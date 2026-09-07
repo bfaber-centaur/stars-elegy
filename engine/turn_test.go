@@ -55,3 +55,21 @@ func TestPopulationCapacity(t *testing.T) {
 		})
 	}
 }
+
+func TestPopulationGrowthBelowCrowdingThreshold(t *testing.T) {
+	planet := Planet{
+		Habitability: 100,
+		Population:   100_000,
+	}
+
+	faction := Faction{
+		GrowthRate: 10,
+	}
+
+	got := PopulationGrowth(planet, faction, JRC3Rules{})
+	want := int64(10_000)
+
+	if got != want {
+		t.Errorf("PopulationGrowth() = %d, want %d", got, want)
+	}
+}
