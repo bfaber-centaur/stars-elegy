@@ -17,3 +17,41 @@ func TestGenerateTurnAdvancesYear(t *testing.T) {
 		t.Errorf("year = %d, want %d", got, want)
 	}
 }
+
+func TestPopulationCapacity(t *testing.T) {
+	tests := []struct {
+		name string
+		hab  int
+		want int64
+	}{
+		{
+			name: "perfect world",
+			hab:  100,
+			want: 1_000_000,
+		},
+		{
+			name: "fifty percent world",
+			hab:  50,
+			want: 500_000,
+		},
+		{
+			name: "minimum positive capacity",
+			hab:  1,
+			want: 50_000,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			planet := Planet{
+				Habitability: tt.hab,
+			}
+
+			got := PopulationCapacity(planet, Faction{}, nil)
+
+			if got != tt.want {
+				t.Errorf("PopulationCapacity() = %d, want %d", got, tt.want)
+			}
+		})
+	}
+}
