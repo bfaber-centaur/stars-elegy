@@ -5,10 +5,6 @@ type Game struct {
 	Year int
 }
 
-func jrc3() Ruleset {
-	return JRC3Rules{}
-}
-
 // todo: move to planet.go or similar
 type Planet struct {
 	Habitability int // -100 - 100, will be derived from environment + faction
@@ -23,6 +19,10 @@ type Faction struct {
 type PlayerOrders struct{}
 type Ruleset interface{}
 type JRC3Rules struct{}
+
+func Jrc3() Ruleset {
+	return JRC3Rules{}
+}
 
 type TurnResult struct {
 	Game Game
@@ -64,5 +64,12 @@ func PopulationGrowth(
 	faction Faction,
 	rules Ruleset,
 ) int64 {
-	return 0
+	if planet.Habitability <= 0 {
+		return 0 // hostile-world deaths come next
+	}
+
+	return planet.Population *
+		int64(faction.GrowthRate) *
+		int64(planet.Habitability) /
+		10_000
 }
