@@ -93,14 +93,53 @@ previous turns have accumulated a fractional growth remainder.
 At `245,800 -> 270,400`, the accumulator returns to zero. This gives a clean
 starting condition for measuring the post-25%-capacity crowding curve.
 
+#### Binary confirmation from `.HST`
+
+Eight consecutive PG-001 host files were decoded for years 2400-2407. The
+planet record stores population in hundreds of colonists and contains a
+separate one-byte field named `excessPop` by StarsAPI. The decoded values were:
+
+| Year | Population units | Display population | `excessPop` | Carry predicted from prior turn |
+|---:|---:|---:|---:|---:|
+| 2400 | 250 | 25,000 | 0 | 0 |
+| 2401 | 275 | 27,500 | 0 | 0 |
+| 2402 | 302 | 30,200 | 50 | 50 |
+| 2403 | 332 | 33,200 | 70 | 70 |
+| 2404 | 365 | 36,500 | 90 | 90 |
+| 2405 | 402 | 40,200 | 40 | 40 |
+| 2406 | 442 | 44,200 | 60 | 60 |
+| 2407 | 486 | 48,600 | 80 | 80 |
+
+The stored `excessPop` value matches the independently inferred growth carry
+for all eight snapshots. This is direct binary evidence that J-RC3 maintains a
+separate persistent remainder associated with population growth, rather than
+merely rounding each year's displayed population independently.
+
+For this measured case, the on-disk state is therefore behaviorally equivalent
+to:
+
+```go
+type PopulationState struct {
+    Hundreds int
+    Carry    int // stored as excessPop; observed range here 0..99
+}
+```
+
+`excessPop` should not be interpreted as ordinary hidden colonists added to the
+planet's displayed population. Its observed evolution matches a remainder from
+the growth calculation.
+
 Interpretation:
 
-- observed population changes in increments of 100 colonists in this test;
+- population is stored in units of 100 colonists in the measured `.HST`
+  records;
 - simple per-turn rounding or truncation does **not** explain the sequence;
-- a persistent fractional growth accumulator does explain every measured
+- a persistent fractional growth accumulator explains every measured
   uncrowded transition exactly;
-- this establishes an equivalent behavioral model, but does not yet prove the
-  exact internal J-RC3 data representation.
+- the `.HST` `excessPop` byte matches that inferred accumulator exactly across
+  eight consecutive turns;
+- the population/carry representation is therefore binary-confirmed for this
+  uncrowded 100%-habitability, 10%-growth scenario.
 
 Supporting observation: an earlier run under the registration/copy-protection
 penalty, which halved effective growth to 5%, also matches the same carry model
@@ -128,8 +167,8 @@ population-capacity purposes.
 ### Unknown / needs measurement
 
 - Exact growth formula above 25% capacity.
-- Exact handling of growth carry when habitability or crowding introduces
-  additional fractional modifiers.
+- Exact handling of `excessPop` / growth carry when habitability or crowding
+  introduces additional fractional modifiers.
 - Whether growth carry persists across ordinary gameplay changes to effective
   growth rate.
 - Exact order of operations between:
@@ -139,19 +178,25 @@ population-capacity purposes.
   - growth carry / integer truncation
 - Exact behavior at 100% capacity.
 - Exact overcrowding death curve between 100% and 400%.
-- Exact internal population and growth-carry representation used by J-RC3.
+- Lifecycle of `excessPop` across migration, colonization, ownership changes,
+  hostile-world deaths, and other population-changing mechanics.
 
 ### Sources
 
 - Stars! User Manual, Population / Growth Rate / Maximum Population /
   Overcrowding / Killer Planets sections.
 - J-RC3 oracle measurements, PG-001.
+- Eight consecutive PG-001 `.HST` snapshots, years 2400-2407.
+- StarsAPI `PartialPlanetBlock`, which decodes population separately from the
+  installation byte it names `excessPop`:
+  <https://github.com/stars-4x/starsapi/blob/master/src/main/java/org/starsautohost/starsapi/block/PartialPlanetBlock.java>
 
 ### Tests
 
 Planned:
 
 - unit fixture reproducing PG-001 exactly;
+- binary fixture asserting the decoded PG-001 population / `excessPop` sequence;
 - differential fixture for the clean 10% / 100%-habitability run;
 - follow-up tests varying growth rate and habitability to determine how the
   accumulator interacts with other modifiers.
