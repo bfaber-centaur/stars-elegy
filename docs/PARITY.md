@@ -166,7 +166,9 @@ population-capacity purposes.
 
 ### Unknown / needs measurement
 
-- Exact growth formula above 25% capacity.
+- Exact growth formula above 25% capacity. One point is measured
+  (PG-002: 2704 → 2958 units at 27.04%); it rejects H0, H1 and H2 as
+  stated, and identifies nothing.
 - Exact handling of `excessPop` / growth carry when habitability or crowding
   introduces additional fractional modifiers.
 - Whether growth carry persists across ordinary gameplay changes to effective
@@ -181,42 +183,71 @@ population-capacity purposes.
 - Lifecycle of `excessPop` across migration, colonization, ownership changes,
   hostile-world deaths, and other population-changing mechanics.
 
-### Planned experiment — PG-002, first crowded turn (NOT RUN)
+### Measured behavior — PG-002, first crowded turn
 
-Status: PLANNED. Predictions only; no observation yet.
+Status: MEASURED (one turn, one planet, read from the UI). Run on
+2026-10-06 with the cloud oracle (`docs/ORACLE.md`).
 
 Question: what does one turn of growth do just above 25% capacity?
 
-Starting state: PG001 at 2425, population 270,400 (27.04% of 1,000,000).
-The PG-001 table above reaches 270,400 in 2425. The carry model predicts
-growth carry 0 there, but that carry is inferred, not binary-confirmed
-(the `.HST` snapshots only cover 2400–2407).
+Starting state, observed: PG001 at 2425, Endeavor population 270,400
+(27.04% of 1,000,000), read in the Stars! UI after advancing the registered
+base from 2407 by 18 empty-order turns (`turn PG001.M1`, oracle restarted
+between turns). The 2408 reading on this base was 53,500, matching PG-001.
+The carry at 2425 is *inferred* to be 0 from the PG-001 carry model; it is
+not binary-confirmed (Elegy does not decode `.HST` bodies).
 
-Predictions for 2426 (10% growth, 100% habitability, carry 0, factor
-applied to the uncrowded growth before truncation):
+Predictions, written before the run (10% growth, 100% habitability, carry 0,
+factor applied to the uncrowded growth before truncation):
 
-| Hypothesis | Factor at 27.04% | 2426 population |
+| Hypothesis | Factor at 27.04% | Predicted 2426 |
 |---|---:|---:|
 | H0: no slowdown yet (uncrowded rule continues) | 1.000 | 297,400 |
 | H1: quadratic, 16/9 × (1 − x)² (recalled community formula; unverified) | 0.946 | 295,900 |
 | H2: linear, (1 − x) / 0.75 | 0.973 | 296,700 |
 
-The predictions are at least 800 colonists apart. The UI shows population
-in units of 100, so a UI reading separates them. A value matching none of
-them rejects all three.
+Observation (UI, Endeavor Status panel and Summary, one run from the
+`pg001-2425` snapshot):
 
-Procedure (`docs/ORACLE.md` tooling):
+| Year | Population | Units of 100 |
+|---:|---:|---:|
+| 2425 | 270,400 | 2704 |
+| 2426 | **295,800** | 2958 |
 
-1. From the `registered` snapshot, run `turn PG001.M1` 18 times, from 2407
-   to 2425, restarting the oracle between turns.
-2. Confirm in the UI that the year is 2425 and Endeavor shows 270,400; if
-   not, stop. Then `snapshot pg001-2425`.
-3. `reset pg001-2425`, run one `turn`, reopen PG001, and read Endeavor's
-   2426 population. Keep the 2426 `.HST`.
+Growth was 25,400 (254 units). The uncrowded rule would give 270.4 → 270.
 
-Limits: one data point cannot identify a formula. The UI does not show the
-carry. Orders are empty, so the experiment assumes nothing else changes
-population.
+Result:
+
+- H0 is rejected: growth slowed in the first turn above 25% capacity.
+- H1 and H2, as stated above, are both rejected. H2 misses by 900 colonists.
+  H1 misses by 100 colonists (one unit): it predicts 255.89 → 255 units,
+  the observation is 254.
+- This is one data point. It does not identify a formula, and nothing has
+  been tested about whether H1 with a different carry, rounding, or order
+  of operations would fit. Those are open questions, not conclusions.
+
+Context of the run, observed:
+
+- Orders were empty (no production queue). The year's messages were the
+  empty production queue and an Energy tech level 7 breakthrough with two
+  benefits (Shadow Shield, Energy Capacitor). No other population-related
+  message was shown.
+- Mines and factories stayed at 10 operable; nothing was built.
+
+Evidence: the `.HST` for every year 2407–2426 of this run, the recorder's
+`observations.jsonl`, the UI screenshots and a SHA-256 manifest are in the
+private `bfaber-centaur/stars-oracle-apparatus` repository, under
+`evidence/pg002/`. They are kept out of this repository because the files were
+produced by a registered copy and the repository is public. SHA-256:
+
+| Year | `PG001.HST` SHA-256 | Header (turn / flags) |
+|---:|---|---|
+| 2425 | `e4bf2e0e38250769d6d394391d540fe2d4833a672428d077fa13bf5f2ddae0fc` | 25 / `0xa0` |
+| 2426 | `150172b721c8e83676e125ce73bfecf318a9dde5410afd384fe569a2b8303201` | 26 / `0xa0` |
+
+Limits: one turn, one planet, one run. The UI shows population in units of
+100 and does not show the carry. The experiment assumes nothing besides
+growth changed population.
 
 ### Sources
 
@@ -224,6 +255,8 @@ population.
   Overcrowding / Killer Planets sections.
 - J-RC3 oracle measurements, PG-001.
 - Eight consecutive PG-001 `.HST` snapshots, years 2400-2407.
+- PG-002, 2026-10-06: PG001 2425 → 2426 from a freshly registered base
+  (see "Measured behavior — PG-002" above).
 - Cloud oracle re-measurement, 2026-10-06 (`docs/ORACLE.md`): PG001 2407 →
   2408 was generated twice (once by hand, once scripted), both times from
   the same snapshot taken after the serial was accepted. Endeavor's
