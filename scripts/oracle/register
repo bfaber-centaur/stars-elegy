@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Type the Stars! serial into the "Stars! Serial Number" dialog and press OK.
+#
+#   scripts/oracle/register SERIAL_FILE
+#
+# The dialog must already be showing (scripts/oracle/wait-for). The serial is
+# read from SERIAL_FILE and piped to xdotool, so it never appears on a command
+# line, in a log, or on stdout. Afterwards Stars! keeps the registration in
+# WINDOWS/STARS.INI on C: — exit Stars!, stop, and `snapshot registered` so
+# later runs can `reset registered`. Never commit that STARS.INI.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -eq 1 ]] || die "usage: register SERIAL_FILE"
+[[ -r "$1" ]] || die "cannot read serial file"
+serial_len="$(tr -d '[:space:]' <"$1" | wc -c)"
+[[ "$serial_len" -eq 8 ]] || die "serial file should hold 8 characters, found $serial_len"
+
+focus_window >/dev/null
+tr -d '[:space:]' <"$1" | xdotool type --delay "${ORACLE_KEY_DELAY:-80}" --file -
+xdotool key Return
+log "serial entered; confirm with a screenshot that the dialog closed"

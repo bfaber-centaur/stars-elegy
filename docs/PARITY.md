@@ -187,6 +187,10 @@ population-capacity purposes.
   Overcrowding / Killer Planets sections.
 - J-RC3 oracle measurements, PG-001.
 - Eight consecutive PG-001 `.HST` snapshots, years 2400-2407.
+- Cloud oracle re-measurement, 2026-10-06 (`docs/ORACLE.md`): PG001 2407 →
+  2408 generated twice from the same registered starting state; Endeavor
+  population 48,600 → 53,500 both times, matching the 2408 value above and
+  not the 51,100 predicted under the halved-growth penalty.
 - StarsAPI `PartialPlanetBlock`, which decodes population separately from the
   installation byte it names `excessPop`:
   <https://github.com/stars-4x/starsapi/blob/master/src/main/java/org/starsautohost/starsapi/block/PartialPlanetBlock.java>

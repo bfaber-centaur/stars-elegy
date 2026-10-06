@@ -25,12 +25,15 @@ marked otherwise.
 | Mouse move, click, double-click land exactly in Windows | verified (Program Manager menu and icon) |
 | Pristine → run copy → snapshot → reset | verified (`selftest`, and real reset between boots) |
 | Header decode of real game files | verified (`files` on `stars_games`) |
-| Stars! registered | **no**: pristine StarsBox asks for a serial; Cancel exits Stars! |
-| Historical universe loaded, turn generated | **blocked** on registration |
-| Normal (non-penalized) growth behavior | **blocked** on registration |
+| Stars! registered | verified: serial accepted, no prompt on relaunch; kept in a local `registered` snapshot |
+| PG001 loaded from D: | verified (title "A Barefoot JayWalk", year 2407, Endeavor 48,600) |
+| One turn generated, change observed from Linux | verified: `PG001.HST`/`.M1` turn 7 → 8 (2407 → 2408), game 92584875 |
+| Normal (non-penalized) growth behavior | verified: 48,600 → 53,500 (penalty would give 51,100), in two independent runs |
+| Turn reproducible from reset | verified at UI level (53,500 both runs); file bytes differ by design (per-write salt) |
 
-Do not collect parity data until the last three rows are verified, and record
-the commit and date when they are.
+The About dialog shows the version (2.60j) but neither a registrant nor an
+"unregistered" marker, so it does not by itself establish registration; the
+growth check does.
 
 ## Required apparatus (not in Git)
 
@@ -128,6 +131,8 @@ scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
 scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
+scripts/oracle/register SERIAL_FILE   # enter the serial into Stars!' first-run dialog
+scripts/oracle/turn GAME.M1           # open a game, generate one turn, exit Stars!
 scripts/oracle/stop
 ```
 
@@ -145,15 +150,26 @@ the window gets clipped when Windows switches to 1152x864.
   succeeds while it's visible. Use `wait-for` with a reference crop of the
   expected dialog instead. Make the crop once from a screenshot, e.g.
   `convert shot.png -crop 290x16+440+344 +repage ~/.stars-oracle/refs/serial-dialog-title.png`
-  is the title bar of the "Stars! Serial Number" dialog.
+  is the title bar of the "Stars! Serial Number" dialog, and
+  `convert shot.png -crop 130x20+367+802 +repage ~/.stars-oracle/refs/main-menu-open.png`
+  is the "Open Game..." button of the title screen (registered Stars!).
 - `wait-stable` suits static screens (Program Manager, Stars! map views).
 
 ### Keyboard
 
 Keys go to the focused DOSBox window, and each script focuses it first.
 Windows menus open with `alt+<letter>`, and dialogs respond to `Tab`,
-`Return`, and `Escape`. Verified: `Escape` cancels the Stars! serial dialog
-(which exits Stars!), and `Escape` closes an open Program Manager menu.
+`Return`, and `Escape`. Verified in Stars!:
+
+| Keys | Effect |
+|---|---|
+| `Escape` on the serial dialog | cancels and exits Stars! |
+| `alt+o` on the title screen | Open Game dialog, current directory `D:\` |
+| type `pg001.m1`, `Return` | loads the game |
+| `F9` | Turn → Generate |
+| `alt+h` `a` | Help → About Stars! (`Return` there presses "Order Info...", not OK; close with `Escape`) |
+| `alt+f` `x` | File → Exit, back to Windows |
+| `alt+x` on the title screen | Exit Stars! |
 
 ### Mouse
 
@@ -208,30 +224,51 @@ Pristine `stars_games` state, as decoded by `scripts/oracle/files`:
 No `PG001.X1` (orders) exists for 2407, so generating 2408 takes a Stars!
 session that opens the player file and submits orders.
 
+Observed when generating PG001 2407 → 2408:
+
+- `PG001.HST` and `PG001.M1` move to turn 8; `PG001.H1` moves to turn 7.
+- Stars! itself rewrites `BACKUP/`: it now holds the pre-turn 2407
+  `.HST`/`.M1` and the submitted turn-7 `.X1`. `BACKUP/` is Stars!-managed,
+  not a static archive.
+- File bodies are encrypted with a salt from the file header that changes on
+  every write, so two runs of the same turn produce different bytes of equal
+  length. Compare runs by decoded content (or the UI), not by hash.
+- Header flag bit `0x20` differed between two otherwise identical runs
+  (`0xa0` vs `0x80`). Its meaning is unknown.
+
 ## Registration
 
 The pristine StarsBox is **not registered**. On first run, Stars! shows a
 "Stars! Serial Number" dialog, and Cancel exits Stars! entirely, so no game
-can be opened. Stars! creates `WINDOWS/STARS.INI` holding window and UI
-settings at that point. The bundle's `WINDOWS/SERIALNO.INI` is the Windows 3.1
+can be opened. The bundle's `WINDOWS/SERIALNO.INI` is the Windows 3.1
 install record, not Stars! registration.
 
-Registering means typing the serial into that dialog. Do it so the value
-never appears on a command line, in a log, or in Git. Then:
+Register once per pristine base, then keep a snapshot:
 
-1. Check registration in the UI (Help → About) with a local screenshot.
-   Do not commit it.
-2. Stop the oracle and `snapshot registered`, so later runs can
-   `reset registered` instead of registering again. Snapshots live in
-   `$ORACLE_HOME`, outside Git.
-3. Run the behavioral check. PG001 is at 2407 with 48,600 colonists and a
-   growth carry of 80 (`docs/PARITY.md`). One turn under normal 10% growth
-   must give 486×10 + 80 = 4,940 → +49 → **53,500** in 2408 (the recorded
-   PG-001 value). The halved 5% penalty would give 486×5 + 80 = 2,510 →
-   +25 → 51,100. Read the population from the planet summary in the UI;
-   Elegy cannot decode it from the `.HST` yet.
+```sh
+scripts/oracle/reset
+scripts/oracle/start
+scripts/oracle/wait-for ~/.stars-oracle/refs/serial-dialog-title.png 440 344 120
+scripts/oracle/register /path/to/serial.txt
+scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 30
+scripts/oracle/key alt+x            # exit Stars! so it finishes writing
+scripts/oracle/wait-stable 30 2
+scripts/oracle/stop
+scripts/oracle/snapshot registered  # later: scripts/oracle/reset registered
+```
 
-If either check is ambiguous, stop and treat the oracle as untrusted.
+Stars! stores the registration in `C:\WINDOWS\STARS.INI`, encoded (the
+serial does not appear there in plaintext), alongside window settings. Treat
+that file, and every snapshot containing it, as registration-bearing: it
+stays under `$ORACLE_HOME` and is git-ignored.
+
+Before collecting parity data on a new base, re-run the behavioral check:
+PG001 is at 2407 with 48,600 colonists and a growth carry of 80
+(`docs/PARITY.md`). One turn under normal 10% growth gives
+486×10 + 80 = 4,940 → +49 → **53,500** in 2408; the halved 5% penalty would
+give 486×5 + 80 = 2,510 → +25 → 51,100. Read the population from the planet
+Status panel; Elegy cannot decode it from the `.HST` yet. Observed
+2026-10-06: 53,500 (twice).
 
 ## Smoke tests
 
@@ -255,10 +292,22 @@ scripts/oracle/stop
 scripts/oracle/reset
 ```
 
-Real apparatus, one turn of PG001: blocked on registration. When unblocked,
-write the exact keystrokes here: open `D:\PG001.M1`, generate one turn, wait,
-stop, then `status` and `files` should show `PG001.HST`/`.M1` at turn 8 →
-2408 with game ID 92584875.
+Real apparatus, one turn of PG001 (needs the `registered` snapshot):
+
+```sh
+scripts/oracle/reset registered
+scripts/oracle/start
+scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 60
+scripts/oracle/turn PG001.M1
+#   before: game=92584875 version=2.83.0 turn=7 year=2407 ...
+#   after:  game=92584875 version=2.83.0 turn=8 year=2408 ...
+scripts/oracle/stop
+scripts/oracle/status                 # PG001.HST/.M1/.H1 and BACKUP/PG001.* modified
+scripts/oracle/reset registered       # PG001.HST back at turn 7
+```
+
+`turn` takes about 8 s. Run `stars-record` on `run/games/stars_games`
+alongside it to keep every `.HST` state.
 
 ## Known fragility
 
