@@ -249,6 +249,37 @@ Limits: one turn, one planet, one run. The UI shows population in units of
 100 and does not show the carry. The experiment assumes nothing besides
 growth changed population.
 
+### Measured behavior — PG-003, crowded turns 2427–2436
+
+Status: IN PROGRESS. Predictions committed before the run.
+
+Question: how does growth proceed over ten more empty-order turns of PG001
+past 2426, and does PG-002's 2426 value (295,800) repeat on a fresh run?
+
+Procedure: from the `registered` snapshot (PG001 2407), advance with
+`turn PG001.M1` to 2426 while `stars-record` archives every `.HST`; read
+Endeavor's population in the UI at 2426, then after each of the turns to
+2436.
+
+Predictions, written before the run. Multi-step trajectories from the
+PG-002 observation (2958 units at 2426), 10% growth, 100% habitability,
+growth truncated to whole units each year, carry ignored (the 2426 carry is
+unknown). H1 and H2 are the PG-002 hypotheses; both were already rejected by
+the single PG-002 point and are listed only as reference curves.
+
+| Year | H1 16/9 × (1 − x)² | H2 (1 − x) / 0.75 |
+|---:|---:|---:|
+| 2427 | 3218 | 3235 |
+| 2428 | 3481 | 3526 |
+| 2429 | 3743 | 3830 |
+| 2430 | 4003 | 4145 |
+| 2431 | 4258 | 4468 |
+| 2432 | 4507 | 4797 |
+| 2433 | 4748 | 5129 |
+| 2434 | 4980 | 5462 |
+| 2435 | 5203 | 5792 |
+| 2436 | 5415 | 6116 |
+
 ### Sources
 
 - Stars! User Manual, Population / Growth Rate / Maximum Population /
