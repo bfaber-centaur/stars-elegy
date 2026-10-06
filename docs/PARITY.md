@@ -235,8 +235,9 @@ Context of the run, observed:
 - Mines and factories stayed at 10 operable; nothing was built.
 
 Evidence: the `.HST` for every year 2407–2426 of this run, the recorder's
-`observations.jsonl`, and the UI screenshots are kept outside Git, in the
-project files folder (`oracle-evidence/pg002/`), because the files were
+`observations.jsonl`, the UI screenshots and a SHA-256 manifest are in the
+private `bfaber-centaur/stars-oracle-apparatus` repository, under
+`evidence/pg002/`. They are kept out of this repository because the files were
 produced by a registered copy and the repository is public. SHA-256:
 
 | Year | `PG001.HST` SHA-256 | Header (turn / flags) |

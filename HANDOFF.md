@@ -16,8 +16,9 @@ inferred or implemented. The next bounded mission has not been assigned.
   `bfaber-centaur/stars-oracle-apparatus`, serial from `STARS_SERIAL`).
 - Universe / turn: run copy left at PG001 2426.
 - Processes running: none.
-- Evidence outside Git: `oracle-evidence/pg002/` in the project files
-  folder (`.HST` for 2407–2426, `observations.jsonl`, UI screenshots).
+- Raw evidence: private `stars-oracle-apparatus` repo, `evidence/pg002/`
+  (`.HST` for 2407–2426, `observations.jsonl`, screenshots, manifest), on
+  branch `evidence/pg002` (apparatus PR #1).
 
 ## Verified
 
@@ -39,8 +40,7 @@ inferred or implemented. The next bounded mission has not been assigned.
   seen running at the start of a real new session. This session's clone
   predated it, so PG-002 registered by hand.
 - Whether registered-copy game files carry registration data is unknown,
-  so the raw `.HST` files were kept out of this public repo. The owner may
-  decide otherwise.
+  so the raw `.HST` files are kept in the private apparatus repo, not here.
 
 ## Next action
 
