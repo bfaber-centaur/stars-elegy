@@ -170,6 +170,13 @@ population-capacity purposes.
   measured (PG-002 and PG-003: 27.04% to 51.90%). They reject H0, H1 and H2
   as stated, and identify nothing. Observed growth sits 0–4 units below
   truncated 16/9 × (1 − x)².
+- `excessPop` across the crowded turns. It has not yet been extracted from
+  the preserved PG-002/PG-003 `.HST` files (apparatus `evidence/pg002/`,
+  `evidence/pg003/`). PG-001 showed this byte tracking the growth carry
+  exactly in the uncrowded case (same decoder: StarsAPI `PartialPlanetBlock`,
+  see "Binary confirmation from `.HST`"). Whether it means the same thing
+  under crowding is open, but it is an existing observable, not an
+  inaccessible quantity.
 - Exact handling of `excessPop` / growth carry when habitability or crowding
   introduces additional fractional modifiers.
 - Whether growth carry persists across ordinary gameplay changes to effective
@@ -195,8 +202,10 @@ Starting state, observed: PG001 at 2425, Endeavor population 270,400
 (27.04% of 1,000,000), read in the Stars! UI after advancing the registered
 base from 2407 by 18 empty-order turns (`turn PG001.M1`, oracle restarted
 between turns). The 2408 reading on this base was 53,500, matching PG-001.
-The carry at 2425 is *inferred* to be 0 from the PG-001 carry model; it is
-not binary-confirmed (Elegy does not decode `.HST` bodies).
+The carry at 2425 is *inferred* to be 0 from the PG-001 carry model.
+`excessPop` has not been extracted from the preserved 2425 `.HST` to check
+it. Elegy has no native body decoder, but the StarsAPI decoder used for the
+PG-001 binary confirmation exposes this byte.
 
 Predictions, written before the run (10% growth, 100% habitability, carry 0,
 factor applied to the uncrowded growth before truncation):
@@ -268,7 +277,7 @@ given.
 Predictions, written and committed before the run (commit `5472daa`):
 multi-step trajectories from the PG-002 observation (2958 units at 2426),
 10% growth, 100% habitability, growth truncated to whole units each year,
-carry ignored (the 2426 carry is unknown). H1 and H2 are the PG-002
+carry ignored (`excessPop` at 2426 had not been extracted). H1 and H2 are the PG-002
 hypotheses; both were already rejected by the single PG-002 point and were
 listed only as reference curves.
 
@@ -323,6 +332,11 @@ Result:
   closely but not exactly. Carry, rounding of the factor, or the order of
   operations could each account for a shortfall of a few units; none of
   these has been tested, and no formula is inferred here.
+- Next observable, before any further oracle turns: `excessPop` for
+  2407–2436 from the preserved PG-003 `.HST` files, decoded with the same
+  StarsAPI decoder used for PG-001. PG-001 established a persistent sub-unit
+  growth accumulator, and the shortfall here is a few units, so the carry
+  is the first column to add. It may not explain the shortfall.
 
 Context of the run, observed:
 
@@ -359,7 +373,8 @@ These differ from PG-002's files for the same years; output bytes differ
 between runs (`docs/ORACLE.md`, "One PG001 turn").
 
 Limits: one planet, one run past 2426, one race and habitability. The UI
-shows population in units of 100 and does not show the carry. The
+shows population in units of 100 and does not show the carry; `excessPop`
+in the preserved files has not been extracted yet. The
 experiment assumes nothing besides growth changed population.
 
 ### Sources

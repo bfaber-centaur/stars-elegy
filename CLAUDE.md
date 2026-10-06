@@ -241,6 +241,8 @@ Do not assign confident semantics to poorly understood fields merely because a n
 
 Names inherited from StarsAPI or other reverse-engineering projects are prior art, not proof.
 
+Before declaring a state variable unobservable, search prior parity evidence and the external analysis tooling the project has used (for example, the StarsAPI decoder behind the PG-001 `excessPop` confirmation). Lack of a native Elegy decoder is not evidence that a quantity has not been, or cannot be, decoded.
+
 ## Current population result
 
 For the measured PG-001 case:
