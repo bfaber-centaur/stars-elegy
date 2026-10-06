@@ -68,8 +68,10 @@ from `STARS_SERIAL`, written without printing to a mode-0400 file under
 not exercised by that session.
 
 Never commit any of these, or screenshots that show registration details or
-proprietary UI unless clearly safe. Raw game files produced by experiments
-are evidence and may be committed as fixtures when needed.
+proprietary UI unless clearly safe. Raw game files, screenshots and recorder
+logs produced by experiments are evidence: preserve them in the private
+apparatus repository under `evidence/<experiment-id>/` (see `CLAUDE.md`,
+"Preserving raw experiment evidence"), not here.
 
 Linux packages (installed by the environment setup script): `dosbox` 0.74-3,
 `xvfb`, `xdotool`, `imagemagick`, `x11-utils`, `unzip`, `p7zip-full`, plus Go.
