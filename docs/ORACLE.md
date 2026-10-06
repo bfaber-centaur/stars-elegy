@@ -11,97 +11,133 @@ Xvfb → DOSBox → Windows 3.1 → Stars! J-RC3
 All control goes through `scripts/oracle/`. The proprietary apparatus stays
 outside the repository, under `$ORACLE_HOME` (default `~/.stars-oracle`).
 
+## Evidence levels used in this document
+
+- **Observed:** seen directly in a screenshot, a decoded file header, or
+  command output. The number of runs is given where it matters.
+- **Inferred:** a conclusion drawn from observations, which could still be
+  wrong.
+- **Hypothesis:** plausible, but not tested here.
+- **Documented:** taken from external documentation or prior art (e.g.
+  StarsAPI), not checked here.
+
+Unlabeled procedural text ("run X, then Y") describes the harness itself.
+
 ## Status
 
-| Capability | State |
-|---|---|
-| Xvfb + DOSBox start/stop unattended | verified (`selftest`) |
-| Screenshot of the DOSBox window | verified (`selftest`) |
-| Keyboard injection reaches the guest | verified (`selftest`, DOS shell) |
-| Guest file writes visible from Linux immediately | verified (`selftest`) |
-| Pristine → run copy → snapshot → reset | verified (`selftest`) |
-| Header decode of produced game files | verified (`selftest`, synthetic file) |
-| Host pointer placement for `click` | verified at X11 level only |
-| Mouse clicks land correctly in Windows 3.1 | **not yet verified** |
-| Windows 3.1 / Stars! J-RC3 boot | **not yet verified** (no apparatus supplied so far) |
-| Existing universe loaded, turn generated | **not yet verified** |
-| Normal registration behavior | **not yet verified** |
+All observations below are from 2026-10-06, with the StarsBox +
+`stars_games` apparatus described below.
 
-Do not collect parity data until the last three rows are verified, and record
-the commit and date when they are.
+| Capability | Evidence |
+|---|---|
+| Xvfb + DOSBox start/stop unattended | Observed, many runs. |
+| Windows 3.1 boots; Stars! starts from autoexec | Observed, many runs. Measured once at about 3 s from `start` to the first Stars! dialog. |
+| Full-window screenshots (1152x864 guest) | Observed. |
+| Keyboard input reaches Windows and Stars! | Observed (keys listed under [Keyboard](#keyboard)). |
+| Mouse click and double-click reach the intended target | Observed for 2 targets: a Program Manager menu and an icon. Positional accuracy is under [Mouse](#mouse). |
+| Pristine → run copy → snapshot → reset | Observed (`selftest`, and real resets between runs). |
+| Header decode of real game files | Observed (`files` on `stars_games`). |
+| Serial accepted | Observed: the dialog closed after `register`, and Stars! started with no serial prompt from the `registered` snapshot (3 boots). |
+| PG001 loads from D: | Observed: title "A Barefoot JayWalk — pg000 — pg001.m1", year 2407, Endeavor population 48,600. |
+| One turn generated; change visible from Linux | Observed, 3 runs: see [One PG001 turn](#one-pg001-turn-observed). |
+| Growth is not the halved-growth penalty | Observed: 48,600 → 53,500 (penalty predicts 51,100). Read from the UI in runs 1 and 2; not read in run 3. |
+| Same UI result across runs | Observed for runs 1 and 2, both from the same `registered` snapshot. Output files differ byte-wise (see below). |
+
+That the oracle now has "normal registered behavior" is **inferred** from
+two things: the serial was accepted, and the growth matches the
+non-penalized PG-001 value. The About dialog shows the version (2.60j) but
+neither a registrant nor an "unregistered" marker, so it neither confirms
+nor refutes registration. Only one mechanic (uncrowded growth on one planet)
+has been compared with a known value.
 
 ## Required apparatus (not in Git)
 
-- A StarsBox-style bundle: Windows 3.1 installed on a DOSBox C: drive
-  (a directory), with Stars! J-RC3 installed. It may come with its own
-  DOSBox config.
-- Optionally, a separate oracle drive containing existing test universes.
-- Registration information for Stars!, if the bundle doesn't already contain it.
+- `starsbox-macapp.tar.gz`: the macOS `StarsBox.app`. Only its DOS/Windows
+  payload is used: `Contents/Resources/c_drive` (Windows 3.1 in `WINDOWS`,
+  Stars! in `STARS`, Stars! Notebook in `NOTEBOOK`). The bundled macOS DOSBox
+  binary and config are not used.
+- `stars_games.tar.gz`: historical game files (`PG000.*`, `PG001.*`,
+  `TESTSSG1.*`, `TEST_SS.R1`, `BACKUP/`).
+- The Stars! serial number. It is entered into Stars!' first-run dialog, and
+  must never be written into the repository, logs, docs, or PRs.
 
-Never commit any of these, or screenshots and logs that show registration
-details. Raw `.HST` and other game files produced by experiments are evidence
-and may be committed as fixtures when needed.
+Never commit any of these, or screenshots that show registration details or
+proprietary UI unless clearly safe. Raw game files produced by experiments
+are evidence and may be committed as fixtures when needed.
 
-Linux packages (installed by the environment setup script): `dosbox` (0.74-3
-tested), `xvfb`, `xdotool`, `imagemagick`, `x11-utils`, `unzip`, `p7zip-full`,
-plus Go for the inspection tools.
+Linux packages (installed by the environment setup script): `dosbox` 0.74-3,
+`xvfb`, `xdotool`, `imagemagick`, `x11-utils`, `unzip`, `p7zip-full`, plus Go.
 
 ## Layout
 
 ```text
 $ORACLE_HOME/
-├── oracle.conf          local configuration (see oracle.conf.example)
-├── sources.txt          SHA-256 of the supplied archives
+├── oracle.conf          local configuration (see scripts/oracle/oracle.conf.example)
+├── sources/             optional read-only copies of the supplied archives
+├── sources.txt          SHA-256 of the archives setup was run from
 ├── pristine/            unpacked apparatus, read-only
+│   ├── StarsBox.app/…/c_drive    → mounted as C:
+│   └── games/stars_games         → mounted as D:
 ├── pristine.sha256      manifest of pristine/
 ├── run/                 disposable copy that DOSBox actually uses
 ├── snapshots/NAME/      saved run copies, read-only
+├── refs/                local reference crops for wait-for (proprietary UI; keep out of Git)
 ├── state/               pid files, logs, generated DOSBox config
 └── shots/               screenshots
 ```
 
-The read-only bits protect against accidents, not against root: the container
-runs as root, which ignores them. Keep the supplied archives themselves
-untouched; `setup --force` can always rebuild `pristine/` from them.
+Read-only bits guard against accidents, not against root, and the container
+runs as root. The archives themselves are the real source of truth, and
+`setup --force` rebuilds `pristine/` from them.
 
-## Configure
-
-```sh
-mkdir -p ~/.stars-oracle
-cp scripts/oracle/oracle.conf.example ~/.stars-oracle/oracle.conf
-$EDITOR ~/.stars-oracle/oracle.conf
-```
-
-Choose one of two ways to boot:
-
-- **Generated config:** `ORACLE_C_DIR` names the directory (relative to
-  `run/`) to mount as C:, and `ORACLE_AUTOEXEC` lists the DOS commands that
-  start Windows, e.g. `win`, or `win stars!` to launch Stars! directly.
-- **Bundle config:** `ORACLE_BASE_CONF` names the bundle's own DOSBox config
-  (relative to `run/`). DOSBox runs with `run/` as its working directory, so
-  relative mount paths in that config still resolve. The headless overrides in
-  `state/overrides.conf` are loaded after it. A config written for DOSBox-X or
-  DOSBox Staging may need hand-editing for 0.74.
-
-Each variable can also be set in the environment for a single command.
-
-## Initialize and reset
+## Configure and initialize
 
 ```sh
-scripts/oracle/setup --bundle /path/to/StarsBox.zip [--drive /path/to/oracle-drive.zip --drive-dest REL]
-scripts/oracle/reset              # run/ := pristine/
-scripts/oracle/snapshot NAME      # save run/ (oracle must be stopped)
-scripts/oracle/reset NAME         # run/ := snapshots/NAME
+mkdir -p ~/.stars-oracle/sources
+cp /path/to/starsbox-macapp.tar.gz /path/to/stars_games.tar.gz ~/.stars-oracle/sources/
+chmod a-w ~/.stars-oracle/sources/*
+cp scripts/oracle/oracle.conf.example ~/.stars-oracle/oracle.conf   # already set up for StarsBox
+
+scripts/oracle/setup --bundle ~/.stars-oracle/sources/starsbox-macapp.tar.gz \
+    --drive ~/.stars-oracle/sources/stars_games.tar.gz --drive-dest games
+scripts/oracle/reset
 ```
 
-`setup` accepts a directory, `.zip`, `.7z`, or tar archive, and only reads it.
-`--drive-dest` (default `drive`) says where in `pristine/` the oracle drive
-goes. If the bundle expects its universes inside its C: drive, point
-`--drive-dest` at that directory.
+The generated DOSBox config mirrors the original macOS launcher:
 
-`reset` stops a running oracle first. Reset before every experiment, and take
-a snapshot at each state you will want to return to, such as "universe loaded,
-turn 2400, orders not yet given".
+```text
+[dosbox] machine=svga_s3  memsize=30
+[autoexec]
+mount c "<run>/StarsBox.app/Contents/Resources/c_drive"
+mount d "<run>/games/stars_games"
+c:
+set PATH=C:\WINDOWS;C:\STARS;C:\NOTEBOOK
+d:
+win /n stars.exe
+```
+
+Mount paths are absolute and point into the run copy. Game files stay on D:,
+separate from the application drive. Headless overrides set no audio devices,
+`output=surface`, `scaler=none`, and `autolock=false`. `cycles=max` replaces
+the original `cycles=auto`. No problem attributable to it has been observed,
+but no comparison with `cycles=auto` has been made either.
+
+The original `stars_dosbox_macos.conf` targets an SDL2 DOSBox build
+(`output=texture`, an SDL2 mapper file), so it is a reference and is not
+loaded.
+
+### Deliberate deviation from pristine
+
+At each `start`, if `ORACLE_MOUSE_NOACCEL=1` (the default), `MouseSpeed=0` is
+added to the `[windows]` section of the **run copy's** `WINDOWS/WIN.INI`, to
+turn off Windows pointer acceleration for `click`.
+
+- *Hypothesis:* this affects only cursor movement, not anything Stars!
+  computes. It has not been tested, e.g. by comparing turn results with and
+  without it.
+- *Observed:* `status` reports `WIN.INI` as modified because of this. After
+  any boot it also reports `WINDOWS/WIN386.SWP` as modified, and, after
+  Stars! has run once, `WINDOWS/STARS.INI` as added.
 
 ## Start, observe, operate, stop
 
@@ -110,116 +146,246 @@ scripts/oracle/start                  # Xvfb + DOSBox, detached; waits for the w
 scripts/oracle/status                 # processes, window title, changes vs pristine
 scripts/oracle/screenshot [OUT.png]   # prints the PNG path
 scripts/oracle/wait-stable [TIMEOUT] [QUIET]   # waits until the screen stops changing
+scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
-scripts/oracle/type 'win'             # literal text, no Return
+scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
+scripts/oracle/register SERIAL_FILE   # type the serial into Stars!' first-run dialog
+scripts/oracle/turn GAME.M1           # open a game, press F9 once, exit Stars!
 scripts/oracle/stop
 ```
 
-Screenshots are taken of the DOSBox window alone, so screenshot pixel
-coordinates are guest screen coordinates (no scaler is applied).
+Screenshots capture the DOSBox window alone, at the guest resolution
+(1152x864 with this Windows install). Screenshot pixel coordinates are guest
+coordinates.
 
-Prefer the keyboard. Windows 3.1 menus open with `alt+<letter>`, dialogs
-respond to `Tab`, `Return`, and `Escape`, and Stars! has many accelerator keys.
+`start` pins the window at the screen origin (`SDL_VIDEO_WINDOW_POS=0,0`) on
+a 1600x1200 Xvfb screen. *Observed:* without this, the window opened at
++192+184 (and +480+400 on a larger screen) and was clipped once Windows
+switched to 1152x864.
+
+### Waiting
+
+- *Observed:* the Stars! title screen animates, and `wait-stable` timed out
+  while it was visible. Use `wait-for` with a reference crop of the expected
+  screen instead. Make the crops once from a screenshot:
+  - `convert shot.png -crop 290x16+440+344 +repage ~/.stars-oracle/refs/serial-dialog-title.png`
+    is the title bar of the "Stars! Serial Number" dialog;
+  - `convert shot.png -crop 130x20+367+802 +repage ~/.stars-oracle/refs/main-menu-open.png`
+    is the "Open Game..." button of the title screen.
+- `wait-stable` has worked on Program Manager and the Stars! map view.
+
+### Keyboard
+
+Keys go to the focused DOSBox window, and each script focuses it first.
+Observed in this setup:
+
+| Keys | Effect |
+|---|---|
+| `Escape` on the serial dialog | cancels; Stars! exits to Program Manager |
+| `alt+o` on the title screen | Open Game dialog, directory `d:\` |
+| type `pg001.m1`, `Return` in that dialog | loads PG001 |
+| `alt+t` | Turn menu: "Wait for New", "Generate F9" |
+| `g` in the Turn menu (run 1), or `F9` (runs 2–3) | generates a turn |
+| `alt+h` `a` | About Stars! dialog; `Return` there opened "Order Info..." (the default button), and two `Escape`s closed both dialogs |
+| `alt+f` `x` | File → Exit, back to Windows |
+| `alt+x` on the title screen | exits Stars! |
 
 ### Mouse
 
-Under DOSBox the Windows mouse is relative. The host pointer position doesn't
-map onto it. `click` therefore drives the guest cursor into the top-left
-corner, where Windows pins it at (0,0), then moves to the target in steps of
-3 pixels or fewer. Two things must hold for this to be exact:
+Measurements with DOSBox 0.74-3 and this Windows 3.1 install, finding the
+cursor by diffing screenshots:
 
-1. Windows mouse acceleration is off (Control Panel → Mouse: slowest tracking
-   speed, or `MouseSpeed=0` in `[windows]` of `WIN.INI`).
-2. `ORACLE_MOUSE_SCALE` is the number of guest pixels moved per host pixel.
-   Leave it at 1, then click a known control and check with a screenshot. If
-   the cursor falls short or overshoots by a constant factor, set the scale to
-   that factor.
+- **Unlocked** (DOSBox's state after `start`): with slow 1–3 px host steps,
+  the guest cursor moved about 0.56× the host distance horizontally and
+  about 0.23× vertically. *Hypothesis:* DOSBox scales motion to a 640x200
+  range (640/1152 ≈ 0.556, 200/864 ≈ 0.231).
+- **Locked** (DOSBox hotkey `ctrl+F10`), with Windows acceleration on:
+  2 px steps 10 ms apart landed exactly in 4 of 4 probes in one session,
+  but overshot by 4 px in a later session. Faster pacing overshot by about
+  2×.
+- **Locked, with `MouseSpeed=0`**, at `click`'s default pacing (8 px steps,
+  5 ms apart): (47,31), (600,400), and (777,123) measured exactly. (1000,800)
+  measured (999,799), and (5,5) measured (0,0). *Inferred, not confirmed:*
+  the last two are artefacts of the diff method near the cursor's outline
+  and the screen corner. No other pacing was measured with acceleration
+  off.
 
-Mouse capture (`autolock`) is disabled, so motion reaches the guest without
-clicking into the window first.
+`click` locks the mouse the first time it runs after `start` (tracked in
+`state/mouse-locked`). It parks the host pointer at the bottom-right of the
+X screen, sweeps the guest cursor past the top-left corner, walks to (X,Y),
+and clicks. It took about 1 s per click. Functional checks: one click opened
+Program Manager's File menu, and one double-click on the Stars! icon
+launched Stars!. Check positions with a screenshot before relying on
+clicks near small targets.
 
-### Wait before acting
-
-DOSBox and Windows take a while to boot and repaint. Use `wait-stable` after
-every action that changes the screen, and look at the screenshot it prints
-before deciding on the next input.
+Don't send `ctrl+F10` by hand. It would toggle the lock out of sync with
+`state/mouse-locked`.
 
 ## Game files
 
-Stars! writes into `run/` and the files are visible from Linux at once.
-DOSBox caches directory listings, though, so files changed from the Linux side
-while DOSBox runs might not be seen by the guest. Make such changes with the
-oracle stopped, or run `rescan` at a DOS prompt.
+Stars! writes game files to D:, i.e. `run/games/stars_games`, and they were
+visible from Linux as soon as Stars! finished. DOSBox caches directory
+listings (documented DOSBox behavior), so make Linux-side changes to the run
+copy only while the oracle is stopped.
 
 ```sh
 scripts/oracle/status   # added / modified / deleted relative to pristine
 scripts/oracle/files    # every .HST/.Mn/.Xn/.Hn/.XY in run/, with decoded headers
-go run ./cmd/stars-header FILE...      # the same decode for arbitrary files
-go run ./cmd/stars-record -watch DIR -out DIR   # archive every distinct .HST state (docs/HST_RECORDER.md)
+go run ./cmd/stars-header FILE...                     # the same decode for arbitrary files
+go run ./cmd/stars-record -watch DIR -out DIR         # archive every distinct .HST state
 ```
 
-Only the plaintext file header (game ID, version, turn, year, player) is
-decoded today. Later blocks are encrypted and not yet decoded by Elegy.
+Only the plaintext file header (game ID, version, turn, year, player, flags)
+is decoded today. The rest of each file is not decoded by Elegy.
+*Documented (StarsAPI):* the rest is encrypted, with a key seeded from the
+header's salt and game ID.
 
-For an experiment that spans several turns, run `stars-record` against the
-game directory inside `run/` while the oracle is running, so every
-intermediate `.HST` state is preserved.
+Pristine `stars_games` headers (observed with `scripts/oracle/files`; "turn
+N / year" is the header's turn field and the year derived from it):
 
-## Verifying registration
+| Game | ID | Files |
+|---|---|---|
+| PG001 | 92584875 | `.HST` 7 / 2407, `.M1` 7 / 2407, `.H1` 6 / 2406, `.XY` 0 / 2400; `BACKUP/` `.HST`/`.M1`/`.X1` 6 / 2406 |
+| PG000 | 7144149 | `.HST`/`.M1` 36 / 2436, `.H1` 35 / 2435, `.XY` 0; `.MAP`/`.PLA`/`.FLE`/`.R1` not decoded; `BACKUP/` 35 / 2435 |
+| TESTSSG1 | 290058 | `.HST`/`.M1` 9 / 2409, `.H1` 8 / 2408, `.XY` 0; `BACKUP/` 8 / 2408 |
 
-The oracle is only trustworthy when Stars! runs with normal registered
-behavior. PARITY.md records that an unregistered or penalized run halved
-effective population growth (10% → 5%). Before collecting data:
+In all three games the `.H1` header turn is one less than the `.HST`/`.M1`
+header turn. What the `.H1` file contains has not been examined.
 
-1. Check what Stars! reports about registration (the Help/About dialog) with
-   a screenshot. Inspect it locally and do not commit it if it shows the
-   name or serial.
-2. Run a behavioral check: take a 10%-growth race at 100% habitability below
-   25% capacity for one turn and confirm the growth matches PG-001 (25,000 →
-   27,500 from a zero carry), not half of it.
+### One PG001 turn (observed)
 
-If either check is ambiguous, stop and treat the oracle as untrusted.
+Three runs, each starting from the `registered` snapshot (PG001 files as in
+the table above):
+
+- Run 1: by hand. Loaded PG001, opened Help → About and Order Info, and
+  generated via the Turn menu.
+- Runs 2 and 3: `scripts/oracle/turn PG001.M1`.
+
+Headers after the turn. All files were decoded after runs 1 and 3, with
+identical results apart from the flags byte. After run 2 only `PG001.HST`
+and `PG001.M1` were decoded, and they match too.
+
+| File | Before | After |
+|---|---|---|
+| `PG001.HST` | 7 / 2407 | 8 / 2408 |
+| `PG001.M1` | 7 / 2407 | 8 / 2408 |
+| `PG001.H1` | 6 / 2406, 254 bytes | 7 / 2407, 280 bytes |
+| `PG001.XY` | 0 / 2400 | unchanged (same SHA-256) |
+| `BACKUP/PG001.HST` | 6 / 2406 | 7 / 2407, byte-identical to the pre-turn `PG001.HST` |
+| `BACKUP/PG001.M1` | 6 / 2406, 603 bytes | 7 / 2407, byte-identical to the pre-turn `PG001.M1` |
+| `BACKUP/PG001.X1` | 6 / 2406 | 7 / 2407, 39 bytes (no pre-turn `PG001.X1` existed) |
+
+Other observations:
+
+- The game ID was unchanged in every file.
+- Endeavor's population read in the UI after the turn: 53,500 (runs 1
+  and 2).
+- Output bytes differ between runs. Matching files have equal lengths but
+  different header salt values (`.HST` 1377 vs 827 in runs 1 and 2), and
+  most bytes differ. *Inferred from the documented encryption:* the files
+  cannot be compared by hash, only by decoded content or the UI.
+- The header flags byte of the new `.HST`/`.M1` was `0xa0`, `0x80`, and
+  `0x20` in runs 1–3 (pre-turn: `0x20`). Its meaning is unknown and not
+  investigated here.
+- *Not established:* why Stars! writes `BACKUP/` and `.X1` as it does. The
+  table only records what happened.
+
+## Registration
+
+*Observed:* the pristine StarsBox shows a "Stars! Serial Number" dialog when
+Stars! starts. Cancel exits Stars!, so no game can be opened. The bundle's
+`WINDOWS/SERIALNO.INI` has `[mswindows]` keys. *Inferred:* it is the Windows
+3.1 install record, not Stars! registration.
+
+Register once per pristine base, then keep a snapshot:
+
+```sh
+scripts/oracle/reset
+scripts/oracle/start
+scripts/oracle/wait-for ~/.stars-oracle/refs/serial-dialog-title.png 440 344 120
+scripts/oracle/register /path/to/serial.txt
+scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 30
+scripts/oracle/key alt+x            # exit Stars! before stopping
+scripts/oracle/wait-stable 30 2
+scripts/oracle/stop
+scripts/oracle/snapshot registered  # later: scripts/oracle/reset registered
+```
+
+Where the registration is kept:
+
+- *Observed:* the `registered` snapshot differs from pristine in exactly
+  three files: `WINDOWS/STARS.INI` (added), `WINDOWS/WIN.INI` (the
+  `MouseSpeed` tweak), and `WINDOWS/WIN386.SWP`. The serial does not appear
+  in plaintext in any file of the run copy. An unregistered run also
+  creates `STARS.INI`, with the same key names.
+- *Hypothesis:* the registration is encoded in `STARS.INI`.
+- Either way, treat `STARS.INI` and every snapshot as registration-bearing:
+  they stay under `$ORACLE_HOME`, and `STARS.INI` is git-ignored.
+
+Before collecting parity data on a new base, run the behavioral check.
+PG001 is at 2407 with 48,600 colonists and a growth carry of 80
+(`docs/PARITY.md`). Predictions:
+
+- uncrowded 10% growth: 486×10 + 80 = 4,940 → +49 → **53,500** in 2408;
+- the halved-growth penalty (5%): 486×5 + 80 = 2,510 → +25 → 51,100.
+
+Read the population from the planet Status panel; Elegy cannot decode it
+from the `.HST` yet. Observed on 2026-10-06: 53,500 (runs 1 and 2).
 
 ## Smoke tests
 
-Plumbing (no apparatus required, about 10 seconds). It runs on its own
-temporary `ORACLE_HOME` and display `:78`:
+Plumbing only, without apparatus (about 10 s, own temporary `ORACLE_HOME`,
+display `:78`):
 
 ```sh
 scripts/oracle/selftest      # ends with "selftest: PASS"
 ```
 
-Full oracle (requires apparatus and a configured `oracle.conf`):
+Real apparatus, boot to Stars! (unregistered base):
 
 ```sh
-scripts/oracle/setup --bundle /path/to/bundle [--drive /path/to/drive]
 scripts/oracle/reset
 scripts/oracle/start
-scripts/oracle/wait-stable 120 5      # Windows / Stars! has booted; inspect the PNG
-# Open a known universe and generate one turn, using key/type/click and
-# checking each step with wait-stable.
-scripts/oracle/wait-stable 120 5
+scripts/oracle/wait-for ~/.stars-oracle/refs/serial-dialog-title.png 440 344 120
+scripts/oracle/key Escape             # Stars! exits to Program Manager
+scripts/oracle/click 50 84 1 --double # relaunch Stars! from its icon
+scripts/oracle/wait-for ~/.stars-oracle/refs/serial-dialog-title.png 440 344 60
 scripts/oracle/stop
-scripts/oracle/status                 # the universe's .HST should be "modified"
-scripts/oracle/files                  # its year should be one more than before
-scripts/oracle/reset                  # back to pristine
+scripts/oracle/reset
 ```
 
-When this passes, write down the exact keystrokes it took next to the
-universe's name here, so later workers can replay them.
+Real apparatus, one turn of PG001 (needs the `registered` snapshot):
+
+```sh
+scripts/oracle/reset registered
+scripts/oracle/start
+scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 60
+scripts/oracle/turn PG001.M1
+#   before: game=92584875 version=2.83.0 turn=7 year=2407 ...
+#   after:  game=92584875 version=2.83.0 turn=8 year=2408 ...   (flags vary)
+scripts/oracle/stop
+scripts/oracle/status          # PG001.HST/.M1/.H1 and BACKUP/PG001.HST/.M1/.X1 modified
+scripts/oracle/reset registered
+```
+
+`turn` took about 8 s. It gives no orders; it only opens the file and
+presses F9 once. Run `stars-record` on `run/games/stars_games` alongside it
+to keep every `.HST` state.
 
 ## Known fragility
 
-- Timing: Windows boot and turn generation take an unknown time under
-  `cycles=max` on a shared VM. Always use `wait-stable`; never fixed sleeps.
-- `stop` kills DOSBox outright. Stars! can be mid-write. Exit Stars! cleanly
-  or wait for the screen to settle before stopping. Snapshot only while
-  stopped.
-- No window manager runs, so `wmctrl` has nothing to report. Use `xdotool`.
-  `xdotool windowmove` has no effect on the DOSBox window either.
-- Keystrokes go to the focused window. `key`, `type`, and `click` focus
-  DOSBox first. Don't run two of them at once.
-- The xkbcomp warnings in `state/xvfb.log` are harmless.
+- `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
+  snapshots only while stopped.
+- Observed once: a `ctrl+F10` sent from `start` right after the window
+  appeared did not lock the mouse. *Hypothesis:* DOSBox wasn't yet
+  processing keys. `click` therefore locks lazily, on first use.
+- No window manager runs: `wmctrl` reports nothing, and `xdotool windowmove`
+  had no effect. Use `xdotool` and `SDL_VIDEO_WINDOW_POS`.
+- Keystrokes go to the focused window. Don't run two input scripts at once.
+- The xkbcomp warnings in `state/xvfb.log` and the ALSA warning in
+  `state/dosbox.log` have had no visible effect.
 - One oracle per `ORACLE_DISPLAY`. Use different `ORACLE_HOME` and
   `ORACLE_DISPLAY` values to run several side by side.
+- The container can be recycled while idle (this happened once), which
+  kills the oracle. `$ORACLE_HOME` survived that time; re-run `start`.

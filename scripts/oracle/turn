@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Open a game from the Stars! title screen, press F9 (Turn > Generate) once,
+# wait for the .HST header turn to change, and exit Stars! via File > Exit.
+# Prints the host file header before and after.
+#
+#   scripts/oracle/turn GAME.M1 [TIMEOUT_SECONDS]
+#
+# GAME.M1 is the player file on D: (e.g. PG001.M1); its .HST must sit next to
+# it. Stars! must be registered and showing its title screen (e.g. after
+# `reset registered` + `start` + `wait-for` on the main-menu reference).
+# It gives no orders.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 1 ]] || die "usage: turn GAME.M1 [TIMEOUT_SECONDS]"
+game="$1" timeout="${2:-120}"
+[[ -n "$ORACLE_D_DIR" ]] || die "turn expects game files on D: (ORACLE_D_DIR)"
+hst="$(find "$RUN/$ORACLE_D_DIR" -maxdepth 1 -iname "${game%.*}.hst" | head -n 1)"
+[[ -f "$hst" ]] || die "no host file for $game in $ORACLE_D_DIR"
+require_window >/dev/null
+
+repo="$(cd "$(dirname "$0")/../.." && pwd)"
+mkdir -p "$STATE/bin"
+(cd "$repo" && go build -o "$STATE/bin/stars-header" ./cmd/stars-header)
+header() { "$STATE/bin/stars-header" "$hst" | awk -F'\t' '{ print $4 }'; }
+turn_of() { header | sed -n 's/.* turn=\([0-9]*\).*/\1/p'; }
+
+before="$(header)"
+start_turn="$(turn_of)"
+echo "before: $before"
+
+here="$(dirname "$0")"
+"$here/key" alt+o # File Open dialog, current directory D:\
+sleep 1
+"$here/type" "$game"
+"$here/key" Return
+"$here/wait-stable" 30 2 >/dev/null
+"$here/key" F9 # Turn > Generate
+
+t0="$SECONDS"
+until [[ "$(turn_of)" != "$start_turn" ]]; do
+	((SECONDS - t0 < timeout)) || die "turn did not advance within ${timeout}s"
+	sleep 0.5
+done
+"$here/wait-stable" 60 2 >/dev/null
+echo "after:  $(header)"
+
+"$here/key" alt+f x # File > Exit
+"$here/wait-stable" 30 2 >/dev/null

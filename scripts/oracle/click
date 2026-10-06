@@ -3,12 +3,12 @@
 #
 #   scripts/oracle/click X Y [BUTTON] [--double]
 #
-# The guest (Windows 3.1) mouse is relative, so absolute host positions do not
-# map onto it. This script first drives the guest cursor into the top-left
-# corner, where the guest clamps it to (0,0), then moves by (X,Y) in small
-# steps so Windows mouse acceleration never triggers. Coordinates are only
-# exact if acceleration is off in the guest and ORACLE_MOUSE_SCALE is right;
-# verify with a screenshot.
+# Locks the DOSBox mouse (ctrl+F10) on first use after start. In locked mode,
+# with Windows acceleration off, the guest cursor was measured to move one
+# guest pixel per host pixel of relative motion (docs/ORACLE.md, Mouse, which
+# also lists the misses). The script drives the cursor far past the top-left
+# corner, where the guest pins it at (0,0), then walks it to (X,Y). Check
+# with a screenshot before relying on clicks near small targets.
 source "$(dirname "$0")/lib.sh"
 
 [[ $# -ge 2 ]] || die "usage: click X Y [BUTTON] [--double]"
@@ -18,33 +18,31 @@ repeat=1
 [[ " $* " == *" --double "* ]] && repeat=2
 
 w="$(focus_window)"
-eval "$(xdotool getwindowgeometry --shell "$w")" # X Y WIDTH HEIGHT
-wx="$X" wy="$Y" ww="$WIDTH" wh="$HEIGHT"
-step=3
+if [[ ! -f "$STATE/mouse-locked" ]]; then
+	xdotool key ctrl+F10
+	touch "$STATE/mouse-locked"
+	sleep 0.3
+fi
+eval "$(xdotool getwindowgeometry --shell "$w")" # WIDTH HEIGHT
+step="$ORACLE_MOUSE_STEP" pause="$ORACLE_MOUSE_PAUSE"
 
-# relmove DX DY: move by (DX,DY) host pixels in steps of at most $step.
+# relmove DX DY: relative motion in steps of at most $step, $pause apart.
 relmove() {
 	local dx="$1" dy="$2" args=() sx sy
 	while ((dx != 0 || dy != 0)); do
 		sx=$((dx > step ? step : (dx < -step ? -step : dx)))
 		sy=$((dy > step ? step : (dy < -step ? -step : dy)))
-		args+=(mousemove_relative -- "$sx" "$sy" sleep 0.002)
+		args+=(mousemove_relative -- "$sx" "$sy" sleep "$pause")
 		dx=$((dx - sx)) dy=$((dy - sy))
-		if ((${#args[@]} > 600)); then
-			xdotool "${args[@]}"
-			args=()
-		fi
 	done
 	((${#args[@]} == 0)) || xdotool "${args[@]}"
 }
 
-# Home: start at the window's bottom-right, sweep to its top-left.
-xdotool mousemove "$((wx + ww - 1))" "$((wy + wh - 1))"
-relmove "$((-(ww - 1)))" "$((-(wh - 1)))"
-relmove -"$step" -"$step" # make sure the guest is pinned at (0,0)
-xdotool mousemove "$wx" "$wy"
-
-tx="$(awk -v v="$x" -v s="$ORACLE_MOUSE_SCALE" 'BEGIN { printf "%d", v / s + 0.5 }')"
-ty="$(awk -v v="$y" -v s="$ORACLE_MOUSE_SCALE" 'BEGIN { printf "%d", v / s + 0.5 }')"
-relmove "$tx" "$ty"
+# Home. The host pointer starts at the bottom-right of the X screen so the
+# sweep never runs into the screen edge before the guest reaches (0,0).
+eval "$(xdpyinfo | awk '/dimensions:/ { split($2, d, "x"); printf "SW=%d SH=%d\n", d[1], d[2] }')"
+xdotool mousemove "$((SW - 1))" "$((SH - 1))"
+relmove "$((-(WIDTH + 16)))" "$((-(HEIGHT + 16)))"
+relmove "$x" "$y"
+sleep 0.2
 xdotool click --repeat "$repeat" --delay 120 "$button"

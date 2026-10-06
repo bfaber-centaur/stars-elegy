@@ -14,18 +14,28 @@ if [[ -f "$ORACLE_HOME/oracle.conf" ]]; then
 fi
 
 ORACLE_DISPLAY="${ORACLE_DISPLAY:-:77}"
-ORACLE_SCREEN="${ORACLE_SCREEN:-1024x768x24}"
+ORACLE_SCREEN="${ORACLE_SCREEN:-1600x1200x24}"
 ORACLE_DOSBOX="${ORACLE_DOSBOX:-dosbox}"
 # Directory (relative to the run copy) mounted as C: by the generated config.
 ORACLE_C_DIR="${ORACLE_C_DIR:-}"
+# Optional directory (relative to the run copy) mounted as D:, e.g. game files
+# kept separate from the application drive.
+ORACLE_D_DIR="${ORACLE_D_DIR:-}"
 # Optional DOSBox config shipped with the bundle (relative to the run copy).
 # When set it is loaded first and the headless overrides are layered on top.
 ORACLE_BASE_CONF="${ORACLE_BASE_CONF:-}"
 # Extra DOS commands appended to the generated [autoexec], one per line.
 ORACLE_AUTOEXEC="${ORACLE_AUTOEXEC:-}"
 ORACLE_CYCLES="${ORACLE_CYCLES:-max}"
-# Guest pixels per host pixel of relative mouse motion (see docs/ORACLE.md).
-ORACLE_MOUSE_SCALE="${ORACLE_MOUSE_SCALE:-1}"
+ORACLE_MACHINE="${ORACLE_MACHINE:-svga_s3}"
+ORACLE_MEMSIZE="${ORACLE_MEMSIZE:-16}"
+# Turn Windows 3.1 mouse acceleration off in the run copy's WIN.INI
+# (MouseSpeed=0) so click can position the cursor. Set to 0 to leave WIN.INI
+# untouched.
+ORACLE_MOUSE_NOACCEL="${ORACLE_MOUSE_NOACCEL:-1}"
+# Relative mouse motion pacing for click (see docs/ORACLE.md, Mouse).
+ORACLE_MOUSE_STEP="${ORACLE_MOUSE_STEP:-8}"
+ORACLE_MOUSE_PAUSE="${ORACLE_MOUSE_PAUSE:-0.005}"
 
 PRISTINE="$ORACLE_HOME/pristine"
 RUN="$ORACLE_HOME/run"
