@@ -2,56 +2,55 @@
 
 ## Objective
 
-Make the oracle reproducible in every cloud session without manual setup. The
-repository side is done: `scripts/oracle/bootstrap` plus a SessionStart hook
-rebuild a registered oracle from durable inputs. The next research mission,
-planned experiment PG-002 (`docs/PARITY.md`), is still not run.
+Make the oracle reproducible in every cloud session without manual setup.
+Done on the repository side: `scripts/oracle/bootstrap` plus a SessionStart
+hook rebuild a registered oracle from the private apparatus repository and
+`STARS_SERIAL`. What remains is to see it happen at the start of a real new
+session. Research experiment PG-002 (`docs/PARITY.md`) is still not run.
 
 ## State
 
-- Branch: `claude/blissful-wozniak-k5958n`, restarted from `main` after PR #2
-  merged.
+- Branch: `claude/blissful-wozniak-k5958n` (PR #3, open).
 - HEAD: the commit that added this file.
-- PR: a new PR for the durable-setup change (see branch).
-- Oracle snapshot: none durable. Each session rebuilds `registered` via
-  `bootstrap` (about 9 s).
+- Apparatus: private repo `bfaber-centaur/stars-oracle-apparatus` (`main`,
+  `b6d8c38`), holding the two archives, `NOTES.txt` and `README.md`. The
+  project owner is adding it to the cloud environment so sessions clone it
+  to `/home/user/stars-oracle-apparatus`.
+- Oracle snapshot: built per session by the hook; none durable.
 - Universe / turn: pristine `stars_games`, PG001 at turn 7 / 2407.
 - Processes running: none.
 
 ## Verified
 
 - `go test ./...` and `scripts/oracle/selftest` pass.
-- Run by hand as `CLAUDE_CODE_REMOTE=true .claude/hooks/session-start.sh`,
-  against a fresh `ORACLE_HOME`, with `STARS_SERIAL` set:
-  - archives from a local directory: registered snapshot built, generated
-    `wait-for` crops pixel-identical to hand-made ones;
-  - the snapshot booted without a serial prompt; `turn PG001.M1` advanced
-    turn 7 / 2407 → 8 / 2408;
-  - archives cloned via `ORACLE_APPARATUS_GIT` (a local git repo): the
-    snapshot was built;
-  - a second run only resets;
-  - with no inputs, the hook prints one line and exits 0.
+- A fresh clone of the apparatus repo has archives with the same SHA-256 as
+  the originally supplied ones.
+- `CLAUDE_CODE_REMOTE=true .claude/hooks/session-start.sh`, with an empty
+  `ORACLE_HOME` and the apparatus repo checked out next to this one (no
+  `ORACLE_APPARATUS_*` variables): prints "Stars! oracle ready" and builds
+  the `registered` snapshot.
+- Earlier runs (`docs/ORACLE.md`, Durable setup): the bootstrapped snapshot
+  boots without a serial prompt, `turn PG001.M1` advances turn 7 → 8, a
+  rerun only resets, and missing inputs are reported without failing.
 
 ## Unresolved
 
-- The project owner still has to create the private apparatus repository
-  (e.g. `bfaber-centaur/stars-oracle-apparatus`, holding the two archives)
-  and make it reachable from sessions. Either add it as a second repository
-  of the session or environment (cloned next to this one), or set
-  `ORACLE_APPARATUS_GIT`.
-- `STARS_SERIAL` is set in the environment settings but was not visible in
-  the session that wrote this. Only new sessions pick it up.
 - The hook has not yet been seen running at the start of a real new
-  session, or cloning the real private repository.
+  session. All tests ran it by hand.
+- `STARS_SERIAL` was not visible in the session that wrote this; tests set
+  it inside the test process.
 
 ## Next action
 
-In a new cloud session, with the apparatus repository reachable, confirm the
-SessionStart hook reported "Stars! oracle ready" (or read
-`~/.stars-oracle/bootstrap.log`). Then record the result in `docs/ORACLE.md`,
-Durable setup.
+In a new cloud session (apparatus repo in the environment), check that
+`~/.stars-oracle/bootstrap.log` ends with "bootstrap: done" or "already
+done", and that `scripts/oracle/status` lists a `registered` snapshot.
+Record the result in `docs/ORACLE.md`, Durable setup.
 
 ## Do not do
 
-- Do not commit archives, crops, snapshots, `STARS.INI`, or the serial.
-- Do not run PG-002 inside the durable-setup task; it is a separate mission.
+- Do not commit archives, crops, snapshots, `STARS.INI`, or the serial to
+  stars-elegy.
+- Do not rewrite or force-push the apparatus repository's archives; add new
+  versions under new names.
+- Do not run PG-002 as part of this task.

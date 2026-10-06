@@ -97,8 +97,10 @@ survives between sessions. Instead, the oracle is rebuilt from three
 durable inputs. None of them is in this repository:
 
 1. **Apparatus archives** `starsbox-macapp*.tar.gz` and `stars_games*.tar.gz`,
-   kept in a private repository owned by the project owner. `bootstrap`
-   looks for them in order:
+   kept in the private repository `bfaber-centaur/stars-oracle-apparatus`
+   (with the owner's apparatus notes; never make it public). Add that
+   repository to the cloud environment's repositories, so sessions clone it
+   next to this one. `bootstrap` looks for the archives in order:
    - its argument;
    - `$ORACLE_APPARATUS_DIR`;
    - a checkout named `stars-oracle-apparatus` next to this repository (where
@@ -121,19 +123,23 @@ runs `bootstrap` in cloud sessions only (`CLAUDE_CODE_REMOTE=true`). It
 writes the log to `$ORACLE_HOME/bootstrap.log` and prints one line. It never
 fails the session: with inputs missing, it reports what is missing and exits 0.
 
-Observed on 2026-10-06 (archives in a local directory, and separately via a
-local git repository standing in for the private one, with `STARS_SERIAL`
-set):
-- a fresh `ORACLE_HOME` was bootstrapped in about 9 s;
-- the generated crops were pixel-identical to hand-made ones;
-- the resulting snapshot started Stars! without a serial prompt, and
-  `turn PG001.M1` advanced the header from 7 / 2407 to 8 / 2408;
-- a second hook run only reset (under 1 s).
+Observed on 2026-10-06, with `STARS_SERIAL` set:
+- a fresh clone of `stars-oracle-apparatus` from GitHub had archives
+  byte-identical (SHA-256) to the originally supplied ones;
+- with that repository checked out at `/home/user/stars-oracle-apparatus`
+  and no `ORACLE_APPARATUS_*` variables, the hook found it on its own and
+  built the `registered` snapshot in an empty `ORACLE_HOME`;
+- with archives from a local directory, and separately from a local git
+  repository via `ORACLE_APPARATUS_GIT`:
+  - a fresh `ORACLE_HOME` was bootstrapped in about 9 s (local directory);
+  - the generated crops were pixel-identical to hand-made ones;
+  - the resulting snapshot started Stars! without a serial prompt, and
+    `turn PG001.M1` advanced the header from 7 / 2407 to 8 / 2408;
+  - a second hook run only reset (under 1 s).
 
-Not yet observed: the hook running at the start of a real new cloud
-session, and a clone from the actual private repository. Whether a hook's
-GitHub credentials reach that repository depends on the environment's
-GitHub access.
+Not yet observed: the hook running at the start of a real new cloud session
+with the apparatus repository in the environment. All tests above ran the
+hook by hand.
 
 ## Configure and initialize (by hand)
 
