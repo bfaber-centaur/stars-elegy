@@ -2,52 +2,41 @@
 
 ## Objective
 
-PG-002 (first crowded turn) is done: one turn of PG001 from 2425 to 2426
-was run on the real oracle and recorded in `docs/PARITY.md`. No formula was
-inferred or implemented. The next bounded mission has not been assigned.
+Close the one open item left on `main`: confirm that the `bootstrap`
+SessionStart hook builds the oracle at the start of a real new cloud
+session. Done and recorded in `docs/ORACLE.md`, Durable setup. No research
+mission is assigned.
 
 ## State
 
-- Branch: `re/population-crowding`
-- HEAD: the merge of `main` (PR #3, oracle bootstrap) into this branch.
-- PR: #4.
-- Oracle snapshots: `registered` and `pg001-2425`, in the ephemeral VM's
-  `~/.stars-oracle` only. Recreate with `docs/ORACLE.md` (archives from
-  `bfaber-centaur/stars-oracle-apparatus`, serial from `STARS_SERIAL`).
-- Universe / turn: run copy left at PG001 2426.
+- Branch: `claude/project-thread-35fu2u`
+- HEAD: the commit recording the hook observation, on top of `main` 45bf908.
+- PR: see the branch's PR on `bfaber-centaur/stars-elegy`.
+- Oracle snapshots: `registered`, in the ephemeral VM's `~/.stars-oracle`
+  only, built by the hook at session start.
+- Universe / turn: run copy reset to `registered` (PG001 2407).
 - Processes running: none.
-- Raw evidence: private `stars-oracle-apparatus` repo, `evidence/pg002/`
-  (`.HST` for 2407–2426, `observations.jsonl`, screenshots, manifest), on
-  branch `evidence/pg002` (apparatus PR #1).
+- Raw evidence: none new. PG-002 evidence is at `evidence/pg002/` on the
+  apparatus repository's `main`.
 
 ## Verified
 
+- The hook ran before the session's first command; `bootstrap.log` ends
+  with "bootstrap: done" (details in `docs/ORACLE.md`).
 - `go test ./...` and `scripts/oracle/selftest` pass.
-- Fresh registration from the apparatus repo + `STARS_SERIAL` worked; the
-  2408 check read 53,500.
-- 18 empty-order turns from 2407 reached 2425 with Endeavor at 270,400
-  (UI), matching the PG-001 table.
-- 2425 → 2426: Endeavor 270,400 → **295,800** (UI, one run). H0 (297,400),
-  H1 (295,900) and H2 (296,700) as written are all rejected. Details and
-  SHA-256 of the 2425/2426 `.HST`: `docs/PARITY.md`, PG-002.
+- From `registered`, `scripts/oracle/turn PG001.M1` went 7 / 2407 →
+  8 / 2408 with no serial prompt.
 
 ## Unresolved
 
-- The 2425 carry is inferred as 0, not binary-confirmed.
-- One data point; H1 misses by one unit. Whether a variant (carry,
-  rounding, order of operations) fits is untested.
-- From main (PR #3): the `bootstrap` SessionStart hook has still not been
-  seen running at the start of a real new session. This session's clone
-  predated it, so PG-002 registered by hand.
+- PG-002 is one data point: the 2425 carry is inferred as 0, not
+  binary-confirmed, and H1 misses by one unit (`docs/PARITY.md`, PG-002).
 - Whether registered-copy game files carry registration data is unknown,
-  so the raw `.HST` files are kept in the private apparatus repo, not here.
+  so raw `.HST` stays in the private apparatus repo.
 
 ## Next action
 
-None assigned for research. Wait for the owner to choose the next mission.
-(Open from PR #3: in a new cloud session, check that
-`~/.stars-oracle/bootstrap.log` ends with "bootstrap: done" and record it in
-`docs/ORACLE.md`, Durable setup.)
+None assigned. Wait for the owner to choose the next research mission.
 
 ## Do not do
 
@@ -55,5 +44,5 @@ None assigned for research. Wait for the owner to choose the next mission.
 - Do not decrypt `.HST` bodies or investigate header flags, `BACKUP/`/`.X1`
   semantics, or `.H1` contents without an explicit task.
 - Do not commit screenshots, `STARS.INI`, snapshots, archives, the serial,
-  or registered-copy game files without the owner's say-so.
-- Do not rewrite or force-push the apparatus repository's archives.
+  or registered-copy game files.
+- Do not rewrite or force-push the apparatus repository's archives or evidence.
