@@ -61,6 +61,17 @@ has been compared with a known value.
 - The Stars! serial number. It is entered into Stars!' first-run dialog, and
   must never be written into the repository, logs, docs, or PRs.
 
+Where they came from on 2026-10-06 (second registration): the two archives
+from the owner's private `bfaber-centaur/stars-oracle-apparatus` repository
+(checked out next to `stars-elegy`), and the serial from the `STARS_SERIAL`
+environment variable of the cloud environment. `register` takes a file, so
+the serial was written, without printing it, to a mode-0400 file under
+`$ORACLE_HOME`:
+
+```sh
+(umask 077; printf '%s' "$STARS_SERIAL" > ~/.stars-oracle/serial.txt)
+```
+
 Never commit any of these, or screenshots that show registration details or
 proprietary UI unless clearly safe. Raw game files produced by experiments
 are evidence and may be committed as fixtures when needed.
@@ -320,8 +331,17 @@ Where the registration is kept:
   in plaintext in any file of the run copy. An unregistered run also
   creates `STARS.INI`, with the same key names.
 - *Hypothesis:* the registration is encoded in `STARS.INI`.
+- *Observed* on the second registration (2026-10-06, fresh pristine base):
+  the serial was accepted again and the `registered` snapshot differed from
+  pristine in `STARS.INI` (added) and `WIN.INI` only; `WIN386.SWP` was not
+  reported modified that time. The 2407 → 2408 check on that base read
+  53,500 again.
 - Either way, treat `STARS.INI` and every snapshot as registration-bearing:
   they stay under `$ORACLE_HOME`, and `STARS.INI` is git-ignored.
+- Game files written by a registered copy are encrypted, so a plaintext
+  search cannot show that they carry no registration data. The PG-002
+  `.HST` files were therefore kept out of this public repository (see
+  `docs/PARITY.md`, PG-002).
 
 Before collecting parity data on a new base, run the behavioral check.
 PG001 is at 2407 with 48,600 colonists and a growth carry of 80
@@ -372,6 +392,41 @@ scripts/oracle/reset registered
 `turn` took about 8 s. It gives no orders; it only opens the file and
 presses F9 once. Run `stars-record` on `run/games/stars_games` alongside it
 to keep every `.HST` state.
+
+### Reading a value after `turn` (observed, PG-002)
+
+`turn` ends with File → Exit, which leaves Stars! and returns to Program
+Manager, not to the title screen. To read the new state in the UI without
+restarting the oracle:
+
+```sh
+scripts/oracle/click 50 84 1 --double   # Stars! icon
+scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 60
+scripts/oracle/key alt+o; scripts/oracle/type 'd:\pg001.m1'; scripts/oracle/key Return
+scripts/oracle/wait-stable 30 2; scripts/oracle/screenshot
+```
+
+- *Observed twice:* keys sent without first waiting for the title screen
+  went to Program Manager instead (once after a double-click sent right
+  after `turn`, once with no relaunch at all). Always `wait-for` first.
+- After relaunching from the icon, the Open dialog was given the full path
+  `d:\pg001.m1`. *Not tested:* whether the bare name works there.
+- With PG001 open, Endeavor is selected and its population shows in both
+  the Status panel and the Summary at the bottom right.
+- Opening the game and exiting with File → Exit did not create a
+  `PG001.X1` (checked once, at 2408).
+
+Advancing many turns (PG-002 used this, 17 times in a row, about 17 s per
+turn; every turn advanced the header by one):
+
+```sh
+for i in $(seq 1 17); do
+  scripts/oracle/start
+  scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 60
+  scripts/oracle/turn PG001.M1
+  scripts/oracle/stop
+done
+```
 
 ## Known fragility
 

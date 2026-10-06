@@ -2,61 +2,51 @@
 
 ## Objective
 
-Oracle bootstrap is complete: a headless Stars! J-RC3 oracle (Xvfb → DOSBox
-→ Windows 3.1 → Stars!) that a fresh worker can set up, register, drive for
-one turn, inspect from Linux, and reset. No game mechanic has been
-investigated. The next bounded mission is the first crowded-growth
-observation (PG-002), which is designed but not run.
+PG-002 (first crowded turn) is done: one turn of PG001 from 2425 to 2426
+was run on the real oracle and recorded in `docs/PARITY.md`. No formula was
+inferred or implemented. The next bounded mission has not been assigned.
 
 ## State
 
-- Branch: `claude/blissful-wozniak-k5958n`
-- HEAD: the commit that added this file (on top of `899f358`).
-- PR: https://github.com/bfaber-centaur/stars-elegy/pull/2 (open). The
-  first oracle commit was already merged to `main` via PR #3.
-- Oracle snapshot: none in the repository. The `registered` snapshot lived
-  in an ephemeral VM's `~/.stars-oracle`. Recreate it with the Registration
-  procedure in `docs/ORACLE.md`; this needs the apparatus archives and the
-  serial from the project owner.
-- Universe / turn: pristine `stars_games`, PG001 at turn 7 / 2407.
+- Branch: `re/population-crowding`
+- HEAD: the commit that added this file (on top of `main` at `f232ae0`).
+- PR: opened from this branch; see the branch on GitHub.
+- Oracle snapshots: `registered` and `pg001-2425`, in the ephemeral VM's
+  `~/.stars-oracle` only. Recreate with `docs/ORACLE.md` (archives from
+  `bfaber-centaur/stars-oracle-apparatus`, serial from `STARS_SERIAL`).
+- Universe / turn: run copy left at PG001 2426.
 - Processes running: none.
+- Evidence outside Git: `oracle-evidence/pg002/` in the project files
+  folder (`.HST` for 2407–2426, `observations.jsonl`, UI screenshots).
 
 ## Verified
 
 - `go test ./...` and `scripts/oracle/selftest` pass.
-- With the real apparatus, observed on 2026-10-06:
-  - Windows 3.1 and Stars! boot unattended.
-  - The serial is accepted via `scripts/oracle/register`.
-  - PG001 loads from D:.
-  - `scripts/oracle/turn PG001.M1` moves the `.HST`/`.M1` headers from turn
-    7 / 2407 to turn 8 / 2408 (3 runs).
-  - Endeavor's population read in the UI went 48,600 → 53,500 (2 runs),
-    not the 51,100 that the halved-growth penalty predicts.
-  - `reset` restores the starting files.
-- Evidence levels and exact commands: `docs/ORACLE.md`. Re-measurement
-  note: `docs/PARITY.md`, Sources.
+- Fresh registration from the apparatus repo + `STARS_SERIAL` worked; the
+  2408 check read 53,500.
+- 18 empty-order turns from 2407 reached 2425 with Endeavor at 270,400
+  (UI), matching the PG-001 table.
+- 2425 → 2426: Endeavor 270,400 → **295,800** (UI, one run). H0 (297,400),
+  H1 (295,900) and H2 (296,700) as written are all rejected. Details and
+  SHA-256 of the 2425/2426 `.HST`: `docs/PARITY.md`, PG-002.
 
 ## Unresolved
 
-- "Normal registered behavior" is inferred from the accepted serial plus
-  one matching growth value. The About dialog is inconclusive.
-- Where the registration is stored is a hypothesis (likely `STARS.INI`).
-- The `.HST` header flags byte varied across runs (`0xa0`, `0x80`, `0x20`).
-  Its meaning is unknown.
-- Population can only be read from the UI. Elegy decodes headers only.
-- `MouseSpeed=0` in the run copy is assumed not to affect Stars!; untested.
+- The 2425 carry is inferred as 0, not binary-confirmed.
+- One data point; H1 misses by one unit. Whether a variant (carry,
+  rounding, order of operations) fits is untested.
+- Whether registered-copy game files carry registration data is unknown,
+  so the raw `.HST` files were kept out of this public repo. The owner may
+  decide otherwise.
 
 ## Next action
 
-Run planned experiment PG-002 exactly as written in `docs/PARITY.md`
-("Planned experiment — PG-002"), on a new branch `re/population-crowding`.
-Record the 2426 population against the predictions written there, and
-preserve the 2426 `.HST`.
+None assigned. Wait for the owner to choose the next mission.
 
 ## Do not do
 
+- Do not implement or "fit" a crowding formula from the single PG-002 point.
 - Do not decrypt `.HST` bodies or investigate header flags, `BACKUP/`/`.X1`
-  semantics, or `.H1` contents as part of PG-002.
-- Do not implement any crowding formula in the engine from a single data
-  point.
-- Do not commit screenshots, `STARS.INI`, snapshots, archives, or the serial.
+  semantics, or `.H1` contents without an explicit task.
+- Do not commit screenshots, `STARS.INI`, snapshots, archives, the serial,
+  or registered-copy game files without the owner's say-so.
