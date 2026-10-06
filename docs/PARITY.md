@@ -181,6 +181,43 @@ population-capacity purposes.
 - Lifecycle of `excessPop` across migration, colonization, ownership changes,
   hostile-world deaths, and other population-changing mechanics.
 
+### Planned experiment — PG-002, first crowded turn (NOT RUN)
+
+Status: PLANNED. Predictions only; no observation yet.
+
+Question: what does one turn of growth do just above 25% capacity?
+
+Starting state: PG001 at 2425, population 270,400 (27.04% of 1,000,000).
+The PG-001 table above reaches 270,400 in 2425. The carry model predicts
+growth carry 0 there, but that carry is inferred, not binary-confirmed
+(the `.HST` snapshots only cover 2400–2407).
+
+Predictions for 2426 (10% growth, 100% habitability, carry 0, factor
+applied to the uncrowded growth before truncation):
+
+| Hypothesis | Factor at 27.04% | 2426 population |
+|---|---:|---:|
+| H0: no slowdown yet (uncrowded rule continues) | 1.000 | 297,400 |
+| H1: quadratic, 16/9 × (1 − x)² (recalled community formula; unverified) | 0.946 | 295,900 |
+| H2: linear, (1 − x) / 0.75 | 0.973 | 296,700 |
+
+The predictions are at least 800 colonists apart. The UI shows population
+in units of 100, so a UI reading separates them. A value matching none of
+them rejects all three.
+
+Procedure (`docs/ORACLE.md` tooling):
+
+1. From the `registered` snapshot, run `turn PG001.M1` 18 times, from 2407
+   to 2425, restarting the oracle between turns.
+2. Confirm in the UI that the year is 2425 and Endeavor shows 270,400; if
+   not, stop. Then `snapshot pg001-2425`.
+3. `reset pg001-2425`, run one `turn`, reopen PG001, and read Endeavor's
+   2426 population. Keep the 2426 `.HST`.
+
+Limits: one data point cannot identify a formula. The UI does not show the
+carry. Orders are empty, so the experiment assumes nothing else changes
+population.
+
 ### Sources
 
 - Stars! User Manual, Population / Growth Rate / Maximum Population /

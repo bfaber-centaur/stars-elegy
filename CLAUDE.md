@@ -27,18 +27,46 @@ hypothesis
 
 over implementation-by-memory or implementation-by-plausibility.
 
+## Scope discipline
+
+Work on **one bounded mission at a time**.
+
+Do not continue into an adjacent task merely because it is interesting, useful, or newly visible.
+
+When the current mission is complete:
+
+1. make the result durable;
+2. update `HANDOFF.md`;
+3. test and commit;
+4. stop and hand back.
+
+Do not start the next research question unless it was part of the assigned mission.
+
+In particular, reverse-engineering work often reveals tempting adjacent questions. Record them under `UNRESOLVED` or in the appropriate canonical document, but do not pursue them without an explicit new task.
+
 ## First steps
 
 At the beginning of substantive work:
 
-1. read this file;
-2. read `docs/PARITY.md`;
-3. inspect relevant existing code/tests;
-4. run:
+1. read this file completely;
+2. read `HANDOFF.md` if it exists;
+3. read `docs/PARITY.md`;
+4. read `docs/ORACLE.md` when oracle work is relevant;
+5. inspect relevant existing code/tests;
+6. inspect recent commits/diff for the active branch;
+7. run:
 
    ```bash
    go test ./...
    ```
+
+If oracle tooling is relevant, also run:
+
+```bash
+scripts/oracle/selftest
+```
+
+Verify important handoff claims against repository state rather than assuming the prose is correct.
 
 Do not reopen established decisions without a concrete defect, contradiction, or new evidence.
 
@@ -69,6 +97,10 @@ Distinguish:
 
 Raw observations and decoded original-game state outrank recollection or assumptions about what Stars!' designers probably intended.
 
+Do not generalize beyond the observed cases without evidence.
+
+If two observations conflict, preserve the contradiction and resolve it before promoting either into a general rule.
+
 ## Experimental oracle
 
 Cloud/reverse-engineering work may have access to external apparatus such as:
@@ -91,7 +123,7 @@ Operational instructions for a working oracle belong in:
 docs/ORACLE.md
 ```
 
-Reusable control scripts belong under something like:
+Reusable control scripts belong under:
 
 ```text
 scripts/oracle/
@@ -118,7 +150,8 @@ Secrets must not appear in:
 - committed logs;
 - issues;
 - commits;
-- PR descriptions.
+- PR descriptions;
+- `HANDOFF.md`.
 
 Do not print credentials unnecessarily.
 
@@ -172,6 +205,8 @@ When possible:
 Contradictions are useful evidence.
 
 Do not massage an experiment until it agrees with the current implementation.
+
+A repeated observation is evidence for that repeated case; it is not automatically evidence for words such as "always", "every", or "deterministic".
 
 ## HST / binary evidence
 
@@ -327,7 +362,7 @@ Before handing work back:
 1. run relevant tests;
 2. inspect the complete diff;
 3. inspect staged files;
-4. exclude secrets, proprietary artifacts, and generated junk;
+4. exclude secrets, proprietary artifacts, screenshots, archives, and generated junk unless explicitly intended;
 5. commit intentional changes;
 6. push the branch;
 7. open/update a PR when appropriate.
@@ -341,18 +376,173 @@ Reverse-engineering PRs should make the scientific handoff clear:
 - implementation/test changes;
 - remaining uncertainty.
 
+## Context is scratch; Git is memory
+
+Do not rely on conversation context, hidden summaries, or compaction to preserve important project state.
+
+Anything consequential must be promoted into a durable artifact before context is compacted, reset, or handed to another worker.
+
+Canonical destinations:
+
+- Stars! behavioral knowledge → `docs/PARITY.md`
+- oracle operation / apparatus knowledge → `docs/ORACLE.md`
+- reproducible behavior → tests / fixtures / scripts
+- architectural decisions → appropriate project docs
+- current frontier only → `HANDOFF.md`
+
+Never say or assume "the context summary will remember this."
+
+Before compaction or handoff, ask:
+
+> If the next worker saw only the repository, would anything important be lost?
+
+If yes, make it durable first.
+
+## Handoff ritual
+
+Checkpoint and hand off when any of these is true:
+
+- roughly half of the available context has been consumed;
+- you are about to begin a substantially different subtask;
+- you are about to compact/reset context;
+- the environment restarted or behaved unexpectedly;
+- you reached a useful experimental milestone;
+- you are about to do risky or difficult-to-reproduce work;
+- the assigned mission is complete;
+- you are preparing to stop or hand work to another worker.
+
+Do not wait until context is nearly exhausted.
+
+### 1. Stop expanding scope
+
+Finish or safely suspend the current smallest unit of work.
+
+Do not begin another adjacent investigation during the checkpoint.
+
+### 2. Promote durable knowledge
+
+Move important results into their canonical locations before writing the handoff.
+
+The handoff is not a substitute for:
+
+- `docs/PARITY.md`
+- `docs/ORACLE.md`
+- tests
+- fixtures
+- scripts
+- architectural documentation
+
+### 3. Rewrite `HANDOFF.md` from scratch
+
+`HANDOFF.md` is a **rolling snapshot of the current frontier**.
+
+**Do not append to it. Replace its contents at every handoff.**
+
+Git history preserves previous handoffs. The current file should contain only what a fresh worker needs now.
+
+Use this shape:
+
+```markdown
+# Handoff
+
+## Objective
+
+One short paragraph describing the current bounded task.
+
+## State
+
+- Branch:
+- HEAD:
+- PR:
+- Oracle snapshot:
+- Universe / turn:
+- Processes running:
+
+## Verified
+
+- Facts actually demonstrated.
+- Commands/tests that demonstrate them.
+
+## Unresolved
+
+- Current uncertainties or contradictions.
+- Failed approaches only when they materially affect the next worker.
+
+## Next action
+
+Exactly one concrete next step.
+
+## Do not do
+
+- Tempting adjacent work explicitly outside the current mission.
+```
+
+Keep it concise.
+
+Do not turn `HANDOFF.md` into:
+
+- a diary;
+- a complete session transcript;
+- a backlog;
+- a research roadmap;
+- a second copy of canonical docs.
+
+If something is historical but no longer affects the next action, omit it.
+
+### 4. Verify repository state
+
+Run applicable checks, normally:
+
+```bash
+go test ./...
+scripts/oracle/selftest
+git status
+git diff
+```
+
+Inspect staged files for:
+
+- credentials;
+- `serial.txt`;
+- Stars!/Windows binaries;
+- proprietary apparatus;
+- tar/zip archives;
+- screenshots;
+- generated oracle state;
+- accidental logs.
+
+Resolve factual contradictions before handoff where practical.
+
+### 5. Commit and push
+
+Prefer handing off a clean committed branch over leaving important uncommitted state in an ephemeral VM.
+
+Update/open the PR when appropriate.
+
+### 6. Stop
+
+Once the checkpoint is committed and pushed, stop.
+
+Do not use remaining context as an excuse to start the next task.
+
+The next worker should begin from the durable repository state.
+
+## Fresh-worker ritual
+
+A fresh worker should:
+
+1. read `CLAUDE.md`;
+2. read the current `HANDOFF.md`;
+3. read relevant canonical docs;
+4. inspect branch/HEAD/diff;
+5. verify the most important handoff claims;
+6. execute the single `Next action`.
+
+If `HANDOFF.md` disagrees with canonical docs or executable evidence, the canonical docs/evidence win and `HANDOFF.md` should be corrected.
+
 ## Durable handoffs
 
 Important discoveries must not exist only in a Claude conversation.
-
-Long-running work should leave useful state in some combination of:
-
-- regression tests;
-- non-proprietary fixtures;
-- experiment scripts;
-- `docs/PARITY.md`;
-- `docs/ORACLE.md`;
-- concise technical documentation.
 
 A fresh worker should be able to determine:
 
@@ -360,6 +550,7 @@ A fresh worker should be able to determine:
 - why we believe it;
 - how it was measured;
 - how to reproduce it;
-- what remains unknown.
+- what remains unknown;
+- exactly what to do next.
 
 Preserve convergence. Revisit established conclusions only when new evidence gives a concrete reason.
