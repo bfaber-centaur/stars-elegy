@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Open a game from the Stars! title screen, generate exactly one turn, and exit
-# Stars! cleanly. Prints the host file header before and after.
+# Open a game from the Stars! title screen, press F9 (Turn > Generate) once,
+# wait for the .HST header turn to change, and exit Stars! via File > Exit.
+# Prints the host file header before and after.
 #
 #   scripts/oracle/turn GAME.M1 [TIMEOUT_SECONDS]
 #
 # GAME.M1 is the player file on D: (e.g. PG001.M1); its .HST must sit next to
 # it. Stars! must be registered and showing its title screen (e.g. after
 # `reset registered` + `start` + `wait-for` on the main-menu reference).
-# Submits whatever orders the player file already has; it does not give any.
+# It gives no orders.
 source "$(dirname "$0")/lib.sh"
 
 [[ $# -ge 1 ]] || die "usage: turn GAME.M1 [TIMEOUT_SECONDS]"

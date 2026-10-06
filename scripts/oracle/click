@@ -3,12 +3,12 @@
 #
 #   scripts/oracle/click X Y [BUTTON] [--double]
 #
-# Locks the DOSBox mouse (ctrl+F10) on first use after start. In locked mode the
-# guest cursor moves exactly one guest pixel per host pixel of relative
-# motion, as long as the motion arrives slowly enough that Windows' mouse
-# acceleration never triggers. The script drives the cursor far past the
-# top-left corner, where the guest pins it at (0,0), then walks it to (X,Y).
-# A click takes about a second; see docs/ORACLE.md for the measurements.
+# Locks the DOSBox mouse (ctrl+F10) on first use after start. In locked mode,
+# with Windows acceleration off, the guest cursor was measured to move one
+# guest pixel per host pixel of relative motion (docs/ORACLE.md, Mouse, which
+# also lists the misses). The script drives the cursor far past the top-left
+# corner, where the guest pins it at (0,0), then walks it to (X,Y). Check
+# with a screenshot before relying on clicks near small targets.
 source "$(dirname "$0")/lib.sh"
 
 [[ $# -ge 2 ]] || die "usage: click X Y [BUTTON] [--double]"

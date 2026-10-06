@@ -5,9 +5,11 @@
 #
 # The dialog must already be showing (scripts/oracle/wait-for). The serial is
 # read from SERIAL_FILE and piped to xdotool, so it never appears on a command
-# line, in a log, or on stdout. Afterwards Stars! keeps the registration in
-# WINDOWS/STARS.INI on C: — exit Stars!, stop, and `snapshot registered` so
-# later runs can `reset registered`. Never commit that STARS.INI.
+# line, in a log, or on stdout. Afterwards, exit Stars!, stop, and
+# `snapshot registered` so later runs can `reset registered`. Where Stars!
+# keeps the registration isn't established (WINDOWS/STARS.INI is the likely
+# place; see docs/ORACLE.md), so treat snapshots and STARS.INI as
+# registration-bearing and never commit them.
 source "$(dirname "$0")/lib.sh"
 
 [[ $# -eq 1 ]] || die "usage: register SERIAL_FILE"

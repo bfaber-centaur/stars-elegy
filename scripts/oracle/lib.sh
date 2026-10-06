@@ -30,7 +30,8 @@ ORACLE_CYCLES="${ORACLE_CYCLES:-max}"
 ORACLE_MACHINE="${ORACLE_MACHINE:-svga_s3}"
 ORACLE_MEMSIZE="${ORACLE_MEMSIZE:-16}"
 # Turn Windows 3.1 mouse acceleration off in the run copy's WIN.INI
-# (MouseSpeed=0) so click lands exactly. Set to 0 to leave WIN.INI untouched.
+# (MouseSpeed=0) so click can position the cursor. Set to 0 to leave WIN.INI
+# untouched.
 ORACLE_MOUSE_NOACCEL="${ORACLE_MOUSE_NOACCEL:-1}"
 # Relative mouse motion pacing for click (see docs/ORACLE.md, Mouse).
 ORACLE_MOUSE_STEP="${ORACLE_MOUSE_STEP:-8}"

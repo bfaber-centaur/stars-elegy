@@ -11,9 +11,9 @@ source "$(dirname "$0")/lib.sh"
 pid_alive dosbox && die "already running (scripts/oracle/stop first)"
 mkdir -p "$STATE" "$SHOTS"
 
-# Guest UI tweak, run copy only: no mouse acceleration, so relative motion
-# maps 1:1 onto the Windows cursor regardless of pacing. This changes how the
-# Windows pointer moves, not anything Stars! computes.
+# Guest UI tweak, run copy only: turn Windows mouse acceleration off so
+# click can position the cursor. Intended to affect only pointer movement;
+# that Stars! is unaffected is untested (docs/ORACLE.md).
 win_ini="$(find "$RUN/$ORACLE_C_DIR" -maxdepth 2 -ipath '*/windows/win.ini' 2>/dev/null | head -n 1)"
 if [[ "$ORACLE_MOUSE_NOACCEL" == 1 && -n "$ORACLE_C_DIR" && -f "$win_ini" ]] &&
 	! grep -qi '^MouseSpeed=0' "$win_ini"; then

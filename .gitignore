@@ -27,6 +27,6 @@ go.work.sum
 # Stars! oracle apparatus and local config must never be committed
 .stars-oracle/
 oracle.conf
-# Stars! registration lives in these; never commit them
+# Stars! registration may be stored in these; never commit them
 STARS.INI
 serial*.txt
