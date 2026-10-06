@@ -145,9 +145,17 @@ Observed on 2026-10-06, with `STARS_SERIAL` set:
     `turn PG001.M1` advanced the header from 7 / 2407 to 8 / 2408;
   - a second hook run only reset (under 1 s).
 
-Not yet observed: the hook running at the start of a real new cloud session
-with the apparatus repository in the environment. All tests above ran the
-hook by hand.
+Observed at the start of a real new cloud session (2026-10-06), with the
+apparatus repository cloned next to this one and `STARS_SERIAL` set, before
+the session ran any command of its own:
+- `$ORACLE_HOME/bootstrap.log` was written between 22:59:50Z and 23:00:04Z
+  (about 14 s) and ended with
+  `bootstrap: done; registered snapshot saved and run copy reset to it`;
+- the archives it hashed (`sources.txt`) were
+  `starsbox-macapp.tar.gz` `662a8ed45de5d1dcb69dc2bfb3788fc4082435e10d8b10bbe713f1eebe8cd35e`
+  and `stars_games.tar.gz` `0153fb07550799b4e7083cb94cd7d544c9f97b9568d63f117427fef0c314e861`;
+- `selftest` passed, and from the `registered` snapshot `turn PG001.M1`
+  advanced the header from 7 / 2407 to 8 / 2408 with no serial prompt.
 
 ## Configure and initialize (by hand)
 
