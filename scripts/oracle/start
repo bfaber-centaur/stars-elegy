@@ -11,6 +11,16 @@ source "$(dirname "$0")/lib.sh"
 pid_alive dosbox && die "already running (scripts/oracle/stop first)"
 mkdir -p "$STATE" "$SHOTS"
 
+# Guest UI tweak, run copy only: no mouse acceleration, so relative motion
+# maps 1:1 onto the Windows cursor regardless of pacing. This changes how the
+# Windows pointer moves, not anything Stars! computes.
+win_ini="$(find "$RUN/$ORACLE_C_DIR" -maxdepth 2 -ipath '*/windows/win.ini' 2>/dev/null | head -n 1)"
+if [[ "$ORACLE_MOUSE_NOACCEL" == 1 && -n "$ORACLE_C_DIR" && -f "$win_ini" ]] &&
+	! grep -qi '^MouseSpeed=0' "$win_ini"; then
+	sed -i -E '/^MouseSpeed=/Id; s/^\[windows\](\r?)$/[windows]\1\nMouseSpeed=0\1/I' "$win_ini"
+	log "set MouseSpeed=0 in run copy ${win_ini#"$RUN/"}"
+fi
+
 if ! pid_alive xvfb; then
 	setsid Xvfb "$DISPLAY" -screen 0 "$ORACLE_SCREEN" -nolisten tcp \
 		>"$STATE/xvfb.log" 2>&1 </dev/null &
@@ -22,9 +32,12 @@ if ! pid_alive xvfb; then
 	xdpyinfo >/dev/null 2>&1 || die "Xvfb did not come up on $DISPLAY (see $STATE/xvfb.log)"
 fi
 
-# Headless overrides: no audio devices exist in the container, and the mouse
-# must not be captured so that xdotool motion reaches the guest directly.
+# Headless overrides: no audio devices exist in the container. autolock is
+# off so a guest click never toggles mouse capture; click locks it explicitly.
 cat >"$STATE/overrides.conf" <<CONF
+[dosbox]
+machine=$ORACLE_MACHINE
+memsize=$ORACLE_MEMSIZE
 [sdl]
 fullscreen=false
 output=surface
@@ -62,6 +75,10 @@ else
 		cat "$STATE/overrides.conf"
 		echo "[autoexec]"
 		echo "mount c \"$RUN/$ORACLE_C_DIR\""
+		if [[ -n "$ORACLE_D_DIR" ]]; then
+			[[ -d "$RUN/$ORACLE_D_DIR" ]] || die "ORACLE_D_DIR not found in run copy: $ORACLE_D_DIR"
+			echo "mount d \"$RUN/$ORACLE_D_DIR\""
+		fi
 		echo "c:"
 		[[ -n "$ORACLE_AUTOEXEC" ]] && printf '%s\n' "$ORACLE_AUTOEXEC"
 	} >"$STATE/dosbox.conf"
@@ -70,7 +87,7 @@ fi
 
 (
 	cd "$RUN"
-	SDL_AUDIODRIVER=dummy exec setsid "$ORACLE_DOSBOX" "${confs[@]}" \
+	SDL_AUDIODRIVER=dummy SDL_VIDEO_WINDOW_POS=0,0 exec setsid "$ORACLE_DOSBOX" "${confs[@]}" \
 		>"$STATE/dosbox.log" 2>&1 </dev/null
 ) &
 echo $! >"$STATE/dosbox.pid"
@@ -82,4 +99,6 @@ for _ in $(seq 100); do
 done
 w="$(dosbox_window)"
 [[ -n "$w" ]] || die "DOSBox window did not appear (see $STATE/dosbox.log)"
+# click locks the mouse on first use; a fresh DOSBox starts unlocked.
+rm -f "$STATE/mouse-locked"
 log "running on $DISPLAY, window $w"

@@ -14,7 +14,7 @@ work="$(mktemp -d)"
 export ORACLE_HOME="$work/home"
 export ORACLE_DISPLAY="${SELFTEST_DISPLAY:-:78}" DISPLAY="${SELFTEST_DISPLAY:-:78}"
 export ORACLE_C_DIR="c"
-unset ORACLE_BASE_CONF ORACLE_AUTOEXEC
+unset ORACLE_BASE_CONF ORACLE_AUTOEXEC ORACLE_D_DIR
 
 cleanup() {
 	"$here/stop" 2>/dev/null || true
@@ -61,14 +61,9 @@ step "screenshot"
 shot="$("$here/screenshot" "$work/shot.png")"
 identify "$shot" | grep -q PNG || fail "screenshot is not a PNG"
 
-step "mouse: host pointer lands at window origin + target"
+step "mouse: click locks the DOSBox mouse and completes"
 "$here/click" 100 50
-win="$(xdotool search --class dosbox | head -n 1)"
-eval "$(xdotool getwindowgeometry --shell "$win")"
-wx="$X" wy="$Y"
-eval "$(xdotool getmouselocation --shell)"
-[[ "$X" -eq "$((wx + 100))" && "$Y" -eq "$((wy + 50))" ]] ||
-	fail "pointer at $X,$Y after click 100 50 (window origin $wx,$wy)"
+[[ -f "$ORACLE_HOME/state/mouse-locked" ]] || fail "click did not lock the mouse"
 
 step "stop"
 "$here/stop"

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Block until a reference image appears at a fixed position on screen. Use it
+# where wait-stable cannot work, e.g. dialogs over the animated Stars! splash.
+#
+#   scripts/oracle/wait-for REF.png X Y [TIMEOUT_SECONDS]
+#
+# REF.png is a crop of an earlier screenshot (convert shot.png -crop WxH+X+Y
+# REF.png). Keep references under $ORACLE_HOME/refs, not in Git: they are
+# pictures of proprietary UI. Prints the matching screenshot's path.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 3 ]] || die "usage: wait-for REF.png X Y [TIMEOUT_SECONDS]"
+ref="$1" x="$2" y="$3" timeout="${4:-60}"
+[[ -f "$ref" ]] || die "no reference image $ref"
+geom="$(identify -format '%wx%h' "$ref")+$x+$y"
+w="$(require_window)"
+tmp="$STATE/wait-for.png"
+start="$SECONDS"
+while ((SECONDS - start < timeout)); do
+	import -window "$w" "$tmp"
+	diff="$(convert "$tmp" -crop "$geom" +repage "$ref" -compose difference -composite \
+		-threshold 0 -format '%[fx:int(mean*w*h)]' info: 2>/dev/null || echo -1)"
+	if [[ "$diff" == 0 ]]; then
+		out="$SHOTS/$(date -u +%Y%m%dT%H%M%S.%3NZ).png"
+		mkdir -p "$SHOTS"
+		mv "$tmp" "$out"
+		echo "$out"
+		exit 0
+	fi
+	sleep 0.5
+done
+die "$(basename "$ref") did not appear at $x,$y within ${timeout}s"

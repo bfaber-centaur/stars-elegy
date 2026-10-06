@@ -2,20 +2,30 @@
 # That file lives outside the repository; never commit a filled-in copy.
 # Paths below are relative to the run copy ($ORACLE_HOME/run).
 
-# Option A: let the oracle generate the DOSBox config. Mount this directory
-# as C: and run these commands after mounting (one per line).
-#ORACLE_C_DIR="StarsBox/C"
-#ORACLE_AUTOEXEC="cd \\WINDOWS
-#win"
+# StarsBox (macOS app bundle) + stars_games, set up with:
+#   scripts/oracle/setup --bundle starsbox-macapp.tar.gz \
+#       --drive stars_games.tar.gz --drive-dest games
+# This reproduces the original launcher: C: is the application drive, D: holds
+# the game files, and Stars! starts with D: as the current drive.
+ORACLE_C_DIR="StarsBox.app/Contents/Resources/c_drive"
+ORACLE_D_DIR="games/stars_games"
+ORACLE_MACHINE="svga_s3"
+ORACLE_MEMSIZE="30"
+ORACLE_AUTOEXEC='set PATH=C:\WINDOWS;C:\STARS;C:\NOTEBOOK
+d:
+win /n stars.exe'
 
-# Option B: use the DOSBox config shipped with the bundle. Headless overrides
-# (no audio, no mouse capture, surface output) are layered on top of it.
-#ORACLE_BASE_CONF="StarsBox/dosbox.conf"
+# Alternative: use a DOSBox config shipped with a bundle instead of generating
+# one. Headless overrides are layered on top of it. The StarsBox config targets
+# an SDL2 DOSBox build and is not directly usable with DOSBox 0.74.
+#ORACLE_BASE_CONF="path/to/dosbox.conf"
 
-# Optional overrides.
+# Optional overrides (defaults shown).
 #ORACLE_DISPLAY=":77"
-#ORACLE_SCREEN="1024x768x24"
+#ORACLE_SCREEN="1600x1200x24"
 #ORACLE_DOSBOX="dosbox"
 #ORACLE_CYCLES="max"
-#ORACLE_MOUSE_SCALE="1"
 #ORACLE_KEY_DELAY="80"
+#ORACLE_MOUSE_NOACCEL="1"
+#ORACLE_MOUSE_STEP="8"
+#ORACLE_MOUSE_PAUSE="0.005"
