@@ -2,61 +2,55 @@
 
 ## Objective
 
-Oracle bootstrap is complete: a headless Stars! J-RC3 oracle (Xvfb → DOSBox
-→ Windows 3.1 → Stars!) that a fresh worker can set up, register, drive for
-one turn, inspect from Linux, and reset. No game mechanic has been
-investigated. The next bounded mission is the first crowded-growth
-observation (PG-002), which is designed but not run.
+Make the oracle reproducible in every cloud session without manual setup.
+Done on the repository side: `scripts/oracle/bootstrap` plus a SessionStart
+hook rebuild a registered oracle from the private apparatus repository and
+`STARS_SERIAL`. What remains is to see it happen at the start of a real new
+session. Research experiment PG-002 (`docs/PARITY.md`) is still not run.
 
 ## State
 
-- Branch: `claude/blissful-wozniak-k5958n`
-- HEAD: the commit that added this file (on top of `899f358`).
-- PR: https://github.com/bfaber-centaur/stars-elegy/pull/2 (open). The
-  first oracle commit was already merged to `main` via PR #3.
-- Oracle snapshot: none in the repository. The `registered` snapshot lived
-  in an ephemeral VM's `~/.stars-oracle`. Recreate it with the Registration
-  procedure in `docs/ORACLE.md`; this needs the apparatus archives and the
-  serial from the project owner.
+- Branch: `claude/blissful-wozniak-k5958n` (PR #3, open).
+- HEAD: the commit that added this file.
+- Apparatus: private repo `bfaber-centaur/stars-oracle-apparatus` (`main`,
+  `b6d8c38`), holding the two archives, `NOTES.txt` and `README.md`. The
+  project owner is adding it to the cloud environment so sessions clone it
+  to `/home/user/stars-oracle-apparatus`.
+- Oracle snapshot: built per session by the hook; none durable.
 - Universe / turn: pristine `stars_games`, PG001 at turn 7 / 2407.
 - Processes running: none.
 
 ## Verified
 
 - `go test ./...` and `scripts/oracle/selftest` pass.
-- With the real apparatus, observed on 2026-10-06:
-  - Windows 3.1 and Stars! boot unattended.
-  - The serial is accepted via `scripts/oracle/register`.
-  - PG001 loads from D:.
-  - `scripts/oracle/turn PG001.M1` moves the `.HST`/`.M1` headers from turn
-    7 / 2407 to turn 8 / 2408 (3 runs).
-  - Endeavor's population read in the UI went 48,600 → 53,500 (2 runs),
-    not the 51,100 that the halved-growth penalty predicts.
-  - `reset` restores the starting files.
-- Evidence levels and exact commands: `docs/ORACLE.md`. Re-measurement
-  note: `docs/PARITY.md`, Sources.
+- A fresh clone of the apparatus repo has archives with the same SHA-256 as
+  the originally supplied ones.
+- `CLAUDE_CODE_REMOTE=true .claude/hooks/session-start.sh`, with an empty
+  `ORACLE_HOME` and the apparatus repo checked out next to this one (no
+  `ORACLE_APPARATUS_*` variables): prints "Stars! oracle ready" and builds
+  the `registered` snapshot.
+- Earlier runs (`docs/ORACLE.md`, Durable setup): the bootstrapped snapshot
+  boots without a serial prompt, `turn PG001.M1` advances turn 7 → 8, a
+  rerun only resets, and missing inputs are reported without failing.
 
 ## Unresolved
 
-- "Normal registered behavior" is inferred from the accepted serial plus
-  one matching growth value. The About dialog is inconclusive.
-- Where the registration is stored is a hypothesis (likely `STARS.INI`).
-- The `.HST` header flags byte varied across runs (`0xa0`, `0x80`, `0x20`).
-  Its meaning is unknown.
-- Population can only be read from the UI. Elegy decodes headers only.
-- `MouseSpeed=0` in the run copy is assumed not to affect Stars!; untested.
+- The hook has not yet been seen running at the start of a real new
+  session. All tests ran it by hand.
+- `STARS_SERIAL` was not visible in the session that wrote this; tests set
+  it inside the test process.
 
 ## Next action
 
-Run planned experiment PG-002 exactly as written in `docs/PARITY.md`
-("Planned experiment — PG-002"), on a new branch `re/population-crowding`.
-Record the 2426 population against the predictions written there, and
-preserve the 2426 `.HST`.
+In a new cloud session (apparatus repo in the environment), check that
+`~/.stars-oracle/bootstrap.log` ends with "bootstrap: done" or "already
+done", and that `scripts/oracle/status` lists a `registered` snapshot.
+Record the result in `docs/ORACLE.md`, Durable setup.
 
 ## Do not do
 
-- Do not decrypt `.HST` bodies or investigate header flags, `BACKUP/`/`.X1`
-  semantics, or `.H1` contents as part of PG-002.
-- Do not implement any crowding formula in the engine from a single data
-  point.
-- Do not commit screenshots, `STARS.INI`, snapshots, archives, or the serial.
+- Do not commit archives, crops, snapshots, `STARS.INI`, or the serial to
+  stars-elegy.
+- Do not rewrite or force-push the apparatus repository's archives; add new
+  versions under new names.
+- Do not run PG-002 as part of this task.
