@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Unpack supplied apparatus into an immutable pristine base.
+#
+#   scripts/oracle/setup --bundle PATH [--drive PATH [--drive-dest REL]] [--force]
+#
+# PATH may be a directory, .zip, .7z, or tar archive. The originals are only
+# read. The result lives in $ORACLE_HOME/pristine and is made read-only; a
+# SHA-256 manifest is written beside it so later runs can be diffed against it.
+source "$(dirname "$0")/lib.sh"
+
+bundle="" drive="" drive_dest="drive" force=0
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	--bundle) bundle="$2"; shift 2 ;;
+	--drive) drive="$2"; shift 2 ;;
+	--drive-dest) drive_dest="$2"; shift 2 ;;
+	--force) force=1; shift ;;
+	*) die "unknown argument: $1" ;;
+	esac
+done
+[[ -n "$bundle" ]] || die "usage: setup --bundle PATH [--drive PATH [--drive-dest REL]] [--force]"
+
+unpack() {
+	local src="$1" dest="$2"
+	mkdir -p "$dest"
+	if [[ -d "$src" ]]; then
+		cp -a "$src/." "$dest/"
+		return
+	fi
+	case "${src,,}" in
+	*.zip) unzip -q "$src" -d "$dest" ;;
+	*.7z) 7z x -y -bd -o"$dest" "$src" >/dev/null ;;
+	*.tar | *.tar.gz | *.tgz | *.tar.xz | *.tar.bz2 | *.tar.zst) tar -xf "$src" -C "$dest" ;;
+	*) die "don't know how to unpack $src" ;;
+	esac
+	rm -rf "$dest/__MACOSX"
+}
+
+[[ -e "$bundle" ]] || die "bundle not found: $bundle"
+[[ -z "$drive" || -e "$drive" ]] || die "drive not found: $drive"
+
+if [[ -e "$PRISTINE" ]]; then
+	[[ $force -eq 1 ]] || die "$PRISTINE already exists (use --force to rebuild it)"
+	chmod -R u+w "$PRISTINE"
+	rm -rf "$PRISTINE"
+fi
+
+mkdir -p "$ORACLE_HOME"
+log "unpacking bundle into $PRISTINE"
+unpack "$bundle" "$PRISTINE"
+if [[ -n "$drive" ]]; then
+	log "unpacking drive into $PRISTINE/$drive_dest"
+	unpack "$drive" "$PRISTINE/$drive_dest"
+fi
+
+{
+	echo "# sources hashed at $(date -u +%FT%TZ)"
+	for src in "$bundle" ${drive:+"$drive"}; do
+		if [[ -f "$src" ]]; then
+			echo "$(sha256sum "$src" | cut -d' ' -f1)  $(basename "$src")"
+		else
+			echo "directory  $(basename "$src")"
+		fi
+	done
+} >"$ORACLE_HOME/sources.txt"
+
+manifest "$PRISTINE" >"$ORACLE_HOME/pristine.sha256"
+chmod -R a-w "$PRISTINE"
+log "pristine base ready: $(wc -l <"$ORACLE_HOME/pristine.sha256") files"
+log "next: scripts/oracle/reset"

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Report process state, configuration, and how the run copy differs from its
+# pristine base. Never prints file contents.
+#
+#   scripts/oracle/status
+source "$(dirname "$0")/lib.sh"
+
+echo "ORACLE_HOME  $ORACLE_HOME"
+echo "display      $DISPLAY"
+for name in xvfb dosbox; do
+	if pid_alive "$name"; then
+		echo "$(printf '%-12s' "$name") running (pid $(cat "$STATE/$name.pid"))"
+	else
+		echo "$(printf '%-12s' "$name") stopped"
+	fi
+done
+if pid_alive dosbox; then
+	w="$(dosbox_window)"
+	if [[ -n "$w" ]]; then
+		echo "window       $w $(xdotool getwindowgeometry "$w" | sed -n 's/.*Geometry: //p')"
+		echo "title        $(xdotool getwindowname "$w")"
+	fi
+fi
+echo "pristine     $([[ -d "$PRISTINE" ]] && echo present || echo missing)"
+echo "run copy     $([[ -d "$RUN" ]] && echo present || echo missing)"
+if [[ -d "$SNAPSHOTS" ]]; then
+	echo "snapshots    $(ls "$SNAPSHOTS" | tr '\n' ' ')"
+fi
+
+if [[ -d "$RUN" && -f "$ORACLE_HOME/pristine.sha256" ]]; then
+	echo "changes vs pristine:"
+	mkdir -p "$STATE"
+	declare -A before=() after=()
+	while read -r sum path; do before[$path]="$sum"; done <"$ORACLE_HOME/pristine.sha256"
+	while read -r sum path; do after[$path]="$sum"; done < <(manifest "$RUN")
+	{
+		for p in "${!after[@]}"; do
+			if [[ -z "${before[$p]:-}" ]]; then
+				echo "  added     ${p#./}"
+			elif [[ "${before[$p]}" != "${after[$p]}" ]]; then
+				echo "  modified  ${p#./}"
+			fi
+		done
+		for p in "${!before[@]}"; do
+			[[ -n "${after[$p]:-}" ]] || echo "  deleted   ${p#./}"
+		done
+	} | sort -k2 >"$STATE/changes.txt"
+	if [[ -s "$STATE/changes.txt" ]]; then cat "$STATE/changes.txt"; else echo "  (none)"; fi
+fi

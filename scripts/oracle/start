@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Start Xvfb and DOSBox on the run copy, detached, and wait for the window.
+#
+#   scripts/oracle/start
+#
+# DOSBox runs with the run copy as its working directory, so relative mount
+# paths in a bundle-supplied config keep working.
+source "$(dirname "$0")/lib.sh"
+
+[[ -d "$RUN" ]] || die "no run copy (scripts/oracle/reset)"
+pid_alive dosbox && die "already running (scripts/oracle/stop first)"
+mkdir -p "$STATE" "$SHOTS"
+
+if ! pid_alive xvfb; then
+	setsid Xvfb "$DISPLAY" -screen 0 "$ORACLE_SCREEN" -nolisten tcp \
+		>"$STATE/xvfb.log" 2>&1 </dev/null &
+	echo $! >"$STATE/xvfb.pid"
+	for _ in $(seq 50); do
+		xdpyinfo >/dev/null 2>&1 && break
+		sleep 0.1
+	done
+	xdpyinfo >/dev/null 2>&1 || die "Xvfb did not come up on $DISPLAY (see $STATE/xvfb.log)"
+fi
+
+# Headless overrides: no audio devices exist in the container, and the mouse
+# must not be captured so that xdotool motion reaches the guest directly.
+cat >"$STATE/overrides.conf" <<CONF
+[sdl]
+fullscreen=false
+output=surface
+autolock=false
+sensitivity=100
+[render]
+frameskip=0
+aspect=false
+scaler=none
+[cpu]
+cycles=$ORACLE_CYCLES
+[mixer]
+nosound=true
+[sblaster]
+sbtype=none
+[gus]
+gus=false
+[speaker]
+pcspeaker=false
+tandy=off
+disney=false
+[midi]
+mpu401=none
+mididevice=none
+CONF
+
+confs=()
+if [[ -n "$ORACLE_BASE_CONF" ]]; then
+	[[ -f "$RUN/$ORACLE_BASE_CONF" ]] || die "ORACLE_BASE_CONF not found in run copy: $ORACLE_BASE_CONF"
+	confs+=(-conf "$RUN/$ORACLE_BASE_CONF" -conf "$STATE/overrides.conf")
+else
+	[[ -n "$ORACLE_C_DIR" ]] || die "set ORACLE_C_DIR or ORACLE_BASE_CONF in $ORACLE_HOME/oracle.conf"
+	[[ -d "$RUN/$ORACLE_C_DIR" ]] || die "ORACLE_C_DIR not found in run copy: $ORACLE_C_DIR"
+	{
+		cat "$STATE/overrides.conf"
+		echo "[autoexec]"
+		echo "mount c \"$RUN/$ORACLE_C_DIR\""
+		echo "c:"
+		[[ -n "$ORACLE_AUTOEXEC" ]] && printf '%s\n' "$ORACLE_AUTOEXEC"
+	} >"$STATE/dosbox.conf"
+	confs+=(-conf "$STATE/dosbox.conf")
+fi
+
+(
+	cd "$RUN"
+	SDL_AUDIODRIVER=dummy exec setsid "$ORACLE_DOSBOX" "${confs[@]}" \
+		>"$STATE/dosbox.log" 2>&1 </dev/null
+) &
+echo $! >"$STATE/dosbox.pid"
+
+for _ in $(seq 100); do
+	[[ -n "$(dosbox_window)" ]] && break
+	pid_alive dosbox || die "DOSBox exited during startup (see $STATE/dosbox.log)"
+	sleep 0.1
+done
+w="$(dosbox_window)"
+[[ -n "$w" ]] || die "DOSBox window did not appear (see $STATE/dosbox.log)"
+log "running on $DISPLAY, window $w"

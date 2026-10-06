@@ -1,0 +1,21 @@
+# Copy to $ORACLE_HOME/oracle.conf (default ~/.stars-oracle/oracle.conf).
+# That file lives outside the repository; never commit a filled-in copy.
+# Paths below are relative to the run copy ($ORACLE_HOME/run).
+
+# Option A: let the oracle generate the DOSBox config. Mount this directory
+# as C: and run these commands after mounting (one per line).
+#ORACLE_C_DIR="StarsBox/C"
+#ORACLE_AUTOEXEC="cd \\WINDOWS
+#win"
+
+# Option B: use the DOSBox config shipped with the bundle. Headless overrides
+# (no audio, no mouse capture, surface output) are layered on top of it.
+#ORACLE_BASE_CONF="StarsBox/dosbox.conf"
+
+# Optional overrides.
+#ORACLE_DISPLAY=":77"
+#ORACLE_SCREEN="1024x768x24"
+#ORACLE_DOSBOX="dosbox"
+#ORACLE_CYCLES="max"
+#ORACLE_MOUSE_SCALE="1"
+#ORACLE_KEY_DELAY="80"

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# List Stars! game files in the run copy with their decoded plaintext headers.
+#
+#   scripts/oracle/files [DIR]
+#
+# Matches *.HST, *.M[0-9]*, *.X[0-9]*, *.H[0-9]*, *.XY (case-insensitive).
+source "$(dirname "$0")/lib.sh"
+
+dir="${1:-$RUN}"
+repo="$(cd "$(dirname "$0")/../.." && pwd)"
+mapfile -d '' found < <(find "$dir" -type f \( -iname '*.hst' -o -iname '*.xy' \
+	-o -iregex '.*\.[mxh][0-9]+' \) -print0 | sort -z)
+((${#found[@]})) || { log "no Stars! game files under $dir"; exit 0; }
+(cd "$repo" && go run ./cmd/stars-header "${found[@]}")

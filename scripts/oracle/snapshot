@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Save the current run copy as a named, read-only snapshot.
+#
+#   scripts/oracle/snapshot NAME
+#
+# Restore it later with scripts/oracle/reset NAME. Stop the oracle first so
+# Stars! is not mid-write.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -eq 1 ]] || die "usage: snapshot NAME"
+[[ "$1" =~ ^[A-Za-z0-9._-]+$ ]] || die "snapshot names may use letters, digits, . _ -"
+[[ -d "$RUN" ]] || die "no run copy to snapshot"
+pid_alive dosbox && die "stop the oracle before taking a snapshot"
+dest="$SNAPSHOTS/$1"
+[[ -e "$dest" ]] && die "snapshot $1 already exists"
+
+mkdir -p "$SNAPSHOTS"
+cp -a "$RUN" "$dest"
+chmod -R a-w "$dest"
+log "saved snapshot $1"

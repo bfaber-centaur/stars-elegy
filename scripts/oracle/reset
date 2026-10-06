@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Replace the disposable run copy with the pristine base or a named snapshot.
+#
+#   scripts/oracle/reset            # back to pristine
+#   scripts/oracle/reset NAME       # back to snapshot NAME (see snapshot)
+#
+# Stops a running oracle first, since DOSBox caches directory listings.
+source "$(dirname "$0")/lib.sh"
+
+src="$PRISTINE"
+if [[ $# -ge 1 ]]; then
+	src="$SNAPSHOTS/$1"
+	[[ -d "$src" ]] || die "no snapshot named $1"
+fi
+[[ -d "$src" ]] || die "$src does not exist (run scripts/oracle/setup first)"
+
+if pid_alive dosbox || pid_alive xvfb; then
+	"$(dirname "$0")/stop"
+fi
+
+if [[ -e "$RUN" ]]; then
+	chmod -R u+w "$RUN"
+	rm -rf "$RUN"
+fi
+cp -a "$src" "$RUN"
+chmod -R u+w "$RUN"
+log "run copy reset from ${1:-pristine}"

@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Exercise the whole control loop against a synthetic, non-proprietary bundle:
+# setup -> reset -> start -> type/key -> guest writes files -> screenshot ->
+# wait-stable -> stop -> status/files -> snapshot -> reset -> reset NAME.
+#
+#   scripts/oracle/selftest
+#
+# Uses its own temporary ORACLE_HOME and display, so it never touches real
+# apparatus. Proves the Linux/Xvfb/DOSBox/xdotool plumbing, not Stars! itself.
+set -euo pipefail
+
+here="$(cd "$(dirname "$0")" && pwd)"
+work="$(mktemp -d)"
+export ORACLE_HOME="$work/home"
+export ORACLE_DISPLAY="${SELFTEST_DISPLAY:-:78}" DISPLAY="${SELFTEST_DISPLAY:-:78}"
+export ORACLE_C_DIR="c"
+unset ORACLE_BASE_CONF ORACLE_AUTOEXEC
+
+cleanup() {
+	"$here/stop" 2>/dev/null || true
+	chmod -R u+w "$work" 2>/dev/null || true
+	rm -rf "$work"
+}
+trap cleanup EXIT
+
+fail() {
+	echo "selftest: FAIL: $*" >&2
+	exit 1
+}
+step() { echo "selftest: $*" >&2; }
+
+# Synthetic bundle: a C: drive holding a header-only Stars! file (the 18-byte
+# PG001 header also used in internal/starsfile tests).
+mkdir -p "$work/bundle/c"
+printf '\x10\x20J3J3\xab\xbb\x84\x05\x60\x2a\x00\x00\x5f\x09\x02\x00' >"$work/bundle/c/SEED.HST"
+(cd "$work" && zip -qr bundle.zip bundle)
+
+step "setup"
+"$here/setup" --bundle "$work/bundle.zip"
+export ORACLE_C_DIR="bundle/c"
+[[ -f "$ORACLE_HOME/pristine/bundle/c/SEED.HST" ]] || fail "pristine base missing seed file"
+[[ -z "$(find "$ORACLE_HOME/pristine" -perm /222 -print -quit)" ]] || fail "pristine base has write bits"
+
+step "reset + start"
+"$here/reset"
+"$here/start"
+sleep 1
+
+step "keyboard: guest writes PROOF.TXT and copies SEED.HST to GAME.HST"
+"$here/type" 'echo ORACLE > PROOF.TXT'
+"$here/key" Return
+"$here/type" 'copy SEED.HST GAME.HST'
+"$here/key" Return
+shot="$("$here/wait-stable" 20 1)"
+[[ -s "$shot" ]] || fail "no screenshot from wait-stable"
+run_c="$ORACLE_HOME/run/bundle/c"
+grep -q ORACLE "$run_c/PROOF.TXT" 2>/dev/null || fail "PROOF.TXT not produced by guest"
+cmp -s "$run_c/SEED.HST" "$run_c/GAME.HST" || fail "GAME.HST not produced by guest"
+
+step "screenshot"
+shot="$("$here/screenshot" "$work/shot.png")"
+identify "$shot" | grep -q PNG || fail "screenshot is not a PNG"
+
+step "mouse: host pointer lands at window origin + target"
+"$here/click" 100 50
+win="$(xdotool search --class dosbox | head -n 1)"
+eval "$(xdotool getwindowgeometry --shell "$win")"
+wx="$X" wy="$Y"
+eval "$(xdotool getmouselocation --shell)"
+[[ "$X" -eq "$((wx + 100))" && "$Y" -eq "$((wy + 50))" ]] ||
+	fail "pointer at $X,$Y after click 100 50 (window origin $wx,$wy)"
+
+step "stop"
+"$here/stop"
+pgrep -f "Xvfb $ORACLE_DISPLAY " >/dev/null && fail "Xvfb still running"
+
+step "status reports changes; files decodes the produced header"
+"$here/status" | grep -q 'added *bundle/c/GAME.HST' || fail "status did not report GAME.HST"
+"$here/files" | grep -q 'GAME.HST.*game=92584875 .*year=2400' || fail "files did not decode GAME.HST"
+
+step "snapshot, reset to pristine, reset to snapshot"
+"$here/snapshot" after-copy
+"$here/reset"
+[[ ! -e "$run_c/GAME.HST" ]] || fail "reset did not restore pristine"
+"$here/reset" after-copy
+[[ -e "$run_c/GAME.HST" ]] || fail "reset NAME did not restore snapshot"
+
+echo "selftest: PASS"

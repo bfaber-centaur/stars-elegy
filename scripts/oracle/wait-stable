@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Block until the screen stops changing, e.g. after asking Stars! to generate
+# a turn. Prints the path of the final screenshot.
+#
+#   scripts/oracle/wait-stable [TIMEOUT_SECONDS] [QUIET_SECONDS]
+#
+# Succeeds once the window image has been identical for QUIET_SECONDS
+# (default 2); fails after TIMEOUT_SECONDS (default 60).
+source "$(dirname "$0")/lib.sh"
+
+timeout="${1:-60}" quiet="${2:-2}"
+w="$(require_window)"
+tmp="$STATE/wait-stable.png"
+last="" since="$SECONDS" start="$SECONDS"
+while ((SECONDS - start < timeout)); do
+	import -window "$w" "$tmp"
+	h="$(convert "$tmp" rgb:- | sha256sum | cut -d' ' -f1)"
+	if [[ "$h" != "$last" ]]; then
+		last="$h" since="$SECONDS"
+	elif ((SECONDS - since >= quiet)); then
+		out="$SHOTS/$(date -u +%Y%m%dT%H%M%S.%3NZ).png"
+		mkdir -p "$SHOTS"
+		mv "$tmp" "$out"
+		echo "$out"
+		exit 0
+	fi
+	sleep 0.25
+done
+die "screen still changing after ${timeout}s"

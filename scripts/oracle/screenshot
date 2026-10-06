@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Capture the DOSBox window as PNG and print the file path.
+#
+#   scripts/oracle/screenshot [OUT.png]
+#
+# Default output: $ORACLE_HOME/shots/<UTC timestamp>.png
+source "$(dirname "$0")/lib.sh"
+
+w="$(require_window)"
+out="${1:-$SHOTS/$(date -u +%Y%m%dT%H%M%S.%3NZ).png}"
+mkdir -p "$(dirname "$out")"
+import -window "$w" "$out"
+echo "$out"

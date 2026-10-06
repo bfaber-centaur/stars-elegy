@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Type literal text into DOSBox. Does not press Return.
+#
+#   scripts/oracle/type 'echo hello'
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -eq 1 ]] || die "usage: type TEXT"
+focus_window >/dev/null
+xdotool type --delay "${ORACLE_KEY_DELAY:-80}" -- "$1"
