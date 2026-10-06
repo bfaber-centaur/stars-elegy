@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Send one or more X keysyms to DOSBox, in order.
+#
+#   scripts/oracle/key Return
+#   scripts/oracle/key alt+f Down Down Return
+#
+# Names are xdotool keysyms (Return, Escape, Tab, F1, alt+f, ctrl+g, ...).
+# ORACLE_KEY_DELAY (ms, default 80) spaces keystrokes so the guest sees each.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 1 ]] || die "usage: key KEYSYM..."
+focus_window >/dev/null
+xdotool key --delay "${ORACLE_KEY_DELAY:-80}" "$@"

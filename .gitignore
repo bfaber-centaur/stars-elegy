@@ -23,3 +23,7 @@ profile.cov
 # Go workspace file
 go.work
 go.work.sum
+
+# Stars! oracle apparatus and local config must never be committed
+.stars-oracle/
+oracle.conf

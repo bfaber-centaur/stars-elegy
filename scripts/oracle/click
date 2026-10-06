@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Click at guest screen coordinates (as seen in a screenshot).
+#
+#   scripts/oracle/click X Y [BUTTON] [--double]
+#
+# The guest (Windows 3.1) mouse is relative, so absolute host positions do not
+# map onto it. This script first drives the guest cursor into the top-left
+# corner, where the guest clamps it to (0,0), then moves by (X,Y) in small
+# steps so Windows mouse acceleration never triggers. Coordinates are only
+# exact if acceleration is off in the guest and ORACLE_MOUSE_SCALE is right;
+# verify with a screenshot.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 2 ]] || die "usage: click X Y [BUTTON] [--double]"
+x="$1" y="$2" button="${3:-1}"
+[[ "$button" == --double ]] && button=1
+repeat=1
+[[ " $* " == *" --double "* ]] && repeat=2
+
+w="$(focus_window)"
+eval "$(xdotool getwindowgeometry --shell "$w")" # X Y WIDTH HEIGHT
+wx="$X" wy="$Y" ww="$WIDTH" wh="$HEIGHT"
+step=3
+
+# relmove DX DY: move by (DX,DY) host pixels in steps of at most $step.
+relmove() {
+	local dx="$1" dy="$2" args=() sx sy
+	while ((dx != 0 || dy != 0)); do
+		sx=$((dx > step ? step : (dx < -step ? -step : dx)))
+		sy=$((dy > step ? step : (dy < -step ? -step : dy)))
+		args+=(mousemove_relative -- "$sx" "$sy" sleep 0.002)
+		dx=$((dx - sx)) dy=$((dy - sy))
+		if ((${#args[@]} > 600)); then
+			xdotool "${args[@]}"
+			args=()
+		fi
+	done
+	((${#args[@]} == 0)) || xdotool "${args[@]}"
+}
+
+# Home: start at the window's bottom-right, sweep to its top-left.
+xdotool mousemove "$((wx + ww - 1))" "$((wy + wh - 1))"
+relmove "$((-(ww - 1)))" "$((-(wh - 1)))"
+relmove -"$step" -"$step" # make sure the guest is pinned at (0,0)
+xdotool mousemove "$wx" "$wy"
+
+tx="$(awk -v v="$x" -v s="$ORACLE_MOUSE_SCALE" 'BEGIN { printf "%d", v / s + 0.5 }')"
+ty="$(awk -v v="$y" -v s="$ORACLE_MOUSE_SCALE" 'BEGIN { printf "%d", v / s + 0.5 }')"
+relmove "$tx" "$ty"
+xdotool click --repeat "$repeat" --delay 120 "$button"
