@@ -176,6 +176,29 @@ immutable supplied artifact
 
 Reset-to-known-state should be cheap and reproducible.
 
+## Preserving raw experiment evidence
+
+Raw experiment state and evidence go in the private repository `bfaber-centaur/stars-oracle-apparatus`, never in this public repository and never only in project files or an ephemeral VM.
+
+This includes `.HST` and other game files written by the oracle, screenshots, recorder logs (such as `observations.jsonl`), and manifests.
+
+Use one directory per experiment:
+
+```text
+evidence/<experiment-id>/
+├── README.md         provenance: experiment, date, J-RC3 version, source universe,
+│                     start/result observations, public Elegy PR/commit, procedure
+├── manifest.sha256   SHA-256 of every preserved file
+├── raw/              game files and recorder logs
+└── screenshots/      UI captures
+```
+
+Follow the precedent at `evidence/pg002/` on the apparatus repository's `main`.
+
+Commit evidence on a branch, open a PR in the apparatus repository, and link it from the Elegy PR. Never rewrite existing evidence; add a new experiment directory instead.
+
+This repository records only derived results: observations and conclusions in `docs/PARITY.md`, non-proprietary fixtures and tests, and a pointer to the evidence directory.
+
 ## Scientific workflow
 
 Reverse engineering should normally follow:
@@ -387,6 +410,7 @@ Canonical destinations:
 - Stars! behavioral knowledge → `docs/PARITY.md`
 - oracle operation / apparatus knowledge → `docs/ORACLE.md`
 - reproducible behavior → tests / fixtures / scripts
+- raw experiment evidence → `evidence/<experiment-id>/` in the private apparatus repository
 - architectural decisions → appropriate project docs
 - current frontier only → `HANDOFF.md`
 
