@@ -1,23 +1,33 @@
 #!/usr/bin/env bash
 # Type the Stars! serial into the "Stars! Serial Number" dialog and press OK.
 #
-#   scripts/oracle/register SERIAL_FILE
+#   scripts/oracle/register [SERIAL_FILE]
 #
-# The dialog must already be showing (scripts/oracle/wait-for). The serial is
-# read from SERIAL_FILE and piped to xdotool, so it never appears on a command
-# line, in a log, or on stdout. Afterwards, exit Stars!, stop, and
+# The serial comes from SERIAL_FILE or, without an argument, from the
+# STARS_SERIAL environment variable. It is piped to xdotool, so it never
+# appears on a command line, in a log, or on stdout. The dialog must already
+# be showing (scripts/oracle/wait-for). Afterwards, exit Stars!, stop, and
 # `snapshot registered` so later runs can `reset registered`. Where Stars!
 # keeps the registration isn't established (WINDOWS/STARS.INI is the likely
 # place; see docs/ORACLE.md), so treat snapshots and STARS.INI as
 # registration-bearing and never commit them.
 source "$(dirname "$0")/lib.sh"
 
-[[ $# -eq 1 ]] || die "usage: register SERIAL_FILE"
-[[ -r "$1" ]] || die "cannot read serial file"
-serial_len="$(tr -d '[:space:]' <"$1" | wc -c)"
-[[ "$serial_len" -eq 8 ]] || die "serial file should hold 8 characters, found $serial_len"
+serial() {
+	if [[ $# -eq 1 ]]; then
+		[[ -r "$1" ]] || die "cannot read serial file"
+		tr -d '[:space:]' <"$1"
+	elif [[ -n "${STARS_SERIAL:-}" ]]; then
+		printf '%s' "$STARS_SERIAL" | tr -d '[:space:]'
+	else
+		die "usage: register [SERIAL_FILE] (or set STARS_SERIAL)"
+	fi
+}
+[[ $# -le 1 ]] || die "usage: register [SERIAL_FILE] (or set STARS_SERIAL)"
+serial_len="$(serial "$@" | wc -c)"
+[[ "$serial_len" -eq 8 ]] || die "serial should hold 8 characters, found $serial_len"
 
 focus_window >/dev/null
-tr -d '[:space:]' <"$1" | xdotool type --delay "${ORACLE_KEY_DELAY:-80}" --file -
+serial "$@" | xdotool type --delay "${ORACLE_KEY_DELAY:-80}" --file -
 xdotool key Return
 log "serial entered; confirm with a screenshot that the dialog closed"

@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# Build a registered oracle from durable inputs, for a fresh machine.
+#
+#   scripts/oracle/bootstrap [APPARATUS_DIR]
+#
+# Inputs, none of which live in this repository:
+#   - starsbox-macapp*.tar.gz and stars_games*.tar.gz, found in APPARATUS_DIR,
+#     else $ORACLE_APPARATUS_DIR, else a checkout next to this repository
+#     named stars-oracle-apparatus, else cloned from $ORACLE_APPARATUS_GIT;
+#   - the Stars! serial in $STARS_SERIAL (or a file named by $ORACLE_SERIAL_FILE).
+#
+# Result: $ORACLE_HOME with a pristine base, local wait-for reference crops,
+# a `registered` snapshot, and the run copy reset to it, with the oracle
+# stopped. Idempotent: if the `registered` snapshot exists it only resets.
+source "$(dirname "$0")/lib.sh"
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/../.." && pwd)"
+
+if [[ -d "$SNAPSHOTS/registered" && -d "$PRISTINE" ]]; then
+	"$here/reset" registered
+	log "bootstrap: already done; run copy reset to the registered snapshot"
+	exit 0
+fi
+
+# --- inputs -----------------------------------------------------------------
+dir="${1:-${ORACLE_APPARATUS_DIR:-}}"
+if [[ -z "$dir" && -d "$repo/../stars-oracle-apparatus" ]]; then
+	dir="$repo/../stars-oracle-apparatus"
+fi
+if [[ -z "$dir" && -n "${ORACLE_APPARATUS_GIT:-}" ]]; then
+	dir="$ORACLE_HOME/apparatus"
+	[[ -d "$dir/.git" ]] || git clone -q --depth 1 "$ORACLE_APPARATUS_GIT" "$dir" ||
+		die "bootstrap: could not clone ORACLE_APPARATUS_GIT"
+fi
+[[ -n "$dir" && -d "$dir" ]] || die "bootstrap: no apparatus directory (see docs/ORACLE.md, Durable setup)"
+bundle="$(find "$dir" -maxdepth 2 -name 'starsbox-macapp*.tar.gz' | head -n 1)"
+games="$(find "$dir" -maxdepth 2 -name 'stars_games*.tar.gz' | head -n 1)"
+[[ -f "$bundle" && -f "$games" ]] || die "bootstrap: archives not found in $dir"
+if [[ -z "${STARS_SERIAL:-}" && ! -r "${ORACLE_SERIAL_FILE:-/nonexistent}" ]]; then
+	die "bootstrap: set STARS_SERIAL or ORACLE_SERIAL_FILE"
+fi
+
+# --- pristine base ----------------------------------------------------------
+mkdir -p "$ORACLE_HOME/sources" "$ORACLE_HOME/refs"
+for src in "$bundle" "$games"; do
+	dest="$ORACLE_HOME/sources/$(basename "$src")"
+	[[ -f "$dest" ]] || { cp "$src" "$dest" && chmod a-w "$dest"; }
+done
+[[ -f "$ORACLE_HOME/oracle.conf" ]] || cp "$here/oracle.conf.example" "$ORACLE_HOME/oracle.conf"
+if [[ ! -d "$PRISTINE" ]]; then
+	"$here/setup" --bundle "$ORACLE_HOME/sources/$(basename "$bundle")" \
+		--drive "$ORACLE_HOME/sources/$(basename "$games")" --drive-dest games
+fi
+
+# --- screen detection without committed images ------------------------------
+# A screen counts as present when a region holds at least MIN pixels of each
+# given exact colour. The numbers come from the reference crops described in
+# docs/ORACLE.md; colours and counts are not proprietary, the crops are.
+count_colour() { # IMG GEOM COLOUR
+	convert "$1" -crop "$2" +repage -fill black +opaque "$3" -fill white -opaque "$3" \
+		-format '%[fx:int(mean*w*h+0.5)]' info:
+}
+wait_screen() { # NAME GEOM TIMEOUT COLOUR MIN [COLOUR MIN]...
+	local name="$1" geom="$2" timeout="$3" t0="$SECONDS" shot="$STATE/bootstrap.png"
+	shift 3
+	while ((SECONDS - t0 < timeout)); do
+		"$here/screenshot" "$shot" >/dev/null
+		local ok=1 args=("$@")
+		while ((${#args[@]})); do
+			(($(count_colour "$shot" "$geom" "${args[0]}") >= args[1])) || ok=0
+			args=("${args[@]:2}")
+		done
+		if ((ok)); then
+			convert "$shot" -crop "$geom" +repage "$ORACLE_HOME/refs/$name.png"
+			return 0
+		fi
+		sleep 0.5
+	done
+	die "bootstrap: $name did not appear within ${timeout}s (screenshot: $shot)"
+}
+serial_dialog() { wait_screen serial-dialog-title 290x16+440+344 "$1" '#A6CBF3' 3600 '#000000' 400; }
+main_menu() { wait_screen main-menu-open 130x20+367+802 "$1" '#C3C3C3' 2100 '#000000' 250; }
+
+# --- register and snapshot --------------------------------------------------
+"$here/reset"
+"$here/start"
+serial_dialog 120
+if [[ -n "${STARS_SERIAL:-}" ]]; then
+	"$here/register"
+else
+	"$here/register" "$ORACLE_SERIAL_FILE"
+fi
+main_menu 60
+"$here/key" alt+x # exit Stars! before stopping
+"$here/wait-stable" 30 2 >/dev/null
+"$here/stop"
+"$here/snapshot" registered
+"$here/reset" registered
+log "bootstrap: done; registered snapshot saved and run copy reset to it"

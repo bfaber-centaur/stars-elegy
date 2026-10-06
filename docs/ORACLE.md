@@ -61,16 +61,11 @@ has been compared with a known value.
 - The Stars! serial number. It is entered into Stars!' first-run dialog, and
   must never be written into the repository, logs, docs, or PRs.
 
-Where they came from on 2026-10-06 (second registration): the two archives
-from the owner's private `bfaber-centaur/stars-oracle-apparatus` repository
-(checked out next to `stars-elegy`), and the serial from the `STARS_SERIAL`
-environment variable of the cloud environment. `register` takes a file, so
-the serial was written, without printing it, to a mode-0400 file under
-`$ORACLE_HOME`:
-
-```sh
-(umask 077; printf '%s' "$STARS_SERIAL" > ~/.stars-oracle/serial.txt)
-```
+The PG-002 run (2026-10-06) registered by hand, using the manual steps
+below: archives from a checkout of the apparatus repository, and the serial
+from `STARS_SERIAL`, written without printing to a mode-0400 file under
+`$ORACLE_HOME`. That predates `bootstrap` (see Durable setup); the hook was
+not exercised by that session.
 
 Never commit any of these, or screenshots that show registration details or
 proprietary UI unless clearly safe. Raw game files produced by experiments
@@ -101,7 +96,58 @@ Read-only bits guard against accidents, not against root, and the container
 runs as root. The archives themselves are the real source of truth, and
 `setup --force` rebuilds `pristine/` from them.
 
-## Configure and initialize
+## Durable setup (cloud sessions)
+
+Cloud sessions start on a fresh machine, so nothing under `$ORACLE_HOME`
+survives between sessions. Instead, the oracle is rebuilt from three
+durable inputs. None of them is in this repository:
+
+1. **Apparatus archives** `starsbox-macapp*.tar.gz` and `stars_games*.tar.gz`,
+   kept in the private repository `bfaber-centaur/stars-oracle-apparatus`
+   (with the owner's apparatus notes; never make it public). Add that
+   repository to the cloud environment's repositories, so sessions clone it
+   next to this one. `bootstrap` looks for the archives in order:
+   - its argument;
+   - `$ORACLE_APPARATUS_DIR`;
+   - a checkout named `stars-oracle-apparatus` next to this repository (where
+     a session cloning that repo as a second source would put it);
+   - a shallow clone of `$ORACLE_APPARATUS_GIT`.
+2. **The serial**, in the environment variable `STARS_SERIAL`, set in the
+   cloud environment's settings. Every session in that environment can read
+   it. Scripts never print it.
+3. **This repository's** scripts and `.claude/hooks/session-start.sh`.
+
+`scripts/oracle/bootstrap` does setup → reset → start → register → exit
+Stars! → stop → `snapshot registered` → `reset registered`. It creates the
+two `wait-for` reference crops from the live screen, detecting each screen
+by counts of exact pixel colours in a fixed region. The colours and counts
+are in the script; the crops stay local. If the `registered` snapshot
+already exists, it only resets to it.
+
+The SessionStart hook (`.claude/settings.json` → `.claude/hooks/session-start.sh`)
+runs `bootstrap` in cloud sessions only (`CLAUDE_CODE_REMOTE=true`). It
+writes the log to `$ORACLE_HOME/bootstrap.log` and prints one line. It never
+fails the session: with inputs missing, it reports what is missing and exits 0.
+
+Observed on 2026-10-06, with `STARS_SERIAL` set:
+- a fresh clone of `stars-oracle-apparatus` from GitHub had archives
+  byte-identical (SHA-256) to the originally supplied ones;
+- with that repository checked out at `/home/user/stars-oracle-apparatus`
+  and no `ORACLE_APPARATUS_*` variables, the hook found it on its own and
+  built the `registered` snapshot in an empty `ORACLE_HOME`;
+- with archives from a local directory, and separately from a local git
+  repository via `ORACLE_APPARATUS_GIT`:
+  - a fresh `ORACLE_HOME` was bootstrapped in about 9 s (local directory);
+  - the generated crops were pixel-identical to hand-made ones;
+  - the resulting snapshot started Stars! without a serial prompt, and
+    `turn PG001.M1` advanced the header from 7 / 2407 to 8 / 2408;
+  - a second hook run only reset (under 1 s).
+
+Not yet observed: the hook running at the start of a real new cloud session
+with the apparatus repository in the environment. All tests above ran the
+hook by hand.
+
+## Configure and initialize (by hand)
 
 ```sh
 mkdir -p ~/.stars-oracle/sources
@@ -161,7 +207,8 @@ scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
 scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
-scripts/oracle/register SERIAL_FILE   # type the serial into Stars!' first-run dialog
+scripts/oracle/register [SERIAL_FILE] # type the serial ($STARS_SERIAL by default) into the first-run dialog
+scripts/oracle/bootstrap [DIR]        # fresh machine → registered snapshot (see Durable setup)
 scripts/oracle/turn GAME.M1           # open a game, press F9 once, exit Stars!
 scripts/oracle/stop
 ```
@@ -179,7 +226,8 @@ switched to 1152x864.
 
 - *Observed:* the Stars! title screen animates, and `wait-stable` timed out
   while it was visible. Use `wait-for` with a reference crop of the expected
-  screen instead. Make the crops once from a screenshot:
+  screen instead. `bootstrap` creates both crops below automatically; by
+  hand, make them from a screenshot:
   - `convert shot.png -crop 290x16+440+344 +repage ~/.stars-oracle/refs/serial-dialog-title.png`
     is the title bar of the "Stars! Serial Number" dialog;
   - `convert shot.png -crop 130x20+367+802 +repage ~/.stars-oracle/refs/main-menu-open.png`
@@ -309,13 +357,14 @@ Stars! starts. Cancel exits Stars!, so no game can be opened. The bundle's
 `WINDOWS/SERIALNO.INI` has `[mswindows]` keys. *Inferred:* it is the Windows
 3.1 install record, not Stars! registration.
 
-Register once per pristine base, then keep a snapshot:
+`scripts/oracle/bootstrap` does all of this. By hand, register once per
+pristine base, then keep a snapshot:
 
 ```sh
 scripts/oracle/reset
 scripts/oracle/start
 scripts/oracle/wait-for ~/.stars-oracle/refs/serial-dialog-title.png 440 344 120
-scripts/oracle/register /path/to/serial.txt
+scripts/oracle/register              # reads $STARS_SERIAL (or pass a serial file)
 scripts/oracle/wait-for ~/.stars-oracle/refs/main-menu-open.png 367 802 30
 scripts/oracle/key alt+x            # exit Stars! before stopping
 scripts/oracle/wait-stable 30 2

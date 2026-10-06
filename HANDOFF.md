@@ -9,8 +9,8 @@ inferred or implemented. The next bounded mission has not been assigned.
 ## State
 
 - Branch: `re/population-crowding`
-- HEAD: the commit that added this file (on top of `main` at `f232ae0`).
-- PR: opened from this branch; see the branch on GitHub.
+- HEAD: the merge of `main` (PR #3, oracle bootstrap) into this branch.
+- PR: #4.
 - Oracle snapshots: `registered` and `pg001-2425`, in the ephemeral VM's
   `~/.stars-oracle` only. Recreate with `docs/ORACLE.md` (archives from
   `bfaber-centaur/stars-oracle-apparatus`, serial from `STARS_SERIAL`).
@@ -35,13 +35,19 @@ inferred or implemented. The next bounded mission has not been assigned.
 - The 2425 carry is inferred as 0, not binary-confirmed.
 - One data point; H1 misses by one unit. Whether a variant (carry,
   rounding, order of operations) fits is untested.
+- From main (PR #3): the `bootstrap` SessionStart hook has still not been
+  seen running at the start of a real new session. This session's clone
+  predated it, so PG-002 registered by hand.
 - Whether registered-copy game files carry registration data is unknown,
   so the raw `.HST` files were kept out of this public repo. The owner may
   decide otherwise.
 
 ## Next action
 
-None assigned. Wait for the owner to choose the next mission.
+None assigned for research. Wait for the owner to choose the next mission.
+(Open from PR #3: in a new cloud session, check that
+`~/.stars-oracle/bootstrap.log` ends with "bootstrap: done" and record it in
+`docs/ORACLE.md`, Durable setup.)
 
 ## Do not do
 
@@ -50,3 +56,4 @@ None assigned. Wait for the owner to choose the next mission.
   semantics, or `.H1` contents without an explicit task.
 - Do not commit screenshots, `STARS.INI`, snapshots, archives, the serial,
   or registered-copy game files without the owner's say-so.
+- Do not rewrite or force-push the apparatus repository's archives.
