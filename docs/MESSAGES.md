@@ -20,7 +20,7 @@ Status tags follow `PARITY.md`:
 - **NEVER SENT**: a message kind exists but no reachable path sends it.
 
 Sources: a private read of every place the original sends a message (387
-kinds, ids 0x000–0x182), checked against 22,707 message records decoded from
+kinds, ids 0x000–0x182), checked against 23,537 message records decoded from
 the oracle turn files of every apparatus corpus (CB, CS, FM, FO, KX, MF, MG,
 OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot counts given here.
 
@@ -38,6 +38,12 @@ OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot coun
   each one byte, or two bytes when its bit in `wide` is set. A slot is
   stored wide when its value needs it. `tools/fleetlab/events.py` decodes the
   block.
+- **Years without orders** (seen by the Objects lane in pinned runs
+  where nobody submitted orders; its write-up is in `docs/ORACLE.md`). A
+  player's message block for a year then begins with the whole previous
+  year's block, followed by the new messages. A message in the repeated
+  part was not sent again, so count only the new tail when counting a
+  year's messages.
 - **Focus codes.** A planet is its planet number; a fleet is its fleet id
   with bit 15 set. Negative codes select a special screen: −1 none, −2
   research, −3 ship design, −4 scores, −5 registration notice, −6 a space
@@ -148,7 +154,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 |---|---|---|---|---|---|---|---|
 | 0x000 | Your landing troops were all killed by the planet's ground forces | Invasion of an owned planet fails (ground combat as in `TAKEOVER.md`) and the planet has no defenses that act on troops | each attacking player | colonists, planet, player (defender) | planet | P2, P6c | CONFIRMED (tk2/tk109) |
 | 0x001 | Your landing troops were killed: part by planetary defenses (percentage given), the rest on the ground | Same failure, and the planet has defenses that shot some troops (`TAKEOVER.md`) | each attacking player | colonists, planet, percent (troops lost to defenses), player (defender) | planet | P2, P6c | CONFIRMED (tk/tk003) |
-| 0x002 | Colonists you sent down by manual transfer died because the planet was not colonized | A manual colonist transfer onto a planet that was unowned when orders were read, and still is | dropping player | colonists, planet | planet | P2 | BINARY-ONLY |
+| 0x002 | Colonists you sent down by manual transfer died because the planet was not colonized | A manual colonist transfer onto a planet that was unowned when orders were read, and still is | dropping player | colonists, planet | planet | P2 | CONFIRMED (TK-404: tk5/tk501) |
 | 0x003 | Your ground forces beat off an invasion by the named player (no defenses involved) | Counterpart of 0x000; one per attacking player | planet owner | planet, colonists, player (attacker) | planet | P2, P6c | CONFIRMED (tk2/tk109) |
 | 0x004 | Your defenses and ground forces beat off an invasion by the named player | Counterpart of 0x001; one per attacking player | planet owner | planet, colonists, player (attacker) | planet | P2, P6c | CONFIRMED (tk/tk003) |
 | 0x005 | Your planet was attacked by several players at once and everyone died | An invasion empties an owned planet and two attackers tie for highest strength: nobody lands and the planet becomes unowned | former planet owner | count (attacking players), planet | planet | P2, P6c | CONFIRMED (tk2/tk113) |
@@ -166,7 +172,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
 | 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
-| 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet or planet ordered by hand: destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
+| 0x042 | Your cargo was delivered to the other player's object | Queued gift to another player's object, destination accepts all of it; minerals or colonists. No manual order reaches the queue in this build: gifts are credited in place at order time with no message (TK-405, TK-412 for planets; TK-406, TK-407, TK-409 for fleets) | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
 | 0x044 | Your object received cargo from another player | Counterpart of 0x042 | receiving object's owner | object, amount, mineral, object | destination | P2 | BINARY-ONLY |
 | 0x045 | Same as 0x044, worded for colonists | Counterpart of 0x043 (fuel) | receiving object's owner | as 0x044 | destination | P2 | BINARY-ONLY; LEGACY BUG? |
@@ -186,13 +192,13 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x055 | Colonists can't be beamed onto an uninhabited planet; colonize it instead | Unload colonists onto a planet that is unowned now and was unowned when the phase began; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk2/tk114) |
 | 0x056 | Your crew refused to beam colonists down (race cannot live on planets) | Alternate Reality fleet unloads colonists onto a planet it does not own; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk2/tk107) |
 | 0x057 | Your colonists died on landing because your race cannot live on planets | Alternate Reality colonists land anywhere other than an unowned planet with a colonize order (for example a manual or invasion drop) | dropping player | planet | planet | P2, P6c | BINARY-ONLY |
-| 0x058 | A starbase shot down the colonists you tried to land | Colonists dropped on an owned planet that has a starbase | dropping player | planet | planet | P2, P6c | BINARY-ONLY |
+| 0x058 | A starbase shot down the colonists you tried to land | Colonists dropped on an owned planet that has a starbase | dropping player | planet | planet | P2, P6c | CONFIRMED (TK-410: tk5/tk501, manual transfer) |
 | 0x059 | Fleet was taken apart; its minerals went to the planet surface | Scrap at a planet without a starbase whose owner lacks Ultimate Recycling (or unowned); also on every successful colonization (the ship-cost share given to the new colony) | fleet owner | fleet, kT, planet | planet | P2 (scrap); P2, P6c (colonize) | CONFIRMED (cs/cs-003, tk2) |
 | 0x05a | Fleet was taken apart at the starbase; minerals deposited | Scrap at a planet with a starbase, owner without Ultimate Recycling | fleet owner | fleet, kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x05b | Fleet was taken apart in deep space, leaving salvage | Scrap with no planet | fleet owner | object (salvage), fleet | object (salvage) | P2 | CONFIRMED (tk2/tk111) |
 | 0x05c | Fleet scrapped at the planet, with recycled resources made available | Scrap at a planet without a starbase whose owner has Ultimate Recycling | fleet owner | fleet, kT, planet, amount (resources) | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x05d | As 0x05c, at a starbase | Same, with starbase | fleet owner | fleet, kT, planet, amount | planet | P2 | CONFIRMED (tk2/tk111) |
-| 0x05e | Settlers found an artifact that added research to a field | A planet holding an artifact is owned after the landings resolve and random events are on. Field random (1 of 6); points 100–400, scaled by pop/1000 when pop < 1000 | planet owner after landing | planet, field, value (resources) | special: research (inferred) | P2, P6c | BINARY-ONLY |
+| 0x05e | Settlers found an artifact that added research to a field | A planet holding an artifact is owned after the landings resolve and random events are on: a colony, a capture, or an invasion the defender beat off. Field random (1 of 6); points 100–400, scaled by pop/1000 when pop < 1000. Sent after that planet's landing messages | planet owner after landing (the defender, if it held) | planet, field, value (resources) | special: research (inferred; focus code −2) | P2, P6c | CONFIRMED (TK-303, TK-304, TK-306) |
 | 0x075 | Mining order cancelled: fleet has no remote-mining modules | Remote-mining task after movement, fleet stationary this turn and orbiting | fleet owner | fleet, planet | fleet | P6c | CONFIRMED (cs/cs-003) |
 | 0x076 | Mining order cancelled: planet is inhabited | Same, planet owned (an Alternate Reality fleet is skipped silently instead) | fleet owner | fleet, planet | fleet | P6c | CONFIRMED (tk2/tk111) |
 | 0x077 | Mining order cancelled: fleet is in deep space | Same, not orbiting | fleet owner | fleet | fleet | P6c | BINARY-ONLY |
@@ -202,7 +208,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x0c4 | Fleet added this many mines to a minefield | Per mine type laid: merged into an own field of that type that covers the fleet | fleet owner | fleet, amount | fleet | P6c | CONFIRMED (ob/ob019-y2) |
 | 0x0db | Another player emptied the packet/salvage first; you got only this much | A manual load from a packet or salvage gets less than requested but more than nothing | owner of the loading fleet | fleet, mineral, kT, mineral | fleet | P1 | BINARY-ONLY |
 | 0x0dc | Another player emptied the packet/salvage first; you got none | Same, nothing obtained | owner of the loading fleet | fleet, mineral | fleet | P1 | BINARY-ONLY |
-| 0x0dd | A manual transfer moved less than requested (shortfall and request given) | A hand-ordered cargo transfer where the giving side lacks the cargo or the receiving side lacks room (not colonists; see Notes) | owner of the source object named in the order | object, value (shortfall), mineral, value (request) | source object | P1 | BINARY-ONLY |
+| 0x0dd | A manual transfer moved less than requested (shortfall and request given) | A hand-ordered cargo transfer where the giving side lacks the cargo or the receiving side lacks room (not colonists; see Notes) | owner of the source object named in the order | object, value (shortfall), mineral, value (request) | source object | P1 | CONFIRMED (tk7/tk503) |
 | 0x0f5 | Merge order failed: destination is not a fleet | Merge task with a non-fleet or vanished target | fleet owner | fleet | fleet | P2, P6c | BINARY-ONLY |
 | 0x0f6 | Merge order failed: destination fleet belongs to someone else | Merge target owned by another player | fleet owner | fleet | fleet | P2, P6c | CONFIRMED (fo/fo04) |
 | 0x0f7 | Fleet merged into the named fleet | Merge task succeeds | fleet owner | fleet (merged, by name), fleet (target) | fleet (target) | P2, P6c | CONFIRMED (fo/fo03) |
@@ -219,7 +225,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x127 | Fleet at a planet has been sent on along the planet's route | Route task, last waypoint, at an own planet that has a route destination | fleet owner | fleet, planet, planet (destination) | fleet | P2 | BINARY-ONLY |
 | 0x128 | As 0x127, but the fleet lacks fuel for the trip and waits | Same, new leg gets speed 0 | fleet owner | fleet, planet, planet | fleet | P2 | BINARY-ONLY |
 | 0x135 | Unload of colonists refused: an enemy starbase guards the planet | Unload colonists onto a foreign planet with a starbase; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk/tk002) |
-| 0x13c | Scrapping at your starbase revealed a new technology | Starbase scrap (no UR) where the planet owner's tech roll gives a discovery | planet owner | fleet, kT, planet | special (inferred: tech) | P2 | BINARY-ONLY |
+| 0x13c | Scrapping at your starbase revealed a new technology | Starbase scrap (no UR) where the planet owner's tech roll gives a Mystery Trader part | planet owner | fleet, kT, planet | the part given | P2 | CONFIRMED (TK-305) |
 | 0x13d | Scrapping at your starbase gave you a research level in a field | Same, roll gives a level | planet owner | fleet, kT, planet, field | special (inferred: research) | P2 | CONFIRMED (tk3/tk203) |
 | 0x13e | As 0x13c, with recycled resources | Starbase scrap with Ultimate Recycling, plus a tech discovery. Also coded (LEGACY BUG?, probably unreachable) as the result of battle wreckage giving the Mystery Trader's planetary device, where this scrap text would be shown with misread slots | planet owner | fleet, kT, planet, amount | special (inferred) | P2 | BINARY-ONLY |
 | 0x13f | As 0x13d, with recycled resources | Starbase scrap with UR, level gained | planet owner | fleet, kT, planet, amount, field | special (inferred) | P2 | BINARY-ONLY |
@@ -238,7 +244,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x165 | Colonists can't be beamed into empty space | Unload colonists with a deep-space target; task cancelled | fleet owner | fleet | fleet | P2, P6c | CONFIRMED (tk3/tk201) |
 | 0x17e | Fleet failed to lay mines for technical reasons | A new field is needed but the game's object limit is reached (512-field limit); those mines are lost | fleet owner | fleet | fleet | P6c | CONFIRMED (MF-13) |
 
-- Within a fleet's task, unload runs before load: before movement (P2) and again after movement (P6c). Colonist landings resolve between the unload and load halves. Hand-ordered cargo gifts to other players (0x042–0x04d) are delivered once, after the pre-movement load half.
+- Within a fleet's task, unload runs before load: before movement (P2) and again after movement (P6c). Colonist landings resolve between the unload and load halves. 0x042–0x04d belong to a queued-gift step after the pre-movement load half; hand-ordered gifts do not use it in this build (they are credited in place when orders are applied, `TAKEOVER.md`), so no legal order is known to send them.
 - Any refusal message on a waypoint task also cancels that task, and 0x04e follows when it was the last waypoint. Oracle: 0x076 then 0x04e, and 0x052 then 0x04e. Load refusals (0x11f/0x120/0x123, 0x121/0x122, 0x126) are sent only after movement; before movement the same condition just waits. 0x03c/0x03d are sent only before movement.
 - Colonizing sends a scrap-style message, 0x059, before 0x00a/0x00b. Oracle: cs/cs-003 and tk2.
 - Scrapping at your own planet sends two messages to the same player: one as fleet owner (0x059/0x05a/0x05c/0x05d) and one as planet owner (0x140–0x143 or 0x13c–0x13f). Oracle: tk2/tk111. At a foreign planet the planet owner gets the second message, the recycled resources and the tech roll.
@@ -415,7 +421,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x029 | A tracked fleet was lost from view at a planet; orders now go to that planet | As 0x028, when the followed fleet still exists but is out of sight and is at a planet | fleet owner | fleet, planet | fleet | P8a | BINARY-ONLY |
 | 0x02a | A tracked fleet moved out of scanner range; orders now go to its last known position | As 0x029, when the followed fleet is in deep space | fleet owner | fleet | fleet | P8a | BINARY-ONLY |
 | 0x050 | A research field reached a new level; research stays in the same field (or moves to the named field) | A field gains a level and the player does not have Generalized Research. One message per level, so a big surplus can give several. Fields at level 26 (or at level 10 for a player flagged for an invalid or duplicated registration) do not level, and research put into them is lost. The third slot is the field researched next: the chosen next field if the leveled field was the current one and the "next" setting is not "same field" ("lowest field" picks the lowest-level field, the first one on ties); otherwise the current field | field owner | count (new level), field, field | research | P4b (also after battles/invasions, P6) | CONFIRMED (cb5/cb041-sf-joat, ob/ob004, tk2, KX-003, KX-004) |
-| 0x05f | A level-up also made a new component available | After each level-up message: one per component the race may use whose requirement in the leveled field equals the new level. The other five field requirements are not checked here. Not used for hulls, planetary scanners or defenses | field owner | field, part (category, item) | part (inferred: component in tech browser) | P4b | CONFIRMED (cb5/cb041-sf-joat, ob/ob004, KX-003, KX-004) |
+| 0x05f | A level-up also made a new component available | After each level-up message: one per component the race may use whose requirement in the leveled field equals the new level and whose other five requirements the player already meets (all six are checked, KX-005). Not used for hulls, planetary scanners or defenses | field owner | field, part (category, item) | part (inferred: component in tech browser) | P4b | CONFIRMED (cb5/cb041-sf-joat, ob/ob004, KX-003, KX-004, KX-005) |
 | 0x078 | A level-up made a new ship hull available | As 0x05f, for ship hulls | field owner | field, part | special (inferred: ship design) | P4b | CONFIRMED (ob/ob004, KX-004) |
 | 0x0aa | Newly found planet is owned by another player | When the turn is opened: a newly seen planet that is owned by someone else | viewer | planet, player | planet | L | BINARY-ONLY (not stored) |
 | 0x0ab | Newly found planet is not habitable; colonists would die each year | Newly seen, unowned, details known, not habitable even with terraforming. Percent = negative planet value ×10 / 100 | viewer | percent, planet | planet | L | BINARY-ONLY (not stored) |
@@ -440,7 +446,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x152 | A starbase will finish its whole production queue this year | When the turn is opened (not in the tutorial): every queue item at a starbase planet of the viewer is due within a year, and at least one item due this year is not an automatic build item. Orbital forts are excluded (inferred) | viewer | planet | planet | L | BINARY-ONLY (not stored) |
 | 0x153 | There is one battle to view | When the turn is opened (not in the tutorial) and it has one battle. Placed first in the list | viewer | - | battle | L | BINARY-ONLY (not stored) |
 | 0x154 | Several battle recordings this year | As 0x153, with more than one battle | viewer | count | battle | L | BINARY-ONLY (not stored) |
-| 0x157 | A level-up gave a new planetary scanner, and existing scanners are upgraded | As 0x05f, for planetary scanners | field owner | field, part | part | P4b | BINARY-ONLY |
+| 0x157 | A level-up gave a new planetary scanner, and existing scanners are upgraded | As 0x05f, for planetary scanners | field owner | field, part | part | P4b | CONFIRMED (tk4/tk305: electronics 1 gained by scrapping gave the scanner for that level) |
 | 0x159 | Spying on other players added research to a field | Super Stealth players only, when at least 2 players are still alive. For each field: bonus = trunc(trunc(total research put into the field this turn by all players, the SS player included, / alive players) / 2). Sent when the bonus is above 1. Level-ups it causes follow afterwards | each Super Stealth player | field, count (resources) | research | P4b | CONFIRMED (tk2/tk113, KX-003) |
 | 0x15d | Newly found planet and the value it could reach | As 0x0ac/0x0ae/0x0ab, but for a Claim Adjuster player | viewer | planet, percent | planet | L | BINARY-ONLY (not stored) |
 
@@ -465,22 +471,22 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 |---|---|---|---|---|---|---|---|
 | 0x00e–0x022 | Older-style battle summaries (blood bath, one-sided wins, observed fights, mutual destruction) | Never: no battle or bombing step produces an id in this range; the battle step picks its summary from 0x07e, 0x08d–0x0a8 and 0x113–0x116 only | - | (as stored) | - | P6 | NEVER SENT |
 | 0x060 | Your fleet killed colonists by bombing | No installations destroyed, colonists killed, planet still populated; one attacking fleet; sent even when defenses stopped some bombs | attacker | fleet, planet, colonists | fleet | P6a | CONFIRMED (cs/cs-003) |
-| 0x061 | Your fleet destroyed one installation | 1 installation destroyed, no colonists killed, no bombs stopped; one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY |
-| 0x062 | Your fleet destroyed several installations | 2 or more installations destroyed, no colonists killed, no bombs stopped; one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY |
-| 0x063 | Your fleet killed colonists and destroyed one installation | 1 installation and some colonists, no bombs stopped; one fleet | attacker | fleet, planet, colonists, count | fleet | P6a | BINARY-ONLY |
+| 0x061 | Your fleet destroyed one installation | 1 installation destroyed, no colonists killed, no bombs stopped; one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x062 | Your fleet destroyed several installations | 2 or more installations destroyed, no colonists killed, no bombs stopped; one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x063 | Your fleet killed colonists and destroyed one installation | 1 installation and some colonists, no bombs stopped; one fleet | attacker | fleet, planet, colonists, count | fleet | P6a | CONFIRMED (tk6/tk601) |
 | 0x064 | Your fleet killed colonists and destroyed several installations | 2+ installations and some colonists, no bombs stopped; one fleet | attacker | fleet, planet, colonists, count | fleet | P6a | CONFIRMED (cs/cs-003) |
 | 0x065, 0x06f, 0x16b, 0x175 | Colonists killed by bombing, with the share of bombs stopped by defenses | Never: when bombing kills only colonists, the plain colonist-kill message (0x060/0x06a/0x166/0x170) is sent even if defenses stopped some bombs | - | fleet, planet, colonists, percent | - | P6a | NEVER SENT LEGACY BUG? |
-| 0x066 | Your fleet destroyed one installation; defenses stopped a share of bombs | As 0x061 but planetary defenses stopped some bombs | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY |
-| 0x067 | Your fleet destroyed several installations; defenses stopped a share | As 0x062 with some bombs stopped | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY |
+| 0x066 | Your fleet destroyed one installation; defenses stopped a share of bombs | As 0x061 but planetary defenses stopped some bombs | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x067 | Your fleet destroyed several installations; defenses stopped a share | As 0x062 with some bombs stopped | attacker | fleet, planet, count, percent | fleet | P6a | CONFIRMED (tk6/tk601) |
 | 0x068 | Your fleet killed colonists and one installation; defenses stopped a share | As 0x063 with some bombs stopped | attacker | fleet, planet, colonists, count, percent | fleet | P6a | CONFIRMED (tk3/tk202) |
 | 0x069 | Your fleet killed colonists and several installations; defenses stopped a share | As 0x064 with some bombs stopped | attacker | fleet, planet, colonists, count, percent | fleet | P6a | CONFIRMED (tk/tk005) |
 | 0x06a | A fleet bombed your planet, killing colonists | As 0x060 | planet owner | fleet, planet, colonists | planet | P6a | CONFIRMED (cs/cs-003) |
-| 0x06b | A fleet destroyed one of your installations | As 0x061 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY |
-| 0x06c | A fleet destroyed several of your installations | As 0x062 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY |
-| 0x06d | A fleet killed your colonists and destroyed one installation | As 0x063 | planet owner | fleet, planet, colonists, count | planet | P6a | BINARY-ONLY |
+| 0x06b | A fleet destroyed one of your installations | As 0x061 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x06c | A fleet destroyed several of your installations | As 0x062 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x06d | A fleet killed your colonists and destroyed one installation | As 0x063 | planet owner | fleet, planet, colonists, count | planet | P6a | CONFIRMED (tk6/tk601) |
 | 0x06e | A fleet killed your colonists and destroyed several installations | As 0x064 | planet owner | fleet, planet, colonists, count | planet | P6a | CONFIRMED (cs/cs-003) |
-| 0x070 | A fleet destroyed one of your installations; your defenses stopped a share | As 0x066 | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY |
-| 0x071 | A fleet destroyed several of your installations; defenses stopped a share | As 0x067 | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY |
+| 0x070 | A fleet destroyed one of your installations; your defenses stopped a share | As 0x066 | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x071 | A fleet destroyed several of your installations; defenses stopped a share | As 0x067 | planet owner | fleet, planet, count, percent | planet | P6a | CONFIRMED (tk6/tk601) |
 | 0x072 | A fleet killed your colonists and one installation; defenses stopped a share | As 0x068 | planet owner | fleet, planet, colonists, count, percent | planet | P6a | CONFIRMED (tk3/tk202) |
 | 0x073 | A fleet killed your colonists and several installations; defenses stopped a share | As 0x069 | planet owner | fleet, planet, colonists, count, percent | planet | P6a | CONFIRMED (tk/tk005) |
 | 0x07e | A battle happened here; open the recording | Battle with 3 or more races in which both your side and the enemy side lost some, but not all, of their forces | each participant | location | battle | P6 | CONFIRMED (cb6/cb042) |
@@ -524,25 +530,25 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x12e | A single fleet undid some of the planet's terraforming by retro-bombing | Retro bombs moved at least one hab click back toward the original; the attacker has one fleet at the planet | attacker and planet owner (same id) | fleet, planet, value (clicks) | fleet (attacker); planet (owner) | P6a | CONFIRMED (tk/tk001) |
 | 0x144 | A starbase you fought was destroyed and its colonists died | An Alternate Reality starbase is destroyed; sent to every other participant, whether or not it fired | every other participant | location, design, colonists | battle | P6 | CONFIRMED (cb5/cb041-sf) |
 | 0x166 | Your fleets killed colonists by bombing | As 0x060 with more than one attacking fleet | attacker | fleet, planet, colonists | fleet | P6a | CONFIRMED (tk/tk005) |
-| 0x167 | Your fleets destroyed one installation | As 0x061, more than one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY |
-| 0x168 | Your fleets destroyed several installations | As 0x062, more than one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY |
+| 0x167 | Your fleets destroyed one installation | As 0x061, more than one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x168 | Your fleets destroyed several installations | As 0x062, more than one fleet | attacker | fleet, planet, count | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
 | 0x169 | Your fleets killed colonists and destroyed one installation | As 0x063, more than one fleet | attacker | fleet, planet, colonists, count | fleet | P6a | CONFIRMED (tk3/tk202) |
 | 0x16a | Your fleets killed colonists and destroyed several installations | As 0x064, more than one fleet | attacker | fleet, planet, colonists, count | fleet | P6a | CONFIRMED (tk3/tk202) |
-| 0x16c | Your fleets destroyed one installation; defenses stopped a share | As 0x066, more than one fleet | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY |
-| 0x16d | Your fleets destroyed several installations; defenses stopped a share | As 0x067, more than one fleet | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY |
-| 0x16e | Your fleets killed colonists and one installation; defenses stopped a share | As 0x068, more than one fleet | attacker | fleet, planet, colonists, count, percent | fleet | P6a | BINARY-ONLY |
+| 0x16c | Your fleets destroyed one installation; defenses stopped a share | As 0x066, more than one fleet | attacker | fleet, planet, count, percent | fleet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x16d | Your fleets destroyed several installations; defenses stopped a share | As 0x067, more than one fleet | attacker | fleet, planet, count, percent | fleet | P6a | CONFIRMED (tk6/tk601) |
+| 0x16e | Your fleets killed colonists and one installation; defenses stopped a share | As 0x068, more than one fleet | attacker | fleet, planet, colonists, count, percent | fleet | P6a | CONFIRMED (tk6/tk601) |
 | 0x16f | Your fleets killed colonists and several installations; defenses stopped a share | As 0x069, more than one fleet | attacker | fleet, planet, colonists, count, percent | fleet | P6a | CONFIRMED (tk3/tk202) |
 | 0x170 | A player's fleets bombed your planet, killing colonists | As 0x166 | planet owner | fleet, planet, colonists | planet | P6a | CONFIRMED (tk/tk005) |
-| 0x171 | A player's fleets destroyed one of your installations | As 0x167 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY |
-| 0x172 | A player's fleets destroyed several of your installations | As 0x168 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY |
+| 0x171 | A player's fleets destroyed one of your installations | As 0x167 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x172 | A player's fleets destroyed several of your installations | As 0x168 | planet owner | fleet, planet, count | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
 | 0x173 | A player's fleets killed your colonists and destroyed one installation | As 0x169 | planet owner | fleet, planet, colonists, count | planet | P6a | CONFIRMED (tk3/tk202) |
 | 0x174 | A player's fleets killed your colonists and destroyed several installations | As 0x16a | planet owner | fleet, planet, colonists, count | planet | P6a | CONFIRMED (tk3/tk202) |
-| 0x176 | A player's fleets destroyed one of your installations; defenses stopped a share | As 0x16c | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY |
-| 0x177 | A player's fleets destroyed several of your installations; defenses stopped a share | As 0x16d | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY |
-| 0x178 | A player's fleets killed your colonists and one installation; defenses stopped a share | As 0x16e | planet owner | fleet, planet, colonists, count, percent | planet | P6a | BINARY-ONLY |
+| 0x176 | A player's fleets destroyed one of your installations; defenses stopped a share | As 0x16c | planet owner | fleet, planet, count, percent | planet | P6a | BINARY-ONLY; not reachable (LEGACY BUG summary) |
+| 0x177 | A player's fleets destroyed several of your installations; defenses stopped a share | As 0x16d | planet owner | fleet, planet, count, percent | planet | P6a | CONFIRMED (tk6/tk601) |
+| 0x178 | A player's fleets killed your colonists and one installation; defenses stopped a share | As 0x16e | planet owner | fleet, planet, colonists, count, percent | planet | P6a | CONFIRMED (tk6/tk601) |
 | 0x179 | A player's fleets killed your colonists and several installations; defenses stopped a share | As 0x16f | planet owner | fleet, planet, colonists, count, percent | planet | P6a | CONFIRMED (tk3/tk202) |
-| 0x17a | Your fleets undid some terraforming by retro-bombing | As 0x12e, the attacker has more than one fleet at the planet | attacker | fleet, planet, value (clicks) | fleet | P6a | BINARY-ONLY |
-| 0x17b | Another player's fleets undid some of your terraforming | As 0x17a | planet owner | fleet, planet, value (clicks) | planet | P6a | BINARY-ONLY |
+| 0x17a | Your fleets undid some terraforming by retro-bombing | As 0x12e, the attacker has more than one fleet at the planet | attacker | fleet, planet, value (clicks) | fleet | P6a | CONFIRMED (tk6/tk601) |
+| 0x17b | Another player's fleets undid some of your terraforming | As 0x17a | planet owner | fleet, planet, value (clicks) | planet | P6a | CONFIRMED (tk6/tk601) |
 | 0x17c | Your fleets killed all colonists by bombing | As 0x08f, more than one fleet | attacker | fleet, planet | fleet | P6a | CONFIRMED (tk2/tk121) |
 | 0x17d | A player's fleets bombed your planet and killed all colonists | As 0x17c | planet owner | fleet, planet | planet | P6a | CONFIRMED (tk2/tk121) |
 | 0x180 | Fleets left out of a crowded battle; their waypoint tasks are skipped this year | Your fleets were left out by the battle size cap; only for non-participants and multi-race participants, never in 2-player battles | owner of the left-out fleet | location | fleet (the highest-numbered left-out fleet, CB-042) | P6 | CONFIRMED (cb6/cb042: 3 races; cb5/cb039: none in 2 races); LEGACY BUG (never in 2-player battles) |
@@ -642,11 +648,12 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Evidence
 
-- 358 rows cover all 387 kinds (some rows cover a range). 195 rows are
-  confirmed by at least one oracle run. The rest are BINARY-ONLY.
+- 358 rows cover all 387 kinds (some rows cover a range). 211 rows are
+  confirmed by at least one oracle run. The rest are BINARY-ONLY or NEVER
+  SENT.
 - The oracle records come from every corpus in apparatus `evidence/`
-  (22,707 message records, including the MG batch (MG-001 to MG-006)
-  plus the TK round-3 batch). 189 distinct kinds appear in them, and every
+  (23,537 message records, including the MG batch (MG-001 to MG-006)
+  and TK rounds 3 to 7). 205 distinct kinds appear in them, and every
   one has a confirmed row. Each was checked against its row: slots in that
   order, sent to that player's file, and the trigger present in the run.
 - The minefield facts are CONFIRMED by MF-1..MF-13:
@@ -659,6 +666,38 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
   players, and 0x117 went to a race penalized for growth 0 during a game.
 - Run the decoder on any dump with `python3 tools/fleetlab/events.py
   DUMP...`.
+
+## Kinds not yet observed, and how to reach them
+
+Every kind has a row. The 147 rows without an oracle sighting fall into
+five groups by what it would take to see them.
+
+1. **Legal orders and a Combat Lab setup reach them.** The rest of the
+   BINARY-ONLY rows: failed gate jumps, waypoint-task refusals, production events
+   (scanners, starbases, packets, the fleet limit), remote terraforming,
+   breeding in transit, waypoint upkeep, victory, battle summaries and
+   Trader trades. This lane's next message batch takes them.
+2. **Manual cargo transfers to another player's fleet** (0x042–0x04d)
+   and to packets or salvage (0x0db, 0x0dc). Legal client orders that Combat Lab cannot write into a host
+   file; the client automation reaches only the orbited planet so far
+   (planet transfers: TK-501, TK-502). Fleet gifts ran (TK-406 to
+   TK-409) and sent none of 0x042–0x04d: the queue they belong to gets
+   nothing from manual orders. 0x0dd is now confirmed.
+3. **Shown only by the client** (0x0aa–0x0ae, 0x151–0x154, 0x15d). Made
+   when the turn is opened and never stored in a turn file, so the file
+   decoder cannot see them. Seeing them means reading the client's
+   message list after legal setups (a new planet in each category, a
+   packet the planet cannot catch, a starbase finishing its queue, one and
+   several battles). On `COVERAGE.md` as a targeted experiment.
+4. **Registration penalties** (0x100–0x107). Need a player flagged for an
+   invalid or shared serial. They wait on the serial decision. On
+   `COVERAGE.md`.
+5. **Never sent** (0x00e–0x022, 0x065/0x06f/0x16b/0x175, 0x0d1, 0x0d2,
+   0x124, 0x125, and the "no sender" table). No experiment can show them.
+   The check is negative: none appears in any corpus so far. Twelve
+   bombing texts are sent by the code but need conditions that cannot
+   occur together (0x061, 0x062, 0x066, 0x06b, 0x06c, 0x070, 0x167,
+   0x168, 0x16c, 0x171, 0x172, 0x176; LEGACY BUG summary).
 
 ## LEGACY BUG summary
 
@@ -688,6 +727,14 @@ row above says what happens.
 - **Never sent:**
   - 0x065, 0x06f, 0x16b and 0x175: bombing that kills only colonists has
     no "defenses stopped some bombs" variant.
+  - Not reachable: "installations destroyed, no colonists killed" without
+    defenses (0x061, 0x062, owner 0x06b, 0x06c, plural 0x167, 0x168,
+    0x171, 0x172) and "one installation, no colonists" with defenses
+    (0x066, 0x070, 0x16c, 0x176). Every bomb that destroys installations
+    also kills colonists, and a non-zero kill rate kills at least one.
+    Defenses can round the kill rate to zero, but then at least 2
+    installations die (CONFIRMED for 9 installations and no colonists:
+    TK-603, TK-604). Inferred from the bombing rules, not run.
 
 ## Open questions
 

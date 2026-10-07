@@ -52,8 +52,8 @@ This refines `KERNEL.md` "Turn order" steps 2 and 6.
 2. **Before movement**, for fleets already at their waypoint 0:
    unloads (including colonist drops on other players' planets), scrap,
    colonize; then all queued colonist drops are resolved (ground combat,
-   new colonies); then loads and merges; then cargo
-   gifted to other players moves.
+   new colonies); then loads and merges; then a queued-gift step that
+   manual gifts do not use (see Manual cargo transfers below).
 3. Movement; production and population growth.
 4. Battles, then **bombing** (after every battle at every location).
 5. **After movement**, for fleets at their new waypoint 0: unloads
@@ -78,7 +78,7 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
 - A starbase destroyed in this year's battle no longer protects the
   planet. Bombing (T-2) and arrival invasions go ahead the same year.
 
-### Order inside a phase (CONFIRMED, TK-114, TK-201; manual transfers BINARY-ONLY)
+### Order inside a phase (CONFIRMED, TK-114, TK-201; manual transfers MEASURED, TK-501)
 
 - **Fleet order.** Every per-fleet step (unloads, scrap, colonize, loads,
   merges, transfers, bombing triggers) walks fleets in **fleet order**: by
@@ -93,8 +93,11 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
   orders (step 1), then the drops made by fleets in fleet order.
   CONFIRMED (TK-201 A): fleets 0, 1 and 12 dropping on planets 14, 3 and 8
   were resolved 14, 3, 8 (capture messages in that order), not in planet
-  order. The manual-transfer part needs crafted orders and stays
-  BINARY-ONLY.
+  order. Manual drops (MEASURED in one run, TK-501): the client wrote
+  player 0's transfers as order records for fleets 7, 6, 5, 2 and 1
+  (planets 13, 14, 3, 21, 8), and fleet 4 had an unload task at planet 3.
+  The planets were resolved 13, 14, 3, 21, 8, the order of the records,
+  with fleet 4's drop joining fleet 5's at planet 3.
 - **"At the start of this phase".** Each of the two waypoint phases (step
   2, and steps 4–5 together) records, for every planet, whether it is
   owned, **before anything else in that phase**. For the after-movement
@@ -165,7 +168,7 @@ For one player's pass, sum over every bomb item:
 Normal kill rates add (10 Cherry = 25%, not `1 − 0.975¹⁰`), and smart kill
 rates multiply.
 
-### Planetary defenses against bombs (CONFIRMED, T-6..T-9)
+### Planetary defenses against bombs (CONFIRMED, T-6..T-9, TK-301, TK-302)
 
 Coverage uses the planet owner's **best** planetary defense at its
 **current** energy tech, not the one it built. Coverage per defense is
@@ -189,7 +192,9 @@ installation kills.
 Vectors (100 SDI, 20 Cherry; defender at 100% habitability):
 `P'` 1000 → 666 (40 counted); `P'` 100 → 42 (4 counted, the minimum
 decides); 20 Smart on 1000 → 812, defenses unchanged. With Missile
-Batteries the same cases give 777, 45 and 846.
+Batteries the same cases give 777, 45 and 846. On a 1000 planet with 100
+defenses (40 counted), 20 Cherry leave 811 with Laser Batteries and 852
+with Planetary Shields, and 20 Smart leave 858 and 874 (TK-301, TK-302).
 
 ### Applying the pass (CONFIRMED, T-10..T-16; random parts MEASURED)
 
@@ -290,7 +295,7 @@ got 0x02d for the ironium, then 0x165 and 0x04e; it kept the colonists, the
 ironium was gone, and no object appeared. Only scrapping a fleet in deep space leaves
 salvage (Other waypoint tasks).
 
-### Unload and load amounts (CONFIRMED, FO-01..05, TK-114; "load exactly" BINARY-ONLY)
+### Unload and load amounts (CONFIRMED, FO-01..05, TK-114, TK-301)
 
 A transport order sets, per cargo type (ironium, boranium, germanium,
 colonists, fuel), one action and an amount `v` (kT; colonists in units of
@@ -310,6 +315,11 @@ holds (planet surface minerals, or the planet's population for colonists):
 
 Unload actions run in the first unload phase that reaches them and are then
 cleared, so they happen once; load actions persist until satisfied.
+
+"Load exactly" vectors (TK-301, TK-302, before movement): 30 colonists
+from a 100 planet leave 70, which then grows; 40 ironium asked with 25 on
+the surface loads 25; 300 asked with 500 on the surface and a 210 kT hold
+loads 210 and leaves 290.
 
 **Load optimal** (fuel only; CONFIRMED in MG-003 and MG-006) acts only when
 waypoint 0 targets a fleet or deep space. Let *need* be the estimated fuel
@@ -366,7 +376,9 @@ All drops queued for one planet in one phase are resolved together.
 Vectors: 100 units (strength 110) against 100 → 9; against 110 → 1; 600
 against 500 with 20 SDI (strength 569) → 72; 300 against 200 with 10 SDI
 (strength 310) → 106. With 20 Missile Batteries, the 600 attackers had
-strength 495 < 500, and the defender kept 5.
+strength 495 < 500, and the defender kept 5. With 20 Laser Batteries the
+same drop has strength 469 and the defender keeps 31; with 20 Planetary
+Shields, strength 434 and 66 kept (TK-301, TK-302).
 
 ### Several players dropping at once (LEGACY BUG, CONFIRMED, T-32)
 
@@ -440,8 +452,9 @@ starvation, a packet or an AR starbase loss) is emptied:
   also a Claim Adjuster, its end-of-year automatic terraforming (`KERNEL.md`
   Turn order, step 7) runs later the same year and can move the environment
   straight back toward the new owner's ideal. In TK-108 a CA attacker's
-  capture ended the year at 50/50/50 (MEASURED in that one case; the CA
-  terraforming rule itself is not yet in `KERNEL.md`).
+  capture ended the year at 50/50/50 (MEASURED in that one case; the rule
+  and worked capture examples are in `KERNEL.md` "Terraforming", Claim
+  Adjuster).
 
 A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally:
@@ -458,12 +471,82 @@ A captured planet then belongs to the winning player as a new colony
   owned planet makes an attempt, not a colonization of an unowned one. On
   that planet the draws come after the ground combat (which draws nothing)
   and before the artifact draws below;
-- a planet with an ancient artifact gives the new owner research points in
-  a random field (`100 + rand(301)` points, scaled down below 1,000
-  colonists), when random events are on (BINARY-ONLY).
+- a planet with an ancient artifact gives research points (see Ancient
+  artifacts, below).
 
 The production queue and the leftover setting after a capture are the
 new owner's defaults, as for a colony (CONFIRMED, T-26).
+
+### Manual cargo transfers to other players (CONFIRMED, TK-501, TK-502)
+
+A player can move cargo by hand from a fleet to the planet it orbits, also
+when the planet belongs to another player or to nobody. The fleet loses the
+cargo when the orders are applied (step 1).
+
+- **Colonists** onto another player's planet are a drop. They join the
+  before-movement drop resolution with the unload tasks and fight as in
+  Ground combat: 30 against 100 left the defender 67 (77 after growth);
+  200 captured it with 109 (125 after growth); 200 by hand plus a 50-colonist
+  unload task at the same planet fought as one force of 250 and kept 159
+  (182). The messages are the unload ones (0x000/0x003, 0x00c/0x007). The
+  players' relations do not matter: the same 200 captured a friend's
+  planet (TK-502).
+- Colonists onto an **unowned** planet are lost and the planet stays
+  unowned; the giver gets 0x002 (colonists, planet). Onto a planet with a
+  **starbase** they are lost as well; the giver gets 0x058.
+- **Minerals** onto another player's planet join its surface at once (100
+  ironium, enemy and friend alike). **No message is sent** to either
+  player (MEASURED, TK-405 and TK-412; the prediction of 0x042/0x044 was
+  wrong).
+- **When a gift is credited.** A gift that is not a colonist drop is
+  credited when the orders are applied (step 1), in place, before any
+  waypoint task (MEASURED for planets: TK-405, TK-412). The binary reading
+  gives fleets the same path: debits are applied before credits, the
+  credit is in place whatever the owners or relation, and the queued-gift
+  step after the loads never receives anything in this build, so its
+  messages (0x042–0x04d) are not sent. A transfer whose source or
+  receiver no longer exists when the order is applied is skipped whole:
+  nothing is taken from the giver (binary reading).
+- **Gifts to another player's fleet** (MEASURED, TK-406, TK-407, TK-409).
+  Ironium and fuel arrive when the orders are applied, with no message.
+  The client does not see the receiver's free room, so it can order more
+  than fits: the receiver takes what fits, the giver loses the whole
+  amount, and the giver gets 0x0dd (shortfall, request). No message goes
+  to the receiver. The client gives no colonists to another player's
+  fleet, enemy or friend (TK-408, TK-414: no order written).
+
+### Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED)
+
+A planet may hold an ancient artifact (new games place them only with
+random events on, `UNIVERSE.md`). When random events are on, the artifact
+is found at the end of a drop resolution on that planet if the planet has
+an owner afterwards:
+
+- a colony on an unowned planet (TK-303 A2, A3);
+- a capture (TK-306 C1);
+- an invasion the defender beat off: the **defender** finds it (TK-306 C2).
+
+The finder gets `100 + rand(301)` research points in a random field
+`rand(6)` (any of the six, energy included), and the artifact is gone.
+When the planet's population after the landing is below 1,000 colonists,
+the points are scaled by `pop/1000` (TK-303 A3: a 500-colonist colony got
+53 to 196 in six streams, against 122 to 272 for a 2,500-colonist colony).
+The message is 0x05e (`MESSAGES.md`), after that planet's landing
+messages. The points join the field's research before this year's
+level-ups, so they can raise a level the same year (TK-306: player 1 went
+from construction 3 to 4 with 392 points).
+
+Draw order on that planet (BINARY-ONLY): the field, then the points,
+after any capture tech attempt.
+
+Slower tech does **not** halve the points: TK-304 (slower tech) gave the
+same field and points as TK-303 in all six streams (LEGACY BUG in the
+binary reading: the halving is computed after the points are added and is
+never used).
+
+No artifact is found by an owned planet with no landing (TK-306 C3), or by
+an unload onto one's own planet (TK-306 C4); both keep the artifact. With
+random events off nothing happens (BINARY-ONLY).
 
 ### The homeworld mark after capture (CONFIRMED in one run, T-41)
 
@@ -540,6 +623,21 @@ choice; parity is "keep and use".
   0.555), never more than one level and never another field; the gain
   replaced 0x141 by 0x13d naming propulsion. A planet without a starbase
   gave no attempt (0x140). The scrapping fleet's owner gains nothing.
+
+  Mystery Trader parts (MEASURED, TK-305, 12 cycle settings): a fleet of
+  12 bombers (12 designs, each with 2 Hush-a-Boom) scrapped at three
+  starbases of a player at tech 0. At the first starbase the player got
+  the Hush-a-Boom in 5 settings (0x13c), a level in 5 (electronics,
+  propulsion, construction, biotechnology twice; 0x13d) and nothing in 2;
+  the second and third starbases never gave anything (0x141), because a
+  gain blocks further attempts that year and, in the two settings without
+  a gain, the later attempts failed too. Energy never came up. The model
+  (`COMBAT.md`, Tech from battle, step 3: the part's chance is the
+  number seen, here 24%, on each of 13 `rand(13)` picks) predicts the part
+  in about 21% of passing attempts and an attempt passing half the time;
+  10 of 12 first attempts passed and 5 of 10 gains were the part. Both are
+  above the model (about 2% and 4% likely by chance); see Open
+  experiments.
 - **Remote mining** (T-35): after movement only, by a fleet that did not move
   this year, at an unowned planet; the order stays. An arriving miner
   therefore mines nothing the year it arrives.
@@ -585,27 +683,26 @@ resolutions after movement. Random-stream pinning for experiments:
 
 ## Open experiments
 
-Rounds 1–3 (TK-001..TK-203), the FO corpus and the MG runs measured every
+Rounds 1–7 (TK-001..TK-606), the FO corpus and the MG runs measured every
 other rule here. What is left:
 
-- Ancient artifacts (random events are off in the test games).
-- Colonists given to a foreign planet by a manual cargo transfer (needs
-  crafted order files) and where those drops sit in the queue.
+- Where a gift is credited relative to the receiver's own waypoint-0
+  tasks in the same year (TK-413 was void; the 0x0dd notices place the
+  credit in the order replay).
+- Why Mystery Trader parts came from scrapping more often than the model
+  predicts (TK-305). A larger sample, or replaying the random stream with
+  the known draw counts, would tell a wrong model from an unlucky one.
 - The draw order of a whole year (drops, battles, bombing, capture tech)
   as seen through the random stream; only the bombing part is measured.
-- Laser Battery and Planetary Shield against bombs and troops (SDI, Missile
-  Battery and Neutron Shield are measured).
-- The "load exactly" action, and Alternate Reality `k = 0` in a contested
-  drop (an AR invasion is refused before strength matters).
-- Scrapping Mystery Trader parts at a starbase (step 3 of the tech attempt
-  could then give the part).
+- Alternate Reality `k = 0` in a contested drop (an AR invasion is refused
+  before strength matters, so legal orders do not reach it).
 
 ## Sources
 
 - `PARITY.md` "Planet Takeover" and `experiments/tk/README.md`: TK-001 to
-  TK-203, every case and value; raw files in private
-  `stars-oracle-apparatus` `evidence/tk/`, `evidence/tk2/` and
-  `evidence/tk3/`.
+  TK-306, every case and value; raw files in private
+  `stars-oracle-apparatus` `evidence/tk/`, `evidence/tk2/`,
+  `evidence/tk3/` and `evidence/tk4/`.
 - White-box reading: private `stars-decomp` `docs/takeover.md` (§10 is
   the reconciliation with TK) and `docs/takeover-predictions.md`.
 - Related specs: `KERNEL.md` (turn order, growth, caps, research),

@@ -118,7 +118,8 @@ def build(ev, out):
         name = r.rid.lower().replace('-', '')
         dirs = sorted(d for d in os.listdir(root) if d.startswith(name + '-c'))
         st = B.state(B.dump(os.path.join(root, dirs[0], 'raw', 'before', 'CB.HST')),
-                     B.dump(os.path.join(root, dirs[0], 'raw', 'before', 'CB.XY')), 'CB')
+                     B.dump(os.path.join(root, dirs[0], 'raw', 'before', 'CB.XY')), 'CB',
+                     os.path.join(root, dirs[0], 'raw', 'before', 'CB.XY'))
         vec = {'schema': B.SCHEMA, 'id': r.rid, 'title': r.title,
                'source': {'experiment': 'experiments/wt', 'spec_rules': 'docs/OBJECTS.md', 'parity': PARITY,
                           'raw_evidence': 'stars-oracle-apparatus evidence/wt/batch/run/%s-c* (private)' % name},
