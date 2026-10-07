@@ -19,3 +19,9 @@ The client's Ship Transfer stopped the destination at 32766, and the host stored
 
 - 16000 + 16765 (32765): prediction **32765 kept**, fleet 1 gone.
 - 16000 + 16000 (32000): prediction **32000 kept**.
+
+## CO-07, CO-07b, CO-08: notes before the runs (predictions are Turn orders')
+
+Seen in the client before the runs (CO-07 base, 2026-10-07):
+- Edit Selected Design is **disabled** for the Freighter (4 ships use it) and for the starbase design in use at the homeworld. It is **enabled** for a design used only by a queue entry ("Queued", 0 of 0). So Turn orders' CO-08 prediction A holds for designs that ships or a starbase use. Prediction B (does the host overwrite or refuse?) is reachable only for a queued-only design, and CO-08 runs that.
+- A ship design can't be a starbase (starbases have their own designs), so CO-07's "starbase of design D" can't be built. CO-07b instead deletes the starbase design that the homeworld's starbase uses.
