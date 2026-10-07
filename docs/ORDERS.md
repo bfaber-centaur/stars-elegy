@@ -369,6 +369,20 @@ transfer is also resolved at step 1 (not deferred), under these rules:
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
+- **Endpoint gone by the credit pass (cross-owner, non-colonist).** A
+  cross-owner cargo gift to a foreign fleet or planet is **not** a single
+  in-place step: the giver is debited when the order is replayed, but the
+  matching credit is appended to a transfer queue and applied **after
+  movement**. If that destination is **gone by the credit pass** — merged,
+  scrapped or destroyed earlier the same turn — the queued credit is **skipped
+  and the already-debited cargo is lost**, *not* returned to the giver. So an
+  implementation that returns the cargo to the giver diverges here. BINARY-ONLY
+  (the post-movement credit routine looks the destination up and does nothing
+  when it is absent — there is no return-to-source path). This also means the
+  non-colonist cross-owner credit is **deferred post-movement**, in tension
+  with the "credited in place at step 1" wording above: the MEASURED gift cases
+  (TK-406/407/409) saw the credit land but, with a stationary endpoint, cannot
+  date it. Flagged for reconciliation with the Takeover lane.
 
 An independent implementation that adopts the "validate ownership on every
 order" chosen rule above still needs the legitimate cross-owner paths —
