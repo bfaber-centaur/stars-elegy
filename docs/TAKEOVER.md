@@ -52,15 +52,14 @@ This refines `KERNEL.md` "Turn order" steps 2 and 6.
 2. **Before movement**, for fleets already at their waypoint 0:
    unloads (including colonist drops on other players' planets), scrap,
    colonize; then all queued colonist drops are resolved (ground combat,
-   new colonies); then loads, merges and colonize retries; then cargo
+   new colonies); then loads and merges; then cargo
    gifted to other players moves.
 3. Movement; production and population growth.
 4. Battles, then **bombing** (after every battle at every location).
 5. **After movement**, for fleets at their new waypoint 0: unloads
    (including invasions by arriving transports), colonize, remote mining,
    mine laying; then queued drops are resolved; then the second research
-   level-up check (`KERNEL.md`); then loads, merges, colonize retries and
-   fleet transfers.
+   level-up check (`KERNEL.md`); then loads, merges and fleet transfers.
 
 Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
 
@@ -353,8 +352,10 @@ A colonize order succeeds when the fleet orbits a planet that is
 has a Colonization Module or an Orbital Construction Module. Otherwise it
 fails with a message, and the fleet is kept. There is **no habitability
 check**: a red planet was colonized and its population then declines per
-`KERNEL.md` (T-31). The order is checked in every waypoint phase, so a
-fleet that fails before movement can succeed after arriving.
+`KERNEL.md` (T-31). The order is tried **once**, in the first waypoint
+phase that reaches it: before movement for a fleet already in orbit, after
+movement for one that arrives. A failure ends the order (Colonize is tried
+once, below).
 
 On success:
 
@@ -387,7 +388,14 @@ starvation, a packet or an AR starbase loss) is emptied:
   production queue, starbase, mass-driver destination, and the
   "only leftover to research" setting.
 - A Claim Adjuster owner's planet returns its current environment to its
-  original values when emptied (BINARY-ONLY).
+  original values when emptied (CONFIRMED, TK-116: 50/50/50 back to
+  55/47/52 when a JOAT attacker captured it). The game then stores no
+  separate original values, because they are equal. If the new owner is
+  also a Claim Adjuster, its end-of-year automatic terraforming (`KERNEL.md`
+  Turn order, step 7) runs later the same year and can move the environment
+  straight back toward the new owner's ideal. In TK-108 a CA attacker's
+  capture ended the year at 50/50/50 (MEASURED in that one case; the CA
+  terraforming rule itself is not yet in `KERNEL.md`).
 
 A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally (BINARY-ONLY):
@@ -456,23 +464,22 @@ choice; parity is "keep and use".
 - **Cargo to another player's fleet**: nothing moves to an enemy;
   colonists are never given to another player's fleet.
 
-### Colonize retries (BINARY-ONLY; LEGACY BUG for the after-movement case)
+### Colonize is tried once (CONFIRMED, TK-113)
 
-Colonize is checked in all four waypoint passes. A fleet whose colonize
-failed in an unload phase because the planet was owned is retried in the
-next load phase, after that phase's drops are resolved. The retry succeeds
-only if the planet is unowned **now**. In practice that happens only when
-the drops in between emptied it with nobody landing, i.e. a tie (Several
-players dropping at once). A successful retry consumes the fleet and
-delivers the minerals at once, like any colonize, and queues the
-colonists:
+A failed colonize order is **not retried**. Whatever the reason (not
+orbiting a planet, planet owned, no colonists, no colony module), the fleet
+gets the failure message and then the "completed its assigned orders"
+message, and its waypoint task is cleared to none. The fleet stays in orbit
+with its cargo.
 
-- **Before movement**, the queued drop is not resolved until the
-  after-movement resolution. It is resolved then against the planet as it
-  is at that point, after movement, production and bombing.
-- **After movement**, nothing resolves it, and the queue is emptied at the
-  start of the next year: the colonists are lost and the planet stays
-  unowned (LEGACY BUG).
+So a planet emptied in the same phase does not help a colony ship whose
+order failed on it. In TK-113 players 0 and 2 dropped 150 each on a
+planet of 100: a tie, so the planet was emptied and nobody landed. Player
+0's colony ship at that planet had already failed with "planet owned". It
+kept its 25 colonists and its task was cleared, both when it was in orbit
+(before movement) and when it arrived (after movement). The planet stayed
+unowned with no minerals. stars-elegy #34 described a retry in the load
+phase. That reading was wrong.
 
 ## Randomness
 
@@ -499,18 +506,18 @@ resolutions after movement. Random-stream pinning for experiments:
 - Several players bombing one planet.
 - Production queue and "only leftover to research" after capture.
 - Tech learned on capture; ancient artifacts.
-- Colonize retries (below).
 - Fuel unloaded at a planet: is the fleet debited?
+- Colonize tried once, other failure reasons (round 3): a colony ship in
+  orbit with no colony module, or at a planet that is bombed empty later
+  that year, keeps its colonists and its cleared task after movement.
+- Claim Adjuster capturing a Claim Adjuster planet: the environment after
+  the year is the new owner's tech-limited target (`KERNEL.md` CA rule,
+  not yet published).
 - Minerals unloaded in deep space (destroyed, no salvage).
 - Minerals unloaded on another player's planet, and the bomb case where
   rounded factory and defense kills exceed `I`.
 - Loading every colonist from one's own planet: does the planet stay owned
   at 0 population?
-- Takeover round 2 can test, with pinned streams where random: bombing
-  order across planets and players; the phase-start ownership record
-  (colonize before movement, bomb empty, arriving freighter); the tech
-  attempt on capture; own-planet unloads before and after growth; both
-  colonize-retry cases.
 - Planetary defenses other than SDI and Missile Battery against bombs and
   troops.
 - Miniaturization at intermediate tech through colony minerals: the same
