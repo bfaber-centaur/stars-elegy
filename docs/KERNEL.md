@@ -49,9 +49,10 @@ One year, in order:
    load).
 3. Mineral packets, wormholes and other space objects move; then fleets
    move (see Movement).
-4. Production, per planet, in this order inside the phase: mining,
-   resources, research tax, production queue, then population growth for
-   every planet, then research level-ups, then random events.
+4. Production, in this order inside the phase: mining for every planet,
+   then per planet resources, research tax and production queue, then
+   population growth for every planet, then research level-ups, then
+   random events.
    CONFIRMED (PG-001..003, PQ-001): mining and resources use the population
    **before** this year's growth; installation caps for auto items use
    population **after** growth (see Production); research uses this year's
@@ -189,7 +190,9 @@ Vectors, BINARY-ONLY (start `(P, k)`, max, G, hab → result):
 `t = max(1, trunc(|hab|·P / 10))` hundredths of a unit die:
 `q = trunc(t/100)`, `r = t − 100q`; `k −= r`, and if `k < 0`, `k += 100`
 and `q += 1`; `P −= q`. (Matches the documented `|hab|/10` percent per
-year.) Vectors: `P 1000, k 0, hab −5` → `995, 0`;
+year.) Growth and deaths are computed only for owned planets with a
+non-zero population, so the `max(1, …)` never acts on an empty planet
+(BINARY-ONLY). Vectors: `P 1000, k 0, hab −5` → `995, 0`;
 `P 1234, k 10, hab −15` → `1215, 59`.
 
 ### Duplicate-serial penalty (BINARY-ONLY)
@@ -273,11 +276,16 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    `(amt mod 100)/100` (one `rand(100) < amt mod 100` draw per mineral with a
    non-zero remainder). The `+1` mechanism is BINARY-ONLY; the oracle's +0/+1
    pattern is consistent with it but its draws are correlated (see
-   Conventions).
+   Conventions). Draw order (BINARY-ONLY): every planet is mined before any
+   planet's production, planets in id order, and within a planet ironium,
+   boranium, germanium.
 4. Depletion uses `p = trunc(prod/100)` (before `eff` and before the random
    +1) and the stored `conc` clamped for this purpose to
    `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
    repeat while `p > 0` and stored `conc > 1`:
+   - `cc` from the current stored `conc` (re-evaluated on every repetition,
+     so it changes when `conc` drops below 25 or 5 within the year;
+     BINARY-ONLY);
    - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
    - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
    - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
@@ -347,7 +355,11 @@ settings and slower tech: BINARY-ONLY.
 - When a level is gained in the current field and the "next field" choice
   is not "same field", the leftover moves to the new field and the current
   field's accumulation becomes 0; "lowest field" picks the lowest level,
-  first in field order on ties (BINARY-ONLY).
+  first in field order on ties (BINARY-ONLY). The new field is checked for
+  level-ups the same year with that leftover. An explicit next-field
+  choice is used once and then resets to "same field"; "lowest field"
+  stays set. Only a level-up in the current field switches fields, also
+  with Generalized Research (BINARY-ONLY).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (BINARY-ONLY).
@@ -388,7 +400,9 @@ research. Its predictions table doubles as the test vectors.
 Additional rules, BINARY-ONLY:
 
 - A planet with a production queue of zero items contributes nothing to
-  research that year.
+  research that year, not even the research tax. (A queue emptied during
+  the year is removed, so the next year takes the no-queue path and sends
+  everything to research.)
 - Resources from ships scrapped at a planet this year with Ultimate
   Recycling (`x`) raise that planet's production resources `r` to
   `r + trunc(x·r/(x + r))`.
@@ -451,7 +465,8 @@ For a move of `L` light-years at warp `w`:
    `f(w)`.
 2. Assign the fleet's cargo (minerals and colonists in kT; fuel has no
    mass) to designs in order of increasing `f(w)`, each up to `n ×` its cargo
-   capacity.
+   capacity. Designs with equal `f(w)` keep the fleet's own design order
+   (BINARY-ONLY).
 3. Cost in tenths of a mg per design: `trunc(f(w)·L·(n·m + cargo assigned)
    / 2000)`; designs with `f(w) = 0` cost nothing.
 4. Fleet cost in mg: `trunc((Σ tenths + 9) / 10)` (rounded up once per
@@ -602,17 +617,24 @@ warp 3 gains 50 (raw 90, capped).
    and rounding rules above with `A = min(trunc(D + 0.9999), step)`.
 3. A chaser that arrives on its target has finished. If that target is
    itself a chaser that has not finished, the target stops for the year
-   (its waypoint is then settled by rule 7 below).
+   (its waypoint is then settled by rule 8 below).
 4. Otherwise `moved += step`, `rem −= step`, and it stays deferred while
    `rem > 0`.
 5. Fuel is charged on the year's total distance (`moved + step`), refunding
    the previous round's charge, so rounds add no extra rounding.
+6. BINARY-ONLY (FM-001..003 chasers all had full tanks): each round applies
+   the ordinary fuel rules to the step, with `R` reduced by `moved` and
+   "the whole leg" meaning the distance to the target's current position.
+   A chaser limited by `R` moves only that far and ends with 0; a chaser
+   that runs dry has its warp lowered as above and stops for the year; a
+   chaser that could afford the whole leg is topped up after each round;
+   ram-scoop fuel is gained per round on that round's step.
 
 After every fleet has moved, waypoints are settled (CONFIRMED, FM-001..003):
 
-6. Every waypoint whose destination is a fleet takes that fleet's position
+7. Every waypoint whose destination is a fleet takes that fleet's position
    at the end of movement.
-7. Every fleet whose position equals its next waypoint exactly completes
+8. Every fleet whose position equals its next waypoint exactly completes
    that waypoint ("completed orders" when it was the last one). This
    applies to a fleet that has used its movement or never moved.
 
@@ -668,6 +690,26 @@ is one at a planet without a starbase.
   each per year, capped at the tank.
 - Refuelling at a friend's starbase, and at a starbase without a dock.
 - Fuel unloaded onto a planet is lost.
+
+## Open experiments
+
+Questions the binary reading does not settle; each needs an oracle case.
+
+- **Auto Alchemy before a multi-count item.** PQ C06/C07 cover an Auto
+  Alchemy prefix before a ×1 item. Unknown for a ×n item: whether alchemy
+  buys the shortfall for one unit or for the whole remaining count, and
+  in which order the item's partial and the alchemy are taken when
+  resources run short. Case: Auto Alchemy, Factory ×5 with germanium for
+  fewer than 5, resources above and below the full shortfall.
+- **Zero maximum population** (Alternate Reality planet without a
+  starbase). The crowding rule divides by the maximum population, which
+  is 0 there. Case: an AR race with population on a planet whose
+  starbase is removed.
+- **Cost modifiers.** PQ-001 measured item costs for one race only. The
+  binary reads Mineral Alchemy as 100 resources per kT, 25 with the
+  Mineral Alchemy LRT; neither that rate nor race options that change
+  installation costs has an oracle case. Case: the same queue for races
+  with each modifier.
 
 ## Sources
 
