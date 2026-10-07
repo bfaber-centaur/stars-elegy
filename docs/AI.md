@@ -78,8 +78,11 @@ In a tutorial game there is no shuffle.
 A definition-file line `# TYPE LEVEL` makes a computer player: TYPE 1–6
 as in the table above, LEVEL 1–4 = easy, standard, harder, expert; 0 for
 either means random (`UNIVERSE.md` "Computer players"). Each type × level
-has a fixed race. Matched field by field against every computer player in
-the UG corpus (73 players, 23 of the 24 combinations).
+has a fixed race. Each row's status covers all of its values: CONFIRMED
+rows were matched field by field against computer players in oracle game
+files (UG corpus, 73 players, plus AIX and AI01, 12 players: 85 players,
+23 of the 24 combinations, no mismatch); the Turindrone harder row was
+never drawn and is read from the original program only.
 
 Columns: lesser racial traits; growth rate; habitability ranges
 (gravity / temperature / radiation in the race wizard's 0–100 click
@@ -91,32 +94,32 @@ construction, electronics, biotech: c cheap, n normal, x expensive);
 "factories cost 1 less germanium"; "expensive fields start at tech 3".
 Built-in names are not listed (`UNIVERSE.md`: 24 built-in names).
 
-| Type | Level | PRT | LRT | Growth | Hab | Col/res | Factories | Mines | Research | Fact. Ge −1 | Exp. start 3 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| HE | easy | HE | IFE MA CE OBRM BET | 5% | imm / imm / imm | 1000 | 12/10/16 | 10/5/10 | n n c n n x | no | no |
-| HE | standard | HE | IFE MA CE OBRM | 6% | imm / imm / imm | 900 | 13/9/16 | 10/4/11 | n n c n n x | no | no |
-| HE | harder | HE | IFE UR MA OBRM | 6% | imm / imm / imm | 800 | 13/9/18 | 10/4/12 | n c c c n x | yes | no |
-| HE | expert | HE | IFE UR MA OBRM | 7% | imm / imm / imm | 800 | 13/9/16 | 10/4/8 | n c n c n x | yes | no |
-| SS | easy | SS | IFE ARM MA RS | 14% | 27-89 / 7-63 / 35-95 | 1000 | 9/10/9 | 9/5/8 | n x n n n x | no | no |
-| SS | standard | SS | IFE ARM MA RS | 14% | 32-92 / 6-60 / 26-96 | 1000 | 10/10/10 | 10/5/9 | n n n n n n | yes | no |
-| SS | harder | SS | IFE ARM MA RS | 14% | 31-95 / 4-52 / 30-94 | 900 | 11/10/10 | 10/5/9 | x n x n n n | yes | no |
-| SS | expert | SS | IFE ARM MA RS | 15% | 31-93 / 5-53 / imm | 800 | 15/10/25 | 10/5/9 | x x x x x x | yes | yes |
-| IS | easy | IS | GR CE OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 900 | 11/10/14 | 11/6/14 | x x x x x x | no | yes |
-| IS | standard | IS | GR CE OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 800 | 13/9/14 | 10/6/14 | x x x x x x | yes | yes |
-| IS | harder | IS | GR OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 800 | 14/9/15 | 14/5/15 | x x x x x x | yes | yes |
-| IS | expert | IS | GR OBRM NAS LSP | 16% | 7-63 / imm / 0-100 | 800 | 14/9/14 | 14/5/14 | x x x x x x | yes | yes |
-| CA | easy | CA | TT CE OBRM NAS LSP BET | 15% | 32-68 / 31-69 / 31-69 | 1000 | 10/10/10 | 10/5/10 | x x x x x c | no | yes |
-| CA | standard | CA | TT OBRM NAS LSP BET | 15% | 32-68 / 31-69 / 31-69 | 800 | 12/10/12 | 14/5/12 | x x x x x c | no | yes |
-| CA | harder | CA | TT OBRM NAS LSP BET | 15% | 23-77 / 24-76 / 25-75 | 800 | 12/10/12 | 14/5/12 | x x x x x c | no | yes |
-| CA | expert | CA | TT OBRM NAS LSP BET | 15% | imm / 24-76 / 25-75 | 800 | 15/10/15 | 15/5/15 | x x x x x c | no | yes |
-| PP | easy | PP | IFE TT OBRM LSP | 12% | 22-78 / 22-78 / 22-78 | 1000 | 9/18/9 | 9/10/8 | n x x n x x | no | yes |
-| PP | standard | PP | IFE TT OBRM NAS LSP | 17% | 19-81 / 19-81 / 19-81 | 1000 | 10/13/19 | 10/10/7 | n x x n n n | no | yes |
-| PP | harder | PP | IFE TT MA OBRM NAS LSP | 17% | 18-82 / 18-82 / 18-82 | 1000 | 14/10/20 | 10/10/6 | n n x n n c | yes | yes |
-| PP | expert | PP | IFE TT MA OBRM NAS LSP | 19% | 17-83 / 17-83 / 17-83 | 1000 | 15/9/25 | 10/10/5 | c c x c n n | yes | yes |
-| AR | easy | AR | IFE TT ISB GR CE | 10% | 20-80 / 20-80 / 20-80 | 1600 | 10/10/10 | 10/5/10 | n n n n x n | no | no |
-| AR | standard | AR | IFE TT ISB GR | 14% | 15-85 / 15-85 / 15-85 | 1200 | 10/10/10 | 10/5/10 | c n n n x n | no | no |
-| AR | harder | AR | IFE TT ARM ISB GR UR MA | 17% | 15-85 / 15-85 / 15-85 | 1000 | 10/10/10 | 10/5/10 | c n n n n n | no | no |
-| AR | expert | AR | IFE TT ARM ISB GR UR MA | 20% | 15-85 / 15-85 / 15-85 | 1000 | 10/10/10 | 10/5/10 | c n n c n n | no | no |
+| Type | Level | PRT | LRT | Growth | Hab | Col/res | Factories | Mines | Research | Fact. Ge −1 | Exp. start 3 | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| HE | easy | HE | IFE MA CE OBRM BET | 5% | imm / imm / imm | 1000 | 12/10/16 | 10/5/10 | n n c n n x | no | no | CONFIRMED |
+| HE | standard | HE | IFE MA CE OBRM | 6% | imm / imm / imm | 900 | 13/9/16 | 10/4/11 | n n c n n x | no | no | CONFIRMED |
+| HE | harder | HE | IFE UR MA OBRM | 6% | imm / imm / imm | 800 | 13/9/18 | 10/4/12 | n c c c n x | yes | no | CONFIRMED |
+| HE | expert | HE | IFE UR MA OBRM | 7% | imm / imm / imm | 800 | 13/9/16 | 10/4/8 | n c n c n x | yes | no | CONFIRMED |
+| SS | easy | SS | IFE ARM MA RS | 14% | 27-89 / 7-63 / 35-95 | 1000 | 9/10/9 | 9/5/8 | n x n n n x | no | no | CONFIRMED |
+| SS | standard | SS | IFE ARM MA RS | 14% | 32-92 / 6-60 / 26-96 | 1000 | 10/10/10 | 10/5/9 | n n n n n n | yes | no | CONFIRMED |
+| SS | harder | SS | IFE ARM MA RS | 14% | 31-95 / 4-52 / 30-94 | 900 | 11/10/10 | 10/5/9 | x n x n n n | yes | no | BINARY-ONLY |
+| SS | expert | SS | IFE ARM MA RS | 15% | 31-93 / 5-53 / imm | 800 | 15/10/25 | 10/5/9 | x x x x x x | yes | yes | CONFIRMED |
+| IS | easy | IS | GR CE OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 900 | 11/10/14 | 11/6/14 | x x x x x x | no | yes | CONFIRMED |
+| IS | standard | IS | GR CE OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 800 | 13/9/14 | 10/6/14 | x x x x x x | yes | yes | CONFIRMED |
+| IS | harder | IS | GR OBRM NAS LSP | 15% | 7-63 / 26-94 / 5-71 | 800 | 14/9/15 | 14/5/15 | x x x x x x | yes | yes | CONFIRMED |
+| IS | expert | IS | GR OBRM NAS LSP | 16% | 7-63 / imm / 0-100 | 800 | 14/9/14 | 14/5/14 | x x x x x x | yes | yes | CONFIRMED |
+| CA | easy | CA | TT CE OBRM NAS LSP BET | 15% | 32-68 / 31-69 / 31-69 | 1000 | 10/10/10 | 10/5/10 | x x x x x c | no | yes | CONFIRMED |
+| CA | standard | CA | TT OBRM NAS LSP BET | 15% | 32-68 / 31-69 / 31-69 | 800 | 12/10/12 | 14/5/12 | x x x x x c | no | yes | CONFIRMED |
+| CA | harder | CA | TT OBRM NAS LSP BET | 15% | 23-77 / 24-76 / 25-75 | 800 | 12/10/12 | 14/5/12 | x x x x x c | no | yes | CONFIRMED |
+| CA | expert | CA | TT OBRM NAS LSP BET | 15% | imm / 24-76 / 25-75 | 800 | 15/10/15 | 15/5/15 | x x x x x c | no | yes | CONFIRMED |
+| PP | easy | PP | IFE TT OBRM LSP | 12% | 22-78 / 22-78 / 22-78 | 1000 | 9/18/9 | 9/10/8 | n x x n x x | no | yes | CONFIRMED |
+| PP | standard | PP | IFE TT OBRM NAS LSP | 17% | 19-81 / 19-81 / 19-81 | 1000 | 10/13/19 | 10/10/7 | n x x n n n | no | yes | CONFIRMED |
+| PP | harder | PP | IFE TT MA OBRM NAS LSP | 17% | 18-82 / 18-82 / 18-82 | 1000 | 14/10/20 | 10/10/6 | n n x n n c | yes | yes | CONFIRMED |
+| PP | expert | PP | IFE TT MA OBRM NAS LSP | 19% | 17-83 / 17-83 / 17-83 | 1000 | 15/9/25 | 10/10/5 | c c x c n n | yes | yes | CONFIRMED |
+| AR | easy | AR | IFE TT ISB GR CE | 10% | 20-80 / 20-80 / 20-80 | 1600 | 10/10/10 | 10/5/10 | n n n n x n | no | no | CONFIRMED |
+| AR | standard | AR | IFE TT ISB GR | 14% | 15-85 / 15-85 / 15-85 | 1200 | 10/10/10 | 10/5/10 | c n n n x n | no | no | CONFIRMED |
+| AR | harder | AR | IFE TT ARM ISB GR UR MA | 17% | 15-85 / 15-85 / 15-85 | 1000 | 10/10/10 | 10/5/10 | c n n n n n | no | no | CONFIRMED |
+| AR | expert | AR | IFE TT ARM ISB GR UR MA | 20% | 15-85 / 15-85 / 15-85 | 1000 | 10/10/10 | 10/5/10 | c n n c n n | no | no | CONFIRMED |
 
 ## 4. Research choice (CONFIRMED, AI-1)
 
