@@ -665,7 +665,7 @@ reset by the warp rule at the end of the turn.
 **Fleet classes.** Hull roles: freighters (Small to Super Freighter),
 privateers (Privateer, Rogue, Galleon), warships (Destroyer to
 Dreadnought), Frigate, Nubian, Meta Morph. A design's *power* is the
-same per-design power the score uses (`KERNEL.md` "Scores", the Ships
+same per-design power the score uses (`KERNEL.md` "Scores and victory conditions", the Ships
 row: beams, torpedoes and bombs, with capacitors and battle speed). The
 computer player computes it at the start of its turn for every design in
 its own view, including other players' designs it knows (BINARY-ONLY that
