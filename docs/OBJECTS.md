@@ -814,8 +814,12 @@ Only Harder and Expert computer players take part, and only a planet with
 a starbase, within 100 ly of the Trader, whose owner this Trader has not
 served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
 (3,500 for Harder). (TP measured Expert Turindrone and Automitron
-homeworlds within 100 ly; the Harder threshold, the 100 ly edge and the
-other levels are BINARY-ONLY.)
+homeworlds within 100 ly. O-53 CONFIRMED the Harder rule: a Harder
+planet with 3,600 kT traded and paid 3,500 kT. A Standard planet and an
+Expert planet with 3,600 kT did not trade, which fits but does not
+separate "Standard never trades" from "Standard needs 5,000 kT"; the
+exclusion of Standard and Easy players is BINARY-ONLY. The exact edge at
+3,500 kT is NOT RUN, and the 100 ly edge is BINARY-ONLY.)
 
 - **Part item.** If the owner lacks the part, it gains it. If it owns it,
   a random part it lacks is drawn, with up to 50 redraws; bit 12 counts as
@@ -826,7 +830,8 @@ other levels are BINARY-ONLY.)
   150 or more, nothing happens and the Trader stays available to it
   (CONFIRMED, TP-002-B). Otherwise the lowest field gains a level, six
   times, at no research cost (CONFIRMED, TP-001-B: 10,10,10,13,10,10 →
-  12,11,11,13,11,11). The price is 5,000 kT (3,500 for Harder).
+  12,11,11,13,11,11). The price is 5,000 kT (3,500 for Harder; CONFIRMED,
+  O-53).
 - The price is taken from germanium first, then boranium, then ironium
   (CONFIRMED, TP-001-B). The owner is marked served. No message is sent.
 
@@ -849,8 +854,9 @@ and nowhere beyond it).
 2. Wormhole jump odds as a measured rate (one stream so far).
 3. Mystery Trader: leaving with 1/2 at an edge (0 of 4 lone arrivals
    left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
-   the part reroll and late-year conversion at appearance; Harder computer
-   players' planets (3,500 kT) and the 100 ly edge.
+   the part reroll and late-year conversion at appearance; the trade's
+   exact 3,500 kT edge for Harder players, its 100 ly edge, and whether
+   Standard and Easy players' planets never trade.
 4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the
    4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
