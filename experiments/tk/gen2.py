@@ -482,6 +482,29 @@ def runs():
     r.case('T', '#34 tech', 'player 0 ends at weapons 3 or 4 (one gain at most per year), other fields 3')
     r.expect('tech', (0,), 'weapons 3 or 4; others 3')
     out.append(r)
+    # Follow-up batch, written after TK-101..115 (predictions committed before running these)
+    # TK-116: the CA revert without a CA new owner (TK-108 A was masked by player 0's own
+    # end-of-year CA terraforming)
+    r = cb_run('tk116', 'T-26 Claim Adjuster defender captured by a JOAT attacker', prt1=3, lrt1=NEG)
+    r.case('A', 'T-26', 'JOAT 100 arriving vs CA P=87, env 50/50/50 orig 55/47/52: env back to 55/47/52')
+    r.target(0, 87, orig='55,47,52'); r.arrive(0, f'{D_FREIGHTER}:1', cargo=(0, 0, 0, 100), task='unload')
+    r.expect('planet', (0,), dict(owner=0, pop=9, env=(55, 47, 52), orig=(55, 47, 52)))
+    r.case('B', 'control', 'CA P=87, env 50/50/50 orig 55/47/52, nothing arrives')
+    r.target(5, 87, orig='55,47,52'); r.expect('planet', (5,), dict(owner=1, pop=100, env=(50, 50, 50)))
+    out.append(r)
+    # TK-117: AR colonists lost in moving fleets (seen in TK-107: 100 -> 97, 25 -> 24)
+    r = cb_run('tk117', 'Alternate Reality colonists in moving and stationary freighters', prt0=8, lrt0=NEG)
+    for cid, col, x in (('A', 10, 1150), ('B', 11, 1180), ('C', 40, 1210), ('D', 200, 1240)):
+        r.case(cid, 'AR loss', f'AR freighter with {col} moving through deep space: loses trunc((C + 11)·3/100) if C > 10')
+        i = r._fleet(0)
+        r.lines.append(f'fleet 0 {i} at {x} 1230 ships {D_FREIGHTER}:1 plan 0 fuel 200 cargo 0 0 0 {col} '
+                       f'to {x} 1240 warp 4')
+        r.expect('fleet', (0, i), dict(col=col - ((col + 11) * 3 // 100 if col > 10 else 0)))
+    r.case('E', 'AR loss', 'AR freighter with 200 stationary in deep space: no loss')
+    i = r.space(1240, 1215, f'{D_FREIGHTER}:1')
+    r.lines[-1] = r.lines[-1] + ' cargo 0 0 0 200'
+    r.expect('fleet', (0, i), dict(col=200))
+    out.append(r)
     return out
 
 

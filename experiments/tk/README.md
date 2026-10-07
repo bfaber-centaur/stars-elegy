@@ -403,3 +403,34 @@ Game CB, 1 year(s). Cycles 20000, 12000, 15000, 25000, 30000, 40000, 50000, 1700
 | B | #34 tech | 100 arriving vs P=87 (100) on planet 5: captured with 9 | planet 5: owner 0, pop 9 |
 | T | #34 tech | player 0 ends at weapons 3 or 4 (one gain at most per year), other fields 3 | tech (0,) weapons 3 or 4; others 3 |
 
+
+## Round 2 follow-up predictions (written after TK-101..TK-115 ran, before these runs)
+
+TK-108 A kept 50/50/50 because player 0 is also Claim Adjuster and its
+end-of-year terraforming would undo a revert, which the prediction forgot;
+TK-116 repeats the capture with a JOAT attacker. TK-107 lost AR colonists in
+flight (100 → 97, 25 → 24); TK-117 tests the loss rule
+`trunc((C + 11)·3/100)` for C > 10, in moving fleets only (stars-decomp
+fleet-movement reading).
+
+### TK-116: T-26 Claim Adjuster defender captured by a JOAT attacker
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-26 | JOAT 100 arriving vs CA P=87, env 50/50/50 orig 55/47/52: env back to 55/47/52 | planet 0: owner 0, pop 9, env 55/47/52, orig 55/47/52 |
+| B | control | CA P=87, env 50/50/50 orig 55/47/52, nothing arrives | planet 5: owner 1, pop 100, env 50/50/50 |
+
+### TK-117: Alternate Reality colonists in moving and stationary freighters
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | AR loss | AR freighter with 10 moving through deep space: loses trunc((C + 11)·3/100) if C > 10 | fleet 0/0: col 10 |
+| B | AR loss | AR freighter with 11 moving through deep space: loses trunc((C + 11)·3/100) if C > 10 | fleet 0/1: col 11 |
+| C | AR loss | AR freighter with 40 moving through deep space: loses trunc((C + 11)·3/100) if C > 10 | fleet 0/2: col 39 |
+| D | AR loss | AR freighter with 200 moving through deep space: loses trunc((C + 11)·3/100) if C > 10 | fleet 0/3: col 194 |
+| E | AR loss | AR freighter with 200 stationary in deep space: no loss | fleet 0/4: col 200 |
+
