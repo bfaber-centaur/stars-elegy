@@ -136,6 +136,7 @@ public class CombatLab {
     static void dump(String f) throws Exception {
         List<Block> blocks = new Decryptor().readFile(f);
         boolean host = f.toUpperCase().endsWith(".HST");
+        boolean orders = f.toUpperCase().matches(".*\\.X\\d+$");
         List<PlayerBlock> players = new ArrayList<>();
         int shipSeen = 0, sbSeen = 0, filePlayer = -1, lastPlanet = -1;
         StringBuilder battle = null;
@@ -245,6 +246,54 @@ public class CombatLab {
                 for (int i = 8; i + 1 < w.size; i += 2) ex.append(i == 8 ? " orders=" : ",").append(String.format("%04x", u16(d, i)));
                 System.out.printf("%s   wp x=%d y=%d obj=%d type=%02x warp=%d task=%d%s%n", f,
                     u16(d, 0), u16(d, 2), u16(d, 4), d[7] & 0xff, (d[6] & 0xff) >> 4, d[6] & 15, ex);
+            } else if (orders && (b.typeId == 1 || b.typeId == 2 || b.typeId == 25)) {
+                // order file: manual cargo transfer. fleet word, other-side object word,
+                // kind byte, item mask (1 ir, 2 bo, 4 ge, 8 col, 16 fuel), then one signed
+                // amount per set bit (1, 2 or 4 bytes); negative = from the fleet
+                byte[] d = b.getDecryptedData();
+                int w = b.typeId == 1 ? 1 : b.typeId == 2 ? 2 : 4, mask = d[5] & 0xff, o = 6;
+                StringBuilder sb = new StringBuilder();
+                String[] it = {"ir", "bo", "ge", "col", "fuel"};
+                for (int i = 0; i < 5; i++) {
+                    if ((mask >> i & 1) == 0) continue;
+                    long v = w == 1 ? d[o] : w == 2 ? (short) u16(d, o) : (int) Util.read32(d, o);
+                    sb.append(' ').append(it[i]).append('=').append(v);
+                    o += w;
+                }
+                System.out.printf("%s order cargo fleet=%d other=%d kind=%02x%s raw=%s%n", f, u16(d, 0) & 0x1ff, u16(d, 2),
+                    d[4] & 0xff, sb, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 29) {
+                // order file: a planet's whole new production queue (planet word, then
+                // items as in the host file's queue block)
+                byte[] d = b.getDecryptedData();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 2; i + 4 <= b.size; i += 4) {
+                    int w0 = u16(d, i), w1 = u16(d, i + 2);
+                    sb.append(i == 2 ? " items=" : ",").append(String.format("%d:%d:%d:%d",
+                        (w0 >> 10) | ((w1 & 1) << 6), w0 & 0x3ff, (w1 >> 4) & 0x7f, (w1 >> 1) & 7));
+                }
+                System.out.printf("%s order queue planet=%d n=%d%s raw=%s%n", f, u16(d, 0) & 0x7ff, (b.size - 2) / 4, sb,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 34) {
+                // order file: research budget percent, then field (low nibble) and next
+                // field (high nibble: 0-5 a field, 7 lowest; seen 2026-10-07)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order research pct=%d field=%d next=%d raw=%s%n", f, d[0] & 0xff, d[1] & 15,
+                    (d[1] & 0xff) >> 4, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId != 8 && b.typeId != 9 && b.typeId != 36 && b.typeId != 0
+                    && !(b instanceof BattlePlanBlock) && b.typeId != 42) {
+                // other order records, raw (never the serial block 9 or the password block 36)
+                System.out.printf("%s order type=%d raw=%s%n", f, b.typeId, Util.bytesToString(b.getDecryptedData(), 0, b.size));
+            } else if (b instanceof BattlePlanBlock && b.size == 2) {
+                // order file: battle plan delete (byte 1 bit 6); plan = high nibble, player = low
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order plan-delete owner=%d k=%d raw=%s%n", f, d[0] & 15, (d[0] & 0xff) >> 4,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (b.typeId == 42) {
+                // order file: set a fleet's battle plan (fleet id word, plan byte)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order fleet-plan fleet=%d plan=%d raw=%s%n", f, u16(d, 0) & 0x1ff, d[2] & 0xff,
+                    Util.bytesToString(d, 0, b.size));
             } else if (b instanceof BattlePlanBlock) {
                 BattlePlanBlock p = (BattlePlanBlock) b;
                 p.decode();
@@ -756,6 +805,15 @@ public class CombatLab {
                 for (int i = 0x4f; i < 0x68; i++) p.fullDataBytes[i] = 0;
                 p.fullDataBytes[0x4f] = (byte) q.size();
                 for (int i = 0; i < q.size(); i++) Util.write16(p.fullDataBytes, 0x50 + 2 * i, q.get(i));
+            }
+            // A negative advantage-point race is illegal: the host degrades it before
+            // production (colonists per resource raised, SL setups 2026-10-07).
+            int pts;
+            try { pts = RaceLab.points(p.fullDataBytes); } catch (Exception e) { pts = 0; System.err.println("combatlab: player " + k + ": race points not computed: " + e); }
+            if (pts < 0) {
+                String msg = "player " + k + " race has " + pts + " advantage points (illegal; the host degrades it)";
+                if ("1".equals(System.getenv("COMBATLAB_ALLOW_ILLEGAL_RACE"))) System.err.println("combatlab: warning: " + msg);
+                else throw new Exception(msg + "; set COMBATLAB_ALLOW_ILLEGAL_RACE=1 to build anyway");
             }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();

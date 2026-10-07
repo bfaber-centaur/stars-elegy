@@ -1,7 +1,5 @@
 # speclint baseline: accepted findings (file, check, message), one per line.
 # Regenerate with: go run ./tools/speclint -write-baseline
-docs/COMBAT.md	uncited	CONFIRMED without a case ID: 3. **The procedure** (BINARY-ONLY in its details; CONFIRMED where
-docs/COMBAT.md	uncited	CONFIRMED without a case ID: least one beam weapon or torpedo; bombs do not count). CONFIRMED:
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	pr-ref	cites PR #44: owns them: research and terraforming, random events (CONFIRMED in #44),
