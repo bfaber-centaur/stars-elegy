@@ -15,7 +15,7 @@ war) gets its own file under docs/ai/:
 | 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) |
 
-Elegy reproduces these personalities (project decision). Related specs:
+Elegy reproduces all six personalities (project decision, 2026-10-07). Related specs:
 game creation and the starting setup of computer players are in
 `UNIVERSE.md`; the research, tech and terraforming mechanics the AI's
 choices feed are in `KERNEL.md` ("Research", "Terraforming"); part and
@@ -100,9 +100,11 @@ program, in player order (lowest player number first; human players are
 skipped). Two pieces of state survive from one computer player to the
 next within that run. Each makes a computer player's orders depend on
 which computer players ran before it that year. Elegy reproduces both
-behind one named switch, for example `legacy_ai_state_leak`. With the
-switch off, each computer player starts from clean state: empty slots read
-as never used, and the armada parameters below are the personality's own.
+behind one named switch, for example `legacy_ai_state_leak`, which is
+**on by default** (project decision, 2026-10-07): the leaked state is
+reproduced as the original does. With the switch off, each computer
+player starts from clean state: empty slots read as never used, and the
+armada parameters below are the personality's own.
 
 - **Empty design slots keep the previous player's bytes.** Loading a
   computer player's file marks its unused ship design slots empty but
