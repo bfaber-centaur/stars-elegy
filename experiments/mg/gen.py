@@ -145,6 +145,21 @@ r.case('B', 'M-5', 'Laser DD, fuel 280, load-optimal fuel at own planet 18 with 
        'if the order runs: surplus offered to the planet; else no message, fuel kept', '')
 
 
+# ------------------------------------------------------------- MG-005 homeworld mark after a capture (KERNEL step 3.6)
+# Binary reading (stars-decomp takeover.md): each year every planet's homeworld mark is cleared and then set on the
+# planet each player's record names as its homeworld. Only new-game creation writes that record, so the mark stays
+# on the captured planet under its new owner.
+r = Run('MG-005', 'homeworld mark after the homeworld is captured',
+        'design 0 2 Medium Freighter, 1 Long Hump 6, empty, empty = Freighter\n')
+x, y = XY[8]
+r.add('planet 8 pop 10 starbase none')
+r.add('fleet 0 0 planet 8 at %d %d ships 2:1 plan 0 fuel 200 cargo 0 0 0 100 task unload' % (x, y))
+r.case('A', 'T-41', 'player 0 freighter in orbit of player 1\'s homeworld 8 (pop 10, no starbase) unloads 100 '
+       'colonists on waypoint 0 (invasion before movement, T-5)',
+       'planet 8 owned by player 0 and still marked homeworld; player 1\'s record still names planet 8; '
+       'player 0\'s homeworld 17 still marked', 'mark cleared, or moved to a planet of player 1')
+
+
 def main():
     if sys.argv[1:] == ['--list']:
         for r in RUNS:

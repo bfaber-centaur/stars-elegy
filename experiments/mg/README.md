@@ -37,7 +37,7 @@ Checked against the existing message records before this batch was built:
 
 ## Predictions (stars-decomp reading)
 
-MG-003 was added after the MG-002 fuel cases missed, and MG-004 after MG-003. Each was committed before its own run.
+MG-003 was added after the MG-002 fuel cases missed, MG-004 after MG-003, and MG-005 (homeworld mark, `TAKEOVER.md` T-41) last. Each was committed before its own run.
 
 ### MG-001: PP packet terraforming and impact messages; a gate jump to an enemy gate
 
@@ -79,6 +79,12 @@ MG-003 was added after the MG-002 fuel cases missed, and MG-004 after MG-003. Ea
 |---|---|---|---|---|
 | MG-004-A | M-5 | Laser DD, fuel 1, load-optimal fuel at own planet 15 with an Orbital Fort, next leg 400 ly at warp 6 | if the order runs as with a fleet target: 0x03c and the fleet waits (no load, H1); if planets are skipped as in MG-002: no message and the fleet leaves |  |
 | MG-004-B | M-5 | Laser DD, fuel 280, load-optimal fuel at own planet 18 with an Orbital Fort, next leg 20 ly | if the order runs: surplus offered to the planet; else no message, fuel kept |  |
+
+### MG-005: homeworld mark after the homeworld is captured
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MG-005-A | T-41 | player 0 freighter in orbit of player 1's homeworld 8 (pop 10, no starbase) unloads 100 colonists on waypoint 0 (invasion before movement, T-5) | planet 8 owned by player 0 and still marked homeworld; player 1's record still names planet 8; player 0's homeworld 17 still marked | mark cleared, or moved to a planet of player 1 |
 
 
 ## Results

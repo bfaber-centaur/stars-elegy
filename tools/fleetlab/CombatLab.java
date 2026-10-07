@@ -172,9 +172,9 @@ public class CombatLab {
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                 }
-                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
+                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s homeworld=%d%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
-                    Arrays.toString(p.playerRelations), sb);
+                    Arrays.toString(p.playerRelations), u16(p.getDecryptedData(), 8), sb);
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 String owner = "?";
@@ -233,8 +233,8 @@ public class CombatLab {
                         p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
                         p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
                 if (p.owner >= 0 || p.hasStarbase)
-                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
-                        p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
+                    System.out.printf("%s planet %d owner=%d homeworld=%b starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
+                        p.planetNumber, p.owner, p.isHomeworld, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.starbaseBytes == null ? -1 : ((p.starbaseBytes[0] & 0xff) | (p.starbaseBytes[1] & 0xff) << 8) >> 4,
                         p.ironium, p.boranium, p.germanium, p.population);

@@ -417,6 +417,26 @@ A captured planet then belongs to the winning player as a new colony
 The production queue after capture was not testable in the corpus (no
 default queue in that game).
 
+### The homeworld mark after capture (BINARY-ONLY, prediction T-41)
+
+Each year, after fleet movement (`KERNEL.md` Turn order, step 3.6), the
+game clears every planet's homeworld mark. It then sets the mark again on
+the planet that each player's own record names as its homeworld. Only
+new-game creation writes that record; no later step changes it. So:
+
+- a captured homeworld **keeps** the homeworld mark under its new owner,
+  and with it the mining floor that the mark gives (`KERNEL.md` Mining);
+- the old owner gets no new homeworld, even while it holds other planets;
+- the new owner keeps its own homeworld too, so it can hold two marked
+  planets;
+- the mark stays even when the planet is unowned, or when the player who
+  started there is dead.
+
+Prediction T-41 (MG-005, `experiments/mg`): a player 0 transport in orbit
+of player 1's homeworld captures it before movement. After the year, the
+planet belongs to player 0, is still marked as a homeworld, and player 1's
+record still names it.
+
 ## Design parts dropped when the year is generated (CONFIRMED in one setting)
 
 When the original game generates a year, it re-checks every ship design
