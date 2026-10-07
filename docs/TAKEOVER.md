@@ -137,8 +137,9 @@ rates multiply.
 
 Coverage uses the planet owner's **best** planetary defense at its
 **current** energy tech, not the one it built. Coverage per defense is
-`c` permille (SDI 10, Missile Battery 20; other defenses BINARY-ONLY from
-the components table). The counted defenses are `n = min(installed,
+`c` permille (SDI 10, Missile Battery 20, Laser Battery 24, Planetary
+Shield 30, Neutron Shield 38; all five CONFIRMED by the planet panel's
+coverage in CS-001, `COMPONENTS.md`). The counted defenses are `n = min(installed,
 operable defenses)` (`KERNEL.md`, Caps: `min(max defenses, 1000,
 ceil(P'/25))`). If the owner has no defenses or no defense part, nothing
 is reduced.
