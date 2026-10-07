@@ -591,7 +591,9 @@ fleet with ships of those slots (except fleets already at the maximum
 mining rate) is merged into the first such fleet at the same place
 (same orbited planet, or same position in space). Up to 32 places are
 tracked per pass; further places get another pass. Other designs in the
-fleets merge along.
+fleets merge along. A merge removes the merged fleet from the fleet list and closes the gap,
+so the walk then skips the fleet that followed it (LEGACY BUG,
+BINARY-ONLY: not exercised in AIX).
 
 **Queueing items.** A personality adds production items through the same
 production list a human sees: an item the planet cannot build (for
