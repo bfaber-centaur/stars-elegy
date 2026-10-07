@@ -1,0 +1,145 @@
+turn	fleet	engine	warp	ships0	ships1	x1	fuel1	charge	f_implied	f_pred	result
+0	0	Settler's Delight	2	51	51	1014	2041	0	0	0	ok
+0	1	Settler's Delight	3	23	23	1019	2071	0	0	0	ok
+0	2	Settler's Delight	4	13	13	1026	1249	0	0	0	ok
+0	3	Settler's Delight	5	9	9	1035	676	0	0	0	ok
+0	4	Settler's Delight	6	6	6	1046	217	0	0	0	ok
+0	5	Settler's Delight	7	5	5	1059	19859	141	140	140	ok
+0	6	Settler's Delight	8	4	4	1074	19724	276	275	275	ok
+0	7	Settler's Delight	9	3	3	1091	19519	481	480	480	ok
+0	8	Settler's Delight	10	3	3	1110	19424	576	576	576	ok
+0	9	Quick Jump 5	2	50	50	1014	19975	25	25	25	ok
+0	10	Quick Jump 5	3	23	23	1019	19900	100	100	100	ok
+0	11	Quick Jump 5	4	13	13	1026	19900	100	100	100	ok
+0	12	Quick Jump 5	5	8	8	1035	19900	100	100	100	ok
+0	13	Quick Jump 5	6	6	6	1046	19819	181	180	180	ok
+0	14	Quick Jump 5	7	5	5	1059	19499	501	500	500	ok
+0	15	Quick Jump 5	8	4	4	1074	19198	802	800	800	ok
+0	16	Quick Jump 5	9	3	3	1091	19099	901	900	900	ok
+0	17	Quick Jump 5	10	2	2	1110	18920	1080	1080	1080	ok
+0	18	Fuel Mizer	2	49	49	1014	1177	0	0	0	ok
+0	19	Fuel Mizer	3	22	22	1019	595	0	0	0	ok
+0	20	Fuel Mizer	4	13	13	1026	209	0	0	0	ok
+0	21	Fuel Mizer	5	8	8	1035	19965	35	35	35	ok
+0	22	Fuel Mizer	6	6	6	1046	19880	120	120	120	ok
+0	23	Fuel Mizer	7	4	4	1059	19824	176	175	175	ok
+0	24	Fuel Mizer	8	4	4	1074	19764	236	235	235	ok
+0	25	Fuel Mizer	9	3	3	1091	19639	361	360	360	ok
+0	26	Fuel Mizer	10	2	2	1110	19580	420	420	420	ok
+0	27	Long Hump 6	2	48	48	1014	19980	20	20	20	ok
+0	28	Long Hump 6	3	21	21	1019	19940	60	60	60	ok
+0	29	Long Hump 6	4	12	12	1026	19900	100	100	100	ok
+0	30	Long Hump 6	5	8	8	1035	19900	100	100	100	ok
+0	31	Long Hump 6	6	6	6	1046	19895	105	105	105	ok
+0	32	Long Hump 6	7	4	4	1059	19549	451	450	450	ok
+0	33	Long Hump 6	8	3	3	1074	19248	752	750	750	ok
+0	34	Long Hump 6	9	3	3	1091	19099	901	900	900	ok
+0	35	Long Hump 6	10	2	2	1110	18920	1080	1080	1080	ok
+1	0	Daddy Long Legs 7	2	46	46	1014	19980	20	20	20	ok
+1	1	Daddy Long Legs 7	3	21	21	1019	19940	60	60	60	ok
+1	2	Daddy Long Legs 7	4	12	12	1026	19930	70	70	70	ok
+1	3	Daddy Long Legs 7	5	8	8	1035	19900	100	100	100	ok
+1	4	Daddy Long Legs 7	6	6	6	1046	19900	100	100	100	ok
+1	5	Daddy Long Legs 7	7	4	4	1059	19889	111	110	110	ok
+1	6	Daddy Long Legs 7	8	3	3	1074	19399	601	600	600	ok
+1	7	Daddy Long Legs 7	9	3	3	1091	19249	751	750	750	ok
+1	8	Daddy Long Legs 7	10	2	2	1110	19100	900	900	900	ok
+1	9	Alpha Drive 8	2	44	44	1014	19985	15	15	15	ok
+1	10	Alpha Drive 8	3	20	20	1019	19950	50	50	50	ok
+1	11	Alpha Drive 8	4	11	11	1026	19940	60	60	60	ok
+1	12	Alpha Drive 8	5	8	8	1035	19930	70	70	70	ok
+1	13	Alpha Drive 8	6	5	5	1046	19900	100	100	100	ok
+1	14	Alpha Drive 8	7	4	4	1059	19899	101	100	100	ok
+1	15	Alpha Drive 8	8	3	3	1074	19884	116	115	115	ok
+1	16	Alpha Drive 8	9	3	3	1091	19299	701	700	700	ok
+1	17	Alpha Drive 8	10	2	2	1110	19160	840	840	840	ok
+1	18	Trans-Galactic Drive	2	41	41	1014	19985	15	15	15	ok
+1	19	Trans-Galactic Drive	3	19	19	1019	19965	35	35	35	ok
+1	20	Trans-Galactic Drive	4	11	11	1026	19955	45	45	45	ok
+1	21	Trans-Galactic Drive	5	7	7	1035	19945	55	55	55	ok
+1	22	Trans-Galactic Drive	6	5	5	1046	19930	70	70	70	ok
+1	23	Trans-Galactic Drive	7	4	4	1059	19919	81	80	80	ok
+1	24	Trans-Galactic Drive	8	3	3	1074	19909	91	90	90	ok
+1	25	Trans-Galactic Drive	9	3	3	1091	19900	100	100	100	ok
+1	26	Trans-Galactic Drive	10	2	2	1110	19880	120	120	120	ok
+1	27	Interspace-10	2	41	41	1014	19990	10	10	10	ok
+1	28	Interspace-10	3	19	19	1019	19970	30	30	30	ok
+1	29	Interspace-10	4	11	11	1026	19960	40	40	40	ok
+1	30	Interspace-10	5	7	7	1035	19950	50	50	50	ok
+1	31	Interspace-10	6	5	5	1046	19940	60	60	60	ok
+1	32	Interspace-10	7	4	4	1059	19929	71	70	70	ok
+1	33	Interspace-10	8	3	3	1074	19919	81	80	80	ok
+1	34	Interspace-10	9	3	3	1091	19910	90	90	90	ok
+1	35	Interspace-10	10	2	2	1110	19900	100	100	100	ok
+2	0	Enigma Pulsar	2	43	43	1014	1721	0	0	0	ok
+2	1	Enigma Pulsar	3	19	19	1019	1027	0	0	0	ok
+2	2	Enigma Pulsar	4	11	11	1026	529	0	0	0	ok
+2	3	Enigma Pulsar	5	7	7	1035	176	0	0	0	ok
+2	4	Enigma Pulsar	6	5	5	1046	19935	65	65	65	ok
+2	5	Enigma Pulsar	7	4	4	1059	19924	76	75	75	ok
+2	6	Enigma Pulsar	8	3	3	1074	19914	86	85	85	ok
+2	7	Enigma Pulsar	9	3	3	1091	19905	95	95	95	ok
+2	8	Enigma Pulsar	10	2	2	1110	19895	105	105	105	ok
+2	9	Trans-Star 10	2	50	50	1014	19995	5	5	5	ok
+2	10	Trans-Star 10	3	22	22	1019	19985	15	15	15	ok
+2	11	Trans-Star 10	4	13	13	1026	19980	20	20	20	ok
+2	12	Trans-Star 10	5	8	8	1035	19975	25	25	25	ok
+2	13	Trans-Star 10	6	6	6	1046	19970	30	30	30	ok
+2	14	Trans-Star 10	7	5	5	1059	19965	35	35	35	ok
+2	15	Trans-Star 10	8	4	4	1074	19960	40	40	40	ok
+2	16	Trans-Star 10	9	3	3	1091	19955	45	45	45	ok
+2	17	Trans-Star 10	10	2	2	1110	19950	50	50	50	ok
+2	18	Radiating Hydro-Ram Scoop	2	47	47	1014	1881	0	0	0	ok
+2	19	Radiating Hydro-Ram Scoop	3	21	21	1019	1891	0	0	0	ok
+2	20	Radiating Hydro-Ram Scoop	4	12	12	1026	1153	0	0	0	ok
+2	21	Radiating Hydro-Ram Scoop	5	8	8	1035	601	0	0	0	ok
+2	22	Radiating Hydro-Ram Scoop	6	6	6	1046	217	0	0	0	ok
+2	23	Radiating Hydro-Ram Scoop	7	4	4	1059	19834	166	165	165	ok
+2	24	Radiating Hydro-Ram Scoop	8	3	3	1074	19624	376	375	375	ok
+2	25	Radiating Hydro-Ram Scoop	9	3	3	1091	19399	601	600	600	ok
+2	26	Radiating Hydro-Ram Scoop	10	2	1	1110	9640	10360	-	720	SHIPS LOST
+2	27	Sub-Galactic Fuel Scoop	2	43	43	1014	1721	0	0	0	ok
+2	28	Sub-Galactic Fuel Scoop	3	19	19	1019	1027	0	0	0	ok
+2	29	Sub-Galactic Fuel Scoop	4	11	11	1026	529	0	0	0	ok
+2	30	Sub-Galactic Fuel Scoop	5	7	7	1035	176	0	0	0	ok
+2	31	Sub-Galactic Fuel Scoop	6	5	5	1046	19915	85	85	85	ok
+2	32	Sub-Galactic Fuel Scoop	7	4	4	1059	19894	106	105	105	ok
+2	33	Sub-Galactic Fuel Scoop	8	3	3	1074	19789	211	210	210	ok
+2	34	Sub-Galactic Fuel Scoop	9	3	3	1091	19619	381	380	380	ok
+2	35	Sub-Galactic Fuel Scoop	10	2	2	1110	19544	456	456	456	ok
+3	0	Trans-Galactic Fuel Scoop	2	44	44	1014	1761	0	0	0	ok
+3	1	Trans-Galactic Fuel Scoop	3	20	20	1019	1801	0	0	0	ok
+3	2	Trans-Galactic Fuel Scoop	4	11	11	1026	1057	0	0	0	ok
+3	3	Trans-Galactic Fuel Scoop	5	7	7	1035	526	0	0	0	ok
+3	4	Trans-Galactic Fuel Scoop	6	5	5	1046	181	0	0	0	ok
+3	5	Trans-Galactic Fuel Scoop	7	4	4	1059	19911	89	88	88	ok
+3	6	Trans-Galactic Fuel Scoop	8	3	3	1074	19899	101	100	100	ok
+3	7	Trans-Galactic Fuel Scoop	9	3	3	1091	19855	145	145	145	ok
+3	8	Trans-Galactic Fuel Scoop	10	2	1	1110	9913	10087	-	174	SHIPS LOST
+3	9	Trans-Galactic Super Scoop	2	44	44	1014	1761	0	0	0	ok
+3	10	Trans-Galactic Super Scoop	3	20	20	1019	1801	0	0	0	ok
+3	11	Trans-Galactic Super Scoop	4	11	11	1026	1430	0	0	0	ok
+3	12	Trans-Galactic Super Scoop	5	7	7	1035	910	0	0	0	ok
+3	13	Trans-Galactic Super Scoop	6	5	5	1046	541	0	0	0	ok
+3	14	Trans-Galactic Super Scoop	7	4	4	1059	197	0	0	0	ok
+3	15	Trans-Galactic Super Scoop	8	3	3	1074	19934	66	65	65	ok
+3	16	Trans-Galactic Super Scoop	9	3	3	1091	19910	90	90	90	ok
+3	17	Trans-Galactic Super Scoop	10	2	1	1110	9946	10054	-	108	SHIPS LOST
+3	18	Trans-Galactic Mizer Scoop	2	47	47	1014	1881	0	0	0	ok
+3	19	Trans-Galactic Mizer Scoop	3	21	21	1019	1891	0	0	0	ok
+3	20	Trans-Galactic Mizer Scoop	4	12	12	1026	1560	0	0	0	ok
+3	21	Trans-Galactic Mizer Scoop	5	8	8	1035	1040	0	0	0	ok
+3	22	Trans-Galactic Mizer Scoop	6	6	6	1046	780	0	0	0	ok
+3	23	Trans-Galactic Mizer Scoop	7	4	4	1059	520	0	0	0	ok
+3	24	Trans-Galactic Mizer Scoop	8	3	3	1074	193	0	0	0	ok
+3	25	Trans-Galactic Mizer Scoop	9	3	3	1091	19930	70	70	70	ok
+3	26	Trans-Galactic Mizer Scoop	10	2	2	1110	19916	84	84	84	ok
+3	27	Galaxy Scoop	2	48	48	1014	1921	0	0	0	ok
+3	28	Galaxy Scoop	3	22	22	1019	1981	0	0	0	ok
+3	29	Galaxy Scoop	4	12	12	1026	1560	0	0	0	ok
+3	30	Galaxy Scoop	5	8	8	1035	1040	0	0	0	ok
+3	31	Galaxy Scoop	6	6	6	1046	780	0	0	0	ok
+3	32	Galaxy Scoop	7	4	4	1059	520	0	0	0	ok
+3	33	Galaxy Scoop	8	3	3	1074	390	0	0	0	ok
+3	34	Galaxy Scoop	9	3	3	1091	244	0	0	0	ok
+3	35	Galaxy Scoop	10	2	2	1110	19940	60	60	60	ok

@@ -1,0 +1,13 @@
+c00 prt=1 lrt=0 tech=0,0,0,0,0,0 mt=fff
+c01 prt=0 lrt=0 tech=26,26,26,26,26,26 mt=fff
+c02 prt=1 lrt=f tech=26,26,26,26,26,26 mt=fff
+c03 prt=2 lrt=480 tech=26,26,26,26,26,26 mt=fff
+c04 prt=3 lrt=300 tech=26,26,26,26,26,26 mt=fff
+c05 prt=4 lrt=1000 tech=26,26,26,26,26,26 mt=fff
+c06 prt=5 lrt=405 tech=26,26,26,26,26,26 mt=fff
+c07 prt=6 lrt=a tech=26,26,26,26,26,26 mt=fff
+c08 prt=7 lrt=180 tech=26,26,26,26,26,26 mt=fff
+c09 prt=8 lrt=208 tech=26,26,26,26,26,26 mt=fff
+c10 prt=9 lrt=0 tech=26,26,26,26,26,26 mt=fff
+c11 prt=1 lrt=1000 tech=0,0,0,0,0,0 mt=fff
+c12 prt=1 lrt=0 tech=0,0,0,0,0,0 mt=0
