@@ -8,7 +8,7 @@ implementer working only from this public repository. It describes what
 happens in the game, not how any file encodes it.
 
 `PARITY.md`, section "Universe objects" (and "Scanning", object
-visibility), holds the experiment records (OB-001 to OB-018). This file
+visibility), holds the experiment records (OB-001 to OB-020). This file
 restates them as rules and adds rules that so far come only from white-box
 analysis of the original program (private `stars-decomp`, promoted here as
 behavior only). Part statistics (dispenser ratings, driver warps, gate
@@ -88,7 +88,8 @@ fields of each kind.
   move this year. **A fleet whose current task is "lay mines" never moves**,
   whatever its later waypoints, so in practice it lays in place every year
   until the task ends (CONFIRMED, OB-014-D: a fleet with a second waypoint
-  25 ly away stayed and laid its full amount).
+  25 ly away stayed and laid its full amount; OB-019: it stayed three
+  years, the field growing 160 → 310 → 460).
 - Space Demolition (SD) only: a fleet travelling toward a waypoint whose
   task is "lay mines" also lays, at its end-of-year position, **half** the
   amount (CONFIRMED, OB-014-C: 80 from a layer rated 160). The halving uses
@@ -115,10 +116,10 @@ fields of each kind.
   at the fleet. CONFIRMED (OB-002-G): a 390 field 10 ly west of the layer,
   plus 160, became 550 centred 2 ly east of the old centre.
 - **Duration.** The task carries a duration: "this year only" lays once and
-  ends the task (CONFIRMED, OB-002-N); "indefinitely" never ends; 2 to 5
-  years count down one per year and end after the last (BINARY-ONLY). The
-  fleet's later waypoints stay queued meanwhile (MEASURED, OB-014-D after
-  file; see Open experiments).
+  ends the task (CONFIRMED, OB-002-N); "indefinitely" never ends
+  (CONFIRMED, OB-019); 2 to 5 years count down one per year and end after
+  the last (BINARY-ONLY). The fleet's later waypoints stay queued meanwhile
+  (CONFIRMED, OB-019: both waypoints kept for three years).
 
 ### Decay (CONFIRMED, OB-002, OB-014-A, OB-015, OB-016)
 
@@ -443,32 +444,27 @@ with random events off (an inserted Trader traded).
 Which of these objects each player sees, and what seeing them discloses
 (including the Packet Physics, Interstellar Traveler and Space Demolition
 rules), is specified in `SCANNING.md`, which owns all visibility rules.
-The oracle records are OB-011..OB-014, OB-017 and OB-018 in `PARITY.md`.
+The oracle records are OB-011..OB-014, OB-017, OB-018 and OB-020 in
+`PARITY.md` (OB-020: a known wormhole is seen anywhere within normal range
+and nowhere beyond it).
 
 ## Open experiments
 
-1. A lay-mines task on the current waypoint with "indefinitely": the fleet
-   stays and lays again the next year (field 160 → 310 → 460), and its next
-   waypoint stays queued. The OB-014-D summary reported that waypoint
-   removed; the preserved after-turn file still lists it.
-2. A known wormhole between a quarter of normal range and full normal
-   range (no penetration) is seen; an unknown one at the same distance is
-   not (`SCANNING.md`).
-3. Packet launch: warp, class, amounts, same-year merge, the launch-year
+1. Packet launch: warp, class, amounts, same-year merge, the launch-year
    half move; PP decay rates and terraforming; IT and AR targets.
-4. Wormhole jump odds over many streams; what a jump does to fleets heading
+2. Wormhole jump odds over many streams; what a jump does to fleets heading
    for the wormhole.
-5. Mystery Trader spawn, path, part and ship rewards.
-6. Minefield hit odds per ly and mines lost for other field sizes; heavy
+3. Mystery Trader spawn, path, part and ship rewards.
+4. Minefield hit odds per ly and mines lost for other field sizes; heavy
    and speed-bump detonation; the Super Mine Layer doubling.
-7. Stargates: every rule above.
+5. Stargates: every rule above.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.
 
 ## Sources
 
-- Oracle: OB-001..OB-018 (`PARITY.md`, "Universe objects" and "Scanning",
+- Oracle: OB-001..OB-020 (`PARITY.md`, "Universe objects" and "Scanning",
   `experiments/ob/`); raw evidence in private `stars-oracle-apparatus`.
 - White-box readings: private `stars-decomp` (objects, minefield hits and
   stargates in fleet movement, scanning notes).
