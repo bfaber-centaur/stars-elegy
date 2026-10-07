@@ -69,36 +69,49 @@ A (2 Freighters, cap 420/900, **200 Ir, fuel 600**) exchanges **1 ship** to B
 - After: A 1 ship 100/300, B 2 ships 100/300. (Symmetric capacity split, round
   down; here it is exact.)
 
-### CO-04 — direct own-fleet cargo/fuel transfer order (OR-19 / Q2)
+### CO-04 — direct own-fleet cargo/fuel transfer order (OR-19 / elegy Q2)
 
-A (1 Freighter, **200 Ir**, free hold 10) and co-located B (1 Freighter, **150
-Ir**, free hold 60), **no ships move**. Order: B loads **all Ir** from A.
+This is the open contradiction behind elegy Q2, so **two** predictions are
+committed and the run decides between them. `docs/ORDERS.md` "Transfer between
+the player's own fleets" currently reads the direct order as a **capacity
+rebalance** (BINARY-ONLY, read from the program, not measured): the two fleets'
+cargo of each kind and fuel are pooled and shared out in proportion to capacity.
+The elegy implementation's proposed rule is **explicit amounts** (load-all /
+set-amount / fill-to-%) clamped by free space, like the FO-02 task actions.
 
-- **Prediction (explicit amounts, Elegy's rule):** B takes what fits its free
-  hold — **60 Ir** — giving B **210 Ir** (full) and leaving A **140 Ir**. The
-  amount is the order's "load all", clamped by B's free space; it is **not** a
-  capacity rebalance (a rebalance would instead even the two holds to 175/175).
-- The 60-vs-rebalance split is the discriminator for Q2.
-- A second case: B does "set amount 300 Ir" from A (A has 200) → B takes **200**
-  (clamped by what A holds and B's room), A ends **0**. Confirms the order
-  carries an explicit amount, not a proportion.
+Setup: A (1 Freighter, cap 210, **200 Ir**, free 10) and co-located B
+(1 Freighter, cap 210, **150 Ir**, free 60), **no ships move**. Order: B loads
+**all Ir** from A.
+
+- **Prediction R (capacity rebalance — the committed binary reading):** the 350
+  Ir is pooled over two equal-capacity fleets → **A 175, B 175**.
+- **Prediction E (explicit amount — the elegy proposal):** B takes what fits its
+  free hold (**60**) → **B 210 (full), A 140**.
+- `175/175` vs `210/140` is the discriminator. If R holds, the elegy rule is
+  INTENTIONALLY DIFFERENT and must be labelled; if E holds, `docs/ORDERS.md`
+  "Transfer between the player's own fleets" is corrected. (Contradiction
+  preserved: the section reads rebalance, the implementation proposes explicit.)
+- Second case to separate the orders: B does "set amount 300 Ir" from A (holds
+  200). R shares the pool unchanged (175/175, the "amount" ignored); E gives B
+  the 200 it names (B 210 clamped by room, A 0). Different outcomes again.
 
 ### CO-05 — direct Merge Fleets damage (O1)
 
-Client Merge Fleets a damaged stack X (10 Freighters, 100 units on 50%) into a
-healthy same-design stack Y (10 Freighters, 0 damage), legally co-located.
+Client Merge Fleets a **damaged** stack X (10 Freighters, 100 units/ship on
+50%) into a **damaged** same-design stack Y (10 Freighters, 200 units/ship on
+20%), legally co-located — the example `docs/ORDERS.md` "Merge order" works
+through, and the two-damaged case is the one that separates the order from the
+task.
 
-- The FO task path (FO-03 D / FO-06 C) gave percent `ceil(100·D/n)` over all
-  `n`=20 ships with the damaged ships' units kept, i.e. 25% and 90 units after
-  repair.
-- **Prediction for the direct order (ORDERS "OX merge-order damage"):** the
-  percent dilutes over the full post-merge count the same way (25%), **but the
-  stored units divide by the damaged count, not the slot total**, so the units
-  figure differs from the task path. Concretely, units = `(ΣD·units)/D_count`
-  over the damaged ships only.
-- **Competing hypothesis the run rules out:** the direct order matches the task
-  exactly (units over all `n`). This case decides whether direct-merge damage
-  diverges from the task.
+- **Percent:** both the order and the task give `ceil(100·ΣD/n)` over the full
+  post-merge count `n`=20, with `ΣD`=`D_X`+`D_Y`=5+2=7 → **35%**.
+- **Units — prediction for the direct order** (`docs/ORDERS.md` "Merge order"):
+  averaged over the **damaged** ships only, `Σ(D·units)/ΣD` = (5·100+2·200)/7 =
+  **~129 units/ship**.
+- **Units — the task** gave a much lower figure for the same inputs
+  (**35 units**, FO-03 C observed; the task dilutes over the full slot).
+- Discriminator: ~129 (order, over damaged) vs ~35 (task, over the slot). A
+  large, unambiguous gap. Confirms the merge-order damage note.
 
 ### CO-06 — direct Merge Fleets ship-count boundary (O4)
 
@@ -106,11 +119,12 @@ From an edited start with large legal stacks, client Merge Fleets to cross the
 16-bit boundary: **16000 + 16766**, **16000 + 16767**, **16000 + 16768**,
 **16000 + 17000** Freighters of one design.
 
-- The FO task path (FO-06 E/F/G) kept 32766 and 32767 and **emptied the slot**
-  (no ships, cargo/fuel retained) at 32768 and above.
-- **Prediction:** the direct order shows the same boundary — **≤ 32767 kept**,
-  and **32768+ empties the ship slot** while keeping the fleet record, cargo and
-  fuel (host LEGACY BUG). **Elegy's chosen rule** clamps 32768+ to **32766**
-  (excess lost) rather than corrupting the slot — stated next to the host
-  behaviour, matching the merge-cap boundary in `docs/ORDERS.md`.
-- The discriminator is whether the direct order clamps or empties like the task.
+- **Prediction for the direct order** (`docs/ORDERS.md` "Merge order", read from
+  the program): **32766 kept; 32767 kept** (the largest the order stores);
+  **32768+ clamped to 32766**, the excess ships lost (not spilled, not refused).
+- The Merge-with-Fleet **task** behaves differently at the top: it kept 32766
+  and 32767 but **emptied the ship slot** at 32768+ (fleet record, cargo and
+  fuel retained) — FO-06 E/F/G. So the discriminator is **clamp-to-32766 (order)
+  vs empty-the-slot (task)** at 32768+.
+- **Elegy's chosen rule** matches the order's clamp (32768+ → 32766), as stated
+  in `docs/ORDERS.md` "Merge order".

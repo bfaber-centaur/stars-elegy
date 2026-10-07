@@ -712,13 +712,16 @@ orders. Predictions for that round are committed in
   the new fleet has exactly the ordered ships, a capacity-proportional share of
   the cargo and fuel (rounded down), and the source's battle plan and waypoints.
   Split All (CO-02) pins where the rounding remainder lands. Confirms "Split".
-- **OX own-fleet transfer order (→ CO-04; elegy implementation Q2).** The direct
-  transfer-to-fleet order between two of the player's own co-located fleets
-  carries an **explicit amount** (load-all / set-amount / fill-to-%), clamped by
-  the destination's free capacity, with the remainder staying aboard the source
-  — **not** a capacity rebalance (which is what moving ships does). Elegy's rule
-  is explicit amounts only; CO-04 discriminates it from the rebalance
-  hypothesis. Confirms "Transfer between the player's own fleets".
+- **OX own-fleet transfer order (→ CO-04; elegy implementation Q2).** An open
+  contradiction. "Transfer between the player's own fleets" above reads the
+  direct order as a **capacity rebalance** (pool each kind and fuel, share by
+  capacity) — BINARY-ONLY, read from the program, not measured. The elegy
+  implementation's proposed rule is **explicit amounts** (load-all /
+  set-amount / fill-to-%) clamped by free space, like the FO-02 task actions.
+  CO-04 runs the discriminating case (350 Ir over two equal-capacity fleets →
+  `175/175` if rebalance, `210/140` if explicit). If rebalance holds, the elegy
+  rule is INTENTIONALLY DIFFERENT; if explicit holds, correct the section. The
+  contradiction is preserved until the run settles it.
 
 The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
 editing**, not crafted order files, so none needed the registered serial, and
