@@ -490,6 +490,19 @@ the year. Minerals are Fe/Bo/Ge.
 | C11 | pop 50 (R 5), minerals 100/100/2 | Factory ×1 @59%, Mine ×10 | factories 1; Ge 0; queue Mine ×10 @19%; research 0 |
 | C12 | pop 1000 (R 100), minerals 3/2/100 | Defenses ×5, Mine ×2 | defenses 10, mines 0; minerals 1/0/98; queue Defenses ×5 @59%, Mine ×2; research 92 |
 
+Second batch, predicted after C01–C12 had run and before these ran:
+
+| Case | Start (differences from common) | Queue | Predicted |
+|---|---|---|---|
+| C13 | pop 1010 (R 101), defenses 40 | Auto Defenses ×100 | defenses 45; minerals 475/475/475; queue unchanged; research 26; "completed its orders" |
+| C14 | C04 repeated, two years | Auto Mines ×100 | 2408 as C04; 2409: mines 9, queue Mine ×1 @79%, Auto Mines ×100, research 0 |
+| C07r | C07 repeated | as C07 | as C07 |
+
+C13 tests the operable-defenses cap `ceil(P/25)` with P the population
+after this year's growth (1111 → 45, so 5 may be built; `floor` gives 4,
+pre-growth population gives 1). C14 tests that the hidden partial item is
+completed first the next year and the auto item spawns a new one.
+
 What each case discriminates:
 
 - C01, C08, C11: the partial percentage (59% for 5 of 10 resources, not
