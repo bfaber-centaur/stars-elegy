@@ -31,15 +31,14 @@ What happens at a limit is one of:
 | Galaxy box | `1000 .. 1000 + (size+1)·400` ly on each axis | waypoints are clamped into the box | CONFIRMED (size, UG01–UG21); clamp BINARY-ONLY | `UNIVERSE.md` "Conventions"; `ORDERS.md` "Range and legality clamps" |
 | Wormhole pairs | by size, 0–8 | — | CONFIRMED (OB-006) | `OBJECTS.md` "Creation" |
 | Seed | only the low 12 bits matter | — | CONFIRMED (UG11, UG14) | `UNIVERSE.md` "Randomness and seeds" |
-| Game name | 31 characters | — | BINARY-ONLY | |
 
 ## Designs and battle plans
 
 | Limit | Value | At the limit | Tag | Where |
 |---|---|---|---|---|
-| Ship designs | 16 slots per player (0–15) | the client offers no 17th slot. A Mystery Trader ship gift or fleet gift with no free or matching slot gives no ship (messages 0x14a, 0x14b, 0x150) | BINARY-ONLY (slots); gift CONFIRMED (OB-026) | `MESSAGES.md`; `OBJECTS.md` "Encounters" |
-| Starbase designs | 10 slots per player | a design order naming a slot past the last is refused | BINARY-ONLY | |
-| Design name | 32 characters | a design order with a longer name is refused | BINARY-ONLY | |
+| Ship designs | 16 slots per player (0–15) | the client offers no 17th slot. A Mystery Trader ship gift or fleet gift with no free or matching slot gives no ship (messages 0x14a, 0x14b, 0x150). A design order naming a slot past 25 is refused | MEASURED (gift with all 16 used, OB-026); slot count BINARY-ONLY | `MESSAGES.md`; `OBJECTS.md` "Encounters" |
+| Starbase designs | 10 slots per player (orders number them 16–25 after the ship slots) | a design order naming a slot past the last is refused | BINARY-ONLY | |
+| Names | see "Names" below | | | |
 | Parts per hull slot | the hull slot's maximum | extra parts are stripped from the stored design | CONFIRMED (strip, SC-021) | `ORDERS.md` "Range and legality clamps" |
 | Battle plans | host 16, client 15 | stated there | MEASURED (client, BP-L in the BP-1..BP-2 runs); host BINARY-ONLY, serial-gated | `COMBAT.md` "Battle plans" |
 | Battle-plan fields | tactic and targets one past the legal sets are stored; anything higher is refused | stated there | BINARY-ONLY | `COMBAT.md` "Battle plans"; `ORDERS.md` "Range and legality clamps" |
@@ -121,6 +120,32 @@ object table.
 | Order record | 1,023 bytes | — | BINARY-ONLY | |
 | Cross-owner colonist drops, cross-owner transfers | 1,000 each per year | behaviour when full UNKNOWN | BINARY-ONLY (size) | `ORDERS.md` "Cross-owner cargo" |
 | Race settings | ranges and repairs | clipped each year | CONFIRMED (RD-P5..RD-P7) | the races spec, "Race settings" (open PR) |
+
+## Names
+
+BINARY-ONLY except where marked.
+
+- **Characters.** A stored name is a byte string. The file encoding
+  packs common characters in one nibble and escapes any other byte, so
+  every single-byte character can be stored (the encoding is DOCUMENTED
+  by StarsAPI). The client takes whatever its text box accepts.
+- **Fleet names.** The client's Rename box takes at most 31 characters,
+  and it also cuts the text to what fits in 160 pixels of its font, so a
+  name of wide characters is shorter. An empty rename removes the custom
+  name, and the fleet shows its default name again (the primary design's
+  name cut to 28 characters plus " #n"). The host does not check the
+  length beyond the order record's size.
+- **Battle-plan names.** The client's name box (Copy and Rename) takes at
+  most 31 characters; a plan stores 32 bytes with the terminator. The
+  name dialog itself does not check for an empty name.
+- **Design names.** The host refuses a design order whose name is longer
+  than 32 characters. The ship designer's own limit is UNKNOWN.
+- **Game name.** 31 characters (from the game definition).
+
+**Chosen rule for an independent implementation.** Fleet, battle-plan and
+design names are at most 31 characters of any single-byte text; an empty
+fleet name restores the default name. The 160-pixel cut is client
+presentation, not game state.
 
 ## Production-queue replace
 
