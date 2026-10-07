@@ -246,8 +246,15 @@ for other `n`.
 For each involved fleet, in location order:
 
 1. The fleet is marked as having fought: it gets no repair this turn.
-2. If its plan has "dump cargo", its minerals go to the planet's surface,
-   or to deep-space salvage. Colonists are not dumped (inferred).
+2. If its plan has "dump cargo" and it carries any minerals, all three
+   minerals are dumped (BINARY-ONLY). Colonists and fuel stay aboard.
+   - At a planet, the planet's surface gains the full amount; the
+     `× 8/10` and `× 5/10` factors of "Salvage" do not apply.
+   - In deep space, the full amount goes into this battle's salvage
+     object, with no quarter lost. The dump happens at setup, before any
+     ship is destroyed, so it is the first addition to that object. The
+     object then exists even if nobody is destroyed. Kill events add to
+     it afterwards as described in "Salvage".
 3. One token is created per design with ships in the fleet.
 
 A starbase token is placed for the starbase of an involved owner (see "Starbases in battle").
@@ -363,6 +370,10 @@ consistent with every replayed record):
    - In the one-player battle the self-entry keeps B in while A drops
      out. The battle then ends either way, so the outcome matches CB-022
      (BINARY-ONLY).
+   - This check only decides whether the battle ends now (BINARY-ONLY).
+     A player found out here keeps its tokens: they still fire in step 6
+     and move next round. Nobody stays out: the check starts again from
+     the players with live tokens every round.
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
@@ -391,6 +402,9 @@ Inside a phase, tokens go in **descending jittered weight**:
   lowers the counter by 1. A move when the counter is 0 takes it off the
   board, so it leaves on its 8th move. It is then out of the battle,
   not destroyed.
+- Every move the token is given counts, including one where it stays on
+  its square (BINARY-ONLY). The counter is lowered before the square is
+  chosen, so the result of the move does not matter.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
@@ -512,6 +526,12 @@ initiative present:
 
 - Tokens act in **reverse token order**, while at least two players are
   still in the battle.
+  - "Still in" here means having a live token; attack sets do not count
+    (BINARY-ONLY). It is checked again before each token acts, so kills
+    earlier in the round count. Once only one player has live tokens,
+    no further token fires in this round and the battle ends after it.
+  - Tokens of a player that round step 5 found out still act; they fire
+    at whatever their own attack set allows.
 - A token fires each of its weapon slots whose weapon initiative equals
   the level.
 - The slot's `N = ships × count`.
@@ -764,6 +784,12 @@ cargo. The share is computed as follows (BINARY-ONLY):
 - That amount is split per mineral as `cargo_i · moved / C` (truncated).
   Any remainder goes 1 kT at a time over ironium, boranium, germanium
   and colonists, one pass, only to types still holding cargo.
+- Fuel is shared the same way, but by **fuel capacity**: the fleet
+  loses `F · Σ lost ships·fuel capacity / Σ ships before·fuel capacity`
+  (truncated), with `F` the fleet's fuel (BINARY-ONLY). Fuel capacity is
+  the design's: hull fuel plus fuel tanks and similar parts.
+- Each kill event takes its share from what the fleet holds at that
+  moment, so a fleet hit several times loses a share each time.
 - Only minerals become salvage. The lost ships' share of fuel and
   colonists is destroyed.
 
@@ -806,11 +832,11 @@ smaller), and `pct` is kept:
 | at its own planet with a starbase without a dock (Orbital Fort) | 40 |
 | at its own planet with a dock (Space Dock or larger) | 100 |
 
-- Interstellar Traveler doubles `r` (BINARY-ONLY).
+- Inner Strength doubles `r` (BINARY-ONLY). `f` is not doubled.
 - `f` = 50 if the fleet has a Super-Fuel Xport, else 25 if it has a Fuel
   Transport, else 0. `f` is added to every stack.
-- A starbase that did not fight this turn repairs 50 units (IS 75)
-  (BINARY-ONLY).
+- A starbase that did not fight this turn repairs 50 units, or 75 for
+  Inner Strength (BINARY-ONLY).
 
 ### Tech from battle (CONFIRMED in part, CB-018, CB-021, Q-11)
 
@@ -885,8 +911,12 @@ Not yet tested:
   the battle;
 - Mystery Trader items from battle;
 - queued ships lost with a starbase; AR starbase loss;
-- the "moved" repair rate, starbase repair, IS repair;
-- salvage at more than one point; dump cargo;
+- the "moved" repair rate, starbase repair, Inner Strength repair;
+- salvage at more than one point; dump cargo, at a planet and in deep
+  space;
+- the fuel share lost with destroyed ships;
+- step 5 removing a player whose tokens can still fire, and a
+  disengaging token that stays on its square;
 - War Monger and cargo in the speed code.
 
 The dampener mass question (19 vs 23) is closed: 19 is the game's value
