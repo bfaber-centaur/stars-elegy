@@ -1,0 +1,3096 @@
+config	category	index	name	ironium	boranium	germanium	resources	mass	label
+c00	armor	0	Tritanium	5	0	0	10	60	Available
+c00	armor	1	Crobmnium	6	0	0	13	56	cost
+c00	armor	2	Carbonic Armor	0	0	5	15	25	cost
+c00	armor	3	Strobnium	8	0	0	18	54	cost
+c00	armor	4	Organic Armor	0	0	6	20	15	cost
+c00	armor	5	Kelarium	9	1	0	25	50	cost
+c00	armor	6	Fielded Kelarium	10	0	2	28	50	UnAvail
+c00	armor	7	Depleted Neutronium	10	0	2	28	50	cost
+c00	armor	8	Neutronium	11	2	1	30	45	cost
+c00	armor	9	Mega Poly Shell	18	6	6	65	20	cost
+c00	armor	10	Valanium	15	0	0	50	40	cost
+c00	armor	11	Superlatanium	25	0	0	100	30	cost
+c00	beam	0	Laser	0	6	0	5	1	Available
+c00	beam	1	X-Ray Laser	0	6	0	6	1	cost
+c00	beam	2	Mini Gun	0	16	0	10	3	UnAvail
+c00	beam	3	Yakimora Light Phaser	0	8	0	7	1	cost
+c00	beam	4	Blackjack	0	16	0	7	10	cost
+c00	beam	5	Phaser Bazooka	0	8	0	11	2	cost
+c00	beam	6	Pulsed Sapper	0	0	4	12	1	cost
+c00	beam	7	Colloidal Phaser	0	14	0	18	2	cost
+c00	beam	8	Gatling Gun	0	20	0	13	3	cost
+c00	beam	9	Mini Blaster	0	10	0	9	1	cost
+c00	beam	10	Bludgeon	0	22	0	9	10	cost
+c00	beam	11	Mark IV Blaster	0	12	0	15	2	cost
+c00	beam	12	Phased Sapper	0	0	6	16	1	cost
+c00	beam	13	Heavy Blaster	0	20	0	25	2	cost
+c00	beam	14	Gatling Neutrino Cannon	0	28	0	17	3	UnAvail
+c00	beam	15	Myopic Disruptor	0	14	0	12	1	cost
+c00	beam	16	Blunderbuss	0	30	0	13	10	UnAvail
+c00	beam	17	Disruptor	0	16	0	20	2	cost
+c00	beam	18	Multi Contained Munition	6	40	6	40	8	cost
+c00	beam	19	Syncro Sapper	0	0	8	21	1	cost
+c00	beam	20	Mega Disruptor	0	30	0	33	2	cost
+c00	beam	21	Big Mutha Cannon	0	36	0	23	3	cost
+c00	beam	22	Streaming Pulverizer	0	20	0	16	1	cost
+c00	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	cost
+c00	bomb	0	Lady Finger Bomb	1	20	0	5	40	cost
+c00	bomb	1	Black Cat Bomb	1	22	0	7	45	cost
+c00	bomb	2	M-70 Bomb	1	24	0	9	50	cost
+c00	bomb	3	M-80 Bomb	1	25	0	12	55	cost
+c00	bomb	4	Cherry Bomb	1	25	0	11	52	cost
+c00	bomb	5	LBU-17 Bomb	1	15	15	7	30	cost
+c00	bomb	6	LBU-32 Bomb	1	24	15	10	35	cost
+c00	bomb	7	LBU-74 Bomb	1	33	12	14	45	cost
+c00	bomb	8	Hush-a-Boom	1	5	0	5	5	cost
+c00	bomb	9	Retro Bomb	15	15	10	50	45	UnAvail
+c00	bomb	10	Smart Bomb	1	22	0	27	50	cost
+c00	bomb	11	Neutron Bomb	1	30	0	30	57	cost
+c00	bomb	12	Enriched Neutron Bomb	1	36	0	25	64	cost
+c00	bomb	13	Peerless Bomb	1	33	0	32	55	cost
+c00	bomb	14	Annihilator Bomb	1	30	0	28	50	cost
+c00	electrical	0	Transport Cloaking	2	0	2	3	1	Available
+c00	electrical	1	Stealth Cloak	2	0	2	5	2	cost
+c00	electrical	2	Super-Stealth Cloak	8	0	8	15	3	cost
+c00	electrical	3	Ultra-Stealth Cloak	10	0	10	25	5	cost
+c00	electrical	4	Multi Function Pod	5	0	5	15	2	cost
+c00	electrical	5	Battle Computer	0	0	15	6	1	Available
+c00	electrical	6	Battle Super Computer	0	0	25	14	1	cost
+c00	electrical	7	Battle Nexus	0	0	30	15	1	cost
+c00	electrical	8	Jammer 10	0	0	2	6	1	UnAvail
+c00	electrical	9	Jammer 20	1	0	5	20	1	cost
+c00	electrical	10	Jammer 30	1	0	6	20	1	cost
+c00	electrical	11	Jammer 50	2	0	7	20	1	UnAvail
+c00	electrical	12	Energy Capacitor	0	0	8	5	1	cost
+c00	electrical	13	Flux Capacitor	0	0	8	5	1	UnAvail
+c00	electrical	14	Energy Dampener	5	10	0	50	2	UnAvail
+c00	electrical	15	Tachyon Detector	1	5	0	70	1	UnAvail
+c00	electrical	16	Anti-matter Generator	8	3	3	10	10	UnAvail
+c00	engine	0	Settler's Delight	1	0	1	2	2	UnAvail
+c00	engine	1	Quick Jump 5	3	0	1	3	4	Available
+c00	engine	2	Fuel Mizer	8	0	0	11	6	UnAvail
+c00	engine	3	Long Hump 6	5	0	1	6	9	cost
+c00	engine	4	Daddy Long Legs 7	11	0	3	12	13	cost
+c00	engine	5	Alpha Drive 8	16	0	3	28	17	cost
+c00	engine	6	Trans-Galactic Drive	20	20	9	50	25	cost
+c00	engine	7	Interspace-10	18	25	10	60	25	UnAvail
+c00	engine	8	Enigma Pulsar	12	15	11	40	20	cost
+c00	engine	9	Trans-Star 10	3	0	3	10	5	cost
+c00	engine	10	Radiating Hydro-Ram Scoop	3	2	9	8	10	cost
+c00	engine	11	Sub-Galactic Fuel Scoop	4	4	7	12	20	cost
+c00	engine	12	Trans-Galactic Fuel Scoop	5	4	12	18	19	cost
+c00	engine	13	Trans-Galactic Super Scoop	6	4	16	24	18	cost
+c00	engine	14	Trans-Galactic Mizer Scoop	5	2	13	20	11	cost
+c00	engine	15	Galaxy Scoop	4	2	9	12	8	UnAvail
+c00	mechanical	0	Colonization Module	12	10	10	10	32	Available
+c00	mechanical	1	Orbital Construction Module	20	15	15	20	50	UnAvail
+c00	mechanical	2	Cargo Pod	5	0	2	10	5	cost
+c00	mechanical	3	Super Cargo Pod	8	0	2	15	7	cost
+c00	mechanical	4	Multi Cargo Pod	12	0	3	25	9	cost
+c00	mechanical	5	Fuel Tank	6	0	0	4	3	Available
+c00	mechanical	6	Super Fuel Tank	8	0	0	8	8	cost
+c00	mechanical	7	Maneuvering Jet	5	0	5	10	5	cost
+c00	mechanical	8	Overthruster	10	0	8	20	5	cost
+c00	mechanical	9	Jump Gate	0	0	50	40	10	cost
+c00	mechanical	10	Beam Deflector	0	0	10	8	1	cost
+c00	mine_layer	0	Mine Dispenser 40	2	10	8	45	25	UnAvail
+c00	mine_layer	1	Mine Dispenser 50	2	12	10	55	30	cost
+c00	mine_layer	2	Mine Dispenser 80	2	14	10	65	30	UnAvail
+c00	mine_layer	3	Mine Dispenser 130	2	18	10	80	30	UnAvail
+c00	mine_layer	4	Heavy Dispenser 50	2	20	5	50	10	UnAvail
+c00	mine_layer	5	Heavy Dispenser 110	2	30	5	70	15	UnAvail
+c00	mine_layer	6	Heavy Dispenser 200	2	45	5	90	20	UnAvail
+c00	mine_layer	7	Speed Trap 20	30	0	12	60	100	UnAvail
+c00	mine_layer	8	Speed Trap 30	32	0	14	72	135	UnAvail
+c00	mine_layer	9	Speed Trap 50	40	0	15	80	140	UnAvail
+c00	mining_robot	0	Robo-Midget Miner	14	0	4	50	80	UnAvail
+c00	mining_robot	1	Robo-Mini-Miner	30	0	7	100	240	cost
+c00	mining_robot	2	Robo-Miner	30	0	7	100	240	cost
+c00	mining_robot	3	Robo-Maxi-Miner	30	0	7	100	240	cost
+c00	mining_robot	4	Robo-Super-Miner	30	0	7	100	240	cost
+c00	mining_robot	5	Robo-Ultra-Miner	14	0	4	50	80	UnAvail
+c00	mining_robot	6	Alien Miner	8	0	2	20	20	cost
+c00	mining_robot	7	Orbital Adjuster	25	25	25	50	80	UnAvail
+c00	orbital	0	Stargate 100/250	50	20	20	200	0	cost
+c00	orbital	1	Stargate any/300	50	20	20	250	0	UnAvail
+c00	orbital	2	Stargate 150/600	50	20	20	500	0	cost
+c00	orbital	3	Stargate 300/500	50	20	20	600	0	cost
+c00	orbital	4	Stargate 100/any	50	20	20	700	0	UnAvail
+c00	orbital	5	Stargate any/800	50	20	20	700	0	UnAvail
+c00	orbital	6	Stargate any/any	50	20	20	800	0	UnAvail
+c00	orbital	7	Mass Driver 5	24	20	20	70	0	UnAvail
+c00	orbital	8	Mass Driver 6	24	20	20	144	0	UnAvail
+c00	orbital	9	Mass Driver 7	100	100	100	512	0	cost
+c00	orbital	10	Super Driver 8	24	20	20	256	0	UnAvail
+c00	orbital	11	Super Driver 9	24	20	20	324	0	UnAvail
+c00	orbital	12	Ultra Driver 10	100	100	100	968	0	cost
+c00	orbital	13	Ultra Driver 11	24	20	20	484	0	UnAvail
+c00	orbital	14	Ultra Driver 12	24	20	20	576	0	UnAvail
+c00	orbital	15	Ultra Driver 13	24	20	20	676	0	UnAvail
+c00	planetary	0	Viewer 50	10	10	70	100	0	Available
+c00	planetary	1	Viewer 90	10	10	70	100	0	cost
+c00	planetary	2	Scoper 150	10	10	70	100	0	cost
+c00	planetary	3	Scoper 220	10	10	70	100	0	cost
+c00	planetary	4	Scoper 280	10	10	70	100	0	cost
+c00	planetary	5	Snooper 320X	10	10	70	100	0	cost
+c00	planetary	6	Snooper 400X	10	10	70	100	0	cost
+c00	planetary	7	Snooper 500X	10	10	70	100	0	cost
+c00	planetary	8	Snooper 620X	10	10	70	100	0	cost
+c00	planetary	9	SDI	5	5	5	15	0	Available
+c00	planetary	10	Missile Battery	5	5	5	15	0	cost
+c00	planetary	11	Laser Battery	5	5	5	15	0	cost
+c00	planetary	12	Planetary Shield	5	5	5	15	0	cost
+c00	planetary	13	Neutron Shield	5	5	5	15	0	cost
+c00	planetary	14	Genesis Device	0	0	0	5000	0	cost
+c00	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c00	scanner	1	Rhino Scanner	3	0	2	3	5	cost
+c00	scanner	2	Mole Scanner	2	0	2	9	2	cost
+c00	scanner	3	DNA Scanner	1	1	1	5	2	cost
+c00	scanner	4	Possum Scanner	3	0	3	18	3	cost
+c00	scanner	5	Pick Pocket Scanner	8	10	6	35	15	cost
+c00	scanner	6	Chameleon Scanner	4	6	4	25	6	cost
+c00	scanner	7	Ferret Scanner	2	0	8	36	2	cost
+c00	scanner	8	Dolphin Scanner	5	5	10	40	4	cost
+c00	scanner	9	Gazelle Scanner	4	0	5	24	5	cost
+c00	scanner	10	RNA Scanner	1	1	2	20	2	cost
+c00	scanner	11	Cheetah Scanner	3	1	13	50	4	cost
+c00	scanner	12	Elephant Scanner	8	5	14	70	6	cost
+c00	scanner	13	Eagle Eye Scanner	3	2	21	64	3	cost
+c00	scanner	14	Robber Baron Scanner	10	10	10	90	20	cost
+c00	scanner	15	Peerless Scanner	3	2	30	90	4	cost
+c00	shield	0	Mole-skin Shield	1	0	1	4	1	Available
+c00	shield	1	Cow-hide Shield	2	0	2	5	1	cost
+c00	shield	2	Wolverine Diffuse Shield	3	0	3	6	1	cost
+c00	shield	3	Croby Sharmor	7	0	4	15	10	UnAvail
+c00	shield	4	Shadow Shield	3	0	3	7	2	cost
+c00	shield	5	Bear Neutrino Barrier	4	0	4	8	1	cost
+c00	shield	6	Langston Shell	10	2	6	20	10	cost
+c00	shield	7	Gorilla Delagator	5	0	6	11	1	cost
+c00	shield	8	Elephant Hide Fortress	8	0	10	15	1	cost
+c00	shield	9	Complete Phase Shield	12	0	15	20	1	cost
+c00	hull	0	Small Freighter	12	0	17	20	25	Available
+c00	hull	1	Medium Freighter	20	0	19	40	60	cost
+c00	hull	2	Large Freighter	35	0	21	100	125	cost
+c00	hull	3	Super Freighter	45	0	21	125	175	UnAvail
+c00	hull	4	Scout	4	2	4	10	8	Available
+c00	hull	5	Frigate	4	2	4	12	8	cost
+c00	hull	6	Destroyer	15	3	5	35	30	cost
+c00	hull	7	Cruiser	40	5	8	85	90	cost
+c00	hull	8	Battle Cruiser	55	8	12	120	120	UnAvail
+c00	hull	9	Battleship	120	25	20	225	222	cost
+c00	hull	10	Dreadnought	140	30	25	275	250	UnAvail
+c00	hull	11	Privateer	50	3	2	50	65	cost
+c00	hull	12	Rogue	80	5	5	60	75	cost
+c00	hull	13	Galleon	70	5	5	105	125	cost
+c00	hull	14	Mini-Colony Ship	2	0	2	3	8	UnAvail
+c00	hull	15	Colony Ship	10	0	15	20	20	Available
+c00	hull	16	Mini Bomber	20	5	10	35	28	cost
+c00	hull	17	B-17 Bomber	55	10	10	150	69	cost
+c00	hull	18	Stealth Bomber	55	10	15	175	70	cost
+c00	hull	19	B-52 Bomber	90	15	10	280	110	cost
+c00	hull	20	Midget Miner	10	0	3	20	10	UnAvail
+c00	hull	21	Mini-Miner	25	0	6	50	80	cost
+c00	hull	22	Miner	32	0	6	110	110	UnAvail
+c00	hull	23	Maxi-Miner	32	0	6	140	110	cost
+c00	hull	24	Ultra-Miner	30	0	6	130	100	UnAvail
+c00	hull	25	Fuel Transport	10	0	5	50	12	UnAvail
+c00	hull	26	Super-Fuel Xport	20	0	8	70	111	cost
+c00	hull	27	Mini Mine Layer	8	2	5	20	10	UnAvail
+c00	hull	28	Super Mine Layer	20	3	9	30	30	UnAvail
+c00	hull	29	Nubian	75	12	12	150	100	cost
+c00	hull	30	Mini Morph	30	8	8	100	70	cost
+c00	hull	31	Meta Morph	50	12	12	120	85	UnAvail
+c00	starbase_hull	0	Orbital Fort	12	0	17	40	0	Available
+c00	starbase_hull	1	Space Dock	20	5	25	100	0	UnAvail
+c00	starbase_hull	2	Space Station	120	80	250	600	0	Available
+c00	starbase_hull	3	Ultra Station	120	80	300	600	0	UnAvail
+c00	starbase_hull	4	Death Star	120	80	350	750	0	UnAvail
+c00	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c00	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c00	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c00	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c00	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c00	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c00	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c00	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c00	terraform	8	Gravity Terraform ±3	0	0	0	100	0	cost
+c00	terraform	9	Gravity Terraform ±7	0	0	0	100	0	cost
+c00	terraform	10	Gravity Terraform ±11	0	0	0	100	0	cost
+c00	terraform	11	Gravity Terraform ±15	0	0	0	100	0	cost
+c00	terraform	12	Temp Terraform ±3	0	0	0	100	0	cost
+c00	terraform	13	Temp Terraform ±7	0	0	0	100	0	cost
+c00	terraform	14	Temp Terraform ±11	0	0	0	100	0	cost
+c00	terraform	15	Temp Terraform ±15	0	0	0	100	0	cost
+c00	terraform	16	Radiation Terraform ±3	0	0	0	100	0	cost
+c00	terraform	17	Radiation Terraform ±7	0	0	0	100	0	cost
+c00	terraform	18	Radiation Terraform ±11	0	0	0	100	0	cost
+c00	terraform	19	Radiation Terraform ±15	0	0	0	100	0	cost
+c00	torpedo	0	Alpha Torpedo	9	3	3	5	25	Available
+c00	torpedo	1	Beta Torpedo	18	6	4	6	25	cost
+c00	torpedo	2	Delta Torpedo	22	8	5	8	25	cost
+c00	torpedo	3	Epsilon Torpedo	30	10	6	10	25	cost
+c00	torpedo	4	Rho Torpedo	34	12	8	12	25	cost
+c00	torpedo	5	Upsilon Torpedo	40	14	9	15	25	cost
+c00	torpedo	6	Omega Torpedo	52	18	12	18	25	cost
+c00	torpedo	7	Anti Matter Torpedo	3	8	1	50	8	cost
+c00	torpedo	8	Jihad Missile	37	13	9	13	35	cost
+c00	torpedo	9	Juggernaut Missile	48	16	11	16	35	cost
+c00	torpedo	10	Doomsday Missile	60	20	13	20	35	cost
+c00	torpedo	11	Armageddon Missile	67	23	16	24	35	cost
+c01	armor	0	Tritanium	1	0	0	2	60	Available
+c01	armor	1	Crobmnium	1	0	0	3	56	Available
+c01	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c01	armor	3	Strobnium	2	0	0	4	54	Available
+c01	armor	4	Organic Armor	0	0	1	5	15	Available
+c01	armor	5	Kelarium	3	1	0	8	50	Available
+c01	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c01	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c01	armor	8	Neutronium	5	1	1	13	45	Available
+c01	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c01	armor	10	Valanium	9	0	0	30	40	Available
+c01	armor	11	Superlatanium	23	0	0	92	30	Available
+c01	beam	0	Laser	0	1	0	1	1	Available
+c01	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c01	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c01	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c01	beam	4	Blackjack	0	4	0	2	10	Available
+c01	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c01	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c01	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c01	beam	8	Gatling Gun	0	8	0	5	3	Available
+c01	beam	9	Mini Blaster	0	4	0	4	1	Available
+c01	beam	10	Bludgeon	0	11	0	4	10	Available
+c01	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c01	beam	12	Phased Sapper	0	0	3	9	1	Available
+c01	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c01	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c01	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c01	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c01	beam	17	Disruptor	0	12	0	15	2	Available
+c01	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c01	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c01	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c01	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c01	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c01	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c01	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c01	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c01	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c01	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c01	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c01	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c01	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c01	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c01	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c01	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c01	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c01	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c01	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c01	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c01	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c01	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c01	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c01	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c01	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c01	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c01	electrical	5	Battle Computer	0	0	4	1	1	Available
+c01	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c01	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c01	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c01	electrical	9	Jammer 20	1	0	2	7	1	Available
+c01	electrical	10	Jammer 30	1	0	4	12	1	Available
+c01	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c01	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c01	electrical	13	Flux Capacitor	0	0	4	3	1	Available
+c01	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c01	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c01	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c01	engine	0	Settler's Delight	1	0	1	1	2	Available
+c01	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c01	engine	2	Fuel Mizer	2	0	0	3	6	UnAvail
+c01	engine	3	Long Hump 6	1	0	1	1	9	Available
+c01	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c01	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c01	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c01	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c01	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c01	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c01	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c01	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c01	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c01	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c01	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c01	engine	15	Galaxy Scoop	3	2	7	9	8	UnAvail
+c01	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c01	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c01	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c01	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c01	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c01	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c01	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c01	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c01	mechanical	8	Overthruster	4	0	4	9	5	Available
+c01	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c01	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c01	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c01	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c01	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c01	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c01	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c01	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c01	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c01	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c01	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c01	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c01	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c01	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c01	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c01	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c01	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c01	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c01	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c01	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c01	orbital	0	Stargate 100/250	13	5	5	50	0	UnAvail
+c01	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c01	orbital	2	Stargate 150/600	20	8	8	200	0	UnAvail
+c01	orbital	3	Stargate 300/500	24	10	10	288	0	UnAvail
+c01	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c01	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c01	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c01	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c01	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c01	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c01	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c01	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c01	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c01	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c01	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c01	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c01	planetary	0	Viewer 50	10	10	70	100	0	Available
+c01	planetary	1	Viewer 90	10	10	70	100	0	Available
+c01	planetary	2	Scoper 150	10	10	70	100	0	Available
+c01	planetary	3	Scoper 220	10	10	70	100	0	Available
+c01	planetary	4	Scoper 280	10	10	70	100	0	Available
+c01	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c01	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c01	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c01	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c01	planetary	9	SDI	5	5	5	15	0	Available
+c01	planetary	10	Missile Battery	5	5	5	15	0	Available
+c01	planetary	11	Laser Battery	5	5	5	15	0	Available
+c01	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c01	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c01	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c01	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c01	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c01	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c01	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c01	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c01	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c01	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c01	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c01	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c01	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c01	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c01	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c01	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c01	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c01	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c01	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c01	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c01	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c01	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c01	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c01	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c01	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c01	shield	6	Langston Shell	4	1	3	9	10	Available
+c01	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c01	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c01	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c01	hull	0	Small Freighter	3	0	4	5	25	Available
+c01	hull	1	Medium Freighter	5	0	5	10	60	Available
+c01	hull	2	Large Freighter	10	0	6	28	125	Available
+c01	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c01	hull	4	Scout	1	1	1	2	8	Available
+c01	hull	5	Frigate	1	1	1	3	8	Available
+c01	hull	6	Destroyer	4	1	1	9	30	Available
+c01	hull	7	Cruiser	13	2	3	27	90	Available
+c01	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c01	hull	9	Battleship	58	12	10	108	222	Available
+c01	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c01	hull	11	Privateer	12	1	1	12	65	Available
+c01	hull	12	Rogue	22	1	1	17	75	UnAvail
+c01	hull	13	Galleon	28	2	2	42	125	Available
+c01	hull	14	Mini-Colony Ship	1	0	1	1	8	Available
+c01	hull	15	Colony Ship	2	0	4	5	20	Available
+c01	hull	16	Mini Bomber	5	1	2	9	28	Available
+c01	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c01	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c01	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c01	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c01	hull	21	Mini-Miner	6	0	1	12	80	Available
+c01	hull	22	Miner	8	0	1	27	110	UnAvail
+c01	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c01	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c01	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c01	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c01	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c01	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c01	hull	29	Nubian	75	12	12	150	100	Available
+c01	hull	30	Mini Morph	8	2	2	28	70	Available
+c01	hull	31	Meta Morph	18	4	4	43	85	Available
+c01	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c01	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c01	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c01	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c01	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c01	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c01	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c01	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c01	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c01	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c01	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c01	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c01	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c01	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c01	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c01	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c01	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c01	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c01	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c01	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c01	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c01	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c01	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c01	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c01	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c01	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c01	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c01	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c01	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c01	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c01	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c01	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c01	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c01	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c01	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c01	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c01	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c02	armor	0	Tritanium	1	0	0	2	60	Available
+c02	armor	1	Crobmnium	1	0	0	3	56	Available
+c02	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c02	armor	3	Strobnium	2	0	0	4	54	Available
+c02	armor	4	Organic Armor	0	0	1	5	15	Available
+c02	armor	5	Kelarium	3	1	0	8	50	Available
+c02	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c02	armor	7	Depleted Neutronium	4	0	1	10	50	Available
+c02	armor	8	Neutronium	5	1	1	13	45	Available
+c02	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c02	armor	10	Valanium	9	0	0	30	40	Available
+c02	armor	11	Superlatanium	23	0	0	92	30	Available
+c02	beam	0	Laser	0	1	0	1	1	Available
+c02	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c02	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c02	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c02	beam	4	Blackjack	0	4	0	2	10	Available
+c02	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c02	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c02	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c02	beam	8	Gatling Gun	0	8	0	5	3	Available
+c02	beam	9	Mini Blaster	0	4	0	4	1	Available
+c02	beam	10	Bludgeon	0	11	0	4	10	Available
+c02	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c02	beam	12	Phased Sapper	0	0	3	9	1	Available
+c02	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c02	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c02	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c02	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c02	beam	17	Disruptor	0	12	0	15	2	Available
+c02	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c02	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c02	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c02	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c02	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c02	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c02	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c02	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c02	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c02	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c02	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c02	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c02	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c02	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c02	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c02	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c02	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c02	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c02	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c02	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c02	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c02	electrical	0	Transport Cloaking	1	0	1	1	1	Available
+c02	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c02	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c02	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	Available
+c02	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c02	electrical	5	Battle Computer	0	0	4	1	1	Available
+c02	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c02	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c02	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c02	electrical	9	Jammer 20	1	0	2	7	1	Available
+c02	electrical	10	Jammer 30	1	0	4	12	1	Available
+c02	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c02	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c02	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c02	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c02	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c02	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c02	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c02	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c02	engine	2	Fuel Mizer	2	0	0	3	6	Available
+c02	engine	3	Long Hump 6	1	0	1	1	9	Available
+c02	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c02	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c02	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c02	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c02	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c02	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c02	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c02	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c02	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c02	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c02	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c02	engine	15	Galaxy Scoop	3	2	7	9	8	Available
+c02	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c02	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c02	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c02	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c02	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c02	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c02	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c02	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c02	mechanical	8	Overthruster	4	0	4	9	5	Available
+c02	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c02	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c02	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c02	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c02	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c02	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c02	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c02	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c02	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c02	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c02	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c02	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c02	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	Available
+c02	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c02	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c02	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c02	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c02	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	Available
+c02	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c02	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c02	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c02	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c02	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c02	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c02	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c02	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c02	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c02	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c02	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c02	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c02	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c02	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c02	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c02	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c02	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c02	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c02	planetary	0	Viewer 50	10	10	70	100	0	Available
+c02	planetary	1	Viewer 90	10	10	70	100	0	Available
+c02	planetary	2	Scoper 150	10	10	70	100	0	Available
+c02	planetary	3	Scoper 220	10	10	70	100	0	Available
+c02	planetary	4	Scoper 280	10	10	70	100	0	Available
+c02	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c02	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c02	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c02	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c02	planetary	9	SDI	5	5	5	15	0	Available
+c02	planetary	10	Missile Battery	5	5	5	15	0	Available
+c02	planetary	11	Laser Battery	5	5	5	15	0	Available
+c02	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c02	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c02	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c02	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c02	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c02	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c02	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c02	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c02	scanner	5	Pick Pocket Scanner	2	2	1	9	15	Available
+c02	scanner	6	Chameleon Scanner	1	1	1	6	6	Available
+c02	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c02	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c02	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c02	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c02	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c02	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c02	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c02	scanner	14	Robber Baron Scanner	6	6	6	50	20	Available
+c02	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c02	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c02	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c02	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c02	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c02	shield	4	Shadow Shield	1	0	1	2	2	Available
+c02	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c02	shield	6	Langston Shell	4	1	3	9	10	Available
+c02	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c02	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c02	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c02	hull	0	Small Freighter	3	0	4	5	25	Available
+c02	hull	1	Medium Freighter	5	0	5	10	60	Available
+c02	hull	2	Large Freighter	10	0	6	28	125	Available
+c02	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c02	hull	4	Scout	1	1	1	2	8	Available
+c02	hull	5	Frigate	1	1	1	3	8	Available
+c02	hull	6	Destroyer	4	1	1	9	30	Available
+c02	hull	7	Cruiser	13	2	3	27	90	Available
+c02	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c02	hull	9	Battleship	58	12	10	108	222	Available
+c02	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c02	hull	11	Privateer	12	1	1	12	65	Available
+c02	hull	12	Rogue	22	1	1	17	75	Available
+c02	hull	13	Galleon	28	2	2	42	125	Available
+c02	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c02	hull	15	Colony Ship	2	0	4	5	20	Available
+c02	hull	16	Mini Bomber	5	1	2	9	28	Available
+c02	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c02	hull	18	Stealth Bomber	15	3	4	49	70	Available
+c02	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c02	hull	20	Midget Miner	2	0	1	5	10	Available
+c02	hull	21	Mini-Miner	6	0	1	12	80	Available
+c02	hull	22	Miner	8	0	1	27	110	Available
+c02	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c02	hull	24	Ultra-Miner	16	0	3	68	100	Available
+c02	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c02	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c02	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c02	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c02	hull	29	Nubian	75	12	12	150	100	Available
+c02	hull	30	Mini Morph	8	2	2	28	70	Available
+c02	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c02	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c02	starbase_hull	1	Space Dock	5	1	6	25	0	Available
+c02	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c02	starbase_hull	3	Ultra Station	53	35	132	264	0	Available
+c02	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c02	terraform	0	Total Terraform ±3	0	0	0	70	0	Available
+c02	terraform	1	Total Terraform ±5	0	0	0	70	0	Available
+c02	terraform	2	Total Terraform ±7	0	0	0	70	0	Available
+c02	terraform	3	Total Terraform ±10	0	0	0	70	0	Available
+c02	terraform	4	Total Terraform ±15	0	0	0	70	0	Available
+c02	terraform	5	Total Terraform ±20	0	0	0	70	0	Available
+c02	terraform	6	Total Terraform ±25	0	0	0	70	0	Available
+c02	terraform	7	Total Terraform ±30	0	0	0	70	0	Available
+c02	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c02	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c02	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c02	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c02	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c02	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c02	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c02	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c02	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c02	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c02	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c02	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c02	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c02	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c02	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c02	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c02	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c02	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c02	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c02	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c02	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c02	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c02	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c02	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c03	armor	0	Tritanium	1	0	0	2	60	Available
+c03	armor	1	Crobmnium	1	0	0	3	56	Available
+c03	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c03	armor	3	Strobnium	2	0	0	4	54	Available
+c03	armor	4	Organic Armor	0	0	1	5	15	Available
+c03	armor	5	Kelarium	3	1	0	8	50	Available
+c03	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c03	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c03	armor	8	Neutronium	5	1	1	13	45	Available
+c03	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c03	armor	10	Valanium	9	0	0	30	40	Available
+c03	armor	11	Superlatanium	23	0	0	92	30	Available
+c03	beam	0	Laser	0	1	0	1	1	Available
+c03	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c03	beam	2	Mini Gun	0	3	0	2	3	UnAvail
+c03	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c03	beam	4	Blackjack	0	3	0	2	10	Available
+c03	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c03	beam	6	Pulsed Sapper	0	0	1	3	1	Available
+c03	beam	7	Colloidal Phaser	0	4	0	5	2	Available
+c03	beam	8	Gatling Gun	0	6	0	4	3	Available
+c03	beam	9	Mini Blaster	0	3	0	3	1	Available
+c03	beam	10	Bludgeon	0	9	0	3	10	Available
+c03	beam	11	Mark IV Blaster	0	5	0	6	2	Available
+c03	beam	12	Phased Sapper	0	0	3	7	1	Available
+c03	beam	13	Heavy Blaster	0	9	0	12	2	Available
+c03	beam	14	Gatling Neutrino Cannon	0	14	0	9	3	Available
+c03	beam	15	Myopic Disruptor	0	8	0	6	1	Available
+c03	beam	16	Blunderbuss	0	17	0	7	10	Available
+c03	beam	17	Disruptor	0	9	0	12	2	Available
+c03	beam	18	Multi Contained Munition	4	24	4	24	8	Available
+c03	beam	19	Syncro Sapper	0	0	5	13	1	Available
+c03	beam	20	Mega Disruptor	0	19	0	21	2	Available
+c03	beam	21	Big Mutha Cannon	0	24	0	15	3	Available
+c03	beam	22	Streaming Pulverizer	0	14	0	12	1	Available
+c03	beam	23	Anti-Matter Pulverizer	0	17	0	21	2	Available
+c03	bomb	0	Lady Finger Bomb	1	4	0	1	40	Available
+c03	bomb	1	Black Cat Bomb	1	4	0	2	45	Available
+c03	bomb	2	M-70 Bomb	1	6	0	3	50	Available
+c03	bomb	3	M-80 Bomb	1	8	0	4	55	Available
+c03	bomb	4	Cherry Bomb	1	10	0	5	52	Available
+c03	bomb	5	LBU-17 Bomb	1	3	3	2	30	Available
+c03	bomb	6	LBU-32 Bomb	1	7	4	3	35	Available
+c03	bomb	7	LBU-74 Bomb	1	14	6	6	45	Available
+c03	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c03	bomb	9	Retro Bomb	6	6	3	17	45	UnAvail
+c03	bomb	10	Smart Bomb	1	4	0	6	50	Available
+c03	bomb	11	Neutron Bomb	1	9	0	9	57	Available
+c03	bomb	12	Enriched Neutron Bomb	1	15	0	11	64	Available
+c03	bomb	13	Peerless Bomb	1	21	0	21	55	Available
+c03	bomb	14	Annihilator Bomb	1	23	0	21	50	Available
+c03	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c03	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c03	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c03	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c03	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c03	electrical	5	Battle Computer	0	0	4	1	1	Available
+c03	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c03	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c03	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c03	electrical	9	Jammer 20	1	0	2	7	1	Available
+c03	electrical	10	Jammer 30	1	0	4	12	1	Available
+c03	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c03	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c03	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c03	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c03	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c03	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c03	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c03	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c03	engine	2	Fuel Mizer	2	0	0	3	6	UnAvail
+c03	engine	3	Long Hump 6	1	0	1	1	9	Available
+c03	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c03	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c03	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c03	engine	7	Interspace-10	7	10	4	24	25	Available
+c03	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c03	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c03	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	UnAvail
+c03	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	UnAvail
+c03	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	UnAvail
+c03	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	UnAvail
+c03	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	UnAvail
+c03	engine	15	Galaxy Scoop	3	2	7	9	8	UnAvail
+c03	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c03	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c03	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c03	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c03	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c03	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c03	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c03	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c03	mechanical	8	Overthruster	4	0	4	9	5	Available
+c03	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c03	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c03	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c03	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	UnAvail
+c03	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c03	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c03	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c03	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c03	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c03	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c03	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c03	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c03	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c03	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c03	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c03	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c03	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c03	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c03	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c03	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c03	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c03	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c03	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c03	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c03	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c03	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c03	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c03	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c03	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c03	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c03	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c03	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c03	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c03	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c03	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c03	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c03	planetary	0	Viewer 50	10	10	70	100	0	Available
+c03	planetary	1	Viewer 90	10	10	70	100	0	Available
+c03	planetary	2	Scoper 150	10	10	70	100	0	Available
+c03	planetary	3	Scoper 220	10	10	70	100	0	Available
+c03	planetary	4	Scoper 280	10	10	70	100	0	Available
+c03	planetary	5	Snooper 320X	10	10	70	100	0	UnAvail
+c03	planetary	6	Snooper 400X	10	10	70	100	0	UnAvail
+c03	planetary	7	Snooper 500X	10	10	70	100	0	UnAvail
+c03	planetary	8	Snooper 620X	10	10	70	100	0	UnAvail
+c03	planetary	9	SDI	5	5	5	15	0	Available
+c03	planetary	10	Missile Battery	5	5	5	15	0	Available
+c03	planetary	11	Laser Battery	5	5	5	15	0	UnAvail
+c03	planetary	12	Planetary Shield	5	5	5	15	0	UnAvail
+c03	planetary	13	Neutron Shield	5	5	5	15	0	UnAvail
+c03	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c03	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c03	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c03	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c03	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c03	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c03	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c03	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c03	scanner	7	Ferret Scanner	1	0	2	9	2	UnAvail
+c03	scanner	8	Dolphin Scanner	2	2	4	14	4	UnAvail
+c03	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c03	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c03	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c03	scanner	12	Elephant Scanner	5	3	8	42	6	UnAvail
+c03	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c03	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c03	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c03	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c03	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c03	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c03	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c03	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c03	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c03	shield	6	Langston Shell	4	1	3	9	10	Available
+c03	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c03	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c03	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c03	hull	0	Small Freighter	3	0	4	5	25	Available
+c03	hull	1	Medium Freighter	5	0	5	10	60	Available
+c03	hull	2	Large Freighter	10	0	6	28	125	Available
+c03	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c03	hull	4	Scout	1	1	1	2	8	Available
+c03	hull	5	Frigate	1	1	1	3	8	Available
+c03	hull	6	Destroyer	4	1	1	9	30	Available
+c03	hull	7	Cruiser	13	2	3	27	90	Available
+c03	hull	8	Battle Cruiser	20	3	4	43	120	Available
+c03	hull	9	Battleship	58	12	10	108	222	Available
+c03	hull	10	Dreadnought	84	18	15	165	250	Available
+c03	hull	11	Privateer	12	1	1	12	65	Available
+c03	hull	12	Rogue	22	1	1	17	75	UnAvail
+c03	hull	13	Galleon	28	2	2	42	125	Available
+c03	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c03	hull	15	Colony Ship	2	0	4	5	20	Available
+c03	hull	16	Mini Bomber	5	1	2	9	28	Available
+c03	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c03	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c03	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c03	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c03	hull	21	Mini-Miner	6	0	1	12	80	Available
+c03	hull	22	Miner	8	0	1	27	110	UnAvail
+c03	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c03	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c03	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c03	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c03	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c03	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c03	hull	29	Nubian	75	12	12	150	100	Available
+c03	hull	30	Mini Morph	8	2	2	28	70	Available
+c03	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c03	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c03	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c03	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c03	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c03	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c03	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c03	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c03	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c03	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c03	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c03	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c03	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c03	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c03	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c03	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c03	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c03	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c03	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c03	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c03	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c03	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c03	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c03	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c03	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c03	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c03	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c03	torpedo	1	Beta Torpedo	3	1	1	1	25	Available
+c03	torpedo	2	Delta Torpedo	6	3	2	3	25	Available
+c03	torpedo	3	Epsilon Torpedo	12	4	3	4	25	Available
+c03	torpedo	4	Rho Torpedo	18	6	4	6	25	Available
+c03	torpedo	5	Upsilon Torpedo	26	9	6	10	25	Available
+c03	torpedo	6	Omega Torpedo	39	14	9	14	25	Available
+c03	torpedo	7	Anti Matter Torpedo	2	5	1	30	8	Available
+c03	torpedo	8	Jihad Missile	12	5	3	5	35	Available
+c03	torpedo	9	Juggernaut Missile	22	8	6	8	35	Available
+c03	torpedo	10	Doomsday Missile	35	12	8	12	35	Available
+c03	torpedo	11	Armageddon Missile	47	16	12	17	35	Available
+c04	armor	0	Tritanium	1	0	0	2	60	Available
+c04	armor	1	Crobmnium	1	0	0	3	56	Available
+c04	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c04	armor	3	Strobnium	2	0	0	4	54	Available
+c04	armor	4	Organic Armor	0	0	1	5	15	Available
+c04	armor	5	Kelarium	3	1	0	8	50	Available
+c04	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c04	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c04	armor	8	Neutronium	5	1	1	13	45	Available
+c04	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c04	armor	10	Valanium	9	0	0	30	40	Available
+c04	armor	11	Superlatanium	23	0	0	92	30	Available
+c04	beam	0	Laser	0	1	0	1	1	Available
+c04	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c04	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c04	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c04	beam	4	Blackjack	0	4	0	2	10	Available
+c04	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c04	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c04	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c04	beam	8	Gatling Gun	0	8	0	5	3	Available
+c04	beam	9	Mini Blaster	0	4	0	4	1	Available
+c04	beam	10	Bludgeon	0	11	0	4	10	Available
+c04	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c04	beam	12	Phased Sapper	0	0	3	9	1	Available
+c04	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c04	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c04	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c04	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c04	beam	17	Disruptor	0	12	0	15	2	Available
+c04	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c04	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c04	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c04	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c04	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c04	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c04	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c04	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c04	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c04	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c04	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c04	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c04	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c04	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c04	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c04	bomb	9	Retro Bomb	7	7	4	22	45	Available
+c04	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c04	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c04	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c04	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c04	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c04	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c04	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c04	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c04	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c04	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c04	electrical	5	Battle Computer	0	0	4	1	1	Available
+c04	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c04	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c04	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c04	electrical	9	Jammer 20	1	0	2	7	1	Available
+c04	electrical	10	Jammer 30	1	0	4	12	1	Available
+c04	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c04	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c04	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c04	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c04	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c04	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c04	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c04	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c04	engine	2	Fuel Mizer	1	0	0	2	6	UnAvail
+c04	engine	3	Long Hump 6	1	0	1	1	9	Available
+c04	engine	4	Daddy Long Legs 7	2	0	1	2	13	Available
+c04	engine	5	Alpha Drive 8	2	0	1	4	17	Available
+c04	engine	6	Trans-Galactic Drive	3	3	2	8	25	Available
+c04	engine	7	Interspace-10	4	5	2	12	25	UnAvail
+c04	engine	8	Enigma Pulsar	3	4	3	10	20	Available
+c04	engine	9	Trans-Star 10	2	0	2	5	5	Available
+c04	engine	10	Radiating Hydro-Ram Scoop	1	1	1	1	10	Available
+c04	engine	11	Sub-Galactic Fuel Scoop	1	1	1	2	20	Available
+c04	engine	12	Trans-Galactic Fuel Scoop	1	1	2	3	19	Available
+c04	engine	13	Trans-Galactic Super Scoop	2	1	4	6	18	Available
+c04	engine	14	Trans-Galactic Mizer Scoop	2	1	4	6	11	Available
+c04	engine	15	Galaxy Scoop	2	1	4	5	8	UnAvail
+c04	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c04	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c04	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c04	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c04	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c04	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c04	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c04	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c04	mechanical	8	Overthruster	4	0	4	9	5	Available
+c04	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c04	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c04	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c04	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c04	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c04	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c04	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c04	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c04	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c04	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c04	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c04	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c04	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c04	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c04	mining_robot	2	Robo-Miner	7	0	2	25	240	UnAvail
+c04	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	UnAvail
+c04	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	UnAvail
+c04	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c04	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c04	mining_robot	7	Orbital Adjuster	6	6	6	12	80	Available
+c04	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c04	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c04	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c04	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c04	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c04	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c04	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c04	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c04	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c04	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c04	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c04	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c04	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c04	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c04	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c04	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c04	planetary	0	Viewer 50	10	10	70	100	0	Available
+c04	planetary	1	Viewer 90	10	10	70	100	0	Available
+c04	planetary	2	Scoper 150	10	10	70	100	0	Available
+c04	planetary	3	Scoper 220	10	10	70	100	0	Available
+c04	planetary	4	Scoper 280	10	10	70	100	0	Available
+c04	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c04	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c04	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c04	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c04	planetary	9	SDI	5	5	5	15	0	Available
+c04	planetary	10	Missile Battery	5	5	5	15	0	Available
+c04	planetary	11	Laser Battery	5	5	5	15	0	Available
+c04	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c04	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c04	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c04	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c04	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c04	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c04	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c04	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c04	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c04	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c04	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c04	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c04	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c04	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c04	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c04	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c04	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c04	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c04	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c04	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c04	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c04	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c04	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c04	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c04	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c04	shield	6	Langston Shell	4	1	3	9	10	Available
+c04	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c04	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c04	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c04	hull	0	Small Freighter	3	0	4	5	25	Available
+c04	hull	1	Medium Freighter	5	0	5	10	60	Available
+c04	hull	2	Large Freighter	10	0	6	28	125	Available
+c04	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c04	hull	4	Scout	1	1	1	2	8	Available
+c04	hull	5	Frigate	1	1	1	3	8	Available
+c04	hull	6	Destroyer	4	1	1	9	30	Available
+c04	hull	7	Cruiser	13	2	3	27	90	Available
+c04	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c04	hull	9	Battleship	58	12	10	108	222	Available
+c04	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c04	hull	11	Privateer	12	1	1	12	65	Available
+c04	hull	12	Rogue	22	1	1	17	75	UnAvail
+c04	hull	13	Galleon	28	2	2	42	125	Available
+c04	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c04	hull	15	Colony Ship	2	0	4	5	20	Available
+c04	hull	16	Mini Bomber	5	1	2	9	28	Available
+c04	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c04	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c04	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c04	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c04	hull	21	Mini-Miner	6	0	1	12	80	Available
+c04	hull	22	Miner	8	0	1	27	110	UnAvail
+c04	hull	23	Maxi-Miner	13	0	2	56	110	UnAvail
+c04	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c04	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c04	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c04	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c04	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c04	hull	29	Nubian	75	12	12	150	100	Available
+c04	hull	30	Mini Morph	8	2	2	28	70	Available
+c04	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c04	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c04	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c04	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c04	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c04	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c04	terraform	0	Total Terraform ±3	0	0	0	35	0	UnAvail
+c04	terraform	1	Total Terraform ±5	0	0	0	35	0	UnAvail
+c04	terraform	2	Total Terraform ±7	0	0	0	35	0	UnAvail
+c04	terraform	3	Total Terraform ±10	0	0	0	35	0	UnAvail
+c04	terraform	4	Total Terraform ±15	0	0	0	35	0	UnAvail
+c04	terraform	5	Total Terraform ±20	0	0	0	35	0	UnAvail
+c04	terraform	6	Total Terraform ±25	0	0	0	35	0	UnAvail
+c04	terraform	7	Total Terraform ±30	0	0	0	35	0	UnAvail
+c04	terraform	8	Gravity Terraform ±3	0	0	0	50	0	Available
+c04	terraform	9	Gravity Terraform ±7	0	0	0	50	0	Available
+c04	terraform	10	Gravity Terraform ±11	0	0	0	50	0	Available
+c04	terraform	11	Gravity Terraform ±15	0	0	0	50	0	Available
+c04	terraform	12	Temp Terraform ±3	0	0	0	50	0	Available
+c04	terraform	13	Temp Terraform ±7	0	0	0	50	0	Available
+c04	terraform	14	Temp Terraform ±11	0	0	0	50	0	Available
+c04	terraform	15	Temp Terraform ±15	0	0	0	50	0	Available
+c04	terraform	16	Radiation Terraform ±3	0	0	0	50	0	Available
+c04	terraform	17	Radiation Terraform ±7	0	0	0	50	0	Available
+c04	terraform	18	Radiation Terraform ±11	0	0	0	50	0	Available
+c04	terraform	19	Radiation Terraform ±15	0	0	0	50	0	Available
+c04	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c04	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c04	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c04	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c04	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c04	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c04	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c04	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c04	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c04	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c04	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c04	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c05	armor	0	Tritanium	1	0	0	2	60	Available
+c05	armor	1	Crobmnium	1	0	0	3	56	Available
+c05	armor	2	Carbonic Armor	0	0	1	3	25	Available
+c05	armor	3	Strobnium	2	0	0	4	54	Available
+c05	armor	4	Organic Armor	0	0	1	4	15	Available
+c05	armor	5	Kelarium	2	1	0	5	50	Available
+c05	armor	6	Fielded Kelarium	2	0	1	6	50	Available
+c05	armor	7	Depleted Neutronium	2	0	1	6	50	UnAvail
+c05	armor	8	Neutronium	3	1	1	9	45	Available
+c05	armor	9	Mega Poly Shell	7	2	2	26	20	Available
+c05	armor	10	Valanium	7	0	0	25	40	Available
+c05	armor	11	Superlatanium	22	0	0	90	30	Available
+c05	beam	0	Laser	0	1	0	1	1	Available
+c05	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c05	beam	2	Mini Gun	0	3	0	2	3	Available
+c05	beam	3	Yakimora Light Phaser	0	2	0	1	1	Available
+c05	beam	4	Blackjack	0	3	0	1	10	Available
+c05	beam	5	Phaser Bazooka	0	2	0	2	2	Available
+c05	beam	6	Pulsed Sapper	0	0	1	2	1	Available
+c05	beam	7	Colloidal Phaser	0	3	0	5	2	Available
+c05	beam	8	Gatling Gun	0	6	0	3	3	Available
+c05	beam	9	Mini Blaster	0	3	0	3	1	Available
+c05	beam	10	Bludgeon	0	10	0	3	10	Available
+c05	beam	11	Mark IV Blaster	0	6	0	7	2	Available
+c05	beam	12	Phased Sapper	0	0	3	8	1	Available
+c05	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c05	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c05	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c05	beam	16	Blunderbuss	0	23	0	10	10	UnAvail
+c05	beam	17	Disruptor	0	13	0	17	2	Available
+c05	beam	18	Multi Contained Munition	5	37	5	37	8	Available
+c05	beam	19	Syncro Sapper	0	0	7	20	1	Available
+c05	beam	20	Mega Disruptor	0	30	0	32	2	Available
+c05	beam	21	Big Mutha Cannon	0	38	0	25	3	Available
+c05	beam	22	Streaming Pulverizer	0	22	0	17	1	Available
+c05	beam	23	Anti-Matter Pulverizer	0	54	0	66	2	Available
+c05	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c05	bomb	1	Black Cat Bomb	1	5	0	1	45	Available
+c05	bomb	2	M-70 Bomb	1	6	0	2	50	Available
+c05	bomb	3	M-80 Bomb	1	7	0	3	55	Available
+c05	bomb	4	Cherry Bomb	1	12	0	5	52	Available
+c05	bomb	5	LBU-17 Bomb	1	3	3	1	30	Available
+c05	bomb	6	LBU-32 Bomb	1	6	3	2	35	Available
+c05	bomb	7	LBU-74 Bomb	1	18	6	7	45	Available
+c05	bomb	8	Hush-a-Boom	1	1	0	1	5	Available
+c05	bomb	9	Retro Bomb	5	5	3	18	45	UnAvail
+c05	bomb	10	Smart Bomb	1	5	0	6	50	UnAvail
+c05	bomb	11	Neutron Bomb	1	7	0	7	57	UnAvail
+c05	bomb	12	Enriched Neutron Bomb	1	20	0	13	64	UnAvail
+c05	bomb	13	Peerless Bomb	1	32	0	32	55	UnAvail
+c05	bomb	14	Annihilator Bomb	2	74	0	70	50	UnAvail
+c05	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c05	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c05	electrical	2	Super-Stealth Cloak	2	0	2	3	3	Available
+c05	electrical	3	Ultra-Stealth Cloak	3	0	3	7	5	UnAvail
+c05	electrical	4	Multi Function Pod	1	0	1	4	2	Available
+c05	electrical	5	Battle Computer	0	0	3	1	1	Available
+c05	electrical	6	Battle Super Computer	0	0	6	3	1	Available
+c05	electrical	7	Battle Nexus	0	0	19	10	1	Available
+c05	electrical	8	Jammer 10	0	0	1	1	1	Available
+c05	electrical	9	Jammer 20	1	0	1	4	1	Available
+c05	electrical	10	Jammer 30	1	0	3	10	1	Available
+c05	electrical	11	Jammer 50	2	0	6	16	1	Available
+c05	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c05	electrical	13	Flux Capacitor	0	0	3	2	1	UnAvail
+c05	electrical	14	Energy Dampener	2	4	0	20	2	UnAvail
+c05	electrical	15	Tachyon Detector	1	2	0	28	1	Available
+c05	electrical	16	Anti-matter Generator	2	1	1	3	10	UnAvail
+c05	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c05	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c05	engine	2	Fuel Mizer	2	0	0	2	6	UnAvail
+c05	engine	3	Long Hump 6	1	0	1	1	9	Available
+c05	engine	4	Daddy Long Legs 7	2	0	1	2	13	Available
+c05	engine	5	Alpha Drive 8	3	0	1	6	17	Available
+c05	engine	6	Trans-Galactic Drive	4	4	2	10	25	Available
+c05	engine	7	Interspace-10	4	6	2	15	25	UnAvail
+c05	engine	8	Enigma Pulsar	4	5	4	14	20	Available
+c05	engine	9	Trans-Star 10	3	0	3	8	5	Available
+c05	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c05	engine	11	Sub-Galactic Fuel Scoop	1	1	1	2	20	Available
+c05	engine	12	Trans-Galactic Fuel Scoop	1	1	2	4	19	Available
+c05	engine	13	Trans-Galactic Super Scoop	2	1	5	7	18	Available
+c05	engine	14	Trans-Galactic Mizer Scoop	2	1	6	10	11	Available
+c05	engine	15	Galaxy Scoop	3	1	6	8	8	UnAvail
+c05	mechanical	0	Colonization Module	2	2	2	2	32	Available
+c05	mechanical	1	Orbital Construction Module	4	3	3	4	50	UnAvail
+c05	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c05	mechanical	3	Super Cargo Pod	2	0	1	3	7	Available
+c05	mechanical	4	Multi Cargo Pod	3	0	1	6	9	Available
+c05	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c05	mechanical	6	Super Fuel Tank	3	0	0	3	8	Available
+c05	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c05	mechanical	8	Overthruster	3	0	2	6	5	Available
+c05	mechanical	9	Jump Gate	0	0	35	28	10	Available
+c05	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c05	mine_layer	0	Mine Dispenser 40	1	2	2	9	25	UnAvail
+c05	mine_layer	1	Mine Dispenser 50	1	2	2	11	30	Available
+c05	mine_layer	2	Mine Dispenser 80	1	3	2	13	30	UnAvail
+c05	mine_layer	3	Mine Dispenser 130	1	5	3	24	30	UnAvail
+c05	mine_layer	4	Heavy Dispenser 50	1	4	1	10	10	UnAvail
+c05	mine_layer	5	Heavy Dispenser 110	1	6	1	14	15	UnAvail
+c05	mine_layer	6	Heavy Dispenser 200	1	18	2	36	20	UnAvail
+c05	mine_layer	7	Speed Trap 20	6	0	2	12	100	Available
+c05	mine_layer	8	Speed Trap 30	6	0	3	14	135	UnAvail
+c05	mine_layer	9	Speed Trap 50	10	0	4	20	140	UnAvail
+c05	mining_robot	0	Robo-Midget Miner	3	0	1	10	80	UnAvail
+c05	mining_robot	1	Robo-Mini-Miner	6	0	1	20	240	Available
+c05	mining_robot	2	Robo-Miner	6	0	1	20	240	Available
+c05	mining_robot	3	Robo-Maxi-Miner	6	0	1	20	240	Available
+c05	mining_robot	4	Robo-Super-Miner	9	0	2	30	240	Available
+c05	mining_robot	5	Robo-Ultra-Miner	6	0	2	22	80	UnAvail
+c05	mining_robot	6	Alien Miner	2	0	1	4	20	Available
+c05	mining_robot	7	Orbital Adjuster	5	5	5	10	80	UnAvail
+c05	orbital	0	Stargate 100/250	10	4	4	40	0	Available
+c05	orbital	1	Stargate any/300	10	4	4	50	0	UnAvail
+c05	orbital	2	Stargate 150/600	13	5	5	125	0	Available
+c05	orbital	3	Stargate 300/500	18	7	7	210	0	Available
+c05	orbital	4	Stargate 100/any	25	10	10	350	0	UnAvail
+c05	orbital	5	Stargate any/800	30	12	12	420	0	UnAvail
+c05	orbital	6	Stargate any/any	45	18	18	720	0	UnAvail
+c05	orbital	7	Mass Driver 5	5	4	4	14	0	UnAvail
+c05	orbital	8	Mass Driver 6	5	4	4	29	0	UnAvail
+c05	orbital	9	Mass Driver 7	20	20	20	103	0	Available
+c05	orbital	10	Super Driver 8	6	5	5	64	0	UnAvail
+c05	orbital	11	Super Driver 9	9	7	7	114	0	UnAvail
+c05	orbital	12	Ultra Driver 10	45	45	45	436	0	Available
+c05	orbital	13	Ultra Driver 11	13	11	11	266	0	UnAvail
+c05	orbital	14	Ultra Driver 12	17	14	14	403	0	UnAvail
+c05	orbital	15	Ultra Driver 13	22	18	18	609	0	UnAvail
+c05	planetary	0	Viewer 50	10	10	70	100	0	Available
+c05	planetary	1	Viewer 90	10	10	70	100	0	Available
+c05	planetary	2	Scoper 150	10	10	70	100	0	Available
+c05	planetary	3	Scoper 220	10	10	70	100	0	Available
+c05	planetary	4	Scoper 280	10	10	70	100	0	Available
+c05	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c05	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c05	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c05	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c05	planetary	9	SDI	5	5	5	15	0	Available
+c05	planetary	10	Missile Battery	5	5	5	15	0	Available
+c05	planetary	11	Laser Battery	5	5	5	15	0	Available
+c05	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c05	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c05	planetary	14	Genesis Device	0	0	0	3500	0	Available
+c05	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c05	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c05	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c05	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c05	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c05	scanner	5	Pick Pocket Scanner	2	2	1	7	15	UnAvail
+c05	scanner	6	Chameleon Scanner	1	1	1	5	6	UnAvail
+c05	scanner	7	Ferret Scanner	1	0	2	7	2	Available
+c05	scanner	8	Dolphin Scanner	1	1	2	8	4	Available
+c05	scanner	9	Gazelle Scanner	1	0	1	5	5	Available
+c05	scanner	10	RNA Scanner	1	1	1	4	2	Available
+c05	scanner	11	Cheetah Scanner	1	1	3	12	4	Available
+c05	scanner	12	Elephant Scanner	4	2	7	35	6	Available
+c05	scanner	13	Eagle Eye Scanner	1	1	8	26	3	Available
+c05	scanner	14	Robber Baron Scanner	4	4	4	40	20	UnAvail
+c05	scanner	15	Peerless Scanner	3	2	27	81	4	Available
+c05	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c05	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c05	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c05	shield	3	Croby Sharmor	1	0	1	3	10	Available
+c05	shield	4	Shadow Shield	1	0	1	1	2	UnAvail
+c05	shield	5	Bear Neutrino Barrier	1	0	1	2	1	Available
+c05	shield	6	Langston Shell	3	1	2	6	10	Available
+c05	shield	7	Gorilla Delagator	2	0	2	4	1	Available
+c05	shield	8	Elephant Hide Fortress	5	0	6	9	1	Available
+c05	shield	9	Complete Phase Shield	10	0	12	16	1	Available
+c05	hull	0	Small Freighter	2	0	3	4	25	Available
+c05	hull	1	Medium Freighter	4	0	4	8	60	Available
+c05	hull	2	Large Freighter	7	0	4	20	125	Available
+c05	hull	3	Super Freighter	16	0	7	44	175	Available
+c05	hull	4	Scout	1	1	1	2	8	Available
+c05	hull	5	Frigate	1	1	1	2	8	Available
+c05	hull	6	Destroyer	3	1	1	7	30	Available
+c05	hull	7	Cruiser	8	1	2	17	90	Available
+c05	hull	8	Battle Cruiser	11	2	2	24	120	UnAvail
+c05	hull	9	Battleship	42	9	7	79	222	Available
+c05	hull	10	Dreadnought	70	15	12	137	250	UnAvail
+c05	hull	11	Privateer	10	1	1	10	65	Available
+c05	hull	12	Rogue	16	1	1	12	75	UnAvail
+c05	hull	13	Galleon	17	1	1	26	125	Available
+c05	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c05	hull	15	Colony Ship	2	0	3	4	20	Available
+c05	hull	16	Mini Bomber	4	1	2	7	28	Available
+c05	hull	17	B-17 Bomber	11	2	2	30	69	Available
+c05	hull	18	Stealth Bomber	11	2	3	35	70	UnAvail
+c05	hull	19	B-52 Bomber	40	7	4	126	110	Available
+c05	hull	20	Midget Miner	2	0	1	4	10	UnAvail
+c05	hull	21	Mini-Miner	5	0	1	10	80	Available
+c05	hull	22	Miner	6	0	1	22	110	UnAvail
+c05	hull	23	Maxi-Miner	8	0	1	35	110	Available
+c05	hull	24	Ultra-Miner	12	0	2	52	100	UnAvail
+c05	hull	25	Fuel Transport	2	0	1	10	12	Available
+c05	hull	26	Super-Fuel Xport	4	0	2	14	111	Available
+c05	hull	27	Mini Mine Layer	2	1	1	4	10	UnAvail
+c05	hull	28	Super Mine Layer	9	1	4	13	30	UnAvail
+c05	hull	29	Nubian	150	24	24	300	100	Available
+c05	hull	30	Mini Morph	6	2	2	20	70	Available
+c05	hull	31	Meta Morph	10	2	2	24	85	UnAvail
+c05	starbase_hull	0	Orbital Fort	3	0	4	8	0	Available
+c05	starbase_hull	1	Space Dock	4	1	5	20	0	UnAvail
+c05	starbase_hull	2	Space Station	24	16	50	120	0	Available
+c05	starbase_hull	3	Ultra Station	36	24	90	180	0	UnAvail
+c05	starbase_hull	4	Death Star	66	44	193	413	0	UnAvail
+c05	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c05	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c05	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c05	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c05	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c05	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c05	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c05	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c05	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c05	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c05	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c05	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c05	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c05	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c05	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c05	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c05	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c05	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c05	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c05	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c05	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c05	torpedo	1	Beta Torpedo	5	1	1	1	25	Available
+c05	torpedo	2	Delta Torpedo	5	2	1	2	25	Available
+c05	torpedo	3	Epsilon Torpedo	15	5	2	5	25	Available
+c05	torpedo	4	Rho Torpedo	25	8	6	8	25	Available
+c05	torpedo	5	Upsilon Torpedo	40	13	8	15	25	Available
+c05	torpedo	6	Omega Torpedo	130	44	30	44	25	Available
+c05	torpedo	7	Anti Matter Torpedo	2	7	1	46	8	Available
+c05	torpedo	8	Jihad Missile	13	5	3	5	35	Available
+c05	torpedo	9	Juggernaut Missile	30	10	6	10	35	Available
+c05	torpedo	10	Doomsday Missile	52	17	11	17	35	Available
+c05	torpedo	11	Armageddon Missile	75	26	17	27	35	Available
+c06	armor	0	Tritanium	1	0	0	2	60	Available
+c06	armor	1	Crobmnium	1	0	0	3	56	Available
+c06	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c06	armor	3	Strobnium	2	0	0	4	54	Available
+c06	armor	4	Organic Armor	0	0	1	5	15	Available
+c06	armor	5	Kelarium	3	1	0	8	50	Available
+c06	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c06	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c06	armor	8	Neutronium	5	1	1	13	45	Available
+c06	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c06	armor	10	Valanium	9	0	0	30	40	Available
+c06	armor	11	Superlatanium	23	0	0	92	30	Available
+c06	beam	0	Laser	0	1	0	1	1	Available
+c06	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c06	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c06	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c06	beam	4	Blackjack	0	4	0	2	10	Available
+c06	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c06	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c06	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c06	beam	8	Gatling Gun	0	8	0	5	3	Available
+c06	beam	9	Mini Blaster	0	4	0	4	1	Available
+c06	beam	10	Bludgeon	0	11	0	4	10	Available
+c06	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c06	beam	12	Phased Sapper	0	0	3	9	1	Available
+c06	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c06	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c06	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c06	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c06	beam	17	Disruptor	0	12	0	15	2	Available
+c06	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c06	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c06	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c06	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c06	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c06	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c06	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c06	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c06	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c06	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c06	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c06	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c06	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c06	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c06	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c06	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c06	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c06	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c06	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c06	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c06	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c06	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c06	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c06	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c06	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c06	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c06	electrical	5	Battle Computer	0	0	4	1	1	Available
+c06	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c06	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c06	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c06	electrical	9	Jammer 20	1	0	2	7	1	Available
+c06	electrical	10	Jammer 30	1	0	4	12	1	Available
+c06	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c06	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c06	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c06	electrical	14	Energy Dampener	3	5	0	26	2	Available
+c06	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c06	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c06	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c06	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c06	engine	2	Fuel Mizer	2	0	0	3	6	Available
+c06	engine	3	Long Hump 6	1	0	1	1	9	Available
+c06	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c06	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c06	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c06	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c06	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c06	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c06	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c06	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c06	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c06	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c06	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c06	engine	15	Galaxy Scoop	3	2	7	9	8	Available
+c06	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c06	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c06	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c06	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c06	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c06	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c06	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c06	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c06	mechanical	8	Overthruster	4	0	4	9	5	Available
+c06	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c06	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c06	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	Available
+c06	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c06	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	Available
+c06	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	Available
+c06	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	Available
+c06	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	Available
+c06	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	Available
+c06	mine_layer	7	Speed Trap 20	7	0	3	15	100	Available
+c06	mine_layer	8	Speed Trap 30	8	0	3	18	135	Available
+c06	mine_layer	9	Speed Trap 50	16	0	6	32	140	Available
+c06	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	Available
+c06	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c06	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c06	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c06	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c06	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	Available
+c06	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c06	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c06	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c06	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c06	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c06	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c06	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c06	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c06	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c06	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c06	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c06	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c06	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c06	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c06	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c06	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c06	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c06	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c06	planetary	0	Viewer 50	10	10	70	100	0	Available
+c06	planetary	1	Viewer 90	10	10	70	100	0	Available
+c06	planetary	2	Scoper 150	10	10	70	100	0	Available
+c06	planetary	3	Scoper 220	10	10	70	100	0	Available
+c06	planetary	4	Scoper 280	10	10	70	100	0	Available
+c06	planetary	5	Snooper 320X	10	10	70	100	0	UnAvail
+c06	planetary	6	Snooper 400X	10	10	70	100	0	UnAvail
+c06	planetary	7	Snooper 500X	10	10	70	100	0	UnAvail
+c06	planetary	8	Snooper 620X	10	10	70	100	0	UnAvail
+c06	planetary	9	SDI	5	5	5	15	0	Available
+c06	planetary	10	Missile Battery	5	5	5	15	0	Available
+c06	planetary	11	Laser Battery	5	5	5	15	0	Available
+c06	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c06	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c06	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c06	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c06	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c06	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c06	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c06	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c06	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c06	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c06	scanner	7	Ferret Scanner	1	0	2	9	2	UnAvail
+c06	scanner	8	Dolphin Scanner	2	2	4	14	4	UnAvail
+c06	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c06	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c06	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c06	scanner	12	Elephant Scanner	5	3	8	42	6	UnAvail
+c06	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c06	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c06	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c06	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c06	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c06	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c06	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c06	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c06	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c06	shield	6	Langston Shell	4	1	3	9	10	Available
+c06	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c06	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c06	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c06	hull	0	Small Freighter	3	0	4	5	25	Available
+c06	hull	1	Medium Freighter	5	0	5	10	60	Available
+c06	hull	2	Large Freighter	10	0	6	28	125	Available
+c06	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c06	hull	4	Scout	1	1	1	2	8	Available
+c06	hull	5	Frigate	1	1	1	3	8	Available
+c06	hull	6	Destroyer	4	1	1	9	30	Available
+c06	hull	7	Cruiser	13	2	3	27	90	Available
+c06	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c06	hull	9	Battleship	58	12	10	108	222	Available
+c06	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c06	hull	11	Privateer	12	1	1	12	65	Available
+c06	hull	12	Rogue	22	1	1	17	75	UnAvail
+c06	hull	13	Galleon	28	2	2	42	125	Available
+c06	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c06	hull	15	Colony Ship	2	0	4	5	20	Available
+c06	hull	16	Mini Bomber	5	1	2	9	28	Available
+c06	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c06	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c06	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c06	hull	20	Midget Miner	2	0	1	5	10	Available
+c06	hull	21	Mini-Miner	6	0	1	12	80	Available
+c06	hull	22	Miner	8	0	1	27	110	Available
+c06	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c06	hull	24	Ultra-Miner	16	0	3	68	100	Available
+c06	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c06	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c06	hull	27	Mini Mine Layer	2	1	1	5	10	Available
+c06	hull	28	Super Mine Layer	11	2	5	17	30	Available
+c06	hull	29	Nubian	75	12	12	150	100	Available
+c06	hull	30	Mini Morph	8	2	2	28	70	Available
+c06	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c06	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c06	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c06	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c06	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c06	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c06	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c06	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c06	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c06	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c06	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c06	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c06	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c06	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c06	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c06	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c06	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c06	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c06	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c06	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c06	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c06	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c06	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c06	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c06	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c06	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c06	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c06	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c06	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c06	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c06	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c06	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c06	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c06	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c06	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c06	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c06	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c06	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c07	armor	0	Tritanium	1	0	0	2	60	Available
+c07	armor	1	Crobmnium	1	0	0	3	56	Available
+c07	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c07	armor	3	Strobnium	2	0	0	4	54	Available
+c07	armor	4	Organic Armor	0	0	1	5	15	Available
+c07	armor	5	Kelarium	3	1	0	8	50	Available
+c07	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c07	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c07	armor	8	Neutronium	5	1	1	13	45	Available
+c07	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c07	armor	10	Valanium	9	0	0	30	40	Available
+c07	armor	11	Superlatanium	23	0	0	92	30	Available
+c07	beam	0	Laser	0	1	0	1	1	Available
+c07	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c07	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c07	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c07	beam	4	Blackjack	0	4	0	2	10	Available
+c07	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c07	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c07	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c07	beam	8	Gatling Gun	0	8	0	5	3	Available
+c07	beam	9	Mini Blaster	0	4	0	4	1	Available
+c07	beam	10	Bludgeon	0	11	0	4	10	Available
+c07	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c07	beam	12	Phased Sapper	0	0	3	9	1	Available
+c07	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c07	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c07	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c07	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c07	beam	17	Disruptor	0	12	0	15	2	Available
+c07	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c07	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c07	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c07	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c07	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c07	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c07	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c07	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c07	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c07	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c07	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c07	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c07	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c07	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c07	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c07	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c07	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c07	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c07	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c07	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c07	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c07	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c07	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c07	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c07	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c07	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c07	electrical	5	Battle Computer	0	0	4	1	1	Available
+c07	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c07	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c07	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c07	electrical	9	Jammer 20	1	0	2	7	1	Available
+c07	electrical	10	Jammer 30	1	0	4	12	1	Available
+c07	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c07	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c07	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c07	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c07	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c07	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c07	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c07	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c07	engine	2	Fuel Mizer	2	0	0	3	6	UnAvail
+c07	engine	3	Long Hump 6	1	0	1	1	9	Available
+c07	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c07	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c07	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c07	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c07	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c07	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c07	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c07	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c07	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c07	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c07	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c07	engine	15	Galaxy Scoop	3	2	7	9	8	UnAvail
+c07	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c07	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c07	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c07	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c07	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c07	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c07	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c07	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c07	mechanical	8	Overthruster	4	0	4	9	5	Available
+c07	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c07	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c07	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c07	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c07	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c07	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c07	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c07	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c07	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c07	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c07	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c07	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c07	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c07	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c07	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c07	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c07	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c07	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c07	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c07	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c07	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c07	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c07	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c07	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c07	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c07	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c07	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c07	orbital	7	Mass Driver 5	6	5	5	18	0	Available
+c07	orbital	8	Mass Driver 6	6	5	5	36	0	Available
+c07	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c07	orbital	10	Super Driver 8	10	8	8	103	0	Available
+c07	orbital	11	Super Driver 9	12	10	10	156	0	Available
+c07	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c07	orbital	13	Ultra Driver 11	16	13	13	310	0	Available
+c07	orbital	14	Ultra Driver 12	18	15	15	438	0	Available
+c07	orbital	15	Ultra Driver 13	22	19	19	622	0	Available
+c07	planetary	0	Viewer 50	10	10	70	100	0	Available
+c07	planetary	1	Viewer 90	10	10	70	100	0	Available
+c07	planetary	2	Scoper 150	10	10	70	100	0	Available
+c07	planetary	3	Scoper 220	10	10	70	100	0	Available
+c07	planetary	4	Scoper 280	10	10	70	100	0	Available
+c07	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c07	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c07	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c07	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c07	planetary	9	SDI	5	5	5	15	0	Available
+c07	planetary	10	Missile Battery	5	5	5	15	0	Available
+c07	planetary	11	Laser Battery	5	5	5	15	0	Available
+c07	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c07	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c07	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c07	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c07	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c07	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c07	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c07	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c07	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c07	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c07	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c07	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c07	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c07	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c07	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c07	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c07	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c07	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c07	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c07	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c07	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c07	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c07	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c07	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c07	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c07	shield	6	Langston Shell	4	1	3	9	10	Available
+c07	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c07	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c07	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c07	hull	0	Small Freighter	3	0	4	5	25	Available
+c07	hull	1	Medium Freighter	5	0	5	10	60	Available
+c07	hull	2	Large Freighter	10	0	6	28	125	Available
+c07	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c07	hull	4	Scout	1	1	1	2	8	Available
+c07	hull	5	Frigate	1	1	1	3	8	Available
+c07	hull	6	Destroyer	4	1	1	9	30	Available
+c07	hull	7	Cruiser	13	2	3	27	90	Available
+c07	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c07	hull	9	Battleship	58	12	10	108	222	Available
+c07	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c07	hull	11	Privateer	12	1	1	12	65	Available
+c07	hull	12	Rogue	22	1	1	17	75	UnAvail
+c07	hull	13	Galleon	28	2	2	42	125	Available
+c07	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c07	hull	15	Colony Ship	2	0	4	5	20	Available
+c07	hull	16	Mini Bomber	5	1	2	9	28	Available
+c07	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c07	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c07	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c07	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c07	hull	21	Mini-Miner	6	0	1	12	80	Available
+c07	hull	22	Miner	8	0	1	27	110	UnAvail
+c07	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c07	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c07	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c07	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c07	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c07	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c07	hull	29	Nubian	75	12	12	150	100	Available
+c07	hull	30	Mini Morph	8	2	2	28	70	Available
+c07	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c07	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c07	starbase_hull	1	Space Dock	5	1	6	25	0	Available
+c07	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c07	starbase_hull	3	Ultra Station	53	35	132	264	0	Available
+c07	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c07	terraform	0	Total Terraform ±3	0	0	0	70	0	Available
+c07	terraform	1	Total Terraform ±5	0	0	0	70	0	Available
+c07	terraform	2	Total Terraform ±7	0	0	0	70	0	Available
+c07	terraform	3	Total Terraform ±10	0	0	0	70	0	Available
+c07	terraform	4	Total Terraform ±15	0	0	0	70	0	Available
+c07	terraform	5	Total Terraform ±20	0	0	0	70	0	Available
+c07	terraform	6	Total Terraform ±25	0	0	0	70	0	Available
+c07	terraform	7	Total Terraform ±30	0	0	0	70	0	Available
+c07	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c07	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c07	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c07	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c07	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c07	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c07	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c07	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c07	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c07	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c07	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c07	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c07	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c07	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c07	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c07	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c07	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c07	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c07	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c07	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c07	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c07	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c07	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c07	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c08	armor	0	Tritanium	1	0	0	2	60	Available
+c08	armor	1	Crobmnium	1	0	0	3	56	Available
+c08	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c08	armor	3	Strobnium	2	0	0	4	54	Available
+c08	armor	4	Organic Armor	0	0	1	5	15	Available
+c08	armor	5	Kelarium	3	1	0	8	50	Available
+c08	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c08	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c08	armor	8	Neutronium	5	1	1	13	45	Available
+c08	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c08	armor	10	Valanium	9	0	0	30	40	Available
+c08	armor	11	Superlatanium	23	0	0	92	30	Available
+c08	beam	0	Laser	0	1	0	1	1	Available
+c08	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c08	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c08	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c08	beam	4	Blackjack	0	4	0	2	10	Available
+c08	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c08	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c08	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c08	beam	8	Gatling Gun	0	8	0	5	3	Available
+c08	beam	9	Mini Blaster	0	4	0	4	1	Available
+c08	beam	10	Bludgeon	0	11	0	4	10	Available
+c08	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c08	beam	12	Phased Sapper	0	0	3	9	1	Available
+c08	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c08	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c08	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c08	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c08	beam	17	Disruptor	0	12	0	15	2	Available
+c08	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c08	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c08	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c08	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c08	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c08	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c08	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c08	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c08	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c08	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c08	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c08	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c08	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c08	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c08	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c08	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c08	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c08	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c08	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c08	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c08	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c08	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c08	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c08	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c08	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c08	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c08	electrical	5	Battle Computer	0	0	4	1	1	Available
+c08	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c08	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c08	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c08	electrical	9	Jammer 20	1	0	2	7	1	Available
+c08	electrical	10	Jammer 30	1	0	4	12	1	Available
+c08	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c08	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c08	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c08	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c08	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c08	electrical	16	Anti-matter Generator	4	1	1	4	10	Available
+c08	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c08	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c08	engine	2	Fuel Mizer	1	0	0	2	6	UnAvail
+c08	engine	3	Long Hump 6	1	0	1	1	9	Available
+c08	engine	4	Daddy Long Legs 7	2	0	1	2	13	Available
+c08	engine	5	Alpha Drive 8	2	0	1	4	17	Available
+c08	engine	6	Trans-Galactic Drive	3	3	2	8	25	Available
+c08	engine	7	Interspace-10	4	5	2	12	25	Available
+c08	engine	8	Enigma Pulsar	3	4	3	10	20	Available
+c08	engine	9	Trans-Star 10	2	0	2	5	5	Available
+c08	engine	10	Radiating Hydro-Ram Scoop	1	1	1	1	10	UnAvail
+c08	engine	11	Sub-Galactic Fuel Scoop	1	1	1	2	20	UnAvail
+c08	engine	12	Trans-Galactic Fuel Scoop	1	1	2	3	19	UnAvail
+c08	engine	13	Trans-Galactic Super Scoop	2	1	4	6	18	UnAvail
+c08	engine	14	Trans-Galactic Mizer Scoop	2	1	4	6	11	UnAvail
+c08	engine	15	Galaxy Scoop	2	1	4	5	8	UnAvail
+c08	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c08	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c08	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c08	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c08	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c08	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c08	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c08	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c08	mechanical	8	Overthruster	4	0	4	9	5	Available
+c08	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c08	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c08	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c08	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c08	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c08	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c08	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c08	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c08	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c08	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c08	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c08	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c08	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c08	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c08	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c08	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c08	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c08	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c08	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c08	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c08	orbital	0	Stargate 100/250	10	4	4	38	0	Available
+c08	orbital	1	Stargate any/300	14	6	6	68	0	Available
+c08	orbital	2	Stargate 150/600	15	6	6	150	0	Available
+c08	orbital	3	Stargate 300/500	18	8	8	216	0	Available
+c08	orbital	4	Stargate 100/any	23	9	9	315	0	Available
+c08	orbital	5	Stargate any/800	26	11	11	357	0	Available
+c08	orbital	6	Stargate any/any	35	14	14	552	0	Available
+c08	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c08	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c08	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c08	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c08	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c08	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c08	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c08	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c08	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c08	planetary	0	Viewer 50	10	10	70	100	0	Available
+c08	planetary	1	Viewer 90	10	10	70	100	0	Available
+c08	planetary	2	Scoper 150	10	10	70	100	0	Available
+c08	planetary	3	Scoper 220	10	10	70	100	0	Available
+c08	planetary	4	Scoper 280	10	10	70	100	0	Available
+c08	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c08	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c08	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c08	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c08	planetary	9	SDI	5	5	5	15	0	Available
+c08	planetary	10	Missile Battery	5	5	5	15	0	Available
+c08	planetary	11	Laser Battery	5	5	5	15	0	Available
+c08	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c08	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c08	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c08	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c08	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c08	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c08	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c08	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c08	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c08	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c08	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c08	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c08	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c08	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c08	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c08	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c08	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c08	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c08	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c08	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c08	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c08	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c08	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c08	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c08	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c08	shield	6	Langston Shell	4	1	3	9	10	Available
+c08	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c08	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c08	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c08	hull	0	Small Freighter	3	0	4	5	25	Available
+c08	hull	1	Medium Freighter	5	0	5	10	60	Available
+c08	hull	2	Large Freighter	10	0	6	28	125	Available
+c08	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c08	hull	4	Scout	1	1	1	2	8	Available
+c08	hull	5	Frigate	1	1	1	3	8	Available
+c08	hull	6	Destroyer	4	1	1	9	30	Available
+c08	hull	7	Cruiser	13	2	3	27	90	Available
+c08	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c08	hull	9	Battleship	58	12	10	108	222	Available
+c08	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c08	hull	11	Privateer	12	1	1	12	65	Available
+c08	hull	12	Rogue	22	1	1	17	75	UnAvail
+c08	hull	13	Galleon	28	2	2	42	125	Available
+c08	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c08	hull	15	Colony Ship	2	0	4	5	20	Available
+c08	hull	16	Mini Bomber	5	1	2	9	28	Available
+c08	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c08	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c08	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c08	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c08	hull	21	Mini-Miner	6	0	1	12	80	Available
+c08	hull	22	Miner	8	0	1	27	110	UnAvail
+c08	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c08	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c08	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c08	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c08	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c08	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c08	hull	29	Nubian	75	12	12	150	100	Available
+c08	hull	30	Mini Morph	8	2	2	28	70	Available
+c08	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c08	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c08	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c08	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c08	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c08	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c08	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c08	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c08	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c08	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c08	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c08	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c08	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c08	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c08	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c08	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c08	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c08	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c08	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c08	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c08	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c08	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c08	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c08	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c08	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c08	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c08	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c08	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c08	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c08	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c08	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c08	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c08	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c08	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c08	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c08	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c08	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c08	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c09	armor	0	Tritanium	1	0	0	2	60	Available
+c09	armor	1	Crobmnium	1	0	0	3	56	Available
+c09	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c09	armor	3	Strobnium	2	0	0	4	54	Available
+c09	armor	4	Organic Armor	0	0	1	5	15	Available
+c09	armor	5	Kelarium	3	1	0	8	50	Available
+c09	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c09	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c09	armor	8	Neutronium	5	1	1	13	45	Available
+c09	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c09	armor	10	Valanium	9	0	0	30	40	Available
+c09	armor	11	Superlatanium	23	0	0	92	30	Available
+c09	beam	0	Laser	0	1	0	1	1	Available
+c09	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c09	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c09	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c09	beam	4	Blackjack	0	4	0	2	10	Available
+c09	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c09	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c09	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c09	beam	8	Gatling Gun	0	8	0	5	3	Available
+c09	beam	9	Mini Blaster	0	4	0	4	1	Available
+c09	beam	10	Bludgeon	0	11	0	4	10	Available
+c09	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c09	beam	12	Phased Sapper	0	0	3	9	1	Available
+c09	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c09	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c09	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c09	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c09	beam	17	Disruptor	0	12	0	15	2	Available
+c09	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c09	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c09	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c09	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c09	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c09	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c09	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c09	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c09	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c09	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c09	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c09	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c09	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c09	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c09	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c09	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c09	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c09	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c09	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c09	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c09	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c09	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c09	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c09	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c09	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c09	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c09	electrical	5	Battle Computer	0	0	4	1	1	Available
+c09	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c09	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c09	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c09	electrical	9	Jammer 20	1	0	2	7	1	Available
+c09	electrical	10	Jammer 30	1	0	4	12	1	Available
+c09	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c09	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c09	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c09	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c09	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c09	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c09	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c09	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c09	engine	2	Fuel Mizer	2	0	0	3	6	UnAvail
+c09	engine	3	Long Hump 6	1	0	1	1	9	Available
+c09	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c09	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c09	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c09	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c09	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c09	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c09	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c09	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c09	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c09	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c09	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c09	engine	15	Galaxy Scoop	3	2	7	9	8	UnAvail
+c09	mechanical	0	Colonization Module	3	2	2	2	32	UnAvail
+c09	mechanical	1	Orbital Construction Module	5	4	4	5	50	Available
+c09	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c09	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c09	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c09	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c09	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c09	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c09	mechanical	8	Overthruster	4	0	4	9	5	Available
+c09	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c09	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c09	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c09	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c09	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c09	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c09	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c09	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c09	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c09	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c09	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c09	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c09	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c09	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c09	mining_robot	2	Robo-Miner	7	0	2	25	240	UnAvail
+c09	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	UnAvail
+c09	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	UnAvail
+c09	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c09	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c09	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c09	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c09	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c09	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c09	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c09	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c09	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c09	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c09	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c09	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c09	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c09	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c09	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c09	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c09	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c09	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c09	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c09	planetary	0	Viewer 50	10	10	70	100	0	UnAvail
+c09	planetary	1	Viewer 90	10	10	70	100	0	UnAvail
+c09	planetary	2	Scoper 150	10	10	70	100	0	UnAvail
+c09	planetary	3	Scoper 220	10	10	70	100	0	UnAvail
+c09	planetary	4	Scoper 280	10	10	70	100	0	UnAvail
+c09	planetary	5	Snooper 320X	10	10	70	100	0	UnAvail
+c09	planetary	6	Snooper 400X	10	10	70	100	0	UnAvail
+c09	planetary	7	Snooper 500X	10	10	70	100	0	UnAvail
+c09	planetary	8	Snooper 620X	10	10	70	100	0	UnAvail
+c09	planetary	9	SDI	5	5	5	15	0	UnAvail
+c09	planetary	10	Missile Battery	5	5	5	15	0	UnAvail
+c09	planetary	11	Laser Battery	5	5	5	15	0	UnAvail
+c09	planetary	12	Planetary Shield	5	5	5	15	0	UnAvail
+c09	planetary	13	Neutron Shield	5	5	5	15	0	UnAvail
+c09	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c09	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c09	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c09	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c09	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c09	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c09	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c09	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c09	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c09	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c09	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c09	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c09	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c09	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c09	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c09	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c09	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c09	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c09	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c09	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c09	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c09	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c09	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c09	shield	6	Langston Shell	4	1	3	9	10	Available
+c09	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c09	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c09	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c09	hull	0	Small Freighter	3	0	4	5	25	Available
+c09	hull	1	Medium Freighter	5	0	5	10	60	Available
+c09	hull	2	Large Freighter	10	0	6	28	125	Available
+c09	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c09	hull	4	Scout	1	1	1	2	8	Available
+c09	hull	5	Frigate	1	1	1	3	8	Available
+c09	hull	6	Destroyer	4	1	1	9	30	Available
+c09	hull	7	Cruiser	13	2	3	27	90	Available
+c09	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c09	hull	9	Battleship	58	12	10	108	222	Available
+c09	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c09	hull	11	Privateer	12	1	1	12	65	Available
+c09	hull	12	Rogue	22	1	1	17	75	UnAvail
+c09	hull	13	Galleon	28	2	2	42	125	Available
+c09	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c09	hull	15	Colony Ship	2	0	4	5	20	Available
+c09	hull	16	Mini Bomber	5	1	2	9	28	Available
+c09	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c09	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c09	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c09	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c09	hull	21	Mini-Miner	6	0	1	12	80	Available
+c09	hull	22	Miner	8	0	1	27	110	UnAvail
+c09	hull	23	Maxi-Miner	13	0	2	56	110	UnAvail
+c09	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c09	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c09	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c09	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c09	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c09	hull	29	Nubian	75	12	12	150	100	Available
+c09	hull	30	Mini Morph	8	2	2	28	70	Available
+c09	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c09	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c09	starbase_hull	1	Space Dock	5	1	6	25	0	Available
+c09	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c09	starbase_hull	3	Ultra Station	53	35	132	264	0	Available
+c09	starbase_hull	4	Death Star	77	51	224	480	0	Available
+c09	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c09	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c09	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c09	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c09	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c09	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c09	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c09	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c09	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c09	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c09	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c09	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c09	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c09	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c09	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c09	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c09	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c09	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c09	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c09	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c09	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c09	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c09	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c09	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c09	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c09	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c09	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c09	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c09	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c09	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c09	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c09	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c10	armor	0	Tritanium	1	0	0	2	60	Available
+c10	armor	1	Crobmnium	1	0	0	3	56	Available
+c10	armor	2	Carbonic Armor	0	0	1	4	25	Available
+c10	armor	3	Strobnium	2	0	0	4	54	Available
+c10	armor	4	Organic Armor	0	0	1	5	15	Available
+c10	armor	5	Kelarium	3	1	0	8	50	Available
+c10	armor	6	Fielded Kelarium	4	0	1	10	50	UnAvail
+c10	armor	7	Depleted Neutronium	4	0	1	10	50	UnAvail
+c10	armor	8	Neutronium	5	1	1	13	45	Available
+c10	armor	9	Mega Poly Shell	9	3	3	34	20	Available
+c10	armor	10	Valanium	9	0	0	30	40	Available
+c10	armor	11	Superlatanium	23	0	0	92	30	Available
+c10	beam	0	Laser	0	1	0	1	1	Available
+c10	beam	1	X-Ray Laser	0	1	0	1	1	Available
+c10	beam	2	Mini Gun	0	4	0	2	3	UnAvail
+c10	beam	3	Yakimora Light Phaser	0	2	0	2	1	Available
+c10	beam	4	Blackjack	0	4	0	2	10	Available
+c10	beam	5	Phaser Bazooka	0	2	0	3	2	Available
+c10	beam	6	Pulsed Sapper	0	0	1	4	1	Available
+c10	beam	7	Colloidal Phaser	0	5	0	6	2	Available
+c10	beam	8	Gatling Gun	0	8	0	5	3	Available
+c10	beam	9	Mini Blaster	0	4	0	4	1	Available
+c10	beam	10	Bludgeon	0	11	0	4	10	Available
+c10	beam	11	Mark IV Blaster	0	6	0	8	2	Available
+c10	beam	12	Phased Sapper	0	0	3	9	1	Available
+c10	beam	13	Heavy Blaster	0	12	0	15	2	Available
+c10	beam	14	Gatling Neutrino Cannon	0	18	0	11	3	UnAvail
+c10	beam	15	Myopic Disruptor	0	10	0	8	1	Available
+c10	beam	16	Blunderbuss	0	22	0	9	10	UnAvail
+c10	beam	17	Disruptor	0	12	0	15	2	Available
+c10	beam	18	Multi Contained Munition	5	32	5	32	8	Available
+c10	beam	19	Syncro Sapper	0	0	6	17	1	Available
+c10	beam	20	Mega Disruptor	0	25	0	28	2	Available
+c10	beam	21	Big Mutha Cannon	0	32	0	20	3	Available
+c10	beam	22	Streaming Pulverizer	0	18	0	15	1	Available
+c10	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	Available
+c10	bomb	0	Lady Finger Bomb	1	5	0	1	40	Available
+c10	bomb	1	Black Cat Bomb	1	5	0	2	45	Available
+c10	bomb	2	M-70 Bomb	1	7	0	3	50	Available
+c10	bomb	3	M-80 Bomb	1	10	0	5	55	Available
+c10	bomb	4	Cherry Bomb	1	13	0	6	52	Available
+c10	bomb	5	LBU-17 Bomb	1	4	4	2	30	Available
+c10	bomb	6	LBU-32 Bomb	1	9	5	4	35	Available
+c10	bomb	7	LBU-74 Bomb	1	18	7	8	45	Available
+c10	bomb	8	Hush-a-Boom	1	2	0	2	5	Available
+c10	bomb	9	Retro Bomb	7	7	4	22	45	UnAvail
+c10	bomb	10	Smart Bomb	1	5	0	7	50	Available
+c10	bomb	11	Neutron Bomb	1	11	0	11	57	Available
+c10	bomb	12	Enriched Neutron Bomb	1	20	0	14	64	Available
+c10	bomb	13	Peerless Bomb	1	28	0	27	55	Available
+c10	bomb	14	Annihilator Bomb	1	30	0	28	50	Available
+c10	electrical	0	Transport Cloaking	1	0	1	1	1	UnAvail
+c10	electrical	1	Stealth Cloak	1	0	1	1	2	Available
+c10	electrical	2	Super-Stealth Cloak	3	0	3	5	3	Available
+c10	electrical	3	Ultra-Stealth Cloak	4	0	4	11	5	UnAvail
+c10	electrical	4	Multi Function Pod	2	0	2	6	2	Available
+c10	electrical	5	Battle Computer	0	0	4	1	1	Available
+c10	electrical	6	Battle Super Computer	0	0	10	6	1	Available
+c10	electrical	7	Battle Nexus	0	0	22	11	1	Available
+c10	electrical	8	Jammer 10	0	0	1	1	1	UnAvail
+c10	electrical	9	Jammer 20	1	0	2	7	1	Available
+c10	electrical	10	Jammer 30	1	0	4	12	1	Available
+c10	electrical	11	Jammer 50	2	0	6	17	1	UnAvail
+c10	electrical	12	Energy Capacitor	0	0	2	1	1	Available
+c10	electrical	13	Flux Capacitor	0	0	4	3	1	UnAvail
+c10	electrical	14	Energy Dampener	3	5	0	26	2	UnAvail
+c10	electrical	15	Tachyon Detector	1	3	0	36	1	UnAvail
+c10	electrical	16	Anti-matter Generator	4	1	1	4	10	UnAvail
+c10	engine	0	Settler's Delight	1	0	1	1	2	UnAvail
+c10	engine	1	Quick Jump 5	1	0	1	1	4	Available
+c10	engine	2	Fuel Mizer	2	0	0	3	6	UnAvail
+c10	engine	3	Long Hump 6	1	0	1	1	9	Available
+c10	engine	4	Daddy Long Legs 7	3	0	1	3	13	Available
+c10	engine	5	Alpha Drive 8	4	0	1	7	17	Available
+c10	engine	6	Trans-Galactic Drive	6	6	3	16	25	Available
+c10	engine	7	Interspace-10	7	10	4	24	25	UnAvail
+c10	engine	8	Enigma Pulsar	6	7	5	19	20	Available
+c10	engine	9	Trans-Star 10	3	0	3	9	5	Available
+c10	engine	10	Radiating Hydro-Ram Scoop	1	1	2	2	10	Available
+c10	engine	11	Sub-Galactic Fuel Scoop	1	1	2	3	20	Available
+c10	engine	12	Trans-Galactic Fuel Scoop	2	1	4	6	19	Available
+c10	engine	13	Trans-Galactic Super Scoop	3	2	7	11	18	Available
+c10	engine	14	Trans-Galactic Mizer Scoop	3	1	8	12	11	Available
+c10	engine	15	Galaxy Scoop	3	2	7	9	8	UnAvail
+c10	mechanical	0	Colonization Module	3	2	2	2	32	Available
+c10	mechanical	1	Orbital Construction Module	5	4	4	5	50	UnAvail
+c10	mechanical	2	Cargo Pod	1	0	1	2	5	Available
+c10	mechanical	3	Super Cargo Pod	3	0	1	5	7	Available
+c10	mechanical	4	Multi Cargo Pod	5	0	1	10	9	Available
+c10	mechanical	5	Fuel Tank	1	0	0	1	3	Available
+c10	mechanical	6	Super Fuel Tank	4	0	0	4	8	Available
+c10	mechanical	7	Maneuvering Jet	1	0	1	2	5	Available
+c10	mechanical	8	Overthruster	4	0	4	9	5	Available
+c10	mechanical	9	Jump Gate	0	0	38	30	10	Available
+c10	mechanical	10	Beam Deflector	0	0	2	2	1	Available
+c10	mine_layer	0	Mine Dispenser 40	1	2	2	11	25	UnAvail
+c10	mine_layer	1	Mine Dispenser 50	1	3	2	14	30	Available
+c10	mine_layer	2	Mine Dispenser 80	1	3	2	16	30	UnAvail
+c10	mine_layer	3	Mine Dispenser 130	1	8	4	35	30	UnAvail
+c10	mine_layer	4	Heavy Dispenser 50	1	5	1	12	10	UnAvail
+c10	mine_layer	5	Heavy Dispenser 110	1	10	2	22	15	UnAvail
+c10	mine_layer	6	Heavy Dispenser 200	1	23	3	47	20	UnAvail
+c10	mine_layer	7	Speed Trap 20	7	0	3	15	100	UnAvail
+c10	mine_layer	8	Speed Trap 30	8	0	3	18	135	UnAvail
+c10	mine_layer	9	Speed Trap 50	16	0	6	32	140	UnAvail
+c10	mining_robot	0	Robo-Midget Miner	3	0	1	12	80	UnAvail
+c10	mining_robot	1	Robo-Mini-Miner	7	0	2	25	240	Available
+c10	mining_robot	2	Robo-Miner	7	0	2	25	240	Available
+c10	mining_robot	3	Robo-Maxi-Miner	7	0	2	25	240	Available
+c10	mining_robot	4	Robo-Super-Miner	13	0	3	44	240	Available
+c10	mining_robot	5	Robo-Ultra-Miner	8	0	2	28	80	UnAvail
+c10	mining_robot	6	Alien Miner	3	0	1	7	20	Available
+c10	mining_robot	7	Orbital Adjuster	6	6	6	12	80	UnAvail
+c10	orbital	0	Stargate 100/250	13	5	5	50	0	Available
+c10	orbital	1	Stargate any/300	18	7	7	90	0	UnAvail
+c10	orbital	2	Stargate 150/600	20	8	8	200	0	Available
+c10	orbital	3	Stargate 300/500	24	10	10	288	0	Available
+c10	orbital	4	Stargate 100/any	30	12	12	420	0	UnAvail
+c10	orbital	5	Stargate any/800	34	14	14	476	0	UnAvail
+c10	orbital	6	Stargate any/any	46	19	19	736	0	UnAvail
+c10	orbital	7	Mass Driver 5	6	5	5	18	0	UnAvail
+c10	orbital	8	Mass Driver 6	6	5	5	36	0	UnAvail
+c10	orbital	9	Mass Driver 7	32	32	32	164	0	Available
+c10	orbital	10	Super Driver 8	10	8	8	103	0	UnAvail
+c10	orbital	11	Super Driver 9	12	10	10	156	0	UnAvail
+c10	orbital	12	Ultra Driver 10	56	56	56	542	0	Available
+c10	orbital	13	Ultra Driver 11	16	13	13	310	0	UnAvail
+c10	orbital	14	Ultra Driver 12	18	15	15	438	0	UnAvail
+c10	orbital	15	Ultra Driver 13	22	19	19	622	0	UnAvail
+c10	planetary	0	Viewer 50	10	10	70	100	0	Available
+c10	planetary	1	Viewer 90	10	10	70	100	0	Available
+c10	planetary	2	Scoper 150	10	10	70	100	0	Available
+c10	planetary	3	Scoper 220	10	10	70	100	0	Available
+c10	planetary	4	Scoper 280	10	10	70	100	0	Available
+c10	planetary	5	Snooper 320X	10	10	70	100	0	Available
+c10	planetary	6	Snooper 400X	10	10	70	100	0	Available
+c10	planetary	7	Snooper 500X	10	10	70	100	0	Available
+c10	planetary	8	Snooper 620X	10	10	70	100	0	Available
+c10	planetary	9	SDI	5	5	5	15	0	Available
+c10	planetary	10	Missile Battery	5	5	5	15	0	Available
+c10	planetary	11	Laser Battery	5	5	5	15	0	Available
+c10	planetary	12	Planetary Shield	5	5	5	15	0	Available
+c10	planetary	13	Neutron Shield	5	5	5	15	0	Available
+c10	planetary	14	Genesis Device	0	0	0	3800	0	Available
+c10	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c10	scanner	1	Rhino Scanner	1	0	1	1	5	Available
+c10	scanner	2	Mole Scanner	1	0	1	2	2	Available
+c10	scanner	3	DNA Scanner	1	1	1	1	2	Available
+c10	scanner	4	Possum Scanner	1	0	1	4	3	Available
+c10	scanner	5	Pick Pocket Scanner	2	2	1	9	15	UnAvail
+c10	scanner	6	Chameleon Scanner	1	1	1	6	6	UnAvail
+c10	scanner	7	Ferret Scanner	1	0	2	9	2	Available
+c10	scanner	8	Dolphin Scanner	2	2	4	14	4	Available
+c10	scanner	9	Gazelle Scanner	1	0	1	7	5	Available
+c10	scanner	10	RNA Scanner	1	1	1	7	2	Available
+c10	scanner	11	Cheetah Scanner	1	1	5	20	4	Available
+c10	scanner	12	Elephant Scanner	5	3	8	42	6	Available
+c10	scanner	13	Eagle Eye Scanner	2	1	11	33	3	Available
+c10	scanner	14	Robber Baron Scanner	6	6	6	50	20	UnAvail
+c10	scanner	15	Peerless Scanner	3	2	28	83	4	Available
+c10	shield	0	Mole-skin Shield	1	0	1	1	1	Available
+c10	shield	1	Cow-hide Shield	1	0	1	1	1	Available
+c10	shield	2	Wolverine Diffuse Shield	1	0	1	1	1	Available
+c10	shield	3	Croby Sharmor	2	0	1	4	10	UnAvail
+c10	shield	4	Shadow Shield	1	0	1	2	2	UnAvail
+c10	shield	5	Bear Neutrino Barrier	1	0	1	3	1	Available
+c10	shield	6	Langston Shell	4	1	3	9	10	Available
+c10	shield	7	Gorilla Delagator	3	0	3	6	1	Available
+c10	shield	8	Elephant Hide Fortress	5	0	7	10	1	Available
+c10	shield	9	Complete Phase Shield	10	0	13	17	1	Available
+c10	hull	0	Small Freighter	3	0	4	5	25	Available
+c10	hull	1	Medium Freighter	5	0	5	10	60	Available
+c10	hull	2	Large Freighter	10	0	6	28	125	Available
+c10	hull	3	Super Freighter	22	0	10	60	175	UnAvail
+c10	hull	4	Scout	1	1	1	2	8	Available
+c10	hull	5	Frigate	1	1	1	3	8	Available
+c10	hull	6	Destroyer	4	1	1	9	30	Available
+c10	hull	7	Cruiser	13	2	3	27	90	Available
+c10	hull	8	Battle Cruiser	20	3	4	43	120	UnAvail
+c10	hull	9	Battleship	58	12	10	108	222	Available
+c10	hull	10	Dreadnought	84	18	15	165	250	UnAvail
+c10	hull	11	Privateer	12	1	1	12	65	Available
+c10	hull	12	Rogue	22	1	1	17	75	UnAvail
+c10	hull	13	Galleon	28	2	2	42	125	Available
+c10	hull	14	Mini-Colony Ship	1	0	1	1	8	UnAvail
+c10	hull	15	Colony Ship	2	0	4	5	20	Available
+c10	hull	16	Mini Bomber	5	1	2	9	28	Available
+c10	hull	17	B-17 Bomber	14	2	2	37	69	Available
+c10	hull	18	Stealth Bomber	15	3	4	49	70	UnAvail
+c10	hull	19	B-52 Bomber	50	8	6	157	110	Available
+c10	hull	20	Midget Miner	2	0	1	5	10	UnAvail
+c10	hull	21	Mini-Miner	6	0	1	12	80	Available
+c10	hull	22	Miner	8	0	1	27	110	UnAvail
+c10	hull	23	Maxi-Miner	13	0	2	56	110	Available
+c10	hull	24	Ultra-Miner	16	0	3	68	100	UnAvail
+c10	hull	25	Fuel Transport	2	0	1	12	12	UnAvail
+c10	hull	26	Super-Fuel Xport	5	0	2	17	111	Available
+c10	hull	27	Mini Mine Layer	2	1	1	5	10	UnAvail
+c10	hull	28	Super Mine Layer	11	2	5	17	30	UnAvail
+c10	hull	29	Nubian	75	12	12	150	100	Available
+c10	hull	30	Mini Morph	8	2	2	28	70	Available
+c10	hull	31	Meta Morph	18	4	4	43	85	UnAvail
+c10	starbase_hull	0	Orbital Fort	3	0	4	10	0	Available
+c10	starbase_hull	1	Space Dock	5	1	6	25	0	UnAvail
+c10	starbase_hull	2	Space Station	30	20	63	150	0	Available
+c10	starbase_hull	3	Ultra Station	53	35	132	264	0	UnAvail
+c10	starbase_hull	4	Death Star	77	51	224	480	0	UnAvail
+c10	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c10	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c10	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c10	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c10	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c10	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c10	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c10	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c10	terraform	8	Gravity Terraform ±3	0	0	0	100	0	Available
+c10	terraform	9	Gravity Terraform ±7	0	0	0	100	0	Available
+c10	terraform	10	Gravity Terraform ±11	0	0	0	100	0	Available
+c10	terraform	11	Gravity Terraform ±15	0	0	0	100	0	Available
+c10	terraform	12	Temp Terraform ±3	0	0	0	100	0	Available
+c10	terraform	13	Temp Terraform ±7	0	0	0	100	0	Available
+c10	terraform	14	Temp Terraform ±11	0	0	0	100	0	Available
+c10	terraform	15	Temp Terraform ±15	0	0	0	100	0	Available
+c10	terraform	16	Radiation Terraform ±3	0	0	0	100	0	Available
+c10	terraform	17	Radiation Terraform ±7	0	0	0	100	0	Available
+c10	terraform	18	Radiation Terraform ±11	0	0	0	100	0	Available
+c10	terraform	19	Radiation Terraform ±15	0	0	0	100	0	Available
+c10	torpedo	0	Alpha Torpedo	2	1	1	1	25	Available
+c10	torpedo	1	Beta Torpedo	4	1	1	1	25	Available
+c10	torpedo	2	Delta Torpedo	8	3	2	3	25	Available
+c10	torpedo	3	Epsilon Torpedo	16	5	3	5	25	Available
+c10	torpedo	4	Rho Torpedo	23	8	5	8	25	Available
+c10	torpedo	5	Upsilon Torpedo	34	12	8	13	25	Available
+c10	torpedo	6	Omega Torpedo	52	18	12	18	25	Available
+c10	torpedo	7	Anti Matter Torpedo	2	6	1	40	8	Available
+c10	torpedo	8	Jihad Missile	16	6	4	6	35	Available
+c10	torpedo	9	Juggernaut Missile	29	10	7	10	35	Available
+c10	torpedo	10	Doomsday Missile	46	15	10	15	35	Available
+c10	torpedo	11	Armageddon Missile	62	21	15	22	35	Available
+c11	armor	0	Tritanium	5	0	0	10	60	Available
+c11	armor	1	Crobmnium	12	0	0	26	56	cost
+c11	armor	2	Carbonic Armor	0	0	10	30	25	cost
+c11	armor	3	Strobnium	16	0	0	36	54	cost
+c11	armor	4	Organic Armor	0	0	12	40	15	cost
+c11	armor	5	Kelarium	18	2	0	50	50	cost
+c11	armor	6	Fielded Kelarium	20	0	4	56	50	UnAvail
+c11	armor	7	Depleted Neutronium	20	0	4	56	50	cost
+c11	armor	8	Neutronium	22	4	2	60	45	cost
+c11	armor	9	Mega Poly Shell	36	12	12	130	20	cost
+c11	armor	10	Valanium	30	0	0	100	40	cost
+c11	armor	11	Superlatanium	50	0	0	200	30	cost
+c11	beam	0	Laser	0	6	0	5	1	Available
+c11	beam	1	X-Ray Laser	0	12	0	12	1	cost
+c11	beam	2	Mini Gun	0	32	0	20	3	UnAvail
+c11	beam	3	Yakimora Light Phaser	0	16	0	14	1	cost
+c11	beam	4	Blackjack	0	32	0	14	10	cost
+c11	beam	5	Phaser Bazooka	0	16	0	22	2	cost
+c11	beam	6	Pulsed Sapper	0	0	8	24	1	cost
+c11	beam	7	Colloidal Phaser	0	28	0	36	2	cost
+c11	beam	8	Gatling Gun	0	40	0	26	3	cost
+c11	beam	9	Mini Blaster	0	20	0	18	1	cost
+c11	beam	10	Bludgeon	0	44	0	18	10	cost
+c11	beam	11	Mark IV Blaster	0	24	0	30	2	cost
+c11	beam	12	Phased Sapper	0	0	12	32	1	cost
+c11	beam	13	Heavy Blaster	0	40	0	50	2	cost
+c11	beam	14	Gatling Neutrino Cannon	0	56	0	34	3	UnAvail
+c11	beam	15	Myopic Disruptor	0	28	0	24	1	cost
+c11	beam	16	Blunderbuss	0	60	0	26	10	UnAvail
+c11	beam	17	Disruptor	0	32	0	40	2	cost
+c11	beam	18	Multi Contained Munition	12	80	12	80	8	cost
+c11	beam	19	Syncro Sapper	0	0	16	42	1	cost
+c11	beam	20	Mega Disruptor	0	60	0	66	2	cost
+c11	beam	21	Big Mutha Cannon	0	72	0	46	3	cost
+c11	beam	22	Streaming Pulverizer	0	40	0	32	1	cost
+c11	beam	23	Anti-Matter Pulverizer	0	44	0	54	2	cost
+c11	bomb	0	Lady Finger Bomb	2	40	0	10	40	cost
+c11	bomb	1	Black Cat Bomb	2	44	0	14	45	cost
+c11	bomb	2	M-70 Bomb	2	48	0	18	50	cost
+c11	bomb	3	M-80 Bomb	2	50	0	24	55	cost
+c11	bomb	4	Cherry Bomb	2	50	0	22	52	cost
+c11	bomb	5	LBU-17 Bomb	2	30	30	14	30	cost
+c11	bomb	6	LBU-32 Bomb	2	48	30	20	35	cost
+c11	bomb	7	LBU-74 Bomb	2	66	24	28	45	cost
+c11	bomb	8	Hush-a-Boom	2	10	0	10	5	cost
+c11	bomb	9	Retro Bomb	30	30	20	100	45	UnAvail
+c11	bomb	10	Smart Bomb	2	44	0	54	50	cost
+c11	bomb	11	Neutron Bomb	2	60	0	60	57	cost
+c11	bomb	12	Enriched Neutron Bomb	2	72	0	50	64	cost
+c11	bomb	13	Peerless Bomb	2	66	0	64	55	cost
+c11	bomb	14	Annihilator Bomb	2	60	0	56	50	cost
+c11	electrical	0	Transport Cloaking	2	0	2	3	1	Available
+c11	electrical	1	Stealth Cloak	4	0	4	10	2	cost
+c11	electrical	2	Super-Stealth Cloak	16	0	16	30	3	cost
+c11	electrical	3	Ultra-Stealth Cloak	20	0	20	50	5	cost
+c11	electrical	4	Multi Function Pod	10	0	10	30	2	cost
+c11	electrical	5	Battle Computer	0	0	15	6	1	Available
+c11	electrical	6	Battle Super Computer	0	0	50	28	1	cost
+c11	electrical	7	Battle Nexus	0	0	60	30	1	cost
+c11	electrical	8	Jammer 10	0	0	4	12	1	UnAvail
+c11	electrical	9	Jammer 20	2	0	10	40	1	cost
+c11	electrical	10	Jammer 30	2	0	12	40	1	cost
+c11	electrical	11	Jammer 50	4	0	14	40	1	UnAvail
+c11	electrical	12	Energy Capacitor	0	0	16	10	1	cost
+c11	electrical	13	Flux Capacitor	0	0	16	10	1	UnAvail
+c11	electrical	14	Energy Dampener	10	20	0	100	2	UnAvail
+c11	electrical	15	Tachyon Detector	2	10	0	140	1	UnAvail
+c11	electrical	16	Anti-matter Generator	16	6	6	20	10	UnAvail
+c11	engine	0	Settler's Delight	1	0	1	2	2	UnAvail
+c11	engine	1	Quick Jump 5	3	0	1	3	4	Available
+c11	engine	2	Fuel Mizer	16	0	0	22	6	UnAvail
+c11	engine	3	Long Hump 6	10	0	2	12	9	cost
+c11	engine	4	Daddy Long Legs 7	22	0	6	24	13	cost
+c11	engine	5	Alpha Drive 8	32	0	6	56	17	cost
+c11	engine	6	Trans-Galactic Drive	40	40	18	100	25	cost
+c11	engine	7	Interspace-10	36	50	20	120	25	UnAvail
+c11	engine	8	Enigma Pulsar	24	30	22	80	20	cost
+c11	engine	9	Trans-Star 10	6	0	6	20	5	cost
+c11	engine	10	Radiating Hydro-Ram Scoop	6	4	18	16	10	cost
+c11	engine	11	Sub-Galactic Fuel Scoop	8	8	14	24	20	cost
+c11	engine	12	Trans-Galactic Fuel Scoop	10	8	24	36	19	cost
+c11	engine	13	Trans-Galactic Super Scoop	12	8	32	48	18	cost
+c11	engine	14	Trans-Galactic Mizer Scoop	10	4	26	40	11	cost
+c11	engine	15	Galaxy Scoop	8	4	18	24	8	UnAvail
+c11	mechanical	0	Colonization Module	12	10	10	10	32	Available
+c11	mechanical	1	Orbital Construction Module	20	15	15	20	50	UnAvail
+c11	mechanical	2	Cargo Pod	10	0	4	20	5	cost
+c11	mechanical	3	Super Cargo Pod	16	0	4	30	7	cost
+c11	mechanical	4	Multi Cargo Pod	24	0	6	50	9	cost
+c11	mechanical	5	Fuel Tank	6	0	0	4	3	Available
+c11	mechanical	6	Super Fuel Tank	16	0	0	16	8	cost
+c11	mechanical	7	Maneuvering Jet	10	0	10	20	5	cost
+c11	mechanical	8	Overthruster	20	0	16	40	5	cost
+c11	mechanical	9	Jump Gate	0	0	100	80	10	cost
+c11	mechanical	10	Beam Deflector	0	0	20	16	1	cost
+c11	mine_layer	0	Mine Dispenser 40	2	10	8	45	25	UnAvail
+c11	mine_layer	1	Mine Dispenser 50	4	24	20	110	30	cost
+c11	mine_layer	2	Mine Dispenser 80	4	28	20	130	30	UnAvail
+c11	mine_layer	3	Mine Dispenser 130	4	36	20	160	30	UnAvail
+c11	mine_layer	4	Heavy Dispenser 50	4	40	10	100	10	UnAvail
+c11	mine_layer	5	Heavy Dispenser 110	4	60	10	140	15	UnAvail
+c11	mine_layer	6	Heavy Dispenser 200	4	90	10	180	20	UnAvail
+c11	mine_layer	7	Speed Trap 20	60	0	24	120	100	UnAvail
+c11	mine_layer	8	Speed Trap 30	64	0	28	144	135	UnAvail
+c11	mine_layer	9	Speed Trap 50	80	0	30	160	140	UnAvail
+c11	mining_robot	0	Robo-Midget Miner	14	0	4	50	80	UnAvail
+c11	mining_robot	1	Robo-Mini-Miner	60	0	14	200	240	cost
+c11	mining_robot	2	Robo-Miner	60	0	14	200	240	cost
+c11	mining_robot	3	Robo-Maxi-Miner	60	0	14	200	240	cost
+c11	mining_robot	4	Robo-Super-Miner	60	0	14	200	240	cost
+c11	mining_robot	5	Robo-Ultra-Miner	28	0	8	100	80	UnAvail
+c11	mining_robot	6	Alien Miner	16	0	4	40	20	cost
+c11	mining_robot	7	Orbital Adjuster	50	50	50	100	80	UnAvail
+c11	orbital	0	Stargate 100/250	100	40	40	400	0	cost
+c11	orbital	1	Stargate any/300	100	40	40	500	0	UnAvail
+c11	orbital	2	Stargate 150/600	100	40	40	1000	0	cost
+c11	orbital	3	Stargate 300/500	100	40	40	1200	0	cost
+c11	orbital	4	Stargate 100/any	100	40	40	1400	0	UnAvail
+c11	orbital	5	Stargate any/800	100	40	40	1400	0	UnAvail
+c11	orbital	6	Stargate any/any	100	40	40	1600	0	UnAvail
+c11	orbital	7	Mass Driver 5	48	40	40	140	0	UnAvail
+c11	orbital	8	Mass Driver 6	48	40	40	288	0	UnAvail
+c11	orbital	9	Mass Driver 7	200	200	200	1024	0	cost
+c11	orbital	10	Super Driver 8	48	40	40	512	0	UnAvail
+c11	orbital	11	Super Driver 9	48	40	40	648	0	UnAvail
+c11	orbital	12	Ultra Driver 10	200	200	200	1936	0	cost
+c11	orbital	13	Ultra Driver 11	48	40	40	968	0	UnAvail
+c11	orbital	14	Ultra Driver 12	48	40	40	1152	0	UnAvail
+c11	orbital	15	Ultra Driver 13	48	40	40	1352	0	UnAvail
+c11	planetary	0	Viewer 50	10	10	70	100	0	Available
+c11	planetary	1	Viewer 90	10	10	70	100	0	cost
+c11	planetary	2	Scoper 150	10	10	70	100	0	cost
+c11	planetary	3	Scoper 220	10	10	70	100	0	cost
+c11	planetary	4	Scoper 280	10	10	70	100	0	cost
+c11	planetary	5	Snooper 320X	10	10	70	100	0	cost
+c11	planetary	6	Snooper 400X	10	10	70	100	0	cost
+c11	planetary	7	Snooper 500X	10	10	70	100	0	cost
+c11	planetary	8	Snooper 620X	10	10	70	100	0	cost
+c11	planetary	9	SDI	5	5	5	15	0	Available
+c11	planetary	10	Missile Battery	5	5	5	15	0	cost
+c11	planetary	11	Laser Battery	5	5	5	15	0	cost
+c11	planetary	12	Planetary Shield	5	5	5	15	0	cost
+c11	planetary	13	Neutron Shield	5	5	5	15	0	cost
+c11	planetary	14	Genesis Device	0	0	0	10000	0	cost
+c11	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c11	scanner	1	Rhino Scanner	6	0	4	6	5	cost
+c11	scanner	2	Mole Scanner	4	0	4	18	2	cost
+c11	scanner	3	DNA Scanner	2	2	2	10	2	cost
+c11	scanner	4	Possum Scanner	6	0	6	36	3	cost
+c11	scanner	5	Pick Pocket Scanner	16	20	12	70	15	cost
+c11	scanner	6	Chameleon Scanner	8	12	8	50	6	cost
+c11	scanner	7	Ferret Scanner	4	0	16	72	2	cost
+c11	scanner	8	Dolphin Scanner	10	10	20	80	4	cost
+c11	scanner	9	Gazelle Scanner	8	0	10	48	5	cost
+c11	scanner	10	RNA Scanner	2	2	4	40	2	cost
+c11	scanner	11	Cheetah Scanner	6	2	26	100	4	cost
+c11	scanner	12	Elephant Scanner	16	10	28	140	6	cost
+c11	scanner	13	Eagle Eye Scanner	6	4	42	128	3	cost
+c11	scanner	14	Robber Baron Scanner	20	20	20	180	20	cost
+c11	scanner	15	Peerless Scanner	6	4	60	180	4	cost
+c11	shield	0	Mole-skin Shield	1	0	1	4	1	Available
+c11	shield	1	Cow-hide Shield	4	0	4	10	1	cost
+c11	shield	2	Wolverine Diffuse Shield	6	0	6	12	1	cost
+c11	shield	3	Croby Sharmor	14	0	8	30	10	UnAvail
+c11	shield	4	Shadow Shield	6	0	6	14	2	cost
+c11	shield	5	Bear Neutrino Barrier	8	0	8	16	1	cost
+c11	shield	6	Langston Shell	20	4	12	40	10	cost
+c11	shield	7	Gorilla Delagator	10	0	12	22	1	cost
+c11	shield	8	Elephant Hide Fortress	16	0	20	30	1	cost
+c11	shield	9	Complete Phase Shield	24	0	30	40	1	cost
+c11	hull	0	Small Freighter	12	0	17	20	25	Available
+c11	hull	1	Medium Freighter	40	0	38	80	60	cost
+c11	hull	2	Large Freighter	70	0	42	200	125	cost
+c11	hull	3	Super Freighter	90	0	42	250	175	UnAvail
+c11	hull	4	Scout	4	2	4	10	8	Available
+c11	hull	5	Frigate	8	4	8	24	8	cost
+c11	hull	6	Destroyer	30	6	10	70	30	cost
+c11	hull	7	Cruiser	80	10	16	170	90	cost
+c11	hull	8	Battle Cruiser	110	16	24	240	120	UnAvail
+c11	hull	9	Battleship	240	50	40	450	222	cost
+c11	hull	10	Dreadnought	280	60	50	550	250	UnAvail
+c11	hull	11	Privateer	100	6	4	100	65	cost
+c11	hull	12	Rogue	160	10	10	120	75	cost
+c11	hull	13	Galleon	140	10	10	210	125	cost
+c11	hull	14	Mini-Colony Ship	2	0	2	3	8	UnAvail
+c11	hull	15	Colony Ship	10	0	15	20	20	Available
+c11	hull	16	Mini Bomber	40	10	20	70	28	cost
+c11	hull	17	B-17 Bomber	110	20	20	300	69	cost
+c11	hull	18	Stealth Bomber	110	20	30	350	70	cost
+c11	hull	19	B-52 Bomber	180	30	20	560	110	cost
+c11	hull	20	Midget Miner	10	0	3	20	10	UnAvail
+c11	hull	21	Mini-Miner	50	0	12	100	80	cost
+c11	hull	22	Miner	64	0	12	220	110	UnAvail
+c11	hull	23	Maxi-Miner	64	0	12	280	110	cost
+c11	hull	24	Ultra-Miner	60	0	12	260	100	UnAvail
+c11	hull	25	Fuel Transport	20	0	10	100	12	UnAvail
+c11	hull	26	Super-Fuel Xport	40	0	16	140	111	cost
+c11	hull	27	Mini Mine Layer	8	2	5	20	10	UnAvail
+c11	hull	28	Super Mine Layer	40	6	18	60	30	UnAvail
+c11	hull	29	Nubian	150	24	24	300	100	cost
+c11	hull	30	Mini Morph	60	16	16	200	70	cost
+c11	hull	31	Meta Morph	100	24	24	240	85	UnAvail
+c11	starbase_hull	0	Orbital Fort	12	0	17	40	0	Available
+c11	starbase_hull	1	Space Dock	40	10	50	200	0	UnAvail
+c11	starbase_hull	2	Space Station	120	80	250	600	0	Available
+c11	starbase_hull	3	Ultra Station	240	160	600	1200	0	UnAvail
+c11	starbase_hull	4	Death Star	240	160	700	1500	0	UnAvail
+c11	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c11	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c11	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c11	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c11	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c11	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c11	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c11	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c11	terraform	8	Gravity Terraform ±3	0	0	0	100	0	cost
+c11	terraform	9	Gravity Terraform ±7	0	0	0	100	0	cost
+c11	terraform	10	Gravity Terraform ±11	0	0	0	100	0	cost
+c11	terraform	11	Gravity Terraform ±15	0	0	0	100	0	cost
+c11	terraform	12	Temp Terraform ±3	0	0	0	100	0	cost
+c11	terraform	13	Temp Terraform ±7	0	0	0	100	0	cost
+c11	terraform	14	Temp Terraform ±11	0	0	0	100	0	cost
+c11	terraform	15	Temp Terraform ±15	0	0	0	100	0	cost
+c11	terraform	16	Radiation Terraform ±3	0	0	0	100	0	cost
+c11	terraform	17	Radiation Terraform ±7	0	0	0	100	0	cost
+c11	terraform	18	Radiation Terraform ±11	0	0	0	100	0	cost
+c11	terraform	19	Radiation Terraform ±15	0	0	0	100	0	cost
+c11	torpedo	0	Alpha Torpedo	9	3	3	5	25	Available
+c11	torpedo	1	Beta Torpedo	36	12	8	12	25	cost
+c11	torpedo	2	Delta Torpedo	44	16	10	16	25	cost
+c11	torpedo	3	Epsilon Torpedo	60	20	12	20	25	cost
+c11	torpedo	4	Rho Torpedo	68	24	16	24	25	cost
+c11	torpedo	5	Upsilon Torpedo	80	28	18	30	25	cost
+c11	torpedo	6	Omega Torpedo	104	36	24	36	25	cost
+c11	torpedo	7	Anti Matter Torpedo	6	16	2	100	8	cost
+c11	torpedo	8	Jihad Missile	74	26	18	26	35	cost
+c11	torpedo	9	Juggernaut Missile	96	32	22	32	35	cost
+c11	torpedo	10	Doomsday Missile	120	40	26	40	35	cost
+c11	torpedo	11	Armageddon Missile	134	46	32	48	35	cost
+c12	armor	0	Tritanium	5	0	0	10	60	Available
+c12	armor	1	Crobmnium	6	0	0	13	56	cost
+c12	armor	2	Carbonic Armor	0	0	5	15	25	cost
+c12	armor	3	Strobnium	8	0	0	18	54	cost
+c12	armor	4	Organic Armor	0	0	6	20	15	cost
+c12	armor	5	Kelarium	9	1	0	25	50	cost
+c12	armor	6	Fielded Kelarium	10	0	2	28	50	UnAvail
+c12	armor	7	Depleted Neutronium	10	0	2	28	50	cost
+c12	armor	8	Neutronium	11	2	1	30	45	cost
+c12	armor	10	Valanium	15	0	0	50	40	cost
+c12	armor	11	Superlatanium	25	0	0	100	30	cost
+c12	beam	0	Laser	0	6	0	5	1	Available
+c12	beam	1	X-Ray Laser	0	6	0	6	1	cost
+c12	beam	2	Mini Gun	0	16	0	10	3	UnAvail
+c12	beam	3	Yakimora Light Phaser	0	8	0	7	1	cost
+c12	beam	4	Blackjack	0	16	0	7	10	cost
+c12	beam	5	Phaser Bazooka	0	8	0	11	2	cost
+c12	beam	6	Pulsed Sapper	0	0	4	12	1	cost
+c12	beam	7	Colloidal Phaser	0	14	0	18	2	cost
+c12	beam	8	Gatling Gun	0	20	0	13	3	cost
+c12	beam	9	Mini Blaster	0	10	0	9	1	cost
+c12	beam	10	Bludgeon	0	22	0	9	10	cost
+c12	beam	11	Mark IV Blaster	0	12	0	15	2	cost
+c12	beam	12	Phased Sapper	0	0	6	16	1	cost
+c12	beam	13	Heavy Blaster	0	20	0	25	2	cost
+c12	beam	14	Gatling Neutrino Cannon	0	28	0	17	3	UnAvail
+c12	beam	15	Myopic Disruptor	0	14	0	12	1	cost
+c12	beam	16	Blunderbuss	0	30	0	13	10	UnAvail
+c12	beam	17	Disruptor	0	16	0	20	2	cost
+c12	beam	19	Syncro Sapper	0	0	8	21	1	cost
+c12	beam	20	Mega Disruptor	0	30	0	33	2	cost
+c12	beam	21	Big Mutha Cannon	0	36	0	23	3	cost
+c12	beam	22	Streaming Pulverizer	0	20	0	16	1	cost
+c12	beam	23	Anti-Matter Pulverizer	0	22	0	27	2	cost
+c12	bomb	0	Lady Finger Bomb	1	20	0	5	40	cost
+c12	bomb	1	Black Cat Bomb	1	22	0	7	45	cost
+c12	bomb	2	M-70 Bomb	1	24	0	9	50	cost
+c12	bomb	3	M-80 Bomb	1	25	0	12	55	cost
+c12	bomb	4	Cherry Bomb	1	25	0	11	52	cost
+c12	bomb	5	LBU-17 Bomb	1	15	15	7	30	cost
+c12	bomb	6	LBU-32 Bomb	1	24	15	10	35	cost
+c12	bomb	7	LBU-74 Bomb	1	33	12	14	45	cost
+c12	bomb	9	Retro Bomb	15	15	10	50	45	UnAvail
+c12	bomb	10	Smart Bomb	1	22	0	27	50	cost
+c12	bomb	11	Neutron Bomb	1	30	0	30	57	cost
+c12	bomb	12	Enriched Neutron Bomb	1	36	0	25	64	cost
+c12	bomb	13	Peerless Bomb	1	33	0	32	55	cost
+c12	bomb	14	Annihilator Bomb	1	30	0	28	50	cost
+c12	electrical	0	Transport Cloaking	2	0	2	3	1	Available
+c12	electrical	1	Stealth Cloak	2	0	2	5	2	cost
+c12	electrical	2	Super-Stealth Cloak	8	0	8	15	3	cost
+c12	electrical	3	Ultra-Stealth Cloak	10	0	10	25	5	cost
+c12	electrical	5	Battle Computer	0	0	15	6	1	Available
+c12	electrical	6	Battle Super Computer	0	0	25	14	1	cost
+c12	electrical	7	Battle Nexus	0	0	30	15	1	cost
+c12	electrical	8	Jammer 10	0	0	2	6	1	UnAvail
+c12	electrical	9	Jammer 20	1	0	5	20	1	cost
+c12	electrical	10	Jammer 30	1	0	6	20	1	cost
+c12	electrical	11	Jammer 50	2	0	7	20	1	UnAvail
+c12	electrical	12	Energy Capacitor	0	0	8	5	1	cost
+c12	electrical	13	Flux Capacitor	0	0	8	5	1	UnAvail
+c12	electrical	14	Energy Dampener	5	10	0	50	2	UnAvail
+c12	electrical	15	Tachyon Detector	1	5	0	70	1	UnAvail
+c12	electrical	16	Anti-matter Generator	8	3	3	10	10	UnAvail
+c12	engine	0	Settler's Delight	1	0	1	2	2	UnAvail
+c12	engine	1	Quick Jump 5	3	0	1	3	4	Available
+c12	engine	2	Fuel Mizer	8	0	0	11	6	UnAvail
+c12	engine	3	Long Hump 6	5	0	1	6	9	cost
+c12	engine	4	Daddy Long Legs 7	11	0	3	12	13	cost
+c12	engine	5	Alpha Drive 8	16	0	3	28	17	cost
+c12	engine	6	Trans-Galactic Drive	20	20	9	50	25	cost
+c12	engine	7	Interspace-10	18	25	10	60	25	UnAvail
+c12	engine	9	Trans-Star 10	3	0	3	10	5	cost
+c12	engine	10	Radiating Hydro-Ram Scoop	3	2	9	8	10	cost
+c12	engine	11	Sub-Galactic Fuel Scoop	4	4	7	12	20	cost
+c12	engine	12	Trans-Galactic Fuel Scoop	5	4	12	18	19	cost
+c12	engine	13	Trans-Galactic Super Scoop	6	4	16	24	18	cost
+c12	engine	14	Trans-Galactic Mizer Scoop	5	2	13	20	11	cost
+c12	engine	15	Galaxy Scoop	4	2	9	12	8	UnAvail
+c12	mechanical	0	Colonization Module	12	10	10	10	32	Available
+c12	mechanical	1	Orbital Construction Module	20	15	15	20	50	UnAvail
+c12	mechanical	2	Cargo Pod	5	0	2	10	5	cost
+c12	mechanical	3	Super Cargo Pod	8	0	2	15	7	cost
+c12	mechanical	5	Fuel Tank	6	0	0	4	3	Available
+c12	mechanical	6	Super Fuel Tank	8	0	0	8	8	cost
+c12	mechanical	7	Maneuvering Jet	5	0	5	10	5	cost
+c12	mechanical	8	Overthruster	10	0	8	20	5	cost
+c12	mechanical	10	Beam Deflector	0	0	10	8	1	cost
+c12	mine_layer	0	Mine Dispenser 40	2	10	8	45	25	UnAvail
+c12	mine_layer	1	Mine Dispenser 50	2	12	10	55	30	cost
+c12	mine_layer	2	Mine Dispenser 80	2	14	10	65	30	UnAvail
+c12	mine_layer	3	Mine Dispenser 130	2	18	10	80	30	UnAvail
+c12	mine_layer	4	Heavy Dispenser 50	2	20	5	50	10	UnAvail
+c12	mine_layer	5	Heavy Dispenser 110	2	30	5	70	15	UnAvail
+c12	mine_layer	6	Heavy Dispenser 200	2	45	5	90	20	UnAvail
+c12	mine_layer	7	Speed Trap 20	30	0	12	60	100	UnAvail
+c12	mine_layer	8	Speed Trap 30	32	0	14	72	135	UnAvail
+c12	mine_layer	9	Speed Trap 50	40	0	15	80	140	UnAvail
+c12	mining_robot	0	Robo-Midget Miner	14	0	4	50	80	UnAvail
+c12	mining_robot	1	Robo-Mini-Miner	30	0	7	100	240	cost
+c12	mining_robot	2	Robo-Miner	30	0	7	100	240	cost
+c12	mining_robot	3	Robo-Maxi-Miner	30	0	7	100	240	cost
+c12	mining_robot	4	Robo-Super-Miner	30	0	7	100	240	cost
+c12	mining_robot	5	Robo-Ultra-Miner	14	0	4	50	80	UnAvail
+c12	mining_robot	7	Orbital Adjuster	25	25	25	50	80	UnAvail
+c12	orbital	0	Stargate 100/250	50	20	20	200	0	cost
+c12	orbital	1	Stargate any/300	50	20	20	250	0	UnAvail
+c12	orbital	2	Stargate 150/600	50	20	20	500	0	cost
+c12	orbital	3	Stargate 300/500	50	20	20	600	0	cost
+c12	orbital	4	Stargate 100/any	50	20	20	700	0	UnAvail
+c12	orbital	5	Stargate any/800	50	20	20	700	0	UnAvail
+c12	orbital	6	Stargate any/any	50	20	20	800	0	UnAvail
+c12	orbital	7	Mass Driver 5	24	20	20	70	0	UnAvail
+c12	orbital	8	Mass Driver 6	24	20	20	144	0	UnAvail
+c12	orbital	9	Mass Driver 7	100	100	100	512	0	cost
+c12	orbital	10	Super Driver 8	24	20	20	256	0	UnAvail
+c12	orbital	11	Super Driver 9	24	20	20	324	0	UnAvail
+c12	orbital	12	Ultra Driver 10	100	100	100	968	0	cost
+c12	orbital	13	Ultra Driver 11	24	20	20	484	0	UnAvail
+c12	orbital	14	Ultra Driver 12	24	20	20	576	0	UnAvail
+c12	orbital	15	Ultra Driver 13	24	20	20	676	0	UnAvail
+c12	planetary	0	Viewer 50	10	10	70	100	0	Available
+c12	planetary	1	Viewer 90	10	10	70	100	0	cost
+c12	planetary	2	Scoper 150	10	10	70	100	0	cost
+c12	planetary	3	Scoper 220	10	10	70	100	0	cost
+c12	planetary	4	Scoper 280	10	10	70	100	0	cost
+c12	planetary	5	Snooper 320X	10	10	70	100	0	cost
+c12	planetary	6	Snooper 400X	10	10	70	100	0	cost
+c12	planetary	7	Snooper 500X	10	10	70	100	0	cost
+c12	planetary	8	Snooper 620X	10	10	70	100	0	cost
+c12	planetary	9	SDI	5	5	5	15	0	Available
+c12	planetary	10	Missile Battery	5	5	5	15	0	cost
+c12	planetary	11	Laser Battery	5	5	5	15	0	cost
+c12	planetary	12	Planetary Shield	5	5	5	15	0	cost
+c12	planetary	13	Neutron Shield	5	5	5	15	0	cost
+c12	scanner	0	Bat Scanner	1	0	1	1	2	Available
+c12	scanner	1	Rhino Scanner	3	0	2	3	5	cost
+c12	scanner	2	Mole Scanner	2	0	2	9	2	cost
+c12	scanner	3	DNA Scanner	1	1	1	5	2	cost
+c12	scanner	4	Possum Scanner	3	0	3	18	3	cost
+c12	scanner	5	Pick Pocket Scanner	8	10	6	35	15	cost
+c12	scanner	6	Chameleon Scanner	4	6	4	25	6	cost
+c12	scanner	7	Ferret Scanner	2	0	8	36	2	cost
+c12	scanner	8	Dolphin Scanner	5	5	10	40	4	cost
+c12	scanner	9	Gazelle Scanner	4	0	5	24	5	cost
+c12	scanner	10	RNA Scanner	1	1	2	20	2	cost
+c12	scanner	11	Cheetah Scanner	3	1	13	50	4	cost
+c12	scanner	12	Elephant Scanner	8	5	14	70	6	cost
+c12	scanner	13	Eagle Eye Scanner	3	2	21	64	3	cost
+c12	scanner	14	Robber Baron Scanner	10	10	10	90	20	cost
+c12	scanner	15	Peerless Scanner	3	2	30	90	4	cost
+c12	shield	0	Mole-skin Shield	1	0	1	4	1	Available
+c12	shield	1	Cow-hide Shield	2	0	2	5	1	cost
+c12	shield	2	Wolverine Diffuse Shield	3	0	3	6	1	cost
+c12	shield	3	Croby Sharmor	7	0	4	15	10	UnAvail
+c12	shield	4	Shadow Shield	3	0	3	7	2	cost
+c12	shield	5	Bear Neutrino Barrier	4	0	4	8	1	cost
+c12	shield	7	Gorilla Delagator	5	0	6	11	1	cost
+c12	shield	8	Elephant Hide Fortress	8	0	10	15	1	cost
+c12	shield	9	Complete Phase Shield	12	0	15	20	1	cost
+c12	hull	0	Small Freighter	12	0	17	20	25	Available
+c12	hull	1	Medium Freighter	20	0	19	40	60	cost
+c12	hull	2	Large Freighter	35	0	21	100	125	cost
+c12	hull	3	Super Freighter	45	0	21	125	175	UnAvail
+c12	hull	4	Scout	4	2	4	10	8	Available
+c12	hull	5	Frigate	4	2	4	12	8	cost
+c12	hull	6	Destroyer	15	3	5	35	30	cost
+c12	hull	7	Cruiser	40	5	8	85	90	cost
+c12	hull	8	Battle Cruiser	55	8	12	120	120	UnAvail
+c12	hull	9	Battleship	120	25	20	225	222	cost
+c12	hull	10	Dreadnought	140	30	25	275	250	UnAvail
+c12	hull	11	Privateer	50	3	2	50	65	cost
+c12	hull	12	Rogue	80	5	5	60	75	cost
+c12	hull	13	Galleon	70	5	5	105	125	cost
+c12	hull	14	Mini-Colony Ship	2	0	2	3	8	UnAvail
+c12	hull	15	Colony Ship	10	0	15	20	20	Available
+c12	hull	16	Mini Bomber	20	5	10	35	28	cost
+c12	hull	17	B-17 Bomber	55	10	10	150	69	cost
+c12	hull	18	Stealth Bomber	55	10	15	175	70	cost
+c12	hull	19	B-52 Bomber	90	15	10	280	110	cost
+c12	hull	20	Midget Miner	10	0	3	20	10	UnAvail
+c12	hull	21	Mini-Miner	25	0	6	50	80	cost
+c12	hull	22	Miner	32	0	6	110	110	UnAvail
+c12	hull	23	Maxi-Miner	32	0	6	140	110	cost
+c12	hull	24	Ultra-Miner	30	0	6	130	100	UnAvail
+c12	hull	25	Fuel Transport	10	0	5	50	12	UnAvail
+c12	hull	26	Super-Fuel Xport	20	0	8	70	111	cost
+c12	hull	27	Mini Mine Layer	8	2	5	20	10	UnAvail
+c12	hull	28	Super Mine Layer	20	3	9	30	30	UnAvail
+c12	hull	29	Nubian	75	12	12	150	100	cost
+c12	hull	31	Meta Morph	50	12	12	120	85	UnAvail
+c12	starbase_hull	0	Orbital Fort	12	0	17	40	0	Available
+c12	starbase_hull	1	Space Dock	20	5	25	100	0	UnAvail
+c12	starbase_hull	2	Space Station	120	80	250	600	0	Available
+c12	starbase_hull	3	Ultra Station	120	80	300	600	0	UnAvail
+c12	starbase_hull	4	Death Star	120	80	350	750	0	UnAvail
+c12	terraform	0	Total Terraform ±3	0	0	0	70	0	UnAvail
+c12	terraform	1	Total Terraform ±5	0	0	0	70	0	UnAvail
+c12	terraform	2	Total Terraform ±7	0	0	0	70	0	UnAvail
+c12	terraform	3	Total Terraform ±10	0	0	0	70	0	UnAvail
+c12	terraform	4	Total Terraform ±15	0	0	0	70	0	UnAvail
+c12	terraform	5	Total Terraform ±20	0	0	0	70	0	UnAvail
+c12	terraform	6	Total Terraform ±25	0	0	0	70	0	UnAvail
+c12	terraform	7	Total Terraform ±30	0	0	0	70	0	UnAvail
+c12	terraform	8	Gravity Terraform ±3	0	0	0	100	0	cost
+c12	terraform	9	Gravity Terraform ±7	0	0	0	100	0	cost
+c12	terraform	10	Gravity Terraform ±11	0	0	0	100	0	cost
+c12	terraform	11	Gravity Terraform ±15	0	0	0	100	0	cost
+c12	terraform	12	Temp Terraform ±3	0	0	0	100	0	cost
+c12	terraform	13	Temp Terraform ±7	0	0	0	100	0	cost
+c12	terraform	14	Temp Terraform ±11	0	0	0	100	0	cost
+c12	terraform	15	Temp Terraform ±15	0	0	0	100	0	cost
+c12	terraform	16	Radiation Terraform ±3	0	0	0	100	0	cost
+c12	terraform	17	Radiation Terraform ±7	0	0	0	100	0	cost
+c12	terraform	18	Radiation Terraform ±11	0	0	0	100	0	cost
+c12	terraform	19	Radiation Terraform ±15	0	0	0	100	0	cost
+c12	torpedo	0	Alpha Torpedo	9	3	3	5	25	Available
+c12	torpedo	1	Beta Torpedo	18	6	4	6	25	cost
+c12	torpedo	2	Delta Torpedo	22	8	5	8	25	cost
+c12	torpedo	3	Epsilon Torpedo	30	10	6	10	25	cost
+c12	torpedo	4	Rho Torpedo	34	12	8	12	25	cost
+c12	torpedo	5	Upsilon Torpedo	40	14	9	15	25	cost
+c12	torpedo	6	Omega Torpedo	52	18	12	18	25	cost
+c12	torpedo	8	Jihad Missile	37	13	9	13	35	cost
+c12	torpedo	9	Juggernaut Missile	48	16	11	16	35	cost
+c12	torpedo	10	Doomsday Missile	60	20	13	20	35	cost
+c12	torpedo	11	Armageddon Missile	67	23	16	24	35	cost

@@ -1999,3 +1999,60 @@ does to fleets aimed at the wormhole (O-28, O-30), Mystery Trader spawning,
 path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
 and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
 stargates.
+
+## Components (CS-001, CS-002)
+
+Question: does the part, hull and planetary-item table read from the binary
+(private `stars-decomp` `tools/components.py`), with its cost and race
+rules, match the original game? Result: `data/components.json` and
+`docs/COMPONENTS.md`. Predictions were committed before each comparison.
+
+### Technology Browser, designer, planet panel (CS-001, MEASURED 2026-10-07)
+
+- 13 race setups (`experiments/cs001/configs.txt`): SS at tech 0 and with
+  Mystery Trader items not owned; HE, SS + IFE/TT/ARM/ISB, WM + NRSE/NAS,
+  CA + CE/OBRM, IS + BET, SD + IFE/ARM/NAS, PP + TT/ISB, IT + NRSE/CE,
+  AR + ISB/OBRM, JOAT at tech 26; SS + BET at tech 0.
+- 3,095 of 3,095 browser readouts as predicted: name, displayed minerals
+  and resources, mass, tech requirement, Available / UnAvail / research
+  cost, and each value the description states (armor, shield, cloak %,
+  jammer %, damage, range, initiative, accuracy, mines swept and laid,
+  bomb kill rates, battle speed, capacitor %, tachyon %, fuel and cargo
+  capacity, deflection, minefield parameters, mining rate, stargate
+  limits, mass driver warp, scanner ranges, dock capacity, terraform
+  amount).
+- Discriminating: perturbing any predicted value by 1 makes the
+  comparison fail. Costs at tech 26 exercise miniaturization at the cap
+  (75%, BET 80%); the race setups exercise every PRT/LRT cost case and
+  every restriction rule; tech 0 with BET exercises the doubling.
+- Terraform and planetary items are not miniaturized and not doubled by
+  BET in any setup (the binary leaves the doubling test reading an unset
+  value for them; observed outcome: never doubled).
+- Mystery Trader items are not listed unless owned (227 items with mask 0).
+- Designer: all 37 hull and starbase slot layouts and each race's
+  hull list as predicted. Starbase hull costs shown there are
+  `(c − c/5 + 1)/2` with ISB or AR and `(c + 1)/2` without (Death Star
+  for AR: 62/41/180/384); the browser shows `c − c/2` regardless of
+  ISB/AR.
+- Defense coverage, 10 defenses: 9.56, 18.29, 21.56, 26.25, 32.11% for
+  SDI, Missile Battery, Laser Battery, Planetary Shield, Neutron Shield;
+  `1 − (1 − c/1000)^10` truncated to two decimals (rounding would give
+  21.57 and 26.26).
+
+### Engine fuel tables (CS-002, CONFIRMED 2026-10-07)
+
+- 144 fleets, all 16 engines at warps 2–10: every charge, ram-scoop gain
+  and end position as predicted (`experiments/cs002`).
+- Warp 10 on engines not rated for it: 3 of 22 ships destroyed (message
+  223 for the fleet), 0 of 10 with rated engines. The fleet paid the full
+  charge, then kept `trunc(x·survivors/ships)` of its fuel and cargo.
+- Engines the race may not build (Settler's Delight, Fuel Mizer,
+  Interspace-10, Galaxy Scoop for an SS race without LRTs) were kept in
+  the designs at tech 26 and used as given.
+
+### StarsAPI comparison (private)
+
+StarsAPI's `UNEDITED.MOD` agrees with the binary table on every item:
+names (its file has a damaged ± character), tech, mass, cost, category
+values, hull cargo, fuel, armor and slots. No disagreement between binary,
+game and StarsAPI was found.
