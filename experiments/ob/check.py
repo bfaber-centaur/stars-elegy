@@ -97,7 +97,8 @@ def scan_expect(run, A, B):
             elif kind == 'packet':
                 ok |= d2 <= R * R or bool(run.scan.get('ppacket'))
             elif kind == 'wormhole':
-                ok |= bool(int(b.get('seen', '0'), 16) & bit) or d2 <= R * R // 16 or d2 <= P * P
+                # O-42 (after OB-011-H): a wormhole the viewer knows is seen within the full R
+                ok |= (bool(int(b.get('seen', '0'), 16) & bit) and d2 <= R * R) or d2 <= R * R // 16 or d2 <= P * P
             else:
                 known = bool(int(b.get('known', '0'), 16) & bit)
                 ok |= (known and d2 <= R * R) or d2 <= P * P or d2 <= R * R // 16 or \
@@ -165,6 +166,13 @@ def evaluate(c, A, B, run=None, M=None):
                  if o == owner and int(fleets[(o, i)]['x']) == x and int(fleets[(o, i)]['y']) == y]
         got = ([int(f['count']) for f in fs], tasks)
         return got == ([want], ['0']), got
+    if kind == 'layhold':
+        _, owner, fid, x, y, want, nwp, task = k
+        f = fleets.get((owner, fid))
+        ws = wps.get((owner, fid), [])
+        got = ((int(f['x']), int(f['y'])) if f else None, [int(t['count']) for t in fields_near(things, owner, x, y)],
+               len(ws), ws[0]['task'] if ws else None)
+        return got == ((x, y), [want], nwp, task), got
     if kind == 'surface':
         _, n, want = k
         before = tuple(int(v) for v in B[1][n].get('surface', '0/0/0').split('/'))
@@ -236,7 +244,10 @@ def main():
     A, B = load(after), load(before, 'before')
     M = load(after, 'after', 'CB.M%d' % (run.scan['viewer'] + 1)) if run.scan else load(after, 'after', 'CB.M2')
     M_ALL[1], M_ALL[2] = load(after, 'after', 'CB.M1'), load(after, 'after', 'CB.M2')
+    year = int(os.environ.get('OB_YEAR', '0'))
     for c in run.cases:
+        if year and c.get('year', 1) != year:
+            continue
         ok, got = evaluate(c, A, B, run, M)
         print('%-9s %-12s %-12s %s' % (c['id'], c['pred'], {True: 'HELD', False: 'CONTRADICTED', None: 'OBSERVED'}[ok], got))
 

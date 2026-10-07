@@ -568,6 +568,40 @@ r.thing('packet', 0, '1300 1350 6 5 100 0 0')
 r.case('K', 'S-17', 'packet about 53 ly from a freighter after its move', 'not seen', '', ('scan',))
 
 
+# ---------------------------------------------------------------- round 4 (decomp reconciliation, O-41 and O-42)
+# OB-019 runs three generations (2400 -> 2403), each started from the previous year's host file.
+r = run('OB-019', 'lay-mines task held over three years (O-41) and the years word 1 (O-4)')
+r.fleet(0, 1050, 1180, '0:1', extra='task lay 5 to 1050 1250 warp 5', fuel=400)
+r.fields.append((0, 1050, 1180, 460, set()))
+for y, n in ((1, 160), (2, 310), (3, 460)):
+    r.case('A%d' % y, 'O-41', 'year %d: non-SD layer, waypoint 0 lay mines indefinitely, waypoint 1 25 ly away' % y,
+           'stays at (1050,1180), field %d, both waypoints kept' % n, 'moves to waypoint 1; field stops growing',
+           ('layhold', 0, 0, 1050, 1180, n, 2, '6'))
+    r.cases[-1]['year'] = y
+r.fleet(0, 1210, 1230, '0:1', extra='task lay 1', fuel=400)
+r.fields.append((0, 1210, 1230, 460, set()))
+for y, n, t in ((1, 160, '6'), (2, 310, '0'), (3, 300, '0')):
+    r.case('B%d' % y, 'O-4', 'year %d: stationary layer with years word 1' % y,
+           'field %d, task %s after the year' % (n, 'lay' if t == '6' else 'cleared'), '',
+           ('layhold', 0, 1, 1210, 1230, n, 1, t))
+    r.cases[-1]['year'] = y
+
+r = run('OB-020', 'known and unknown wormholes between R/4 and R (O-42)',
+        extra='planet 8 scanner none\n' + FREIGHTER1)
+r.scan = dict(viewer=1, mask=2, R=50, P=0)
+r.fleet(1, 1050, 1040, '2:1'); r.fleet(1, 1370, 1230, '2:1')
+r.thing('wormhole', 0, '1050 1070 1 0 seen 2'); r.thing('wormhole', 0, '1220 1300 0 0')
+r.case('A', 'O-42', 'wormhole known to player 1, 30 ly from a freighter (13 to 47 after the jiggle)',
+       'seen (known: full R)', 'not seen if known wormholes use R/4', ('thingin', 2, 16384, True))
+r.thing('wormhole', 0, '1370 1260 3 0'); r.thing('wormhole', 0, '1100 1300 2 0')
+r.case('B', 'O-42', 'unknown wormhole at the same distance from the other freighter', 'not seen (R/4)', '',
+       ('thingin', 2, 16386, False))
+r.thing('wormhole', 0, '1250 1120 5 0 seen 2'); r.thing('wormhole', 0, '1300 1350 4 0')
+r.case('C', 'O-42', 'known wormhole 170+ ly from every scanner (as OB-011-H)', 'not seen', '',
+       ('thingin', 2, 16388, False))
+r.case('D', 'S-17', 'every object in player 1\'s file', 'as the rules (known wormholes within R)', '', ('scan',))
+
+
 def main():
     if sys.argv[1:2] == ['--defs']:
         out = sys.argv[2]
