@@ -204,7 +204,7 @@ def state(hst, xy, game, xy_path=None):
                                        'primary': int(d['primary']), 'secondary': int(d['secondary']),
                                        'attack_who': int(d['who']), 'dump_cargo': d['dump'] == 'true',
                                        'name': s.split('name=', 1)[1]})
-        elif s.startswith('planet '):
+        elif s.startswith('planet ') and d.get('owner') != '-1':  # an unowned planet has no starbase
             n = int(s.split()[1])
             sb[n] = dict(design=int(d['design']) if d.get('starbase') == 'true' else None,
                          damage=int(d.get('sbdmg', 0)))
