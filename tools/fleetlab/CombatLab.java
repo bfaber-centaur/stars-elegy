@@ -737,6 +737,8 @@ public class CombatLab {
 
         // Player blocks: tech, design and fleet counts, relations.
         for (PlayerBlock p : players) {
+            // another player's summary in a .Mn file has no full data to edit or re-encode
+            if (!p.fullDataFlag) continue;
             int k = p.playerNumber;
             for (Map.Entry<String, Integer> e : tech.entrySet()) {
                 String[] pf = e.getKey().split(" ");
