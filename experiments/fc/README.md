@@ -59,18 +59,19 @@ The host applied all of them, and the name was stored in the host file. Within t
 
 ## CO-01..06: Turn orders' client-order cases (2026-10-07)
 
-Turn orders committed the predictions before the runs, on its own branch (`experiments/fo/client-orders.md`). This lane's added cases are in `co/PREDICTIONS.md`. The setups and commands are in `co/`, and each case has its own start file. Each run is one pinned base year, then the client's orders, then one pinned host year (cycles 20000). The design is a Freighter: a Medium Freighter with a Long Hump 6, cargo 210, fuel 450. Fleets 1 and 2 sit in deep space at (1100, 1230). Raw files are in the private apparatus, `evidence/fo/co*`.
+Turn orders committed the predictions before the runs, on its own branch (`experiments/fo/client-orders.md`). Its revision of CO-04/05/06 (20:30Z) also came before those runs; the verdicts below use the revised text, and CO-05's revised setup ran as CO-05c. This lane's added cases are in `co/PREDICTIONS.md`. The setups and commands are in `co/`, and each case has its own start file. Each run is one pinned base year, then the client's orders, then one pinned host year (cycles 20000). The design is a Freighter: a Medium Freighter with a Long Hump 6, cargo 210, fuel 450. Fleets 1 and 2 sit in deep space at (1100, 1230). Raw files are in the private apparatus, `evidence/fo/co*`.
 
 | Case | Orders the client wrote | Host result | Verdict |
 |---|---|---|---|
 | CO-01 | split; move 1 ship, fleet 1 → new fleet 2 | 2: 102 Ir, 250 fuel; 1: 3 ships, 308 Ir, 751 fuel | CONFIRMED |
 | CO-02 | Split All of 3: two split and move pairs; the source keeps one ship | 1: 34 Ir, 334 fuel; 2 and 3: 33 Ir, 333 fuel | prediction MISSED in form, rule held (below) |
 | CO-03 | move 1 ship, fleet 1 → fleet 2 | 1: 100 Ir, 300 fuel; 2: 2 ships, 100 Ir, 300 fuel | CONFIRMED |
-| CO-04a | cargo, fleet 2 loads 60 Ir from fleet 1 (the client capped the 300 asked) | 1: 140; 2: 210 | CONFIRMED (explicit amount, not 175/175) |
-| CO-04b | cargo, fleet 2 loads 200 Ir (300 asked; fleet 2 empty) | 1: 0; 2: 200 | CONFIRMED |
-| CO-05 | Merge Fleets, fleet 1 (10 at 100 units on 50%) into fleet 2 (10 healthy) | 20 ships, 90 units on 25% after repair | 25% CONFIRMED; units do not discriminate |
+| CO-04a | cargo, fleet 2 loads 60 Ir from fleet 1 (the client capped the 300 asked) | 1: 140; 2: 210 | E (explicit amount) CONFIRMED; R (capacity rebalance, 175/175) refuted |
+| CO-04b | cargo, fleet 2 loads 200 Ir (300 asked; fleet 2 empty, not the revised text's 150 Ir B) | 1: 0; 2: 200 | E CONFIRMED; R refuted |
+| CO-05 (first text) | Merge Fleets, fleet 1 (10 at 100 units on 50%) into fleet 2 (10 healthy) | 20 ships, 90 units on 25% after repair | 25% as first predicted; units do not discriminate |
+| CO-05c (revised CO-05) | Merge Fleets, 10 at 100 units on 50% into 10 at 200 on 20% | 20 ships, **118 units on 35%** after repair (128 before) | CONFIRMED: 35%, (500 + 400) / 7 = 128.6 → 128 (task: 35) |
 | CO-05b | Merge Fleets, 2 at 101 units on 50% into 2 at 100 on 50% | 4 ships, **90 units on 50%** after repair | Turn orders' direct-order rule CONFIRMED; task rule (41) refuted |
-| CO-06 | see below | see below | MISSED: the host keeps at most 32765 |
+| CO-06 | see below | see below | merge order not reachable; the exchange path keeps at most 32765 |
 
 Notes:
 
@@ -86,3 +87,23 @@ Notes:
   - The host then stored **32765** in fleet 2 each time, one ship fewer than the client showed. Controls kept 32765 (16000 + 16765) and 32000 (16000 + 16000).
   - So the host clamps the move-ships destination at 32765 and the extra ship is lost. Cargo and fuel moved by the share of ships moved (16767: 99 of 100 Ir, 999 of 1000 fuel). A source left with ships kept the rest.
   - Neither the 32768 slot-emptying of the task path nor its 32766/32767 kept counts were reachable through legal client orders.
+
+## CO-07, CO-07b, CO-08: deleting and editing designs in use (2026-10-07)
+
+The predictions are Turn orders' (CO-07, CO-08). This lane's pre-run notes are in `co/PREDICTIONS.md`. The setup (`co07.spec`) has three designs:
+- Freighter (slot 6), used by fleet 1 (2 Freighters and a Looker), by fleet 2 (2 Freighters) and by the homeworld's queue (2 Freighters, the first 66% done);
+- Looker (slot 7);
+- Queued (slot 8), used only by the queue (1).
+
+The homeworld's starbase uses starbase design 0.
+
+- **In the client:** Edit Selected Design is disabled for a design that ships use, and for the starbase design in use. It is enabled for a design used only in a queue. Delete is enabled in every case. Its alert, in substance: "you have 4 Freighters and 2 in production with some work done; deleting destroys the ships and/or removes them from the queues". For the starbase design: "you have 1 Starbase; deleting destroys it".
+- **CO-07, deleting the Freighter: CONFIRMED except renumbering.**
+  - Fleet 1 lost its two Freighters and kept the Looker. Its fuel went from 500 to 27 (the Looker holds 50; 27 is observed, not explained).
+  - Fleet 2 was removed.
+  - The queue's Freighter entry was dropped (no Freighter was built). The Queued design was built that year and took the freed fleet number 2.
+  - The slot was cleared, and the Looker and Queued kept slots 7 and 8. **No renumbering** (predicted: later designs renumber).
+- **CO-07b, deleting the starbase design in use** (a ship design can't be a starbase, so this stands in for CO-07's starbase): the homeworld's **starbase was removed**. The planet kept its other state.
+- **CO-08, editing:**
+  - A design that ships or a starbase use can't be edited in the client, so prediction A holds there.
+  - For the queued-only design, the client wrote a full design record for slot 8 (Bat Scanner added), and the host **overwrote the slot in place**. The queue entry still pointed at slot 8 and now builds the edited design. This is prediction B's "overwrite", for a slot that only a queue uses.
