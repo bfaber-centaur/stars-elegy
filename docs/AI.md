@@ -664,9 +664,15 @@ reset by the warp rule at the end of the turn.
 
 **Fleet classes.** Hull roles: freighters (Small to Super Freighter),
 privateers (Privateer, Rogue, Galleon), warships (Destroyer to
-Dreadnought), Frigate, Nubian, Meta Morph. A fleet's *power* per design
-is the combat power estimate of `ORDERS.md`/`COMBAT.md` (BINARY-ONLY
-formula, to be published with the personality stage that needs it).
+Dreadnought), Frigate, Nubian, Meta Morph. A design's *power* is the
+same per-design power the score uses (`KERNEL.md` "Scores and victory
+conditions", the "Power of a design" list: beams, torpedoes and bombs,
+with capacitors and battle speed). The computer player computes it at the
+start of its turn for every design in its own view, including other
+players' designs it knows (BINARY-ONLY that the AI reads the same value;
+the formula is CONFIRMED at the score class boundaries KX-003 reached,
+with capacitors and sappers BINARY-ONLY and the speed term CONFIRMED by
+OT-6).
 - *Attack fleet*: walking its designs in slot order (slots with ships
   only): a warship → yes; a Frigate → yes if its power > 0, else **no,
   stop looking** (LEGACY BUG candidate: an unarmed frigate slot hides a
@@ -837,11 +843,11 @@ and an order is written only when the warp changes.
 
 ## Open experiments
 
-- AI-3, AI-5 on a second game; AI-4 needs a colonizer with no target.
-- Easy/standard/harder levels for AI-1 and AI-2 (variant counts and the
-  planet-automation thresholds are level-independent in the reading;
-  only the packet fling checks the level).
-- §7 planet automation as predictions: needs Elegy's production and
-  mining estimates to predict queue contents exactly.
+Settled by the stage-1 games (`PARITY.md` "Computer players: stage 1"):
+AI-3 and AI-5 on further games and levels, AI-4, and the Easy, Standard
+and Harder levels of AI-1 and AI-2. Still open:
+
+- §7 planet automation as predictions (AI-7, not run): needs Elegy's
+  production and mining estimates to predict queue contents exactly.
 - Turindrone harder race (never drawn in UG).
 - The "dormant" flag (§1).
