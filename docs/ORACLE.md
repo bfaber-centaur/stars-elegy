@@ -1158,6 +1158,50 @@ python3 experiments/wt/trace.py OUT/run                # per-year wormholes, Tra
 - Minefield counts are 32-bit in the object record; fields of 2,100,000
   load and decay normally.
 
+### Client estimates (observed 2026-10-07, ES-001)
+
+```sh
+python3 experiments/es001/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/es001.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT 20000
+tools/fleetlab/combatlab dump OUT/raw/after/CB.HST > after.dump
+python3 experiments/es001/predict.py after.dump > predictions.tsv   # commit before opening the client
+python3 experiments/es001/check.py predictions.tsv results.tsv
+```
+
+- `combatlab dump` prints each player's economy settings for the model:
+  `race=` (growth %, colonists per resource / 100, factory output, cost,
+  operated, mine output, cost, operated), `rcost=` (research cost
+  setting per field, 0 expensive, 1 normal, 2 cheap), `resLast=` (last
+  year's research spending), and per planet `frac=` (mineral depletion
+  fractions) and `homeworld`.
+- A first waypoint at the fleet's own position keeps the fleet where it
+  is for the year and leaves its other waypoints as orders, so the
+  generated file still has multi-leg routes to read estimates from.
+- Open `cb.m1` from `OUT/raw/after` (title screen: alt+o, `cb.m1`,
+  Return; "2 years of data read", Return).
+- Report → Planets (F3) and Report → Fleets: the maximize button at
+  (862,244) shows every column. Double-clicking a row selects that planet
+  or fleet; Escape returns to the main window with it selected.
+- Fleet view: the Fleet Waypoints list rows are at y = 262 + 14·k
+  (x ≈ 60); clicking a row updates Distance, Travel Time and Est Fuel
+  Usage. "Est. Range" is in the Fleet Composition tile. The fleet Next
+  button (145,132) steps through the fleets in fleet-report order.
+- Planet view: the Production list rows are at y = 219 + 14·k (x ≈ 260);
+  "Completion:" is under the list. The planet Next button is also at
+  (145,132).
+- The population popup appears only while the mouse button is held on the
+  Status tile's "Population" row (≈ 40,299): press, screenshot, release.
+  `scripts/oracle/click` releases at once, so press with `xdotool
+  mousedown 1` after moving the pointer the way `click` does.
+- F5 opens the Research dialog.
+- ES-002 (`experiments/es002`, same commands with `es002.spec`;
+  `predict.py` takes `after.dump` with the `.XY` dump appended, and
+  optionally the `.M1` dump for the planets player 0 has reports of).
+  To read another player's view, exit the game and use File → Open: the
+  dialog starts in `c:\stars`, so type the full path (`d:\cb.m2`). With
+  the fleet view up, alt+r p did not open the planet report; F3 did.
+
 ### Files written during a generation (observed 2026-10-07)
 
 - `PINNED_CAPTURE=DIR tools/fleetlab/pinned-turn …` starts
