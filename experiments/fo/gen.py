@@ -332,6 +332,39 @@ def runs():
         r.expect('fleet', (0, x), dict(ships=f'{F}:1', col=10))
         r.expect('nofleetat', (1, p[0], p[1]), None)
         out.append(r)
+
+    # ---------------------------------------------------------------- FO-06 (follow-up, after FO-01..05)
+    # FO-03 C gave 35/35% where 118/35% was predicted, D held (90/25%), and E (32000 + 1000)
+    # left a fleet with no ships. Candidate read off those results, predicted here before
+    # FO-06 runs: when both stacks are damaged, units = sum(D*units) / (all ships of the
+    # slot) with D = max(1, pct*n/100); when only one is, its units are kept; either way
+    # pct = ceil(100*sumD/n). Ship counts add with no clamp, and a sum above 32767 (a
+    # negative 16-bit count) empties the slot. Repair 10 after the merge as before.
+    r = fo_run('fo06', 'follow-up: merge damage when both or one stack is damaged; ship counts near 32767')
+
+    def dmg_case(cid, text, xn, xd, yn, yd, units, pct):
+        r.case(cid, 'FO-03 follow-up', text)
+        p = r.spot()
+        y = r.fleet(0, p, f'{F}:{yn}', dmg=yd and f'{F}:{yd[0]}:{yd[1]}')
+        r.fleet(0, p, f'{F}:{xn}', dmg=xd and f'{F}:{xd[0]}:{xd[1]}', extra=f'target fleet 0 {y} task merge')
+        r.expect('fleet', (0, y), dict(ships=f'{F}:{xn + yn}', dmg={F: (units - 10, pct)}))
+
+    dmg_case('A', 'X 10 at 100 units on 50% into Y 30 at 200 on 20%: D 5 + 6, units 1700/40 = 42 on 28%, repair -> 32/28 '
+             '(sum/sumD would give 154 -> 144)', 10, (100, 50), 30, (200, 20), 42, 28)
+    dmg_case('B', 'X 4 at 300 units on 100% into Y 6 at 100 on 50%: D 4 + 3, units 1500/10 = 150 on 70%, repair -> 140/70',
+             4, (300, 100), 6, (100, 50), 150, 70)
+    dmg_case('C', 'undamaged X 10 into Y 10 at 100 units on 50% (FO-03 D reversed): units kept, 25%, repair -> 90/25',
+             10, None, 10, (100, 50), 100, 25)
+    dmg_case('D', 'X 6 at 100 units on 50% into undamaged Y 14: units kept, ceil(300/20) = 15%, repair -> 90/15',
+             6, (100, 50), 14, None, 100, 15)
+    for cid, add, want in (('E', 766, f'{F}:32766'), ('F', 767, f'{F}:32767'), ('G', 768, '')):
+        r.case(cid, 'FO-03 follow-up', f'X {add} Freighters into Y 32000: '
+               + (f'{32000 + add} ships' if want else 'over 32767: the slot empties'))
+        p = r.spot()
+        y = r.fleet(0, p, f'{F}:32000')
+        r.fleet(0, p, f'{F}:{add}', extra=f'target fleet 0 {y} task merge')
+        r.expect('fleet', (0, y), dict(ships=want))
+    out.append(r)
     return out
 
 

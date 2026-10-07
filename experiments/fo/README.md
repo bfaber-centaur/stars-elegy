@@ -115,3 +115,20 @@ populations in 100s; growth 15% (`grow`).
 | E | decomp §3.3 | X (2 Freighters, 100 Ir, fuel 300) transfers to player 1: refused, X unchanged | fleet 0/4: ships 11:2, fe 100; no player 1 fleet at 1010,1190 |
 | F | decomp §3.3 | X (1 Freighter, 10 colonists) transfers to player 1: refused (carries colonists) | fleet 0/5: ships 11:1, col 10; no player 1 fleet at 1010,1235 |
 
+
+## Follow-up predictions (FO-06; written after FO-01..05 ran, before FO-06)
+
+FO-03 C (both stacks damaged) and E (32000 + 1000 ships) missed; see "Results". FO-06 tests the candidate rule read off them.
+
+### FO06: follow-up: merge damage when both or one stack is damaged; ship counts near 32767
+
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | FO-03 follow-up | X 10 at 100 units on 50% into Y 30 at 200 on 20%: D 5 + 6, units 1700/40 = 42 on 28%, repair -> 32/28 (sum/sumD would give 154 -> 144) | fleet 0/0: ships 11:40, dmg 11: 32/28% |
+| B | FO-03 follow-up | X 4 at 300 units on 100% into Y 6 at 100 on 50%: D 4 + 3, units 1500/10 = 150 on 70%, repair -> 140/70 | fleet 0/2: ships 11:10, dmg 11: 140/70% |
+| C | FO-03 follow-up | undamaged X 10 into Y 10 at 100 units on 50% (FO-03 D reversed): units kept, 25%, repair -> 90/25 | fleet 0/4: ships 11:20, dmg 11: 90/25% |
+| D | FO-03 follow-up | X 6 at 100 units on 50% into undamaged Y 14: units kept, ceil(300/20) = 15%, repair -> 90/15 | fleet 0/6: ships 11:20, dmg 11: 90/15% |
+| E | FO-03 follow-up | X 766 Freighters into Y 32000: 32766 ships | fleet 0/8: ships 11:32766 |
+| F | FO-03 follow-up | X 767 Freighters into Y 32000: 32767 ships | fleet 0/10: ships 11:32767 |
+| G | FO-03 follow-up | X 768 Freighters into Y 32000: over 32767: the slot empties | fleet 0/12: ships  |
+
