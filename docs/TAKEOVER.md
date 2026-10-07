@@ -78,7 +78,7 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
 - A starbase destroyed in this year's battle no longer protects the
   planet. Bombing (T-2) and arrival invasions go ahead the same year.
 
-### Order inside a phase (BINARY-ONLY)
+### Order inside a phase (CONFIRMED, TK-114, TK-201; manual transfers BINARY-ONLY)
 
 - **Fleet order.** Every per-fleet step (unloads, scrap, colonize, loads,
   merges, transfers, bombing triggers) walks fleets in **fleet order**: by
@@ -91,6 +91,10 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
   of their first queued drop. Before movement, the queue starts with
   colonists given to foreign planets by manual cargo transfers in the
   orders (step 1), then the drops made by fleets in fleet order.
+  CONFIRMED (TK-201 A): fleets 0, 1 and 12 dropping on planets 14, 3 and 8
+  were resolved 14, 3, 8 (capture messages in that order), not in planet
+  order. The manual-transfer part needs crafted orders and stays
+  BINARY-ONLY.
 - **"At the start of this phase".** Each of the two waypoint phases (step
   2, and steps 4–5 together) records, for every planet, whether it is
   owned, **before anything else in that phase**. For the after-movement
@@ -130,7 +134,7 @@ plans and whichever fleet comes first. A Laser Frigate with an attacking
 plan and no bombs made a bomber fleet with plan "nobody" bomb. Two fleets
 of 5 Cherry each are one pass of 10 Cherry.
 
-**Bombing order** (BINARY-ONLY). Bombing walks fleets in fleet order
+**Bombing order** (CONFIRMED: TK-201 B across planets, TK-113 across players). Bombing walks fleets in fleet order
 (owner, then fleet number). The first fleet that qualifies at a planet
 triggers its owner's single pass there, which is applied at once with its
 random draws (factories, defenses, population); that owner's other fleets
@@ -197,9 +201,18 @@ Installations first, when `I > 0` and `T = mines + factories + defenses >
 3. mines lose the rest, `I − factories lost − defenses lost`, at most the
    mines there. When the two rounded-up kills together exceed `I`, the rest
    is negative and mines lose nothing; they never increase and never go
-   below 0 (BINARY-ONLY). Example: `I = 1`, one factory and one defense, no
+   below 0. Example: `I = 1`, one factory and one defense, no
    mines: each can lose 1 with chance ½, so 2 installations can die from
-   `I = 1`.
+   `I = 1`. CONFIRMED (TK-202, 12 streams): with `I = 1` on mines 1,
+   factories 20, defenses 20, the 72 planet outcomes were 21 × mines 0 with
+   nothing else lost, 40 × one factory or one defense lost and mines kept,
+   and 11 × one factory **and** one defense lost with mines still 1, never
+   2. With `I = 3` the mines went to 0 only when exactly one factory and
+   one defense were lost (7 of 24).
+   The bombing message reports `factories lost + defenses lost + rest`
+   with the negative rest included, so it can understate: two
+   installations destroyed by `I = 1` are reported as 1 (LEGACY BUG,
+   CONFIRMED; `MESSAGES.md`).
 
 A draw is made only when its remainder is non-zero.
 
@@ -260,16 +273,21 @@ still move (MG-006-A: 20 kT ironium unloaded; 100 fuel stayed aboard).
 
 **Minerals** unloaded on a planet the fleet's owner does not own (another
 player's, whatever the relation, or an unowned one) are added to that
-planet's surface, and the fleet loses them (BINARY-ONLY). Only cargo to
+planet's surface, and the fleet loses them (CONFIRMED, TK-201 C–E: 50 kT
+ironium onto an enemy planet without and with a starbase, and onto an
+unowned planet, each surface 0 → 50, fleet 0, message 0x02d). Only cargo to
 another player's **fleet** checks the relation: nothing moves to an enemy's
 fleet.
 
 **Unloading in deep space** (a waypoint that is not a planet, fleet or
-salvage; BINARY-ONLY): minerals are **destroyed**. The fleet loses them,
+salvage; CONFIRMED, TK-201 F): minerals are **destroyed**. The fleet loses them,
 the owner gets the usual "unloaded" message, and no salvage object is made.
 Colonists are refused: the fleet keeps them and the owner gets a failure
 message. Fuel does not move, with no message and no debit (CONFIRMED,
-MG-006-E/F: an unload-all and a load-optimal fuel order both kept 300). Only scrapping a fleet in deep space leaves
+MG-006-E/F: an unload-all and a load-optimal fuel order both kept 300). In
+TK-201 F a freighter unloading 50 kT ironium and 50 colonists in deep space
+got 0x02d for the ironium, then 0x165 and 0x04e; it kept the colonists, the
+ironium was gone, and no object appeared. Only scrapping a fleet in deep space leaves
 salvage (Other waypoint tasks).
 
 ### Unload and load amounts (CONFIRMED, FO-01..05, TK-114; "load exactly" BINARY-ONLY)
@@ -311,7 +329,12 @@ On a planet the fleet's owner owns, unloaded colonists are added to the
 population at once, with no cap. Before movement that is **before** this
 year's growth, so they grow this year; after movement they do not.
 Unloaded minerals join the surface the same way. Loading colonists
-subtracts them from the population. These own-planet rules belong with
+subtracts them from the population, and nothing stops a load from taking
+every colonist (CONFIRMED, TK-201 G). The planet then stays owned with
+population 0 until this year's growth, where it is lost like any other
+empty planet (message 0x040 or 0x023, `MESSAGES.md`). In TK-201 a "load
+all" took all 50 from player 0's planet 12 and from its homeworld 17; both
+were unowned at the end of the year. These own-planet rules belong with
 `KERNEL.md` production; they are given here until KERNEL covers
 transport.
 
@@ -367,7 +390,7 @@ player 1 12 → player 0 with 25; player 0 12 vs player 1 25 → player 1
 with 12 (reduced by `(27 − 13)/27`); 25 vs 25 → nobody, and the planet
 received both ships' minerals.
 
-## Colonization (CONFIRMED, T-1, T-30, T-31; requirements BINARY-ONLY)
+## Colonization (CONFIRMED, T-1, T-30, T-31; requirements T-39, TK-201 H)
 
 A colonize order succeeds when the fleet orbits a planet that is
 **unowned now**, carries colonists, and has at least one ship whose design
@@ -424,10 +447,10 @@ A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally:
 
 - the old owner is told (CONFIRMED: message 0x007, `MESSAGES.md`);
-- the new owner makes one **tech attempt** (MEASURED, TK-115: gains only in
-  a field where the old owner was ahead, never more than one level a year;
-  the draw order is BINARY-ONLY) exactly as in `COMBAT.md`, Tech
-  from battle, steps 1–5. The "seen" levels are the **old owner's current
+- the new owner makes one **tech attempt**, exactly as in `COMBAT.md`, Tech
+  from battle, steps 1–5 (MEASURED, TK-115: gains only in a field where the
+  old owner was ahead, never more than one level a year; the draw order is
+  BINARY-ONLY). The "seen" levels are the **old owner's current
   levels** in each field, and no Mystery Trader item has a chance, so step 3
   always makes its 13 `rand(13)` draws and gives nothing. The attempt
   shares the "already gained this turn" mark with battles and scrapping:
@@ -465,8 +488,12 @@ record still names it.
 Result (MG-005, cycles 20000, apparatus `evidence/mg/mg005`): as predicted.
 Planet 8 was owned by player 0 and still marked as a homeworld. Player 1's
 record still named planet 8, and player 0's homeworld 17 stayed marked.
-The two cases that are untested: an unowned homeworld, and a player that
-still holds other planets.
+Both cases left open there are CONFIRMED by TK-201 (cycles 20000 and
+30000). Player 1 lost its homeworld 8 while keeping other planets: planet
+8 kept the mark under player 0, and player 1's record still named it, with
+no other player 1 planet marked. Player 0's homeworld 17 was emptied by
+loading every colonist (above): it was unowned and still marked at the end
+of that year **and of the next**, and player 0's record still named 17.
 
 ## Design parts dropped when the year is generated (CONFIRMED in one setting)
 
@@ -503,8 +530,16 @@ choice; parity is "keep and use".
 
   Mineral cargo is added on top. Ultimate Recycling is the **planet
   owner's** trait. Colonists join the planet only if the fleet owner owns
-  it. Scrapping at a starbase may teach the planet owner a tech level, as
-  in battle.
+  it. Scrapping at a starbase gives the **planet owner** one tech attempt,
+  as in battle (`COMBAT.md`, Tech from battle): the "seen" levels are the
+  highest tech each field's requirement reaches among the scrapped ships'
+  hulls and parts. CONFIRMED (TK-203, 12 cycle settings): a Scout with Long
+  Hump 6 (propulsion 3) scrapped at each of two starbases of a player at
+  tech 0 gave that player propulsion 1 in 8 settings (7 at the first
+  starbase, 1 at the second after the first gave nothing; predicted chance
+  0.555), never more than one level and never another field; the gain
+  replaced 0x141 by 0x13d naming propulsion. A planet without a starbase
+  gave no attempt (0x140). The scrapping fleet's owner gains nothing.
 - **Remote mining** (T-35): after movement only, by a fleet that did not move
   this year, at an unowned planet; the order stays. An arriving miner
   therefore mines nothing the year it arrives.
@@ -550,38 +585,27 @@ resolutions after movement. Random-stream pinning for experiments:
 
 ## Open experiments
 
-- War Monger and Inner Strength ground combat (`k = 165`, `D = 2P`) and
-  Alternate Reality drops and colonization (T-24, T-33).
-- Scrap at each place, with and without Ultimate Recycling, and the
-  arrival-delay rule (T-34).
-- Remote mining delay (T-35).
-- Several players bombing one planet.
-- Production queue and "only leftover to research" after capture.
-- Tech learned on capture; ancient artifacts.
-- Colonize tried once, other failure reasons (round 3): a colony ship in
-  orbit with no colony module, or at a planet that is bombed empty later
-  that year, keeps its colonists and its cleared task after movement.
-- Claim Adjuster capturing a Claim Adjuster planet: the environment after
-  the year is the new owner's tech-limited target (`KERNEL.md` CA rule,
-  not yet published).
-- Minerals unloaded in deep space (destroyed, no salvage).
-- Minerals unloaded on another player's planet, and the bomb case where
-  rounded factory and defense kills exceed `I`.
-- Loading every colonist from one's own planet: does the planet stay owned
-  at 0 population?
-- Planetary defenses other than SDI and Missile Battery against bombs and
-  troops.
-- Miniaturization at intermediate tech through colony minerals: the same
-  Colony Ship at tech 5, 10 and 15 everywhere should leave 17/6/15,
-  12/4/12 and 9/3/8 kT.
-- Design check at generation with one field short by one level that is the
-  current research field (predicted: still removed).
+Rounds 1–3 (TK-001..TK-203), the FO corpus and the MG runs measured every
+other rule here. What is left:
+
+- Ancient artifacts (random events are off in the test games).
+- Colonists given to a foreign planet by a manual cargo transfer (needs
+  crafted order files) and where those drops sit in the queue.
+- The draw order of a whole year (drops, battles, bombing, capture tech)
+  as seen through the random stream; only the bombing part is measured.
+- Laser Battery and Planetary Shield against bombs and troops (SDI, Missile
+  Battery and Neutron Shield are measured).
+- The "load exactly" action, and Alternate Reality `k = 0` in a contested
+  drop (an AR invasion is refused before strength matters).
+- Scrapping Mystery Trader parts at a starbase (step 3 of the tech attempt
+  could then give the part).
 
 ## Sources
 
 - `PARITY.md` "Planet Takeover" and `experiments/tk/README.md`: TK-001 to
-  TK-007, every case and value; raw files in private
-  `stars-oracle-apparatus` `evidence/tk/`.
+  TK-203, every case and value; raw files in private
+  `stars-oracle-apparatus` `evidence/tk/`, `evidence/tk2/` and
+  `evidence/tk3/`.
 - White-box reading: private `stars-decomp` `docs/takeover.md` (§10 is
   the reconciliation with TK) and `docs/takeover-predictions.md`.
 - Related specs: `KERNEL.md` (turn order, growth, caps, research),

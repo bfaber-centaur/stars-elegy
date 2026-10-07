@@ -630,3 +630,17 @@ Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000, 17000, 1150
 | S3 | scrap tech | the same at player 1 planet 3 with no starbase (control) | 0x140 to player 1, no tech attempt |
 | Y | scrap tech | player 1 tech at the end of the year | per stream: propulsion 0 or 1 (1 w.p. 0.555), never 2; every other field 0; the fleet owner (player 0) never gains |
 
+
+## Round 3 results
+
+Runs in private apparatus `evidence/tk3/`; `python3 experiments/tk/check3.py
+RUNDIR` prints the table below from the dumps.
+
+| Run | Result |
+|---|---|
+| TK-201 (20000, 30000) | every check OK (planet 12's `pop` reads None in the checker because an unowned planet stores none). Capture messages 14, 3, 8 and bombing messages 13, 2: fleet order. Surfaces 50/0/0 at planets 9, 10, 4. Deep space: 0x02d, 0x165, 0x04e, colonists kept, no object. Planets 12 and 17 lost at growth with 0x040. Homeworld 17 unowned and marked in years 1 and 2; homeworld 8 marked under player 0. 0x051 and 0x053 then 0x04e |
+| TK-202 (12 settings, 10 outcome vectors) | pop 997 / 994 / 988 everywhere. Single Lady Finger (72 planets): mines 0 with f20/d20 21×, mines 1 with one of f19/d19 40×, mines 1 with f19 and d19 11× (never 2). Two Lady Fingers (24): mines 0 only at f19/d19 (7×). U21 mines 0, U23 mines 6. Messages 0x068/0x072 (count 1 even when 2 were lost), 0x16f/0x179 (count 3), 0x169/0x173, 0x16a/0x174 |
+| TK-203 (12 settings) | propulsion 0 → 1 in 8 runs (S0 7, S2 1), never 2 or another field; 0x13d (field 2) on the gaining scrap, 0x141 otherwise, 0x140 at planet 3. Without the gain, leftover research took energy to 1 |
+
+Side observation: the bombing message's installation count is `f + d +
+rest` with a negative rest kept (LEGACY BUG, `MESSAGES.md`).

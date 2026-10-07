@@ -2991,13 +2991,79 @@ Construction Module ship 5/2/5: BET miniaturization (80%) applies.
 the research field was energy or electronics; Hush-a-Boom (Mystery
 Trader), Retro (CA only) and every other part stayed.
 
+### Round 3 (TK-201 to TK-203)
+
+Status: MEASURED, 2026-10-07. A sweep of the rules `TAKEOVER.md` still
+tagged BINARY-ONLY after round 2. Predictions in `experiments/tk/gen3.py`
+and `experiments/tk/README.md` "Round 3" were committed before the runs
+(60cac43); `check3.py` summarizes the dumps. Combat Lab, two JOAT players,
+enemies; raw files in private `stars-oracle-apparatus` `evidence/tk3/`.
+Every prediction held. Fuel at a planet was settled separately (MG-006,
+`MESSAGES.md`).
+
+**Order across planets (CONFIRMED, TK-201 A, B; cycles 20000 and
+30000).** Freighters 0, 1 and 12 of player 0 invaded planets 14, 3 and 8
+before movement: the capture messages came in that order (fleet order),
+not planet order. Bombers 2 and 3 over planets 13 and 2: both players'
+bombing messages named 13 before 2. Every value matched (captures landed
+90, 103 after growth; Cherry pairs took 100 to 94).
+
+**Minerals to another player's or an unowned planet (CONFIRMED, TK-201
+C–E).** 50 kT ironium unloaded on an enemy planet without a starbase, one
+with an Orbital Fort, and an unowned planet: each surface went 0 → 50, the
+fleets kept none, and each owner got 0x02d.
+
+**Deep space (CONFIRMED, TK-201 F).** A freighter unloading 50 kT ironium
+and 50 colonists at an empty point lost the ironium (0x02d, no object
+created) and kept the colonists (0x165, then 0x04e).
+
+**Loading every colonist (CONFIRMED, TK-201 G).** "Load all" colonists
+took all 50 off player 0's planet 12 and off its homeworld 17 (0x02c). Both
+planets were lost at growth (0x040: the planet before each had grown) and
+were unowned at the end of the year.
+
+**Homeworld mark (CONFIRMED, TK-201 G2, I).** The emptied homeworld 17 kept
+its mark at the end of that year and of a second year, with player 0's
+record still naming it. Player 1's homeworld 8, captured while player 1 kept
+other planets, stayed marked under player 0; player 1's record still named
+8 and no other player 1 planet was marked.
+
+**Colonize failures (CONFIRMED, TK-201 H).** A colony ship in deep space got
+0x051 and one with no colonists at an unowned planet 0x053; each then got
+0x04e, kept its cargo and had its task cleared.
+
+**Mines never go negative (CONFIRMED, TK-202, 12 cycle settings, 10
+distinct outcome vectors).** One Lady Finger over 20 Neutron Shields (`I =
+1`, mines 1, factories 20, defenses 20): every planet went 1000 → 997, and
+the 72 installation outcomes were mines 0 alone (21; predicted chance
+0.262), one factory or one defense with mines kept (40), and one factory
+and one defense with mines **still 1** (11; never 2). Two Lady Fingers (`I
+= 3`): 1000 → 994, mines lost only when exactly one factory and one defense
+were lost (7 of 24). Undefended, two fleets: 1000 → 988, mines 10 → 6 and
+1 → 0.
+
+**Bombing messages for several fleets (CONFIRMED, TK-202).** 0x169/0x173,
+0x16a/0x174 and 0x16f/0x179 as predicted. LEGACY BUG (CONFIRMED): the
+installation count in a bombing message keeps the negative mine remainder,
+so it reported 1 (and the singular text) when two installations were lost
+to `I = 1`, and 3 when four were lost to `I = 3`.
+
+**Tech from scrapping at a starbase (CONFIRMED, TK-203, 12 cycle
+settings).** Player 0 scrapped a Scout with Long Hump 6 (propulsion 3) at
+each of two starbases of player 1 (tech 0 everywhere) and at a third planet
+without one. Player 1 gained propulsion 1 in 8 of 12 settings (7 at the
+first starbase; 1 at the second after the first gave nothing; predicted
+chance 0.555), never 2 and never another field; the gaining scrap sent
+0x13d (field propulsion) instead of 0x141, and the third planet 0x140.
+Player 1's leftover research reached energy 1 only in the runs without the
+gain (level costs rise with levels held).
+
 ### Not tested
 
-Ancient artifacts; tech learned from scrapping at a starbase; fuel
-unloaded at a planet; loading every colonist from one's own planet; a
-colonize retry in a setting other than a tie (the tie case did not retry);
-planetary defenses other than SDI and Missile Battery; the bombing order
-across planets as seen through random draws.
+Ancient artifacts; colonists given to a foreign planet by a manual cargo
+transfer; the year's full draw order through the random stream; Laser
+Battery and Planetary Shield against bombs and troops; scrapping Mystery
+Trader parts at a starbase.
 
 ## Universe objects
 
