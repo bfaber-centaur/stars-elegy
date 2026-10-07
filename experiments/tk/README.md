@@ -105,3 +105,21 @@ Orbital Construction Module and the Multi Contained Munition stayed, and
 only those bombed. Player 1's energy also rose from 3 to 5 in TK-001 run1
 through research. From run2 on, player 0 has tech 26 in every field and
 both players research 0%.
+
+### Added after run2, predictions committed before running them
+
+In TK-001 run2 player 1's energy rose from 3 to 5 during the year (all of
+its resources went to research: its planets have no production queue),
+so the bombing there met Missile Batteries. TK-005 repeats the SDI cases
+with only four player-1 planets.
+
+| Run | Planet | Case | P → P' | Predicted |
+|---|---|---|---|---|
+| TK-005 | 7 | T-6 with SDI (player 1 stays at energy 3) | 870 → 1000 | pop 666, defenses 0 |
+| TK-005 | 9 | T-7 with SDI | 87 → 100 | pop 42 |
+| TK-005 | 10 | T-9 with SDI | 870 → 1000 | pop 812, defenses 100 |
+| TK-005 | 19 | T-20: a Laser Frigate with plan "enemies" (first fleet) and 10 Cherry with plan "nobody" (second fleet) | 800 → 920 | **690**: one attacking fleet triggers bombing with every bomb its owner has at the planet (the reading has no check that the trigger fleet carries bombs) |
+| TK-006 | 14 | T-19, players **neutral**, plan "enemies" | 800 → 920 | 920 (no bombing) |
+| TK-006 | 16 | neutral, plan "player 1 only" | 800 → 920 | 690 |
+| TK-006 | 22 | neutral, plan "everyone" | 800 → 920 | 690 |
+| TK-006 | 5 | control | 87 → 100 | 100 |

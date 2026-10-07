@@ -177,7 +177,22 @@ def runs():
     r4.target(0, "T-11 1 Hush-a-Boom, P=44", 44); r4.orbit(0, "6:1")
     r4.target(6, "T-15 1 LBU-17, P=870, mines 20 factories 10", 870, mines=20, factories=10); r4.orbit(6, "4:1")
     r4.target(12, "T-13 10 Smart + 10 Cherry, P=870", 870); r4.orbit(12, "1:5"); r4.orbit(12, "0:5")
-    return [r1, r2, r3, r4]
+    # R5: SDI coverage with few player-1 planets (TK-001 run2 researched to energy 5),
+    # and a bomb-less attacking fleet with a non-attacking bomber fleet
+    r5 = Run("tk005")
+    r5.target(7, "T-6 20 Cherry, P=870, 100 SDI", 870, defenses=100); r5.orbit(7, "0:10")
+    r5.target(9, "T-7 20 Cherry, P=87, 100 SDI", 87, defenses=100); r5.orbit(9, "0:10")
+    r5.target(10, "T-9 20 Smart, P=870, 100 SDI", 870, defenses=100); r5.orbit(10, "1:10")
+    r5.target(19, "T-20 Laser Frigate (enemies) first + 10 Cherry (nobody) second, P=800", 800)
+    r5.orbit(19, "10:1", plan=0); r5.orbit(19, "0:5", plan=1)
+
+    # R6: neutral relation and battle-plan "attack who"
+    r6 = Run("tk006", rel01=0, rel10=0)
+    r6.target(14, "T-19 neutral: plan enemies, P=800", 800); r6.orbit(14, "0:5", plan=0)
+    r6.target(16, "T-19 neutral: plan player 1 only, P=800", 800); r6.orbit(16, "0:5", plan=3)
+    r6.target(22, "T-19 neutral: plan everyone, P=800", 800); r6.orbit(22, "0:5", plan=4)
+    r6.target(5, "control: P=87", 87)
+    return [r1, r2, r3, r4, r5, r6]
 
 
 if __name__ == "__main__":
