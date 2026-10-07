@@ -134,20 +134,34 @@ def battles(lines):
     return out
 
 
-def strip_fleet(f):
-    return {k: v for k, v in f.items() if k not in ('owner', 'id', 'waypoints', 'battle_plan')}
+def strip_fleet(f, full=False):
+    drop = ('owner', 'id') if full else ('owner', 'id', 'waypoints', 'battle_plan')
+    return {k: v for k, v in f.items() if k not in drop}
 
 
-def diff(st0, st1):
-    """Host-file changes over the turn as expectations."""
+def diff(st0, st1, full=False):
+    """Host-file changes over the turn as expectations. full (the order
+    corpora) adds fleets' waypoints and battle plans, designs, battle plans
+    and players' research settings and relations."""
     ex = []
     f0 = {(f['owner'], f['id']): f for f in st0['fleets']}
     f1 = {(f['owner'], f['id']): f for f in st1['fleets']}
     for k in sorted(set(f0) | set(f1)):
         if k not in f1:
             ex.append({'kind': 'fleet_gone', 'owner': k[0], 'id': k[1]})
-        elif k not in f0 or strip_fleet(f0[k]) != strip_fleet(f1[k]):
-            ex.append({'kind': 'fleet', 'owner': k[0], 'id': k[1], 'equals': strip_fleet(f1[k])})
+        elif k not in f0 or strip_fleet(f0[k], full) != strip_fleet(f1[k], full):
+            ex.append({'kind': 'fleet', 'owner': k[0], 'id': k[1], 'equals': strip_fleet(f1[k], full)})
+    if full:
+        for key, kind in (('designs', 'design'), ('starbase_designs', 'starbase_design'),
+                          ('battle_plans', 'battle_plan')):
+            d0 = {(d['owner'], d['slot']): d for d in st0[key]}
+            d1 = {(d['owner'], d['slot']): d for d in st1[key]}
+            for k in sorted(set(d0) | set(d1)):
+                if k not in d1:
+                    ex.append({'kind': kind + '_gone', 'owner': k[0], 'slot': k[1]})
+                elif d0.get(k) != d1[k]:
+                    ex.append({'kind': kind, 'owner': k[0], 'slot': k[1],
+                               'equals': {f: v for f, v in d1[k].items() if f not in ('owner', 'slot')}})
     p0 = {p['id']: p for p in st0['planets']}
     for p in st1['planets']:
         q = p0.get(p['id'], {})
@@ -159,7 +173,10 @@ def diff(st0, st1):
             ex.append({'kind': 'planet', 'id': p['id'], 'equals': ch})
     pl0 = {p['id']: p for p in st0['players']}
     for p in st1['players']:
-        ch = {k: p[k] for k in ('tech', 'research_accumulated', 'mystery_trader_items', 'race') if p[k] != pl0[p['id']][k]}
+        keys = ('tech', 'research_accumulated', 'mystery_trader_items', 'race')
+        if full:
+            keys += ('research_percent', 'research_field', 'relations', 'counts')
+        ch = {k: p[k] for k in keys if p[k] != pl0[p['id']][k]}
         if ch:
             ex.append({'kind': 'player', 'id': p['id'], 'equals': ch})
     q0 = {q['planet']: q['items'] for q in st0['production_queues']}
@@ -224,7 +241,7 @@ def build(ev, out):
                 bs = {}
                 for f in sorted(os.listdir(adir)):
                     if re.search(r'\.M\d+$', f):
-                        bs.update(battles(B.dump(os.path.join(adir, f))))
+                        bs.update(battles(B.last_section(B.dump(os.path.join(adir, f)))))
                 exps = []
                 for b in sorted(bs.values(), key=lambda b: (b['x'], b['y'])):
                     acts = b.pop('actions')

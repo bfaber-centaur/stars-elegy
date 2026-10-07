@@ -196,6 +196,12 @@ public class CombatLab {
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s homeworld=%d%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
                     Arrays.toString(p.playerRelations), u16(p.getDecryptedData(), 8), sb);
+            } else if (orders && b instanceof DesignBlock && b.size == 2) {
+                // order file: design delete (byte 0 low nibble 0; byte 1: slot in the low
+                // nibble, bit 4 starbase)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order design-delete %s slot=%d raw=%s%n", f, (d[1] >> 4 & 1) == 1 ? "starbase" : "ship",
+                    d[1] & 15, Util.bytesToString(d, 0, b.size));
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 String owner = "?";

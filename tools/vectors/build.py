@@ -53,6 +53,13 @@ def dump(path):
     return [line.split(' ', 1)[1] for line in out.splitlines() if ' ' in line]
 
 
+def last_section(lines):
+    """A player's .M holds one section per year since the player last
+    submitted; the generated year is the last one."""
+    starts = [i for i, s in enumerate(lines) if s.startswith('file ')]
+    return lines[starts[-1]:] if starts else lines
+
+
 def kv(s):
     return dict(m.groups() for m in re.finditer(r'(\w+)=(\S+)', s))
 
@@ -98,6 +105,10 @@ def waypoint(d, owner, nplayers):
         tk['years'] = 'indefinitely' if words[0] == 5 else words[0]
     elif task == 9 and words:
         tk['to_player'] = [p for p in range(nplayers) if p != owner][words[0]]
+    elif task == 7 and words:
+        if words[0] >> 15:
+            raise ValueError('patrol order word with bit 15 set: not decoded')
+        tk['range'] = words[0]
     wp['task'] = tk
     return wp
 
@@ -214,6 +225,8 @@ def state(hst, xy, game, xy_path=None):
                     p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
                 if 'leftover' in d:
                     p['leftover_to_research'] = d['leftover'] == 'true'
+                if 'route' in d and int(d['route'], 16) & 0x3ff:
+                    p['route_to'] = (int(d['route'], 16) & 0x3ff) - 1
             planets[n] = p
         elif s.startswith('queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
@@ -231,6 +244,8 @@ def state(hst, xy, game, xy_path=None):
                      'orbiting': None if int(d['obj']) == 65535 else int(d['obj']), 'ships': ships,
                      'cargo': dict(zip(CARGO[:4], c)), 'fuel': int(d['fuel']), 'battle_plan': int(d['plan']),
                      'waypoints': []}
+            if int(d['b5'], 16) & 2:
+                fleet['repeat_orders'] = True
             st['fleets'].append(fleet)
         elif s.startswith('  wp ') and fleet is not None:
             fleet['waypoints'].append(waypoint(d, fleet['owner'], len(owners)))
@@ -495,10 +510,9 @@ if __name__ == '__main__':
     elif corpus in ('cb', 'sc', 'mf', 'rp'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
-    elif corpus == 'cb':
+    elif corpus in ('xf', 'bp', 'tk5', 'wu'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import build_cb
-        build_cb.build(ev, out)
+        __import__('build_orders').build(corpus, ev, out)
     elif corpus == 'wt':
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import build_wt
