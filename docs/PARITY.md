@@ -1399,7 +1399,8 @@ checker (stars-decomp 134256d) with no mismatches.
 
 Stack movement order by weight (P-9), queued ships lost with a starbase
 (P-25), the "moved" repair rate, starbase repair, salvage at more than one
-point (E-8), three or more players, minefields, bombing and invasion.
+point (E-8), three or more players, minefields. Bombing and invasion: see
+"Planet Takeover".
 
 ## Scanning
 
@@ -1555,6 +1556,184 @@ the Combat Lab universe has none), PP packet scanners and the IT gate
 scan, SD minefield detection and the population estimate (S-21, S-22,
 random), AR planet scanners (S-11), chase retargeting (S-24), and
 scanners on more than two players.
+
+## Planet Takeover
+
+Status: MEASURED (TK-001 to TK-007, 2026-10-07; cloud oracle). Predictions
+from the private binary reading (stars-decomp `docs/takeover-predictions.md`
+T-1..T-35, PR #8) were committed before every run
+(`experiments/tk/README.md`, which has every case, prediction and value).
+This section states behavior only. Populations are in **units of 100
+colonists** (the file's unit) unless written as colonists.
+
+### Method
+
+- Combat Lab universe (`docs/ORACLE.md`), one generation 2400 → 2401 per
+  run with the random stream pinned (`tools/fleetlab/pinned-turn`). Specs
+  from `experiments/tk/gen.py`; one case per planet, up to 21 per run.
+- Player 1 owns the target planets, environment 50/50/50 (100%
+  habitability; both races are the same JOAT race, growth 15%), no
+  production queue. Player 0 attacks: bombers orbit the target from the
+  start; transports and colony ships arrive this turn from 20 ly
+  (waypoint 1 with the task), or sit in orbit with the task on waypoint 0.
+- Player 0 at tech 26 in every field from run2 on (see "Design parts
+  dropped" below). Mutual enemies unless stated.
+- Values read from the 2401 `.HST` with `combatlab dump` / `hst-edit dump`.
+  Raw files: private `stars-oracle-apparatus`, `evidence/tk/`.
+
+### Order within the turn (CONFIRMED)
+
+- Population growth (and production, research) happens before bombing,
+  and bombing happens before colonists that **arrive** this turn land.
+  Every bombing and arrival case matched only when computed on P', the
+  population after this year's growth.
+- A transport already **in orbit** with an unload-colonists order lands
+  before growth: 100 colonists units against 87 left 20, which then grew as
+  the attacker's colony to 23 (T-5).
+- A colony ship already in orbit with a colonize order colonizes before
+  growth (25 → 28 the same year); one that arrives colonizes after growth
+  (exactly the 25 carried) (T-1).
+- Research done this year applies to this year's bombing: player 1's
+  energy rose from 3 to 5 during TK-001 and its defenses then covered as
+  Missile Batteries (T-8).
+- A starbase destroyed in this year's battle no longer protects the
+  planet: the bombers bombed it in the same year (T-2).
+
+### Who bombs (CONFIRMED)
+
+- Only planets owned by another player are bombed, and any starbase,
+  even an unarmed Orbital Fort, prevents bombing (T-3).
+- The bombing fleet's battle plan "attack who" decides: "nobody" and
+  "player 0 only" (the attacker itself) did not bomb; "player 1 only" and
+  "everyone" did; "enemies" bombed an enemy but not a neutral, and with
+  players neutral "player 1 only" and "everyone" still bombed. With
+  players friends, "everyone" bombed (T-19).
+- All of one player's fleets at a planet bomb as one: their bombs are
+  summed into one pass (10 Cherry in two fleets = 25%, not two passes)
+  as soon as **one** of them has an attacking plan, whatever the others'
+  plans and whichever comes first in the fleet list. A Laser Frigate with
+  an attacking plan and no bombs triggered the bombing by a bomber fleet
+  whose plan was "nobody" (T-20). This contradicts the binary reading's
+  medium-confidence detail that an earlier non-attacking fleet is left
+  out.
+
+### Kill arithmetic (CONFIRMED)
+
+Bomb kill rates in tenths of a percent and installations per bomb, as
+used below: Lady Finger 6/2, Cherry 25/10, LBU-17 2/16, LBU-32 3/28,
+Hush-a-Boom 30/2, Smart 13/0, Peerless 50/0.
+
+- **Normal bombs add.** A = Σ kill rates (permille), M = minimum kill =
+  3 units per bomb for Lady Finger, Black Cat, M-70, M-80 and Cherry
+  only. Kill = floor(P'·A/1000), plus one unit with probability
+  (r + 1)/1000 when the remainder r is non-zero; a zero kill becomes 1
+  when A > 0; then at least M, at most P'. 10 Cherry on 920 → 230 (25%,
+  not 1 − 0.975¹⁰); 1 Lady Finger on 10 → 3 (the minimum); 1 LBU-17 on
+  10 → 1 (no minimum); Hush-a-Boom on 50 → 1 or 2, never 3.
+- **Smart bombs multiply:** S = 1000 − 1000·Π(1 − kill/1000), rounded;
+  kill = floor(P'·S/1000), at most P' − 1, so smart bombs never empty a
+  planet. 20 Peerless: 1150 → 412 (64.2%); 1 → 1.
+- **Smart bombs act first,** normal bombs on the rest: 10 Smart + 10
+  Cherry on 921 → 606.
+- **Installations** (I = Σ installations per bomb): factories lose
+  floor(I·F/T) (+1 with probability (I·F mod T)/T), defenses likewise,
+  mines take the remainder of I; T = mines + factories + defenses.
+  LBU-32 on mines 30 / factories 30 → 16 / 16; LBU-17 on mines 20 /
+  factories 10 → factories 5 or 4, mines always the rest of 16.
+- **Retro bombs** move every environment axis toward the original by one
+  click per bomb, each axis separately: 3 Retro on 55/47/52 (original
+  50/50/50) → 52/50/50 (T-16).
+- **Orbital Construction Module counts as a bomb**: a minimum kill of 20
+  units per module with no percentage. One OCM ship (plan "enemies") took
+  100 → 80 (T-17, the reading's least certain item).
+- **Multi Contained Munition counts as a bomb**: 2% kill, minimum 3
+  units, 5 installations per item. One MCM frigate: 100 → 97, mines
+  10 → 5 (T-18).
+
+### Planetary defenses against bombs (CONFIRMED)
+
+- Coverage per defense c = 1% (SDI) or 2% (Missile Battery): the
+  planet owner's best defense at its **current** energy tech, not the
+  one built. Counted defenses n = min(installed, the owner's
+  habitability cap (not varied here: 100 at 100%), ceil(colonists/2500)).
+- s = (1 − c)ⁿ; normal kill rate and minimum ×s, smart ×(1 − c/2)ⁿ,
+  installations ×(1 − (1 − s)/2), each rounded to nearest.
+- 100 SDI, 20 Cherry: 1000 → 666 (40 counted), 100 → 42 (only 4 counted
+  at 10,000 colonists, so the minimum 58 decides); 20 Smart: 1000 → 812,
+  no defense lost. With Missile Batteries the same cases gave 777, 45 and
+  846.
+
+### Ground combat (CONFIRMED)
+
+- Attacker strength per player = floor(colonist units·110/100) (165 for
+  WM, not tested), times s' = s + (1 − s)/4, i.e. defenses work at 75%
+  against troops. Defender strength D = population units (×2 for IS, not
+  tested).
+- D > strength: all attackers die and the defender loses
+  floor(P·strength/D): 200 vs 110 → 90.
+- D ≤ strength (a tie goes to the attacker): one attacking player keeps
+  floor(troops·(strength − D)/strength) units, at least 1: 100 units
+  (strength 110) vs D 100 → 9; vs D 110 → 1; 600 vs 500 with 20 SDI
+  (strength 569) → 72; 300 vs 200 with 10 SDI (strength 310) → 106. With 20 Missile Batteries the 600
+  attackers had strength 495 < 500 and the defender kept 5.
+- A planet with any starbase refuses the drop: the transport keeps its
+  colonists (event id 0x135) (T-28).
+- Unloading colonists on a **friend's** planet (order set in the file)
+  invades it exactly like an enemy's (T-29).
+- Colonists unloaded on a planet that was unowned at the start of the
+  turn do not land; the transport keeps them (event id 0x55). A planet
+  bombed empty this turn is different: an arriving transport (no colony
+  module) colonized it with all 50 units it carried (T-4).
+
+### Capture (CONFIRMED)
+
+The captured planet keeps its mines, factories, surface minerals,
+concentrations and environment, and the population growth carry byte
+(set to 37 before growth, 42 after growth and capture: T-27, readable
+with `hst-edit dump` as `excess`). It loses its defenses and its
+planetary scanner. Whether the new owner's default production queue
+replaces the old queue was not tested (no player in this game has one).
+
+### Colonization (CONFIRMED)
+
+- No habitability check: a colony ship colonized a red planet (T-31).
+- Colony ship minerals: the new colony received 18/6/17 kT from a tech-3
+  colony ship and 4/1/5 from a tech-26 one (Long Hump 6 + Colonization
+  Module on a Colony Ship hull). The reading says ¾ of the fleet's
+  mineral cost; not checked against a cost table here.
+- **Contested colonization (asymmetric, LEGACY BUG candidate).** Two
+  players' colony ships arriving at the same unowned planet: strengths
+  as for troops. Player 0 25 vs player 1 12: player 0 got it with all 25.
+  Player 0 12 vs player 1 25: player 1 got it with 12, reduced by the
+  lower-index player's strength (25·(27 − 13)/27). Equal 25 vs 25: nobody
+  got it, both ships were consumed, and the planet received both ships'
+  minerals (T-32).
+
+### Random roundings (MEASURED)
+
+Outcomes stayed inside the reading's predicted sets in every run. Over 7
+distinct random streams: Hush-a-Boom on 50 gave 48 in 42 of 98 cases
+(predicted p 0.501); Smart + Cherry on 1000 gave 657 in 5 of 14
+(p 0.251); the LBU-17 factory split was 7 / 7 (p 2/3 for the larger
+kill).
+
+### Design parts dropped (MEASURED)
+
+With player 0 at tech 3 in every field, the generated year removed Cherry,
+Smart, Peerless, LBU-17 and LBU-32 bombs from player 0's ship designs
+(slots written back empty) and those ships did not bomb; Lady Finger,
+Hush-a-Boom, Retro, Orbital Construction Module and Multi Contained
+Munition parts stayed and acted. At tech 26 nothing was removed. This
+agrees with the scanning corpus (SC-021: a scanner above the owner's
+tech was removed). That Hush-a-Boom and Retro stayed at tech 3 was not
+checked against their tech requirements.
+
+### Not tested
+
+WM / IS / AR races (T-24, T-33), the production queue after capture,
+scrap (T-34), remote mining (T-35), several bombing players at one
+planet, the tech learned on capture, ancient artifacts, and colonist
+loss when a colonize retry happens in the load phase.
 
 ## Turn Orders
 
