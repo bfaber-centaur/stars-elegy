@@ -4487,7 +4487,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-12)
+## Computer players (AI-0..AI-17)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4503,6 +4503,8 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 - **AI01**: another small map (seed 4101), same line-up, 2400–2402; a
   rerun at the same cycles gave identical orders, and another stream
   changed only design names, starbase pictures and packet destinations.
+- **AI02, AI03, AI04**: the stage-1 games, one computer player of each
+  type at easy, standard and harder; 2400–2424, 2400–2424 and 2400–2454.
 - **UG**: the universe-generation corpus's computer players (73 players).
 
 ### Cases
@@ -4520,6 +4522,10 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-11 | Waypoint-1 warp re-pick at the end of every computer player's turn (`AI.md` §11 "Warp choice") | CONFIRMED: AIX 1,680 of 1,680 rewritten warps, 2,043 of 2,043 fleets left alone, 207 of 207 warps set earlier in the turn; 38 fleets in enlarged foreign minefields all in the random set; the AI oracle's round-2 runs all agree, including a Scout's 6 → 5 |
 | AI-12 | Robotoid fleet orders each year: waypoint-0 task and waypoint-1 target and task per own fleet (`docs/ai/robotoid.md` §4), with the planet view of `AI.md` §1 | MEASURED: every own Robotoid fleet in AIX's 61 years agrees (146 colonize targets, 58 unloads at foreign planets, 219 freighter targets, 22 armada and 123 attack orders as outcome sets, 1,251 fleets left alone); obsolete fleets, join-up and wormholes never occurred. The planet-view rule is CONFIRMED by two edited AI oracle runs (history-file owners of other players → scrap; the same planets as its own → colonize) |
 | AI-13 | Cross-player leak of empty design slots (`AI.md` §1 "State leaking between computer players"): Macinti's slot-4 rule reads the creation year Cybertron left in slot 3 | MEASURED (prediction committed before the runs): from AIX 2448, moving only Cybertron's slot-3 creation year from 2442 to 2428 made Macinti create slot 4 (a Cruiser) in 2449 in 2 of 2 random streams; unedited controls never did; Cybertron's own orders were unchanged. Later years then differed for other computer players through the shared random stream |
+| AI-14 | Rototill never makes, deletes, ages, splits or merges ship designs (`docs/ai/rototill.md` §1) | MEASURED: no ship design order in 166 Rototill player-years (AIX 2400–2460, AI02/AI03 2400–2424, AI04 2400–2454); only starbase design orders |
+| AI-15 | Rototill production: at most one Colony Ship a year, on the lowest-id own planet with a starbase and 100,000 colonists, when none is alive or alive + 1 < U (`docs/ai/rototill.md` §2) | MEASURED: 3 colony ships queued as predicted (AIX 2444, 2446; AI02 2414), 108 qualifying planet-years and 70 other planet-years with none; the alive + 1 < U branch never reached (U ≤ 2) |
+| AI-16 | Rototill colony ships: invasion unload or route cut in pass 1; load 2,500 colonists and colonize the nearest seen planet habitable after terraforming, or a wormhole, in pass 2; empty ones go home (`docs/ai/rototill.md` §3) | MEASURED: 98 idle colony-ship years (4 colonize, 2 wormhole, 92 no target), 1 unload, 1 cut, 1 move home, colonist loads in 166 of 166 years; ignoring habitability breaks 89 rows |
+| AI-17 | Rototill scouts move to the nearest never-seen planet (in neither turn file nor history file) not targeted by another own fleet, 5% wormhole when orbiting (`docs/ai/rototill.md` §3) | MEASURED: 75 of 75 scout moves; counting history-only planets as never seen breaks 31; fallbacks not exercised |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

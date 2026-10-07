@@ -11,7 +11,7 @@ war) gets its own file under docs/ai/:
 | 1 | Robotoid | HE | `docs/ai/robotoid.md` |
 | 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
 | 3 | Automitron | IS | docs/ai/automitron.md (planned) |
-| 4 | Rototill | CA | docs/ai/rototill.md (planned) |
+| 4 | Rototill | CA | `docs/ai/rototill.md` |
 | 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) |
 
@@ -508,6 +508,9 @@ scraps at least one starting fleet at its homeworld.
   AIX is the one built in 2400, not a starting ship. Macinti merges its
   fleets every year before its fleet pass (§10 "Merging"), so the scrap
   rules see that turn's merged fleets.
+- **Rototill** scraps only an idle empty colony ship it cannot send home
+  and a nearly unfuelled Quick Jump 5 scout (`docs/ai/rototill.md` §3;
+  neither seen in 166 player-years).
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -626,8 +629,13 @@ formula, to be published with the personality stage that needs it).
 player's own view (§1: a planet never scanned counts as unowned) that no
 other own fleet is already heading to (its waypoint 1 is that planet:
 for Robotoid and Macinti only when that waypoint's task is colonize; for
-the others any task). Robotoid and Macinti take any unowned planet; the
-others skip planets whose habitability value for the race is negative.
+the others any task). Robotoid and Macinti take any unowned planet,
+including planets they have never seen. The others take only planets in
+their view (their turn file or history file, §1) and skip planets whose
+habitability for the race, after the terraforming the player could
+currently do, is negative (MEASURED for Rototill, AI-16: ignoring the
+test, using present habitability, or dropping history-only planets each
+breaks the Rototill replay).
 The nearest candidate to the fleet wins. Robotoid and Macinti recompute
 the marks for every fleet; the others compute them once per turn, so a
 planet chosen earlier in the same turn is not excluded for them. Then, if
