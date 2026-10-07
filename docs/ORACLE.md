@@ -712,6 +712,89 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
   appeared with the fleet and planet numbers next to them. The rest of the
   record layout is not decoded.
 
+### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
+
+```sh
+python3 experiments/ob/gen.py experiments/ob     # writes obNNN.spec; --list prints the case tables
+tools/fleetlab/combatlab build CB.HST experiments/ob/ob001.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT 20000
+python3 experiments/ob/check.py OB-001 OUT/after.dump
+```
+
+- **Objects as records.** Minefields, packets, wormholes and the Mystery
+  Trader are stored in the host file as object blocks (type 43): one count
+  block (a 2-byte count), then one 18-byte record per object sorted by id
+  `type<<13 | owner<<9 | number`. They come after the starbase designs and
+  before the battle plans. The count block is left out when there are no
+  objects. CombatLab `thing` lines write these records (header of
+  `CombatLab.java`):
+
+  ```text
+  thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
+  thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
+  thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
+  thing trader NUM X Y DX DY WARP [met MASK] [item I]
+  thing raw HEX
+  ```
+
+  The game loaded, updated and rewrote all four kinds. `combatlab dump`
+  prints `things count=` and a `thing id=… type=…` line per record with its
+  decoded fields and raw bytes.
+- In written host files, wormhole records carry bit 13 of word 6 (0x2000)
+  and packet records carry bit 15 of word 6. The game sets packet bit 14
+  after a packet moves. Neither bit 15 nor bit 14 changed what the next
+  year did (OB-003-J/K, OB-017-E).
+- **New waypoint forms.** `task lay [YEARS]` (task 6) writes the lay-mines
+  years word. The game writes the task back with 10 more bytes. With years
+  0 it laid once and cleared the task. `to X Y thing ID warp W` targets an
+  object (waypoint type 0x18), which is how a fleet enters a wormhole.
+- **A lay-mines task on waypoint 0 holds the fleet.** A non-SD layer with
+  lay on waypoint 0 and a waypoint 1 25 ly away laid in place, did not
+  move, and lost waypoint 1 (OB-014-D).
+- **Minefield cases must count planets.** Decay depends on the number of
+  planets inside the field (`docs/PARITY.md` "Universe objects"). `gen.py`
+  asserts the planet set inside every field. OB-001-J forgot this. A fleet
+  that ends its move inside an enemy field sweeps it (OB-010-S).
+- **Packet damage needs growth control.** Population grows after packet
+  impacts in the same year. Set the target's environment to 50,50,50 and
+  carry 0 (`planetset N env=50,50,50 …`); then an undamaged planet with
+  population P (units of 100) is ⌊1.15·P⌋ after the year (OB-009 A/B).
+  Packets 49 ly from a warp-7 target arrive the next year: allow a whole
+  year's travel.
+- **JOAT built-in scanner.** JOAT Scout, Frigate and Destroyer hulls scan
+  20·electronics / 10·electronics on top of their parts (S-10). Player 1
+  at electronics 3 with a Rhino: R = ⌊⁴√(50⁴ + 60⁴)⌋ = 66, P = 30.
+  OB-011's first checker forgot this.
+- **PRT edits.** JOAT → SD (`prt P 5`) was legal. JOAT → PP (6) and IT (7)
+  gave message 0x117 (the `.M` event block holds the bytes `17 01`) unless
+  `lrt P 0x1b80` was also set, which made them legal.
+- **New games from a definition file.** `stars.exe -a FILE.DEF` builds a
+  new game with no window input and exits. `tools/fleetlab/new-game DEF OUT
+  [CYCLES] [RACE_FILE…]` runs it from the registered snapshot and copies
+  the new files out. The definition is plain text:
+
+  ```text
+  NAME                      game name
+  0 1 1 11                  size (0 tiny … 4 huge), density, player positions, seed
+  0 0 0 1 0 0 0             seven option flags; the 4th is "no random events"
+  2                         number of players
+  pg000.r1                  race file of player 1
+  # 1 0                     an AI player (race, level)
+  1 60                      eight victory-condition lines
+  0 26 4
+  0 5000
+  0 100
+  0 100
+  0 100
+  0 100
+  1 50
+  o6t11n.xy                 output file name (DOS 8.3)
+  ```
+
+  The race file must be copied into the games directory with the
+  definition; `new-game` copies its extra arguments there. Copy it to a
+  path outside the games directory first, because the reset deletes it.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take

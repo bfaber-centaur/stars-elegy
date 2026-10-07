@@ -253,6 +253,25 @@ Player 1 has two Rhino Scouts (JOAT: R 66, P 30).
 | OB-017-E | S-17 | player 1 packet with bit 15 set in the start file (as every host file leaves it) | absent from player 0's file | present if the mark persists |
 | OB-017-F | S-17 | player 0 packet far from player 1's scouts (player 0 is written first) | absent from player 1's file | present if player 0's own pass marks it |
 
+### OB-018: scanning of objects by Rhino freighters (R 50, P 0, R/4 12.5)
+
+Committed in 6a78bee after OB-011 showed the JOAT hull scanner
+covering every R/4 edge, and before OB-018 ran.
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-018-A | S-17 | unknown field 100 at d=12 | seen (d <= R/4) |  |
+| OB-018-B | S-17 | unknown field 100 at d=13 | not seen | seen if any range above 13 applied |
+| OB-018-C | S-17 | unknown field 1000 at d=30, freighter inside | seen |  |
+| OB-018-D | S-17 | unknown field 100 at d=40 | not seen | seen at full R |
+| OB-018-E | S-17 | field known to player 1 at d=40 | seen (full R) |  |
+| OB-018-F | S-17 | known field at d=50 | seen |  |
+| OB-018-G | S-17 | known field at d=51 | not seen |  |
+| OB-018-H | S-17 | unknown wormhole 40 ly from a freighter (at least 23 after the jiggle); partner far | neither end seen | seen at full R |
+| OB-018-I | S-17 | unknown wormhole on a freighter before its jiggle | seen iff d <= 12.5 after the jiggle |  |
+| OB-018-J | S-17 | packet about 48 ly from a freighter after its move | seen (d <= R) |  |
+| OB-018-K | S-17 | packet about 53 ly from a freighter after its move | not seen |  |
+
 ## Results
 
 Pinned stream (cycles fixed 20000), one generation per run. `check.py`
@@ -263,8 +282,9 @@ Held as predicted:
 - OB-001 A–I (sweeping: O-8, O-9, O-10, O-11).
 - OB-002 A–L and N (decay, laying, merging, part kinds, years word 0). M
   (detonation) was recorded as a measurement and agreed with O-13: the five
-  own Laser DDs and the five enemy Medium Freighters were damaged, the own
-  Mini Mine Layer was not, and the field went 1000 → 730 (2% + 25% decay,
+  own Laser DDs took 50% of their armor and the five enemy Medium
+  Freighters 80% (250/500 and 400/500 on every ship), the own Mini Mine
+  Layer nothing, and the field went 1000 → 730 (2% + 25% decay,
   no extra loss for the hits).
 - OB-003 A, B, C, G, J (packets: one ninth uncaught, the 10 kT minimum,
   planet wiped, in-flight movement and decay).
@@ -277,8 +297,17 @@ Held as predicted:
   friend's field (1000 → 960).
 - OB-009 A–H (packet damage with growth controlled).
 - OB-010 H0–H4 (no hits at the distance-limited warp).
-- OB-011 A–G, I, J; OB-012 A–C; OB-013 A–C; OB-014 A–C (object scanning,
-  PP, IT gates, SD).
+- OB-011 (every object except H; see below), OB-012 A–C, OB-013 A–C,
+  OB-014 A–C (object scanning, PP, IT gates, SD). OB-011's case table
+  assumed R 50 and no penetration, but JOAT Scouts add a hull scanner
+  (S-10), so the viewers had R 66 and P 30. `check.py` applies the rules
+  with those ranges, and every object matched except H. With P 30 above
+  R/4 (16), the d=13 and d=30 fields were seen through penetration, so
+  OB-011 did not test the R/4 edge; OB-018 did. The known fields at 40 and
+  51 ly were seen through the full R.
+- OB-006, all 21 new games (wormhole counts, classes, none with random
+  events off; `check_newgames.py`).
+- OB-018 A–K (R/4, known-field and packet edges with no hull scanner).
 - OB-015 A; OB-016 A (decay cap; SD decay).
 - OB-017 A–F.
 
@@ -305,3 +334,38 @@ Contradicted, with the cause:
   whose waypoint 1 was 25 ly away did not move. It laid 160 at its start
   and waypoint 1 was removed. O-2 says it "lays nothing" while moving; in
   the game a lay-mines task on waypoint 0 keeps the fleet in place.
+
+### Decomp `tools/scan.py`
+
+`scan.py check` (stars-decomp PR #10 branch, c0675c4) on the 2401 `.M`
+files of OB-011..014, 017 and 018 (`evidence/ob/obNNN/scanpy-Mn.txt`):
+
+- 0 mismatches for every player 0 file and for OB-017's player 1 file.
+- OB-011 and OB-018 player 1: one mismatch each. The file holds player
+  0's block, which the model does not predict. Player 1 saw only player
+  0's minefields and packets.
+- OB-012 (PP), OB-013 (IT) and OB-014 (SD): the mismatches are exactly
+  the rules `scan.py` reports as not modelled (PP packet pass, IT gate
+  detection, SD field pass), plus the same player block. `check.py`
+  models those rules, and they held.
+
+### Other random streams
+
+OB-005 and OB-010 were generated again with cycles 15000, 25000, 30000,
+40000 and 60000 (`evidence/ob/ob005-cNNNNN`, `ob010-cNNNNN`). Every host
+file differed byte-wise, so streams are counted by outcome.
+
+- OB-005 A, C, D and OB-010 H0–H4 held in all six settings: 30 fleet-years
+  with no hit at the distance-limited warp.
+- OB-005-B (class 2, 30 years, two ends) gave 4 distinct outcomes. Only
+  one had a jump, in 20000 and 25000: end 2 moved −59,−25 and its years
+  went to 0. Every other end jiggled by at most 11 ly per axis, years 31.
+- OB-010-S gave 3 distinct outcomes:
+  - 15000, 20000, 25000: no hit. The fleet reached (1241,1230) and swept
+    the field it ended in, 3000 → 2940 → 2840.
+  - 30000 and 40000: a stop at (1220,1230); 60000: a stop at (1229,1230).
+    Each Laser DD took 50% of its armor (250/500 on every ship), and the
+    field was 2791. That is 3000 − 50 (hit) = 2950, then 2% decay (59) to
+    2891, as predicted, then the stopped fleet's sweep of 100. The
+    prediction left the sweep out. Decay before the hit would give 2790.
+
