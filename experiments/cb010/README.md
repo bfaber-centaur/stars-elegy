@@ -20,3 +20,8 @@ distances 1–3 (and most at 0) for stacks of 3 with a deflector.
 - The raw-leftover alternative (next target receives L directly)
   mismatches at least one recorded hit, provided some action destroys a
   stack at distance ≥ 1 with damage left over.
+
+## Result
+
+Rescaled-carry-only checker: 59/59 hits. Raw-leftover checker: 51/59
+(8 mismatches). CONFIRMED.

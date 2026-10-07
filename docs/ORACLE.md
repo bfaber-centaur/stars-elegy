@@ -578,12 +578,43 @@ tools/fleetlab/host-turn OUT.HST BASEDIR OUTDIR     # reset registered, generate
 - `combatlab build` replaced ship and starbase designs (the game
   recomputed armor for Regenerating Shields), battle plans, relations,
   tech levels, LRTs and every fleet; all loaded without complaint.
-- **Movement inside battles was not reproducible.** CB-001, generated
-  twice from the same file after a reset, gave different token moves.
-  This qualifies "restarted runs reuse nearly the same random draws"
-  (fleet movement corpus): do not count on a rerun to reproduce a battle.
+- **Movement inside battles was not reproducible with host-turn.**
+  CB-001, generated twice from the same file after a reset, gave
+  different token moves. This qualifies "restarted runs reuse nearly the
+  same random draws" (fleet movement corpus). Use pinned-turn below.
 - `OUTDIR` holds registered-copy output (and a screenshot of the Host
   Mode dialog): preserve it in the apparatus repository, never here.
+- `planet N owner P pop X starbase D|none` gives a player extra planets
+  with chosen starbases (fields copied from the player's homeworld; no
+  installations); `fleet … dmg D:UNITS:PCT` starts a stack damaged;
+  `research P PCT` sets the research share. All were accepted by the
+  game (CB-011..018).
+
+### Pinned battle RNG (observed 2026-10-07)
+
+```sh
+tools/fleetlab/pinned-turn START.HST BASEDIR OUTDIR [CYCLES] [GAME]
+```
+
+The binary reading says Stars! seeds its random stream once at startup
+from the Windows tick count, so a rerun differs whenever startup timing
+differs. `pinned-turn` removes host timing from that: DOSBox runs with
+`cycles=fixed CYCLES` (default 20000) and the autoexec starts
+`win /n stars.exe -g cb.hst`. With `-g` Stars! generates the year and
+exits on its own, with no window input (no Host Mode dialog). It uses
+`ORACLE_CYCLES_OVERRIDE` / `ORACLE_AUTOEXEC_OVERRIDE`, which win over
+`oracle.conf`.
+
+- Repeats of the same start and CYCLES gave byte-identical battle records
+  and host files: CB-001, CB-002 and CB-008 starts twice each, CB-008 a
+  third time through the committed tool.
+- Different CYCLES values usually give different streams, but few
+  distinct ones: on the CB-018 start, 14 values gave 6 streams (every
+  value from 50000 to 100000 gave the same one). 20000 reproduced the
+  Host Mode CB-001 run1 and 30000 reproduced CB-001 run2 and CB-002 run1.
+  To sample a random outcome, compare record hashes and count streams,
+  not runs.
+- A generation takes a few seconds after DOSBox starts.
 
 ## Known fragility
 

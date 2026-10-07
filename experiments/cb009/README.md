@@ -46,3 +46,19 @@ From the stars-decomp reading at 4a8c82b:
   0x80) before the hit record and does dmg/8 to shields only (Beta 12 →
   1 per miss).
 - Every recorded hit replays through `combat.py check` (4a8c82b).
+
+## Result
+
+Run twice (run1 `fixed 20000`, run2 `fixed 30000`, different streams);
+101 and 104 hits replay, 0 mismatches.
+
+- K1: four salvos of 202 kills each, then 192; survivors' damage word 0.
+  CONFIRMED.
+- K2/K3: carries happened (K3) but at distance 0, where the two carry
+  rules agree; see CB-010.
+- K4–K7: the predicted stack was chosen in all four battles in both runs
+  (K4 5-ship stack, K5 lower index, K6 Fuel Tank frigates, K7 damaged
+  stack). In run1 the K4 and K6 picks also had the lower index; in run2
+  they had the higher one. CONFIRMED.
+- K8: miss records (flags 0xc4) precede each hit record; miss shield
+  damage 21 for 14 misses (floor(14 × 12 / 8)). CONFIRMED.

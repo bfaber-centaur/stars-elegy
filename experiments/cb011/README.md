@@ -74,3 +74,24 @@ Station fires at player 1's frigates when they come within its range.
 CB-012 (plan 0 everyone) is also rerun with two other pinned seeds
 (`cycles=fixed 30000`, `fixed 40000`) because Q-2 depends on stale
 memory: prediction, usually no battle at S1.
+
+## Results
+
+- S1: battle in CB-011 (enemies), CB-012 (everyone; three seeds) and
+  CB-013 (player 1), with identical records; the station fired 4 slots
+  at distance 2. No battle in CB-014 (nobody). Q-1 CONFIRMED, Q-2
+  CONTRADICTED.
+- S2, S3: no battle in any turn. CONFIRMED.
+- S4: battle record, 2 tokens, no hits. S5: the frigates destroyed the
+  unarmed station (shields 400, then 90, 190, … 490 per 500, then
+  destroyed); planet 12 had no starbase after. Q-4 CONFIRMED, Q-5 in part.
+- S6: planet 15 surface 6/0/8; S7: planet 22 surface 4/0/5 (one kill
+  event each). Q-13 CONFIRMED.
+- CB-015 T1: the visitors died to player 0's frigates before reaching
+  station range (inconclusive; CB-016). T2: the Bare Fort died to one hit;
+  planet 19 had no starbase after.
+- CB-016: the station fired at the frigates (4 hits at distance 2).
+  Q-3 CONFIRMED.
+- Checker mismatches (4a8c82b): station laser hits at distance 2 (the
+  record shows 80% of 80 = 64 per slot, i.e. dropoff with the Laser's
+  own range 1) and hits on the unarmed station.

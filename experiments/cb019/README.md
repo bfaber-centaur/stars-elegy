@@ -13,3 +13,9 @@ pinned seeds (`fixed 20000`, `fixed 8000`).
 - For each seed, the two tactics give the same move sequence and the same
   hits (identical battle records), since both score squares the same way
   and only ties use the random stream.
+
+## Result
+
+Moves identical through round 4; from round 6 on the token stood on (5,5)
+with tactic 3 and on (5,6) with tactic 4, in both seeds, with identical
+hits (Colloidal Phaser on the station's shields, 23 each). CONTRADICTED.

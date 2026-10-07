@@ -27,6 +27,9 @@ ORACLE_BASE_CONF="${ORACLE_BASE_CONF:-}"
 # Extra DOS commands appended to the generated [autoexec], one per line.
 ORACLE_AUTOEXEC="${ORACLE_AUTOEXEC:-}"
 ORACLE_CYCLES="${ORACLE_CYCLES:-max}"
+# One-off overrides that win over oracle.conf (tools/fleetlab/pinned-turn).
+ORACLE_AUTOEXEC="${ORACLE_AUTOEXEC_OVERRIDE:-$ORACLE_AUTOEXEC}"
+ORACLE_CYCLES="${ORACLE_CYCLES_OVERRIDE:-$ORACLE_CYCLES}"
 ORACLE_MACHINE="${ORACLE_MACHINE:-svga_s3}"
 ORACLE_MEMSIZE="${ORACLE_MEMSIZE:-16}"
 # Turn Windows 3.1 mouse acceleration off in the run copy's WIN.INI

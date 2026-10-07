@@ -24,3 +24,7 @@ damaged ship; the damaged-ship percentage is unchanged:
 | R10 | own planet, no starbase, + Fuel Transport | 25 + 25 | 250 | 200 |
 
 The "moved" rate (5) is not tested: CombatLab fleets are stationary.
+
+## Result
+
+All 20 values (10 fleets × 2 turns) as predicted. CONFIRMED.

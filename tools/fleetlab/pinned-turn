@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Generate one year of a game with the battle random number generator
+# pinned, and collect the raw result.
+#   tools/fleetlab/pinned-turn START.HST BASEDIR OUTDIR [CYCLES] [GAME]
+# Like host-turn, but DOSBox runs with cycles=fixed CYCLES (default 20000)
+# and starts `stars.exe -g GAME.hst`, which generates the year and exits
+# with no UI input. Stars! seeds its RNG from the Windows tick count at
+# startup, which this makes repeatable: the same START and CYCLES gave
+# identical battle records (docs/ORACLE.md, "Pinned battle RNG"). A
+# different CYCLES value usually gives a different stream.
+# OUTDIR holds registered-copy output: keep it out of this repository.
+set -euo pipefail
+[[ $# -ge 3 ]] || { echo "usage: pinned-turn START.HST BASEDIR OUTDIR [CYCLES] [GAME]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+oracle="$here/../../scripts/oracle"
+start="$1" base="$2" out="$3" cycles="${4:-20000}" game="${5:-CB}"
+home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+games="$home/run/games/stars_games"
+mkdir -p "$out/raw/before" "$out/raw/after"
+"$oracle/stop" >/dev/null 2>&1 || true
+"$oracle/reset" registered
+cp "$base/$game".* "$games/"
+cp "$start" "$games/$game.HST"
+cp "$games/$game".* "$out/raw/before/"
+hdr() { (cd "$here/../.." && go run ./cmd/stars-header "$games/$game.HST") | awk -F'\t' '{print $4}'; }
+turn() { hdr | sed -n 's/.* turn=\([0-9]*\).*/\1/p'; }
+before="$(turn)"; echo "before: $(hdr)" | tee "$out/turn.log"
+export ORACLE_CYCLES_OVERRIDE="fixed $cycles"
+export ORACLE_AUTOEXEC_OVERRIDE="set PATH=C:\\WINDOWS;C:\\STARS;C:\\NOTEBOOK
+d:
+win /n stars.exe -g ${game,,}.hst"
+"$oracle/start" >/dev/null
+t0=$SECONDS
+until [[ "$(turn)" != "$before" ]]; do
+  ((SECONDS - t0 < 240)) || { echo "pinned-turn: turn did not advance" >&2; "$oracle/stop"; exit 1; }
+  sleep 1
+done
+sleep 5    # Stars! exits by itself after -g
+echo "after:  $(hdr)  cycles=fixed $cycles" | tee -a "$out/turn.log"
+"$oracle/stop"
+cp "$games/$game".* "$out/raw/after/"
+"$here/combatlab" dump "$out/raw/before/$game.HST" > "$out/before.dump"
+"$here/combatlab" dump "$out/raw/after/"* > "$out/after.dump"
+(cd "$out" && find raw -type f -print0 | sort -z | xargs -0 sha256sum > manifest.sha256)
+echo "pinned-turn: results in $out"

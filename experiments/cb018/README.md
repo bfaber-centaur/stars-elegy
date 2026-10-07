@@ -28,3 +28,14 @@ directive) and adds `cb018-control.spec`, identical except that player
 1's frigates are 280 ly away (no battle). Predictions unchanged: the
 control stays at weapons 3 with nothing accumulated; the battle runs
 gain one weapons level's cost (or the level) in about half the seeds.
+
+## Results
+
+- Batch 1 (research 15%, six seeds): weapons 4 everywhere; confounded.
+- Control (research 0%, no battle; two seeds): weapons 3, accumulators 0.
+- Battle (research 0%): 14 cycle values gave 6 distinct battle streams.
+  Weapons was 4 in the 2401 file for 4 streams (cycles 8000, 12000,
+  20000, 25000, 30000–45000) and 3 for 2 streams (16000; 50000–100000).
+  Every research accumulator read 0. Player 1 gained nothing.
+- The gain is random per stream, as predicted; the level rose within the
+  same generation, which the prediction did not expect.
