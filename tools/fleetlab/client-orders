@@ -141,12 +141,14 @@ xfer() {
 	nclick "$x" "$y" "$n"
 }
 # nclick X Y N: press the button at X,Y for N units, where a click is 1,
-# shift-click 10 and ctrl-click 100 (Cargo Transfer arrows, Production Add
+# shift-click 10, ctrl-click 100 and ctrl+shift-click 1000 (Ship Transfer) (Cargo Transfer arrows, Production Add
 # and Remove)
 nclick() {
 	local x="$1" y="$2" n="$3"
 	((n == 0)) && return
 	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; counts 1
+	((n >= 1000)) && xdotool keydown ctrl keydown shift click --repeat $((n / 1000)) --delay 150 1 keyup shift keyup ctrl
+	n=$((n % 1000))
 	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
 	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
 	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1

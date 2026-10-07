@@ -1,5 +1,9 @@
-# CO-06: Merge Fleets 16000 + 16766 Freighters (32766).
+# CO-06: 16000 + 16766 Freighters (32766) into one fleet. The fleet panel's Merge (Merge Fleets) was disabled for these fleets in the first run (no order written), so this uses the two-fleet exchange: all 16000 ships of fleet 1 move into fleet 2.
 fleet first
 fleet next
-# on fleet 2; Merge Fleets rows: 1, 2
-fleet merge 0 1
+# on fleet 2 (16766 ships); others: fleet 1 (16000)
+fleet other 0
+fleet exchange
+ships 0 -16000
+shot moved
+ships ok
