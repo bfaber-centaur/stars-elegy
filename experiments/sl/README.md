@@ -107,6 +107,64 @@ Every building planet has population 1000 (100,000 colonists),
   mines. (b) Player 0 (JOAT) builds the planet-18 Mini-Miner with task
   none.
 
-## Results
+## Results (two streams each, cycles 20000 and 30000; identical in both unless stated)
 
-(pending)
+- **SL-01: CONFIRMED.** Planet 15 made three fleets: 2 Scouts with
+  fuel 100, 1 Scout with fuel 50, and 1 Colony with fuel 200. Each had
+  plan 0 and one waypoint at the planet (task 0, warp 0).
+- **SL-02: CONFIRMED.** Player 1's new fleets were numbered 2 and 4.
+- **SL-03: CONFIRMED.** Every new fleet had byte 5 = 0x09 in its build
+  year. The pre-existing fleets that stayed put had 0x29. In year 2 the
+  SL-01 fleets read 0x29.
+  - Not predicted: the route-to-itself fleets (SL-07) still read 0x09
+    in year 2, at their planet with 2 waypoints.
+  - Not predicted: the AR Mini-Miner on remote mining (SL-11a) also
+    read 0x09 in year 2.
+- **SL-04..SL-07: CONFIRMED, 28 of 28 warps.** Every fleet's waypoint 1
+  was its destination with task 8, at the warp in the table, including:
+  - 11 through the safe gates;
+  - 6/6 beyond the gate range;
+  - the dock rule only at own Stations, not at the own Fort or player
+    1's Station;
+  - warp 2 for the route to itself.
+  Every route word was unchanged.
+- **SL-08: CONFIRMED.** Player 0 made fleet 511 holding both Scouts and
+  reached 512 fleets, with no fleet 512.
+- **SL-09: CONFIRMED in part.** No ship was built and no fleet changed.
+  The queue emptied and factories went from 100 to 105.
+  - Planet 8's minerals ended 12/6/13 kT lower than in the control (Fe/Bo/Ge),
+    so the ships' minerals were spent, not refunded.
+  - Not testable here: the research comparison. Both players were at
+    tech 26 in every field, and research accumulation stayed 0 in both
+    runs.
+- **SL-10: CONFIRMED (with the year's repair after the merge).** Fleet 3
+  received the Scout: 11 Scouts at 45%, with 25 units after the year
+  (predicted 45% / 125 at the merge). Its control went from 100 units
+  to undamaged. In the follow-up the control went 300 → 200 units, a
+  repair of 100. The merge ended at 45% / 275, which is the predicted
+  375 less that 100. That rules out the merge-order rule (46% / 100
+  units scale).
+- **SL-10 variant: CONFIRMED.** Fleet 5 received the Scout (2 Scouts),
+  and fleet 3 stayed at 32765.
+- **SL-11: CONFIRMED.**
+  - (a) Player 1's AR Mini-Miner had waypoint 0 task 3 (remote mining)
+    and plan 0.
+  - AR planet 4 gains minerals with no mines and no miner: +19/+3/+27 kT
+    in year 1 and +20/+3/+29 in year 2 in `sl-starbases-ctl`.
+  - In the build year, planet 4 changed by exactly that baseline less
+    the Mini-Miner's cost. The cost is 22/0/7, the same as player 0's
+    Mini-Miner at planet 18, so there was no mining.
+  - In year 2 it added +5/+1/+7 over the control's baseline.
+  - (b) Player 0's Mini-Miner had task 0.
+- **SL-12: CONFIRMED.**
+  - Station → Dock: Dock built, no Scouts, queue empty.
+  - Death Star → Ultra Station (AR): Ultra built, no Scouts.
+  - Station → Station B: built, 2 Scouts.
+  - Orbital Fort: built its Scout.
+  - Space Dock: built the 574 kT Mini-Miner (LEGACY BUG).
+  - Damaged Station → Station B: the new Station read 150 units after
+    the year, and the unreplaced control Station went 200 → 150 → 100.
+    So the damage is kept and then repaired as usual.
+  - Dock → Station first reached only 88% for lack of resources. In
+    `sl-starbases-ctl`, with three times the resources, the Station was
+    built and so were both Scouts.

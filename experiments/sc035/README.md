@@ -47,3 +47,10 @@ player 2's design in full.
   have died from the environment rather than from the bombs. The setup
   now makes planet 23 habitable (`env=50,50,50`), and the run is
   repeated with the prediction unchanged.
+- **SC-035: CONFIRMED** (habitable setup, 2 streams). Planet 23 ended
+  the year unowned. Player 0's report of it was a normal report (level
+  3, with environment 50/50/50 and the unowned state). Its report of
+  the control planet 22 was position only (level 1).
+  - The first setup fits the same rule: there the colonists apparently
+    died from the environment after the bombing step, and the report
+    was position only. One setup each; not a separate claim.

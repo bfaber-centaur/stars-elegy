@@ -38,4 +38,18 @@ are run, and streams are counted by record hash.
 
 ## Results
 
-(pending)
+Six cycle settings gave six distinct record hashes. Each battle had 7
+tokens and 20 to 37 actions.
+- The unarmed freighter token is recorded with tactic 0, although its
+  fleet's plan has tactic 3.
+- The stars-decomp `combat.py check` (fixed version, stars-decomp #28)
+  replayed every hit in five streams: 17, 25, 15, 16 and 22 hits.
+- In cycles 7000 it matched 17 hits and missed 1. That miss is in round
+  4: a 4-ship Mixed DD token (Colloidal Phaser, Laser, Delta Torpedo,
+  Energy Capacitor) hitting the 4-ship Shield DD token (Wolverine shield,
+  Beam Deflector), recorded as shield 12, damage 3300.
+
+The movement replay is the decomp's to run. `battlesim.py` handles only
+tactics 0, 1, 2 and 5 with uniform designs. These records are the
+evidence for COMBAT.md's BINARY-ONLY movement parts. Raw runs are in
+stars-oracle-apparatus `evidence/cb7/cb049`.

@@ -2369,6 +2369,107 @@ queues and Mystery Trader parts".
   With its biotechnology at 3 instead, the same 12 streams gave a
   biotechnology level in 2 and still no item, so attempts happen. Open.
 
+### Round 7 (CB-048, CB-049) and scanning SC-035/SC-036
+
+Predictions committed here before each batch: 11b00a2 (CB-048), 1f528ce
+(CB-049) and 7229c97 (SC-035/036). The SC-035 setup was changed in
+ba6b0d1 before its second run. Experiment READMEs hold the details.
+
+- **Mystery Trader items from battle, CONFIRMED (CB-048: 24 runs, 20
+  streams; control 12).** The round-6 miss is resolved by the
+  reconciled rule (stars-decomp #28, COMBAT.md #54):
+  - each kill event adds, for each Mystery Trader part type on the
+    destroyed design, its slot count to that item's chance;
+  - the chance is capped at 25, and hulls never count.
+
+  Thirty one-ship Mini Morph fleets (five Mystery Trader part types)
+  gave one item in 10 of 20 streams. The same 30 Morphs in one fleet
+  gave one in 1 of 12. The decomp's replay matched every move. It
+  also named exactly the gaining streams and the item in each, in all
+  36 runs. The checker replayed every hit.
+- **Battle movement beyond the replayed cases (CB-049, 6 streams):
+  recorded, replay pending.** There were seven moving stacks on tactics
+  1 to 4, with target-type mismatches, weapons of ranges 1, 3 and 4,
+  capacitors, deflectors, sappers and shields. The checker replayed
+  every hit in 5 streams. In cycles 7000 it missed one: a Mixed DD
+  (phaser, laser, torpedo, capacitor) hit on the shielded, deflected
+  Shield DD, in round 4. That one is open for the decomp pass. The
+  unarmed freighter token was recorded with tactic 0 under a tactic-3
+  plan.
+- **Scanning after bombing, CONFIRMED (SC-035, 2 streams).** A
+  scannerless bomber fleet emptied an enemy colony with no starbase.
+  Its owner then got a normal report of the now-unowned planet; at an
+  unowned control planet it got position only.
+- **Designs and players from a three-player battle, CONFIRMED (SC-036,
+  2 streams).** Players 0 and 1 (friends) and player 2 (enemy of both)
+  fought in deep space. Each participant's file then held the other two
+  players' designs in full, the ally's included, and player blocks for
+  both. Before the battle it held only its own.
+- **Battle plans.** New fleets got plan 0 in every SL run, over 40 new
+  fleets (below).
+  - Not run: the 16-plan limit and delete-and-renumber, which need
+    client or crafted orders.
+  - Not run: the stale "Default" attack-who, which needs two games in
+    one client session.
+  - Not re-run: the five starting plans, already MEASURED on 22 games.
+
+### Ship launch (SL-01 to SL-12)
+
+Predictions from the decomp ship-launch reading (stars-decomp #27,
+PRODUCTION-LAUNCH.md #57), committed here before the runs (4c2ae44). Two
+setups were added later, each committed before its own runs: a starbase
+control (70745c8) and an SL-10 follow-up (428e68d). Each case ran on 2
+pinned streams, and the two always agreed. Details are in
+`experiments/sl/README.md`.
+
+- **New fleets, CONFIRMED (SL-01..03).**
+  - Each queue item makes its own fleet with full fuel, plan 0 and one
+    waypoint at the planet.
+  - A new fleet takes the lowest unused number (2 and 4 when 0, 1 and 3
+    were in use).
+  - Byte 5 bit 0x20 is clear on a new fleet in its build year and set
+    on fleets that stayed put.
+  - Fleets routed to their own planet still lacked it in year 2, and so
+    did a remote-mining AR Mini-Miner.
+- **Route warp, CONFIRMED (SL-04..07, 28 of 28 warps).** Waypoint 1 is
+  the route destination with task 8. The warp is the engine's ideal
+  warp, stepped down while `trunc(trunc(d/w)/w)` is unchanged and while
+  the leg costs more than the fuel aboard.
+  - The dock rule applies only when the destination is the builder's
+    own planet with a dock and both planets have starbases: Scout 7 and
+    QJ5 9 at 72 ly, where the no-dock rule gives 5/5. The builder's Fort
+    and the other player's Station gave the no-dock warps.
+  - Safe gates at both ends gave warp 11. Beyond the gate's 250 ly range
+    the dock rule applied.
+  - A route to the building planet itself gave warp 2.
+  - Route words are planet + 1 and survive the turn.
+- **The 512-fleet limit, CONFIRMED (SL-08..10).**
+  - At 511 fleets, the next item makes fleet 511 and the following item
+    joins it.
+  - At 512 with no fleet at the planet, ships are not built, their
+    queue items go, and their minerals are spent (12/6/13 kT below the
+    control). Research could not be compared, because both runs were at
+    tech 26.
+  - At 512 with fleets at the planet, the lowest-numbered fleet whose
+    stack stays at most 32765 receives the ships.
+  - The merged damage follows the prediction: 10 Scouts at 50% / 100
+    units plus 1 gave 45% / 125. At 300 units it gave 45% / 375. The
+    starbase's repair of 100 units that year came afterwards (observed
+    25 and 275).
+- **Default orders, CONFIRMED (SL-11).** An AR builder's new Mini-Miner
+  has waypoint 0 task remote mining; a JOAT builder's has task none.
+  The AR miner did not mine in its build year and did in year 2.
+  - Not predicted: an AR planet with no mines and no miner gained
+    +19/+3/+27 kT a year (control).
+- **Replacing a starbase, CONFIRMED (SL-12).**
+  - Station → Dock and Death Star → Ultra Station removed the queued
+    ships; Dock → Station and Station → Station did not.
+  - A replaced starbase keeps its damage, which is then repaired as
+    usual: 200 → 150, the same as the unreplaced control.
+  - An Orbital Fort builds ships.
+  - A Space Dock built a 574 kT Mini-Miner (LEGACY BUG: no dock-size
+    check).
+
 ### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
