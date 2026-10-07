@@ -1,0 +1,4 @@
+# CO-05b: Merge Fleets, X (fleet 1) into Y (fleet 2), both damaged.
+fleet first
+fleet next
+fleet merge 0 1

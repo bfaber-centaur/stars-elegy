@@ -2,13 +2,6 @@
 # Regenerate with: go run ./tools/speclint -write-baseline
 docs/COMPONENTS.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
-docs/COVERAGE.md	pr-ref	cites PR #44: owns them: research and terraforming, random events (CONFIRMED in #44),
-docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
-docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
-docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
-docs/COVERAGE.md	pr-ref	cites PR #44: | Scores and victory | `KERNEL.md` (#44) | In progress | |
-docs/COVERAGE.md	pr-ref	cites PR #47: | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: ...
-docs/COVERAGE.md	pr-ref	cites PR #49: | Race checks at the start of the year | `KERNEL.md`, RACES.md (#49) | In progress | |
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED met and unmet, S1).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
@@ -28,18 +21,48 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: temperature, radiation) on t
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: this year **whether or not the condition is enabled** (CONFIRMED for
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
-docs/OBJECTS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
+docs/OBJECTS.md	missing-section	docs/KERNEL.md has no section "Chain freeze"
 docs/OBJECTS.md	missing-section	docs/KERNEL.md has no section "Mystery Trader appearance"
-docs/OBJECTS.md	missing-section	docs/ORDERS.md has no section "Waypoint upkeep"
+docs/ORDERS.md	missing-file	LIMITS.md does not exist
+docs/ORDERS.md	missing-file	LIMITS.md does not exist
+docs/ORDERS.md	missing-file	LIMITS.md does not exist
+docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	pr-ref	cites PR #49: elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
+docs/ORDERS.md	pr-ref	cites PR #50: stars-elegy #50, `OBJECTS.md`). A detonate-setting order names a minefield,
+docs/ORDERS.md	pr-ref	cites PR #53: `KERNEL.md` (stars-elegy #53). A fleet whose waypoint targets another fleet is
+docs/ORDERS.md	pr-ref	cites PR #57: (stars-elegy #57), which this section defers to rather than restating.
+docs/ORDERS.md	pr-ref	cites PR #57: context in stars-elegy #57, `PRODUCTION-LAUNCH.md`). The host does **not**
+docs/ORDERS.md	pr-ref	cites PR #59: (see #59 for the plan analogue). Client-reachable (the original client deletes
+docs/ORDERS.md	pr-ref	cites PR #59: battle-plan number against the owner's plans. See #59 for plan semantics (the
+docs/ORDERS.md	pr-ref	cites PR #59: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
+docs/ORDERS.md	pr-ref	cites PR #65: not reproduce the whole-file abort. (See `LIMITS.md`, stars-elegy #65.)
+docs/ORDERS.md	pr-ref	cites PR #65: progress from a crafted percentage. (See `LIMITS.md`, stars-elegy #65.)
+docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
+docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (a two-waypoint repeat fleet came back with only the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED for the ideal-warp case: a fleet carrying the route task at a planet
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED for the upkeep link, with the movement-phase freeze deferred to
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED:
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: Otherwise the fleet changes owner — CONFIRMED (an empty fleet gifted to a
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: `evidence/wu/`). Lines below are tagged CONFIRMED where a measurement agrees
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: and the fleet goes on to what was the next waypoint. CONFIRMED (a three-
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: both fleets unchanged (CONFIRMED, FO — a target 195 ly away did nothing). The
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: chasing it. CONFIRMED (a waypoint aimed at a fleet that moved north came
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: each other (a **cycle**). CONFIRMED (a three-fleet chain came back with each
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: fleet: the transfer is refused and the fleet keeps its owner. CONFIRMED (on a
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: gifted; the transfer is refused. CONFIRMED (a colonist-carrying gift to a
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: list, so the fleet cycles through its waypoints indefinitely. CONFIRMED (the
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: orders are complete. CONFIRMED (a fleet run onto its only waypoint ended
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: ordinary reached waypoint. The order is not dropped outright. CONFIRMED (a
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
-docs/PARITY.md	missing-file	AI.md does not exist
-docs/PARITY.md	missing-file	AI.md does not exist
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
+docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
 docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
@@ -55,20 +78,5 @@ docs/PARITY.md	pr-ref	cites PR #38: which is flat at distance 2 or more for thes
 docs/PARITY.md	pr-ref	cites PR #42: re-applied as c0476b2 and 2cf004d after #42 was squash-merged), one
 docs/PARITY.md	pr-ref	cites PR #6: `docs/scanning-predictions.md`, PR #6 at 3b5de74) were restated as a
 docs/PARITY.md	pr-ref	cites PR #8: T-1..T-35, PR #8) were committed before every run
-docs/SCANNING.md	uncited	CONFIRMED without a case ID: - **No scanner (CONFIRMED by every SC run that removed one).** A planet
 docs/SCANNING.md	uncited	CONFIRMED without a case ID: - Another known player is identified by name only (CONFIRMED, SC corpus).
 docs/TAKEOVER.md	pr-ref	cites PR #34: unowned with no minerals. stars-elegy #34 described a retry in the load
-docs/ai/automitron.md	missing-file	AI.md does not exist
-docs/ai/automitron.md	missing-file	AI.md does not exist
-docs/ai/automitron.md	missing-file	AI.md does not exist
-docs/ai/automitron.md	missing-file	AI.md does not exist
-docs/ai/automitron.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
-docs/ai/turindrone.md	missing-file	AI.md does not exist
