@@ -181,6 +181,14 @@ public class CombatLab {
                         Util.read16(d, 0x48)));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
+                    // economy settings (estimates corpus): growth %, colonists per resource / 100,
+                    // factory output/cost/operated, mine output/cost/operated, the six research
+                    // cost settings, and last year's research resources (player struct +0x3a)
+                    sb.append(" race=").append(p.fullDataBytes[0x11]);
+                    for (int i = 54; i <= 60; i++) sb.append(',').append(p.fullDataBytes[i] & 0xff);
+                    sb.append(" rcost=");
+                    for (int i = 62; i <= 67; i++) sb.append(i == 62 ? "" : ",").append(p.fullDataBytes[i] & 0xff);
+                    sb.append(" resLast=").append(Util.read32(p.fullDataBytes, 0x32));
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
@@ -336,6 +344,19 @@ public class CombatLab {
         if (p.canSeeEnvironment())
             sb.append(String.format(" conc=%d/%d/%d env=%d/%d/%d", p.ironiumConc, p.boraniumConc, p.germaniumConc,
                 p.gravity, p.temperature, p.radiation));
+        if (p.canSeeEnvironment() && p.fractionalMinConcBytes != null) {
+            // depletion fractions: a length byte (2 bits per mineral, ironium in the low
+            // bits), then each mineral's value in that many bytes (none = 0)
+            byte[] fb = p.fractionalMinConcBytes;
+            int o = 1;
+            sb.append(" frac=");
+            for (int m = 0; m < 3; m++) {
+                int n = ((fb[0] & 0xff) >> (2 * m)) & 3, v = 0;
+                for (int k = 0; k < n && o < fb.length; k++, o++) v |= (fb[o] & 0xff) << (8 * k);
+                sb.append(m == 0 ? "" : "/").append(v);
+            }
+        }
+        if (p.isHomeworld) sb.append(" homeworld");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -453,10 +474,10 @@ public class CombatLab {
         Decryptor dec = new Decryptor();
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
+        Map<String, Long> accums = new HashMap<>();
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
-        Map<String, Long> accums = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();

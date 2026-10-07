@@ -4000,3 +4000,115 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
   - Player 0 got 0x117, and each of the four other human players got
     0x182 ("hacked race discovered"). The computer player's `.M` file has
     no message block at all, so whether it is told is not observable.
+
+## Client estimates (ES-001)
+
+`docs/ESTIMATES.md` specifies the projections the original client shows:
+travel time, fuel use and range of fleets, leg distance, production
+completion, research estimates, population growth, value and optimal
+value, mining rate. The rules were read from the original program
+(private `stars-decomp` `docs/estimates.md`) and measured once.
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es001/gen.py`,
+cycles 20000). Player 0 had 9 fleets with two or three legs each (warp 0
+and warp 1 legs, a zero-length leg, a 25.495 ly leg, multi-year legs with
+a ram-scoop ship and a Fuel Transport, a route through its homeworld's
+Space Station, a fleet without the fuel for its first leg), one Scout per
+engine with a part-filled tank, 10 planets with production queues
+(resource-limited, germanium-limited, no germanium, automatic items, Auto
+Alchemy in the middle and at the end), planets of habitability −10% to
+100% including one above its maximum population, and research at 10% on
+weapons. Predictions were computed from the generated host file with
+`experiments/es001/estimates.py` and committed (503745c) before the
+client was opened. Raw evidence and screenshots: private
+`stars-oracle-apparatus` `evidence/es/es-001/`.
+
+### Result (CONFIRMED, 2026-10-07)
+
+`experiments/es001/check.py`: 149 of 149 readings matched.
+
+| Screen | Readings |
+|---|---:|
+| Fleet Waypoints tile: distance, travel time, est. fuel usage (and red) per waypoint | 63 |
+| Fleet Composition tile: Est. Range (every engine, three mixed fleets) | 23 |
+| Production tile: Completion of each queue item | 19 |
+| Planet report: Value (optimal value), Mining Rate | 20 |
+| Population popup | 10 |
+| Research dialog | 5 |
+| Fleet report: ETA column, red | 9 |
+| Not counted: queue colours, the planet report's resources "A / R" | |
+
+Discriminating cases that held:
+
+- A 25.495 ly leg at warp 5 is 1 year (`trunc(D) ≤ w²`), while its fuel is
+  priced as 2 years.
+- Fuel estimates priced year by year, the ram-scoop and Fuel Transport
+  credits (45 and 25 mg, against 114 and 103 for the whole leg at once),
+  and the running total restarting after a waypoint at the homeworld
+  (251, not 362).
+- The ideal warp for range: each engine's warp in `ESTIMATES.md`,
+  including the scoops' free-warp step down and warp 10 only for the five
+  named engines.
+- The production estimate's carried item (an alchemy item left over from
+  the real year), Auto Alchemy as the target ("As Needed") and as the last
+  item ("14 - ??? years"), automatic items blocked by germanium
+  ("Unknown") and a factory with no germanium ("Never").
+- Projected research budget (163) from the first estimated year of every
+  queue.
+
+Not exercised by ES-001 (ES-002 below): stargate legs, "Skipped", Generalized Research, a field at
+level 26, distances with a zero tens-of-hundredths digit (e.g. 20.05).
+
+## Client estimates follow-up (ES-002)
+
+### Question
+
+Do the five client estimates ES-001 left unmeasured behave as read:
+stargate legs, "Skipped", Generalized Research, a field at level 26 and
+distances whose hundredths have a leading zero?
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es002/gen.py`,
+cycles 20000). Player 0 (Generalized Research, a legal LRT set) had gates
+100/250 on three planets and Space Station gate 100/250 on a fourth, a
+150/600 gate on a fifth, and 12 fleets: scouts and freighters ordered
+through gates (usable, two gate legs in a row, cargo, beyond range, over
+the mass limit, to an own planet without a gate, from a planet without a
+gate, to deep space, to another player's planet, to an unowned planet),
+and two scouts on short non-gate legs chosen for distances like 20.02.
+Two queues held automatic items with nothing to do. Player 1 researched
+energy at level 25 with "next field" left at "same field" and enough
+resources stored to reach 26 during the year (`KERNEL.md` KX-005).
+Predictions were committed (0600161) before the client was opened, with
+`expect.tsv` for the host-side result. Raw evidence and screenshots:
+private `stars-oracle-apparatus` `evidence/es/es-002/`.
+
+### Result (2026-10-07)
+
+`experiments/es002/check.py`: 81 of 83 matched. Both misses are fleet 7
+(own gate → an unowned planet): its waypoint tile and report ETA showed
+"Uncertain", predicted "Never".
+
+Interpretation: the prediction model treated every unowned planet as
+reported to the viewer this year. That planet was not in player 0's
+2401 `.M1` (its reports list planets 0, 2, 4, 11, 15–19, 21), so the
+client's rule as read ("Never" only for an unowned planet reported this
+year) gives "Uncertain". `estimates.py` now takes the reported planets
+(`predict.py after.dump m1.dump` gives "Uncertain" for both). The
+"reported unowned planet → Never" branch itself was not exercised and
+stays BINARY-ONLY.
+
+| Item | Observed | Status |
+|---|---|---|
+| Stargate legs (11 fleets) | 1 year, cumulative after the gate; "Unload" with cargo; "Danger" beyond range and over the mass limit; "Never" without a gate at either end or in deep space; "Uncertain" for another player's or an unreported planet; fuel 0mg; warp box "Use Stargate" | CONFIRMED |
+| Distances | 319.01 → "319.1", 20.02 → "20.2", 10.05 → "10.5", 7.07 → "7.7" | CONFIRMED, LEGACY BUG (display) |
+| "Skipped" | Auto Defenses at the defense limit, Auto Mines at the mine limit: "Skipped" in grey; following items unaffected | CONFIRMED |
+| Planet report, queue of one skipped item | "--- Queue is Empty ---" | MEASURED |
+| Generalized Research | 801 needed, projected 261 → 7 years | CONFIRMED |
+| Level 26 (KX-005) | energy 26, current field weapons, next field `<Same field>`; weapons 595 needed, 16 years; energy "Maxed Out" (needed and time) | CONFIRMED |
+
+Not predicted, observed: player 0's Est. Range for the three designs (561,
+166, 175 l.y.).
