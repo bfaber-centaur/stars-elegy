@@ -25,3 +25,11 @@ The client's Ship Transfer stopped the destination at 32766, and the host stored
 Seen in the client before the runs (CO-07 base, 2026-10-07):
 - Edit Selected Design is **disabled** for the Freighter (4 ships use it) and for the starbase design in use at the homeworld. It is **enabled** for a design used only by a queue entry ("Queued", 0 of 0). So Turn orders' CO-08 prediction A holds for designs that ships or a starbase use. Prediction B (does the host overwrite or refuse?) is reachable only for a queued-only design, and CO-08 runs that.
 - A ship design can't be a starbase (starbases have their own designs), so CO-07's "starbase of design D" can't be built. CO-07b instead deletes the starbase design that the homeworld's starbase uses.
+
+## CO-07c: fuel and cargo of a fleet that loses ships to a design delete
+
+In CO-07, fleet 1 (2 Freighters at 450 mg each and a Looker at 50 mg, 950 in all) went from 500 to 27 mg of fuel. It was stationary in deep space, so it burned no fuel. Two readings:
+- **Clamp** to the survivors' tank: min(500, 50) = 50, which does not match 27.
+- **Share out like a ship move**: the deleted ships take floor(500 · 900/950) = 473, and the remainder of 27 stays. This matches.
+
+CO-07c gives fleet 1 300 mg and 100 kT Ir. Prediction (share out): fuel 300 − floor(300 · 900/950) = 300 − 284 = **16** (a clamp would give 50). Ir 100 − floor(100 · 420/420) = **0**, because the Looker has no hold.
