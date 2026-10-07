@@ -27,7 +27,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `cs` | CS-003 W, B, S, C, C2, D | 80 | warp 10 losses, fuel generation, bombs, colonizing, Orbital Adjuster, minefield sweeping and laying, torpedo hits, designer readouts | `docs/COMPONENTS.md` |
 | `es` | ES-001, ES-002 | 153 | client estimates: waypoint distance, travel time and fuel, range, report ETA, production completion, research, population, value, mining rate | `docs/ESTIMATES.md` |
 | `ob` | OB-001..005, 007..027 | 146 | minefields, packets, the Mystery Trader, wormholes, scanning, stargates | `docs/OBJECTS.md`, `docs/SCANNING.md` |
-| `ug` | UG01..UG21 | 84 | new games: starting tech and designs, planet counts, homeworlds, wormholes (`new_game` vectors) | `docs/UNIVERSE.md` |
+| `ug` | UG01..UG21 | 105 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
 

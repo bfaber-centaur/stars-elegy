@@ -72,7 +72,7 @@ def build(ev, out):
         name = open(os.path.join(raw, defn), encoding='latin-1').readline().strip()
         settings = dict(name=name, **settings)
         rid = 'UG' + g[2:]
-        per = {k: {} for k in 'ABCD'}
+        per = {k: {} for k in 'ABCDE'}
         races, held = None, True
         for d in dirs:
             r = os.path.join(ev, d, 'raw')
@@ -82,7 +82,10 @@ def build(ev, out):
             if races is None:
                 races = [dict(p, race=pl['race'], leftover_spend_code=spend.get(pl['id']))
                          for p, pl in zip(players, st['players'])]
-                settings.update(B.game_settings(xy))
+                stored = B.game_settings(xy)
+                # the .def's victory lines are the input; the game record keeps no value for a disabled
+                # condition, so the stored conditions are an observation (case E), not a setting
+                settings.update({k: v for k, v in stored.items() if k != 'victory_conditions'})
             held = held and ' 0 mismatch' in open(os.path.join(ev, d, 'check.txt')).read()
             stream = 'cycles ' + (d.split('-c')[1] if '-c' in d else '20000')
             per['A'][stream] = [{'year': 0, 'kind': 'player', 'id': p['id'], 'equals': {
@@ -97,6 +100,10 @@ def build(ev, out):
                                  'constraint': 'installations, population, second planet and leftover spends as in '
                                  'PARITY.md "Starting planets"; every homeworld shares one surface draw and planet '
                                  '0\'s concentrations raised to 30 ("Shared homeworld minerals", LEGACY BUG)'}]
+            per['E'][stream] = [{'year': 0, 'kind': 'sample', 'check': 'stored_victory_conditions', 'target': [],
+                                 'observed': B.game_settings(xy)['victory_conditions'],
+                                 'constraint': 'a disabled condition\'s value is stored as 0, which decodes as that condition\'s '
+                                 'lowest value (tech level 8, score 1000, ...); enabled conditions keep the .def value'}]
             per['D'][stream] = [{'year': 0, 'kind': 'sample', 'check': 'wormholes', 'target': [],
                                  'observed': worms, 'constraint': 'none with no random events'}]
         vec = {'schema': B.SCHEMA, 'id': rid, 'title': '%s %s, %d players' % (settings['size'], settings['density'],
@@ -109,7 +116,8 @@ def build(ev, out):
         for k, rule, setup in [('A', 'UNIVERSE Starting tech by PRT; starting designs', 'starting tech and design count per player'),
                                ('B', 'UNIVERSE Planet counts', 'number of planets'),
                                ('C', 'UNIVERSE Starting planets; shared homeworld minerals', 'homeworlds and other starting planets per player'),
-                               ('D', 'UNIVERSE Options: no random events', 'wormholes in the new game')]:
+                               ('D', 'UNIVERSE Options: no random events', 'wormholes in the new game'),
+                               ('E', 'KERNEL Victory conditions', 'victory conditions as stored in the new game')]:
             vec['cases'].append(B.case('%s-%s' % (rid, k), rule, setup, per[k], held, set()))
         with open(os.path.join(out, g + '.json'), 'w') as f:
             B.json.dump(vec, f, indent=1)

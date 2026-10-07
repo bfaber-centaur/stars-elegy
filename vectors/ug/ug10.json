@@ -64,46 +64,7 @@
    ],
    "slower_tech": false,
    "random_events": true,
-   "public_scores": false,
-   "victory_conditions": {
-    "planets_owned_percent": {
-     "value": 60,
-     "enabled": true
-    },
-    "tech_level": {
-     "value": 8,
-     "enabled": false
-    },
-    "tech_fields": {
-     "value": 2
-    },
-    "score": {
-     "value": 1000,
-     "enabled": false
-    },
-    "lead_over_second_percent": {
-     "value": 20,
-     "enabled": false
-    },
-    "resources_thousands": {
-     "value": 10,
-     "enabled": false
-    },
-    "capital_ships": {
-     "value": 10,
-     "enabled": false
-    },
-    "highest_score_after_years": {
-     "value": 30,
-     "enabled": false
-    },
-    "conditions_needed": {
-     "value": 1
-    },
-    "minimum_years": {
-     "value": 50
-    }
-   }
+   "public_scores": false
   },
   "races": [
    {
@@ -946,6 +907,62 @@
      "target": [],
      "observed": 6,
      "constraint": "none with no random events"
+    }
+   ]
+  },
+  {
+   "id": "UG10-E",
+   "rule": "KERNEL Victory conditions",
+   "setup": "victory conditions as stored in the new game",
+   "tag": "MEASURED",
+   "prediction_held": true,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "year": 0,
+     "kind": "sample",
+     "check": "stored_victory_conditions",
+     "target": [],
+     "observed": {
+      "planets_owned_percent": {
+       "value": 60,
+       "enabled": true
+      },
+      "tech_level": {
+       "value": 8,
+       "enabled": false
+      },
+      "tech_fields": {
+       "value": 2
+      },
+      "score": {
+       "value": 1000,
+       "enabled": false
+      },
+      "lead_over_second_percent": {
+       "value": 20,
+       "enabled": false
+      },
+      "resources_thousands": {
+       "value": 10,
+       "enabled": false
+      },
+      "capital_ships": {
+       "value": 10,
+       "enabled": false
+      },
+      "highest_score_after_years": {
+       "value": 30,
+       "enabled": false
+      },
+      "conditions_needed": {
+       "value": 1
+      },
+      "minimum_years": {
+       "value": 50
+      }
+     },
+     "constraint": "a disabled condition's value is stored as 0, which decodes as that condition's lowest value (tech level 8, score 1000, ...); enabled conditions keep the .def value"
     }
    ]
   }
