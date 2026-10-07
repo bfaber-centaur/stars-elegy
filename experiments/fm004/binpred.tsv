@@ -1,0 +1,56 @@
+id	pos	fuel	warp	obj	waypoints	events	notes
+0	1035,1010	0	1	-1	2	139(warp 1)	ran dry: move=range=25; out of fuel: waypoint warp 6 -> 1 (msg 0x8b)
+1	1037,1016	0	1	-1	2	139(warp 1)	ran dry: move=range=27; out of fuel: waypoint warp 7 -> 1 (msg 0x8b)
+2	1039,1022	0	1	-1	2	139(warp 1)	ran dry: move=range=29; out of fuel: waypoint warp 8 -> 1 (msg 0x8b)
+3	1068,1028	0	1	-1	2	139(warp 1)	ran dry: move=range=58; out of fuel: waypoint warp 8 -> 1 (msg 0x8b)
+4	1039,1034	0	1	-1	2	139(warp 1)	ran dry: move=range=29; out of fuel: waypoint warp 6 -> 1 (msg 0x8b)
+5	1060,1046	0	6	-1	2	139(warp 6)	ran dry: move=range=50; out of fuel: waypoint warp 10 -> 6 (msg 0x8b)
+6	1022,1052	0	1	-1	2	139(warp 1)	ran dry: move=range=12; out of fuel: waypoint warp 9 -> 1 (msg 0x8b)
+7	1038,1058	0	4	-1	2	139(warp 4)	ran dry: move=range=28; out of fuel: waypoint warp 7 -> 4 (msg 0x8b)
+8	1037,1064	0	4	-1	2	139(warp 4)	ran dry: move=range=27; out of fuel: waypoint warp 9 -> 4 (msg 0x8b)
+9	1055,1070	0	6	-1	2	139(warp 6)	ran dry: move=range=45; out of fuel: waypoint warp 8 -> 6 (msg 0x8b)
+10	1032,1076	0	6	-1	2	139(warp 6)	ran dry: move=range=22; out of fuel: waypoint warp 8 -> 6 (msg 0x8b)
+11	1010,1082	0	4	-1	2	139(warp 4)	ran dry: move=range=0; out of fuel: waypoint warp 7 -> 4 (msg 0x8b); no movement
+12	1010,1088	0	5	-1	2	139(warp 5)	ran dry: move=range=0; out of fuel: waypoint warp 7 -> 5 (msg 0x8b); no movement
+13	1010,1094	0	1	-1	2	139(warp 1)	ran dry: move=range=0; out of fuel: waypoint warp 7 -> 1 (msg 0x8b); no movement
+14	1030,1100	1	7	-1	1	78	-
+15	1011,1112	110	1	-1	2	243(10)	ram scoop +10 (raw 10)
+16	1014,1118	124	2	-1	2	243(24)	ram scoop +24 (raw 24)
+17	1019,1124	127	3	-1	2	243(27)	ram scoop +27 (raw 27)
+18	1026,1130	116	4	-1	2	243(16)	ram scoop +16 (raw 16)
+19	1035,1136	99	5	-1	2	-	-
+20	1011,1142	110	1	-1	2	243(10)	ram scoop +10 (raw 10)
+21	1014,1148	140	2	-1	2	243(40)	ram scoop +40 (raw 40)
+22	1019,1154	190	3	-1	2	243(90)	ram scoop +90 (raw 90)
+23	1026,1160	196	4	-1	2	243(96)	ram scoop +96 (raw 96)
+24	1035,1172	175	5	-1	2	243(75)	ram scoop +75 (raw 75)
+25	1046,1178	136	6	-1	2	243(36)	ram scoop +36 (raw 36)
+26	1059,1184	94	7	-1	2	-	-
+27	1026,1190	196	4	-1	2	243(96)	ram scoop +96 (raw 96)
+28	1046,1196	136	6	-1	2	243(36)	ram scoop +36 (raw 36)
+29	1014,1202	172	2	-1	2	243(72)	ram scoop +72 (raw 72)
+30	1014,1208	124	2	-1	2	243(24)	ram scoop +24 (raw 24)
+31	1019,1214	300	3	-1	2	243(90)	ram scoop +50 (raw 90)
+32	1020,1220	154	4	-1	1	243(54) 78	ram scoop +54 (raw 54)
+33	1017,1233	148	4	-1	1	243(48) 78	ram scoop +48 (raw 48)
+34	1013,1232	112	2	-1	1	243(12) 78	ram scoop +12 (raw 12)
+35	1011,1238	101	1	-1	2	243(1)	ram scoop +1 (raw 1)
+36	1011,1244	101	1	-1	2	243(1)	ram scoop +1 (raw 1)
+37	1014,1250	600	2	-1	2	-	-
+38	1035,1256	597	5	-1	2	-	-
+39	1035,1262	891	5	-1	2	-	-
+40	1074,1268	540	8	-1	2	-	-
+41	1046,1274	230	6	-1	2	-	-
+42	1046,1280	220	6	-1	2	-	-
+43	1091,1286	37	9	-1	2	-	top-up 36 -> 37
+44	1091,1292	35	9	-1	2	-	-
+45	1046,1304	98	6	-1	2	-	top-up 97 -> 98
+46	1113,1298	300	-	7	1	-	dock 50 -> 300
+47	1113,1298	300	-	7	1	-	dock 400 -> 300
+48	1113,1298	130	-	7	1	-	dock 10 -> 130
+49	1010,1310	400	-	-1	1	-	-
+50	1113,1298	300	5	7	1	78	dock 98 -> 300
+51	1138,1298	97	5	-1	2	-	-
+52	1101,1283	98	5	6	1	78	-
+53	1113,1298	300	5	7	1	78	dock 98 -> 300
+54	1153,1335	98	5	12	1	78	-

@@ -60,20 +60,25 @@ def model(p, r):
     return (math.floor(start[0] + dx * L / d + .5), math.floor(start[1] + dy * L / d + .5)), 0, "limit"
 
 
-bad = 0
-for n in (1, 2, 3):
-    for p, r in rows(n):
-        if p["group"] in ("O", "CH", "MU") or "wpf" in p["waypoints"]:
-            continue
-        if p["group"] == "C" and len([w for w in p["waypoints"].split() if w in ("wp", "wpp")]) > 1:
-            # chaining: stops at waypoint 1 for the year
-            w = p["waypoints"].split()
-            p = dict(p, waypoints=" ".join(w[:4]))
-        end, fuel1, note = model(p, r)
-        obs_end, obs_fuel = ast.literal_eval(r["end"]), int(r["fuel1"])
-        ok = end == obs_end and fuel1 == obs_fuel
-        bad += not ok
-        if not ok or "-v" in sys.argv:
-            print(f"FM-00{n} {r['id']:>3} {p['group']:>2} {'ok ' if ok else 'BAD'} model end={end} fuel={fuel1} "
-                  f"obs end={obs_end} fuel={obs_fuel} {note} | {p['desc']}")
-print("mismatches:", bad)
+def main():
+    bad = 0
+    for n in (1, 2, 3):
+        for p, r in rows(n):
+            if p["group"] in ("O", "CH", "MU") or "wpf" in p["waypoints"]:
+                continue
+            if p["group"] == "C" and len([w for w in p["waypoints"].split() if w in ("wp", "wpp")]) > 1:
+                # chaining: stops at waypoint 1 for the year
+                w = p["waypoints"].split()
+                p = dict(p, waypoints=" ".join(w[:4]))
+            end, fuel1, note = model(p, r)
+            obs_end, obs_fuel = ast.literal_eval(r["end"]), int(r["fuel1"])
+            ok = end == obs_end and fuel1 == obs_fuel
+            bad += not ok
+            if not ok or "-v" in sys.argv:
+                print(f"FM-00{n} {r['id']:>3} {p['group']:>2} {'ok ' if ok else 'BAD'} model end={end} fuel={fuel1} "
+                      f"obs end={obs_end} fuel={obs_fuel} {note} | {p['desc']}")
+    print("mismatches:", bad)
+
+
+if __name__ == "__main__":
+    main()

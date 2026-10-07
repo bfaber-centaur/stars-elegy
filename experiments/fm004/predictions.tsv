@@ -1,0 +1,56 @@
+id	group	desc	start	waypoints	ships	mass	fuel0	pred	fitted
+0	LR	1x Scout/LH6 warp 6 fuel 3	(1010, 1010)	wp 1110 1010 6	3:1	23	3	1035,1010; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=25; out of fuel: waypoint warp 6 -> 1 (msg 0x8b)	pos=1034,1010 fuel=0 (limit)
+1	LR	1x Scout/DLL7 warp 7 fuel 4	(1010, 1016)	wp 1110 1016 7	4:1	27	4	1037,1016; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=27; out of fuel: waypoint warp 7 -> 1 (msg 0x8b)	pos=1036,1016 fuel=0 (limit)
+2	LR	1x Scout/LH6 warp 8 fuel 25	(1010, 1022)	wp 1110 1022 8	3:1	23	25	1039,1022; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=29; out of fuel: waypoint warp 8 -> 1 (msg 0x8b)	pos=1038,1022 fuel=0 (limit)
+3	LR	3x Scout/AD8 warp 8 fuel 31	(1010, 1028)	wp 1110 1028 8	5:3	93	31	1068,1028; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=58; out of fuel: waypoint warp 8 -> 1 (msg 0x8b)	pos=1067,1028 fuel=0 (limit)
+4	LR	1x SmallFreighter/LH6 warp 6 fuel 7 cargo 10 Ir	(1010, 1034)	wp 1110 1034 6	9:1	46	7	1039,1034; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=29; out of fuel: waypoint warp 6 -> 1 (msg 0x8b)	pos=1038,1034 fuel=0 (limit)
+5	LR	1x Scout/SD warp 10 fuel 23	(1010, 1046)	wp 1110 1046 10	6:1	16	23	1060,1046; 0; 6; -1; 2; 139(warp 6); ran dry: move=range=50; out of fuel: waypoint warp 10 -> 6 (msg 0x8b)	pos=1059,1046 fuel=0 (limit)
+6	LR	control: QJ5 scout warp 9 fuel 10	(1010, 1052)	wp 1110 1052 9	0:1	18	10	1022,1052; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=12; out of fuel: waypoint warp 9 -> 1 (msg 0x8b)	pos=1022,1052 fuel=0 (limit)
+7	WD	FM scout warp 7 fuel 5	(1010, 1058)	wp 1110 1058 7	7:1	20	5	1038,1058; 0; 4; -1; 2; 139(warp 4); ran dry: move=range=28; out of fuel: waypoint warp 7 -> 4 (msg 0x8b)	pos=1038,1058 fuel=0 (limit)
+8	WD	FM scout warp 9 fuel 10	(1010, 1064)	wp 1110 1064 9	7:1	20	10	1037,1064; 0; 4; -1; 2; 139(warp 4); ran dry: move=range=27; out of fuel: waypoint warp 9 -> 4 (msg 0x8b)	pos=1037,1064 fuel=0 (limit)
+9	WD	SD scout warp 8 fuel 10	(1010, 1070)	wp 1110 1070 8	6:1	16	10	1055,1070; 0; 6; -1; 2; 139(warp 6); ran dry: move=range=45; out of fuel: waypoint warp 8 -> 6 (msg 0x8b)	pos=1055,1070 fuel=0 (limit)
+10	WD	RHRS scout warp 8 fuel 10	(1010, 1076)	wp 1110 1076 8	8:1	24	10	1032,1076; 0; 6; -1; 2; 139(warp 6); ran dry: move=range=22; out of fuel: waypoint warp 8 -> 6 (msg 0x8b)	pos=1032,1076 fuel=0 (limit)
+11	WD	FM scout warp 7 fuel 0	(1010, 1082)	wp 1110 1082 7	7:1	20	0	1010,1082; 0; 4; -1; 2; 139(warp 4); ran dry: move=range=0; out of fuel: waypoint warp 7 -> 4 (msg 0x8b); no movement	pos=1010,1082 fuel=0 (fuel 0)
+12	WD	FM scout warp 7 fuel 0, leg 2 ly	(1010, 1088)	wp 1012 1088 7	7:1	20	0	1010,1088; 0; 5; -1; 2; 139(warp 5); ran dry: move=range=0; out of fuel: waypoint warp 7 -> 5 (msg 0x8b); no movement	pos=1010,1088 fuel=0 (fuel 0)
+13	WD	QJ5 scout warp 7 fuel 0	(1010, 1094)	wp 1110 1094 7	0:1	18	0	1010,1094; 0; 1; -1; 2; 139(warp 1); ran dry: move=range=0; out of fuel: waypoint warp 7 -> 1 (msg 0x8b); no movement	pos=1010,1094 fuel=0 (fuel 0)
+14	WD	FM scout warp 7 fuel 5, arrives at 20 ly	(1010, 1100)	wp 1030 1100 7	7:1	20	5	1030,1100; 1; 7; -1; 1; 78; -	pos=1030,1100 fuel=1
+15	RS	FM scout warp 1	(1010, 1112)	wp 1110 1112 1	7:1	20	100	1011,1112; 110; 1; -1; 2; 243(10); ram scoop +10 (raw 10)	pos=1011,1112 fuel=101
+16	RS	FM scout warp 2	(1010, 1118)	wp 1110 1118 2	7:1	20	100	1014,1118; 124; 2; -1; 2; 243(24); ram scoop +24 (raw 24)	pos=1014,1118 fuel=100
+17	RS	FM scout warp 3	(1010, 1124)	wp 1110 1124 3	7:1	20	100	1019,1124; 127; 3; -1; 2; 243(27); ram scoop +27 (raw 27)	pos=1019,1124 fuel=100
+18	RS	FM scout warp 4	(1010, 1130)	wp 1110 1130 4	7:1	20	100	1026,1130; 116; 4; -1; 2; 243(16); ram scoop +16 (raw 16)	pos=1026,1130 fuel=100
+19	RS	FM scout warp 5	(1010, 1136)	wp 1110 1136 5	7:1	20	100	1035,1136; 99; 5; -1; 2; -; -	pos=1035,1136 fuel=99
+20	RS	SD scout warp 1	(1010, 1142)	wp 1110 1142 1	6:1	16	100	1011,1142; 110; 1; -1; 2; 243(10); ram scoop +10 (raw 10)	pos=1011,1142 fuel=101
+21	RS	SD scout warp 2	(1010, 1148)	wp 1110 1148 2	6:1	16	100	1014,1148; 140; 2; -1; 2; 243(40); ram scoop +40 (raw 40)	pos=1014,1148 fuel=100
+22	RS	SD scout warp 3	(1010, 1154)	wp 1110 1154 3	6:1	16	100	1019,1154; 190; 3; -1; 2; 243(90); ram scoop +90 (raw 90)	pos=1019,1154 fuel=100
+23	RS	SD scout warp 4	(1010, 1160)	wp 1110 1160 4	6:1	16	100	1026,1160; 196; 4; -1; 2; 243(96); ram scoop +96 (raw 96)	pos=1026,1160 fuel=100
+24	RS	SD scout warp 5	(1010, 1172)	wp 1110 1172 5	6:1	16	100	1035,1172; 175; 5; -1; 2; 243(75); ram scoop +75 (raw 75)	pos=1035,1172 fuel=100
+25	RS	SD scout warp 6	(1010, 1178)	wp 1110 1178 6	6:1	16	100	1046,1178; 136; 6; -1; 2; 243(36); ram scoop +36 (raw 36)	pos=1046,1178 fuel=100
+26	RS	SD scout warp 7	(1010, 1184)	wp 1110 1184 7	6:1	16	100	1059,1184; 94; 7; -1; 2; -; -	pos=1059,1184 fuel=94
+27	RS	RHRS scout warp 4	(1010, 1190)	wp 1110 1190 4	8:1	24	100	1026,1190; 196; 4; -1; 2; 243(96); ram scoop +96 (raw 96)	pos=1026,1190 fuel=100
+28	RS	RHRS scout warp 6	(1010, 1196)	wp 1110 1196 6	8:1	24	100	1046,1196; 136; 6; -1; 2; 243(36); ram scoop +36 (raw 36)	pos=1046,1196 fuel=100
+29	RS	3 FM scouts warp 2	(1010, 1202)	wp 1110 1202 2	7:3	60	100	1014,1202; 172; 2; -1; 2; 243(72); ram scoop +72 (raw 72)	pos=1014,1202 fuel=100
+30	RS	QJ5 scout + FM scout warp 2	(1010, 1208)	wp 1110 1208 2	0:1,7:1	38	100	1014,1208; 124; 2; -1; 2; 243(24); ram scoop +24 (raw 24)	pos=1014,1208 fuel=100
+31	RS	SD scout warp 3 fuel 250 (cap)	(1010, 1214)	wp 1110 1214 3	6:1	16	250	1019,1214; 300; 3; -1; 2; 243(90); ram scoop +50 (raw 90)	pos=1019,1214 fuel=250
+32	RS	SD scout warp 4 arrives at 10 ly	(1010, 1220)	wp 1020 1220 4	6:1	16	100	1020,1220; 154; 4; -1; 1; 243(54) 78; ram scoop +54 (raw 54)	pos=1020,1220 fuel=100
+33	RS	SD scout warp 4 arrives at (7,7)	(1010, 1226)	wp 1017 1233 4	6:1	16	100	1017,1233; 148; 4; -1; 1; 243(48) 78; ram scoop +48 (raw 48)	pos=1017,1233 fuel=100
+34	RS	FM scout warp 2 arrives at 3 ly	(1010, 1232)	wp 1013 1232 2	7:1	20	100	1013,1232; 112; 2; -1; 1; 243(12) 78; ram scoop +12 (raw 12)	pos=1013,1232 fuel=100
+35	RS	control: QJ5 scout warp 1	(1010, 1238)	wp 1110 1238 1	0:1	18	100	1011,1238; 101; 1; -1; 2; 243(1); ram scoop +1 (raw 1)	pos=1011,1238 fuel=101
+36	RS	control: AD8 scout warp 1	(1010, 1244)	wp 1110 1244 1	5:1	31	100	1011,1244; 101; 1; -1; 2; 243(1); ram scoop +1 (raw 1)	pos=1011,1244 fuel=101
+37	MS	1x Scout/QJ5 + 1x Scout/LH6 warp 2	(1010, 1250)	wp 1110 1250 2	0:1,3:1	41	600	1014,1250; 600; 2; -1; 2; -; -	pos=1014,1250 fuel=599
+38	MS	1x Scout/QJ5 + 1x Scout/FM warp 5	(1010, 1256)	wp 1110 1256 5	0:1,7:1	38	600	1035,1256; 597; 5; -1; 2; -; -	pos=1035,1256 fuel=596
+39	MS	2x Scout/LH6 + 1x Scout/DLL7 warp 5	(1010, 1262)	wp 1110 1262 5	3:2,4:1	73	900	1035,1262; 891; 5; -1; 2; -; -	pos=1035,1262 fuel=890
+40	MS	1x Scout/QJ5 + 1x Scout/SD warp 8	(1010, 1268)	wp 1110 1268 8	0:1,6:1	34	600	1074,1268; 540; 8; -1; 2; -; -	pos=1074,1268 fuel=539
+41	CA	QJ5 freighter + LH6 freighter, 70 kt Ir, warp 6	(1010, 1274)	wp 1110 1274 6	1:1,9:1	137	260	1046,1274; 230; 6; -1; 2; -; -	pos=1046,1274 fuel=220
+42	CA	QJ5 freighter + LH6 freighter, 100 kt Ir, warp 6	(1010, 1280)	wp 1110 1280 6	1:1,9:1	167	260	1046,1280; 220; 6; -1; 2; -; -	pos=1046,1280 fuel=210
+43	TU	QJ5 scout warp 9 fuel 102, leg 126	(1010, 1286)	wp 1136 1286 9	0:1	18	102	1091,1286; 37; 9; -1; 2; -; top-up 36 -> 37	pos=1091,1286 fuel=36
+44	TU	QJ5 scout warp 9 fuel 101, leg 126	(1010, 1292)	wp 1136 1292 9	0:1	18	101	1091,1292; 35; 9; -1; 2; -; -	pos=1091,1292 fuel=35
+45	TU	QJ5 freighter 70 kt Ir warp 6 fuel 130, leg 143	(1010, 1304)	wp 1153 1304 6	1:1	101	130	1046,1304; 98; 6; -1; 2; -; top-up 97 -> 98	pos=1046,1304 fuel=97
+46	DK	QJ5 scout at planet 7, fuel 50, no orders	(1113, 1298)		0:1	18	50	1113,1298; 300; -; 7; 1; -; dock 50 -> 300	pos=1113,1298 fuel=50
+47	DK	QJ5 scout at planet 7, fuel 400, no orders	(1113, 1298)		0:1	18	400	1113,1298; 300; -; 7; 1; -; dock 400 -> 300	pos=1113,1298 fuel=400
+48	DK	QJ5 freighter at planet 7, fuel 10, no orders	(1113, 1298)		1:1	31	10	1113,1298; 130; -; 7; 1; -; dock 10 -> 130	pos=1113,1298 fuel=10
+49	DK	QJ5 scout in deep space, fuel 400, no orders	(1010, 1310)		0:1	18	400	1010,1310; 400; -; -1; 1; -; -	pos=1010,1310 fuel=400
+50	DK	QJ5 scout arrives at planet 7 (planet waypoint), warp 5, fuel 100	(1093, 1298)	wpp 7 1113 1298 5	0:1	18	100	1113,1298; 300; 5; 7; 1; 78; dock 98 -> 300	pos=1113,1298 fuel=98
+51	DK	QJ5 scout leaves planet 7 east 50 ly, warp 5, fuel 100	(1113, 1298)	wp 1163 1298 5	0:1	18	100	1138,1298; 97; 5; -1; 2; -; -	pos=1138,1298 fuel=97
+52	DK	QJ5 scout arrives at planet 6 (no starbase), warp 5, fuel 100	(1081, 1283)	wpp 6 1101 1283 5	0:1	18	100	1101,1283; 98; 5; 6; 1; 78; -	pos=1101,1283 fuel=98
+53	OR	QJ5 scout to deep-space waypoint on planet 7, warp 5, fuel 100	(1113, 1278)	wp 1113 1298 5	0:1	18	100	1113,1298; 300; 5; 7; 1; 78; dock 98 -> 300	pos=1113,1298 fuel=98
+54	OR	QJ5 scout to deep-space waypoint on planet 12, warp 5, fuel 100	(1173, 1335)	wp 1153 1335 5	0:1	18	100	1153,1335; 98; 5; 12; 1; 78; -	pos=1153,1335 fuel=98

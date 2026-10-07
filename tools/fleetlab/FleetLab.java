@@ -57,7 +57,10 @@ public class FleetLab {
                     sb);
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
-                if (d.isStarbase) continue;
+                if (d.isStarbase) {
+                    System.out.printf("%s starbase design %d hull=%d%n", f, d.designNumber, d.hullId);
+                    continue;
+                }
                 designs.put(d.designNumber, d);
                 StringBuilder sb = new StringBuilder();
                 for (DesignBlock.Slot s : d.slots)
@@ -87,6 +90,9 @@ public class FleetLab {
                 System.out.printf("%s   wp fleet=%d i=%d x=%d y=%d obj=%d type=%02x warp=%d task=%d%s%n", f,
                     cur == null ? -1 : cur.fleetNumber, wpIndex++, w.x, w.y, w.positionObject, w.positionObjectType,
                     w.warp, w.waypointTask, extra.length() > 0 ? " extra=" + extra : "");
+            } else if (b instanceof PartialPlanetBlock && ((PartialPlanetBlock) b).hasStarbase) {
+                PartialPlanetBlock p = (PartialPlanetBlock) b;
+                System.out.printf("%s planet %d owner=%d starbase design=%d%n", f, p.planetNumber, p.owner, p.starbaseDesign);
             } else if (b.typeId != BlockType.PLANET && b.typeId != BlockType.PARTIAL_PLANET
                        && b.typeId != BlockType.FILE_FOOTER && b.typeId != BlockType.PLANETS) {
                 System.out.printf("%s block type=%d size=%d data=%s%n", f, b.typeId, b.size,
