@@ -54,8 +54,8 @@ Levels:
    difference INTENTIONALLY DIFFERENT. The in-year special rules for
    computer players need a spec either way.
 2. **Ships and starbases leaving production.** This happens every year
-   for every player. It is already read privately, so a spec section and
-   a small oracle corpus would close it.
+   for every player. Now specified (BINARY-ONLY) in
+   `PRODUCTION-LAUNCH.md`; the SL-01..12 corpus will confirm it.
 3. **Waypoint upkeep and the remaining tasks:** repeat orders, dropped
    waypoints, dead targets, the route and patrol tasks, transfer-fleet
    refusals. Every multi-waypoint order depends on these. Mostly read
