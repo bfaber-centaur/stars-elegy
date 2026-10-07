@@ -356,10 +356,14 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   relation (enemy) check, so a gift to an enemy's fleet or planet is allowed
   here. (The *waypoint* task that transfers a fleet to another player's fleet
   is the path that refuses an enemy — see "Transfer fleet".)
-- **Two passes, in place.** Within step 1 the host runs all **debits first**
-  and then all **credits**, so same-step transfers draw from pre-transfer
-  stocks. A manual gift is credited to the destination at this time, **not**
-  after movement, and there is **no** queued-gift step for manual orders.
+- **Credited in place at step 1.** The original credits a manual gift to the
+  destination as the order is replayed (step 1), **not** after movement, with
+  **no** queued-gift step for manual orders (MEASURED, TK-406/407/409); each
+  transfer record's debit and credit are applied together in place. Whether the
+  host orders all debits before all credits across records is **not**
+  established, so that ordering is not asserted here. Elegy's orders layer
+  performs the debit and credit in two passes — an implementation detail of the
+  Elegy orders layer, not a measured Stars! rule.
 - **Colonists** onto a planet the giver does not own are a **drop**, resolved
   in the first drop step **before** movement (CONFIRMED, TK-501) —
   colonisation or invasion under the takeover/objects rules — not in the
@@ -380,11 +384,16 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   after it lands the gifted cargo is **indistinguishable from the fleet's own
   cargo**. Its fate is therefore whatever the fleet-removal order does to that
   fleet's cargo generally: a **merge** pools it into the surviving fleet, and a
-  **design delete** shares it out to any surviving ships exactly as a ship move
-  does (`floor(amount × capacity ÷ fleet capacity)`), with the remainder **lost**
-  only when no capacity survives — the same outcome as for native cargo (see
-  "Design delete effect", MEASURED CO-07/CO-07c, and "Merge"). There is **no**
-  gift-specific refund to the giver and **no** gift-specific loss. The
+  **design delete** shares it out exactly as a ship move does — the deleted
+  ships carry off their proportional share
+  `floor(amount × deleted capacity ÷ fleet capacity)`, which is **lost with
+  them even when other ships survive**, and only the **remainder** stays with
+  the survivors (CO-07c: a 500 mg / capacity-950 fleet losing a 900-capacity
+  design keeps `500 − floor(500·900÷950) = 27` and the deleted ships take the
+  other 473 away); if no ship survives, all of it is lost — the same outcome as
+  for native cargo (see "Design delete effect", MEASURED CO-07/CO-07c, and
+  "Merge"). There is **no** gift-specific refund to the giver and **no**
+  gift-specific loss. The
   no-provenance property of the in-place credit is BINARY-ONLY (read from the
   credit branch, which writes cargo and nothing else); the disposition on
   removal is the MEASURED fleet-removal behaviour it inherits.
