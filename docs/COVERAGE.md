@@ -43,16 +43,17 @@ Levels:
 | Scores and victory | `KERNEL.md` "Scores and victory conditions" | Confirmed / Read | Score KX-003; the victory conditions are Read. |
 | New games | `UNIVERSE.md`, `RACES.md` | Confirmed | |
 | Messages to players | `MESSAGES.md` | Confirmed / Read | All 387 kinds are catalogued (sender, recipients, values, phase); 198 rows are CONFIRMED. The rest are listed under "Kinds not yet observed, and how to reach them" and as gap 4 below. Player-to-player mail is not covered. |
-| Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Each personality's own turn is in progress (`docs/ai/`). Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
+| Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Robotoid and Cybertron's own turns are specified (`docs/ai/`; designs CONFIRMED, fleet passes MEASURED by every own fleet in AIX, AI-12 and AI-15); the other four are in progress. Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
 | What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings; ES-002 confirmed stargate legs, "Skipped", Generalized Research, "Maxed Out" and the distance display. |
 | Limits: fleets, space objects, minefields, designs, queue length | `PRODUCTION-LAUNCH.md` (fleets), `OBJECTS.md` (minefields and objects) | Partial | Fleets (512) and minefields (512, or 511) are CONFIRMED or MEASURED. Design-slot and queue limits are not collected anywhere. |
 
 ## Largest gaps for a playable game
 
 1. **Computer players' own turns.** Bobby chose to reproduce the original
-   personalities. The shared core is in `AI.md`; each personality's turn
-   is being read (`docs/ai/`), with predictions checked against captured
-   computer-player orders.
+   personalities. The shared core is in `AI.md`; Robotoid and Cybertron
+   are specified (`docs/ai/`), and the other personalities' turns are
+   being read, with predictions checked against captured computer-player
+   orders.
 2. **Waypoint upkeep and the remaining tasks:** specified in `ORDERS.md`
    (Read); the WU batch will confirm it. Every multi-waypoint order
    depends on these.

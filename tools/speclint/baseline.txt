@@ -8,7 +8,6 @@ docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-section	docs/ORDERS.md has no section "Waypoint upkeep and the remaining tasks"
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED met and unmet, S1).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
@@ -34,8 +33,6 @@ docs/ORACLE.md	pr-ref	cites PR #44: (stars-elegy #44), so a sweep for random out
 docs/ORDERS.md	missing-file	LIMITS.md does not exist
 docs/ORDERS.md	missing-file	LIMITS.md does not exist
 docs/ORDERS.md	missing-file	LIMITS.md does not exist
-docs/ORDERS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
-docs/ORDERS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
 docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation

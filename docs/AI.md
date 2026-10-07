@@ -12,7 +12,7 @@ war) gets its own file under docs/ai/:
 | 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
 | 3 | Automitron | IS | docs/ai/automitron.md (planned) |
 | 4 | Rototill | CA | docs/ai/rototill.md (planned) |
-| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
+| 5 | Cybertron | PP | docs/ai/cybertron.md |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) |
 
 Elegy reproduces these personalities (project decision). Related specs:
@@ -374,7 +374,7 @@ After its own work, every computer player runs these steps, in order.
    a scout heading to a planet at warp 6 can get an order changing only
    its warp to 5 (the same whole-year travel time).
 2. **Starbases for hubs** (not Macinti; in a tutorial game only before
-   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md, planned).
+   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md §4.3).
    The others: every own planet with no starbase, population ≥ 8,000, not
    marked by the personality's own pass, that is a hub (§6), gets the
    current starbase design (slot 0, or 5 when slot 5 is newer) ×1 appended
@@ -586,8 +586,7 @@ keeps waypoint 0 and sets waypoint 1 to the target with the given task
 and warp, dropping any later waypoints; if the fleet is already at the
 target, the task goes on waypoint 0 and the route is cut to that one
 waypoint. When the existing waypoint 0 lies at the fleet's position, the move
-order overwrites it in place (BINARY-ONLY; details with Cybertron,
-docs/ai/cybertron.md, planned).
+order overwrites it in place (BINARY-ONLY).
 
 **Supplies.** When a rule loads colonists or minerals between a planet
 and a fleet, the planet and fleet change at once in the computer player's
