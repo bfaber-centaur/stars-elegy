@@ -487,6 +487,41 @@ for i in $(seq 1 17); do
 done
 ```
 
+## Setting up a state (observed, PQ-001)
+
+`turn` only presses F9, so experiments that need a particular planet state
+edit the game files instead. `scripts/oracle/hst-edit` decodes and
+re-encodes `.HST`/`.M1` files with StarsAPI (pinned commit, built under
+`$ORACLE_HOME`); `scripts/oracle/edit-turn OUTDIR key=value...` resets to
+the `registered` snapshot, applies the same edit to `PG001.HST` and
+`PG001.M1`, generates `TURNS` years and keeps every file plus a decoded
+dump.
+
+```sh
+scripts/oracle/hst-edit dump FILE.HST FILE.M1      # planet, queue, research, events
+scripts/oracle/edit-turn /tmp/pq-case mines=0 factories=0 researchPct=0 \
+    pop=1050 queue=7:20:0:1                        # Factory x20 on planet 7
+```
+
+Observed on 2026-10-07 (PQ-001, about 20 generated years):
+
+- The unmodified PG001 2407 `.HST` round-trips byte-identically through the
+  codec.
+- Stars! loaded every edited pair and generated the turn from the edited
+  state: population, minerals, mines, factories, defenses, the leftover-only
+  box, the research budget and the production queue all took effect. No
+  checksum or consistency complaint was seen.
+- The production queue is a type-28 block right after the planet block, in
+  both files. Queue item: `id = (dword >> 10) & 0x7f`, count = low 10 bits,
+  kind `(w1 >> 1) & 7` (1 = planetary item), percent `(w1 >> 4) & 0x7f`.
+- The `.M1` event block (type 12) lists the year's messages; each record
+  starts with the message id (e.g. 0x3e "completed its orders").
+- Edits are made only while the oracle is stopped (DOSBox caches directory
+  listings). Both files are edited because the client opens `.M1` before
+  generating; whether editing the `.HST` alone suffices was not tested.
+- Set mines to 0 to keep surface minerals fixed during the year; mining
+  happens before production.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
