@@ -23,7 +23,7 @@ Levels:
 | Tasks before movement: unload, scrap, colonize, drops, load, merge, cargo to other players | `TAKEOVER.md`, `ORDERS.md` | Confirmed | Scrap and transfer details are Read. |
 | Packets, wormholes, Mystery Trader | `OBJECTS.md` | In progress | Wormholes and the Trader are owned by the objects and races lane. Packet launch is Read. |
 | Fleet movement, fuel, chasing, stargates | `KERNEL.md`, `OBJECTS.md` | Confirmed | |
-| Minefields | `OBJECTS.md` | Confirmed / Read | Predictions MF-1..12 are with the oracle. |
+| Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: whether the 512th field depends on object order, the 4050-object limit, SS and SD safe-warp bonuses. |
 | Colonists breeding inside fleets (one primary trait) | none | Missing | How carried colonists grow, and where the overflow goes. |
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | none | Missing | Where built ships go: one new fleet per build, its number and name, full fuel, the per-player fleet limit and what happens at it, routing to the planet's route destination with the warp chosen, a new fleet's default orders, what replacing or upgrading a starbase does to the old one. |
