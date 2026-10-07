@@ -156,6 +156,8 @@ public class CombatLab {
                     }
                     if (nq == 0) sb.append("none");
                     sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
+                    // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
+                    sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,

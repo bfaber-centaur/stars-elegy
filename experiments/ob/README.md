@@ -390,3 +390,105 @@ O-41, O-42). `python3 experiments/ob/gen.py --list` prints the tables.
 - `scan.py` at 5e5eb63 reports 0 mismatches on OB-011, OB-018 and OB-020
   (both players), and 0 on OB-020 player 0.
 
+
+
+## Round 5 predictions (OBJECTS.md BINARY-ONLY rules)
+
+Written before OB-021..OB-026 ran. Each case restates a rule `docs/OBJECTS.md`
+marks BINARY-ONLY (the stars-decomp objects reading, PR #10, with its
+stargate notes) that no earlier OB case tested: stargate range, mass,
+refusal, cargo and ownership rules; IT gates and packet targets; Packet
+Physics decay; mines lost to a hit for other field sizes, salvage and
+speed-bump stops; the Super Mine Layer; lay-mines years words 2 and 3;
+wormhole ages, classes and jumps over three years; Mystery Trader arrival
+and part and ship rewards. Sweeping is left out (settled, and CS-003
+measured beams against mines).
+
+- Gate warp is waypoint warp 11. Danger, losses and the damage word come
+  from `gate_pct` and `gate_word` in `gen.py` (OBJECTS.md "Stargates").
+  Every gate case's fleet uses plan "nobody", so no sweep or battle
+  interferes.
+- Random outcomes (gate losses, mine hits, wormhole jumps, Trader warp
+  rises) are predicted as outcome sets. Runs use the pinned stream
+  (cycles 20000).
+- OB-025 runs three years (2400 → 2403) like OB-019.
+- `combatlab dump` now prints each player's Mystery Trader part mask
+  (`mt=`), for OB-026.
+
+### OB-021: stargates: range, mass, refusal, cargo, gate ownership (JOAT player 0, gates 100/250 and 150/600)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-021-A | gate | Laser DD (mass 41) jumps 100 ly between 100/250 gates | at planet 15, undamaged, fuel 100 (no fuel used) | stays; or fuel spent |
+| OB-021-B | gate | 5 Laser DDs jump 384 ly through a 100/250 gate (over range): danger 13% | at planet 16; each ship lost with 4%; survivors 65/100% (26 armor each) | refused; or no damage |
+| OB-021-C | gate | 3 Super Freighters (mass 202 > 100) jump 112 ly carrying 100/50/25 kT and 10 kT colonists: danger 44% | at planet 11 empty; each ship lost with 14%; survivors 220/100%; source planet 5 surface +100/+50/+25 and pop 1010 -> 1161 | cargo carried through |
+| OB-021-C2 | gate | the source planet of C | surface +100/+50/+25, pop 1161 | unchanged (1150) |
+| OB-021-D | gate | Heavy Freighter (mass 502 > 5 x 100) at a gate, 103 ly jump, carrying 100 kT ironium | refused: stays at planet 14, undamaged, hold empty | jumps with damage |
+| OB-021-D2 | gate | the source planet of D | surface +100 ironium (cargo dumped although the jump was refused, LEGACY BUG) | surface unchanged |
+| OB-021-E | gate | Laser DD jumps 372 ly from a 150/600 gate to a 100/250 gate | at planet 23, undamaged (range from the source gate only) | damaged by the 250 range |
+| OB-021-F | gate | Laser DD jumps the same 372 ly the other way (100/250 source): danger 12% | at planet 1, lost with 4%, else 60/100% | undamaged |
+| OB-021-G | gate | 3 Super Freighters (mass 202) jump 357 ly: range and mass factors multiply, danger 50% | at planet 21; each lost with 16%; survivors 250/100% | danger 44% if only the larger factor counted |
+| OB-021-H | gate | Laser DD at a gate, destination planet 20 has a starbase without a gate | stays at planet 18, fuel 100 | jumps |
+| OB-021-I | gate | Laser DD (plan "nobody") at enemy player 1's gate planet 9, gate warp to own gate planet 10 | stays at planet 9 (source gate not owned by self or a friend) | jumps |
+
+### OB-022: Interstellar Traveler player 1 (tech 26): stargates without losses or cargo dumps; packets into IT planets
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-022-A | gate/IT | IT: 5 Laser DDs jump 384 ly through a 100/250 gate: danger 13% | at planet 16, all 5 ships kept, each 65/100% | ships lost with 4% |
+| OB-022-B | gate/IT | IT: Heavy Freighter (mass 502) refused, carrying 100 kT ironium | stays at planet 14 with its 100 kT; planet 14 surface unchanged | cargo dumped |
+| OB-022-B2 | gate/IT | the source planet of B | surface +0 | +100 |
+| OB-022-C | gate/IT | IT: 3 Super Freighters (danger 44%) jump 112 ly with 100/50/25 kT and 10 kT colonists | at planet 11, all 3 kept, cargo carried through, each 220/100% | cargo dumped at planet 5 |
+| OB-022-D | packet/IT | player 0 warp-10 1000 kT packet into IT planet 20 (no starbase, pop 1000) | w^2 halved to 50: 312 killed, pop 688 -> 791; surface +111 | not halved: 625 killed, 431 |
+| OB-022-E | packet/IT | the same into IT planet 9 with a Mass Driver 7 catcher (pop 1000) | w^2 50, c^2 24: q 480, surface +537; 162 killed, pop 838 -> 963 | not halved: +546, 784; rounded c^2 25: +555, 970 |
+
+### OB-023: Packet Physics player 1 packet decay; one Mystery Trader reaching its destination
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-023-P0 | packet/PP | PP packet class 1, 1000/0/0 kT, warp 5 in flight | cargo 950/0/0 after one year (PP rates 5/12/25%, minimum 5) | 900 |
+| OB-023-P1 | packet/PP | PP packet class 2, 1000/0/0 kT, warp 5 in flight | cargo 880/0/0 after one year (PP rates 5/12/25%, minimum 5) | 750; 875 if 12.5% |
+| OB-023-P2 | packet/PP | PP packet class 3, 1000/0/0 kT, warp 5 in flight | cargo 750/0/0 after one year (PP rates 5/12/25%, minimum 5) | 500 |
+| OB-023-P3 | packet/PP | PP packet class 1, 50/0/0 kT, warp 5 in flight | cargo 45/0/0 after one year (PP rates 5/12/25%, minimum 5) | 40 (minimum 10) |
+| OB-023-P4 | packet/PP | PP packet class 2, 100/100/0 kT, warp 5 in flight | cargo 88/88/0 after one year (PP rates 5/12/25%, minimum 5) | 75/75; germanium stays 0 |
+| OB-023-Q | packet | player 0 (JOAT) packet class 1, 1000 kT | cargo 900 (10%) |  |
+| OB-023-R | packet | player 0 packet class 1, 50 kT | cargo 40 (minimum 10) | 45 |
+| OB-023-T | trader | the only Mystery Trader, warp 8, 20 ly from its destination (1380,1300) | gone (1/2), or at (1380,1300) with warp 7 (8 if its warp rose first) and a new destination on an edge | keeps moving past |
+
+### OB-024: minefield hits at warp 10: mines lost by field size, salvage, speed-bump stops; Super Mine Layer
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-024-A | O-14/O-15 | one Laser DD at warp 10 (100 ly) crossing 40 ly of a heavy 400 field (40 per mille per ly) | no hit (20%): field 390, DD at (1120,1230); or hit: DD destroyed (2000 minimum), field 400-20-10 = 370, salvage of 0-9 kT of each mineral at the stop point | mines lost 10 |
+| OB-024-B | O-14/O-15 | 5 Laser DDs at warp 10 crossing a heavy 6000 field (154 ly, two planets inside) | hit (99.8%): all destroyed (500 each); field 6000-60 = 5940, decay 10% -> 5346; salvage 0-9 kT each | mines lost 300 (N/20) or 50 |
+| OB-024-C | O-14/O-15 | one Laser DD at warp 10 crossing a speed-bump 400 field (175 per mille per ly) | stopped inside, undamaged; field 400-20 = 380, decay 2% (no minimum) -> 373 | damaged; or field 392 |
+| OB-024-D | O-1 | Super Mine Layer with 2 Mine Dispenser 40, laying in place | standard field 160 (doubled) | 80 |
+
+### OB-025: three years: lay-mines years words 2 and 3; wormhole years, classes and jumps (6%/yr ends)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-025-A1 | O-4 | year 1: stationary layer, years word 2 | field 160, task kept | cleared a year earlier (word = years) |
+| OB-025-A2 | O-4 | year 2: stationary layer, years word 2 | field 310, task kept | cleared a year earlier (word = years) |
+| OB-025-A3 | O-4 | year 3: stationary layer, years word 2 | field 460, task cleared (3 years laid) | cleared a year earlier (word = years) |
+| OB-025-B1 | O-4 | year 1: stationary layer, years word 3 | field 160, task kept |  |
+| OB-025-B2 | O-4 | year 2: stationary layer, years word 3 | field 310, task kept |  |
+| OB-025-B3 | O-4 | year 3: stationary layer, years word 3 | field 460, task kept |  |
+| OB-025-W1 | O-28/O-29 | year 1: class-1 pair aged 0 | no jump (0% before 10 years); years 1; class 1; each step at most 12 ly per axis |  |
+| OB-025-W2 | O-28/O-29 | year 2: class-1 pair aged 0 | no jump (0% before 10 years); years 2; class 1; each step at most 12 ly per axis |  |
+| OB-025-W3 | O-28/O-29 | year 3: class-1 pair aged 0 | no jump (0% before 10 years); years 3; class 1; each step at most 12 ly per axis |  |
+| OB-025-J1 | O-28 | year 1: twenty class-2 ends aged 40 (jump 6% per end per year) | each end jiggles (years +1) or jumps (years 0, anywhere); class stays 2; recorded per end |  |
+| OB-025-J2 | O-28 | year 2: twenty class-2 ends aged 41 (jump 6% per end per year) | each end jiggles (years +1) or jumps (years 0, anywhere); class stays 2; recorded per end |  |
+| OB-025-J3 | O-28 | year 3: twenty class-2 ends aged 42 (jump 6% per end per year) | each end jiggles (years +1) or jumps (years 0, anywhere); class stays 2; recorded per end |  |
+| OB-025-F1 | O-31 | year 1: scouts at warp 1 targeting aged ends (player 0 sees the whole map) | the waypoint keeps the wormhole as target and follows its position, after jiggles and after jumps | target dropped to deep space after a jump |
+| OB-025-F2 | O-31 | year 2: scouts at warp 1 targeting aged ends (player 0 sees the whole map) | the waypoint keeps the wormhole as target and follows its position, after jiggles and after jumps | target dropped to deep space after a jump |
+| OB-025-F3 | O-31 | year 3: scouts at warp 1 targeting aged ends (player 0 sees the whole map) | the waypoint keeps the wormhole as target and follows its position, after jiggles and after jumps | target dropped to deep space after a jump |
+
+### OB-026: Mystery Trader: arrival while another exists, part and ship rewards (player 1 at tech 3)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-026-A | trader | Trader 0 (warp 9) 80 ly from its destination while three others exist | gone | stays (1/2) |
+| OB-026-B | trader | Trader 1 offering part bit 0 moves 64 ly onto a player 1 fleet of 24 Medium Freighters with 5000 kT | fleet removed; player 1 gains exactly one Mystery Trader part bit; tech unchanged | research levels |
+| OB-026-C | trader | Trader 2 offering a ship moves 64 ly onto a second player 1 fleet with 5000 kT | fleet removed; a new player 1 fleet of 1 or 2 ships of one new design (added to its designs) at (1084,1300); tech unchanged | research levels; nothing |
+| OB-026-D | trader | Trader 3, warp 9, mid-crossing | at (1101,1050) warp 9 (24/25), or warp 10 at (1120,1050), perhaps with a new destination |  |
