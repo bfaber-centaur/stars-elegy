@@ -21,6 +21,8 @@ import org.starsautohost.starsapi.items.Items;
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
+//   accum P FIELD N                 set P's accumulated research in FIELD (resources toward
+//                                   the next level; dumped as accum=)
 //   field P FIELD                   set the current research field
 //   defqueue P ID:COUNT[,...]|none  set P's default production queue for new colonies (at
 //                                   most 12 items; ID = planetary item id, 0 auto mines,
@@ -73,8 +75,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
-//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
-//   thing trader NUM X Y DX DY WARP [met MASK] [item I]
+//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
+//   thing trader NUM X Y DX DY WARP [met MASK] [item I] [w10 HEX] [w16 HEX]
 //   thing raw HEX                   (18 bytes)
 //                                   universe objects (objects corpus), written as the
 //                                   host file's object blocks: a count block, then one
@@ -169,6 +171,14 @@ public class CombatLab {
                     }
                     if (nq == 0) sb.append("none");
                     sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
+                    // race economy (RaceLab layout): growth %, colonists per resource /100, factory
+                    // output, cost, count per 10k; mine output, cost, count per 10k; leftover spend;
+                    // research cost per field (0 expensive, 1 normal, 2 cheap); trait word 0x48
+                    byte[] d = p.fullDataBytes;
+                    sb.append(String.format(" growth=%d econ=%d,%d,%d,%d,%d,%d,%d spend=%d rcost=%d,%d,%d,%d,%d,%d traits=%04x",
+                        d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
+                        d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
+                        Util.read16(d, 0x48)));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                 }
@@ -446,6 +456,7 @@ public class CombatLab {
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
+        Map<String, Long> accums = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
@@ -475,6 +486,7 @@ public class CombatLab {
                         break;
                     }
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "accum": accums.put(t[1] + " " + t[2], Long.parseLong(t[3])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "mt": {
@@ -696,6 +708,13 @@ public class CombatLab {
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
+            for (Map.Entry<String, Long> e : accums.entrySet()) {
+                String[] pf = e.getKey().split(" ");
+                if (Integer.parseInt(pf[0]) != k) continue;
+                int i = Arrays.asList(TECH).indexOf(pf[1]);
+                if (i < 0) throw new Exception("accum: unknown tech field " + pf[1]);
+                Util.write32(p.fullDataBytes, 0x18 + 4 * i, e.getValue());
+            }
             if (fields.containsKey(k)) {
                 if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
@@ -1001,6 +1020,8 @@ public class CombatLab {
                         case "years": years = Integer.parseInt(t[++i]); break;
                         case "seen": Util.write16(r, 8, Integer.decode(t[++i])); break;
                         case "seen2": Util.write16(r, 10, Integer.decode(t[++i])); break;
+                        case "w14": Util.write16(r, 14, Integer.parseInt(t[++i], 16)); break;
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("wormhole: unknown token " + t[i]);
                     }
                 }
@@ -1016,6 +1037,8 @@ public class CombatLab {
                     switch (t[i]) {
                         case "met": Util.write16(r, 12, Integer.decode(t[++i])); break;
                         case "item": Util.write16(r, 14, Integer.decode(t[++i])); break;
+                        case "w10": Util.write16(r, 10, Integer.parseInt(t[++i], 16)); break;   // whole word, warp included
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("trader: unknown token " + t[i]);
                     }
                 }

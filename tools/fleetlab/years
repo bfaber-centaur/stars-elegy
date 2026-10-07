@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Generate N years in a row with the random stream pinned, keeping every year.
+#   tools/fleetlab/years START.HST BASEDIR OUTDIR N [CYCLES] [STEP] [GAME]
+# Year 1 is `pinned-turn START BASEDIR OUTDIR/y1 CYCLES`; year k > 1 starts
+# from year k-1's output (OUTDIR/y(k-1)/raw/after, host file and player
+# files) and runs with CYCLES + (k-1)*STEP (STEP default 1000), or with
+# the k-th value when CYCLES is a comma list of N values.
+# STEP matters: every year starts a fresh DOSBox, so with STEP 0 each year
+# replays the same random stream and a wormhole jiggles by the same vector
+# every year (WT-000). STEP 0 is only for reproducing a fixed-cycles chain
+# such as OB-019. Different CYCLES do not always give different streams
+# (20000 and 22000 gave the same draws in WT-000), so trace.py flags a year
+# whose wormhole moves repeat the year before; pick a list that avoids it.
+# Each OUTDIR/yK holds pinned-turn's usual raw/, before.dump,
+# after.dump and manifest.sha256, so experiments/wt/trace.py can follow
+# objects and fleets year by year. The same START and CYCLES repeat the
+# whole chain; to sample other random streams, run it again with other
+# CYCLES values into other OUTDIRs.
+# OUTDIR holds registered-copy output: keep it out of this repository.
+set -euo pipefail
+[[ $# -ge 4 ]] || { echo "usage: years START.HST BASEDIR OUTDIR N [CYCLES] [STEP] [GAME]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+start="$1" base="$2" out="$3" n="$4" cycles="${5:-20000}" step="${6:-1000}" game="${7:-CB}"
+mkdir -p "$out"
+for ((k = 1; k <= n; k++)); do
+  if [[ "$cycles" == *,* ]]; then
+    IFS=, read -ra list <<< "$cycles"
+    [[ ${#list[@]} -eq $n ]] || { echo "years: CYCLES list needs $n values" >&2; exit 2; }
+    c="${list[k - 1]}"
+  else
+    c="$((cycles + (k - 1) * step))"
+  fi
+  "$here/pinned-turn" "$start" "$base" "$out/y$k" "$c" "$game" | tail -1
+  start="$out/y$k/raw/after/$game.HST" base="$out/y$k/raw/after"
+done
+echo "years: $n years in $out/y1..y$n"
