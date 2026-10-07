@@ -37,6 +37,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
 //                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
 //                                   = percent of the first unit already done (default 0)
+//   keepfleets                      keep the base file's fleets (no "fleet" lines allowed)
+//   fleetset P ID fuel=N            with keepfleets: set kept fleet P/ID's fuel (mg)
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -73,6 +75,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
+//                                   packet=DEST,WARP|none (packet destination planet and
+//                                   packet speed setting; WARP 4 = unset, the game then
+//                                   uses the driver's warp)
 //                                   artifact=1|0 (ancient artifact flag, any planet)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
@@ -489,6 +494,9 @@ public class CombatLab {
         Map<Integer, int[]> planetSpecs = new HashMap<>(); // N -> {owner, pop, starbase, scanner}; -2 = keep, -1 = none
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
+        boolean keepFleets = false;
+        Map<Integer, Map<String, String>> fleetSets = new HashMap<>(); // owner * 1024 + id -> KEY=V
+
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -530,6 +538,17 @@ public class CombatLab {
                             }
                         if (q.size() > 12) throw new Exception("defqueue: at most 12 items");
                         defQueues.put(Integer.parseInt(t[1]), q);
+                        break;
+                    }
+                    case "keepfleets": keepFleets = true; break;
+                    case "fleetset": {
+                        Map<String, String> kv = new LinkedHashMap<>();
+                        for (int i = 3; i < t.length; i++) {
+                            String[] e = t[i].split("=", 2);
+                            if (e.length != 2 || !e[0].equals("fuel")) throw new Exception("fleetset: fuel=N expected, got " + t[i]);
+                            kv.put(e[0], e[1]);
+                        }
+                        fleetSets.put(Integer.parseInt(t[1]) * 1024 + Integer.parseInt(t[2]), kv);
                         break;
                     }
                     case "relation":
@@ -637,6 +656,8 @@ public class CombatLab {
             }
         }
 
+        if (keepFleets && !fleets.isEmpty()) throw new Exception("keepfleets: no fleet lines allowed");
+        if (!fleetSets.isEmpty() && !keepFleets) throw new Exception("fleetset needs keepfleets");
         // Final design lists per player.
         Map<Integer, Collection<DesignBlock>> ship = new TreeMap<>(), sbs = new TreeMap<>();
         for (PlayerBlock p : players) {
@@ -753,7 +774,7 @@ public class CombatLab {
             }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
-            p.fleets = fleetCount.getOrDefault(k, 0);
+            if (!keepFleets) p.fleets = fleetCount.getOrDefault(k, 0);
             if (relations.containsKey(k)) {
                 Map<Integer, Integer> rel = relations.get(k);
                 int len = Math.max(p.playerRelations.length, Collections.max(rel.keySet()) + 1);
@@ -787,7 +808,15 @@ public class CombatLab {
                 }
                 continue;
             }
-            if (b instanceof PartialFleetBlock || b instanceof WaypointBlock) continue;
+            if ((b instanceof PartialFleetBlock || b instanceof WaypointBlock) && !keepFleets) continue;
+            if (b instanceof PartialFleetBlock && !fleetSets.isEmpty()) {
+                PartialFleetBlock fl = (PartialFleetBlock) b;
+                Map<String, String> kv = fleetSets.remove(fl.owner * 1024 + fl.fleetNumber);
+                if (kv != null) {
+                    fl.fuel = Long.parseLong(kv.get("fuel"));
+                    fl.encode();
+                }
+            }
             if (b.typeId == BlockType.OBJECT && !things.isEmpty()) continue;
             if (!things.isEmpty() && !thingsDone && (b instanceof BattlePlanBlock || b.typeId == BlockType.FILE_FOOTER)) {
                 if (!fleetsDone) { result.addAll(newFleets); fleetsDone = true; }
@@ -889,6 +918,7 @@ public class CombatLab {
         if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
+        if (!fleetSets.isEmpty()) throw new Exception("fleetset: no fleet " + fleetSets.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
     }
@@ -947,6 +977,21 @@ public class CombatLab {
                     int w = (pl.starbaseBytes[0] & 0xff) | (pl.starbaseBytes[1] & 0xff) << 8;
                     w = (w & 0x000f) | (Integer.parseInt(v) & 0x0fff) << 4;
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
+                    break;
+                }
+                case "packet": {
+                    // packet destination and speed: starbase word 1, bits 0-9 = destination
+                    // planet + 1 (0 = none), bits 10-13 = packet warp - 4. packet=DEST,WARP or none
+                    if (pl.starbaseBytes == null) throw new Exception("planetset " + pl.planetNumber + ": no starbase");
+                    int w = (pl.starbaseBytes[2] & 0xff) | (pl.starbaseBytes[3] & 0xff) << 8;
+                    if (v.equals("none")) w &= ~0x3fff;
+                    else {
+                        if (three.length != 2) throw new Exception("planetset packet=DEST,WARP expected");
+                        int dest = Integer.parseInt(three[0]), warp = Integer.parseInt(three[1]);
+                        if (dest < 0 || dest > 1022 || warp < 4 || warp > 19) throw new Exception("planetset packet: bad " + v);
+                        w = (w & ~0x3fff) | (dest + 1) | (warp - 4) << 10;
+                    }
+                    pl.starbaseBytes[2] = (byte) w; pl.starbaseBytes[3] = (byte) (w >> 8);
                     break;
                 }
                 case "route":
