@@ -899,14 +899,53 @@ loses nothing. Vectors (TK-117, deep space): 10 → 10, 11 → 11, 40 → 39,
 200 → 194 moving; 200 stationary → 200. TK-107 matches too (25 → 24,
 100 → 97).
 
+### Fuel cannot be unloaded onto a planet (CONFIRMED, FM-101..105)
+
+A waypoint unload of fuel at a planet moves nothing: the fleet keeps all
+its fuel and the unload order is cleared as usual (FM round 2, `PARITY.md`
+"Fleet Movement": "unload all" at the owner's own planet without a starbase, 300 mg kept). A planet
+neither takes nor supplies fuel, and deep space behaves the same way
+(`TAKEOVER.md`). Fuel moves only between fleets. A direct cargo transfer
+of fuel to a planet was not run.
+
+### Designs without a full set of engines (LEGACY BUG, CONFIRMED FM-105)
+
+A design whose engine slot is empty or not filled to the hull's maximum
+uses engine factor `f = 99999` at every warp (it can still move).
+
+Each stack's fuel term `trunc(f·L·M/2000)` (`L` light-years, `M` its mass
+plus cargo, Fuel cost above) is computed with 32-bit integers when
+`M < 200`, or when `f·L < 500000` and `M < 4000`, or when
+`f·L < 100000` and `M < 20000`; otherwise in floating point. In the
+integer form the product `f·L·M` keeps only its low 32 bits (unsigned) and
+is then divided as a signed 32-bit number. With J-RC3 engines this never
+wraps. With `f = 99999` it does for the range estimate (`L = 1000`):
+
+- A Large Freighter with one of its two Long Hump 6 engines, 134 kT, warp
+  5: `99999·1000·134 = 13,399,866,000` keeps `514,964,112`, so `C1000 =
+  trunc(trunc(514964112/2000)/10) = 25748` and `R = trunc(fuel·1000/25748)`.
+  Moving `R` costs far more than the tank (25 ly: `trunc(99999·25·134/2000)
+  = 167498` tenths), so the fleet moves `R` and ends with 0 mg.
+- Vectors (CONFIRMED, FM-105): fuel 200, 50, 500 mg → 7, 1, 19 ly, 0 mg
+  left.
+
+This is a deterministic arithmetic overflow, not memory corruption: the
+result depends only on the factor, distance and mass. Elegy reproduces it
+in one isolated function (32-bit wrap of the integer-form product) so it
+can be switched off. FM-105 used an edited design; whether the original's
+ship designer lets a player save one is not established.
+
 ### Other movement rules (BINARY-ONLY)
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
 - Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
   Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
-  each ship is destroyed with probability 1/10 each year it moves.
+  each ship is destroyed with probability 1/10 each year it moves
+  (MEASURED, FM round 2: 11 of 100 and 5 of 50 ships lost; fuel left with
+  the lost ships in proportion).
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
-  fleet does not move.
+  fleet does not move (MEASURED, FM round 2: 2 of 40 fleets stopped at
+  warp 7, 0 of 20 at warp 6).
 - Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`.
 - Radiating Hydro-Ram Scoop engines kill
   `max(1, trunc(colonists·trunc((86 − mid)/2)/100))` kT of carried
@@ -916,7 +955,6 @@ loses nothing. Vectors (TK-117, deep space): 10 → 10, 11 → 11, 40 → 39,
 - Fuel generators (anti-matter) add 50 mg each and fuel transports 200 mg
   each per year, capped at the tank.
 - Refuelling at a friend's starbase, and at a starbase without a dock.
-- Fuel unloaded onto a planet is lost.
 
 ## Scores and victory conditions
 

@@ -571,6 +571,18 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   JOAT → Super Stealth (`prt 1 1`) is over budget (KX-003 S3: 0x117,
   colonists-per-resource 24); LRTs `0x1b80` made it legal (S3L). JOAT →
   Claim Adjuster is legal.
+- KX-004 (2026-10-07): long runs go one year per `pinned-turn` process
+  (`experiments/kx004/run-kx4.sh`, about 13 s a year), with a different
+  cycles value each year so each year draws from a different random
+  stream. Running several `stars.exe -g` in one DOSBox autoexec does not
+  work: Windows stays up after the first generated year.
+- Event records in a `.M` file's events block (the `events` hex from
+  `hst-edit dump`): a 16-bit word whose low 9 bits are the message id and
+  whose bits 9 and up flag which parameters take 2 bytes; a 16-bit
+  object word; then the parameters, 1 byte each unless flagged. The number
+  of parameters depends on the message id (a table in the original
+  program; the private KX-004 checker carries it). Example: `5901 feff 00
+  17` is message 0x159 with object −2 and parameters 0 and 23.
 - A state the game cannot process shows a Windows "Application Error"
   dialog (KX-001 Z1: "integer divide by 0") and no year is written; `turn`
   and `host-turn` then time out with the dialog still open. Take a
