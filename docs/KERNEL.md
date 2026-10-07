@@ -73,8 +73,9 @@ Race: for each axis (gravity, temperature, radiation) a center `c`, a low
 `lo` and a high `hi` on the 0–100 internal scale, or "immune" on that axis.
 Planet: current environment `v` per axis on the same scale.
 
-Rule (BINARY-ONLY; CONFIRMED only for a planet at the race's center on all
-three axes, which gives 100):
+Rule (CONFIRMED at the seven points the vector table marks so: KX-002
+H1–H6 cover one and two axes off centre, all three off, the range edge
+and two hostile planets, read through growth and resources):
 
 1. If any axis is outside `lo..hi`, the planet is hostile:
    `hab = −Σ min(15, distance beyond the nearer edge)` over the axes outside
@@ -86,30 +87,35 @@ three axes, which gives 100):
      (more than halfway to the edge), `M = trunc(M·(2w − (2d − w)) / (2w))`.
 3. `x = trunc(sqrt(S/3) + 0.9)` (floating point), `hab = trunc(x·M / 10000)`.
 
-Vectors (race center 50, low 15, high 85 on every axis; BINARY-ONLY except
-the first):
+Vectors (race center 50, low 15, high 85 on every axis):
 
 | Planet (g, t, r) | hab | Status |
 |---|---:|---|
 | 50, 50, 50 | 100 | CONFIRMED (PG001) |
-| 60, 50, 50 | 92 | BINARY-ONLY |
+| 60, 50, 50 | 92 | CONFIRMED (KX-002 H1) |
 | 70, 50, 50 | 79 | BINARY-ONLY |
-| 85, 50, 50 | 41 | BINARY-ONLY |
-| 70, 70, 50 | 58 | BINARY-ONLY |
-| 80, 80, 80 | 3 | BINARY-ONLY |
-| 90, 50, 50 | −5 | BINARY-ONLY |
-| 10, 95, 50 | −15 | BINARY-ONLY |
+| 85, 50, 50 | 41 | CONFIRMED (KX-002 H4) |
+| 70, 70, 50 | 58 | CONFIRMED (KX-002 H2) |
+| 80, 80, 80 | 3 | CONFIRMED (KX-002 H3) |
+| 90, 50, 50 | −5 | CONFIRMED (KX-002 H5) |
+| 10, 95, 50 | −15 | CONFIRMED (KX-002 H6) |
+
+The cap of 15 per hostile axis is BINARY-ONLY: with this race no value
+can be more than 14 outside 15–85.
 
 ## Maximum population
 
 In units. Rule:
 
 - ordinary race: `max = 100·hab` for `hab ≥ 5`; `max = 500` for `hab < 5`
-  (hostile included). CONFIRMED for hab 100 (10,000 units).
+  (hostile included). CONFIRMED for hab 100 (10,000 units), 92, 58, 41
+  and 3 (500), and 500 on hostile planets (KX-002 H1–H6, through growth
+  and effective population).
 - Hyper-Expansion: `max −= trunc(max/2)`. Jack of all Trades:
   `max += trunc(max/5)`. Then Only Basic Remote Mining:
-  `max += trunc(max/10)`. BINARY-ONLY (agrees with the documented
-  500,000 / 1,200,000 / +10%).
+  `max += trunc(max/10)`. CONFIRMED one at a time at hab 100 (KX-002 P1:
+  HE 5,000; P2: JOAT 12,000; P3: OBRM 11,000). Combining them, and the
+  order of the truncations, is BINARY-ONLY.
 - Alternate Reality: 0 unless the planet has the owner's starbase; then by
   starbase hull, in hull order: 2,500, 5,000, 10,000, 20,000, 30,000 units,
   regardless of habitability (OBRM +10% still applies). BINARY-ONLY.
@@ -126,15 +132,16 @@ In units. Rule:
   starbase's design, which removes the starbase and keeps the population
   (BINARY-ONLY).
 
-Vectors (BINARY-ONLY): HE at hab 100 → 5,000; JOAT at hab 100 → 12,000;
-OBRM at hab 100 → 11,000; hab 3 → 500; JOAT+OBRM at hab 79 → 10,428.
+Vectors: HE at hab 100 → 5,000; JOAT at hab 100 → 12,000; OBRM at hab
+100 → 11,000; hab 3 → 500 (all CONFIRMED, KX-002); JOAT+OBRM at hab 79 →
+10,428 (BINARY-ONLY).
 
 ## Population growth
 
 State per planet: population `P` (units) and a growth **carry** `k`
 (hundredths of a unit, 0–99). The carry is persistent: it is the byte
 StarsAPI calls `excessPop`. Race growth rate `G` (percent; doubled for
-Hyper-Expansion, BINARY-ONLY).
+Hyper-Expansion, CONFIRMED, KX-002 P1).
 
 ### Positive habitability (`hab ≥ 0`)
 
@@ -145,8 +152,8 @@ Hyper-Expansion, BINARY-ONLY).
      `g = trunc(g·(1000 − c)² / 562500)` if `g < 1000`, else
      `g = 10·trunc(trunc(g/10)·(1000 − c)² / 562500)`;
    - if `max ≤ P ≤ max + 10`: no change at all this year (P and k kept);
-   - if `P > max + 10` (overcrowded): `g = 2·max(−300, trunc(c/−10) + 99)`
-     with `c` as above (negative: deaths).
+   - if `P > max + 10` (overcrowded): `g = 4·max(−300, trunc(c/−10) + 99)`
+     with `c` as above (negative: deaths, at most 12% a year).
 3. `t = trunc(g·P / 100)` (hundredths of a unit). (For very large products
    the game computes `trunc(g/100)·P`; it uses that value whenever it is at
    least 10,000,000.)
@@ -160,9 +167,14 @@ max 10,000) over 36 consecutive years 2400–2436, 11 of them crowded
 (27% to 54% of capacity), population **and** carry every year. That race
 has `g = G·hab = 1000` exactly, so its crowded years exercise the
 quantized branch, and the boundary is inclusive: the unquantized formula
-would give 2425 → 2426 growth of 256 units, not the observed 254. The
-`g < 1000` branch, other `g` values, overcrowding and the "within 10 units
-of max" rule are BINARY-ONLY. The 16/9·(1−x)² curve in `PARITY.md` (H1) is
+would give 2425 → 2426 growth of 256 units, not the observed 254. KX-002
+confirms the `g < 1000` branch (H3 `g = 30`, H4 `g = 410`), HE's
+`g = 2000` (P1), the "within 10 units of max" freeze (G2), the zero-growth
+carry (G3) and overcrowding (G1). Overcrowding was published before
+KX-002 as `2·max(−300, …)`. The oracle gave twice those deaths (G1:
+12,000 → 11,899 carry 20, not 11,949 carry 60). Re-reading the binary
+shows that this branch's result also goes through the final doubling of
+the quantized crowded branch, so the factor is 4. The 16/9·(1−x)² curve in `PARITY.md` (H1) is
 this rule; its 0–4 unit misses come from the permille truncation, the
 quantization of `g` to a multiple of 10, and the carry.
 
@@ -190,25 +202,31 @@ not below 1000, so the quantized branch applies. `c = trunc(1000·2704/10000) = 
 `(1000 − c)² = 532900`, `g = 10·trunc(100·532900/562500) = 940`;
 `t = trunc(940·2704/100) = 25417`; `q = 254`, `r = 17`; P 2958, k 17.
 
-Vectors, BINARY-ONLY (start `(P, k)`, max, G, hab → result):
+Vectors (start `(P, k)`, max, G, hab → result; CONFIRMED where a KX-002
+case is named, otherwise BINARY-ONLY):
 
 | Start | max | G | hab | Result | Case |
 |---|---:|---:|---:|---|---|
 | 1000, 0 | 7900 | 15 | 79 | 1118, 50 | uncrowded |
 | 5000, 30 | 10000 | 15 | 100 | 5330, 30 | crowded, `g ≥ 1000` quantization |
 | 3000, 0 | 8600 | 10 | 86 | 3194, 70 | crowded, `g < 1000` |
-| 9995, 0 | 10000 | 10 | 100 | 9995, 1 | zero growth adds 1 to the carry |
-| 10005, 0 | 10000 | 10 | 100 | 10005, 0 | within 10 units of max: frozen |
-| 12000, 0 | 10000 | 10 | 100 | 11949, 60 | overcrowded deaths |
+| 300, 0 | 500 | 10 | 3 | 300, 24 | crowded, `g < 1000` (KX-002 H3) |
+| 3000, 0 | 4100 | 10 | 41 | 3015, 60 | crowded, `g < 1000` (KX-002 H4) |
+| 3000, 0 | 5000 | 20 | 100 | 3168, 0 | HE, crowded, `g ≥ 1000` (KX-002 P1) |
+| 10005, 0 | 12000 | 10 | 100 | 10045, 2 | JOAT, crowded (KX-002 P2) |
+| 10005, 0 | 11000 | 10 | 100 | 10015, 0 | OBRM, crowded (KX-002 P3) |
+| 9995, 0 | 10000 | 10 | 100 | 9995, 1 | zero growth adds 1 to the carry (KX-002 G3) |
+| 10005, 0 | 10000 | 10 | 100 | 10005, 0 | within 10 units of max: frozen (KX-002 G2) |
+| 12000, 0 | 10000 | 10 | 100 | 11899, 20 | overcrowded deaths, `g = −84` (KX-002 G1) |
 
-### Hostile planets (`hab < 0`) (BINARY-ONLY)
+### Hostile planets (`hab < 0`) (CONFIRMED, KX-002 H5, H6)
 
 `t = max(1, trunc(|hab|·P / 10))` hundredths of a unit die:
 `q = trunc(t/100)`, `r = t − 100q`; `k −= r`, and if `k < 0`, `k += 100`
 and `q += 1`; `P −= q`. (Matches the documented `|hab|/10` percent per
 year.) Growth and deaths are computed only for owned planets with a
 non-zero population, so the `max(1, …)` never acts on an empty planet
-(BINARY-ONLY). Vectors: `P 1000, k 0, hab −5` → `995, 0`;
+(BINARY-ONLY). Vectors (CONFIRMED): `P 1000, k 0, hab −5` → `995, 0`;
 `P 1234, k 10, hab −15` → `1215, 59`.
 
 ### Duplicate-serial penalty (BINARY-ONLY)
@@ -229,7 +247,9 @@ per 100 units).
 ### Resources per planet
 
 1. Effective population `E = P` if `P ≤ max`, else
-   `min(2·max, max + trunc((P − max)/2))` (BINARY-ONLY above max).
+   `min(2·max, max + trunc((P − max)/2))`. Above max: CONFIRMED (KX-002 G1,
+`P` 12,000 at max 10,000 → `E` 11,000; H5, H6, hostile planets above
+their 500); the `2·max` limit is BINARY-ONLY.
 2. Non-AR: `resources = trunc(E / R0) + trunc((F·n + 9) / 10)`, where
    `n = min(installed factories, operable factories)`.
 3. Alternate Reality: `trunc(sqrt((E / R0)·max(1, energy tech))·
@@ -250,9 +270,9 @@ every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
 
 | Quantity | Rule | Status |
 |---|---|---|
-| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | BINARY-ONLY |
-| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | BINARY-ONLY |
-| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | BINARY-ONLY |
+| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | CONFIRMED at hab 41: 410 (KX-002 C3); the floor of 10 and AR: BINARY-ONLY |
+| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | CONFIRMED at hab 58: 580 (KX-002 C1); the floor of 10 and AR: BINARY-ONLY |
+| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | CONFIRMED at hab 3: 12 (KX-002 C2); the other branches and AR: BINARY-ONLY |
 | operable mines | `max(1, min(max mines, trunc(P'·Mo/100)))` | CONFIRMED for auto mines (PQ C04, C09, C14) |
 | operable factories | `max(1, min(max factories, trunc(P'·Fo/100)))` | CONFIRMED for auto factories (PQ C09) |
 | operable defenses | `min(max defenses, 1000, ceil(P'/25))` | CONFIRMED (PQ C13) |
@@ -289,8 +309,9 @@ depletion fraction `f` (stored byte, 1/256ths of the current concentration
 point remaining, 0 meaning a full 256) and `m` working mines:
 
 1. Homeworld floor: on a homeworld, `conc` below 30 counts as 30 for output
-   (the stored value is not raised). BINARY-ONLY (PG's ironium sits exactly
-   at 30).
+   and for depletion (the stored value is not raised, and keeps falling).
+   CONFIRMED (KX-002 N2: stored ironium 20 → 19 over three years, output
+   300 kT a year from 1000 mines).
 2. `prod = conc_used·m`; output `amt = trunc(prod·eff/10)` with
    `eff` = race mine output (AR: 10).
 3. Surface minerals gain `trunc(amt/100)`, plus 1 with probability
@@ -304,9 +325,10 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    +1) and the stored `conc` clamped for this purpose to
    `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
    repeat while `p > 0` and stored `conc > 1`:
-   - `cc` from the current stored `conc` (re-evaluated on every repetition,
-     so it changes when `conc` drops below 25 or 5 within the year;
-     BINARY-ONLY);
+   - `cc` from the current stored `conc`, re-evaluated on every repetition
+     (CONFIRMED, KX-002 N2: germanium 84 → 79 in one year, fraction 34;
+     the `cc = 25` clamp, ironium at 20 and 19; the `cc = 10` clamp below
+     5 is BINARY-ONLY);
    - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
    - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
    - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
@@ -316,7 +338,8 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    So one concentration point costs about `12500/cc` units of `p`.
    CONFIRMED: concentration and fraction bytes after every one of 48 PG
    years (homeworld, 10 mines, race mine output 10, concentrations 30, 113,
-   84 at 2407).
+   84 at 2407), and three years with 1000 mines, several points a year
+   (KX-002 N2, vectors below).
 
 Vectors (CONFIRMED, PG002 run, 10 working mines, `eff = 10`; fraction shown
 as stored, 0 = 256):
@@ -335,6 +358,17 @@ probability 30%; this year 0). `p = 11`, `cc = 100`, `s = 86`:
 Boranium 2410 → 2411: `s = 12`, `need = trunc(585/100) = 5 ≤ 11`: conc
 113 → 112, `p = 6`; then `s = 256`, `need = 125 > 6`,
 `f = trunc(119·256/125) = 243`.
+
+Vectors (CONFIRMED, KX-002 N2: homeworld, 1000 working mines, `eff = 10`,
+population frozen at max; 2407 as PG with ironium concentration set to
+20):
+
+| Year | conc I/B/G | frac I/B/G | Surface gain I/B/G that year |
+|---:|---|---|---|
+| 2407 | 20/113/84 | 242/86/157 | |
+| 2408 | 20/104/79 | 88/73/34 | +300/+1130/+840 |
+| 2409 | 19/96/74 | 189/11/77 | +300/+1040/+790 |
+| 2410 | 19/88/70 | 35/241/11 | +300/+960/+740 |
 
 Remote mining (BINARY-ONLY): a fleet with a remote-mining task, at an
 unowned planet, that did not move this year, mines after production with
@@ -360,8 +394,9 @@ doubled when the game's slower-tech option is set.
 6100, 9870, 13850, 18040, 22440, 27050, 31870, 36900, 42140, 47590, 53250,
 59120, 65200, 71490, 77990, 84700.
 
-CONFIRMED for the normal setting, levels 3–9 of one field (PG). Other
-settings and slower tech: BINARY-ONLY.
+CONFIRMED for the normal setting, levels 3–9 of one field (PG), and for
+"costs 75% more" (KX-002 R1: `c = 210` → 368, rounding up) and "costs 50%
+less" (KX-002 R2: 100, 145, 215, 325). Slower tech: BINARY-ONLY.
 
 ### Allocation
 
@@ -372,20 +407,22 @@ settings and slower tech: BINARY-ONLY.
 - All research goes to the current field. Level-ups: while
   `accumulated ≥ cost(level+1)`, subtract the cost and raise the level;
   the excess carries over (CONFIRMED, PG). Several levels per year are
-  possible (BINARY-ONLY).
+  possible (CONFIRMED, KX-002 G1 and R2: three and four levels).
 - When a level is gained in the current field and the "next field" choice
   is not "same field", the leftover moves to the new field and the current
-  field's accumulation becomes 0; "lowest field" picks the lowest level,
-  first in field order on ties (BINARY-ONLY). The new field is checked for
-  level-ups the same year with that leftover. An explicit next-field
-  choice is used once and then resets to "same field"; "lowest field"
-  stays set. Only a level-up in the current field switches fields, also
-  with Generalized Research (BINARY-ONLY).
+  field's accumulation becomes 0; "lowest field" picks the lowest level
+  (counting the level just gained), first in field order on ties. The new
+  field is checked for level-ups the same year with that leftover, and can
+  switch again. An explicit next-field choice is used once and then resets
+  to "same field"; "lowest field" stays set. CONFIRMED (KX-002 R3: energy
+  → weapons → propulsion in one year, "lowest" kept; R4: leftover 100 to
+  biotech, choice reset). Only a level-up in the current field switches
+  fields, also with Generalized Research (BINARY-ONLY).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
-  (BINARY-ONLY).
-- Research into a field at level 26 (or level 10 for a capped player) is
-  lost (BINARY-ONLY).
+  (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
+- Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
+  level 10 for a capped player: BINARY-ONLY.
 - Super Stealth gains, per field, `trunc(trunc(spent_by_all/players)/2)`
   when it exceeds 1 (BINARY-ONLY).
 
@@ -450,7 +487,7 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Mine (and Auto Mines) | race mine cost | CONFIRMED (PQ-001 cost 5; KX-001 M3b cost 8) |
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
-| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | BINARY-ONLY |
+| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED for 100 and 70 (KX-002 T1, T2); Claim Adjuster BINARY-ONLY |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -524,8 +561,48 @@ Additional rules, BINARY-ONLY:
 - A planetary scanner order on a planet that already has one is removed
   with a message; a mass-driver packet order without a driver or
   destination is removed with a message; a terraform order above the
-  remaining terraform capacity is clipped (or removed at 0).
+  remaining terraform capacity is clipped (or removed at 0; CONFIRMED for
+  terraforming, KX-002 T1, T3; see "Terraforming").
 - A planet with 0 resources builds nothing and sends no messages.
+
+### Terraforming
+
+A Terraform Environment unit (planetary item 12) moves one environment
+axis of the planet one click (CONFIRMED, KX-002 T1–T3; parts below
+BINARY-ONLY where marked):
+
+- **Reach per axis.** `t` = the largest value among the owner's
+  available terraform parts for that axis (`COMPONENTS.md`, category
+  `terraform`; a Total Terraform part, which needs the TT LRT, counts for
+  every axis). The axis can be moved within `orig ± t`, clipped to 1–99,
+  where `orig` is the planet's original (never-terraformed) value, and
+  only toward the race's centre, stopping at it. CONFIRMED: Gravity
+  Terraform ±3 from 60 reaches 57 (T1), and from a current 58 with
+  original 60 only 57 remains (T3); TT ±3 applies to gravity and
+  temperature (T2). An immune axis is not terraformed (BINARY-ONLY).
+- **Capacity.** The clicks still available are the sum over axes of the
+  distance from the current value to its limit. An order (or the part of
+  it left) above that is cut to it when the queue reaches it, with a
+  message, and removed if it is 0 (CONFIRMED, T1: ×5 → ×3; T3: ×5 → ×1;
+  T2: 6 clicks, ×5 kept).
+- **Axis choice.** For each unit, each axis with room gets
+  `score = trunc(|hab(limit) − hab(now)|·100 / |limit − now|) + 1`, where
+  `hab(limit)` is the planet's habitability with that axis alone set to its
+  limit: the average change per click over the whole remaining range, not
+  the next click. The highest score wins, the first axis (gravity,
+  temperature, radiation) on ties. CONFIRMED at one point (T2: from
+  60/45/50 with ±3, temperature 101 against gravity 67, and both units went
+  to temperature); ties BINARY-ONLY.
+- **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
+  for Claim Adjuster (BINARY-ONLY); no minerals.
+- Auto Max Terraform builds Terraform Environment units up to the
+  capacity; Auto Min Terraform does so only while the planet's population
+  would shrink this year or its habitability is 0 or less. Claim
+  Adjuster planets move in one step to the full reachable value after
+  production, and their original value can drift one click toward the
+  centre (rarely, at random). Orbital Adjuster fleets move a planet one
+  click per part each year with the fleet owner's tech and the planet
+  owner's habitat, away from the centre for an enemy. All BINARY-ONLY.
 
 ## Fleet movement
 
@@ -810,11 +887,13 @@ is one at a planet without a starbase.
 
 None for this specification. The three earlier items (Auto Alchemy before
 a multi-count item, zero maximum population, cost modifiers) were settled
-by KX-001; see the rules above and `PARITY.md`.
+by KX-001; see the rules above and `PARITY.md`. KX-002 measured the
+BINARY-ONLY rules a playable game meets every year; the ones it could not
+reach are listed at the end of its section in `PARITY.md`.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001 and KX-001 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001 and KX-002 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that

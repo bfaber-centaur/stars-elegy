@@ -870,8 +870,10 @@ race keys of `scripts/oracle/hst-edit` (`ORACLE.md`).
 
 ### KX-002 — untested BINARY-ONLY kernel rules
 
-Status: predictions committed before any case ran (2026-10-07); results
-follow in this section once measured.
+Status: MEASURED (25 cases, 2026-10-07). Predictions were committed
+(`35e057e`) before any case ran; results follow them. 24 of 25 matched in
+every predicted field; G1 (overcrowding) did not, and the published rule
+was wrong by a factor of 2 (below).
 
 Question: which `KERNEL.md` rules still tagged BINARY-ONLY hold in the
 original, for the rules a playable game exercises every year? Chosen from a
@@ -993,6 +995,77 @@ click (first axis on ties). An order larger than the clicks left is cut
 | T1 | env and original 60/50/50, propulsion 1, biotech 1 (Gravity Terraform ±3), pop 2000 (200 resources), Terraform ×5 | gravity 60 → 57: 3 clicks | order cut to 3; 2 units: env 58/50/50; Terraform ×1 @0%; research 0 | cost 100; range ±3; cut to capacity |
 | T2 | LRT TT, env and original 60/45/50, pop 2000 (hab 87), Terraform ×5 | gravity 3, temperature 3: 6 clicks | not cut; 2 units, both temperature: env 60/47/50; Terraform ×3 @86%; research 0 | TT cost 70 (with 100: env 60/47/50, ×3 @0%); TT ±3 on all axes; axis choice (temperature scores 101 a click vs gravity 67) |
 | T3 | env 58/50/50, original 60/50/50, propulsion 1, biotech 1, pop 2000, Terraform ×5 | gravity down to 57 (60 − 3): 1 click | cut to 1; env 57/50/50; order done; research 100 | range measured from the original value, not the current one |
+
+#### Results
+
+Observed 2408 (2408–2410 for N2) in the generated `.HST`, with the `.M1`
+messages. No case got message 0x117, and every edited race was unchanged
+after the year, so all race edits were within the point budget.
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| H1 | pop 1092 carry 0; research 110; energy 2, 175 | match |
+| H2 | 1058, 0; 110; 2, 175 | match |
+| H3 | 300, 24; 40; 2, 105 | match |
+| H4 | 3015, 60; 310; 3, 175 | match |
+| H5 | 995, 0; 85; 2, 150 | match |
+| H6 | 1215, 59; 96; 2, 161 | match |
+| G1 | **11899, 20**; 1110; 5, 255 | population **differs** (predicted 11949, 60); research matches |
+| G2 | 10005, 0; 1010; 5, 155 | match |
+| G3 | 9995, 1; 1009; 5, 154 | match |
+| P1 (HE) | 3168, 0; 310; 3, 175 | match |
+| P2 (JOAT) | 10045, 2; 1010; 5, 155 | match |
+| P3 (OBRM) | 10015, 0; 1010; 5, 155 | match |
+| N2 | every surface gain, concentration and fraction in the table, all three years; research 1010 a year; energy 5/155, 6/515, 7/525 | match |
+| R1 | 303; levels 3/0/0/0/5/1; accumulated all 0 | match |
+| R2 | 1000; energy 6, 280; level-up messages for energy 3, 4, 5, 6 | match |
+| R3 | 400; levels 3/1/0/0/5/0; propulsion 135, others 0; current propulsion, next "lowest" | match |
+| R4 | 235; energy 3; biotech 100, energy 0; current biotech, next "same" | match |
+| R5 (GR) | 211; 171/32/32/32/32/32 | match |
+| R6 | 211; energy 26, still 65 | match |
+| C1 | message 0x12a; 10 factories; Ge 460; Factory ×570 @9%; research 0 | match |
+| C2 | 0x12a; 3 defenses; 484/484/484; Defenses ×9 @39%; research 0 | match |
+| C3 | 0x12a; 20 mines; Mine ×390 @19%; research 0 | match |
+| T1 | message 0x12f; two 0x7b; env 58/50/50; Terraform ×1 @0%; research 0 | match |
+| T2 (TT) | no cut; two 0x7b; env 60/47/50; Terraform ×3 @86%; research 0 | match |
+| T3 | 0x12f; env 57/50/50; queue empty; research 100 | match |
+
+G1: 12,000 units at max 10,000 lost 101 units and the carry went 0 → 20,
+which is `t = −10080`, i.e. `g = −84` = `4·(trunc(1200/−10) + 99)`. The
+published rule had `2·`. Re-reading the binary's population-change
+routine: the overcrowded branch doubles its value and then joins the
+quantized crowded branch at its final doubling, so the result is doubled
+twice. `KERNEL.md` now gives `4·max(−300, trunc(c/−10) + 99)` (deaths of
+at most 12% a year) as CONFIRMED at this one point. The `−300` floor
+itself is not reached by any case (it needs a population above 4 times
+the maximum).
+
+Interpretation:
+
+- Habitability, maximum population (including HE, JOAT, OBRM and the
+  floor of 500), every growth branch, hostile deaths and effective
+  population above max now have an oracle point each.
+- Mining: the homeworld floor applies to output and depletion while the
+  stored concentration keeps falling below 30, `cc` follows the stored
+  value within a year, and several points can go in one year.
+- Research: both cost settings (75% more rounds up), several level-ups a
+  year, switching to an explicit field or to the lowest field (with a
+  chain in one year), the GR split and the level-26 loss.
+- Installation caps below 100% habitability and the terraform rules
+  (cost, TT, range from the original value, capacity cut, axis score) are
+  as read.
+
+Still BINARY-ONLY after KX-002: the 15-click hostile cap, HE/JOAT/OBRM
+combined, the `2·max` limit on effective population, the `cc = 10`
+clamp, slower tech, the level-10 cap for capped players, Super Stealth
+research stealing, Claim Adjuster, auto terraform items, orbital
+adjusters, and ties in the terraform axis choice. Scores have no public
+rule yet, so there was nothing to test.
+
+Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
+`evidence/kx002/` (edited inputs, every resulting file, decoded dumps, the
+model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with
+the `hst-edit` keys `field=` and `conc=` added for this corpus.
 
 ## Fleet Movement
 
