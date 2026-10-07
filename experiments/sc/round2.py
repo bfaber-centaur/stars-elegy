@@ -226,7 +226,7 @@ def sc027():
                'floor halving %s' % (hf,) if hf != hv else 'gcd-reduced or unscaled',
                'move (%d,%d)' % (tx - sx, ty - sy))
     s = r.fleet(1, 1150, 1250, '0:1', note='SC027-S stationary')
-    r.case('SC027-S', 'heading', (0, 1, s), (0, 0, 0), '-', 'did not move')
+    r.case('SC027-S', 'heading', (0, 1, s), (-127, -127, 0), '-', 'did not move: stored bytes 0/0, warp 0')
     a = r.fleet(1, 1240, 1240, '0:1', extra='to 1250 1240 warp 5', note='SC027-A arrives this year')
     r.case('SC027-A', 'record', ('heading', 0, 1, a), None, '-', 'reaches its waypoint (record only)')
     m1 = r.fleet(1, 1250, 1050, '0:1', extra='cargo 10 20 30 40', fuel=100,
@@ -343,7 +343,56 @@ def sc031():
     return r
 
 
-RUNS = [sc024, sc025, sc026, sc027, sc028, sc029, sc030, sc031]
+def sc032():
+    """Follow-up (predictions committed after SC-024/SC-031, before this run).
+
+    SC-024 and SC-031 gave a NORMAL report (level 3, environment, population
+    estimate) to blind fleets orbiting enemy colonies without a starbase
+    (planets 20, 12), and position only (level 1) at the two homeworlds,
+    which have starbases; SC-002 gave level 1 at an unowned planet. Two
+    readings: the starbase decides (H-sb) or the homeworld flag does (H-hw).
+    SC-031's battle case was confounded by this; it is repeated at planets
+    where a blind orbit alone gives position only."""
+    r = Run('sc032', 'blind orbit reports: starbase vs homeworld vs unowned; planet report after battle')
+    r.add('design 0 0 Cruiser, 2 Quick Jump 5, empty, empty, 2 Laser, 2 Laser, empty, empty = Laser Cruiser')
+    r.add('design 0 1 %s = Blind' % (SF % 'empty'))
+    designs1(r, ['Destroyer, 1 Quick Jump 5, 1 Laser, 1 Laser, empty, empty, empty, empty = Laser DD'])
+    r.add('planet 8 starbase none')
+    r.add('planet 11 owner 1 pop 1000 starbase 0 scanner none')
+    r.add('planet 12 owner 1 pop 1000 starbase none scanner none')
+    r.add('planet 15 owner 1 pop 1000 starbase 0 scanner none')
+    for pid, note in ((11, 'P1 colony with starbase'), (8, 'P1 homeworld without starbase'),
+                      (12, 'P1 colony without starbase'), (2, 'unowned')):
+        r.fleet(0, *XY[pid], '1:1', planet=pid, note='SC032 blind orbiter: ' + note)
+    r.case('SC032-colony-sb', 'planet', (0, 11), 1, 'H-hw: 3', 'H-sb: a starbase gives position only')
+    r.case('SC032-hw-nosb', 'planet', (0, 8), 3, 'H-hw: 1', 'H-sb: no starbase, owned: normal')
+    r.case('SC032-colony', 'planet', (0, 12), 3, '-', 'repeat of SC-031-p12')
+    r.case('SC032-unowned', 'planet', (0, 2), 1, '-', 'repeat of SC-002')
+    # battles where a blind orbit alone would give position only
+    r.fleet(0, *XY[9], '0:1', planet=9, note='SC032 Cruiser at unowned planet 9')
+    r.fleet(1, *XY[9], '4:1', planet=9, note='SC032 P1 Laser DD at planet 9: battle')
+    r.fleet(0, *XY[15], '0:1', planet=15, note='SC032 Cruiser at P1 colony 15 (bare starbase)')
+    r.fleet(1, *XY[15], '4:1', planet=15, note='SC032 P1 Laser DD at planet 15: battle')
+    r.case('SC032-battle-unowned', 'planet', (0, 9), 3, 'orbit rule only: 1', 'fought at an unowned planet')
+    r.case('SC032-battle-sb', 'planet', (0, 15), 3, 'orbit rule only: 1 under H-sb', 'fought at a colony with starbase')
+    return r
+
+
+def sc033():
+    r = Run('sc033', 'SC-028 T75 repeated with the viewer at the centre (SC-028-T75-out was clamped to y 1000)')
+    r.add('design 0 0 Frigate, 1 Quick Jump 5, empty, 3 Tachyon Detector, empty = Tachyon Frigate')
+    designs1(r)
+    vx, vy = 1200, 1200
+    r.fleet(0, vx, vy, '0:1', note='viewer: 520 normal, 3 detectors')
+    c = 75
+    cc = c * TACHYON[3] // 100
+    b = cloak_bound(520, cc)
+    place_pair(r, vx, vy, b, cloak_bound(520, c * TACHYON[2] // 100), '1:1', '75%% -> %d%%' % cc, 'SC033-T75',
+               'count-1 index (25985) in; 4-detector factor (29446) out')
+    return r
+
+
+RUNS = [sc024, sc025, sc026, sc027, sc028, sc029, sc030, sc031, sc032, sc033]
 
 
 # ------------------------------------------------------------------ checking
@@ -357,15 +406,16 @@ def parse(dump, turn=1):
         m = re.match(r'\S+\.M(\d+) file turn=(\d+)', line)
         if m:
             cur = V.setdefault(int(m.group(1)) - 1, {'fleet': {}, 'planet': {}, 'design': {}, 'sbdesign': {},
-                                                       'player': {}}) if int(m.group(2)) == turn else None
+                                                       'player': {}, '_designs': [], '_counts': []}) if int(m.group(2)) == turn else None
             continue
         if f.endswith('.HST'):
             m = re.search(r' planet (\d+) owner=(-?\d+) .* pop=(\d+)', line)
             if m:
                 H['pop'][int(m.group(1))] = int(m.group(3))
-            m = re.search(r' pdetail (\d+) .*defenses=(\d+)', line)
+            m = re.search(r' pdetail (\d+) .*env=(\d+)/(\d+)/(\d+) .*defenses=(\d+)', line)
             if m:
-                H['def'][int(m.group(1))] = int(m.group(2))
+                H['def'][int(m.group(1))] = int(m.group(5))
+                H.setdefault('env', {})[int(m.group(1))] = tuple(int(m.group(i)) for i in (2, 3, 4))
             continue
         if cur is None or '.M' not in f:
             continue
@@ -382,13 +432,32 @@ def parse(dump, turn=1):
                                               'sb': m.group(4) == 'true', 'env': m.group(5) == 'true',
                                               'popest': int(m.group(6)), 'defest': int(m.group(7))}
             continue
-        m = re.search(r' (sb)?design owner=(\d+) n=(\d+) .*full=(\w+)', line)
-        if m:
-            cur['sbdesign' if m.group(1) else 'design'][(int(m.group(2)), int(m.group(3)))] = m.group(4) == 'true'
+        # The dump's design owner is not the design's owner (a partial design
+        # prints owner=?, a full foreign one the file's player). Designs come
+        # in player order, as many per player as its block's shipdesigns
+        # count, so the owner is taken from the position.
+        m = re.search(r' design owner=(\d+|\?) n=(\d+) .*full=(\w+)', line)
+        if m and ' sbdesign ' not in line:
+            k = len(cur['_designs'])
+            cur['_designs'].append(None)
+            o, acc = None, 0
+            for p, cnt in cur['_counts']:
+                if k < acc + cnt:
+                    o = p
+                    break
+                acc += cnt
+            cur['design'][(o, int(m.group(2)))] = m.group(3) == 'true'
             continue
-        m = re.search(r' player (\d+) shipdesigns.*?( energy=)?', line)
+        # a partial starbase design prints owner=? (its block carries no owner)
+        m = re.search(r' sbdesign owner=(\d+|\?) n=(\d+) .*full=(\w+)', line)
         if m:
-            cur['player'][int(m.group(1))] = 'full' if m.group(2) else 'partial'
+            o = -1 if m.group(1) == '?' else int(m.group(1))
+            cur['sbdesign'][(o, int(m.group(2)))] = m.group(3) == 'true'
+            continue
+        m = re.search(r' player (\d+) shipdesigns=(\d+)', line)
+        if m:
+            cur['player'][int(m.group(1))] = 'full' if ' energy=' in line else 'partial'
+            cur['_counts'].append((int(m.group(1)), int(m.group(2))))
     return V, H
 
 
@@ -419,7 +488,7 @@ def evaluate(case, V, H):
         p = v.get('planet', {}).get(args[1])
         got = p['env'] if p else None
     elif kind == 'sbdesigns':
-        got = [full for (o, n), full in sorted(v.get('sbdesign', {}).items()) if o == args[1]]
+        got = [full for (o, n), full in sorted(v.get('sbdesign', {}).items()) if o in (args[1], -1)]
     elif kind == 'design':
         got = v.get('design', {}).get((args[1], args[2]))
     elif kind == 'player':
@@ -428,8 +497,18 @@ def evaluate(case, V, H):
         p = v.get('planet', {}).get(args[1])
         got = p['defest'] if p else None
         n = H['def'].get(args[1])
-        exp = defest(n) if n is not None else None
-        note = '%s; after-state defenses %s' % (note, n)
+        # SCANNING.md caps n at the defenses the planet can operate (KERNEL.md:
+        # min(max defenses, ceil(P/25)), max defenses min(100, max(10, 4 hab))).
+        # The committed prediction left the cap out; it is applied here after
+        # the run. A planet with an axis outside the race's 15..85 range has
+        # hab < 0, so max defenses 10; otherwise 4 hab is assumed not to bind.
+        exp = None
+        if n is not None:
+            cap = math.ceil(H['pop'][args[1]] / 25)
+            if any(not 15 <= e <= 85 for e in H.get('env', {}).get(args[1], ())):
+                cap = min(cap, 10)
+            exp = defest(min(n, cap))
+            note = '%s; after-state defenses %s, operable cap %d, uncapped %d' % (note, n, cap, defest(n))
     elif kind == 'popest':
         p = v.get('planet', {}).get(args[1])
         got = p['popest'] if p else None

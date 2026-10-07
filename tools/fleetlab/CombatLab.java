@@ -186,9 +186,10 @@ public class CombatLab {
                 if (fl.kindByte == PartialFleetBlock.FULL_KIND)
                     for (int i = 0; i < 16; i++) if ((fl.damagedShipTypes & (1 << i)) != 0)
                         dmg.append(String.format(" dmg%d=%d/%d%%", i, fl.damagedShipInfo[i] >> 7, fl.damagedShipInfo[i] & 0x7f));
-                if (fl.kindByte != PartialFleetBlock.FULL_KIND)   // another player's fleet: heading, warp, mass
+                if (fl.kindByte != PartialFleetBlock.FULL_KIND)   // another player's fleet: heading, warp, mass;
+                    // each heading byte stores the component + 127 (SC-027); a fleet that did not move has 0/0
                     dmg.append(String.format(" dx=%d dy=%d warp=%d wbits=%02x mass=%d",
-                        (byte) fl.deltaX, (byte) fl.deltaY, fl.warp, fl.unknownBitsWithWarp, fl.mass));
+                        (fl.deltaX & 0xff) - 127, (fl.deltaY & 0xff) - 127, fl.warp, fl.unknownBitsWithWarp, fl.mass));
                 System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d%s%n",
                     f, fl.owner, fl.fleetNumber, fl.kindByte, fl.x, fl.y, fl.positionObjectId, ships,
                     fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan, dmg);
