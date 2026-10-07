@@ -15,6 +15,10 @@
 //                1 mineral concentrations, 2 mines, 3 factories, 4 defenses
 //                                                        byte 0x3d
 //   growth=N     maximum growth rate in percent          byte 0x11
+//   stat=I:V[/I:V]  race stat I (0..15), byte 0x36 + I (0 colonists per resource
+//                in hundreds, 1-6 economy, 7 spend, 8-13 research costs, 14 PRT, 15 unused)
+//   hab=C,C,C,L,L,L,H,H,H  habitat centre, low, high per axis (bytes 0x08..0x10;
+//                -1 = immune marker 255; no repair is made here)
 //   name=S plural=S
 //
 // Advantage points come from StarsAPI's racebuilder (craigstars port). It
@@ -101,7 +105,24 @@ public class RaceLab {
                 case "prt": d[0x44] = (byte) Integer.parseInt(v); break;
                 case "lrt": Util.write16(d, 0x46, (Util.read16(d, 0x46) & ~0x3fff) | (Integer.decode(v) & 0x3fff)); break;
                 case "spend": d[0x3d] = (byte) Integer.parseInt(v); break;
+                case "stat":
+                    // stat=I:V[/I:V...]: race stat I (0..15) at byte 0x36 + I, as hst-edit's stat=
+                    for (String iv : v.split("/")) {
+                        String[] q = iv.split(":");
+                        int i = Integer.parseInt(q[0]);
+                        if (i < 0 || i > 15) throw new Exception("stat index 0..15");
+                        d[0x36 + i] = (byte) Integer.parseInt(q[1]);
+                    }
+                    break;
                 case "growth": d[0x11] = (byte) Integer.parseInt(v); break;
+                case "hab": {
+                    // centre, low, high per axis (gravity, temperature, radiation), stored as
+                    // signed bytes from 0x08; -1 (255) is the immune marker
+                    String[] h = v.split(",");
+                    if (h.length != 9) throw new Exception("hab=C,C,C,L,L,L,H,H,H expected");
+                    for (int i = 0; i < 9; i++) d[8 + i] = (byte) Integer.parseInt(h[i]);
+                    break;
+                }
                 case "name": p.nameSingular = v; break;
                 case "plural": p.namePlural = v; break;
                 default: throw new Exception("unknown key " + k);

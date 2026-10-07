@@ -9,8 +9,8 @@ war) gets its own file under docs/ai/:
 | Type (definition file) | Personality | PRT | File | Elegy |
 |---|---|---|---|---|
 | 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
-| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
-| 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 2 | Turindrone | SS | `docs/ai/turindrone.md` | legacy reference: fleet pass checked over AIX (AI-22), not an implementation commitment |
+| 3 | Automitron | IS | `docs/ai/automitron.md` | legacy reference: fleet pass checked over AIX (AI-23), not an implementation commitment |
 | 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
 | 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
@@ -21,7 +21,10 @@ with oracle captures: Robotoid, Rototill and Cybertron, each matched over
 every captured player-year of its corpus (`../PARITY.md` cases). These
 are candidates for faithful implementation. Turindrone, Automitron and
 Macinti are documented as legacy-reference behavior: read from the
-original, only partly checked, and optional future work. Reproducing all
+original and optional future work. Turindrone's and Automitron's fleet
+passes are checked over AIX (AI-22, AI-23), which preserves the result
+but is not a commitment to implement them; their bomber paths stay
+BINARY-ONLY. Reproducing all
 six personalities is not an objective. Further computer-player
 experiments need a concrete reason: an Elegy implementation blocker, a
 contradiction in an existing spec, or a cheap experiment that closes a
@@ -677,7 +680,7 @@ formula, to be published with the personality stage that needs it).
   slots 2–5 + 2 × ships in slots 6–7`. It is "too weak" when `strength <
   P` (the personality's armada potency). Turindrone calls the same rule
   for its bomber check, where slots 2–7 are not its warships (see
-  docs/ai/turindrone.md, planned): LEGACY BUG, reproduced as written.
+  `docs/ai/turindrone.md`): LEGACY BUG, reproduced as written.
 
 **Nearest colonizable planet.** Candidates are planets unowned in the
 player's own view (§1: a planet never scanned counts as unowned) that no
