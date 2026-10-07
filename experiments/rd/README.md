@@ -143,3 +143,83 @@ Evidence: stars-oracle-apparatus `evidence/rd/rd07`, `rp11`, `rp12`.
 - RD-P12: held for the humans (0x117 to player 0; 0x182 to players 1..4;
   colonists 2500, growth 7). The computer player's `.M6` carries no
   message block, so its 0x182 is not observable.
+
+## Round 3: the remaining BINARY-ONLY rules (committed before the runs)
+
+From the BINARY-ONLY sweep of `docs/RACES.md`. Predictions are
+stars-decomp `tools/races.py` (20e93b8) for the penalty cases and
+`tools/universe.py` for RW08; the model outputs and race files are in
+the apparatus (`evidence/rd/round3/`, ff01ff25).
+
+### RW08: creation repairs (new game `rw08.def`)
+
+Small map, seed 808: three human races edited from PG000.R1 with
+`racelab edit` (all legal as written), plus one computer player.
+
+| Player | Edit | Points | Prediction | Rules out |
+|---|---|---|---|---|
+| 0 | `hab=50,50,50,-1,40,40,85,60,60` (gravity low = immune marker, centre and high not) | 413 | kept; gravity **immune** (centre and high set to the marker), tampered flag | a numeric clamp of −1 to 0 |
+| 1 | `hab=67,50,50,15,15,15,120,85,85` (gravity high 120) | 218 | kept; gravity 15–100, centre 57, tampered flag | high kept at 120; race replaced |
+| 2 | `growth=25 stat=0:25` | 159 | kept; growth **20**, colonists 2500, tampered flag | growth 25 kept |
+
+The whole game (planets, homeworlds, the three races as repaired) is
+predicted by `universe.py`.
+
+### RD-P13..RD-P19: running-game clamps and the tampered flag
+
+Same base and method as RD-P1..P10 (`PG001.HST`, one pinned year).
+
+| Case | hst-edit args | Points after the edit | Prediction |
+|---|---|---|---|
+| RD-P13 | `growth=25 stat=0:25` | 159 | **silent**: growth 20, colonists 2500, no message, no flag |
+| RD-P14 | `growth=25` | −440 | growth clamped to 20 first (still negative), then punished: colonists 2500, growth 16 (502), flag 0x10 |
+| RD-P15 | `researchPct=150` | 245 | research share 15%, silent |
+| RD-P16 | `hab=67,50,50,15,15,15,120,85,85` | 218 | punished (repair): gravity 15–100, centre 57, colonists 1800 (538), flag 0x10 |
+| RD-P17 | `hab=50,50,50,-1,15,15,85,85,85` | −72 | punished: gravity immune, colonists 2500 (527), flag 0x10 |
+| RD-P18 | `growth=-3` | 7565 | **silent**: growth 1, no message, no flag (unlike growth 0, RD-P11) |
+| RD-P19 | RD-P1's edit, run for two years | −444 | year 1 as RD-P1 (colonists 2500, growth 7, flag); **year 2 unchanged, no 0x117** (already tampered, points positive) |
+
+### RD-P20: a computer player's repair
+
+Base: the AP game (apparatus `evidence/ai/ap/new/raw/AP01.HST`; player 1
+is a computer player whose race scores −1173). Edit `player=1 planet=108
+hab=61,29,-1,31,5,-1,93,53,-1` (gravity centre 61, one below the
+midpoint 62). One pinned year. Prediction: centre back to 62 and the
+tampered flag set, but **no message and no other change**: colonists per
+resource, growth and research costs stay as they were, although the race
+is negative.
+
+### Round 3 follow-up: RD-P21 (committed before the run)
+
+RD-P19's second year sent message 0x117 again although the race was
+already marked tampered, had 1042 points and was not changed (prediction:
+no message). Candidate: the penalty message goes to a human player every
+year while the race carries the tampered flag, whether or not anything is
+repaired. RW08's three human races carry the flag from creation (positive
+points, nothing left to repair).
+
+RD-P21: RW08 (`evidence/rd/rw08`), one pinned year. If the candidate
+holds: 0x117 to players 0, 1 and 2, races unchanged. If 0x117 needs a
+punishment or a repair that year: no 0x117, races unchanged. The
+candidate is the prediction. RD-P19 year 3 is run alongside: the
+candidate predicts 0x117 again, race unchanged.
+
+### Round 3 results
+
+Evidence: stars-oracle-apparatus `evidence/rd/rw08`, `rp13`..`rp20`,
+`rp19-y2`, `rp19-y3`, `rp21`. Public record: `docs/PARITY.md` "Race
+design", Round 3.
+
+- RW08: held (`universe.py check` 65 match, 0 mismatch; all three races
+  kept, repaired as predicted, flag 0x10).
+- RD-P13..RD-P20: held (`races.py turn` 1/1 each; messages as predicted:
+  0x117 in P14, P16, P17, P19 year 1; none new in P13, P15, P18, P20).
+- RD-P19 year 2 first looked like a miss (0x117 in the turn file). The
+  turn file carries the previous year's messages over when no orders were
+  submitted: years 1, 2 and 3 held 3, 6 and 9 messages, each block
+  starting with the previous one. RD-P21 showed the same (RW08's eight
+  creation messages, then two new ones: 0x03f, an owned planet's empty
+  queue, and 0x159, Super Stealth spying). So the original prediction held
+  (no new 0x117, race unchanged in years 2 and 3), and the RD-P21
+  candidate (a new 0x117 every year while flagged) is ruled out: no new
+  0x117, races unchanged.

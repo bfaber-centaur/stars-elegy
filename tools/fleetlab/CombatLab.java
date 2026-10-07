@@ -38,6 +38,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
 //                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
 //                                   = percent of the first unit already done (default 0)
+//   keepfleets                      keep the base file's fleets (no "fleet" lines allowed)
+//   fleetset P ID fuel=N            with keepfleets: set kept fleet P/ID's fuel (mg)
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -77,6 +79,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
+//                                   packet=DEST,WARP|none (packet destination planet and
+//                                   packet speed setting; WARP 4 = unset, the game then
+//                                   uses the driver's warp)
 //                                   driver=DEST[,WARP] (mass-driver packet destination
 //                                   planet and chosen packet warp; needs a starbase)
 //                                   artifact=1|0 (ancient artifact: the file flag, and on
@@ -178,7 +183,8 @@ public class CombatLab {
                     sb.append(" accum=");
                     for (int i = 0; i < 6; i++)
                         sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
-                    sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
+                    sb.append(String.format(" researchPct=%d field=%d next=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15,
+                        (p.fullDataBytes[0x31] & 0xff) >> 4));
                     sb.append(" hab=");
                     for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
                     // advantage points (RaceLab, StarsAPI racebuilder): negative = a race the
@@ -202,6 +208,8 @@ public class CombatLab {
                         d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
                         d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
                         Util.read16(d, 0x48), d[0x45]));
+                    // computer player: player struct +0x07 bit 1 (block byte 7)
+                    sb.append(" computer=").append(p.getDecryptedData()[7] >> 1 & 1);
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                     // economy settings (estimates corpus): growth %, colonists per resource / 100,
@@ -216,6 +224,12 @@ public class CombatLab {
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s homeworld=%d%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
                     Arrays.toString(p.playerRelations), u16(p.getDecryptedData(), 8), sb);
+            } else if (orders && b instanceof DesignBlock && b.size == 2) {
+                // order file: design delete (byte 0 low nibble 0; byte 1: slot in the low
+                // nibble, bit 4 starbase)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order design-delete %s slot=%d raw=%s%n", f, (d[1] >> 4 & 1) == 1 ? "starbase" : "ship",
+                    d[1] & 15, Util.bytesToString(d, 0, b.size));
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 String owner = "?";
@@ -601,6 +615,8 @@ public class CombatLab {
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
         Map<Integer, Integer> routes = new HashMap<>(); // planet N -> route destination planet
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
+        boolean keepFleets = false;
+        Map<Integer, Map<String, String>> fleetSets = new HashMap<>(); // owner * 1024 + id -> KEY=V
         boolean keepFleetsOrdered = false; // keep the base's own fleets and add the spec's alongside, in owner/id order
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
@@ -643,6 +659,17 @@ public class CombatLab {
                             }
                         if (q.size() > 12) throw new Exception("defqueue: at most 12 items");
                         defQueues.put(Integer.parseInt(t[1]), q);
+                        break;
+                    }
+                    case "keepfleets": keepFleets = true; break;
+                    case "fleetset": {
+                        Map<String, String> kv = new LinkedHashMap<>();
+                        for (int i = 3; i < t.length; i++) {
+                            String[] e = t[i].split("=", 2);
+                            if (e.length != 2 || !e[0].equals("fuel")) throw new Exception("fleetset: fuel=N expected, got " + t[i]);
+                            kv.put(e[0], e[1]);
+                        }
+                        fleetSets.put(Integer.parseInt(t[1]) * 1024 + Integer.parseInt(t[2]), kv);
                         break;
                     }
                     case "relation":
@@ -752,6 +779,9 @@ public class CombatLab {
             }
         }
 
+        if (keepFleets && !fleets.isEmpty()) throw new Exception("keepfleets: no fleet lines allowed");
+        if (keepFleets && keepFleetsOrdered) throw new Exception("keepfleets and keepfleets-ordered are exclusive");
+        if (!fleetSets.isEmpty() && !keepFleets) throw new Exception("fleetset needs keepfleets");
         // Final design lists per player.
         Map<Integer, Collection<DesignBlock>> ship = new TreeMap<>(), sbs = new TreeMap<>();
         for (PlayerBlock p : players) {
@@ -874,6 +904,8 @@ public class CombatLab {
 
         // Player blocks: tech, design and fleet counts, relations.
         for (PlayerBlock p : players) {
+            // another player's summary in a .Mn file has no full data to edit or re-encode
+            if (!p.fullDataFlag) continue;
             int k = p.playerNumber;
             for (Map.Entry<String, Integer> e : tech.entrySet()) {
                 String[] pf = e.getKey().split(" ");
@@ -920,7 +952,7 @@ public class CombatLab {
             }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
-            p.fleets = (keepFleetsOrdered ? origFleetCount.getOrDefault(k, 0) : 0) + fleetCount.getOrDefault(k, 0);
+            if (!keepFleets) p.fleets = (keepFleetsOrdered ? origFleetCount.getOrDefault(k, 0) : 0) + fleetCount.getOrDefault(k, 0);
             if (relations.containsKey(k)) {
                 Map<Integer, Integer> rel = relations.get(k);
                 int len = Math.max(p.playerRelations.length, Collections.max(rel.keySet()) + 1);
@@ -954,7 +986,15 @@ public class CombatLab {
                 }
                 continue;
             }
-            if (b instanceof PartialFleetBlock || b instanceof WaypointBlock) continue;
+            if ((b instanceof PartialFleetBlock || b instanceof WaypointBlock) && !keepFleets) continue;
+            if (b instanceof PartialFleetBlock && !fleetSets.isEmpty()) {
+                PartialFleetBlock fl = (PartialFleetBlock) b;
+                Map<String, String> kv = fleetSets.remove(fl.owner * 1024 + fl.fleetNumber);
+                if (kv != null) {
+                    fl.fuel = Long.parseLong(kv.get("fuel"));
+                    fl.encode();
+                }
+            }
             if (b.typeId == BlockType.OBJECT && !things.isEmpty()) continue;
             if (!things.isEmpty() && !thingsDone && (b instanceof BattlePlanBlock || b.typeId == BlockType.FILE_FOOTER)) {
                 if (!fleetsDone) { result.addAll(newFleets); fleetsDone = true; }
@@ -1067,6 +1107,7 @@ public class CombatLab {
         if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
+        if (!fleetSets.isEmpty()) throw new Exception("fleetset: no fleet " + fleetSets.keySet());
         if (!routes.isEmpty()) throw new Exception("route: no planet " + routes.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
@@ -1129,6 +1170,21 @@ public class CombatLab {
                     int w = (pl.starbaseBytes[0] & 0xff) | (pl.starbaseBytes[1] & 0xff) << 8;
                     w = (w & 0x000f) | (Integer.parseInt(v) & 0x0fff) << 4;
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
+                    break;
+                }
+                case "packet": {
+                    // packet destination and speed: starbase word 1, bits 0-9 = destination
+                    // planet + 1 (0 = none), bits 10-13 = packet warp - 4. packet=DEST,WARP or none
+                    if (pl.starbaseBytes == null) throw new Exception("planetset " + pl.planetNumber + ": no starbase");
+                    int w = (pl.starbaseBytes[2] & 0xff) | (pl.starbaseBytes[3] & 0xff) << 8;
+                    if (v.equals("none")) w &= ~0x3fff;
+                    else {
+                        if (three.length != 2) throw new Exception("planetset packet=DEST,WARP expected");
+                        int dest = Integer.parseInt(three[0]), warp = Integer.parseInt(three[1]);
+                        if (dest < 0 || dest > 1022 || warp < 4 || warp > 19) throw new Exception("planetset packet: bad " + v);
+                        w = (w & ~0x3fff) | (dest + 1) | (warp - 4) << 10;
+                    }
+                    pl.starbaseBytes[2] = (byte) w; pl.starbaseBytes[3] = (byte) (w >> 8);
                     break;
                 }
                 case "driver": {

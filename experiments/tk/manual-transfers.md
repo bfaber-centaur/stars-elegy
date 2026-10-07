@@ -88,6 +88,10 @@ Results (runs tk503 and tk504): see `README.md` "Round 7 results". TK-406,
 TK-407 and TK-409 held as revised; the client gives no colonists to
 another player's fleet (TK-408, TK-414); TK-413 was void.
 
+The timing is measured by round 8 (TK-415, TK-416, `gen8.py`): a fuel
+or ironium gift to a fleet that moves away the same year is aboard
+before it moves.
+
 ## Not predicted
 
 - Whether the client lets a player give colonists to an unowned planet

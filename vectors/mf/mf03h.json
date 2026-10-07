@@ -82,6 +82,7 @@
     },
     "research_percent": 0,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {
      "1": "enemy"
     },
@@ -157,6 +158,7 @@
     },
     "research_percent": 0,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {
      "0": "enemy"
     },
@@ -2895,41 +2897,6 @@
     {
      "kind": "message",
      "player": 0,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 169,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
      "message_id": 202,
      "present": true,
      "year": 1
@@ -2968,41 +2935,6 @@
       }
      },
      "seen_by": 0,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 169,
-     "present": true,
      "year": 1
     },
     {

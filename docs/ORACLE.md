@@ -1166,6 +1166,16 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   - A thing-target waypoint survives an object's move only if the owner
     knew the object at the start of the year. Set `seen` on the wormhole
     when a case needs the target kept.
+- **Stargate runs on a medium map (GT, 2026-10-07).** Range refusals need
+  more than 1250 ly, which the tiny Combat Lab universe cannot give. GT
+  is a medium two-player game (`experiments/gt/gt.def`) made with
+  `new-game` from PG000.R1 edited to JOAT (`racelab edit … prt=9`, plus
+  `lrt=0x100` for Cheap Engines; both legal). CombatLab built on it
+  unchanged (`pinned-turn … GT`). Exact truncated distances are easiest
+  with deep-space Jump Gate fleets, which may start anywhere. Jump Gate
+  designs loaded with `mt P 0800` set. In the other player's `.M`,
+  `combatlab dump` shows a fleet that gated with `warp=0 dx=-127 dy=-127`.
+  Message parameters name the fleet as `0x8000 | owner << 9 | id`.
 - **JOAT built-in scanner.** JOAT Scout, Frigate and Destroyer hulls scan
   20·electronics / 10·electronics on top of their parts (S-10). Player 1
   at electronics 3 with a Rhino: R = ⌊⁴√(50⁴ + 60⁴)⌋ = 66, P = 30.
@@ -1250,7 +1260,7 @@ python3 experiments/wt/trace.py OUT/run                # per-year wormholes, Tra
   years running, every wormhole end moved by the same vector each year.
   Cycles values also fall into few streams: 21 values from 20000 to 45000
   gave 3 on the WT-000 start. This matches the KX-004 cycles-to-tick map
-  (stars-elegy #44), so a sweep for random outcomes such as jump odds has
+  (`PARITY.md` KX-004), so a sweep for random outcomes such as jump odds has
   to reach low cycles values. `trace.py` flags a year whose wormhole moves repeat the year
   before as `SAME STREAM?`. Year-1 stream classes for the WT-000 start are
   in `experiments/wt/README.md`.
@@ -1388,6 +1398,14 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
 - A rerun from the same start at the same cycles captured the same
   computer orders; a different stream changed only random choices such as
   names and pictures (one 7-player game, one year).
+- A computer player plans from its own player file (`.Mn`), not from the
+  `.HST`. Editing its tech in the `.HST` (`scripts/oracle/hst-edit edit IN
+  OUT player=N planet=HW tech=…`, its homeworld as `planet`) changed
+  nothing in that year's orders; the next year's orders used the edited
+  tech (AP-001, AP-002). So run one extra year after an `.HST` edit.
+- A game definition whose first race line is a computer player (`# 2 4`)
+  is refused ("unable to load the race file"); put a race file first
+  (observed once, 2026-10-07).
 
 ## Known fragility
 
@@ -1405,3 +1423,8 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   `ORACLE_DISPLAY` values to run several side by side.
 - The container can be recycled while idle (this happened once), which
   kills the oracle. `$ORACLE_HOME` survived that time; re-run `start`.
+- Multi-year pinned runs with no orders carry messages over (MEASURED,
+  RD-P19, RD-P21; `PARITY.md` "Race design", Round 3): each year's `.M`
+  message block starts with the whole previous block and the new year's
+  messages follow. A message seen in year 2 may be year 1's. Compare with
+  the previous `.M` and count only what follows the carried prefix.

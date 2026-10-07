@@ -132,16 +132,20 @@ BINARY-ONLY.
   after the order is accepted, so an out-of-box waypoint is corrected, not
   rejected.
 - **Waypoint warp, target and transport (elegy implementation Q13).** The legal
-  warp set is **0..10**, with **11** reserved for the stargate hop; a nonexistent
-  target object and a negative transport amount are both malformed. Elegy's
-  chosen rule is to **reject** each — a warp outside `0..11`, a waypoint naming a
-  target that does not exist, and a transport order with a negative amount are
-  refused (the order dropped, the rest of the file applying), rather than
-  clamped or coerced. Whether the original clamps the warp (as it clamps
-  coordinates above) or coerces a negative amount is read but unmeasured
-  (BINARY-ONLY); the discriminating OX run submits each malformed value and
-  reads back whether it was clamped or dropped. The coordinate clamp above is
-  the one validation confirmed to correct-rather-than-reject.
+  travel-warp set is **0..10**, with **11** the stargate-hop value — CONFIRMED
+  (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
+  destination performs a gate jump. (A gate jump also needs a gated source and
+  destination; see "Route and the stargate" below for the gate conditions.) A
+  nonexistent target object and a negative transport amount are both malformed.
+  Elegy's chosen rule is to **reject** each — a travel warp outside `0..10`
+  (warp 11 reserved for the gate hop), a waypoint naming a target that does not
+  exist, and a transport order with a negative amount are refused (the order
+  dropped, the rest of the file applying), rather than clamped or coerced.
+  Whether the original clamps the warp (as it clamps coordinates above) or
+  coerces a negative amount is read but unmeasured (BINARY-ONLY); the
+  discriminating OX run submits each malformed value and reads back whether it
+  was clamped or dropped. The coordinate clamp above is the one validation
+  confirmed to correct-rather-than-reject.
 - **Design legality (tech strip).** A design that lists a component the
   player has not yet earned the tech for, or that the chosen hull does not
   allow in that slot, has that component **dropped** from the stored design
@@ -209,23 +213,35 @@ BINARY-ONLY.
 - **Design change into an occupied slot (elegy implementation Q10).** A design
   *change* order names a design slot that may already hold a built design — one
   with **ships in the field**, a **starbase**, or a **production-queue entry**
-  that builds it. Elegy's chosen rule: **refuse** a change to a slot that is in
-  use (ships, starbase, or queued), so a redefinition cannot silently mutate
-  ships already built to the old design. Whether the original overwrites the
-  slot in place (the ships then reading as the new design) or refuses is read
-  but unmeasured — BINARY-ONLY, pending the **CO-08** client-orders run (if the
-  client refuses to edit an in-use slot, that is a client limit to record in
-  `ORACLE.md`; otherwise the run reads host overwrite-vs-refuse).
+  that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
+  original **client disables Edit** for any design used by **ships or a
+  starbase**, so that case is not client-reachable (a client limit, also noted
+  in `ORACLE.md`). A design used **only by a production-queue entry** can be
+  edited: the host **overwrites the slot in place**, and the queue entry then
+  builds the edited design. Elegy's rule reproduces this: **overwrite the slot
+  in place** for a change to a queue-only design (the queue builds the edited
+  design), and **refuse** only a change to a design in use by **ships or a
+  starbase** — which the client cannot reach anyway, so that refusal never
+  fires on a legal order. The host's behaviour when a slot in use by **ships**
+  is overwritten by a **crafted** order remains BINARY-ONLY (serial-gated).
 - **Design delete effect (elegy implementation Q11).** Deleting a design
   removes every ship of that design: ships in the field are removed, a fleet
   left with no ships is removed, and a **starbase** of that design is removed,
   following the object-removal rules in `KERNEL.md` (the same path a scrapped or
   destroyed design takes). A production-queue entry building the deleted design
-  is dropped. Elegy applies this deterministically on the design-delete order;
-  the slot renumbering of later designs follows the same rule as battle plans
-  (see #59 for the plan analogue). Client-reachable (the original client deletes
-  an in-use design with its alert, DS-1); the **CO-07** client-orders run
-  measures each effect. No serial needed.
+  is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
+  ships of the deleted design are removed and a fleet of only those ships
+  disappears; a queue entry building it is dropped **even at 66% done**; the
+  slot is **cleared in place with no renumbering** of later designs (correcting
+  the earlier battle-plan-renumber reading for this order); and deleting the
+  **starbase** design in use removed the homeworld's starbase (CO-07b). When the
+  deleted ships shared a fleet with survivors, their fuel and cargo are shared
+  out exactly as a ship **move** does it: the leaving ships take
+  `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with
+  the survivors with no clamp to the survivors' tank (CO-07c: a 500 mg fleet of
+  capacity 950 losing a 900-capacity design kept `500 − floor(500·900÷950) = 27`
+  mg; 100 kT of iron shared the same way left 0). Client-reachable (the original
+  client deletes an in-use design with its alert, DS-1). No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
   whole-design rejection, under the rules above: (1) a component above the
@@ -349,10 +365,45 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   colonisation or invasion under the takeover/objects rules — not in the
   post-movement waypoint phase and not credited silently to the planet.
 - **Missing endpoint.** A transfer record whose source or destination object
-  is missing is **skipped whole**; neither side changes.
+  is missing when the order is replayed is **skipped whole**; neither side
+  changes. Because the manual transfer is resolved in place at step 1, this
+  also covers a receiver **removed by an earlier order the same turn** (scrapped,
+  merged or destroyed, or whose owner's replay ran first): the gift is skipped
+  and the **giver keeps the cargo** — nothing is debited. BINARY-ONLY for the
+  same-turn-removal case (read from the order-time object lookup; the in-place
+  step-1 timing is MEASURED, TK-406/407/409).
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
+- **A separate queued credit routine exists in the binary; its legal
+  reachability is UNRESOLVED (open hypothesis, not a rule).** The manual
+  transfer above is in place and **silent**. The binary also contains a
+  *distinct* cross-player credit routine: order replay can append a cross-owner,
+  **non-colonist** cargo-credit record to an internal transfer queue, and a
+  separate routine then applies those credits, notifying both players (messages
+  `0x042`/`0x044`, and `0x046`/`0x048` on a shortfall). Three things keep this
+  from being a stated behaviour:
+    - **Timing is before movement, not after.** The private turn-order map
+      places the queued-credit routine *before* the movement phase, so the
+      earlier claim that credit is applied *after* movement is **withdrawn**.
+    - **Manual giving does not reach it.** The hand-transfer order takes the
+      in-place step-1 path above (selected by the transfer record's destination
+      kind); the queue append is on the *other* branch, and the private analysis
+      argues manual giving never reaches that append.
+    - **No legal trigger is identified.** The queue append is written only
+      during step-1 order replay, **not** by a waypoint transport task (those
+      run in a later phase and do not append here). What legal order, if any,
+      reaches the append is **not established**.
+  Accordingly this spec makes **no** claim that any cross-player cargo is
+  delivered after movement, and **no** claim that cargo is lost when a recipient
+  disappears by the time the routine runs. The routine does look its destination
+  up and has no return-to-source path if the destination is absent, but that is
+  recorded only as a **BINARY-ONLY** property of an unexercised routine (its
+  `0x042`–`0x048` messages are themselves BINARY-ONLY in `MESSAGES.md`), pending
+  evidence of a legal trigger. Until a reachable path is shown, an
+  implementation should model only the manual-gift rules above and leave this
+  routine unmodelled. This is **not** the manual gift, which is credited in
+  place at step 1 (MEASURED, TK-406, TK-407, TK-409).
 
 An independent implementation that adopts the "validate ownership on every
 order" chosen rule above still needs the legitimate cross-owner paths —
@@ -420,13 +471,17 @@ INTENTIONALLY DIFFERENT. BINARY-ONLY until run.
 A direct cargo transfer between two of the submitting player's fleets at the
 same location applies at order time and is **owner-checked**: both fleets
 must belong to the submitter, or the transfer is refused (CONFIRMED,
-FO-01..07, which exercised the transfer-fleet task and its refusals). When
-it applies, the two fleets' cargo of each kind and their fuel are pooled and
-shared out **in proportion to each fleet's capacity**, so nothing is lost
-while the combined capacity holds; accumulated ship damage is likewise shared
-across the combined ships (BINARY-ONLY — the balancing split itself is read
-from the program, not separately measured). Giving cargo to another player's
-fleet is the deferred cross-owner path above, not this operation.
+FO-01..07, which exercised the transfer-fleet task and its refusals). When it
+applies, it carries an **explicit amount per cargo kind and for fuel**, not a
+capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
+client caps the amount by the other fleet's **free hold** and by **what is
+aboard** the source, then writes that amount; the host applies the written
+amount as it stands. (A "load all" of 200 against a hold with 70 free gave
+140/210; "set amount 300" of a source holding 200 moved 200.) An earlier
+reading of this path as a capacity-proportional pooling (where 350 over two
+equal holds would even to 175/175) is **refuted**. Giving cargo to another
+player's fleet is the cross-owner path above, not this operation. A waypoint
+transport task *aimed at a fleet* was not reachable from the client (CO-04).
 
 **Elegy implementation Q4 (transfer preconditions).** Elegy's chosen rules,
 each stated next to the open host question:
@@ -457,32 +512,50 @@ emptied fleets are removed. There are two ways to order a merge, and they do
 is summed into a signed 16-bit count, one source fleet at a time, with the
 emptied source fleets removed. The boundary, stated exactly:
 
-- a resulting stack of **32766** is kept as 32766;
-- a resulting stack of **32767** is kept as 32767 — this is the largest count
-  the order can store, not 32766;
-- a stack that would reach **32768 or more** is slammed to **32766**, and the
-  excess ships are **lost** (not spilled back into a source fleet, and the
-  order is not refused). The clamp is applied after each addition, so once a
-  running total passes 32767 it becomes 32766 and any further source fleets
-  merged into the same slot re-trigger it.
+MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
+exchange path only**: the host stores at most **32765** ships in a per-design
+stack reached that way. The two-fleet **ship exchange** (the move/transfer
+path) driven to a stored total of 16766..17000 against a 16000 stack held
+**32765** in every case — one ship short of 32766 — with the excess lost and
+the order not refused. The **merge order itself was not reachable** at this
+boundary from a legal client (Merge Fleets is disabled for 16000-ship fleets,
+and the exchange path is what carried the ships across), so the **merge
+order's own clamp is not measured** — the 32765 belongs to the exchange path,
+not to a direct merge.
 
-Elegy's chosen clamp reproduces this exactly: keep counts up to 32767, and a
-stack that would exceed 32767 becomes 32766 with the remainder dropped. This
-path is otherwise BINARY-ONLY — read from the program, not yet oracle-tested.
+Client-side caps (what a legal client can even issue): the two-fleet **Ship
+Transfer** stops at **32766**, and **Merge Fleets is disabled** for
+16000-ship fleets (the exact fleet size at which the client disables it is
+unmeasured). So the measured **32765** is the ship-move/exchange result; the
+**task** path's "32766/32767 kept, 32768+ empties the slot" (below) is **not
+reachable by any legal order**.
+
+**Elegy's chosen rule** for the **merge order** overflow (kept separate from
+the measurement, reconciliation pending with the kernel/orders lanes): the
+standing overflow rule stores **32766**, and it is **unconfirmed** — the merge
+order's own clamp was never reached by a legal order (the boundary was only
+measured through the exchange path, which stored 32765). An implementation
+should treat **32765** as the measured truth for the **ship-move/exchange**
+path, while the **merge order keeps 32766** as Elegy's chosen rule until the
+lanes reconcile. Flagged for that reconciliation.
 
 This path also combines damage by its **own** routine, not the one the
-Merge-with-Fleet task uses, and the two do not agree on magnitude. The
-**percentage** combines the same way — a damaged stack merged into healthy
-ships of the same design has its percent spread over the full post-merge
-count, `ceil(100·ΣD/n)` with `D` the damaged-ship count per stack and `n` the
-slot total. But the per-ship **damage units** are averaged over the
-**damaged** ships only (`Σ(D·units)/ΣD`), not over all `n`, so the merge order
-keeps a higher per-ship figure than the task's dilution: for the task's own
-example (10 ships at 100 units/50% + 10 at 200 units/20%) both give 35%, but
-the merge order yields ~129 units/ship where the task gives 45. An
-implementation should therefore not assume ORDERS.md's single damage rule
-(stated for the task) holds verbatim here. BINARY-ONLY — this whole path is
-read from the program but not yet oracle-tested.
+Merge-with-Fleet task uses, and the two do not agree on magnitude —
+CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+**damage units** are averaged over the **damaged** ships only
+(`Σ(D·units)/ΣD`), **rounded down**, not over all `n` ships of the slot: the
+run merged two damaged ships totalling 201 units and stored `201/2 → 100`
+(rounded down). The percentage combines over the full post-merge count
+(`ceil(100·ΣD/n)`, `D` the damaged-ship count per stack, `n` the slot total).
+So the merge order keeps a higher per-ship figure than the task's dilution,
+and the **task's damage rule is refuted for the direct merge** — an
+implementation must not assume the single task damage rule holds here. A richer
+case confirms the two formulas together (CO-05c): merging ten ships at 100
+units/50% damaged with ten at 200 units/20% damaged stored per-ship units
+`(500 + 400)/7 = 128.6 → 128` (`Σ(D·units)/ΣD` over the seven damaged ships,
+rounded down) at `100·7/20 = 35%` of the slot. Note the stored damage is read
+*before* the year's repair: the same file **after** the turn's repair reads
+**118 units**, so an audit must compare at the same phase.
 
 **Merge-with-Fleet waypoint task** (CONFIRMED, FO-01..07). The ordering fleet
 joins a target fleet on arrival; ship counts add per design and cargo and
@@ -525,14 +598,25 @@ the precise messages needs the OX runs.
 
 ### Split
 
-BINARY-ONLY.
+CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
 
 A split creates a new fleet from part of an existing one. The new fleet
 carries exactly the ships named in the order, and **inherits the source
 fleet's battle plan and its full waypoint list** (so the detached ships keep
-following the same orders until changed). The source's cargo and fuel are
-then divided between the two fleets in proportion to capacity. "Split all"
-is the same operation taken to the limit: one new single-ship fleet per ship.
+following the same orders until changed). The source's cargo and fuel are then
+divided between the two fleets **in proportion to capacity, rounded down** (the
+remainder staying with the source). The two-fleet **ship exchange** moves
+cargo and fuel with the ships by the same capacity-proportional, round-down
+rule (CO-03).
+
+**Split All** is the same operation taken to the limit — one single-ship fleet
+per ship — but its *form* is specific (CO-02): the client **keeps the source
+fleet with one ship** and writes **one split-and-move per new fleet**; each
+move takes `floor(share)` of what is *left*, so the **rounding remainder stays
+with the source** (the lowest id). For three ships over 100 Ir / 1000 fuel the
+result is **34/334** on the retained source fleet and **33/333, 33/333** on the
+two split-offs — the numbers my prediction gave, with the remainder landing on
+the source rather than a new fleet.
 
 ### Turn placement
 
@@ -544,9 +628,10 @@ each player's orders are replayed, before any movement (`KERNEL.md`, turn
 order step 1). The Merge-with-Fleet, load and unload **tasks attached to
 waypoints** are distinct: they run at the pre-movement and post-movement
 waypoint phases (`KERNEL.md`, steps 2 and 6), on arrival at the waypoint, and
-the load/unload planet-side amounts are in `TAKEOVER.md`. Cross-owner cargo
-given at order time is deferred to those later phases as described under
-Cross-owner cargo.
+the load/unload planet-side amounts are in `TAKEOVER.md`. A manual cross-owner
+cargo gift is applied in place during this step-1 replay, **before** movement,
+not deferred to the later waypoint phases (see **Cross-owner cargo** above,
+MEASURED, TK-406/407/409).
 
 ## Waypoint upkeep and the remaining tasks
 
@@ -605,10 +690,18 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   target's current position, so a fleet ordered to meet a moving fleet keeps
   chasing it. CONFIRMED (a waypoint aimed at a fleet that moved north came
   back with the target's new coordinates). Only a position is copied; the
-  target's owner is not re-checked, so a waypoint keeps tracking a target fleet
-  even if it has changed hands (been captured) — the captured case is
-  BINARY-ONLY. An exception bit on the waypoint suppresses the refresh (the
-  waypoint then holds its coordinates) — BINARY-ONLY.
+  target's owner is not re-checked, so a waypoint keeps tracking a target even
+  if it has changed hands (been captured). MEASURED for a **planet target**
+  (WU wuCAP, apparatus `evidence/wu`): a fleet's waypoint naming an enemy planet
+  survived that planet being captured the same turn — a one-sided colonist drop
+  invaded the undefended planet (owner flipped at the drop step, before fleet
+  movement), yet the pursuing fleet's waypoint still named the planet (same
+  target type) afterwards, not cleared. The **fleet-target** capture (an
+  in-place owner change of a *fleet* target) stays BINARY-ONLY: it is not
+  reachable from the client, because a fleet gift removes the original and
+  creates a new fleet for the recipient, which is the "target gone" case below,
+  not an in-place capture. An exception bit on the waypoint suppresses the
+  refresh (the waypoint then holds its coordinates) — BINARY-ONLY.
 - **Target gone (destroyed, or no longer a fleet):** the target is cleared
   and the waypoint becomes a plain go-to-coordinates waypoint at the
   last-known position; the fleet still travels there and then treats it as an
@@ -655,10 +748,10 @@ automatically sent on to that destination (a fresh two-waypoint order):
 
 - the warp is the **ideal warp** for the distance, then reduced step by step
   if the fleet lacks the fuel to sustain it;
-- if both the source and destination planets have a **stargate**, the fleet
-  carries no cargo, and the gate can move the fleet's heaviest hull over the
-  distance with no loss, the fleet is sent through the stargate instead
-  (warp set to the gate code).
+- if both the source and destination planets have a **stargate**, both planets
+  belong to the fleet's owner, the fleet carries no cargo, and the gate can move
+  the fleet's heaviest hull over the distance with no loss, the fleet is sent
+  through the stargate instead (warp set to the gate code, **11**).
 
 This chains across hops: each arrival re-routes. A planet with no route set,
 or not owned by the fleet, leaves the fleet idle rather than re-routing.
@@ -666,10 +759,26 @@ or not owned by the fleet, leaves the fleet idle rather than re-routing.
 CONFIRMED for the ideal-warp case: a fleet carrying the route task at a planet
 whose route pointed to another planet ~161 ly away came back with a fresh
 two-waypoint order to that planet at warp 6 (the Long Hump 6 ideal warp, with
-fuel to spare) and had begun moving. The stargate case is BINARY-ONLY (the
-base starbases have no gate). This routing rule is the same one new fleets use
-when they leave production; the shared statement lives in `PRODUCTION-LAUNCH.md`
-(stars-elegy #57), which this section defers to rather than restating.
+fuel to spare) and had begun moving.
+
+MEASURED for the **stargate case** (WU wuRSG2, apparatus `evidence/wu`): with
+both the source (planet 17) and destination (planet 8) owned by the fleet's
+player and each carrying a stargate, a cargo-free fleet with the route task at
+planet 17 was re-routed through the gate — it arrived at planet 8 the same year
+(a ~161 ly hop, farther than warp 10's 100 ly/year reach, so the move can only
+be a gate jump) and its regenerated waypoint read warp 11 (the gate code,
+GT-004). A direct warp-11 control fleet naming the same gated destination jumped
+identically. **Both planets must belong to the fleet's owner** for the shared
+routing check (`FCanFleetUseStargates`): a friend's gate does not count. (A
+non-IT fleet carrying cargo may change the choice, since the no-cargo condition
+and the gate's mass/range limits then apply; not separately measured here.) One
+observation left open: both fleets' fuel read 100 before and 50 after the jump,
+though a gate hop is conventionally fuel-free — recorded, not interpreted, and
+distinct from the CO-07c design-delete fuel accounting below.
+
+This routing rule is the same one new fleets use when they leave production; the
+shared statement lives in `PRODUCTION-LAUNCH.md` (stars-elegy #57), which this
+section defers to rather than restating.
 
 ### Patrol task
 
@@ -760,18 +869,17 @@ serial decision: `tools/fleetlab/client-orders` issues them as **legal** client
 orders. Predictions for that round are committed in
 `experiments/fo/client-orders.md` (**CO** prefix). Still open:
 
-- **OX merge-order cap and loss (→ CO-06).** The direct merge order's per-design
-  cap is read but untested. The Merge-with-Fleet *task* (FO-06) keeps 32766 and
-  32767 and **empties the ship slot** at 32768 and above (the fleet record,
-  cargo and fuel stay). Push a direct merge across the same boundary and confirm
-  whether it empties the slot the same way or clamps. **Elegy's chosen rule**
-  for the overflow is 32768+ → **32766** with the excess lost, next to the host
-  behaviour. Confirms "Merge order".
-- **OX merge-order damage (→ CO-05).** Merge (direct order) a damaged stack into
-  healthy ships of the same design and read back the stored percent and per-ship
-  damage units; confirm the percent dilutes over the full count like the task
-  but the units divide by the damaged count, not the slot total (so the figure
-  differs from the task path). Confirms the merge-order damage note.
+- **OX merge-order cap and loss — RESOLVED (CO-06).** The **ship-move/exchange**
+  path stores at most **32765** ships (one short of 32766, excess lost); the
+  direct **merge order** was not reachable at the boundary (Merge Fleets is
+  disabled for 16000-ship fleets, Ship Transfer stops at 32766), so the merge
+  order's own clamp is unmeasured and stays Elegy's chosen rule (32766,
+  unconfirmed). The task path's 32766/32767 keep and 32768 empty are
+  unreachable by legal orders. See "Merge order".
+- **OX merge-order damage — RESOLVED (CO-05).** CONFIRMED: the direct order
+  averages damage units over the **damaged** ships only, rounded down
+  (`201/2 → 100`); the task's dilution rule is refuted for the direct merge.
+  See "Merge order".
 - **OX merge-target validation.** With the Merge-with-Fleet task, aim it at a
   co-located fleet owned by another player, and at a fleet that has already
   merged away the same turn; confirm each is refused with no change. Confirms
@@ -785,20 +893,14 @@ orders. Predictions for that round are committed in
   player's minefield, and one naming a field kind that cannot detonate;
   confirm the original accepts both. Confirms "Minefield detonate-setting".
   Keep the crafted inputs in private apparatus.
-- **OX split (→ CO-01, CO-02).** Split some ships off a loaded fleet; confirm
-  the new fleet has exactly the ordered ships, a capacity-proportional share of
-  the cargo and fuel (rounded down), and the source's battle plan and waypoints.
-  Split All (CO-02) pins where the rounding remainder lands. Confirms "Split".
-- **OX own-fleet transfer order (→ CO-04; elegy implementation Q2).** An open
-  contradiction. "Transfer between the player's own fleets" above reads the
-  direct order as a **capacity rebalance** (pool each kind and fuel, share by
-  capacity) — BINARY-ONLY, read from the program, not measured. The elegy
-  implementation's proposed rule is **explicit amounts** (load-all /
-  set-amount / fill-to-%) clamped by free space, like the FO-02 task actions.
-  CO-04 runs the discriminating case (350 Ir over two equal-capacity fleets →
-  `175/175` if rebalance, `210/140` if explicit). If rebalance holds, the elegy
-  rule is INTENTIONALLY DIFFERENT; if explicit holds, correct the section. The
-  contradiction is preserved until the run settles it.
+- **OX split — RESOLVED (CO-01, CO-02, CO-03).** CONFIRMED: split and exchange
+  share cargo/fuel by capacity, rounded down; Split All keeps the source with
+  one ship and leaves the rounding remainder on it (lowest id). See "Split".
+- **OX own-fleet transfer order — RESOLVED (CO-04; elegy Q2).** CONFIRMED
+  **explicit amounts**, not a capacity rebalance: the client caps the amount by
+  the other fleet's free hold and by what is aboard, and the host applies the
+  written amount. The earlier capacity-rebalance reading is refuted. See
+  "Transfer between the player's own fleets".
 
 The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
 editing**, not crafted order files, so none needed the registered serial, and
@@ -814,22 +916,27 @@ cycle), and the computer-player transfer refusal (a fleet gifted to an expert
 computer, measured on a computer-opponents base built with the fleetlab
 `keepfleets-ordered` directive).
 
-Still open (fleetlab HST editing, no serial). Each needs a setup the current
-CombatLab directives do not yet build, so they are not part of the plain WU
-batch:
+Both previously-open WU cases are now **run** (fleetlab HST editing, no serial):
 
-- **WU captured target.** Track a fleet target that changes owner **mid-turn**;
-  confirm the waypoint keeps tracking it (owner not re-checked), and that the
-  suppress bit holds coordinates instead. Needs a deterministic ownership
-  change during the generated turn (combat capture or takeover), which host
-  editing alone cannot stage from a quiet start.
-- **WU route stargate.** Route between two **gated** planets with an empty
-  fleet; confirm it is sent through the stargate rather than at warp. Needs a
-  starbase design carrying a stargate on both planets; CombatLab's `planet …
-  starbase` copies the homeworld starbase (no gate), so it cannot build this
-  without a stargate-bearing starbase design.
+- **WU captured target (planet-invasion variant) — RESOLVED (MEASURED, wuCAP).**
+  A player-0 fleet dropped 200 colonists onto an **undefended** foreign planet
+  (its starbase removed and defenses zeroed so the drop is not refused — a
+  foreign starbase otherwise cancels the drop with message 0x135, `MESSAGES.md`);
+  the planet flipped to player 0 at the drop step, before fleet movement. A
+  second player-0 fleet carrying a waypoint that named that planet (target type
+  11) still named it after the capture — the waypoint was not dropped when the
+  planet changed hands. See "Targets that moved, died or were captured" above.
+  The **fleet-target** in-place capture stays BINARY-ONLY (not client-reachable;
+  a fleet gift is the "target gone" case).
+- **WU route stargate — RESOLVED (MEASURED, wuRSG2).** A cargo-free fleet with
+  the route task, both route endpoints owned by the fleet's player and each
+  gated, was sent through the gate (warp 11), arriving the same year over a hop
+  longer than any warp could cover; the earlier `wuGATE` miss was only because
+  its destination waypoint did not name the gated planet as its target object.
+  See the Route task section above; the gate encoding itself (warp 11 = gate,
+  GT-004) is the Objects lane's.
 
-(**WU patrol no-repeat** is now MEASURED — see the patrol bullet above, run
+(**WU patrol no-repeat** is also MEASURED — see the patrol bullet above, run
 `wuPNR`.)
 
 The order-ingestion predictions remain open:

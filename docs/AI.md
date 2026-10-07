@@ -9,10 +9,10 @@ war) gets its own file under docs/ai/:
 | Type (definition file) | Personality | PRT | File | Elegy |
 |---|---|---|---|---|
 | 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
-| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
-| 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 2 | Turindrone | SS | `docs/ai/turindrone.md` | legacy reference: fleet pass checked over AIX (AI-22), not an implementation commitment |
+| 3 | Automitron | IS | `docs/ai/automitron.md` | legacy reference: fleet pass checked over AIX (AI-23), not an implementation commitment |
 | 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
-| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
+| 5 | Cybertron | PP | `docs/ai/cybertron.md` | faithful candidate |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
 
 **Project policy (2026-10-07).** Elegy reproduces faithfully only the
@@ -21,7 +21,10 @@ with oracle captures: Robotoid, Rototill and Cybertron, each matched over
 every captured player-year of its corpus (`../PARITY.md` cases). These
 are candidates for faithful implementation. Turindrone, Automitron and
 Macinti are documented as legacy-reference behavior: read from the
-original, only partly checked, and optional future work. Reproducing all
+original and optional future work. Turindrone's and Automitron's fleet
+passes are checked over AIX (AI-22, AI-23), which preserves the result
+but is not a commitment to implement them; their bomber paths stay
+BINARY-ONLY. Reproducing all
 six personalities is not an objective. Further computer-player
 experiments need a concrete reason: an Elegy implementation blocker, a
 contradiction in an existing spec, or a cheap experiment that closes a
@@ -433,7 +436,7 @@ After its own work, every computer player runs these steps, in order.
    a scout heading to a planet at warp 6 can get an order changing only
    its warp to 5 (the same whole-year travel time).
 2. **Starbases for hubs** (not Macinti; in a tutorial game only before
-   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md, planned).
+   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md §4.3).
    The others: every own planet with no starbase, population ≥ 8,000, not
    marked by the personality's own pass, that is a hub (§6), gets the
    current starbase design (slot 0, or 5 when slot 5 is newer) ×1 appended
@@ -650,8 +653,7 @@ keeps waypoint 0 and sets waypoint 1 to the target with the given task
 and warp, dropping any later waypoints; if the fleet is already at the
 target, the task goes on waypoint 0 and the route is cut to that one
 waypoint. When the existing waypoint 0 lies at the fleet's position, the move
-order overwrites it in place (BINARY-ONLY; details with Cybertron,
-docs/ai/cybertron.md, planned).
+order overwrites it in place (BINARY-ONLY).
 
 **Supplies.** When a rule loads colonists or minerals between a planet
 and a fleet, the planet and fleet change at once in the computer player's
@@ -677,7 +679,7 @@ formula, to be published with the personality stage that needs it).
   slots 2–5 + 2 × ships in slots 6–7`. It is "too weak" when `strength <
   P` (the personality's armada potency). Turindrone calls the same rule
   for its bomber check, where slots 2–7 are not its warships (see
-  docs/ai/turindrone.md, planned): LEGACY BUG, reproduced as written.
+  `docs/ai/turindrone.md`): LEGACY BUG, reproduced as written.
 
 **Nearest colonizable planet.** Candidates are planets unowned in the
 player's own view (§1: a planet never scanned counts as unowned) that no
