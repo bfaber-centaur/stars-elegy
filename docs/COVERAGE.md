@@ -26,7 +26,7 @@ Levels:
 | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: whether the 512th field depends on object order, the 4050-object limit, SS and SD safe-warp bonuses. |
 | Colonists breeding inside fleets (one primary trait) | none | Missing | How carried colonists grow, and where the overflow goes. |
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
-| Ships and starbases leaving production | none | Missing | Where built ships go: one new fleet per build, its number and name, full fuel, the per-player fleet limit and what happens at it, routing to the planet's route destination with the warp chosen, a new fleet's default orders, what replacing or upgrading a starbase does to the old one. |
+| Ships and starbases leaving production | `PRODUCTION-LAUNCH.md` | Read | New fleets, numbers, fuel, default orders, routing warp, the 512-fleet limit, starbase replacement. Predictions SL-01..12 are with the oracle. |
 | Population growth | `KERNEL.md` | Confirmed | |
 | Research and tech progression | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. |
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#44), `OBJECTS.md` | Confirmed (#44) | KX-004. Check that #44 states meteors and climate change also clear the non-automatic items from a planet's queue. |
