@@ -535,6 +535,39 @@ r.case('F', 'S-17', 'player 0 packet far from player 1\'s scouts (player 0 is wr
        'absent from player 1\'s file', 'present if player 0\'s own pass marks it', ('thingin', 2, 8192, False))
 
 
+# ---------------------------------------------------------------- OB-018 object scanning without hull scanners
+# OB-011's JOAT Scouts added a built-in penetrating range of 30, which covered every R/4 edge. Here
+# player 1 views with Small Freighters carrying one Rhino (no hull scanner: R 50, P 0, R/4 12.5).
+FREIGHTER1 = 'design 1 2 Small Freighter, 1 Long Hump 6, 1 Rhino Scanner, empty = Rhino Freighter\n'
+r = run('OB-018', 'scanning of objects by Rhino freighters (R 50, P 0, R/4 12.5)',
+        extra='planet 8 scanner none\n' + FREIGHTER1)
+r.scan = dict(viewer=1, mask=2, R=50, P=0)
+for (sx, sy) in ((1050, 1040), (1050, 1260), (1360, 1040), (1370, 1230), (1151, 1277), (1291, 1274)):
+    r.fleet(1, sx, sy, '2:1')
+r.field(0, 1062, 1040, 100); r.case('A', 'S-17', 'unknown field 100 at d=12', 'seen (d <= R/4)', '', ('scan',))
+r.field(0, 1050, 1053, 100); r.case('B', 'S-17', 'unknown field 100 at d=13', 'not seen', 'seen if any '
+                                    'range above 13 applied', ('scan',))
+r.field(0, 1080, 1260, 1000); r.case('C', 'S-17', 'unknown field 1000 at d=30, freighter inside', 'seen', '', ('scan',))
+r.field(0, 1050, 1300, 100); r.case('D', 'S-17', 'unknown field 100 at d=40', 'not seen', 'seen at full R',
+                                    ('scan',))
+r.thing('minefield', 0, '1360 1080 100 known 2'); r.fields.append((0, 1360, 1080, 100, set()))
+r.case('E', 'S-17', 'field known to player 1 at d=40', 'seen (full R)', '', ('scan',))
+r.thing('minefield', 0, '1310 1040 100 known 2'); r.fields.append((0, 1310, 1040, 100, set()))
+r.case('F', 'S-17', 'known field at d=50', 'seen', '', ('scan',))
+r.thing('minefield', 0, '1360 1091 100 known 2'); r.fields.append((0, 1360, 1091, 100, set()))
+r.case('G', 'S-17', 'known field at d=51', 'not seen', '', ('scan',))
+r.thing('wormhole', 0, '1370 1270 1 0'); r.thing('wormhole', 0, '1210 1360 0 0')
+r.case('H', 'S-17', 'unknown wormhole 40 ly from a freighter (at least 23 after the jiggle); partner far',
+       'neither end seen', 'seen at full R', ('scan',))
+r.thing('wormhole', 0, '1370 1230 3 0'); r.thing('wormhole', 0, '1020 1150 2 0')
+r.case('I', 'S-17', 'unknown wormhole on a freighter before its jiggle', 'seen iff d <= 12.5 after the jiggle',
+       '', ('scan',))
+r.thing('packet', 0, '1150 1350 6 5 100 0 0')
+r.case('J', 'S-17', 'packet about 48 ly from a freighter after its move', 'seen (d <= R)', '', ('scan',))
+r.thing('packet', 0, '1300 1350 6 5 100 0 0')
+r.case('K', 'S-17', 'packet about 53 ly from a freighter after its move', 'not seen', '', ('scan',))
+
+
 def main():
     if sys.argv[1:2] == ['--defs']:
         out = sys.argv[2]

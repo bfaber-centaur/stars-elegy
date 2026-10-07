@@ -234,3 +234,74 @@ Scanning runs (OB-011..014) are checked object by object: `check.py`
 applies the S-17..S-19 rules to the generated host file (positions after
 the year's jiggles and moves) and compares the expected set with the objects
 in the viewer's `.M` file.
+
+## Round 3 predictions
+
+Committed in `gen.py` (1c7ae56) after OB-011 and before OB-017 ran.
+
+### OB-017: known wormholes in range, and packet visibility marks carried between viewers
+
+Player 0 has no scanner at all (homeworld scanner removed, no fleets).
+Player 1 has two Rhino Scouts (JOAT: R 66, P 30).
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-017-A | S-17 | wormhole known to player 1, starting on a scout (after its jiggle within the penetrating range 30) | in player 1's file | absent if known wormholes are skipped |
+| OB-017-B | S-17 | unknown wormhole starting on the other scout | in player 1's file |  |
+| OB-017-C | S-17 | the two partners, far from every scanner | absent |  |
+| OB-017-D | S-17 | player 1 packet, start file mark bit 15 clear, far from player 0 | absent from player 0's file |  |
+| OB-017-E | S-17 | player 1 packet with bit 15 set in the start file (as every host file leaves it) | absent from player 0's file | present if the mark persists |
+| OB-017-F | S-17 | player 0 packet far from player 1's scouts (player 0 is written first) | absent from player 1's file | present if player 0's own pass marks it |
+
+## Results
+
+Pinned stream (cycles fixed 20000), one generation per run. `check.py`
+output for every run is in the private apparatus `evidence/ob/`.
+
+Held as predicted:
+
+- OB-001 A–I (sweeping: O-8, O-9, O-10, O-11).
+- OB-002 A–L and N (decay, laying, merging, part kinds, years word 0). M
+  (detonation) was recorded as a measurement and agreed with O-13: the five
+  own Laser DDs and the five enemy Medium Freighters were damaged, the own
+  Mini Mine Layer was not, and the field went 1000 → 730 (2% + 25% decay,
+  no extra loss for the hits).
+- OB-003 A, B, C, G, J (packets: one ninth uncaught, the 10 kT minimum,
+  planet wiped, in-flight movement and decay).
+- OB-004 A–E, rerun (Mystery Trader).
+- OB-005 A, C, D (wormhole jiggle and transit). B is a measurement: on this
+  stream the class-2/30-year end jumped (moved −59, −25, years reset to 0)
+  and its partner jiggled (years 31).
+- OB-007 A–E; OB-008 A and C (sweeping and relations). OB-008 B and D were
+  measurements: plan "everyone" and plan "player 1 only" both swept a
+  friend's field (1000 → 960).
+- OB-009 A–H (packet damage with growth controlled).
+- OB-010 H0–H4 (no hits at the distance-limited warp).
+- OB-011 A–G, I, J; OB-012 A–C; OB-013 A–C; OB-014 A–C (object scanning,
+  PP, IT gates, SD).
+- OB-015 A; OB-016 A (decay cap; SD decay).
+- OB-017 A–F.
+
+Contradicted, with the cause:
+
+- OB-001-J: 860, not 900. Setup error: the field holds planet 5, so it
+  decays 6%, not 2% (1000 → 940), then the fort sweeps 80. Agrees with O-5
+  and O-9 (starbase range +1).
+- OB-003 D, E, F, H, I: setup errors. Packet E was 50 ly away at warp 7
+  (49 ly/yr) and arrived a year late, and population growth on the damaged
+  planets confounded the others. OB-009 repeated them with growth controlled
+  and all held.
+- OB-010-S: the fleet crossed the field without a hit (one of the two
+  predicted outcomes) but the field was 2840, not 2940. The fleet ended the
+  move inside the field and swept it (5 Laser DDs, 100). Agrees with the
+  model; the prediction left the sweep out.
+- **OB-011-H**: a wormhole whose "seen" mask already held player 1, far from
+  every player 1 scanner, was not in player 1's file. OB-017 A–C confirmed
+  the rule that fits: a wormhole is written only when it is within R/4 or P
+  of a scanner this year, whatever the mask says. (The decomp states the
+  "earlier turn" rule for minefields only; this prediction extended it to
+  wormholes.)
+- **OB-014-D**: the non-SD layer whose waypoint 0 carried the lay task and
+  whose waypoint 1 was 25 ly away did not move. It laid 160 at its start
+  and waypoint 1 was removed. O-2 says it "lays nothing" while moving; in
+  the game a lay-mines task on waypoint 0 keeps the fleet in place.
