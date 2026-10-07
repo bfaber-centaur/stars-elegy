@@ -2079,19 +2079,25 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 
 ### Open
 
-- IFE and other LRTs (the binary reading has IFE cut engine fuel by 15%
-  and Cheap Engines fail at warp 7–10 at random), warp-10 ship losses
-  (random in the binary reading), fuel transports and anti-matter
-  generators, and fuel transfer orders: not tested.
-- The chase candidates above are now explained by the binary reading
-  (white-box: chasers move after the other fleets in steps of about a fifth
-  of warp² while their target has not moved; a chaser landing on a target
-  that is itself chasing stops it for the year). The oracle side has only
-  the FM-001..003 cases.
+Settled since this list was written (kept for the record):
+
+- ~~IFE and other LRTs, warp-10 ship losses, fuel transports and
+  anti-matter generators~~: CONFIRMED in Round 2 (FM-101..105) and KB batch
+  4 (KB-4A: IFE factor, generator and transport caps, refuelling at a
+  friend's or own dock). Cheap Engines failures and warp-10 losses are
+  MEASURED rates (Round 2).
+- ~~Fuel transfer orders~~: `ORDERS.md` "Cargo amounts and clamps"
+  (FO-01..07).
+- ~~Chase candidates, oracle side only FM-001..003~~: chasing a finished
+  target CONFIRMED (KB-4A C); per-pass steps and the chain freeze MEASURED
+  (MF-02, MF-02b, "Followers" below).
+- ~~Minefields, stargates, wormholes~~: covered by the MF, GT and WT
+  corpora (`OBJECTS.md`).
+
+Still open:
+
 - Whether chain freezing and the mutual-chase scheme hold for three-way
   cycles and in the next year.
-- Minefields, stargates, wormholes, and movement
-  that interacts with other players were deliberately not tested.
 
 ### Round 2 (FM-101 to FM-105)
 
