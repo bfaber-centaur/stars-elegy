@@ -3271,7 +3271,8 @@ the other two starbases always sent 0x141. The electronics level also sent
 time, and a passing attempt gives the part with chance 0.215. Observed
 10 of 12 first attempts passed and 5 of 10 gains were the part, both above
 the model (TK-203 also gained more often than predicted: 7 of 12 first
-attempts against 0.33). Open.
+attempts against 0.33). Open; follow-up TK-307 (`experiments/tk/tk307.md`,
+predictions committed before the run).
 
 ### Round 5: manual cargo transfers (TK-501, TK-502)
 
