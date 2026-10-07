@@ -916,13 +916,16 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
 
 ### Weapons and damage (CONFIRMED by replay)
 
-- **Torpedo salvos.** A salvo of N torpedoes at hit chance p% hits exactly
-  floor(N·p/100) times: 202 Beta torpedoes hit 90 / 125 / 103 / 72 times
-  for p = 45 (no computer), 62 (BSC), 51 (BSC vs Jammer 20), 36 (BSC vs
+- **Torpedo salvos of more than 200 torpedoes.** Such a salvo at hit
+  chance p% hits exactly floor(N·p/100) times: 202 Beta torpedoes hit
+  90 / 125 / 103 / 72 times for p = 45 (no computer), 62 (BSC), 51 (BSC vs Jammer 20), 36 (BSC vs
   Jammer 50) — the same numbers in both CB-001 runs (P-17, P-18). Hit
   chance: with c = max(0, computer − jammer) and j = max(0, jammer −
   computer), p = 100 − (100 − c)(100 − accuracy)/100 if c > 0, else
-  accuracy·(100 − j)/100 (integers).
+  accuracy·(100 − j)/100 (integers). The fixed count was tested only with
+  N = 202. For salvos of 200 or fewer the binary reading draws each
+  torpedo at random; that case was not checked against the oracle beyond
+  the replay of recorded hits.
 - **Missiles** (Jihad) do double damage to a stack with no shields:
   202 Jihads at 20% hit 40 times for 6800 damage on two 3650-armor Hulks
   (one killed, the survivor shown 432/500 damaged) (P-20).
@@ -956,18 +959,28 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   side whose plan attacks enemies is unarmed (CB-006).
 - A stack whose plan attacks nobody fires back once a battle has started
   (P-6).
-- **Starbases — CONTRADICTS the binary reading.** In five configurations
-  (owner plan 0 attack-who enemies / neutrals and enemies / everyone; Laser
-  or Gatling stations; armed and unarmed enemy visitors attacking nobody or
-  enemies) an armed starbase alone never started a battle with an enemy
-  fleet in orbit (CB-002 C9/C10, CB-003/004 S2, CB-006). The binary reading
-  predicted that plan-0 "enemies" makes the station attack. P-29 (plan 0
-  "everyone" may fail) therefore cannot be tested as stated.
-- When a battle happens at a planet, the starbase joins as a token: it did
-  when its owner's fleet started the battle (CB-003/004 S1), and an
-  **unarmed** station also appeared as a token (CB-005). The latter
-  CONTRADICTS P-4 ("unarmed starbase is not a token"). An armed station in
-  the battle fired (CB-005).
+- **Lone starbases did not start battles — CONTRADICTS the binary
+  reading.** In all six tested cases an armed starbase whose owner had no
+  armed fleet there started no battle with an enemy fleet in orbit:
+  - CB-002 C9: Laser station, plan 0 attack everyone; unarmed visitor
+    attacking nobody.
+  - CB-002 C10: Gatling station, plan 0 enemies; unarmed visitors
+    attacking nobody.
+  - CB-003 S2 / CB-004 S2: Laser station, plan 0 enemies / neutrals and
+    enemies; unarmed visitor attacking nobody.
+  - CB-006: Laser station, plan 0 enemies, armed visitor attacking nobody;
+    Gatling station, plan 0 enemies, unarmed visitor attacking enemies.
+  The binary reading predicted that plan 0 "enemies" makes the station
+  attack. Other plan settings, armed visitors that attack, and other
+  hulls were not tested, so this is not a general rule. P-29 (plan 0
+  "everyone" may fail) cannot be tested as stated.
+- **Starbases in a battle started by fleets.** When fleets fought at a
+  planet, its starbase appeared as a token: an armed station whose owner's
+  fleet started the battle (CB-003/004 S1, never in range, did not fire);
+  an armed Gatling station attacked by enemy fleets (CB-005, fired); and an
+  **unarmed** station at a planet where its owner's fleet attacked enemy
+  fleets (CB-005). The unarmed case CONTRADICTS P-4 ("unarmed starbase is
+  not a token").
 
 ### Salvage (CONFIRMED, one case)
 
@@ -976,6 +989,12 @@ B1, three kill events (3, 4 and 3 Small Freighters; 4 Ironium,
 5 Germanium each at tech 26) left 10 Ironium and 13 Germanium:
 per kill event, a third of the destroyed ships' mineral cost, then a
 quarter of that lost (integer at each step) (P-26).
+
+### Open reconciliation
+
+- Energy Dampener frigate token mass: the battle record shows 19 (CB-002
+  C8); the binary-derived part table gives 23. Hit replay is unaffected in
+  this corpus. Unexplained.
 
 ### Not tested
 
