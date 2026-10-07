@@ -1501,6 +1501,134 @@ coordinates, item draw for the outcomes seen). Not exercised: the part
 reroll and its late-year research conversion, and the `mod 128 = 49`
 branch at an index where `mod 100` also matches.
 
+### KX-005 — research, tech progression and terraforming
+
+Status: PREDICTIONS (committed before any case ran).
+
+Question: which research and terraforming rules in `KERNEL.md` are still
+BINARY-ONLY, and do they hold? Already settled elsewhere: level cost,
+cost settings, field switching, Generalized Research shares, level-26 loss
+(KX-002); slower tech and Super Stealth stealing (KX-003); miniaturization
+and what a race can build (`COMPONENTS.md`, CS-001); tech gained from
+battles, captures and scrapping (`COMBAT.md` "Tech from battle",
+`TAKEOVER.md`). Still open: Generalized Research under slower tech, a
+GR-fed field levelling without switching, reaching level 26 with "same
+field", which parts a level-up announces, and the terraforming rules
+marked BINARY-ONLY (ties, Auto Min/Max, Claim Adjuster cost, Orbital
+Adjusters, Claim Adjuster drift).
+
+Binary reading (stars-decomp `docs/research.md`, `mining-terraform.md`):
+
+- **Part announcements.** After a level-up in field `f`, every part the
+  race may use whose requirement in `f` equals the new level is announced,
+  **provided all six requirements are met** after the level-up (the lookup
+  returns "available" only then). Race-restricted parts and Mystery Trader
+  parts the player does not own are not announced. (An earlier private
+  note read the check as field `f` only; corrected.)
+- **Generalized Research under slower tech.** The current field gets
+  `(res+1)/2` at full scale, so it is stored as half (rounded up) like
+  normal research; each other field's 15% share `o` is added to its stored
+  value as `trunc(o/2)`.
+- **Level-ups in a GR-fed field** do not switch fields; their message is
+  the GR variant (as every level-up message of a GR player).
+- **Reaching 26** in a field whose next-field choice is "same field" turns
+  the choice into "lowest field", so research moves to the lowest field
+  (first in field order on ties) the same year with the leftover.
+- **Auto Min Terraform** builds (up to the terraform capacity) only when
+  the planet's population change this year is negative or its
+  habitability for the owner is 0 or less; Auto Max always up to the
+  capacity.
+- **Claim Adjuster** terraform items cost half (100 → 50).
+- **Orbital Adjusters:** after movement, each fleet orbiting an owned
+  planet makes one click per Orbital Adjuster (whatever its value), with
+  the fleet owner's terraform tech and the planet owner's habitat. If the
+  fleet's owner is the planet's owner or has the planet owner as a
+  *friend*, the click improves the planet (axis chosen as for production);
+  otherwise (neutral or enemy) it worsens it, pushing each axis to the
+  reachable end farther from the owner's centre (`orig ± reach`), unless
+  the planet has a starbase, in which case nothing happens. No test of
+  whether the fleet moved this year.
+- **Claim Adjuster drift:** per CA planet in planet order, `rand(3)` picks
+  an axis; if that axis's original value differs from the centre,
+  `rand(10) = 0` is needed, then population ≥ 1000 units passes, else
+  `rand(1000) < population`; the original value moves 1 toward the centre
+  before the year-end terraform.
+
+Method: Combat Lab game CB (two JOAT players), one year per run with
+`pinned-turn`; specs `experiments/kx005/`. Population in units of 100;
+resources = population / 10 (no factories) plus 35 at each homeworld.
+
+#### Research cases
+
+`kx5r`: player 0 Generalized Research, levels 10/0/3/3/3/3, energy
+current, next "lowest", 100% research, four planets of 4,900 (research
+1,995); player 1 levels 9/3/3/3/3/3, energy, next "same", eight planets
+of 5,000 (research 4,035). Run R1 on the normal base, R2 on base `0x82`
+(slower tech). `kx5l` (run R3): player 0 energy 25 with stored 85,080,
+next "same", homeworld only (35).
+
+| Run | Player | Predicted levels | Predicted stored research | Predicted messages |
+|---|---|---|---|---|
+| R1 | 0 (GR) | 10/**1**/3/3/3/3 | 998/30/300/300/300/300; field energy, next lowest (no switch) | GR level-up weapons 1 (continuing energy); part: Radiation Terraform ±3 |
+| R1 | 1 | **10**/3/3/3/3/3 | 25/0/0/0/0/0 | level-up energy 10; parts: Bear Neutrino Barrier, Laser Battery, Temp Terraform ±11 (not Battle Nexus, which needs electronics 19) |
+| R2 | 0 (GR, slow) | 10/0/3/3/3/3 (no level) | 499/150/150/150/150/150 | none |
+| R2 | 1 (slow) | 9/3/3/3/3/3 | 2018/0/0/0/0/0 | none |
+| R3 | 0 | **26**/3/3/3/3/3 | 0/**15**/0/0/0/0; field **weapons**, next lowest | level-up energy 26, continuing in weapons; no parts |
+| R3 | 1 | 3/3/3/3/3/3 | 35/0/0/0/0/0 | none |
+
+Alternatives these discriminate: GR shares stored at full scale under
+slow tech (R2 player 0 would gain weapons 1, stored 30/…); announcements
+checked on field `f` only (R1 player 1 would also announce Battle Nexus);
+level 26 keeping "same field" (R3: research stays in energy and is lost,
+weapons stored 0).
+
+#### Terraforming cases
+
+`kx5t0`, `kx5t1`, `kx5t2` differ only in player 1's relation to player 0
+(neutral, friend, enemy). Player 0: JOAT, tech 3 (reach ±3 per axis),
+research 0%. Player 1: Claim Adjuster, propulsion 10, biotech 6 (reach
+gravity ±11, temperature and radiation ±3), research 0%, and Orbital
+Adjuster fleets (one Mini-Miner with two adjusters each). Player 0 sees
+player 1 as a friend, so no battle.
+
+| Planet (owner) | Start (env = orig) | Queue / fleet | Predicted end of year |
+|---|---|---|---|
+| 0 (P0) | 50/60/60, pop 1000 (100 res.) | Terraform ×1 | 50/**59**/60: temperature and radiation tie, first axis wins |
+| 1 (P0) | 50/60/58, pop 8000 (800) | Auto Max ×9 | 6 built (capacity), 50/57/55 |
+| 2 (P0) | 50/60/60, pop 3000, growing | Auto Min ×5 | nothing built, unchanged |
+| 3 (P0) | 50/86/50 (hab −1), pop 2000 (120) | Auto Min ×1 | 1 built, 50/85/50 |
+| 9 (P0) | 50/60/60, pop 16000 (over capacity, shrinking; 1298) | Auto Min ×9 | 6 built, 50/57/57 |
+| 5 (P1, CA) | 60/60/60, pop 1200 (120) | Terraform ×3 | queue left **Terraform ×1 at 41%** (cost 50: two built); at cost 100 it would be ×2 at 20%. Year end: env 50/57/57 |
+| 15 (P0) | 60/60/60 | P1 fleet in orbit, 2 adjusters | neutral, enemy: **62**/60/60; friend: **58**/60/60 |
+| 19 (P0, starbase) | 60/60/60 | P1 fleet in orbit | neutral, enemy: unchanged; friend: 58/60/60 |
+| 21 (P0) | 60/60/60 | P1 fleet arriving this year (30 ly at warp 6) | as planet 15 |
+| 4, 6, 13, 14, 16 (P1, CA) | 60/60/60, pop 3000 | none | env 50/57/57 (year-end Claim Adjuster), orig 60/60/60 unless drifted |
+| 7 (P1, CA) | 60/60/60, pop 500 | none | as above; drift needs `rand(1000) <` its grown population (~554) |
+
+Hostile adjusters: gravity's reachable ends are 49 and 71; 71 is farther
+from the centre 50, and its average habitability loss per click (score
+137) beats temperature's and radiation's (67), so both clicks go to
+gravity. Friendly: gravity toward 50 (score 111) beats the others.
+
+Claim Adjuster drift, replayed from each startup tick at draw offset 4
+(the offset at which KX-004's events began; it is one value for every run
+from this state and is fitted if 4 misses), planets in order 4, 5, 6, 7,
+8, 13, 14, 16 (8 is the homeworld, original = centre, one draw):
+
+| Cycles → tick | Predicted drift (original value moves 1 toward 50) |
+|---|---|
+| 35000 → 109 | 14 radiation (env 50/57/**56**) |
+| 3700 → 1098 | 14 temperature (env 50/**56**/57) |
+| 2190 → 1812 | 5 temperature |
+| 1490 → 2691 | 4 radiation |
+| 1210 → 3295 | 6 radiation |
+| 1165 → 3460 | 4 temperature, 6 gravity (env unchanged: target stays 50), 14 temperature |
+| 1135 → 3570 | 13 radiation |
+| 11500 → 329, 10500 → 384, 6000 → 659, 5200 → 768, 1985 → 2032, 1190 → 3405, 930 → 4284, 880 → 4503 | none |
+
+Runs: T0 (neutral) at all 15 cycles values; T1 (friend) at 3700; T2
+(enemy) at 1165.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
