@@ -389,7 +389,7 @@ Each end separately, in list order:
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
   is rejected. The class never changes.
 
-### Placement badness (BINARY-ONLY)
+### Placement badness (CONFIRMED at creation, UG01–UG21)
 
 A try is rejected outright when outside the galaxy or exactly on another
 object, planet or fleet. Otherwise its badness combines: within 10 ly of
@@ -398,6 +398,20 @@ another wormhole (< 16, 64, 225, 900); near a planet (< 25, 100, 400, 784).
 The first try with no badness wins, else the least bad. In effect ends
 settle ≥ 70 ly from their partner, ≥ 30 ly from other wormholes and
 ≥ 28 ly from planets when they can.
+
+**How the terms combine.** Badness is a set of four flags, not a sum. Each
+distance band sets one flag: the closest band sets 8, the next 4, then 2,
+then 1. Being within 10 ly of an edge (`x` or `y` below `1010` or above
+`1000 + W − 10`) sets 4. Every term is checked against every other
+wormhole end and every planet, and the flags are OR-ed: two planets in the
+same band still set only that band's flag. Tries are compared by the
+resulting number (0–15), lower is better, and the first try with the
+lowest value wins. So one closest-band hit (8) is worse than every other
+combination (at most 7). A rejected try counts as 15: it can only be kept
+when every one of the 100 tries was rejected. The partner's bands apply
+only to the partner; when the first end of a pair is placed it has no
+partner yet. A try is never outside the galaxy, since positions are drawn
+as `1000 + rand(W)` on each axis.
 
 ### Travel (CONFIRMED, OB-005 C, D)
 

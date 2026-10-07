@@ -81,10 +81,16 @@ creation (BINARY-ONLY). Their later effects belong to other specs.
    packed, `N += N/4` again; at most 999.
 2. The generator places `M = min(999, N + N/7)` candidate points, each
    uniform with `x, y ∈ 1010 .. 1010 + W − 20`.
-3. **Minimum spacing.** Candidates closer than the minimum spacing are
-   removed: no two surviving planets have `d² ≤ 144` (12 ly).
+3. **Minimum spacing** (CONFIRMED). The candidates are sorted by `x`.
+   Taking each surviving candidate in that order, every later candidate
+   within `d² ≤ 144` (12 ly) of it is removed. A removed candidate removes
+   nothing, so the later member of each too-close pair goes. No two
+   surviving planets are within 12 ly. (The original's sort is not stable
+   for equal `x`; which of two equal-`x` candidates comes first is not
+   specified here.)
 4. Further candidates are removed at random until `N` remain. When the
-   spacing pass already removed more than `M − N`, fewer than `N` remain.
+   spacing pass already removed more than `M − N`, fewer than `N` remain,
+   and no candidate is added back.
 
 | size | sparse | normal | dense | packed |
 |---|---|---|---|---|
@@ -98,6 +104,13 @@ In large packed and huge dense or packed games the count depends on the
 seed. Over 316 sampled streams (BINARY-ONLY) it ranged 899–940 for large
 packed and 930–962 for huge dense or packed. Huge dense and huge packed
 are the same galaxy for the same seed (UG05, UG15).
+
+The other cells are the usual count, but the rule in step 4 can also put
+them below `N` (BINARY-ONLY; 3,000 uniform samples of steps 2–3 per cell).
+Tiny packed came out 54–60, below 60 in about 13% of games. Tiny dense
+came out 36–40, below 40 in about 4%. Small packed came out 235–240, below
+240 in about 1%. Medium packed came out 531–540, below 540 in about 0.1%.
+None of the UG games hit this (UG runs were not tiny or small packed).
 
 ### Clumping option (CONFIRMED, UG04, UG10)
 
@@ -144,7 +157,11 @@ the same mineral can be hit twice). For `9 ≤ r < 18`, once. Otherwise
 none.
 
 **Maximum minerals**: every concentration is 100 and no overrides apply
-(UG02, UG09).
+(UG02, UG09). Homeworlds start from planet 0's concentrations (below), so
+also 100, and then take any concentration boost from their spend. In UG02
+the human player (minerals spend) had 100/100/100. The harder computer
+player (concentrations spend, `L = 50`) had 138/113/113: +25 on the first
+lowest, then +13 on all.
 
 Surface minerals are 0 on every planet that is not a homeworld or second
 planet.
@@ -161,15 +178,24 @@ planet.
 Placement:
 
 1. The first homeworld is a random planet in the central box
-   `1000 + [W/4, 3W/4]` on both axes. After 50 random picks outside it,
-   the pick nearest to the box is used.
+   `1000 + [W/4, 3W/4]` on both axes. Boxes include their edges. After 50
+   random picks outside it, the pick nearest to the box is used. "Nearest"
+   is `dx² + dy²`, where `dx` and `dy` are how far the planet lies outside
+   the box on each axis (0 when inside on that axis). The first of equally
+   near picks wins.
 2. Each further homeworld is a random planet inside a wider box that
    meets the distance rules. The box is `1000 + [W/20, 19W/20]` for 5 or
    more players, `[W/10, 9W/10]` for 3–4 and `[3W/20, 17W/20]` for 1–2.
-   After 50 random picks fail, the next qualifying planet in list order
-   is taken.
+   A planet qualifies only when it is inside the wide box, at `d² ≥ 9v/10`
+   from every earlier homeworld (and not one of them) and within
+   `d² ≤ 7v/6` of at least one. After 50 random picks fail, the planet
+   list (sorted by `x`) is scanned from the planet after the 50th pick,
+   wrapping from the last planet to the first. The first qualifying planet
+   is taken. The scan stops without a result on returning to the 50th
+   pick, which is not tested again.
 3. If no planet qualifies, the minimum shrinks and the maximum grows by
-   `v/35` each, and placement restarts from the first homeworld. UG01,
+   `v/35` each (the changes accumulate over restarts), and placement
+   restarts from the first homeworld. UG01,
    UG05 and UG06 needed restarts.
 4. Players are then assigned to the homeworlds in random order.
 
@@ -199,8 +225,8 @@ Then:
   it is lower.
 - CE: propulsion +1. IFE: propulsion +1 (not in the tutorial).
 
-Research starts at 15% of resources for human players (MEASURED in every
-UG dump). No research is banked.
+Research starts at 15% of resources for every player (MEASURED in every
+UG dump; see Relations, research and production). No research is banked.
 
 ### Homeworld (CONFIRMED)
 
@@ -219,7 +245,10 @@ homeworlds in a game get the same surface minerals and the same
 concentrations, before spends. Surface minerals are drawn once per game:
 per mineral `10 + rand(10·c)`, plus `155 + rand(150)` when that is below
 200, where `c` is the concentration of planet 0 (the first planet in the
-planet list); BBS adds a quarter. The concentrations are planet 0's,
+planet list); BBS adds a quarter. `c` is planet 0's concentration as
+generated: after the radiation bonus, the BBS +5 and any low override.
+It is not raised to 30; that floor applies only to the homeworlds'
+concentrations. The concentrations are planet 0's,
 each raised to at least 30, not the homeworld's own. If planet 0 ends up
 unowned, its surface minerals are 0. Elegy reproduces this as one
 isolated rule (shared draw, concentrations taken from one reference
@@ -245,6 +274,11 @@ design 0 is an empty Orbital Fort.
 | factories | `+L/5` |
 | defenses | `+(L + 5)/10` |
 
+AR homeworlds get no mines, factories or defenses after the spend, so an
+AR race's mines, factories or defenses spend adds nothing (BINARY-ONLY: no
+UG race was AR with those spends; the built-in AR computer players spend
+on minerals). Its minerals and concentrations spends apply as usual.
+
 How a race's leftover points are computed is the race-design point
 system, not specified here. Every race in the UG corpus had at least 50.
 
@@ -262,13 +296,22 @@ system, not specified here. Every race in the UG corpus had at least 50.
 
 ### Starbases (CONFIRMED except where noted)
 
-- Design 0 for every race: a Space Station armed with lasers and
-  Mole-skin shields. The homeworld's starbase uses it.
-- PP: design 0 also carries a Mass Driver 5. On a map larger than tiny,
-  design 1 is an Orbital Fort with a Mass Driver 5 (for the second planet).
-- IT (not in the tutorial): design 0 also carries a Stargate 100/250. On a
-  map larger than tiny, design 1 is an Orbital Fort with the same gate.
-- AR: see Homeworld.
+- Design 0 for every race: a Space Station. The homeworld's starbase uses
+  it. Its 12 slots in hull order (CONFIRMED, every UG game): empty, 8 Laser,
+  8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, 8 Mole-skin Shield,
+  empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield. That is 32
+  Lasers and 32 Mole-skin Shields.
+- PP: design 0 also carries a Mass Driver 5 in its first slot. On a map
+  larger than tiny, design 1 is an Orbital Fort for the second planet:
+  Mass Driver 5, 6 Laser, 6 Cow-hide Shield, 6 Laser, 6 Cow-hide Shield.
+  The PP fort's shields are Cow-hide, not Mole-skin.
+- IT (not in the tutorial): design 0 also carries a Stargate 100/250 in
+  its first slot. On a map larger than tiny, design 1 is an Orbital Fort:
+  Stargate 100/250, 6 Laser, 6 Mole-skin Shield, 6 Laser, 6 Mole-skin
+  Shield.
+- AR: design 1 is the plain Space Station above (same loadout, no
+  additions), and it orbits the homeworld. Design 0 is an Orbital Fort
+  with all five slots empty.
 
 ### Starting ships (CONFIRMED)
 
@@ -334,7 +377,9 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
 
 - A random unowned planet at distance `0.15W ≤ d ≤ 0.23W` from the
   homeworld (all such planets equally likely); if none, the nearest
-  unowned planet outside that band.
+  unowned planet outside that band (the first in list order on a tie).
+  The band is checked on exact `d²` against `(15W/100)²` and `(23W/100)²`,
+  with each bound truncated before squaring, and both ends included.
 - If its habitability for the owner is below 10% (`KERNEL.md`), its
   environment is redrawn, each axis `2 + rand(97)`, until it reaches 10%,
   at most 100 times. If all 100 redraws were used, the planet takes the
@@ -344,11 +389,19 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
   minerals `100 + rand(200)` each, and 2/5 of the homeworld's population.
   The homeworld keeps 4/5.
 
-### Relations (MEASURED)
+### Relations, research and production (MEASURED)
 
-When exactly one player is human, every player starts as an enemy of
-every other (OB-006 and UG dumps). Otherwise relations keep their
-default starting value (BINARY-ONLY).
+- When exactly one player is human, every player starts as an enemy of
+  every other (OB-006 and UG dumps). With two or more human players,
+  every player is neutral to every other, the default (UG16, UG17, UG19,
+  UG20 and UG21 have 2 to 6 human players, and their files store no
+  relations, which reads as neutral). A game with no human player was
+  not run.
+- Every player, computer players included, starts with research at 15%
+  of resources. The current field is energy, and the next field is "same
+  field" (every player in every UG dump).
+- No planet has a production queue at the start (no queue in any UG
+  dump).
 
 ## Space objects at the start
 
@@ -367,4 +420,6 @@ default starting value (BINARY-ONLY).
    race-wide "75% extra fields start at 3" combined with JOAT (start 4).
 3. The second-planet redraw limit (needs a race that makes 100 redraws
    likely).
-4. Seed-dependent planet counts beyond one seed per size and density.
+4. Seed-dependent planet counts beyond one seed per size and density,
+   including tiny and small packed games that fall below `N`.
+5. An AR race file with a mines, factories or defenses spend.
