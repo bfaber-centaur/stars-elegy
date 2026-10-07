@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go test ./...
+
+  speclint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      # Fails on findings not in tools/speclint/baseline.txt; see that tool's
+      # doc comment for -all and -write-baseline.
+      - run: go run ./tools/speclint
+
+  fleetlab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      # The fleetlab script hides javac errors; fail if any tool class is missing.
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          tools/fleetlab/fleetlab >/dev/null 2>&1 || true
+          for c in FleetLab CombatLab RaceLab; do test -f "$FLEETLAB_CACHE/build/$c.class"; done

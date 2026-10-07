@@ -200,10 +200,12 @@ def main():
             else:
                 verdict = 'HELD' if not near else 'CONTRADICTED'
         elif kind == 'limit':
-            near = [t for t in fields(things, 0) if (int(t['x']) - 1100) ** 2 + (int(t['y']) - 1300) ** 2 <= 100]
-            notes.append('fields at the open layer: %s; player-0 fields %d' % (
-                ['(%s,%s) %s num %s' % (t['x'], t['y'], t['count'], t['num']) for t in near], len(fields(things, 0))))
-            lm = [x for x in m[0][2] if x['id'] in ('0x17e', '0xc3', '0xc4')]
+            ow = chk[2] if len(chk) > 2 else 0
+            near = [t for t in fields(things, ow) if (int(t['x']) - 1100) ** 2 + (int(t['y']) - 1300) ** 2 <= 100]
+            notes.append('fields at the open layer: %s; player-%d fields %d' % (
+                ['(%s,%s) %s num %s' % (t['x'], t['y'], t['count'], t['num']) for t in near], ow,
+                len(fields(things, ow))))
+            lm = [x for x in m[ow][2] if x['id'] in ('0x17e', '0xc3', '0xc4')]
             notes.append('laying messages: %s' % ['%s %s' % (x['name'], x['p']) for x in lm])
             verdict = 'HELD' if (not near) == chk[1] else 'CONTRADICTED'
         elif kind == 'merge_tiny':

@@ -1,0 +1,4 @@
+case	item	prediction
+K1	player 1 energy level after the year	26
+K2	player 1 current field after the year	weapons (lowest, first in field order)
+K3	player 1 next-field choice after the year	same field

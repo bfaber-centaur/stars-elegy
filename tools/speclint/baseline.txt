@@ -1,0 +1,71 @@
+# speclint baseline: accepted findings (file, check, message), one per line.
+# Regenerate with: go run ./tools/speclint -write-baseline
+docs/COMBAT.md	uncited	CONFIRMED without a case ID: 3. **The procedure** (BINARY-ONLY in its details; CONFIRMED where
+docs/COMBAT.md	uncited	CONFIRMED without a case ID: least one beam weapon or torpedo; bombs do not count). CONFIRMED:
+docs/COMPONENTS.md	missing-section	docs/KERNEL.md has no section "Remote mining"
+docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
+docs/COVERAGE.md	missing-file	RACES.md does not exist
+docs/COVERAGE.md	pr-ref	cites PR #44: owns them: research and terraforming, random events (CONFIRMED in #44),
+docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
+docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
+docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
+docs/COVERAGE.md	pr-ref	cites PR #44: | Scores and victory | `KERNEL.md` (#44) | In progress | |
+docs/COVERAGE.md	pr-ref	cites PR #47: | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: ...
+docs/COVERAGE.md	pr-ref	cites PR #49: | Race checks at the start of the year | `KERNEL.md`, RACES.md (#49) | In progress | |
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED met and unmet, S1).
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: - **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: 2. Stop if the year index is below 10 (CONFIRMED, S3). No protection.
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: There is no year-index minimum (CONFIRMED, S3: unowned planet 18 at
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: Vectors (CONFIRMED): +13 ironium, +8 germanium, +16, +10, +19, +5, +14 on
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: Vectors (CONFIRMED): S3, unowned planet 18 at year index 5, gravity
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: Vectors (CONFIRMED): small 9237 → 6928; medium 9237 → 5081; large
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: Which component limits a unit (CONFIRMED where cases are cited,
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: `15 + rand(15)`; capped at 200 (CONFIRMED: huge comet, 112 → 200).
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: message, and removed if it is 0 (CONFIRMED, T1: ×5 → ×3; T3: ×5 → ×1;
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: only toward the race's centre, stopping at it. CONFIRMED: Gravity
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: player (CONFIRMED, S1: 101·120/100 ≤ 623).
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: temperature, radiation) on ties. CONFIRMED at one point (T2: from
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: this year **whether or not the condition is enabled** (CONFIRMED for
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
+docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
+docs/OBJECTS.md	untagged	section "Visibility" has no status tag
+docs/ORACLE.md	pr-ref	cites PR #44: (stars-elegy #44), so a sweep for random outcomes such as jump odds has
+docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: both fleets unchanged (CONFIRMED, FO — a target 195 ly away did nothing). The
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
+docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
+docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
+docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
+docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
+docs/PARITY.md	pr-ref	cites PR #17: stars-decomp #17); predictions committed before the runs. Each ran at six
+docs/PARITY.md	pr-ref	cites PR #22: (stars-decomp #22): the JOAT result is as predicted in 12 of 12 streams
+docs/PARITY.md	pr-ref	cites PR #22: Predictions from the Combat decomp pass (stars-decomp #22, COMBAT.md #38)
+docs/PARITY.md	pr-ref	cites PR #34: The reading in stars-elegy #34 (a load-phase retry, and the after-movement
+docs/PARITY.md	pr-ref	cites PR #34: rules of stars-elegy #34) committed before each run; specs, predictions
+docs/PARITY.md	pr-ref	cites PR #38: Predictions from the Combat decomp pass (stars-decomp #22, COMBAT.md #38)
+docs/PARITY.md	pr-ref	cites PR #38: Setups from the Combat decomp pass after round 4 (stars-elegy #38,
+docs/PARITY.md	pr-ref	cites PR #38: experiments of `docs/COMBAT.md` (#38). Predictions were committed before
+docs/PARITY.md	pr-ref	cites PR #38: which is flat at distance 2 or more for these Laser stacks (#38).
+docs/PARITY.md	pr-ref	cites PR #42: re-applied as c0476b2 and 2cf004d after #42 was squash-merged), one
+docs/PARITY.md	pr-ref	cites PR #6: `docs/scanning-predictions.md`, PR #6 at 3b5de74) were restated as a
+docs/PARITY.md	pr-ref	cites PR #8: T-1..T-35, PR #8) were committed before every run
+docs/SCANNING.md	uncited	CONFIRMED without a case ID: - **No scanner (CONFIRMED by every SC run that removed one).** A planet
+docs/SCANNING.md	uncited	CONFIRMED without a case ID: - Another known player is identified by name only (CONFIRMED, SC corpus).
+docs/TAKEOVER.md	pr-ref	cites PR #34: unowned with no minerals. stars-elegy #34 described a retry in the load
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Computer players (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Leftover advantage points (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Names (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Second planet: PP and IT (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starbases (CONFIRMED except where noted)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting ships (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting tech (CONFIRMED)
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **AR** (CONFIRMED): no mines, factories or defenses and no planetary
+docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **Part upgrades** (CONFIRMED for the cases run): in every starting design,
+docs/UNIVERSE.md	uncited	MEASURED without a case ID: Research starts at 15% of resources for human players (MEASURED in every
+docs/UNIVERSE.md	untagged	section "Space objects at the start" has no status tag

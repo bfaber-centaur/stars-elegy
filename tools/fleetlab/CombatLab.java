@@ -21,6 +21,8 @@ import org.starsautohost.starsapi.items.Items;
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
+//   accum P FIELD N                 set P's accumulated research in FIELD (resources toward
+//                                   the next level; dumped as accum=)
 //   field P FIELD                   set the current research field
 //   defqueue P ID:COUNT[,...]|none  set P's default production queue for new colonies (at
 //                                   most 12 items; ID = planetary item id, 0 auto mines,
@@ -71,10 +73,11 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
+//                                   artifact=1|0 (ancient artifact flag, any planet)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
-//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
-//   thing trader NUM X Y DX DY WARP [met MASK] [item I]
+//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
+//   thing trader NUM X Y DX DY WARP [met MASK] [item I] [w10 HEX] [w16 HEX]
 //   thing raw HEX                   (18 bytes)
 //                                   universe objects (objects corpus), written as the
 //                                   host file's object blocks: a count block, then one
@@ -169,12 +172,28 @@ public class CombatLab {
                     }
                     if (nq == 0) sb.append("none");
                     sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
+                    // race economy (RaceLab layout): growth %, colonists per resource /100, factory
+                    // output, cost, count per 10k; mine output, cost, count per 10k; leftover spend;
+                    // research cost per field (0 expensive, 1 normal, 2 cheap); trait word 0x48
+                    byte[] d = p.fullDataBytes;
+                    sb.append(String.format(" growth=%d econ=%d,%d,%d,%d,%d,%d,%d spend=%d rcost=%d,%d,%d,%d,%d,%d traits=%04x",
+                        d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
+                        d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
+                        Util.read16(d, 0x48)));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
+                    // economy settings (estimates corpus): growth %, colonists per resource / 100,
+                    // factory output/cost/operated, mine output/cost/operated, the six research
+                    // cost settings, and last year's research resources (player struct +0x3a)
+                    sb.append(" race=").append(p.fullDataBytes[0x11]);
+                    for (int i = 54; i <= 60; i++) sb.append(',').append(p.fullDataBytes[i] & 0xff);
+                    sb.append(" rcost=");
+                    for (int i = 62; i <= 67; i++) sb.append(i == 62 ? "" : ",").append(p.fullDataBytes[i] & 0xff);
+                    sb.append(" resLast=").append(Util.read32(p.fullDataBytes, 0x32));
                 }
-                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
+                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s homeworld=%d%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
-                    Arrays.toString(p.playerRelations), sb);
+                    Arrays.toString(p.playerRelations), u16(p.getDecryptedData(), 8), sb);
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 String owner = "?";
@@ -242,9 +261,9 @@ public class CombatLab {
                     System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s env=%s popest=%d defest=%d surface=%s%n", f,
                         p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
                         p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
-                if (p.owner >= 0 || p.hasStarbase)
-                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
-                        p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
+                if (p.owner >= 0 || p.hasStarbase || (host && p.isHomeworld))
+                    System.out.printf("%s planet %d owner=%d homeworld=%b starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
+                        p.planetNumber, p.owner, p.isHomeworld, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.starbaseBytes == null ? -1 : ((p.starbaseBytes[0] & 0xff) | (p.starbaseBytes[1] & 0xff) << 8) >> 4,
                         p.ironium, p.boranium, p.germanium, p.population);
@@ -336,6 +355,20 @@ public class CombatLab {
         if (p.canSeeEnvironment())
             sb.append(String.format(" conc=%d/%d/%d env=%d/%d/%d", p.ironiumConc, p.boraniumConc, p.germaniumConc,
                 p.gravity, p.temperature, p.radiation));
+        if (p.canSeeEnvironment() && p.fractionalMinConcBytes != null) {
+            // depletion fractions: a length byte (2 bits per mineral, ironium in the low
+            // bits), then each mineral's value in that many bytes (none = 0)
+            byte[] fb = p.fractionalMinConcBytes;
+            int o = 1;
+            sb.append(" frac=");
+            for (int m = 0; m < 3; m++) {
+                int n = ((fb[0] & 0xff) >> (2 * m)) & 3, v = 0;
+                for (int k = 0; k < n && o < fb.length; k++, o++) v |= (fb[o] & 0xff) << (8 * k);
+                sb.append(m == 0 ? "" : "/").append(v);
+            }
+        }
+        if (p.isHomeworld) sb.append(" homeworld");
+        if (p.hasArtifact) sb.append(" artifact");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -453,6 +486,7 @@ public class CombatLab {
         Decryptor dec = new Decryptor();
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
+        Map<String, Long> accums = new HashMap<>();
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
@@ -485,6 +519,7 @@ public class CombatLab {
                         break;
                     }
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "accum": accums.put(t[1] + " " + t[2], Long.parseLong(t[3])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "mt": {
@@ -706,6 +741,13 @@ public class CombatLab {
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
+            for (Map.Entry<String, Long> e : accums.entrySet()) {
+                String[] pf = e.getKey().split(" ");
+                if (Integer.parseInt(pf[0]) != k) continue;
+                int i = Arrays.asList(TECH).indexOf(pf[1]);
+                if (i < 0) throw new Exception("accum: unknown tech field " + pf[1]);
+                Util.write32(p.fullDataBytes, 0x18 + 4 * i, e.getValue());
+            }
             if (fields.containsKey(k)) {
                 if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
@@ -934,6 +976,7 @@ public class CombatLab {
                         pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
                     }
                     break;
+                case "artifact": pl.hasArtifact = !v.equals("0"); break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
@@ -1020,6 +1063,8 @@ public class CombatLab {
                         case "years": years = Integer.parseInt(t[++i]); break;
                         case "seen": Util.write16(r, 8, Integer.decode(t[++i])); break;
                         case "seen2": Util.write16(r, 10, Integer.decode(t[++i])); break;
+                        case "w14": Util.write16(r, 14, Integer.parseInt(t[++i], 16)); break;
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("wormhole: unknown token " + t[i]);
                     }
                 }
@@ -1035,6 +1080,8 @@ public class CombatLab {
                     switch (t[i]) {
                         case "met": Util.write16(r, 12, Integer.decode(t[++i])); break;
                         case "item": Util.write16(r, 14, Integer.decode(t[++i])); break;
+                        case "w10": Util.write16(r, 10, Integer.parseInt(t[++i], 16)); break;   // whole word, warp included
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("trader: unknown token " + t[i]);
                     }
                 }
