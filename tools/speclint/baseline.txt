@@ -72,6 +72,7 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: ordinary reached waypoint. T
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
+docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
 docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a

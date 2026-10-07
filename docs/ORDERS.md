@@ -585,7 +585,12 @@ flag:
   current-position waypoint; a three-waypoint repeat fleet whose last two
   waypoints shared a position came back with those two coincident waypoints and
   no third added).
-- A **patrol** waypoint never repeats, even with repeat orders on. BINARY-ONLY.
+- A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
+  (WU `wuPNR`): a patrol fleet with repeat on kept its patrol task and station
+  across a host year (task 7, same position, one waypoint), while a control
+  fleet with repeat on and a plain single current-position waypoint went idle
+  (task 0) in the same run — so a patrol waypoint is not subject to the
+  reached-waypoint repeat handling.
 - When a fleet reaches its **last** waypoint with no continuing task and no
   planet route to follow, it goes idle and its owner is messaged that the
   orders are complete. CONFIRMED (a fleet run onto its only waypoint ended
@@ -809,15 +814,23 @@ cycle), and the computer-player transfer refusal (a fleet gifted to an expert
 computer, measured on a computer-opponents base built with the fleetlab
 `keepfleets-ordered` directive).
 
-Still open (fleetlab HST editing, no serial):
+Still open (fleetlab HST editing, no serial). Each needs a setup the current
+CombatLab directives do not yet build, so they are not part of the plain WU
+batch:
 
-- **WU patrol no-repeat.** Repeat flag on, a patrol waypoint reached; confirm
-  it is not rotated to the end.
-- **WU captured target.** Track a fleet target that changes owner mid-turn;
+- **WU captured target.** Track a fleet target that changes owner **mid-turn**;
   confirm the waypoint keeps tracking it (owner not re-checked), and that the
-  suppress bit holds coordinates instead.
-- **WU route stargate.** Route between two gated planets with an empty fleet;
-  confirm it is sent through the stargate rather than at warp.
+  suppress bit holds coordinates instead. Needs a deterministic ownership
+  change during the generated turn (combat capture or takeover), which host
+  editing alone cannot stage from a quiet start.
+- **WU route stargate.** Route between two **gated** planets with an empty
+  fleet; confirm it is sent through the stargate rather than at warp. Needs a
+  starbase design carrying a stargate on both planets; CombatLab's `planet …
+  starbase` copies the homeworld starbase (no gate), so it cannot build this
+  without a stargate-bearing starbase design.
+
+(**WU patrol no-repeat** is now MEASURED — see the patrol bullet above, run
+`wuPNR`.)
 
 The order-ingestion predictions remain open:
 
