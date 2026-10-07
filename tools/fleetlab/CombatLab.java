@@ -719,6 +719,15 @@ public class CombatLab {
                 p.fullDataBytes[0x4f] = (byte) q.size();
                 for (int i = 0; i < q.size(); i++) Util.write16(p.fullDataBytes, 0x50 + 2 * i, q.get(i));
             }
+            // A negative advantage-point race is illegal: the host degrades it before
+            // production (colonists per resource raised, SL setups 2026-10-07).
+            int pts;
+            try { pts = RaceLab.points(p.fullDataBytes); } catch (Exception e) { pts = 0; System.err.println("combatlab: player " + k + ": race points not computed: " + e); }
+            if (pts < 0) {
+                String msg = "player " + k + " race has " + pts + " advantage points (illegal; the host degrades it)";
+                if ("1".equals(System.getenv("COMBATLAB_ALLOW_ILLEGAL_RACE"))) System.err.println("combatlab: warning: " + msg);
+                else throw new Exception(msg + "; set COMBATLAB_ALLOW_ILLEGAL_RACE=1 to build anyway");
+            }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
             p.fleets = fleetCount.getOrDefault(k, 0);

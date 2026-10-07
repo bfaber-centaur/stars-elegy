@@ -2431,6 +2431,13 @@ control (70745c8) and an SL-10 follow-up (428e68d). Each case ran on 2
 pinned streams, and the two always agreed. Details are in
 `experiments/sl/README.md`.
 
+The SL races were illegal: player 0 (JOAT + ISB) was at −42 advantage
+points and player 1 (AR + ISB) at −94. The host degraded them before
+production, raising colonists per resource to 2,400 and 2,500. That
+changes resources only. PRODUCTION-LAUNCH.md (stars-elegy #57) explains
+why no other SL result depends on it. Combat Lab builds now refuse a
+negative race score unless `COMBATLAB_ALLOW_ILLEGAL_RACE=1` is set.
+
 - **New fleets, CONFIRMED (SL-01..03).**
   - Each queue item makes its own fleet with full fuel, plan 0 and one
     waypoint at the planet.
@@ -2478,6 +2485,29 @@ pinned streams, and the two always agreed. Details are in
   - An Orbital Fort builds ships.
   - A Space Dock built a 574 kT Mini-Miner (LEGACY BUG: no dock-size
     check).
+
+### Battle plans through the client (BP)
+
+The original client gave the orders (`tools/fleetlab/client-orders`), and
+one pinned host year applied them. Predictions from the decomp lane's
+battle-plan rules were committed first (5aaa4d1). Details:
+`experiments/bp/README.md`.
+
+- **Delete renumbering, CONFIRMED (BP-1).** With plans 0..6 and fleets on
+  plans 3, 5, 2 and 6, deleting plan 3 left six plans. The fleets ended on
+  2, 4, 2 and 5: every fleet on a plan at or above the deleted one moves
+  down one, so the users of the deleted plan get the plan before it, not
+  plan 0, and later plans keep their identity (P5 and P6 kept their
+  fields). The client warns before deleting a plan that fleets use, and
+  its Delete is disabled for plan 0.
+- **Plan limit in the client: 15, MEASURED (BP-L, twice).** The client
+  refused a 16th plan (Copy did nothing), and the host kept 15. After a
+  delete the client copied again. The host's own limit of 16 can't be
+  reached with client orders, so it stays BINARY-ONLY.
+- **Stale single-human Default: MISSED (BP-2).** Three single-player games
+  made one after another in one client session all had attack-who 2 on
+  Default for both players. The predicted carry-over of the single-human
+  setting to the next game did not show in this path.
 
 ### Resolved reconciliation
 

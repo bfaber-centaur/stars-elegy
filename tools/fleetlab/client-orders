@@ -40,6 +40,7 @@ here="$(cd "$(dirname "$0")" && pwd)"
 O="$here/../../scripts/oracle"
 dir="$1" out="$2" cmds="$3" mfile="${4:-cb.m1}" game="${5:-CB}"
 home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+export DISPLAY="${ORACLE_DISPLAY:-:77}"   # for the bare xdotool clicks below
 games="$home/run/games/stars_games"
 n="${mfile##*.m}"; n="${n##*.M}"
 mkdir -p "$out/screens"
@@ -49,16 +50,22 @@ shot() { step=$((step + 1)); "$O/screenshot" "$out/screens/$(printf %02d "$step"
 pause() { sleep "${1:-0.8}"; }
 pixel() { "$O/screenshot" "$out/.probe.png" >/dev/null; convert "$out/.probe.png" -format "%[pixel:p{$1,$2}]" info:; rm -f "$out/.probe.png"; }
 downs() { local i; for ((i = 0; i < $1; i++)); do "$O/key" Down; done; }
-# fleet panel Battle Plan list: 6 rows of 14 px from y 327, scroll arrows at x 380
+# fleet panel Battle Plan list: item 0 is "Battle Plans..." (opens the
+# dialog), item K+1 is plan K; 6 rows of 14 px with centres from y 327; a
+# scroll bar (x 380, arrows at y 327 and 397) only when there are more items
 fleetplan() {
-	local k="$1"
+	local item=$(($1 + 1))
 	"$O/click" 380 309; pause 0.6           # open the list
-	"$O/click" 380 327; xdotool click --repeat 16 --delay 120 1; pause 0.3   # scroll to the top
-	if ((k < 6)); then
-		"$O/click" 300 $((327 + 14 * k))
+	if [[ "$(pixel 380 360)" == "srgb(195,195,195)" ]]; then
+		"$O/click" 380 327; xdotool click --repeat 20 --delay 120 1; pause 0.3   # scroll to the top
+		if ((item <= 5)); then
+			"$O/click" 300 $((327 + 14 * item))
+		else
+			"$O/click" 380 397; ((item > 6)) && xdotool click --repeat $((item - 6)) --delay 120 1
+			pause 0.3; "$O/click" 300 397
+		fi
 	else
-		"$O/click" 380 397; ((k > 6)) && xdotool click --repeat $((k - 6)) --delay 120 1
-		pause 0.3; "$O/click" 300 397
+		"$O/click" 300 $((327 + 14 * item))
 	fi
 	pause
 }

@@ -752,6 +752,47 @@ One turn on the Combat Lab base (`experiments/sltool`, cycles 30000):
   rest at 28%, which looks resource-limited.
 - No fleet-name blocks were written.
 
+### Client orders (observed 2026-10-07, BP)
+
+`tools/fleetlab/client-orders DIR OUTDIR CMDS [MFILE] [GAME]` opens a
+player's turn in the original client, runs a command file, saves with
+File > Save and keeps the order file (`GAME.Xn`, with `GAME.Hn`), a
+screenshot per command, and `orders.dump`. Then run the year with
+`pinned-turn START.HST BASE OUT`, where BASE holds DIR's files plus the
+order file: the registered host read the client's `.X1` (BP-1, BP-L).
+The command list is in the script's header. Order files carry the
+registration, so OUTDIR stays private. Getting a consistent `.M1` for a
+Combat Lab start: one `pinned-turn` year, then open `raw/after/cb.m1`.
+
+What the client did, at 1152x864:
+
+- Opening `cb.m1` shows "Note: N years of data read." (Return). The
+  homeworld is selected in the planet view.
+- File > Save is `alt+f s`. `ctrl+s` did nothing after an Escape had left
+  the menu bar active. The year shows `2401*` while there are unsaved
+  orders.
+- Battle Plans (F6) dialog at (362, 325). Mnemonics: `alt+p` Plan list,
+  `alt+c` Copy (opens "Rename Battle Plan" with "NAME (2)"; type and
+  Return), `alt+r` Rename, `alt+d` Delete, `alt+e` Secondary Target,
+  `alt+t` Tactic, `alt+w` Attack Who. Primary Target's mnemonic collides
+  with Rename: use `alt+e shift+Tab`. With a list focused and closed,
+  Home and Down change the selection directly. Close has no working
+  mnemonic: click (621, 513). Return in the dialog presses the focused
+  button, which closed the dialog during a refused copy. Dump Cargo is
+  the box at (686, 478).
+- Deleting a plan that fleets use shows an alert (OK = Return). Delete is
+  disabled for plan 0. At 15 plans Copy stays enabled but does nothing;
+  `client-orders` detects the missing Rename dialog by the pixel at
+  (600, 405).
+- Fleets: Goto (232, 169) in "Fleets in Orbit" selects the first fleet
+  there ("Armed Probe #1" = fleet 0). The fleet panel's Next (144, 132)
+  went #1 → #4 → #3 → #2 → #1 with four fleets.
+- The fleet panel's Battle Plan list (combo at 380, 309) ignored keys;
+  use the mouse. Its first item is "Battle Plans..." (opens the dialog),
+  then the plans. Six rows of 14 px from y 320. A scroll bar (arrows at
+  (380, 327) and (380, 397)) only appears with more than six items, and
+  the open list starts scrolled to the current plan.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh

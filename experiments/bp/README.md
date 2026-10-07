@@ -28,4 +28,38 @@ client. All five starting plans have attack-who 2.
 
 ## Results
 
-Pending.
+All runs on 2026-10-07. The host year is pinned (cycles 20000).
+
+- **BP-1: CONFIRMED.** The client wrote, in order: P5 (k 5) and P6 (k 6)
+  with their edited fields, fleet-plan records with the values chosen
+  before the delete (fleet 0 → 3, 3 → 5, 2 → 2, 1 → 6), then a delete of
+  plan 3. After the year the host had six plans, Default, Kill Starbase,
+  Max-Defense, Chicken, P5 (tactic 1), P6 (attack-who 3), and fleets
+  0, 1, 2, 3 on plans 2, 5, 2, 4. Fleet 0 (on the deleted plan) went to
+  plan 2, not 0. The client's alert reads, in substance: fleets use this
+  plan and will be given the next plan up the list. No alert when no
+  fleet used the deleted plan (exploration).
+- **BP-L: client limit 15, MEASURED twice.** The eleventh copy (the 16th
+  plan) was refused: Copy stays enabled but opens no Rename dialog. The
+  host kept plans 0..14. After deleting one plan the client copied again
+  (exploration). The host's own limit (append refused at 16 plans) is
+  not reachable with orders the client writes; it stays BINARY-ONLY.
+- **BP-2: MISSED.** Three single-player Tiny games made in one client
+  session (the first from the title screen, the second with File > New
+  while the first was open, the third from the title screen after File >
+  Close) all had attack-who 2 on every plan of both players, Default
+  included. The stale single-human bit did not show. Not tried: a
+  multi-human second game (Advanced Game), or games made with `-a`.
+
+Order-file facts seen on the way (client J-RC3, one or two files each):
+
+- A new plan is one plan record with its index (k = count) and fields;
+  editing a new plan before saving gives one record with the final
+  fields. A delete is a 2-byte plan record (k in the high nibble, byte 1
+  bit 6).
+- A fleet-plan change is a 4-byte record (fleet id word, plan byte). In
+  BP-1 they come before the delete and hold the pre-delete numbers; the
+  host's delete then renumbers them.
+- Edited in one session in the order "delete plan 14, copy, edit, set
+  fleet 3 to plan 3, then to 12": the file held the delete, the new
+  plan 14, and both fleet-plan records (3, then 12).
