@@ -1,0 +1,10 @@
+# tk502: manual cargo transfers to a friend (client orders) (experiments/tk/gen5.py)
+fleet first
+fleet next
+fleet xfer
+xfer ir 100
+xfer ok
+fleet next
+fleet xfer
+xfer col 200
+xfer ok

@@ -1,0 +1,16 @@
+# DS-1 / ML-1: create a design (copy Hauler, add a Bat Scanner, rename), then lay mines
+# with the minelayer (fourth fleet in Next order) at its current position.
+design open
+design select 0
+design copy
+design category 9
+design part 0 838 355
+design name Scout Hauler
+design ok
+design done
+fleet first
+fleet next
+fleet next
+fleet next
+wp select 0
+wp task 6

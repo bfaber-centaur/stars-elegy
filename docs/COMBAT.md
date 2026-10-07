@@ -98,6 +98,9 @@ BINARY-ONLY otherwise). Validation of the fields is in `ORDERS.md`
 - A definition for an existing plan number replaces that plan.
 - A new plan takes the next number (the current count). The 17th plan is
   refused.
+- A definition whose number is beyond the next free one (above the
+  current count) is refused. The order is dropped and the plans are
+  unchanged (BINARY-ONLY).
 - Deleting plan `k` moves every later plan down by one number. Every
   fleet of that player whose plan number is `k` or higher has it lowered
   by one. So a fleet on a later plan keeps the same plan, and a fleet on
@@ -107,6 +110,35 @@ BINARY-ONLY otherwise). Validation of the fields is in `ORDERS.md`
   The client
   asks for confirmation first when some fleet uses plan `k`. It never
   offers to delete plan 0.
+
+**Order validation** (BINARY-ONLY unless marked; Elegy's choices for
+values only crafted orders can carry are marked "Elegy").
+
+- **Plan limit.** The host holds at most 16 plans, because the plan
+  number in an order has room only for 0..15. The client stops at 15
+  (MEASURED, BP-L in the BP-1..BP-2 client runs). Elegy enforces the
+  host's 16; the 15 is a client limit.
+- **Fields the host checks.** The host refuses a tactic above 6 and a
+  primary or secondary target above 8. So 6 and 8, one past the legal
+  sets (tactics 0..5, target types 0..7), get through. Elegy refuses
+  anything outside the legal sets, as `ORDERS.md` states for
+  battle-plan fields.
+- **Attack-who is not checked.** The host stores any value the order
+  carries (0..31). The client offers only nobody, enemies, neutrals and
+  enemies, everyone, and each other player in the game; it never offers
+  the player itself or a player who is not in the game. In battle a
+  named player is the value minus 4.
+  - A plan naming a player who is not in the game attacks no one through
+    that choice: no such player is ever present.
+  - A plan naming its own owner marks that owner as its own target.
+    Tokens never fire at their own side, but how this mark enters the
+    choice of who fights at a location was not traced.
+  - Elegy refuses both.
+- **Names.** The client limits a plan name to 31 characters and checks
+  nothing else (an empty name is not refused; inferred from the dialog).
+  The host stores the name the order carries with no length or content
+  check. Its plan record has room for 31 characters, so a longer crafted
+  name overruns it. Elegy refuses a name longer than 31 characters.
 
 ## Where battles happen in the turn (CONFIRMED in part; see each rule)
 
@@ -1015,7 +1047,11 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
   that year still fights. Packets queued there are lost too
   (BINARY-ONLY).
 - Either way, **no damage is left over** after a hit on a starbase. A
-  beam stops there, even after destroying it (BINARY-ONLY).
+  beam stops there, even after destroying it. CONFIRMED (CB-052, 6
+  streams): a one-slot phaser stack put 234 into an Orbital Fort with 100
+  armor. Its fire action held only the Fort's record, though an enemy
+  stack sat on the same square in range; that stack was first hit by the
+  next round's shot. CB-041 agrees with a 2-point overkill.
 - Destroying an Alternate Reality race's starbase leaves the planet
   uninhabited (CONFIRMED, CB-041: 17 of 17 streams).
 
