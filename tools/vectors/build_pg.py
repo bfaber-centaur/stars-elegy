@@ -5,7 +5,9 @@ Each run is the pristine PG001 2407 universe advanced year by year with no
 orders; the run kept the .HST of every year (raw/YYYY-PG001-<sha8>.HST) but
 not the .XY, which no turn changes, so the .XY comes from the PQ-001 corpus
 (evidence/pq001/raw/P0/before). The expectations are planet 7's population
-and growth carry (`excess`) each year.
+and growth carry (`excess`) each year. The runs were not pinned to a random
+stream (each turn seeded from the clock), so only quantities with no random
+draw are recorded: minerals, which include a random mining draw, are left out.
 """
 import glob, os
 import build as B
@@ -13,9 +15,9 @@ import build as B
 PLANET = 7
 SPEC = 'docs/KERNEL.md "Population growth"'
 RUNS = [
-    ('PG-002', 'pg002', 'PG001 2407 advanced 19 years with empty orders; first crowded year 2426',
+    ('PG-002', 'pg002', 'PG001 2407 advanced 19 years with empty orders; first crowded year 2426; unpinned clock-seeded turns, so random outcomes (mining) are not exact',
      'docs/PARITY.md "Measured behavior — PG-002, first crowded turn"'),
-    ('PG-003', 'pg003', 'PG001 2407 advanced 29 years with empty orders; crowded years 2426-2436 (repeats PG-002)',
+    ('PG-003', 'pg003', 'PG001 2407 advanced 29 years with empty orders; crowded years 2426-2436 (repeats PG-002); unpinned clock-seeded turns, so random outcomes (mining) are not exact',
      'docs/PARITY.md "Measured behavior — PG-003, crowded turns 2427–2436"'),
 ]
 CROWDED = 2426  # first year whose start population is above 25% of capacity

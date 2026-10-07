@@ -1,7 +1,7 @@
 {
  "schema": "stars-elegy-vector/1",
  "id": "PG-002",
- "title": "PG001 2407 advanced 19 years with empty orders; first crowded year 2426",
+ "title": "PG001 2407 advanced 19 years with empty orders; first crowded year 2426; unpinned clock-seeded turns, so random outcomes (mining) are not exact",
  "source": {
   "experiment": "PG-002 (no generator; procedure in PARITY.md)",
   "spec_rules": "docs/KERNEL.md \"Population growth\"",
