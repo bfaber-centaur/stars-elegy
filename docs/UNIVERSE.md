@@ -279,8 +279,8 @@ AR race's mines, factories or defenses spend adds nothing (BINARY-ONLY: no
 UG race was AR with those spends; the built-in AR computer players spend
 on minerals). Its minerals and concentrations spends apply as usual.
 
-How a race's leftover points are computed is the race-design point
-system, not specified here. Every race in the UG corpus had at least 50.
+A race's points, the replacement of illegal races and the Random race are
+in `RACES.md`. Every race in the UG corpus had at least 50.
 
 ### Computer players (CONFIRMED)
 
@@ -416,7 +416,7 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
 
 1. Unseeded new-game wizard games: computer-player counts chosen from size
    and difficulty (BINARY-ONLY), not run.
-2. The tutorial galaxy (fixed tiny galaxy, fixed seed), random races, and
+2. The tutorial galaxy (fixed tiny galaxy, fixed seed) and
    race-wide "75% extra fields start at 3" combined with JOAT (start 4).
 3. The second-planet redraw limit (needs a race that makes 100 redraws
    likely).
