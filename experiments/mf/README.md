@@ -209,6 +209,43 @@ steps. Mutual chases keep both fleets deferred:
 | MF-02b-A | MF-2 | 12 pairs 80 ly apart on one line, each Tank following the other at warp 9 | no stops: each moves in steps of about 17 ly (effective warp 4, below heavy safe 6) until they meet | per-year effective warp (9: 30 per mille per ly over about 40 ly each, 70% per fleet) |
 
 
+### MF-13 and OB-010-S re-check (committed before these runs)
+
+MF-13 (stars-decomp minefields branch c9aa82c, `objects.md` §2.6, MF-13):
+with numbers 0..510 taken, a player's field number 511 is given only when
+no object sorts after that player's minefields (LEGACY BUG candidate).
+Objects sort by type (minefields, then packets/salvage, wormholes, Trader),
+then owner, then number. MF-11a (field 511 made) had nothing after the run.
+One pinned year at cycles 20000, as MF-11.
+
+#### MF-13a: player 0 has 511 fields; one player-1 field far away sorts after them
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-13a-A | MF-13 | 511 player-0 fields of 100 (numbers 0..510), a player-1 field, and a layer in open space | no new field; "failed to lay" message (0x17e) for that layer | field 511 made (as in MF-11a) |
+
+#### MF-13b: player 0 has 511 fields; one salvage object (type 1) sorts after them
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-13b-A | MF-13 | 511 player-0 fields of 100 (numbers 0..510), a salvage object, and a layer in open space | no new field; "failed to lay" message (0x17e) for that layer | field 511 made (as in MF-11a) |
+
+#### MF-13c: player 1 has 511 fields; one player-0 field far away sorts before them
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-13c-A | MF-13 | 511 player-1 fields of 100 (numbers 0..510), a player-0 field (sorts before), and a player-1 layer in open space | a new 160 field (number 511) at (1100,1300) | refusal |
+
+OB-010-S re-check (existing apparatus evidence `evidence/ob/ob010*`, six
+cycles settings, no new run). Under the order measured in MF-4 (stops take
+their loss during movement; decay then counts planets inside the field as
+the stops left it; sweeping after decay), the 3000-mine standard field at
+(1220,1230) has no planet inside at 3000 or 2950. Predicted final counts:
+no stop → 3000 → 2940 (decay 2%) → 2840 if the five Laser DDs end inside
+the field and sweep 100; one stop → 2950 → 2891 → 2791. A fleet that ends
+outside the field does not sweep it (2940).
+Decay before the stop's loss would give 2890 before sweeping.
+
 ## Results
 
 Evidence: stars-oracle-apparatus `evidence/mf/` (54335b2), one directory
