@@ -271,6 +271,21 @@ r.case('A', 'MF-4', 'player-0 heavy fields F1 10000 at (1160,1200) and F2 400 at
        'every stop is paid by F1 (smallest d^2 - count): F1 -100 per stop; F2 only decays (400 -> 390)',
        'nearest centre or nearest edge: F2 pays (-20) for stops inside F2', ('payer',))
 
+# follow-ups after MF-04 (F1 lost 126 before decay for 11 stops, F2 nothing): each field alone
+r = run('MF-04b', 'MF-04 with F1 only')
+r.field(0, 1160, 1200, 10000, kind='heavy', tag='F1')
+for y in range(1195, 1207):
+    r.fleet(1, 1190, y, [(TANK, 1)], to=(1271, y), tag='mf4')
+r.case('A', 'MF-4', 'F1 alone (heavy 10000, 5 planets), the MF-04 fleets',
+       'F1 = 10000 less max(50, count/100) per stop in turn, then 22% decay, then the starbase sweep (1280)',
+       '', ('alone', 0, 10000, 22))
+r = run('MF-04d', 'MF-04 with F2 only')
+r.field(0, 1210, 1200, 400, kind='heavy', tag='F2')
+for y in range(1195, 1207):
+    r.fleet(1, 1190, y, [(TANK, 1)], to=(1271, y), tag='mf4')
+r.case('A', 'MF-4', 'F2 alone (heavy 400, no planets), the MF-04 fleets (40 ly inside F2)',
+       'F2 = 400 less 20 per stop, then 2% decay (min 10)', '', ('alone', 0, 400, 2))
+
 # ------------------------------------------------------------------ MF-7, MF-8, MF-12: detonation, laying order
 H, B, S = (1040, 1200), (1070, 1370), (1220, 1050)
 r = run('MF-07', 'detonation of heavy, speed-bump and standard fields; laying order (mutual enemies)')

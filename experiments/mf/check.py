@@ -147,6 +147,18 @@ def main():
             notes.append('%d stops inside F2' % len(inside2))
             f2 = [t for t in fields(things, 0) if t['num'] == '1']
             verdict = 'HELD' if f2 and int(f2[0]['count']) == 390 else 'CONTRADICTED'
+        elif kind == 'alone':
+            rows = legs(run, fleets, lambda f: f['tag'] == 'mf4')
+            n = sum(1 for _, st, _ in rows if st)
+            c = chk[2]
+            for _ in range(n):
+                c -= gen.shrink(c)
+            want = gen.decay(c, len(run.fields[0]['planets'])) - (1280 if run.fields[0]['planets'] else 0)
+            t = fields(things, 0)
+            got = int(t[0]['count']) if t else 0
+            notes.append('%d stops %s; field %d, predicted %d' % (
+                n, [(f['x'] + o, f['y']) for f, st, o in rows if st], got, want))
+            verdict = 'HELD' if got == want else 'CONTRADICTED'
         elif kind == 'det':
             tag = chk[1]
             for f in run.fleets:

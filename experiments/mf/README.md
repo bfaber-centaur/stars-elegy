@@ -171,3 +171,25 @@ table below; `check.py` compares a run with them.
 |---|---|---|---|---|
 | MF-11c-A | MF-11 | 512 own standard fields of 100 (numbers 0..511) and a layer in open space | no new field; the layer's mines are lost (refusal message) | a new field |
 | MF-11c-B | MF-11 | a layer at (1010,1010) inside the tiny fields | merges (a tiny field there gains 160) |  |
+
+### MF-04 follow-up (committed before these runs)
+
+MF-04 left F2 at 390 (decay only) as predicted, but F1 lost only 126 mines to
+its 11 stops (10000 → 9874 before decay; one stop would be −100, eleven
+−1045). Counts in every single-field run fit "each stop takes max(50,
+count/100) (or max(10, count/20)) in turn, then decay, then sweeping"
+exactly (MF-01, MF-02, MF-03s/h, MF-05b, MF-09s/h). Each field alone, the
+same fleets, cycles 20000; and MF-04 again at cycles 25000:
+
+### MF-04b: MF-04 with F1 only
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-04b-A | MF-4 | F1 alone (heavy 10000, 5 planets), the MF-04 fleets | F1 = 10000 less max(50, count/100) per stop in turn, then 22% decay, then the starbase sweep (1280) |  |
+
+### MF-04d: MF-04 with F2 only
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-04d-A | MF-4 | F2 alone (heavy 400, no planets), the MF-04 fleets (40 ly inside F2) | F2 = 400 less 20 per stop, then 2% decay (min 10) |  |
+
