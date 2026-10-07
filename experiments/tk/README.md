@@ -95,3 +95,13 @@ TK-004, random cases, several cycle settings; outcome distribution from
 | 0 | T-11: 1 Hush-a-Boom (3.0%, no minimum) | 44 → 50 | pop 48 (p 501/1000) or 49 (p 499/1000); a 300-colonist minimum would give 47 |
 | 6 | T-15: 1 LBU-17, mines 20, factories 10 | 870 → 1000 | pop 998; factories 5 / mines 9 (p 2/3) or factories 4 / mines 10 (p 1/3); kills always sum to 16 |
 | 12 | T-13: 10 Smart + 10 Cherry | 870 → 1000 | pop 658 (p 749/1000) or 657 (p 251/1000) |
+
+### Setup change after run1 (before run2; predictions unchanged)
+
+TK-001..003 run1 used player 0 at tech 3 with 15% research. The generated
+2401 files had Cherry, Smart, Peerless, LBU-17 and LBU-32 bombs removed from
+player 0's designs (slots empty); Lady Finger, Hush-a-Boom, Retro, the
+Orbital Construction Module and the Multi Contained Munition stayed, and
+only those bombed. Player 1's energy also rose from 3 to 5 in TK-001 run1
+through research. From run2 on, player 0 has tech 26 in every field and
+both players research 0%.

@@ -22,6 +22,17 @@ COMMON = """\
 relation 0 1 {rel01}
 relation 1 0 {rel10}
 tech 1 energy {energy1}
+# player 0 at tech 26: in TK-001..003 run1 (tech 3) the generated year dropped
+# Cherry, Smart, Peerless, LBU-17 and LBU-32 bombs from player 0's designs
+tech 0 energy 26
+tech 0 weapons 26
+tech 0 prop 26
+tech 0 con 26
+tech 0 elec 26
+tech 0 bio 26
+# no research, so player 1's energy (best defense part) cannot change during the year
+research 0 0
+research 1 0
 # player 0 ship designs (Mini Bomber: one engine slot, one 2-bomb slot)
 design 0 0 Mini Bomber, 1 Long Hump 6, 2 Cherry Bomb = Cherry2
 design 0 1 Mini Bomber, 1 Long Hump 6, 2 Smart Bomb = Smart2
