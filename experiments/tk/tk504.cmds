@@ -1,0 +1,7 @@
+# tk504: manual gifts to a friend's fleet (client orders) (experiments/tk/gen7.py)
+fleet first
+fleet next
+fleet other 0
+fleet cargo
+xfer col 20
+xfer ok
