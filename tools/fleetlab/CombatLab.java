@@ -76,7 +76,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
 //                                   driver=DEST[,WARP] (mass-driver packet destination
 //                                   planet and chosen packet warp; needs a starbase)
-//                                   artifact=1|0 (ancient artifact flag, any planet)
+//                                   artifact=1|0 (ancient artifact: the file flag, and on
+//                                   owned planets the installations bit the host reads)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
@@ -183,10 +184,10 @@ public class CombatLab {
                     // output, cost, count per 10k; mine output, cost, count per 10k; leftover spend;
                     // research cost per field (0 expensive, 1 normal, 2 cheap); trait word 0x48
                     byte[] d = p.fullDataBytes;
-                    sb.append(String.format(" growth=%d econ=%d,%d,%d,%d,%d,%d,%d spend=%d rcost=%d,%d,%d,%d,%d,%d traits=%04x",
+                    sb.append(String.format(" growth=%d econ=%d,%d,%d,%d,%d,%d,%d spend=%d rcost=%d,%d,%d,%d,%d,%d traits=%04x stat15=%d",
                         d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
                         d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
-                        Util.read16(d, 0x48)));
+                        Util.read16(d, 0x48), d[0x45]));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                     // economy settings (estimates corpus): growth %, colonists per resource / 100,
@@ -395,7 +396,7 @@ public class CombatLab {
     }
 
     // Takeover detail: installations, carry byte, environment.
-    static void printPlanetDetail(String f, PartialPlanetBlock p) {
+    static void printPlanetDetail(String f, PartialPlanetBlock p) throws Exception {
         StringBuilder sb = new StringBuilder();
         if (p.canSeeEnvironment())
             sb.append(String.format(" conc=%d/%d/%d env=%d/%d/%d", p.ironiumConc, p.boraniumConc, p.germaniumConc,
@@ -414,6 +415,7 @@ public class CombatLab {
         }
         if (p.isHomeworld) sb.append(" homeworld");
         if (p.hasArtifact) sb.append(" artifact");
+        if (p.hasInstallations && (p.getDecryptedData()[installationByte6(p)] & 0x40) != 0) sb.append(" artbit");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -1056,8 +1058,24 @@ public class CombatLab {
             }
         }
         pl.encode();
+        if (pl.hasArtifact && pl.hasInstallations) setInstallationArtifactBit(pl);
         pl.setData(pl.getDecryptedData(), pl.size);
         pl.decode();
+    }
+
+    // The host reads a planet's artifact from the file flag only when the record has no installations
+    // block; with one (owned planets), it takes bit 6 of the block's seventh byte, which StarsAPI does not
+    // write (tools/fleetlab/fleetlab patches its decoder to accept the bit). Set it after encode().
+    static int installationByte6(PartialPlanetBlock pl) throws Exception {
+        int tail = (pl.hasStarbase ? (pl.typeId == BlockType.PARTIAL_PLANET ? 1 : pl.starbaseBytes.length) : 0)
+                + (pl.hasRoute && pl.typeId == BlockType.PLANET ? 2 : 0) + (pl.turn >= 0 ? 2 : 0);
+        return pl.size - tail - 8 + 6;
+    }
+
+    static void setInstallationArtifactBit(PartialPlanetBlock pl) throws Exception {
+        byte[] d = pl.getDecryptedData();
+        d[installationByte6(pl)] |= 0x40;
+        pl.setDecryptedData(d, pl.size); // encode() leaves two copies; the writer uses this one
     }
 
     // One 18-byte universe-object record (docs/ORACLE.md "Universe objects").
