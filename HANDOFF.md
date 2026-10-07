@@ -94,12 +94,15 @@ Questions on Elegy's path:
   rule of the original.
 - **Spec text that lagged the evidence at `5469029`:**
   - MESSAGES.md said component announcements check only the levelled
-    field; KX-005 R1 shows every requirement is checked.
+    field. KX-005 R1 showed a part with an unmet electronics
+    requirement was not announced; that all six requirements are
+    checked is the binary reading.
   - AI.md §11 called the combat power estimate unpublished; KERNEL.md
     "Scores" gives the per-design power formula.
   - AI.md "Open experiments" still listed cases that stage 1 settled.
-  - OBJECTS.md still listed the Harder computer-planet trade threshold,
-    which O-53 confirmed.
+  - OBJECTS.md still listed the Harder computer-planet trade threshold
+    as open. O-53 confirmed that a Harder planet trades at 3,600 kT
+    against the 3,500 kT threshold; the exact edge is untested.
 
 Research items, none of them blocking:
 
