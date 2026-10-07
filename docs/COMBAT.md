@@ -552,6 +552,11 @@ first in token order wins ties, and a score of 0 is never chosen.
 **Cost.** Take the target design's current cost (resources + boranium,
 see "Design cost") × ships.
 
+- For a starbase token this is the starbase design's plain owner cost
+  (BINARY-ONLY). The starbase build-cost rule of `COMPONENTS.md` (ISB or
+  AR `c − c/5`, then halved) applies only to what production charges;
+  target choice does not use it.
+
 - Multiply by 100 if that is below 100000. Otherwise use 10^7.
 
 **Toughness.**
@@ -611,7 +616,11 @@ different cost in CB-009 (Humanoid JOAT at tech 26).
 
 1. Choose a target.
 2. `dp = R × capacitor/100 × target deflector/100`.
-3. If the distance `x > 0`, `dp = (100 − x·10/range)·dp/100`.
+3. If the distance `x > 0` and the part's range is above 0,
+   `dp = (100 − x·10/range)·dp/100`.
+   - A range-0 beam (Blackjack, Bludgeon, Blunderbuss) has no dropoff
+     (BINARY-ONLY). On a starbase its reach is 1, and it hits at full
+     damage at distance 1.
    - `x·10/range` is an integer, so a range-3 weapon loses 3% at
      distance 1, 6% at 2 and 10% at 3.
    - **`range` is the part's own range, without the starbase +1.** So a
@@ -877,20 +886,40 @@ homeworld against three frigates. The gain came in exactly the three
 streams predicted from this draw order, and the frigates' squares
 matched in all six.
 
-Who makes an attempt (BINARY-ONLY in detail):
+Who makes an attempt (BINARY-ONLY in detail). After the battle, every
+player of the game is considered once, in player-number order, so the
+draws come in that order.
 
-- In a two-player battle with two tokens, each participant makes an
-  attempt when the battle was in deep space, at an unowned planet, or at
-  its own planet. This includes a participant that lost nothing and
-  destroyed nothing. There is no attempt at another player's planet.
-  CONFIRMED by the exact replays: CB-021 (the attacker at the defender's
-  planet makes no attempt) and the round-2 CB-012 chain (a player that
-  lost nothing at its own planet does attempt).
-- In larger battles, participants make an attempt under the same
-  location rule, and probably only when ships other than their own were
-  destroyed; this condition is not fully settled.
-- A player that is not in the battle makes an attempt when the battle was
-  at its own planet.
+- **Participants** (players in the battle's player list):
+  - Location rule: only when the battle was in deep space, at an
+    unowned planet, or at the participant's own planet. There is no
+    attempt at another player's planet. CONFIRMED by CB-021 (the
+    attacker at the defender's planet makes no attempt).
+  - When `n = 2` (two involved players), only a participant that still
+    has something after the battle (a ship, or its starbase alive). A
+    participant that lost nothing and destroyed nothing does attempt.
+    CONFIRMED by the round-2 CB-012 chain (a player that lost nothing at
+    its own planet). That a wiped-out participant makes no attempt is
+    BINARY-ONLY.
+  - When `n` is not 2 (one involved player, or three or more), every
+    participant makes an attempt, whatever it lost or destroyed.
+  - If the battle destroyed an Alternate Reality starbase, no
+    participant makes an attempt.
+  - Nothing is destroyed in some of these battles; the attempt still
+    makes its draws (step 2 onwards), and the field step then finds no
+    field behind.
+- **Players not in the battle:**
+  - A player makes an attempt when the battle was at its own planet.
+  - **LEGACY BUG (BINARY-ONLY).** Otherwise, the game means to give an
+    attempt to observers: players present at the location but not in the
+    battle, and the owner of a planet there without a starbase. It tests
+    the player's **number** against the observer set instead of the
+    player's bit: player `i` qualifies when `i AND observers ≠ 0`, where
+    `observers` has bit `j` set for observer `j`. Player 0 never
+    qualifies; player 1 qualifies when player 0 is an observer, player 2
+    when player 1 is, player 3 when player 0 or 1 is, and so on. A
+    qualifying player also needs a fleet at the location. The location
+    rule does not apply here.
 
 ## Open experiments
 
@@ -903,12 +932,17 @@ Not yet tested:
 - the movement order by jittered weight, and any battle with several
   moving tokens on both sides (e.g. a CB-018 replay);
 - the plan-0 value X on the first location of a turn (not 0 or 1 in
-  CB-022; unexplained), and a starbase owner in the player list but not
-  involved (start-square rank past row `n` with `n ≥ 2`);
+  CB-022). It is a leftover value from code that ran before battles, so
+  reading the binary alone does not settle it; it needs a debugger run or
+  more oracle cases;
+- a starbase owner in the player list but not involved (start-square rank past row `n` with `n ≥ 2`);
 - three or more players, start squares for `n ≠ 2`, and friends joining;
 - the token cap;
-- the tech-attempt condition in larger battles, and for players outside
-  the battle;
+- the tech-attempt rules beyond the two-player cases: a wiped-out
+  participant, three or more players, the AR starbase case, and players
+  outside the battle (including the observer LEGACY BUG);
+- a starbase token's cost in target choice, and a range-0 beam on a
+  starbase;
 - Mystery Trader items from battle;
 - queued ships lost with a starbase; AR starbase loss;
 - the "moved" repair rate, starbase repair, Inner Strength repair;
