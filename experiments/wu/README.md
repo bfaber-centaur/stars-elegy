@@ -65,11 +65,22 @@ The repeat fall-backs (`wuFALLBACK`) and the follower chain/cycle linkage
 (`wuFOLLOW`) have since been run and are CONFIRMED (folded into `docs/ORDERS.md`;
 raw evidence in private `stars-oracle-apparatus` `evidence/wu/`).
 
+The **computer-player transfer refusal** is now CONFIRMED. It runs on the
+AI-player base (`stars-oracle-apparatus` `evidence/ai/ai01`) built with the
+new `keepfleets` CombatLab directive, which preserves the base's own fleets
+(all seven players') and adds the gift fleet in owner/id order. A non-colonist
+fleet gifted by the human to an expert computer is refused and keeps its owner,
+even with the computer's stored relation to the giver forced neutral both ways
+(the computer is hostile when the gift is evaluated, so the gift fails the
+recipient-relation check — the same refusal as an enemy human, not a separate
+computer-only path; a live computer is not the vacant-slot case). See
+`docs/ORDERS.md` "Transfer fleet".
+
+Earlier diagnosis (recorded for the tooling): a plain full-replacement rewrite
+of this 7-player registered base left the host unable to advance, because the
+added fleet was appended out of owner/id order and desynced a player's fleet
+group from its fleet count; `keepfleets` merges base and added fleets and emits
+them in owner/id order, which the host accepts.
+
 Still open (see `docs/ORDERS.md` Open experiments, WU prefix): patrol
-no-repeat, captured-target tracking, and the route stargate case. The
-computer-player transfer refusal was attempted on the new AI-player base
-(`stars-oracle-apparatus` `evidence/ai/ai01`) but is blocked: `combatlab build`
-rewrites that 7-player registered base into a file the host loads but will not
-advance (a single-player / two-player base advances fine), so the HST editor
-needs multi-player support before the computer refusal can be measured. It
-stays BINARY-ONLY meanwhile.
+no-repeat, captured-target tracking, and the route stargate case.

@@ -562,16 +562,24 @@ order, intercept warp `min(10, range/5)`.
 ### Transfer fleet (give a whole fleet to another player)
 
 The transfer-fleet task hands the entire fleet to a named recipient. The host
-refuses it in three cases; an implementation that validates the gift up front
+refuses it in four cases; an implementation that validates the gift up front
 reproduces the original:
 
-- **Recipient is not a real, active player** — an empty or eliminated slot,
-  or a **computer player**. A computer player never receives a gifted fleet.
-  Refused, with a message to the giver. BINARY-ONLY — not yet measured: an
-  AI-player base now exists, but the fleetlab HST editor cannot yet rewrite a
-  multi-player registered base into a turn the host will generate (the edited
-  file loads but the year does not advance), so the computer refusal has no
-  oracle run.
+- **Recipient is an empty or eliminated slot.** The gift is refused with its
+  own message to the giver. BINARY-ONLY (the oracle bases carry no absent or
+  eliminated player to aim at). This is the only refusal that keys off the slot
+  being vacant rather than off the recipient's disposition or the cargo.
+- **Recipient is a computer player.** A computer player never accepts a gifted
+  fleet: the transfer is refused and the fleet keeps its owner. CONFIRMED (on a
+  base of computer opponents, a non-colonist fleet gifted to an expert computer
+  was refused and stayed with the giver). This is **not** a separate
+  computer-only rule — it is the enemy refusal below. A live computer is an
+  ordinary, present player, so it is not caught by the vacant-slot case; an
+  expert computer is simply hostile to the human, so the gift fails the
+  recipient-relation check. Forcing the computer's stored relation to the giver
+  to neutral does not change the outcome (the computer is still hostile when the
+  gift is evaluated), so there is no setting under which a computer accepts a
+  gift.
 - **Recipient treats the giver as an enemy.** If the recipient's relation
   toward the giver is "enemy" (or the recipient otherwise declines gifts),
   the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
@@ -581,9 +589,9 @@ reproduces the original:
   willing non-enemy was refused; the fleet kept its owner).
 
 Otherwise the fleet changes owner — CONFIRMED (an empty fleet gifted to a
-willing non-enemy human became that player's fleet). (The computer-player and
-treated-as-enemy refusals are the two the coverage audit flagged as
-missing; the colonist refusal was already read.)
+willing non-enemy human became that player's fleet). (The coverage audit
+flagged the computer-player and treated-as-enemy refusals as missing; both are
+now measured, and the colonist refusal was already read.)
 
 ### Oracle plan
 
@@ -645,8 +653,10 @@ gone fleet targets, the route task (ideal-warp case), the enemy and
 colonist transfer refusals plus the empty-fleet success, the patrol target
 rule (nearest enemy within ~50 ly, ties by fleet order, warp `min(10,range/5)`),
 the two repeat fall-backs (a two-waypoint circuit and a coincident reached/last
-waypoint), and the follower-linkage upkeep (a three-fleet chain and a two-fleet
-cycle).
+waypoint), the follower-linkage upkeep (a three-fleet chain and a two-fleet
+cycle), and the computer-player transfer refusal (a fleet gifted to an expert
+computer, measured on a computer-opponents base built with the fleetlab
+`keepfleets` directive).
 
 Still open (fleetlab HST editing, no serial):
 
@@ -657,11 +667,6 @@ Still open (fleetlab HST editing, no serial):
   suppress bit holds coordinates instead.
 - **WU route stargate.** Route between two gated planets with an empty fleet;
   confirm it is sent through the stargate rather than at warp.
-- **WU computer-player transfer.** Gift a fleet to a computer player; confirm
-  it is refused. Attempted on the new AI-player base but blocked: the fleetlab
-  HST editor does not yet rewrite a multi-player registered base into a turn
-  the host will generate (needs the HST editor to handle a multi-player base, a
-  tooling item, not the serial).
 
 The order-ingestion predictions remain open:
 
