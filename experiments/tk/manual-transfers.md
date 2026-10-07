@@ -84,6 +84,10 @@ the same year to merge or scrap the receiver). Reading: the replay looks
 up both objects first and skips the whole transfer if either is missing,
 so nothing is debited and the giver keeps the cargo.
 
+Results (runs tk503 and tk504): see `README.md` "Round 7 results". TK-406,
+TK-407 and TK-409 held as revised; the client gives no colonists to
+another player's fleet (TK-408, TK-414); TK-413 was void.
+
 ## Not predicted
 
 - Whether the client lets a player give colonists to an unowned planet

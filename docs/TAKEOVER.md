@@ -506,9 +506,14 @@ cargo when the orders are applied (step 1).
   step after the loads never receives anything in this build, so its
   messages (0x042–0x04d) are not sent. A transfer whose source or
   receiver no longer exists when the order is applied is skipped whole:
-  nothing is taken from the giver. The fleet cases are predicted, not run
-  (`experiments/tk/manual-transfers.md`, TK-406 to TK-409, TK-413,
-  TK-414).
+  nothing is taken from the giver (binary reading).
+- **Gifts to another player's fleet** (MEASURED, TK-406, TK-407, TK-409).
+  Ironium and fuel arrive when the orders are applied, with no message.
+  The client does not see the receiver's free room, so it can order more
+  than fits: the receiver takes what fits, the giver loses the whole
+  amount, and the giver gets 0x0dd (shortfall, request). No message goes
+  to the receiver. The client gives no colonists to another player's
+  fleet, enemy or friend (TK-408, TK-414: no order written).
 
 ### Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED)
 
@@ -678,12 +683,12 @@ resolutions after movement. Random-stream pinning for experiments:
 
 ## Open experiments
 
-Rounds 1–4 (TK-001..TK-306), the FO corpus and the MG runs measured every
+Rounds 1–7 (TK-001..TK-606), the FO corpus and the MG runs measured every
 other rule here. What is left:
 
-- Manual cargo transfers to another player's **fleet** (full, partial
-  and refused gifts, fuel). The client automation opens Cargo Transfer
-  only with the orbited planet so far.
+- Where a gift is credited relative to the receiver's own waypoint-0
+  tasks in the same year (TK-413 was void; the 0x0dd notices place the
+  credit in the order replay).
 - Why Mystery Trader parts came from scrapping more often than the model
   predicts (TK-305). A larger sample, or replaying the random stream with
   the known draw counts, would tell a wrong model from an unlucky one.

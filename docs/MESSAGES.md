@@ -20,7 +20,7 @@ Status tags follow `PARITY.md`:
 - **NEVER SENT**: a message kind exists but no reachable path sends it.
 
 Sources: a private read of every place the original sends a message (387
-kinds, ids 0x000–0x182), checked against 23,516 message records decoded from
+kinds, ids 0x000–0x182), checked against 23,537 message records decoded from
 the oracle turn files of every apparatus corpus (CB, CS, FM, FO, KX, MF, MG,
 OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot counts given here.
 
@@ -38,6 +38,12 @@ OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot coun
   each one byte, or two bytes when its bit in `wide` is set. A slot is
   stored wide when its value needs it. `tools/fleetlab/events.py` decodes the
   block.
+- **Years without orders** (seen by the Objects lane in pinned runs
+  where nobody submitted orders; its write-up is in `docs/ORACLE.md`). A
+  player's message block for a year then begins with the whole previous
+  year's block, followed by the new messages. A message in the repeated
+  part was not sent again, so count only the new tail when counting a
+  year's messages.
 - **Focus codes.** A planet is its planet number; a fleet is its fleet id
   with bit 15 set. Negative codes select a special screen: −1 none, −2
   research, −3 ship design, −4 scores, −5 registration notice, −6 a space
@@ -166,7 +172,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
 | 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
-| 0x042 | Your cargo was delivered to the other player's object | Queued gift to another player's object, destination accepts all of it; minerals or colonists. No manual order reaches the queue in this build: gifts are credited in place at order time with no message (TK-405, TK-412 for planets; fleets predicted, `TAKEOVER.md` "Manual cargo transfers to other players") | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
+| 0x042 | Your cargo was delivered to the other player's object | Queued gift to another player's object, destination accepts all of it; minerals or colonists. No manual order reaches the queue in this build: gifts are credited in place at order time with no message (TK-405, TK-412 for planets; TK-406, TK-407, TK-409 for fleets) | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
 | 0x044 | Your object received cargo from another player | Counterpart of 0x042 | receiving object's owner | object, amount, mineral, object | destination | P2 | BINARY-ONLY |
 | 0x045 | Same as 0x044, worded for colonists | Counterpart of 0x043 (fuel) | receiving object's owner | as 0x044 | destination | P2 | BINARY-ONLY; LEGACY BUG? |
@@ -202,7 +208,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x0c4 | Fleet added this many mines to a minefield | Per mine type laid: merged into an own field of that type that covers the fleet | fleet owner | fleet, amount | fleet | P6c | CONFIRMED (ob/ob019-y2) |
 | 0x0db | Another player emptied the packet/salvage first; you got only this much | A manual load from a packet or salvage gets less than requested but more than nothing | owner of the loading fleet | fleet, mineral, kT, mineral | fleet | P1 | BINARY-ONLY |
 | 0x0dc | Another player emptied the packet/salvage first; you got none | Same, nothing obtained | owner of the loading fleet | fleet, mineral | fleet | P1 | BINARY-ONLY |
-| 0x0dd | A manual transfer moved less than requested (shortfall and request given) | A hand-ordered cargo transfer where the giving side lacks the cargo or the receiving side lacks room (not colonists; see Notes) | owner of the source object named in the order | object, value (shortfall), mineral, value (request) | source object | P1 | BINARY-ONLY |
+| 0x0dd | A manual transfer moved less than requested (shortfall and request given) | A hand-ordered cargo transfer where the giving side lacks the cargo or the receiving side lacks room (not colonists; see Notes) | owner of the source object named in the order | object, value (shortfall), mineral, value (request) | source object | P1 | CONFIRMED (tk7/tk503) |
 | 0x0f5 | Merge order failed: destination is not a fleet | Merge task with a non-fleet or vanished target | fleet owner | fleet | fleet | P2, P6c | BINARY-ONLY |
 | 0x0f6 | Merge order failed: destination fleet belongs to someone else | Merge target owned by another player | fleet owner | fleet | fleet | P2, P6c | CONFIRMED (fo/fo04) |
 | 0x0f7 | Fleet merged into the named fleet | Merge task succeeds | fleet owner | fleet (merged, by name), fleet (target) | fleet (target) | P2, P6c | CONFIRMED (fo/fo03) |
@@ -642,12 +648,12 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Evidence
 
-- 358 rows cover all 387 kinds (some rows cover a range). 210 rows are
+- 358 rows cover all 387 kinds (some rows cover a range). 211 rows are
   confirmed by at least one oracle run. The rest are BINARY-ONLY or NEVER
   SENT.
 - The oracle records come from every corpus in apparatus `evidence/`
-  (23,516 message records, including the MG batch (MG-001 to MG-006)
-  and TK rounds 3 to 6). 204 distinct kinds appear in them, and every
+  (23,537 message records, including the MG batch (MG-001 to MG-006)
+  and TK rounds 3 to 7). 205 distinct kinds appear in them, and every
   one has a confirmed row. Each was checked against its row: slots in that
   order, sent to that player's file, and the trigger present in the run.
 - The minefield facts are CONFIRMED by MF-1..MF-13:
@@ -663,7 +669,7 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Kinds not yet observed, and how to reach them
 
-Every kind has a row. The 148 rows without an oracle sighting fall into
+Every kind has a row. The 147 rows without an oracle sighting fall into
 five groups by what it would take to see them.
 
 1. **Legal orders and a Combat Lab setup reach them.** The rest of the
@@ -672,12 +678,11 @@ five groups by what it would take to see them.
    breeding in transit, waypoint upkeep, victory, battle summaries and
    Trader trades. This lane's next message batch takes them.
 2. **Manual cargo transfers to another player's fleet** (0x042–0x04d)
-   and to packets or salvage (0x0db, 0x0dc), and the shortfall notice
-   0x0dd. Legal client orders that Combat Lab cannot write into a host
+   and to packets or salvage (0x0db, 0x0dc). Legal client orders that Combat Lab cannot write into a host
    file; the client automation reaches only the orbited planet so far
-   (planet transfers: TK-501, TK-502). On `COVERAGE.md` as a targeted
-   experiment. The revised reading predicts that a fleet gift sends none
-   of 0x042–0x04d (TK-406 to TK-409, TK-413).
+   (planet transfers: TK-501, TK-502). Fleet gifts ran (TK-406 to
+   TK-409) and sent none of 0x042–0x04d: the queue they belong to gets
+   nothing from manual orders. 0x0dd is now confirmed.
 3. **Shown only by the client** (0x0aa–0x0ae, 0x151–0x154, 0x15d). Made
    when the turn is opened and never stored in a turn file, so the file
    decoder cannot see them. Seeing them means reading the client's

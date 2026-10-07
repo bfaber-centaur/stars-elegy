@@ -1643,3 +1643,29 @@ shape as round 5; the client gives each gift through the fleet panel's
 |---|---|---|
 | TK-414 | players 0 and 1 are friends; giver gives 20 colonists to an empty player 1 Freighter | fleet 1/0: col 20; as TK-408 |
 
+
+## Round 7 results
+
+Run 2026-10-07 (cycles 20000, `check7.py`); raw files, order files and
+screenshots in apparatus `evidence/tk7/`.
+
+- The client wrote a cargo record to the other player's fleet for
+  ironium and fuel, and did **not** cap the amount: the Cargo Transfer
+  dialog shows a foreign fleet's fuel and hold as 0, so 100 ironium went
+  out for TK-406 and TK-407.
+- TK-406: the receiver ended at 210 kT (50 received), the giver ended
+  empty (all 100 gone), and player 0 got 0x0dd (fleet, shortfall 50,
+  ironium, request 100). No 0x046/0x048. As revised.
+- TK-407: nothing received, the giver lost 100, 0x0dd (shortfall 100,
+  request 100). No 0x04a/0x04c. As revised.
+- TK-409: 50 mg of fuel moved, giver 150, receiver 150, no message. As
+  revised.
+- TK-408 and TK-414: the client did not move colonists to another
+  player's fleet (the arrow click left 20 colonists on the giver's side)
+  and wrote no record, enemy or friend. Not predicted: a legal client
+  cannot give colonists to another player's fleet.
+- TK-413 is void: the receiver's transport task was cleared at the end of
+  year 1 (nothing to unload, 0x04e), so year 2 had no unload to carry the
+  gift. The gift stayed in the receiver's hold. Timing within the year is
+  instead shown by the 0x0dd shortfall notices, which the order replay
+  sends; a queued gift would have sent 0x046 or 0x04a.
