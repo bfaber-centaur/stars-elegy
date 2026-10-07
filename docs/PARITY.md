@@ -2385,15 +2385,128 @@ The Mystery Trader works with random events off.
 - A second player 1 fleet with 5000 kT at the same trader in the same year
   was kept: each player gets one reward per trader.
 
+### Round 5: rules OBJECTS.md marked BINARY-ONLY (OB-021..OB-027)
+
+Status: MEASURED, 2026-10-07. Predictions were committed before the runs
+(`experiments/ob/README.md` "Round 5"; commits e1873db and 4c63088), one
+pinned year each (cycles 20000) unless stated. OB-021 and OB-024 were also
+generated at cycles 15000, 25000, 30000, 40000 and 60000. In the base
+stream, 44 of 49 predicted cases held. The misses were the two IT packet
+cases and OB-025-F1..F3 (wormhole targets). In other streams, OB-024-A and
+C missed for a reason outside the objects rules, and OB-021-G's fuel check
+missed when a ship was lost. Details below.
+
+#### Stargates (CONFIRMED, OB-021, OB-022)
+
+- Gate travel is waypoint warp 11. A Laser DD jumped 100 ly between two
+  100/250 gates and arrived undamaged with its fuel unchanged.
+- **Danger.** Every case matched OBJECTS.md's formula:
+  - Range is judged by the source gate only. A 150/600 → 100/250 jump of
+    372 ly was safe. The reverse jump (danger 12%) left the DD with 60/500
+    of its armor as damage.
+  - Mass is per ship and is checked against both gates. Super Freighters
+    (mass 202) between 100/250 gates had danger 44%. Over 357 ly, range
+    and mass multiplied to 50%, not 44%.
+  - Every survivor took ⌊pct·armor/100⌋, written as one damage word on
+    100% of the ships: 5 DDs at 13% got 65/500, freighters 220/500 and
+    250/500.
+- **Losses** are random. In 6 streams:
+  - 5 DDs at 13% (4% each) lost none.
+  - 3 freighters at 44% (14% each) lost one in 3 streams.
+  - 3 freighters at 50% (16% each) lost one in 2 streams.
+  - When one of 3 ships was lost, fleet fuel went from 100 to 67, and the
+    survivors' damage word was unchanged.
+- **Refusal.** A ship over 5× a mass limit (mass 502 vs 100) was refused:
+  no move and no damage.
+- **Cargo dump (LEGACY BUG, MEASURED).** The refused freighter's 100 kT
+  ironium was still unloaded onto the source planet. A successful jump
+  unloaded 100/50/25 kT and 10 kT of colonists onto the source planet. The
+  population added before growth (1010 → 1161).
+- No destination gate, or an enemy's source gate, meant no jump.
+- **IT (OB-022):** at 13% danger, all 5 DDs survived with the same damage.
+  Neither the refused nor the successful freighter unloaded its cargo.
+
+#### Packets (OB-022, OB-023)
+
+- **Packet Physics decay (CONFIRMED):** classes 1, 2, 3 lost 5, 12 and 25%
+  per year (1000 kT → 950, 880, 750). Each non-empty mineral lost at least
+  5: 50 → 45, and a 100/100/0 packet → 88/88/0. A non-PP class-1 packet
+  lost 10% (1000 → 900), with at least 10 (50 → 40).
+- **IT targets: the OBJECTS.md rule missed (MEASURED).** OBJECTS.md halves
+  both the packet's w² and the catcher's c² when the target's owner is
+  IT.
+  - A warp-10 1000 kT packet into an IT planet with no starbase killed 625
+    units, as for any other owner (pop 1000 → 375 → 431 after growth).
+  - Into an IT planet with a Mass Driver 7, it added 324 kT and killed 475
+    units (pop 525 → 603). Both fit c² halved to ⌊49/2⌋ = 24 with w² = 100
+    unhalved: caught 240‰, damage ⌊(100 − 24)·1000/160⌋ = 475.
+  - So an IT catcher works at half its speed squared, and the packet's
+    speed is not reduced. Sent to the objects decomp for reconciliation.
+
+#### Minefield hits (CONFIRMED, OB-024)
+
+- **Mines lost to a hit:**
+  - heavy 400: −20 (N/20), then the 2% decay with the minimum of 10, to
+    370 (one stream);
+  - heavy 6000: −60 (N/100, since N/20 > 50), then 10% decay with two
+    planets inside, to 5346 (all six streams);
+  - speed bump 400: −20, then 2% with no minimum, to 373.
+- A speed-bump stop left the fleet undamaged. The stops were 7 and 13 ly
+  into the field.
+- **Salvage (LEGACY BUG candidate, MEASURED).** Destroyed fleets with no
+  cargo left salvage at the stop point. Each mineral was 0–9 kT: 4/5/0,
+  8/5/6, 6/3/1, 2/3/0 and 7/3/9.
+- **Setup caveat.** At warp 10 a Long Hump 6 ship can be lost before
+  moving: the fleet was deleted with message 0xe1, with no hit and no
+  salvage (one fleet in 4 of 6 streams). This is the overspeed rule for
+  engines not rated for warp 10 (`docs/COMPONENTS.md`), not a minefield
+  rule. Those streams' OB-024-A and C misses are this, not a field
+  result.
+- The Super Mine Layer doubles: two Mine Dispenser 40 laid 160.
+
+#### Lay-mines duration and wormholes over three years (OB-025, OB-027)
+
+- **Years word (CONFIRMED).** Word 2 laid three years (160, 310, 460), and
+  the task was cleared after the third. Word 3 was still laying after
+  three years. With word 0 (one year, OB-002-N) and word 1 (two years,
+  OB-019), a word of 0–3 lays word + 1 years.
+- **Wormhole ages (CONFIRMED).** A class-1 pair aged 0 jiggled each year:
+  years 1, 2, 3, class unchanged, at most 12 ly per axis.
+- **Jumps (MEASURED).** Twenty class-2 ends aged 40–42 (6% per end per
+  year) gave 5 jumps in 60 end-years. A jump reset years to 0 and kept the
+  class, and the new position was far away (for example (1180,1240) →
+  (1090,1034)).
+- **Wormhole targets (MEASURED; the prediction missed).** A waypoint aimed
+  at a wormhole its owner had not seen at the start of the year became a
+  deep-space waypoint at the wormhole's old position after the first
+  jiggle (OB-025-F1, OB-027-B, 8 fleets). It made no difference that the
+  owner saw the wormhole that year. With the owner's seen bit set at the
+  start, the waypoint kept the wormhole and moved with it (OB-027-A, 4
+  fleets). This agrees with the decomp's rule; the OB-025 prediction had
+  assumed the scouts' scanning would count in the same year.
+
+#### Mystery Trader (CONFIRMED, OB-023, OB-026)
+
+- A Trader that reached its destination while another Trader existed was
+  removed.
+- The only Trader, arriving at its edge destination, stayed: warp 8 → 7,
+  with a new destination on an edge ((1380,1300) → dest (1098,1380)). The
+  other outcome, leaving with 1/2, was not seen in this stream.
+- A part offer (item bit 0) traded to a tech-3 player gave exactly that
+  part. Its Mystery Trader part word, read little-endian at byte 0x4a of
+  the player block, gained bit 0, and tech was unchanged.
+- A ship offer gave a new fleet of one Nubian (mass 499) at the trade
+  point, added as a new design. The traded fleet was removed.
+- A warp-9 Trader moved 81 ly in a year.
+
 ### Not tested
 
 Packet launch (warp, class, amounts, same-year merge, the launch-year half
-move: O-16..O-19), PP terraforming and PP decay rates, AR and IT packet
-targets (O-25, O-26), wormhole jump odds over many streams and what a jump
-does to fleets aimed at the wormhole (O-28, O-30), Mystery Trader spawning,
-path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
-and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
-stargates.
+move: O-16..O-19), PP terraforming, AR packet targets (O-25), wormhole jump
+odds to a measured rate (O-28), Mystery Trader spawning (O-32), minefield
+hit odds per ly as a rate (O-14), detonation of heavy and speed-bump fields,
+Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
+a tiny map).
 
 ## Components (CS-001, CS-002)
 

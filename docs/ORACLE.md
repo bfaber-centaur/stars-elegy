@@ -822,6 +822,22 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   population P (units of 100) is ⌊1.15·P⌋ after the year (OB-009 A/B).
   Packets 49 ly from a warp-7 target arrive the next year: allow a whole
   year's travel.
+- **Round 5 notes (OB-021..OB-027).**
+  - Gate jumps: `to X Y planet N warp 11`. Waypoint warp 11 means "use the
+    stargate".
+  - `combatlab dump` prints `mt=` per player: bytes 0x4a and 0x4b of the
+    player block, high byte first. The game's part word is little-endian,
+    so item bit 0 shows as `mt=0100`.
+  - Do not send Long Hump 6 fleets at warp 10 into minefield cases. Each
+    ship has a 1-in-10 chance to be lost before moving (message 0xe1 for a
+    whole fleet), which hides the field result. Use warp 9, or a
+    warp-10-rated engine.
+  - Consecutive `pinned-turn` years start from the same random stream.
+    Repeated draws in a multi-year run are not independent (the OB-025
+    jiggles repeated their offsets).
+  - A thing-target waypoint survives an object's move only if the owner
+    knew the object at the start of the year. Set `seen` on the wormhole
+    when a case needs the target kept.
 - **JOAT built-in scanner.** JOAT Scout, Frigate and Destroyer hulls scan
   20·electronics / 10·electronics on top of their parts (S-10). Player 1
   at electronics 3 with a Rhino: R = ⌊⁴√(50⁴ + 60⁴)⌋ = 66, P = 30.

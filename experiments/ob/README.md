@@ -501,3 +501,28 @@ Added after OB-025-F1 contradicted its prediction, before this run.
 |---|---|---|---|---|
 | OB-027-A | O-31 | scouts at warp 1 targeting class-1 wormholes 0-3, known to player 0 (seen bit set) | waypoint keeps the wormhole as target (obj id kept) | deep space at the old position as in OB-025-F1 |
 | OB-027-B | O-31 | scouts targeting wormholes 4-7, unknown at the start (as OB-025) | deep-space waypoint at the old position (repeats OB-025-F1) |  |
+
+## Round 5 results
+
+Recorded in `docs/PARITY.md` "Universe objects", "Round 5". Raw runs:
+private apparatus `evidence/ob/ob021`..`ob027` (OB-025 as `ob025-y1..y3`;
+other streams as `obNNN-cNNNNN`).
+
+- Held: every stargate case (OB-021, OB-022 A–C), every Packet Physics and
+  class-1 decay case (OB-023 P0–P4, Q, R), the single Trader's arrival
+  (OB-023-T, it stayed), OB-024 A–D, lay-mines words 2 and 3, wormhole ages
+  and jumps (OB-025 A, B, W, J), OB-026 A–C and OB-027 A, B.
+- Missed: OB-022-D and E. An IT target halves only the catcher's c², not
+  the packet's w²: planet 20 lost 625 units (pop 431 after growth), and
+  planet 9 with a Mass Driver 7 gained 324 kT and lost 475 units (pop 603).
+- Missed: OB-025-F1..F3. Waypoints aimed at wormholes the owner had not
+  seen at the start of the year became deep-space waypoints at the old
+  position. OB-027 then confirmed that a known wormhole is followed and an
+  unknown one is dropped.
+- Other streams: gate losses were seen (one of three freighters in 3 of 6
+  streams at 44% danger, 2 of 6 at 50%; fuel 100 → 67). OB-024-A and C
+  "missed" in 4 streams because a Long Hump 6 fleet at warp 10 was lost to
+  the overspeed rule before reaching its field (message 0xe1). OB-021-G's
+  fuel check missed when a ship was lost.
+- Pinned consecutive years start from the same random stream: the OB-025
+  class-1 pair jiggled by the same offsets in all three years.
