@@ -473,7 +473,10 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus == 'cb':
+    if corpus in ('cb', 'sc'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        __import__('build_' + corpus).build(ev, out)
+    elif corpus == 'cb':
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import build_cb
         build_cb.build(ev, out)

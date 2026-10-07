@@ -23,6 +23,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `fo` | FO-01..07 | 48 | transport tasks, merges, scrapping, transfers between players | `docs/ORDERS.md` "Fleet operations" |
 | `tk2` | TK-101..121 | 64 | planet takeover: bombing, invasion, what the new owner gets | `docs/TAKEOVER.md` |
 | `wt` | WT-001..005 | 31 | wormholes and the Mystery Trader | `docs/OBJECTS.md` |
+| `sc` | SC-001..034 | 680 | scanning: what each player's file shows of fleets, planets, designs and player blocks | `docs/SCANNING.md` |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -197,6 +198,7 @@ decoded quantities above. Implementers never need to run it.
 python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
+python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
 go test ./internal/vectors
 ```
 
@@ -207,6 +209,8 @@ go test ./internal/vectors
   checker output.
 - CB-000 (ship designer readouts, no turn), CB-018 batch 1 (confounded by
   research), the superseded CB-046 morph v1, and CB-017's second year.
-- Scanning (`sc`), races (`rd`), minefields (`mf`) and kernel (`kx*`): in
+- SC-015 (the tamper check fired; SC-015L repeats it) and SC-021 (invalid
+  setup).
+- Races (`rd`), minefields (`mf`) and kernel (`kx*`): in
   progress. Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.
