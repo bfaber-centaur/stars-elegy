@@ -263,3 +263,31 @@ Each of the other 12 runs matched the predicted order at some k. Cycles
 Neither alternative order matches either of those runs at any k. With
 mining before the scrap draws, all 11 known streams would differ; with
 bombing before the events, 3 would.
+
+## Batch 4: movement and fuel leftovers
+
+### KB-4A (`kb4a.spec`)
+
+Random events off, cycles 20000 and 3700.
+
+Player 0 is an Interstellar Traveler with Improved Fuel Efficiency (56
+points), at tech 26. Player 1 treats player 0 as a friend, and player 0
+is neutral to player 1. Masses from the dump: tank scout 17 kT, Small
+Freighter with Quick Jump 5 29, Medium Freighter with Quick Jump 5 64.
+`python3 kbmodel.py kb4a` prints these.
+
+| Fleet | Setup | Predicted | Rules out |
+|---|---|---|---|
+| G1, G2 | Anti-matter Generator scout (tank 250), stationary, fuel 100 / 230 | 150 / 250 | uncapped 280 |
+| X1, X2 | Super-Fuel Xport (tank 2,250), stationary, fuel 1,000 / 2,150 | 1,200 / 2,250 | uncapped 2,350 |
+| E | tank scout, warp 6, 100 ly east, fuel 300 | IFE factor `180 − 27 = 153`: 46 tenths → 5 mg, fuel 295, at (1056, 1030) | no IFE: 294 |
+| K | the same with fuel 20 and a 300 ly leg (39 mg) | moves 36 ly, fuel 15, warp still 6, no out-of-fuel message | warp lowered |
+| H, H0 | Small Freighter with a Radiating Hydro-Ram Scoop, 70 kT of colonists, moving at warp 6 / stationary | 70 − `max(1, trunc(70·18/100))` = 58, message 0x74 / 70 | no loss, or a loss when stationary |
+| Q | Small Freighter then Medium Freighter (both Quick Jump 5), 111 kT of ironium, warp 6 | Small Freighter first: 272 + 289 = 561 tenths → 57 mg, fuel 243 | Medium Freighter first: 560 → fuel 244 |
+| C | tank scout chasing E at warp 9, fuel 5 | `C1000` 650, `R` 7: moves 7 ly toward E's end to (1026, 1013), fuel 0, out-of-fuel message, warp 1; its waypoint takes E's end position | moves further, or keeps warp 9 |
+| T1 | Small Freighter at planet 9 (no ironium): waypoint 0 transport "wait for 50% ironium", then 25 ly east at warp 5 | holds at planet 9, task kept | moves |
+| T2 | Small Freighter at planet 12 with 10 kT of ironium: waypoint 0 transport "unload all ironium", then 25 ly south at warp 5 | unloads, moves to (1245, 1183), fuel 97 | holds |
+| F1, F2 | tank scouts at player 1's homeworld (friend, Space Station), fuel 10 / 400 | 300 / 300 | not refuelled |
+| F3 | player 1's tank scout at player 0's homeworld (player 0 neutral to it), fuel 10 | 10 | refuelled |
+| F4 | tank scout at player 0's Orbital Fort planet 13, fuel 10 | 10 (no dock) | refuelled |
+| F5 | tank scout at player 0's homeworld (Space Station), fuel 10 | 300 | |

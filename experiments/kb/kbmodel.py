@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """KB predictions from the public KERNEL.md rules (no private material).
 
-  python3 experiments/kb/kbmodel.py kb1a|kb1b|kb2a|kb2b|kb2c
+  python3 experiments/kb/kbmodel.py kb1a|kb1b|kb2a|kb2b|kb2c|kb4a
 Prints the predicted end-of-year state for each case. Alternatives (the
 readings each case rules out) are printed with 'alt'."""
 import math, sys
@@ -268,5 +268,48 @@ def kb2c():
           "3 built (300 resources) -> 20/50/50, item gone; alt gravity counted: capacity 6, x5 kept")
     print("  11: 10/50/50, capacity 0: Terraform x2 removed (message 0x12f), nothing built, 10/50/50; alt gravity counted: units built on gravity")
 
+QJ5 = [0, 0, 25, 100, 100, 100, 180, 500, 800, 900, 1080]
+
+def ife(f): return f - 15 * f // 100
+
+def fuel_tenths(stacks, cargo, L):
+    """KERNEL.md "Fuel cost": stacks = [(f, n, m, cap)] in the fleet's design
+    order; cargo goes to increasing f, equal f in that order."""
+    order = sorted(range(len(stacks)), key=lambda i: stacks[i][0]); left = cargo; t = 0
+    for i in order:
+        f, n, m, cap = stacks[i]; c = min(left, n * cap); left -= c
+        t += f * L * (n * m + c) // 2000
+    return t
+
+def mg(t): return (t + 9) // 10
+
+def place(x0, y0, x1, y1, A):
+    D = math.hypot(x1 - x0, y1 - y0)
+    if math.trunc(D - 0.99999) < A: return x1, y1
+    r = lambda d: math.trunc(d * A / D + (0.5 if d > 0 else -0.5))
+    return x0 + r(x1 - x0), y0 + r(y1 - y0)
+
+def kb4a():
+    print("KB-4A (player 0 IT + IFE, tech 26)")
+    f6, f9 = ife(QJ5[6]), ife(QJ5[9])
+    print(f"  G1: 100 + 50 = 150; G2: 230 + 50 capped at 250 (alt uncapped 280)")
+    print(f"  X1: 1000 + 200 = 1200; X2: 2150 + 200 capped at 2250 (alt 2350)")
+    tE = fuel_tenths([(f6, 1, 17, 0)], 0, 36); tEa = fuel_tenths([(QJ5[6], 1, 17, 0)], 0, 36)
+    print(f"  E: f(6) = {f6} with IFE: {tE} tenths -> {mg(tE)} mg, fuel {300 - mg(tE)}, at {place(1020, 1030, 1120, 1030, 36)} (alt no IFE: {300 - mg(tEa)})")
+    leg = mg(fuel_tenths([(f6, 1, 17, 0)], 0, 300)); C1000 = fuel_tenths([(f6, 1, 17, 0)], 0, 1000) // 10
+    print(f"  K: whole leg {leg} mg > 20; R = trunc(20000/{C1000}) = {20000 // C1000} >= 36: moves 36, fuel {20 - mg(tE)}, warp stays 6, no out-of-fuel message (alt: warp lowered)")
+    kill = max(1, 70 * ((86 - (15 + 85) // 2) // 2) // 100)
+    print(f"  H: colonists 70 - {kill} = {70 - kill} (message 0x74); H0 (stationary): 70")
+    tQ = fuel_tenths([(f6, 1, 29, 70), (f6, 1, 64, 210)], 111, 36); tQa = fuel_tenths([(f6, 1, 64, 210), (f6, 1, 29, 70)], 111, 36)
+    print(f"  Q: Small Freighter first: {tQ} tenths -> {mg(tQ)} mg, fuel {300 - mg(tQ)} (alt Medium first: {tQa} -> fuel {300 - mg(tQa)})")
+    C9 = fuel_tenths([(f9, 1, 17, 0)], 0, 1000) // 10; R = 5000 // C9
+    tx, ty = place(1020, 1030, 1120, 1030, 36)
+    print(f"  C: f(9) = {f9}, C1000 = {C9}, R = {R}: moves {R} ly toward E's end {tx, ty} -> {place(1020, 1010, tx, ty, R)}, "
+          f"fuel 0, out of fuel, warp lowered to 1; its waypoint takes E's end position")
+    tT = fuel_tenths([(ife(QJ5[5]), 1, 29, 70)], 0, 25)
+    print(f"  T1: holds at planet 9 (1208, 1297), task kept; T2: unloads 10 kT on planet 12, moves to (1245, 1183), fuel {100 - mg(tT)}")
+    print("  F1: 10 -> 300 (friend's Space Station); F2: 400 -> 300; F3: 10 (player 0 is neutral to player 1); "
+          "F4: 10 (Orbital Fort has no dock); F5: 10 -> 300")
+
 if __name__ == '__main__':
-    {'kb1a': kb1a, 'kb1b': kb1b, 'kb2a': kb2a, 'kb2b': kb2b, 'kb2c': kb2c}[sys.argv[1]]()
+    {'kb1a': kb1a, 'kb1b': kb1b, 'kb2a': kb2a, 'kb2b': kb2b, 'kb2c': kb2c, 'kb4a': kb4a}[sys.argv[1]]()
