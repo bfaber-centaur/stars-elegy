@@ -161,6 +161,9 @@ public class CombatLab {
                     sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
                     sb.append(" hab=");
                     for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
+                    // advantage points (RaceLab, StarsAPI racebuilder): negative = a race the
+                    // host degrades at the start of the year (message 0x117)
+                    try { sb.append(" points=").append(RaceLab.points(p.fullDataBytes)); } catch (Exception e) { sb.append(" points=?"); }
                     // default production queue for new colonies (count at 0x4f, words id | count << 6 from 0x50)
                     // and the default "only leftover to research" bit (0x4e bit 0)
                     sb.append(" defqueue=");
