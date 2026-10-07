@@ -21,3 +21,19 @@ counts 5000 … 50000.
   Destroyer was destroyed, player 1 (a participant at its own planet with
   something left) reaches propulsion 4 in some (about a third).
 - Player 0 makes no attempt in either (another player's planet).
+
+## Second setup (committed before its run)
+
+Committed after the first twelve-stream runs of both starts (results
+below) and before these ran. In those runs player 1's Freighter died in
+every stream, so player 1 had nothing left and the `n` = 2 rule ruled out
+its attempt in the JOAT control too: the first setup cannot tell the AR
+rule apart. `cb041-sf` and `cb041-sf-joat` replace the Freighter with one
+fleet of ten Super Freighters (Long Hump 6, armor 400 each).
+
+- Player 1 keeps at least one Super Freighter in every stream.
+- `cb041-sf`: the Fort is destroyed, planet 8 is uninhabited, and player 1
+  stays at propulsion 3 in every stream (no attempt after a destroyed AR
+  starbase).
+- `cb041-sf-joat`: planet 8 stays player 1's. In streams where a
+  player-0 Destroyer was destroyed, player 1 reaches propulsion 4 in some.

@@ -181,6 +181,13 @@ ar = h2(low1={"prop": 3}) + ["research 1 0",
 ]
 specs["cb041"] = ["prt 1 8", "lrt 1 0x1b80"] + ar
 specs["cb041-joat"] = ar
+# Second setup: the lone Freighter died in every first run, so player 1 had
+# nothing left. Here player 1's survivor is a fleet of ten Super Freighters.
+SUPER_LH = "Super Freighter, 3 Long Hump 6, empty, empty, empty"
+ar_sf = ar[:-1] + [f"design 1 1 {SUPER_LH} = Super",
+                   f"fleet 1 0 planet {P1HW[0]} at {P1HW[1]} {P1HW[2]} ships 1:10 fuel 100"]
+specs["cb041-sf"] = ["prt 1 8", "lrt 1 0x1b80"] + ar_sf
+specs["cb041-sf-joat"] = ar_sf
 
 for name, lines in specs.items():
     exp = name.split("-")[0]
