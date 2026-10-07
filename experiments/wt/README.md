@@ -177,3 +177,40 @@ These were committed after WT-001..003 ran and before WT-005 ran.
 | WT-005-A | player 0 fleet with 5000 kT 50 ly east of Trader 0's start (heading east, warp 9), waypoint on the Trader, warp 6 (36 ly) | flies 31 ly to the Trader's end point (1281,1300) and trades: consumed; Trader met mask 0x1 | flies 36 ly west toward the start (1214,1300), kept (O-47) |
 | WT-005-B | WT-001-F1 repeated by player 1: 30 ly west of the start, waypoint on the Trader, warp 6 | moves 36 ly east to (1206,1300), kept | stops at (1200,1300) |
 
+
+## Results
+
+Raw `check.py` output: apparatus `evidence/wt/batch/check.out`. The full
+record is in PARITY.md "Universe objects" → "Wormholes and Mystery Trader,
+round 2".
+
+**Held:**
+- O-43: WT-001 A1, A2, G.
+- O-44: 18 of 18 jumps kept the destination bit.
+- O-46: WT-001 B1, B2, C, D, E.
+- O-48: WT-003 A00–A11 and A at cycles 20000.
+- O-49: WT-003 B, and WT-004 C over 15 streams.
+- O-50: WT-002 A.
+- O-51: WT-004 B over 15 streams; 3 gave nothing.
+- O-52: WT-002 B.
+
+Two message checks first failed because the checker matched the whole
+header word. 0x109 was written as `09 03`, with a flag bit above the 9-bit
+id. The check was fixed to match the id bits only; the game's output was
+unchanged.
+
+**Missed:**
+- **O-47.** A fleet aimed at the Trader flies toward the Trader's position
+  after the Trader moves, not toward its start-of-year position.
+  - WT-001 F1 (fixed setup) ended at (1206,1300).
+  - WT-005 A traded at the Trader's end point (1281,1300). This was
+    predicted after F1.
+- **O-44, known bit.** 4 of the 18 jumped ends still had player 0's
+  known bit. Each was in player 0's file, 21–107 ly from the M.T. ship
+  player 0 received that year, so it was seen again after the jump
+  (PARITY.md). That makes them a scanning observation, not a jump-rule
+  miss.
+
+**Void (the Trader's yearly warp bump moved it off the staged point):**
+- WT-003 at cycles 26000: Traders 11 and 12 (A11, A, B).
+- WT-004 C at 1490 and B at 1155.

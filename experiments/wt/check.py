@@ -179,12 +179,25 @@ def gift(b, a, des, des0, ev, owner, fid, slot, mt):
     return '%s x%d in slot %d at (%d,%d) fuel %d' % (kind, n, d, f['x'], f['y'], f['fuel']), ok
 
 
+def bumps(b, a):
+    """Traders whose warp or destination changed before their move (OBJECTS 6.2 reading:
+    1/25 a year warp + 1, then 1/3 a new destination; message 0x130)."""
+    out = {}
+    for n, t in b['traders'].items():
+        u = a['traders'].get(n)
+        if u and (u['warp'] != t['warp'] or u['dest'] != t['dest']):
+            out[n] = 'trader %d warp %d->%d dest %s->%s' % (n, t['warp'], u['warp'], t['dest'], u['dest'])
+    return out
+
+
 def main(argv):
     rid, dirs = argv[0], argv[1:]
     if rid != 'WT-004':
         for d in dirs:
-            res, _ = check_run(rid, d)
+            res, (b, a, _, _, _) = check_run(rid, d)
             print('== %s %s' % (rid, d))
+            for n, s in sorted(bumps(b, a).items()):
+                print('   BUMP %s (staging void for its meeting)' % s)
             for cid, ok, s in res:
                 print('%-8s %s  %s' % (cid, 'OK  ' if ok else 'MISS', s))
             print('%d/%d OK' % (sum(ok for _, ok, _ in res), len(res)))
@@ -199,8 +212,14 @@ def main(argv):
                 print('   end %2d %s %s' % (k, s, 'OK' if ok else 'MISS'))
             njump += s.startswith('JUMP')
             nbad += not ok
-        for case in r.cases[1:]:
+        bp = bumps(b, a)
+        for n, s in sorted(bp.items()):
+            print('   BUMP %s' % s)
+        for tn, case in enumerate(r.cases[1:]):
             _, owner, fid, slot, mt = case['check']
+            if tn in bp:
+                print('   %s VOID (Trader %d bumped before the meeting)' % (case['id'], tn))
+                continue
             s, ok = gift(b, a, des, des0, ev, owner, fid, slot, mt)
             print('   %s %s %s' % (case['id'], s, 'OK' if ok else 'MISS'))
             nbad += not ok
