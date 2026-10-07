@@ -3882,7 +3882,7 @@ In the host file a wormhole has two player masks, the **known** mask
     sampling streams;
   - Trader appearance (KX-004).
 
-### Round 6: the rest of OBJECTS.md's BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001/002)
+### Round 6: the rest of OBJECTS.md's BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001, TP-002)
 
 Status: MEASURED, 2026-10-07. Predictions were committed before the runs
 (stars-elegy ee169d3: `experiments/ob/README.md` "Round 6",
@@ -3936,7 +3936,7 @@ in three streams, 12 GT-003 cases, 6 TP cases). Raw evidence: apparatus
   design wiped out by the roll counts once (GT-002: a design lost
   entirely at `pct = 100` counts twice). In the other four the freighter
   survived.
-- **Computer players' planets (TP-001/002).** An expert Turindrone
+- **Computer players' planets (TP-001, TP-002).** An expert Turindrone
   homeworld gained the offered part and lost all its surface minerals; with
   that part already owned it drew another (bit 6). An expert Automitron
   homeworld at tech 10,10,10,13,10,10 went to 12,11,11,13,11,11 and paid
@@ -4175,7 +4175,7 @@ usual 60 and 240 for the seeds the model picked (UG22..UG24).
 
 ### Round 3: BINARY-ONLY generation rules (UG22..UG30)
 
-Predictions committed before the runs (stars-elegy 7726cc3 on #49,
+Predictions committed before the runs (stars-elegy 7726cc3,
 `experiments/ug/README.md` "Round 3"; apparatus ff01ff25). All nine games
 matched the whole predicted game field by field (37 to 44 fields each, 0
 mismatches).
