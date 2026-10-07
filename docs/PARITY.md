@@ -4203,7 +4203,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-5)
+## Computer players (AI-0..AI-8)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4230,6 +4230,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-2 | Starbase designs created each year: slots, hull, parts, counts, picture (`AI.md` §5) | CONFIRMED: 320 of 320 player-years (HE SS IS CA PP), including the 2450 family switch |
 | AI-3 | Robotoid scraps fleets holding its slot-0 Scout until year index 20 | MEASURED once: AIX 2400, the Scout fleet is scrapped and gone the next year |
 | AI-5 | Macinti scraps early fleets and builds and scraps its slot-1 colonizer each year until design 7 exists | MEASURED: AIX 2400–2406 |
+| AI-8 | Robotoid ship designs each year: ageing deletes, the design ladder, the slot-0 Frigate rebuild; slot, hull, parts, counts and picture (`docs/ai/robotoid.md` §2) | CONFIRMED: 61 of 61 player-years (AIX), covering 7 design orders and every year without one |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

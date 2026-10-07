@@ -8,7 +8,7 @@ war) gets its own file under docs/ai/:
 
 | Type (definition file) | Personality | PRT | File |
 |---|---|---|---|
-| 1 | Robotoid | HE | docs/ai/robotoid.md (planned) |
+| 1 | Robotoid | HE | `docs/ai/robotoid.md` |
 | 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
 | 3 | Automitron | IS | docs/ai/automitron.md (planned) |
 | 4 | Rototill | CA | docs/ai/rototill.md (planned) |
