@@ -29,6 +29,9 @@ vectors/<corpus>/<run>.json      one oracle run
 | `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
 | `mf` | MF-01..11c | 20 | minefields: hits, sweeping, decay, detonation, speed bumps | `docs/OBJECTS.md` "Minefields" |
 | `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty" |
+| `cb7` | CB-048, CB-049, SC-035, SC-036 | 5 | combat round 7 (Mystery Trader items from battle, movement) and scanning after battles | `docs/COMBAT.md`, `docs/SCANNING.md` |
+| `tk3` | TK-201..203 | 3 | takeover round 3: order across planets, unloads, mines floor, scrapping tech | `docs/TAKEOVER.md` |
+| `sl` | SL-01..12 (9 setups) | 9 | ship launch: new fleets, route warps, the 512-fleet limit, starbase replacement | `docs/ORDERS.md` |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -212,6 +215,7 @@ python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
 python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
+python3 tools/vectors/build.py sl  ../stars-oracle-apparatus/evidence/sl   # also cb7, tk3
 python3 tools/vectors/build.py mf  ../stars-oracle-apparatus/evidence/mf
 python3 tools/vectors/build.py rp  ../stars-oracle-apparatus/evidence/rd
 python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
@@ -225,6 +229,8 @@ go test ./internal/vectors
   checker output.
 - CB-000 (ship designer readouts, no turn), CB-018 batch 1 (confounded by
   research), the superseded CB-046 morph v1, and CB-017's second year.
+- GT-001/002 (stargates): waiting for their public record in stars-elegy.
+  SC-035 v1 (did not test the claim) and the SL tooling check.
 - SC-015 (the tamper check fired; SC-015L repeats it) and SC-021 (invalid
   setup).
 - KX-001 M3 (the prediction was void: the race edit tripped the tamper

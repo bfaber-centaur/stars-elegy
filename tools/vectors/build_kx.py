@@ -75,6 +75,14 @@ def observe(st_prev, adir, g, year):
         if e['kind'] == 'planet' and 'surface_minerals' in e['equals']:
             e['tolerance'] = {'surface_minerals': 1}
         exps.append(dict(e, year=year))
+    bs = {}
+    for f in sorted(os.listdir(adir)):
+        if re.fullmatch(re.escape(g) + r'\.M\d+', f):
+            bs.update(C.battles(B.dump(os.path.join(adir, f))))
+    for b in sorted(bs.values(), key=lambda b: (b['x'], b['y'])):
+        acts = b.pop('actions')
+        exps.append(dict(b, year=year))
+        exps.append({'kind': 'battle_actions', 'x': b['x'], 'y': b['y'], 'actions': acts, 'year': year})
     for f in sorted(os.listdir(adir)):
         m = re.fullmatch(re.escape(g) + r'\.M(\d+)', f)
         if not m:
