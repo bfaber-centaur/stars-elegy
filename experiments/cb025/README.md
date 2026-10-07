@@ -25,3 +25,19 @@ Pinned at cycles 20000 and 30000.
 - C1, C2, C3: cargo kept, no salvage object.
 - Speed code in the battle record: D1/D2 Freighter 0 (1 for its empty mass,
   −1 for dumping), C3 Freighter 1 (loaded mass 64).
+
+## Result
+
+Both seeds (20000, 30000) gave the same end state.
+
+- D1: the Freighter ended with 0/0/0, and a salvage object at (1020,1230)
+  holds exactly 20/10/5. CONFIRMED (full amount, and the object exists
+  although nothing was destroyed).
+- D2: planet 5 ended at 120/110/105, planet 22 (C2) at 100/100/100: the
+  full amount. CONFIRMED.
+- C1, C2, C3: cargo kept, no salvage object. CONFIRMED.
+- Speed codes: D1 and D2 Freighters 0, C3 Freighter 1. CONFIRMED.
+- Also observed: both dumping Freighters (speed 0) moved only in even
+  rounds and left the board on their 8th move, in round 14; the C3
+  Freighter (speed 1) left on its 8th move in round 9. Each disengage move
+  record carries a counter that counts down 7 … 0.

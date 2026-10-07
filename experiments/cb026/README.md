@@ -12,3 +12,11 @@ approach it. Pinned at cycles 20000 and 30000.
   no dropoff. With 5 undamaged ships of 300 armor, a first hit records
   `wDmg` 60/100% (36 per ship); a 90% hit (162) would record 54/100%.
 - Every hit replays with the stars-decomp checker.
+
+## Result
+
+Both seeds (20000, 30000). The station first fired in round 7, when the
+Destroyers had reached a square at distance 1. That first hit recorded
+`wDmg` **60/100%** (180 delivered), as did every later hit (cumulative
+120, 180, 240 …). No dropoff at distance 1. CONFIRMED. All 17 hits in each
+record replayed with the stars-decomp checker, no mismatches.

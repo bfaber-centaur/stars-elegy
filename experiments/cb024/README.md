@@ -23,3 +23,12 @@ Damage units after the turn (before → after), `r` doubled for IS, `f` not:
 Starbases (none fought): homeworld stations 200 → **125** (IS, −75) and
 200 → **150** (−50); Orbital Forts 100 → 25 and 100 → 50.
 The damaged-ship percentage stays 100.
+
+## Result
+
+Pinned at 20000. No battle took place. All 28 values matched the table
+above exactly: every fleet (player 0 380, 390, 370, 200, 350, 320, 355;
+player 1 390, 395, 385, 300, 375, 360, 365, both stacks of fleet 6 alike)
+and every starbase (125, 150, 25, 50). CONFIRMED: IS doubles `r`, not the
+Fuel Transport's `f`; an IS starbase repairs 75, any other 50. The Fuel
+Transports in fleet 6 also generated 200 fuel each (100 → 300).

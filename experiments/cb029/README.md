@@ -17,3 +17,13 @@ streams are counted by record hash.
   (CB-018: 4 of 6; CB-021: 3 of 6).
 - Streams where player 0 survives are reported separately (it attempts
   there).
+
+## Result
+
+Twelve cycle counts (5000 … 50000) gave twelve distinct battle records.
+In every one, all five player-0 Laser DDs were destroyed, and so was
+player 1's Charger (Colloidal Phaser, weapons 10). Player 0 ended at
+weapons **3** in **12 of 12** streams. CONFIRMED: a wiped-out participant
+in a two-player battle makes no attempt. (A one-in-three attempt would
+leave all twelve at 3 about 0.8% of the time.) Every hit replayed with
+the checker.

@@ -12,3 +12,14 @@ staying put scores best. Pinned at cycles 20000 and 30000.
 - It leaves the board on its 8th move, i.e. in **round 7**, and the
   battle ends then. If moves that keep it on its square did not count, it
   would still be on the board after round 15.
+
+## Result
+
+Both seeds (20000, 30000). The Runner made one disengage move each round
+from round 0 and left the board on its 8th move, in **round 7**; the
+battle ended then. CONFIRMED.
+
+The first prediction missed: the Runner changed square on **every** move
+(the move records' counter goes 7 … 0), so no move kept it on its square.
+The "stay-put moves count" clause is therefore **not tested** by this
+setup. The same was true of the four dumping Freighters in CB-025.
