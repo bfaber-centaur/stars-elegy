@@ -1,0 +1,15 @@
+# BP-L: copy Default eleven times (5 plans → 16 asked); the client stopped at 15 in exploration.
+plans
+plan select 0
+plan copy P5
+plan copy P6
+plan copy P7
+plan copy P8
+plan copy P9
+plan copy P10
+plan copy P11
+plan copy P12
+plan copy P13
+plan copy P14
+plan copy P15
+plans close

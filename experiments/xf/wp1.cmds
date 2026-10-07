@@ -1,0 +1,14 @@
+# WP-1: waypoint-0 tasks. Hauler #3 at its own homeworld: transport, unload exactly
+# 25 kT ironium and load exactly 30 kT germanium. Hauler #2 at the unowned planet:
+# colonize (it has no colony module). Hauler #1 at the foreign homeworld: scrap.
+fleet first
+wp select 0
+wp task 1
+wp transport 1 4 25
+wp transport 3 3 30
+fleet next
+wp select 0
+wp task 2
+fleet next
+wp select 0
+wp task 5
