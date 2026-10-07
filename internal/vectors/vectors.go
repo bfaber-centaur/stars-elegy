@@ -218,6 +218,7 @@ type Player struct {
 	ResearchField       string            `json:"research_field"`
 	Relations           map[string]string `json:"relations"`
 	MysteryTraderItems  []string          `json:"mystery_trader_items"`
+	Computer            bool              `json:"computer,omitempty"` // a computer player: the host plans its orders
 	Race                Race              `json:"race"`
 	Counts              struct {
 		ShipDesigns     int `json:"ship_designs"`

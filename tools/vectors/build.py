@@ -192,6 +192,8 @@ def state(hst, xy, game, xy_path=None):
                 },
                 'counts': {'ship_designs': int(d['shipdesigns']), 'starbase_designs': int(d['sbdesigns'])},
             })
+            if d.get('computer') == '1':
+                st['players'][-1]['computer'] = True
             owners.append(p)
         elif s.startswith('design ') or s.startswith('sbdesign '):
             m = re.match(r'(sb)?design owner=(\d+) n=(\d+) mass=(\d+) armor=(-?\d+) full=\w+ :: (.*)', s)

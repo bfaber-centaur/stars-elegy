@@ -1,17 +1,17 @@
 {
  "schema": "stars-elegy-vector/1",
- "id": "RD-P12",
- "title": "turn-time race penalty P12",
+ "id": "WU-AICOMP3",
+ "title": "transfer fleet to an expert computer player whose relation to the giver is neutral",
  "years": 1,
  "random": "single_stream",
  "streams": 1,
  "initial_state": {
   "year": 2400,
   "game": {
-   "name": "RD07",
-   "players": 6,
+   "name": "AI01",
+   "players": 7,
    "slower_tech": false,
-   "random_events": false,
+   "random_events": true,
    "public_scores": false,
    "victory_conditions": {
     "planets_owned_percent": {
@@ -74,7 +74,14 @@
     },
     "research_percent": 15,
     "research_field": "energy",
-    "relations": {},
+    "relations": {
+     "1": "enemy",
+     "2": "enemy",
+     "3": "enemy",
+     "4": "enemy",
+     "5": "enemy",
+     "6": "enemy"
+    },
     "mystery_trader_items": [],
     "race": {
      "prt": "AR",
@@ -105,9 +112,9 @@
       ],
       "order": "center, low, high (255 = immune)"
      },
-     "colonists_per_resource": 100,
+     "colonists_per_resource": 1800,
      "factory": {
-      "output": 1,
+      "output": 12,
       "cost": 5,
       "per_10k": 14
      },
@@ -137,7 +144,7 @@
    {
     "id": 1,
     "tech": {
-     "energy": 1,
+     "energy": 0,
      "weapons": 0,
      "propulsion": 1,
      "construction": 0,
@@ -154,338 +161,24 @@
     },
     "research_percent": 15,
     "research_field": "energy",
-    "relations": {},
-    "mystery_trader_items": [],
-    "race": {
-     "prt": "AR",
-     "lrt": [
-      "IFE",
-      "TT",
-      "ARM",
-      "UR",
-      "MA",
-      "RS"
-     ],
-     "growth_percent": 8,
-     "habitability": {
-      "gravity": [
-       56,
-       45,
-       67
-      ],
-      "temperature": [
-       255,
-       255,
-       255
-      ],
-      "radiation": [
-       255,
-       255,
-       255
-      ],
-      "order": "center, low, high (255 = immune)"
-     },
-     "colonists_per_resource": 1800,
-     "factory": {
-      "output": 12,
-      "cost": 5,
-      "per_10k": 14
-     },
-     "mine": {
-      "output": 23,
-      "cost": 6,
-      "per_10k": 12
-     },
-     "research_cost": {
-      "energy": "normal",
-      "weapons": "cheap",
-      "propulsion": "expensive",
-      "construction": "normal",
-      "electronics": "cheap",
-      "biotechnology": "cheap"
-     },
-     "leftover_spend": "mineral_concentrations",
-     "stat_15": 0,
-     "techs_start_high": false,
-     "factories_cost_less": true
+    "relations": {
+     "0": "neutral",
+     "2": "enemy",
+     "3": "enemy",
+     "4": "enemy",
+     "5": "enemy",
+     "6": "enemy"
     },
-    "counts": {
-     "ship_designs": 3,
-     "starbase_designs": 2
-    }
-   },
-   {
-    "id": 2,
-    "tech": {
-     "energy": 1,
-     "weapons": 0,
-     "propulsion": 1,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_accumulated": {
-     "energy": 0,
-     "weapons": 0,
-     "propulsion": 0,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_percent": 15,
-    "research_field": "energy",
-    "relations": {},
-    "mystery_trader_items": [],
-    "race": {
-     "prt": "AR",
-     "lrt": [
-      "IFE",
-      "TT",
-      "ARM",
-      "UR",
-      "MA",
-      "RS"
-     ],
-     "growth_percent": 8,
-     "habitability": {
-      "gravity": [
-       56,
-       45,
-       67
-      ],
-      "temperature": [
-       255,
-       255,
-       255
-      ],
-      "radiation": [
-       255,
-       255,
-       255
-      ],
-      "order": "center, low, high (255 = immune)"
-     },
-     "colonists_per_resource": 1800,
-     "factory": {
-      "output": 12,
-      "cost": 5,
-      "per_10k": 14
-     },
-     "mine": {
-      "output": 23,
-      "cost": 6,
-      "per_10k": 12
-     },
-     "research_cost": {
-      "energy": "normal",
-      "weapons": "cheap",
-      "propulsion": "expensive",
-      "construction": "normal",
-      "electronics": "cheap",
-      "biotechnology": "cheap"
-     },
-     "leftover_spend": "mines",
-     "stat_15": 0,
-     "techs_start_high": false,
-     "factories_cost_less": true
-    },
-    "counts": {
-     "ship_designs": 3,
-     "starbase_designs": 2
-    }
-   },
-   {
-    "id": 3,
-    "tech": {
-     "energy": 1,
-     "weapons": 0,
-     "propulsion": 1,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_accumulated": {
-     "energy": 0,
-     "weapons": 0,
-     "propulsion": 0,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_percent": 15,
-    "research_field": "energy",
-    "relations": {},
-    "mystery_trader_items": [],
-    "race": {
-     "prt": "AR",
-     "lrt": [
-      "IFE",
-      "TT",
-      "ARM",
-      "UR",
-      "MA",
-      "RS"
-     ],
-     "growth_percent": 8,
-     "habitability": {
-      "gravity": [
-       56,
-       45,
-       67
-      ],
-      "temperature": [
-       255,
-       255,
-       255
-      ],
-      "radiation": [
-       255,
-       255,
-       255
-      ],
-      "order": "center, low, high (255 = immune)"
-     },
-     "colonists_per_resource": 1800,
-     "factory": {
-      "output": 12,
-      "cost": 5,
-      "per_10k": 14
-     },
-     "mine": {
-      "output": 23,
-      "cost": 6,
-      "per_10k": 12
-     },
-     "research_cost": {
-      "energy": "normal",
-      "weapons": "cheap",
-      "propulsion": "expensive",
-      "construction": "normal",
-      "electronics": "cheap",
-      "biotechnology": "cheap"
-     },
-     "leftover_spend": "factories",
-     "stat_15": 0,
-     "techs_start_high": false,
-     "factories_cost_less": true
-    },
-    "counts": {
-     "ship_designs": 3,
-     "starbase_designs": 2
-    }
-   },
-   {
-    "id": 4,
-    "tech": {
-     "energy": 1,
-     "weapons": 0,
-     "propulsion": 1,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_accumulated": {
-     "energy": 0,
-     "weapons": 0,
-     "propulsion": 0,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_percent": 15,
-    "research_field": "energy",
-    "relations": {},
-    "mystery_trader_items": [],
-    "race": {
-     "prt": "AR",
-     "lrt": [
-      "IFE",
-      "TT",
-      "ARM",
-      "UR",
-      "MA",
-      "RS"
-     ],
-     "growth_percent": 8,
-     "habitability": {
-      "gravity": [
-       56,
-       45,
-       67
-      ],
-      "temperature": [
-       255,
-       255,
-       255
-      ],
-      "radiation": [
-       255,
-       255,
-       255
-      ],
-      "order": "center, low, high (255 = immune)"
-     },
-     "colonists_per_resource": 1800,
-     "factory": {
-      "output": 12,
-      "cost": 5,
-      "per_10k": 14
-     },
-     "mine": {
-      "output": 23,
-      "cost": 6,
-      "per_10k": 12
-     },
-     "research_cost": {
-      "energy": "normal",
-      "weapons": "cheap",
-      "propulsion": "expensive",
-      "construction": "normal",
-      "electronics": "cheap",
-      "biotechnology": "cheap"
-     },
-     "leftover_spend": "defenses",
-     "stat_15": 0,
-     "techs_start_high": false,
-     "factories_cost_less": true
-    },
-    "counts": {
-     "ship_designs": 3,
-     "starbase_designs": 2
-    }
-   },
-   {
-    "id": 5,
-    "tech": {
-     "energy": 0,
-     "weapons": 0,
-     "propulsion": 2,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_accumulated": {
-     "energy": 0,
-     "weapons": 0,
-     "propulsion": 0,
-     "construction": 0,
-     "electronics": 0,
-     "biotechnology": 0
-    },
-    "research_percent": 15,
-    "research_field": "energy",
-    "relations": {},
     "mystery_trader_items": [],
     "race": {
      "prt": "HE",
      "lrt": [
       "IFE",
+      "UR",
       "MA",
-      "CE",
-      "OBRM",
-      "BET"
+      "OBRM"
      ],
-     "growth_percent": 5,
+     "growth_percent": 7,
      "habitability": {
       "gravity": [
        255,
@@ -504,11 +197,447 @@
       ],
       "order": "center, low, high (255 = immune)"
      },
+     "colonists_per_resource": 800,
+     "factory": {
+      "output": 13,
+      "cost": 9,
+      "per_10k": 16
+     },
+     "mine": {
+      "output": 10,
+      "cost": 4,
+      "per_10k": 8
+     },
+     "research_cost": {
+      "energy": "normal",
+      "weapons": "cheap",
+      "propulsion": "normal",
+      "construction": "cheap",
+      "electronics": "normal",
+      "biotechnology": "expensive"
+     },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
+     "techs_start_high": false,
+     "factories_cost_less": true
+    },
+    "counts": {
+     "ship_designs": 2,
+     "starbase_designs": 1
+    },
+    "computer": true
+   },
+   {
+    "id": 2,
+    "tech": {
+     "energy": 3,
+     "weapons": 3,
+     "propulsion": 4,
+     "construction": 3,
+     "electronics": 5,
+     "biotechnology": 3
+    },
+    "research_accumulated": {
+     "energy": 0,
+     "weapons": 0,
+     "propulsion": 0,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_percent": 15,
+    "research_field": "energy",
+    "relations": {
+     "0": "enemy",
+     "1": "enemy",
+     "3": "enemy",
+     "4": "enemy",
+     "5": "enemy",
+     "6": "enemy"
+    },
+    "mystery_trader_items": [],
+    "race": {
+     "prt": "SS",
+     "lrt": [
+      "IFE",
+      "ARM",
+      "MA",
+      "RS"
+     ],
+     "growth_percent": 15,
+     "habitability": {
+      "gravity": [
+       62,
+       31,
+       93
+      ],
+      "temperature": [
+       29,
+       5,
+       53
+      ],
+      "radiation": [
+       255,
+       255,
+       255
+      ],
+      "order": "center, low, high (255 = immune)"
+     },
+     "colonists_per_resource": 800,
+     "factory": {
+      "output": 15,
+      "cost": 10,
+      "per_10k": 25
+     },
+     "mine": {
+      "output": 10,
+      "cost": 5,
+      "per_10k": 9
+     },
+     "research_cost": {
+      "energy": "expensive",
+      "weapons": "expensive",
+      "propulsion": "expensive",
+      "construction": "expensive",
+      "electronics": "expensive",
+      "biotechnology": "expensive"
+     },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
+     "techs_start_high": true,
+     "factories_cost_less": true
+    },
+    "counts": {
+     "ship_designs": 3,
+     "starbase_designs": 1
+    },
+    "computer": true
+   },
+   {
+    "id": 3,
+    "tech": {
+     "energy": 3,
+     "weapons": 3,
+     "propulsion": 3,
+     "construction": 3,
+     "electronics": 3,
+     "biotechnology": 3
+    },
+    "research_accumulated": {
+     "energy": 0,
+     "weapons": 0,
+     "propulsion": 0,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_percent": 15,
+    "research_field": "energy",
+    "relations": {
+     "0": "enemy",
+     "1": "enemy",
+     "2": "enemy",
+     "4": "enemy",
+     "5": "enemy",
+     "6": "enemy"
+    },
+    "mystery_trader_items": [],
+    "race": {
+     "prt": "IS",
+     "lrt": [
+      "GR",
+      "OBRM",
+      "NAS",
+      "LSP"
+     ],
+     "growth_percent": 16,
+     "habitability": {
+      "gravity": [
+       35,
+       7,
+       63
+      ],
+      "temperature": [
+       255,
+       255,
+       255
+      ],
+      "radiation": [
+       50,
+       0,
+       100
+      ],
+      "order": "center, low, high (255 = immune)"
+     },
+     "colonists_per_resource": 800,
+     "factory": {
+      "output": 14,
+      "cost": 9,
+      "per_10k": 14
+     },
+     "mine": {
+      "output": 14,
+      "cost": 5,
+      "per_10k": 14
+     },
+     "research_cost": {
+      "energy": "expensive",
+      "weapons": "expensive",
+      "propulsion": "expensive",
+      "construction": "expensive",
+      "electronics": "expensive",
+      "biotechnology": "expensive"
+     },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
+     "techs_start_high": true,
+     "factories_cost_less": true
+    },
+    "counts": {
+     "ship_designs": 2,
+     "starbase_designs": 1
+    },
+    "computer": true
+   },
+   {
+    "id": 4,
+    "tech": {
+     "energy": 3,
+     "weapons": 3,
+     "propulsion": 3,
+     "construction": 3,
+     "electronics": 3,
+     "biotechnology": 6
+    },
+    "research_accumulated": {
+     "energy": 0,
+     "weapons": 0,
+     "propulsion": 0,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_percent": 15,
+    "research_field": "energy",
+    "relations": {
+     "0": "enemy",
+     "1": "enemy",
+     "2": "enemy",
+     "3": "enemy",
+     "5": "enemy",
+     "6": "enemy"
+    },
+    "mystery_trader_items": [],
+    "race": {
+     "prt": "CA",
+     "lrt": [
+      "TT",
+      "OBRM",
+      "NAS",
+      "LSP",
+      "BET"
+     ],
+     "growth_percent": 15,
+     "habitability": {
+      "gravity": [
+       255,
+       255,
+       255
+      ],
+      "temperature": [
+       50,
+       24,
+       76
+      ],
+      "radiation": [
+       50,
+       25,
+       75
+      ],
+      "order": "center, low, high (255 = immune)"
+     },
+     "colonists_per_resource": 800,
+     "factory": {
+      "output": 15,
+      "cost": 10,
+      "per_10k": 15
+     },
+     "mine": {
+      "output": 15,
+      "cost": 5,
+      "per_10k": 15
+     },
+     "research_cost": {
+      "energy": "expensive",
+      "weapons": "expensive",
+      "propulsion": "expensive",
+      "construction": "expensive",
+      "electronics": "expensive",
+      "biotechnology": "cheap"
+     },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
+     "techs_start_high": true,
+     "factories_cost_less": false
+    },
+    "counts": {
+     "ship_designs": 3,
+     "starbase_designs": 1
+    },
+    "computer": true
+   },
+   {
+    "id": 5,
+    "tech": {
+     "energy": 4,
+     "weapons": 0,
+     "propulsion": 4,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_accumulated": {
+     "energy": 0,
+     "weapons": 0,
+     "propulsion": 0,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_percent": 15,
+    "research_field": "energy",
+    "relations": {
+     "0": "enemy",
+     "1": "enemy",
+     "2": "enemy",
+     "3": "enemy",
+     "4": "enemy",
+     "6": "enemy"
+    },
+    "mystery_trader_items": [],
+    "race": {
+     "prt": "PP",
+     "lrt": [
+      "IFE",
+      "TT",
+      "MA",
+      "OBRM",
+      "NAS",
+      "LSP"
+     ],
+     "growth_percent": 19,
+     "habitability": {
+      "gravity": [
+       50,
+       17,
+       83
+      ],
+      "temperature": [
+       50,
+       17,
+       83
+      ],
+      "radiation": [
+       50,
+       17,
+       83
+      ],
+      "order": "center, low, high (255 = immune)"
+     },
      "colonists_per_resource": 1000,
      "factory": {
-      "output": 12,
+      "output": 15,
+      "cost": 9,
+      "per_10k": 25
+     },
+     "mine": {
+      "output": 10,
       "cost": 10,
-      "per_10k": 16
+      "per_10k": 5
+     },
+     "research_cost": {
+      "energy": "cheap",
+      "weapons": "cheap",
+      "propulsion": "expensive",
+      "construction": "cheap",
+      "electronics": "normal",
+      "biotechnology": "normal"
+     },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
+     "techs_start_high": true,
+     "factories_cost_less": true
+    },
+    "counts": {
+     "ship_designs": 2,
+     "starbase_designs": 2
+    },
+    "computer": true
+   },
+   {
+    "id": 6,
+    "tech": {
+     "energy": 1,
+     "weapons": 0,
+     "propulsion": 1,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_accumulated": {
+     "energy": 0,
+     "weapons": 0,
+     "propulsion": 0,
+     "construction": 0,
+     "electronics": 0,
+     "biotechnology": 0
+    },
+    "research_percent": 15,
+    "research_field": "energy",
+    "relations": {
+     "0": "enemy",
+     "1": "enemy",
+     "2": "enemy",
+     "3": "enemy",
+     "4": "enemy",
+     "5": "enemy"
+    },
+    "mystery_trader_items": [],
+    "race": {
+     "prt": "AR",
+     "lrt": [
+      "IFE",
+      "TT",
+      "ARM",
+      "ISB",
+      "GR",
+      "UR",
+      "MA"
+     ],
+     "growth_percent": 20,
+     "habitability": {
+      "gravity": [
+       50,
+       15,
+       85
+      ],
+      "temperature": [
+       50,
+       15,
+       85
+      ],
+      "radiation": [
+       50,
+       15,
+       85
+      ],
+      "order": "center, low, high (255 = immune)"
+     },
+     "colonists_per_resource": 1000,
+     "factory": {
+      "output": 10,
+      "cost": 10,
+      "per_10k": 10
      },
      "mine": {
       "output": 10,
@@ -516,12 +645,12 @@
       "per_10k": 10
      },
      "research_cost": {
-      "energy": "normal",
+      "energy": "cheap",
       "weapons": "normal",
-      "propulsion": "cheap",
-      "construction": "normal",
+      "propulsion": "normal",
+      "construction": "cheap",
       "electronics": "normal",
-      "biotechnology": "expensive"
+      "biotechnology": "normal"
      },
      "leftover_spend": "surface_minerals",
      "stat_15": 0,
@@ -529,8 +658,8 @@
      "factories_cost_less": false
     },
     "counts": {
-     "ship_designs": 2,
-     "starbase_designs": 1
+     "ship_designs": 3,
+     "starbase_designs": 2
     },
     "computer": true
    }
@@ -538,1037 +667,89 @@
   "planets": [
    {
     "id": 0,
-    "x": 1027,
-    "y": 1046,
+    "x": 1011,
+    "y": 1125,
     "owner": -1,
     "concentrations": [
-     98,
-     88,
-     85
+     30,
+     61,
+     88
     ],
     "environment": [
-     20,
-     16,
-     90
+     13,
+     61,
+     63
     ]
    },
    {
     "id": 1,
-    "x": 1030,
-    "y": 1376,
+    "x": 1028,
+    "y": 1509,
     "owner": -1,
     "concentrations": [
-     44,
-     23,
-     110
+     3,
+     46,
+     68
     ],
     "environment": [
-     42,
-     49,
-     38
+     81,
+     81,
+     81
     ]
    },
    {
     "id": 2,
-    "x": 1034,
-    "y": 1247,
+    "x": 1029,
+    "y": 1135,
     "owner": -1,
     "concentrations": [
-     73,
-     95,
-     66
+     76,
+     94,
+     65
     ],
     "environment": [
-     19,
-     37,
-     3
+     83,
+     66,
+     65
     ]
    },
    {
     "id": 3,
-    "x": 1036,
-    "y": 1451,
+    "x": 1032,
+    "y": 1291,
     "owner": -1,
     "concentrations": [
-     76,
-     26,
-     14
+     52,
+     37,
+     12
     ],
     "environment": [
-     65,
-     75,
-     13
+     33,
+     32,
+     40
     ]
    },
    {
     "id": 4,
-    "x": 1038,
-    "y": 1355,
-    "owner": -1,
+    "x": 1043,
+    "y": 1494,
+    "owner": 2,
     "concentrations": [
-     18,
-     64,
-     47
-    ],
-    "environment": [
-     32,
-     67,
-     2
-    ]
-   },
-   {
-    "id": 5,
-    "x": 1044,
-    "y": 1018,
-    "owner": -1,
-    "concentrations": [
-     71,
-     51,
-     86
-    ],
-    "environment": [
-     42,
-     67,
-     41
-    ]
-   },
-   {
-    "id": 6,
-    "x": 1046,
-    "y": 1746,
-    "owner": -1,
-    "concentrations": [
-     85,
-     12,
-     56
-    ],
-    "environment": [
-     69,
-     58,
-     31
-    ]
-   },
-   {
-    "id": 7,
-    "x": 1051,
-    "y": 1498,
-    "owner": -1,
-    "concentrations": [
-     5,
-     70,
-     58
-    ],
-    "environment": [
-     55,
-     87,
-     3
-    ]
-   },
-   {
-    "id": 8,
-    "x": 1052,
-    "y": 1538,
-    "owner": -1,
-    "concentrations": [
-     14,
+     68,
      74,
-     83
-    ],
-    "environment": [
-     82,
-     19,
-     66
-    ]
-   },
-   {
-    "id": 9,
-    "x": 1053,
-    "y": 1246,
-    "owner": -1,
-    "concentrations": [
-     61,
-     20,
-     108
-    ],
-    "environment": [
-     85,
-     65,
-     61
-    ]
-   },
-   {
-    "id": 10,
-    "x": 1055,
-    "y": 1641,
-    "owner": -1,
-    "concentrations": [
-     26,
-     52,
      101
     ],
     "environment": [
-     19,
-     17,
-     43
-    ]
-   },
-   {
-    "id": 11,
-    "x": 1073,
-    "y": 1618,
-    "owner": -1,
-    "concentrations": [
-     49,
-     17,
-     63
-    ],
-    "environment": [
-     28,
-     32,
-     8
-    ]
-   },
-   {
-    "id": 12,
-    "x": 1077,
-    "y": 1144,
-    "owner": -1,
-    "concentrations": [
-     30,
-     25,
-     8
-    ],
-    "environment": [
-     44,
-     89,
-     33
-    ]
-   },
-   {
-    "id": 13,
-    "x": 1100,
-    "y": 1092,
-    "owner": -1,
-    "concentrations": [
-     17,
-     51,
-     28
-    ],
-    "environment": [
-     45,
-     23,
-     85
-    ]
-   },
-   {
-    "id": 14,
-    "x": 1104,
-    "y": 1694,
-    "owner": -1,
-    "concentrations": [
-     24,
-     61,
-     85
-    ],
-    "environment": [
-     51,
-     18,
-     32
-    ]
-   },
-   {
-    "id": 15,
-    "x": 1112,
-    "y": 1071,
-    "owner": -1,
-    "concentrations": [
-     4,
-     94,
-     27
-    ],
-    "environment": [
      62,
-     55,
-     2
-    ]
-   },
-   {
-    "id": 16,
-    "x": 1118,
-    "y": 1502,
-    "owner": -1,
-    "concentrations": [
-     15,
-     84,
-     73
-    ],
-    "environment": [
-     30,
-     63,
-     49
-    ]
-   },
-   {
-    "id": 17,
-    "x": 1121,
-    "y": 1646,
-    "owner": -1,
-    "concentrations": [
-     23,
-     15,
-     97
-    ],
-    "environment": [
-     90,
-     34,
-     53
-    ]
-   },
-   {
-    "id": 18,
-    "x": 1135,
-    "y": 1389,
-    "owner": -1,
-    "concentrations": [
-     7,
-     71,
-     64
-    ],
-    "environment": [
-     24,
-     12,
-     59
-    ]
-   },
-   {
-    "id": 19,
-    "x": 1135,
-    "y": 1406,
-    "owner": -1,
-    "concentrations": [
-     74,
-     61,
-     90
-    ],
-    "environment": [
-     71,
-     62,
-     30
-    ]
-   },
-   {
-    "id": 20,
-    "x": 1142,
-    "y": 1565,
-    "owner": -1,
-    "concentrations": [
-     91,
-     80,
-     66
-    ],
-    "environment": [
-     77,
-     3,
-     39
-    ]
-   },
-   {
-    "id": 21,
-    "x": 1145,
-    "y": 1587,
-    "owner": -1,
-    "concentrations": [
-     92,
-     53,
-     47
-    ],
-    "environment": [
-     31,
-     63,
-     39
-    ]
-   },
-   {
-    "id": 22,
-    "x": 1152,
-    "y": 1419,
-    "owner": -1,
-    "concentrations": [
-     30,
-     99,
-     81
-    ],
-    "environment": [
-     41,
-     59,
-     57
-    ]
-   },
-   {
-    "id": 23,
-    "x": 1161,
-    "y": 1250,
-    "owner": -1,
-    "concentrations": [
-     85,
-     33,
-     27
-    ],
-    "environment": [
-     92,
-     10,
-     79
-    ]
-   },
-   {
-    "id": 24,
-    "x": 1163,
-    "y": 1556,
-    "owner": 4,
-    "concentrations": [
-     98,
-     88,
-     85
-    ],
-    "environment": [
-     56,
-     62,
-     72
+     29,
+     17
     ],
     "surface_minerals": [
-     676,
-     279,
-     426
+     591,
+     500,
+     528
     ],
-    "population": 250,
-    "starbase": {
-     "design": 1,
-     "damage": 0
-    }
-   },
-   {
-    "id": 25,
-    "x": 1165,
-    "y": 1349,
-    "owner": -1,
-    "concentrations": [
-     59,
-     1,
-     75
-    ],
-    "environment": [
-     89,
-     13,
-     25
-    ]
-   },
-   {
-    "id": 26,
-    "x": 1169,
-    "y": 1761,
-    "owner": -1,
-    "concentrations": [
-     69,
-     27,
-     24
-    ],
-    "environment": [
-     54,
-     60,
-     82
-    ]
-   },
-   {
-    "id": 27,
-    "x": 1177,
-    "y": 1399,
-    "owner": -1,
-    "concentrations": [
-     5,
-     88,
-     64
-    ],
-    "environment": [
-     87,
-     28,
-     50
-    ]
-   },
-   {
-    "id": 28,
-    "x": 1178,
-    "y": 1163,
-    "owner": -1,
-    "concentrations": [
-     100,
-     15,
-     87
-    ],
-    "environment": [
-     78,
-     96,
-     32
-    ]
-   },
-   {
-    "id": 29,
-    "x": 1184,
-    "y": 1054,
-    "owner": -1,
-    "concentrations": [
-     19,
-     96,
-     7
-    ],
-    "environment": [
-     46,
-     17,
-     43
-    ]
-   },
-   {
-    "id": 30,
-    "x": 1189,
-    "y": 1124,
-    "owner": -1,
-    "concentrations": [
-     88,
-     64,
-     94
-    ],
-    "environment": [
-     63,
-     7,
-     6
-    ]
-   },
-   {
-    "id": 31,
-    "x": 1198,
-    "y": 1049,
-    "owner": -1,
-    "concentrations": [
-     101,
-     50,
-     71
-    ],
-    "environment": [
-     37,
-     50,
-     66
-    ]
-   },
-   {
-    "id": 32,
-    "x": 1200,
-    "y": 1334,
-    "owner": -1,
-    "concentrations": [
-     84,
-     74,
-     86
-    ],
-    "environment": [
-     24,
-     33,
-     85
-    ]
-   },
-   {
-    "id": 33,
-    "x": 1200,
-    "y": 1026,
-    "owner": -1,
-    "concentrations": [
-     38,
-     66,
-     23
-    ],
-    "environment": [
-     63,
-     47,
-     37
-    ]
-   },
-   {
-    "id": 34,
-    "x": 1201,
-    "y": 1463,
-    "owner": -1,
-    "concentrations": [
-     82,
-     3,
-     88
-    ],
-    "environment": [
-     65,
-     73,
-     94
-    ]
-   },
-   {
-    "id": 35,
-    "x": 1220,
-    "y": 1123,
-    "owner": -1,
-    "concentrations": [
-     80,
-     85,
-     40
-    ],
-    "environment": [
-     36,
-     42,
-     75
-    ]
-   },
-   {
-    "id": 36,
-    "x": 1221,
-    "y": 1424,
-    "owner": -1,
-    "concentrations": [
-     23,
-     91,
-     108
-    ],
-    "environment": [
-     25,
-     21,
-     90
-    ]
-   },
-   {
-    "id": 37,
-    "x": 1231,
-    "y": 1481,
-    "owner": -1,
-    "concentrations": [
-     78,
-     17,
-     102
-    ],
-    "environment": [
-     86,
-     14,
-     18
-    ]
-   },
-   {
-    "id": 38,
-    "x": 1239,
-    "y": 1013,
-    "owner": -1,
-    "concentrations": [
-     35,
-     112,
-     39
-    ],
-    "environment": [
-     57,
-     81,
-     20
-    ]
-   },
-   {
-    "id": 39,
-    "x": 1245,
-    "y": 1561,
-    "owner": -1,
-    "concentrations": [
-     65,
-     72,
-     23
-    ],
-    "environment": [
-     54,
-     16,
-     86
-    ]
-   },
-   {
-    "id": 40,
-    "x": 1246,
-    "y": 1412,
-    "owner": -1,
-    "concentrations": [
-     101,
-     22,
-     68
-    ],
-    "environment": [
-     17,
-     61,
-     61
-    ]
-   },
-   {
-    "id": 41,
-    "x": 1265,
-    "y": 1048,
-    "owner": -1,
-    "concentrations": [
-     30,
-     51,
-     68
-    ],
-    "environment": [
-     80,
-     20,
-     1
-    ]
-   },
-   {
-    "id": 42,
-    "x": 1266,
-    "y": 1427,
-    "owner": -1,
-    "concentrations": [
-     95,
-     44,
-     24
-    ],
-    "environment": [
-     51,
-     41,
-     76
-    ]
-   },
-   {
-    "id": 43,
-    "x": 1266,
-    "y": 1478,
-    "owner": -1,
-    "concentrations": [
-     55,
-     41,
-     22
-    ],
-    "environment": [
-     83,
-     18,
-     77
-    ]
-   },
-   {
-    "id": 44,
-    "x": 1267,
-    "y": 1613,
-    "owner": -1,
-    "concentrations": [
-     65,
-     2,
-     94
-    ],
-    "environment": [
-     36,
-     45,
-     30
-    ]
-   },
-   {
-    "id": 45,
-    "x": 1273,
-    "y": 1372,
-    "owner": -1,
-    "concentrations": [
-     15,
-     108,
-     67
-    ],
-    "environment": [
-     42,
-     39,
-     33
-    ]
-   },
-   {
-    "id": 46,
-    "x": 1275,
-    "y": 1582,
-    "owner": -1,
-    "concentrations": [
-     13,
-     69,
-     75
-    ],
-    "environment": [
-     57,
-     26,
-     34
-    ]
-   },
-   {
-    "id": 47,
-    "x": 1275,
-    "y": 1557,
-    "owner": -1,
-    "concentrations": [
-     81,
-     73,
-     87
-    ],
-    "environment": [
-     94,
-     93,
-     78
-    ]
-   },
-   {
-    "id": 48,
-    "x": 1281,
-    "y": 1495,
-    "owner": -1,
-    "concentrations": [
-     46,
-     87,
-     26
-    ],
-    "environment": [
-     17,
-     41,
-     19
-    ]
-   },
-   {
-    "id": 49,
-    "x": 1290,
-    "y": 1155,
-    "owner": -1,
-    "concentrations": [
-     71,
-     5,
-     92
-    ],
-    "environment": [
-     25,
-     8,
-     97
-    ]
-   },
-   {
-    "id": 50,
-    "x": 1292,
-    "y": 1463,
-    "owner": -1,
-    "concentrations": [
-     23,
-     95,
-     63
-    ],
-    "environment": [
-     59,
-     83,
-     38
-    ]
-   },
-   {
-    "id": 51,
-    "x": 1302,
-    "y": 1514,
-    "owner": -1,
-    "concentrations": [
-     78,
-     91,
-     15
-    ],
-    "environment": [
-     82,
-     48,
-     36
-    ]
-   },
-   {
-    "id": 52,
-    "x": 1306,
-    "y": 1387,
-    "owner": -1,
-    "concentrations": [
-     9,
-     96,
-     110
-    ],
-    "environment": [
-     33,
-     6,
-     82
-    ]
-   },
-   {
-    "id": 53,
-    "x": 1314,
-    "y": 1640,
-    "owner": -1,
-    "concentrations": [
-     66,
-     70,
-     11
-    ],
-    "environment": [
-     48,
-     82,
-     82
-    ]
-   },
-   {
-    "id": 54,
-    "x": 1319,
-    "y": 1024,
-    "owner": -1,
-    "concentrations": [
-     54,
-     54,
-     74
-    ],
-    "environment": [
-     28,
-     72,
-     69
-    ]
-   },
-   {
-    "id": 55,
-    "x": 1320,
-    "y": 1438,
-    "owner": -1,
-    "concentrations": [
-     88,
-     103,
-     15
-    ],
-    "environment": [
-     28,
-     45,
-     96
-    ]
-   },
-   {
-    "id": 56,
-    "x": 1320,
-    "y": 1198,
-    "owner": -1,
-    "concentrations": [
-     88,
-     12,
-     2
-    ],
-    "environment": [
-     78,
-     75,
-     94
-    ]
-   },
-   {
-    "id": 57,
-    "x": 1323,
-    "y": 1237,
-    "owner": -1,
-    "concentrations": [
-     9,
-     63,
-     99
-    ],
-    "environment": [
-     86,
-     68,
-     87
-    ]
-   },
-   {
-    "id": 58,
-    "x": 1327,
-    "y": 1591,
-    "owner": -1,
-    "concentrations": [
-     109,
-     75,
-     15
-    ],
-    "environment": [
-     10,
-     20,
-     89
-    ]
-   },
-   {
-    "id": 59,
-    "x": 1333,
-    "y": 1664,
-    "owner": -1,
-    "concentrations": [
-     85,
-     67,
-     103
-    ],
-    "environment": [
-     88,
-     9,
-     94
-    ]
-   },
-   {
-    "id": 60,
-    "x": 1340,
-    "y": 1703,
-    "owner": 3,
-    "concentrations": [
-     98,
-     88,
-     85
-    ],
-    "environment": [
-     56,
-     47,
-     3
-    ],
-    "surface_minerals": [
-     676,
-     279,
-     426
-    ],
-    "population": 250,
-    "starbase": {
-     "design": 1,
-     "damage": 0
-    }
-   },
-   {
-    "id": 61,
-    "x": 1346,
-    "y": 1739,
-    "owner": -1,
-    "concentrations": [
-     72,
-     27,
-     83
-    ],
-    "environment": [
-     83,
-     92,
-     25
-    ]
-   },
-   {
-    "id": 62,
-    "x": 1348,
-    "y": 1502,
-    "owner": 5,
-    "concentrations": [
-     98,
-     88,
-     85
-    ],
-    "environment": [
-     28,
-     97,
-     96
-    ],
-    "surface_minerals": [
-     801,
-     529,
-     551
-    ],
-    "population": 250,
+    "population": 275,
     "excess": 0,
     "mines": 10,
     "factories": 10,
@@ -1581,812 +762,120 @@
     }
    },
    {
-    "id": 63,
-    "x": 1377,
-    "y": 1467,
-    "owner": -1,
+    "id": 5,
+    "x": 1061,
+    "y": 1292,
+    "owner": 3,
     "concentrations": [
-     98,
-     112,
-     15
+     68,
+     74,
+     101
     ],
     "environment": [
-     7,
      35,
-     80
-    ]
-   },
-   {
-    "id": 64,
-    "x": 1380,
-    "y": 1353,
-    "owner": -1,
-    "concentrations": [
-     67,
-     80,
-     93
-    ],
-    "environment": [
-     89,
-     97,
-     94
-    ]
-   },
-   {
-    "id": 65,
-    "x": 1383,
-    "y": 1592,
-    "owner": -1,
-    "concentrations": [
-     72,
-     66,
-     86
-    ],
-    "environment": [
-     38,
-     30,
-     71
-    ]
-   },
-   {
-    "id": 66,
-    "x": 1385,
-    "y": 1076,
-    "owner": -1,
-    "concentrations": [
-     67,
-     93,
-     56
-    ],
-    "environment": [
-     40,
-     73,
-     69
-    ]
-   },
-   {
-    "id": 67,
-    "x": 1402,
-    "y": 1446,
-    "owner": -1,
-    "concentrations": [
-     81,
-     90,
-     81
-    ],
-    "environment": [
-     54,
-     62,
-     18
-    ]
-   },
-   {
-    "id": 68,
-    "x": 1404,
-    "y": 1021,
-    "owner": -1,
-    "concentrations": [
-     95,
-     76,
-     71
-    ],
-    "environment": [
-     12,
-     94,
-     96
-    ]
-   },
-   {
-    "id": 69,
-    "x": 1405,
-    "y": 1383,
-    "owner": -1,
-    "concentrations": [
-     7,
-     1,
-     97
-    ],
-    "environment": [
-     27,
-     77,
-     16
-    ]
-   },
-   {
-    "id": 70,
-    "x": 1416,
-    "y": 1372,
-    "owner": -1,
-    "concentrations": [
-     84,
-     109,
-     100
-    ],
-    "environment": [
-     18,
-     53,
-     42
-    ]
-   },
-   {
-    "id": 71,
-    "x": 1422,
-    "y": 1205,
-    "owner": -1,
-    "concentrations": [
-     63,
-     26,
-     3
-    ],
-    "environment": [
-     92,
-     37,
-     51
-    ]
-   },
-   {
-    "id": 72,
-    "x": 1430,
-    "y": 1317,
-    "owner": 2,
-    "concentrations": [
-     98,
-     88,
-     85
-    ],
-    "environment": [
-     56,
-     17,
-     59
-    ],
-    "surface_minerals": [
-     676,
-     279,
-     426
-    ],
-    "population": 250,
-    "starbase": {
-     "design": 1,
-     "damage": 0
-    }
-   },
-   {
-    "id": 73,
-    "x": 1432,
-    "y": 1160,
-    "owner": -1,
-    "concentrations": [
-     55,
-     5,
-     105
-    ],
-    "environment": [
-     30,
-     38,
-     27
-    ]
-   },
-   {
-    "id": 74,
-    "x": 1439,
-    "y": 1236,
-    "owner": -1,
-    "concentrations": [
-     53,
-     66,
-     77
-    ],
-    "environment": [
-     61,
-     57,
-     89
-    ]
-   },
-   {
-    "id": 75,
-    "x": 1452,
-    "y": 1250,
-    "owner": -1,
-    "concentrations": [
-     58,
-     77,
-     92
-    ],
-    "environment": [
-     74,
-     12,
-     28
-    ]
-   },
-   {
-    "id": 76,
-    "x": 1456,
-    "y": 1057,
-    "owner": -1,
-    "concentrations": [
-     31,
-     88,
-     26
-    ],
-    "environment": [
-     55,
-     53,
-     82
-    ]
-   },
-   {
-    "id": 77,
-    "x": 1462,
-    "y": 1356,
-    "owner": -1,
-    "concentrations": [
-     66,
-     56,
-     30
-    ],
-    "environment": [
-     19,
-     90,
-     32
-    ]
-   },
-   {
-    "id": 78,
-    "x": 1465,
-    "y": 1383,
-    "owner": -1,
-    "concentrations": [
-     85,
-     54,
-     23
-    ],
-    "environment": [
-     63,
-     7,
-     76
-    ]
-   },
-   {
-    "id": 79,
-    "x": 1472,
-    "y": 1653,
-    "owner": -1,
-    "concentrations": [
-     101,
-     81,
-     21
-    ],
-    "environment": [
-     50,
-     79,
-     59
-    ]
-   },
-   {
-    "id": 80,
-    "x": 1474,
-    "y": 1284,
-    "owner": -1,
-    "concentrations": [
-     94,
-     65,
-     106
-    ],
-    "environment": [
-     70,
-     74,
-     26
-    ]
-   },
-   {
-    "id": 81,
-    "x": 1475,
-    "y": 1133,
-    "owner": 0,
-    "concentrations": [
-     98,
-     88,
-     85
-    ],
-    "environment": [
-     56,
      23,
-     15
+     50
     ],
     "surface_minerals": [
-     761,
-     449,
-     511
+     466,
+     375,
+     278
     ],
-    "population": 250,
+    "population": 192,
+    "excess": 0,
+    "mines": 10,
+    "factories": 10,
+    "defenses": 10,
+    "planetary_scanner": 0,
+    "leftover_to_research": false,
     "starbase": {
-     "design": 1,
+     "design": 0,
      "damage": 0
     }
    },
    {
-    "id": 82,
-    "x": 1482,
-    "y": 1772,
+    "id": 6,
+    "x": 1061,
+    "y": 1740,
     "owner": -1,
     "concentrations": [
-     89,
-     54,
-     18
-    ],
-    "environment": [
-     31,
-     82,
-     36
-    ]
-   },
-   {
-    "id": 83,
-    "x": 1487,
-    "y": 1348,
-    "owner": -1,
-    "concentrations": [
-     6,
-     92,
-     11
-    ],
-    "environment": [
-     3,
-     28,
-     30
-    ]
-   },
-   {
-    "id": 84,
-    "x": 1491,
-    "y": 1729,
-    "owner": -1,
-    "concentrations": [
-     12,
-     14,
-     10
-    ],
-    "environment": [
-     60,
-     34,
-     24
-    ]
-   },
-   {
-    "id": 85,
-    "x": 1498,
-    "y": 1205,
-    "owner": -1,
-    "concentrations": [
-     45,
-     87,
-     25
-    ],
-    "environment": [
-     6,
-     60,
-     98
-    ]
-   },
-   {
-    "id": 86,
-    "x": 1504,
-    "y": 1111,
-    "owner": -1,
-    "concentrations": [
-     67,
-     15,
-     91
-    ],
-    "environment": [
-     35,
-     86,
-     40
-    ]
-   },
-   {
-    "id": 87,
-    "x": 1509,
-    "y": 1265,
-    "owner": -1,
-    "concentrations": [
+     37,
      80,
-     53,
-     6
-    ],
-    "environment": [
-     45,
-     74,
-     28
-    ]
-   },
-   {
-    "id": 88,
-    "x": 1530,
-    "y": 1721,
-    "owner": -1,
-    "concentrations": [
-     74,
-     85,
-     23
-    ],
-    "environment": [
-     59,
-     53,
-     63
-    ]
-   },
-   {
-    "id": 89,
-    "x": 1533,
-    "y": 1419,
-    "owner": -1,
-    "concentrations": [
-     66,
-     49,
-     20
-    ],
-    "environment": [
-     28,
-     39,
-     20
-    ]
-   },
-   {
-    "id": 90,
-    "x": 1547,
-    "y": 1293,
-    "owner": -1,
-    "concentrations": [
-     84,
-     69,
-     57
-    ],
-    "environment": [
-     17,
-     63,
-     84
-    ]
-   },
-   {
-    "id": 91,
-    "x": 1550,
-    "y": 1454,
-    "owner": -1,
-    "concentrations": [
-     74,
-     105,
-     25
-    ],
-    "environment": [
-     25,
-     19,
-     87
-    ]
-   },
-   {
-    "id": 92,
-    "x": 1553,
-    "y": 1400,
-    "owner": -1,
-    "concentrations": [
-     1,
-     79,
-     22
-    ],
-    "environment": [
-     21,
-     70,
-     8
-    ]
-   },
-   {
-    "id": 93,
-    "x": 1555,
-    "y": 1039,
-    "owner": -1,
-    "concentrations": [
-     48,
-     19,
-     10
-    ],
-    "environment": [
-     98,
-     77,
-     65
-    ]
-   },
-   {
-    "id": 94,
-    "x": 1556,
-    "y": 1209,
-    "owner": -1,
-    "concentrations": [
-     80,
-     19,
-     73
-    ],
-    "environment": [
-     41,
-     52,
-     84
-    ]
-   },
-   {
-    "id": 95,
-    "x": 1558,
-    "y": 1658,
-    "owner": -1,
-    "concentrations": [
-     19,
-     99,
-     56
-    ],
-    "environment": [
-     91,
-     89,
-     34
-    ]
-   },
-   {
-    "id": 96,
-    "x": 1559,
-    "y": 1579,
-    "owner": -1,
-    "concentrations": [
-     92,
-     80,
-     78
-    ],
-    "environment": [
-     70,
-     28,
-     81
-    ]
-   },
-   {
-    "id": 97,
-    "x": 1560,
-    "y": 1114,
-    "owner": -1,
-    "concentrations": [
-     74,
-     16,
      17
     ],
     "environment": [
-     31,
-     77,
-     84
-    ]
-   },
-   {
-    "id": 98,
-    "x": 1577,
-    "y": 1049,
-    "owner": -1,
-    "concentrations": [
-     9,
-     58,
-     83
-    ],
-    "environment": [
-     88,
-     83,
-     41
-    ]
-   },
-   {
-    "id": 99,
-    "x": 1579,
-    "y": 1424,
-    "owner": -1,
-    "concentrations": [
-     59,
-     51,
-     77
-    ],
-    "environment": [
-     48,
-     60,
-     1
-    ]
-   },
-   {
-    "id": 100,
-    "x": 1596,
-    "y": 1355,
-    "owner": -1,
-    "concentrations": [
-     96,
-     45,
-     97
-    ],
-    "environment": [
      87,
-     67,
-     38
+     40,
+     18
     ]
    },
    {
-    "id": 101,
-    "x": 1599,
-    "y": 1541,
+    "id": 7,
+    "x": 1067,
+    "y": 1711,
     "owner": -1,
     "concentrations": [
-     30,
-     54,
-     95
+     42,
+     59,
+     79
     ],
     "environment": [
+     22,
+     44,
+     3
+    ]
+   },
+   {
+    "id": 8,
+    "x": 1069,
+    "y": 1550,
+    "owner": -1,
+    "concentrations": [
+     63,
      81,
-     39,
-     24
-    ]
-   },
-   {
-    "id": 102,
-    "x": 1599,
-    "y": 1336,
-    "owner": -1,
-    "concentrations": [
-     82,
-     83,
-     13
+     80
     ],
     "environment": [
-     85,
-     65,
-     62
-    ]
-   },
-   {
-    "id": 103,
-    "x": 1602,
-    "y": 1228,
-    "owner": -1,
-    "concentrations": [
-     84,
-     69,
-     91
-    ],
-    "environment": [
-     93,
-     11,
-     52
-    ]
-   },
-   {
-    "id": 104,
-    "x": 1607,
-    "y": 1652,
-    "owner": -1,
-    "concentrations": [
-     96,
-     88,
-     85
-    ],
-    "environment": [
-     23,
-     13,
-     4
-    ]
-   },
-   {
-    "id": 105,
-    "x": 1609,
-    "y": 1174,
-    "owner": -1,
-    "concentrations": [
-     78,
-     75,
-     88
-    ],
-    "environment": [
-     19,
-     11,
-     18
-    ]
-   },
-   {
-    "id": 106,
-    "x": 1610,
-    "y": 1583,
-    "owner": -1,
-    "concentrations": [
-     57,
-     7,
-     79
-    ],
-    "environment": [
-     43,
-     25,
-     18
-    ]
-   },
-   {
-    "id": 107,
-    "x": 1615,
-    "y": 1100,
-    "owner": -1,
-    "concentrations": [
-     24,
-     84,
-     76
-    ],
-    "environment": [
-     14,
-     62,
-     79
-    ]
-   },
-   {
-    "id": 108,
-    "x": 1639,
-    "y": 1730,
-    "owner": -1,
-    "concentrations": [
-     67,
-     67,
-     8
-    ],
-    "environment": [
-     94,
-     56,
-     45
-    ]
-   },
-   {
-    "id": 109,
-    "x": 1643,
-    "y": 1709,
-    "owner": -1,
-    "concentrations": [
-     51,
-     19,
-     82
-    ],
-    "environment": [
-     69,
-     86,
-     23
-    ]
-   },
-   {
-    "id": 110,
-    "x": 1646,
-    "y": 1461,
-    "owner": -1,
-    "concentrations": [
-     85,
-     68,
-     98
-    ],
-    "environment": [
+     12,
      90,
-     74,
      67
     ]
    },
    {
-    "id": 111,
-    "x": 1652,
-    "y": 1082,
-    "owner": 1,
+    "id": 9,
+    "x": 1072,
+    "y": 1367,
+    "owner": -1,
     "concentrations": [
-     107,
-     97,
-     111
+     39,
+     67,
+     69
+    ],
+    "environment": [
+     30,
+     9,
+     21
+    ]
+   },
+   {
+    "id": 10,
+    "x": 1087,
+    "y": 1657,
+    "owner": 0,
+    "concentrations": [
+     30,
+     61,
+     88
     ],
     "environment": [
      56,
-     3,
-     73
+     95,
+     30
     ],
     "surface_minerals": [
-     676,
-     279,
-     426
+     551,
+     460,
+     448
     ],
     "population": 250,
     "starbase": {
@@ -2395,259 +884,1949 @@
     }
    },
    {
-    "id": 112,
-    "x": 1657,
-    "y": 1197,
+    "id": 11,
+    "x": 1087,
+    "y": 1078,
     "owner": -1,
     "concentrations": [
-     62,
-     93,
-     49
-    ],
-    "environment": [
-     21,
-     63,
-     41
-    ]
-   },
-   {
-    "id": 113,
-    "x": 1659,
-    "y": 1269,
-    "owner": -1,
-    "concentrations": [
-     91,
-     44,
-     3
-    ],
-    "environment": [
-     53,
-     90,
+     88,
+     48,
      65
-    ]
-   },
-   {
-    "id": 114,
-    "x": 1660,
-    "y": 1583,
-    "owner": -1,
-    "concentrations": [
-     40,
-     9,
-     80
-    ],
-    "environment": [
-     34,
-     28,
-     74
-    ]
-   },
-   {
-    "id": 115,
-    "x": 1661,
-    "y": 1464,
-    "owner": -1,
-    "concentrations": [
-     72,
-     12,
-     16
-    ],
-    "environment": [
-     78,
-     81,
-     84
-    ]
-   },
-   {
-    "id": 116,
-    "x": 1676,
-    "y": 1081,
-    "owner": -1,
-    "concentrations": [
-     75,
-     21,
-     97
-    ],
-    "environment": [
-     25,
-     87,
-     54
-    ]
-   },
-   {
-    "id": 117,
-    "x": 1680,
-    "y": 1449,
-    "owner": -1,
-    "concentrations": [
-     56,
-     18,
-     86
-    ],
-    "environment": [
-     97,
-     87,
-     9
-    ]
-   },
-   {
-    "id": 118,
-    "x": 1694,
-    "y": 1529,
-    "owner": -1,
-    "concentrations": [
-     54,
-     98,
-     105
-    ],
-    "environment": [
-     23,
-     81,
-     65
-    ]
-   },
-   {
-    "id": 119,
-    "x": 1706,
-    "y": 1572,
-    "owner": -1,
-    "concentrations": [
-     72,
-     8,
-     10
-    ],
-    "environment": [
-     27,
-     87,
-     39
-    ]
-   },
-   {
-    "id": 120,
-    "x": 1709,
-    "y": 1365,
-    "owner": -1,
-    "concentrations": [
-     3,
-     105,
-     70
     ],
     "environment": [
      83,
-     93,
-     98
+     63,
+     37
     ]
    },
    {
-    "id": 121,
-    "x": 1727,
-    "y": 1086,
+    "id": 12,
+    "x": 1094,
+    "y": 1050,
     "owner": -1,
     "concentrations": [
-     7,
-     70,
-     4
-    ],
-    "environment": [
-     15,
-     72,
-     84
-    ]
-   },
-   {
-    "id": 122,
-    "x": 1767,
-    "y": 1788,
-    "owner": -1,
-    "concentrations": [
-     50,
-     111,
-     20
-    ],
-    "environment": [
-     42,
+     94,
      20,
-     17
+     2
+    ],
+    "environment": [
+     56,
+     50,
+     20
     ]
    },
    {
-    "id": 123,
-    "x": 1775,
-    "y": 1471,
+    "id": 13,
+    "x": 1097,
+    "y": 1364,
     "owner": -1,
     "concentrations": [
-     75,
+     25,
+     25,
+     53
+    ],
+    "environment": [
+     23,
+     56,
+     47
+    ]
+   },
+   {
+    "id": 14,
+    "x": 1100,
+    "y": 1766,
+    "owner": -1,
+    "concentrations": [
+     15,
+     64,
+     18
+    ],
+    "environment": [
+     65,
+     44,
+     88
+    ]
+   },
+   {
+    "id": 15,
+    "x": 1106,
+    "y": 1533,
+    "owner": -1,
+    "concentrations": [
+     94,
+     25,
+     54
+    ],
+    "environment": [
+     95,
+     60,
+     69
+    ]
+   },
+   {
+    "id": 16,
+    "x": 1111,
+    "y": 1306,
+    "owner": -1,
+    "concentrations": [
+     100,
+     72,
+     86
+    ],
+    "environment": [
+     53,
+     51,
+     16
+    ]
+   },
+   {
+    "id": 17,
+    "x": 1116,
+    "y": 1206,
+    "owner": -1,
+    "concentrations": [
+     55,
+     2,
+     54
+    ],
+    "environment": [
+     49,
+     67,
+     40
+    ]
+   },
+   {
+    "id": 18,
+    "x": 1121,
+    "y": 1360,
+    "owner": -1,
+    "concentrations": [
+     69,
+     16,
+     42
+    ],
+    "environment": [
+     83,
+     60,
+     79
+    ]
+   },
+   {
+    "id": 19,
+    "x": 1133,
+    "y": 1675,
+    "owner": -1,
+    "concentrations": [
+     77,
+     25,
+     74
+    ],
+    "environment": [
+     62,
+     76,
+     19
+    ]
+   },
+   {
+    "id": 20,
+    "x": 1134,
+    "y": 1627,
+    "owner": -1,
+    "concentrations": [
+     92,
+     69,
+     19
+    ],
+    "environment": [
      13,
+     66,
+     47
+    ]
+   },
+   {
+    "id": 21,
+    "x": 1140,
+    "y": 1399,
+    "owner": -1,
+    "concentrations": [
+     15,
+     88,
      78
     ],
     "environment": [
-     46,
-     12,
-     48
+     80,
+     22,
+     34
     ]
    },
    {
-    "id": 124,
-    "x": 1781,
-    "y": 1694,
+    "id": 22,
+    "x": 1140,
+    "y": 1709,
     "owner": -1,
     "concentrations": [
-     82,
-     14,
+     67,
+     73,
+     65
+    ],
+    "environment": [
+     47,
+     52,
+     25
+    ]
+   },
+   {
+    "id": 23,
+    "x": 1150,
+    "y": 1514,
+    "owner": -1,
+    "concentrations": [
+     64,
+     93,
+     57
+    ],
+    "environment": [
+     20,
+     23,
+     61
+    ]
+   },
+   {
+    "id": 24,
+    "x": 1172,
+    "y": 1779,
+    "owner": -1,
+    "concentrations": [
+     62,
+     53,
      4
     ],
     "environment": [
-     91,
-     56,
+     75,
+     86,
+     67
+    ]
+   },
+   {
+    "id": 25,
+    "x": 1186,
+    "y": 1222,
+    "owner": -1,
+    "concentrations": [
+     43,
+     62,
+     95
+    ],
+    "environment": [
+     69,
+     47,
+     71
+    ]
+   },
+   {
+    "id": 26,
+    "x": 1187,
+    "y": 1075,
+    "owner": -1,
+    "concentrations": [
+     71,
+     2,
+     79
+    ],
+    "environment": [
+     77,
+     25,
+     3
+    ]
+   },
+   {
+    "id": 27,
+    "x": 1190,
+    "y": 1351,
+    "owner": -1,
+    "concentrations": [
+     57,
+     81,
+     63
+    ],
+    "environment": [
+     11,
+     89,
+     94
+    ]
+   },
+   {
+    "id": 28,
+    "x": 1195,
+    "y": 1283,
+    "owner": -1,
+    "concentrations": [
+     23,
+     101,
+     12
+    ],
+    "environment": [
+     49,
+     76,
+     20
+    ]
+   },
+   {
+    "id": 29,
+    "x": 1200,
+    "y": 1722,
+    "owner": -1,
+    "concentrations": [
+     63,
+     10,
+     10
+    ],
+    "environment": [
+     79,
+     75,
      64
     ]
    },
    {
-    "id": 125,
-    "x": 1788,
-    "y": 1466,
-    "owner": -1,
+    "id": 30,
+    "x": 1201,
+    "y": 1415,
+    "owner": 5,
     "concentrations": [
      68,
-     84,
+     74,
+     101
+    ],
+    "environment": [
+     50,
+     50,
+     50
+    ],
+    "surface_minerals": [
+     466,
+     375,
+     278
+    ],
+    "population": 153,
+    "excess": 0,
+    "mines": 10,
+    "factories": 10,
+    "defenses": 10,
+    "planetary_scanner": 0,
+    "leftover_to_research": false,
+    "starbase": {
+     "design": 0,
+     "damage": 0
+    }
+   },
+   {
+    "id": 31,
+    "x": 1205,
+    "y": 1786,
+    "owner": -1,
+    "concentrations": [
+     7,
+     97,
+     3
+    ],
+    "environment": [
+     18,
+     32,
+     41
+    ]
+   },
+   {
+    "id": 32,
+    "x": 1206,
+    "y": 1013,
+    "owner": -1,
+    "concentrations": [
+     30,
+     98,
+     103
+    ],
+    "environment": [
+     75,
+     77,
+     70
+    ]
+   },
+   {
+    "id": 33,
+    "x": 1216,
+    "y": 1410,
+    "owner": -1,
+    "concentrations": [
+     53,
+     76,
+     84
+    ],
+    "environment": [
+     5,
+     24,
+     8
+    ]
+   },
+   {
+    "id": 34,
+    "x": 1232,
+    "y": 1325,
+    "owner": -1,
+    "concentrations": [
+     85,
+     92,
+     104
+    ],
+    "environment": [
+     20,
+     63,
+     72
+    ]
+   },
+   {
+    "id": 35,
+    "x": 1243,
+    "y": 1447,
+    "owner": -1,
+    "concentrations": [
+     55,
+     18,
+     55
+    ],
+    "environment": [
+     46,
+     18,
+     34
+    ]
+   },
+   {
+    "id": 36,
+    "x": 1248,
+    "y": 1327,
+    "owner": -1,
+    "concentrations": [
+     80,
+     108,
+     20
+    ],
+    "environment": [
+     39,
+     58,
+     52
+    ]
+   },
+   {
+    "id": 37,
+    "x": 1259,
+    "y": 1743,
+    "owner": -1,
+    "concentrations": [
+     63,
+     97,
+     1
+    ],
+    "environment": [
+     86,
+     28,
+     90
+    ]
+   },
+   {
+    "id": 38,
+    "x": 1260,
+    "y": 1090,
+    "owner": -1,
+    "concentrations": [
+     54,
+     104,
+     54
+    ],
+    "environment": [
+     75,
+     12,
+     23
+    ]
+   },
+   {
+    "id": 39,
+    "x": 1263,
+    "y": 1253,
+    "owner": 4,
+    "concentrations": [
+     68,
+     74,
+     101
+    ],
+    "environment": [
+     5,
+     50,
+     50
+    ],
+    "surface_minerals": [
+     466,
+     375,
+     278
+    ],
+    "population": 192,
+    "excess": 0,
+    "mines": 10,
+    "factories": 10,
+    "defenses": 10,
+    "planetary_scanner": 0,
+    "leftover_to_research": false,
+    "starbase": {
+     "design": 0,
+     "damage": 0
+    }
+   },
+   {
+    "id": 40,
+    "x": 1271,
+    "y": 1388,
+    "owner": -1,
+    "concentrations": [
+     27,
+     44,
+     81
+    ],
+    "environment": [
+     34,
+     74,
+     96
+    ]
+   },
+   {
+    "id": 41,
+    "x": 1277,
+    "y": 1044,
+    "owner": -1,
+    "concentrations": [
+     82,
+     59,
+     82
+    ],
+    "environment": [
+     56,
+     47,
+     41
+    ]
+   },
+   {
+    "id": 42,
+    "x": 1282,
+    "y": 1494,
+    "owner": -1,
+    "concentrations": [
+     67,
+     71,
+     25
+    ],
+    "environment": [
+     38,
+     86,
+     14
+    ]
+   },
+   {
+    "id": 43,
+    "x": 1290,
+    "y": 1191,
+    "owner": -1,
+    "concentrations": [
+     88,
+     70,
+     11
+    ],
+    "environment": [
+     48,
+     12,
+     46
+    ]
+   },
+   {
+    "id": 44,
+    "x": 1295,
+    "y": 1148,
+    "owner": -1,
+    "concentrations": [
+     96,
+     54,
+     111
+    ],
+    "environment": [
+     25,
+     56,
+     55
+    ]
+   },
+   {
+    "id": 45,
+    "x": 1299,
+    "y": 1423,
+    "owner": -1,
+    "concentrations": [
+     63,
+     20,
+     55
+    ],
+    "environment": [
+     61,
+     35,
+     54
+    ]
+   },
+   {
+    "id": 46,
+    "x": 1306,
+    "y": 1441,
+    "owner": -1,
+    "concentrations": [
+     26,
+     28,
      43
     ],
     "environment": [
-     30,
-     27,
+     75,
+     89,
+     79
+    ]
+   },
+   {
+    "id": 47,
+    "x": 1309,
+    "y": 1028,
+    "owner": -1,
+    "concentrations": [
+     28,
+     1,
+     20
+    ],
+    "environment": [
+     13,
+     54,
+     55
+    ]
+   },
+   {
+    "id": 48,
+    "x": 1328,
+    "y": 1352,
+    "owner": -1,
+    "concentrations": [
+     22,
+     16,
+     30
+    ],
+    "environment": [
+     39,
+     60,
+     91
+    ]
+   },
+   {
+    "id": 49,
+    "x": 1328,
+    "y": 1422,
+    "owner": -1,
+    "concentrations": [
+     87,
+     73,
+     49
+    ],
+    "environment": [
+     48,
+     48,
+     91
+    ]
+   },
+   {
+    "id": 50,
+    "x": 1332,
+    "y": 1020,
+    "owner": -1,
+    "concentrations": [
+     21,
+     88,
+     100
+    ],
+    "environment": [
+     76,
+     37,
+     32
+    ]
+   },
+   {
+    "id": 51,
+    "x": 1333,
+    "y": 1084,
+    "owner": -1,
+    "concentrations": [
+     6,
+     108,
+     89
+    ],
+    "environment": [
+     38,
+     9,
+     75
+    ]
+   },
+   {
+    "id": 52,
+    "x": 1337,
+    "y": 1676,
+    "owner": -1,
+    "concentrations": [
+     96,
+     79,
+     78
+    ],
+    "environment": [
+     65,
+     22,
+     57
+    ]
+   },
+   {
+    "id": 53,
+    "x": 1372,
+    "y": 1226,
+    "owner": -1,
+    "concentrations": [
+     55,
+     17,
+     16
+    ],
+    "environment": [
+     28,
+     25,
+     16
+    ]
+   },
+   {
+    "id": 54,
+    "x": 1373,
+    "y": 1131,
+    "owner": -1,
+    "concentrations": [
+     103,
+     84,
+     50
+    ],
+    "environment": [
+     41,
+     49,
+     93
+    ]
+   },
+   {
+    "id": 55,
+    "x": 1378,
+    "y": 1576,
+    "owner": -1,
+    "concentrations": [
+     98,
+     61,
+     21
+    ],
+    "environment": [
+     36,
+     22,
+     81
+    ]
+   },
+   {
+    "id": 56,
+    "x": 1384,
+    "y": 1411,
+    "owner": 5,
+    "concentrations": [
+     89,
+     52,
+     40
+    ],
+    "environment": [
+     29,
+     73,
+     50
+    ],
+    "surface_minerals": [
+     150,
+     245,
+     254
+    ],
+    "population": 76,
+    "excess": 0,
+    "mines": 10,
+    "factories": 4,
+    "defenses": 0,
+    "planetary_scanner": 0,
+    "leftover_to_research": false,
+    "starbase": {
+     "design": 1,
+     "damage": 0
+    }
+   },
+   {
+    "id": 57,
+    "x": 1388,
+    "y": 1511,
+    "owner": -1,
+    "concentrations": [
+     91,
+     48,
+     26
+    ],
+    "environment": [
+     25,
+     96,
+     47
+    ]
+   },
+   {
+    "id": 58,
+    "x": 1395,
+    "y": 1352,
+    "owner": -1,
+    "concentrations": [
+     67,
+     77,
+     103
+    ],
+    "environment": [
+     69,
+     21,
+     87
+    ]
+   },
+   {
+    "id": 59,
+    "x": 1401,
+    "y": 1323,
+    "owner": -1,
+    "concentrations": [
+     3,
+     15,
+     23
+    ],
+    "environment": [
+     84,
+     48,
+     98
+    ]
+   },
+   {
+    "id": 60,
+    "x": 1403,
+    "y": 1306,
+    "owner": -1,
+    "concentrations": [
+     80,
+     55,
+     91
+    ],
+    "environment": [
+     29,
+     85,
+     87
+    ]
+   },
+   {
+    "id": 61,
+    "x": 1410,
+    "y": 1450,
+    "owner": -1,
+    "concentrations": [
+     23,
+     13,
+     81
+    ],
+    "environment": [
+     75,
+     82,
+     31
+    ]
+   },
+   {
+    "id": 62,
+    "x": 1425,
+    "y": 1063,
+    "owner": -1,
+    "concentrations": [
+     94,
+     26,
+     70
+    ],
+    "environment": [
+     64,
+     80,
+     17
+    ]
+   },
+   {
+    "id": 63,
+    "x": 1426,
+    "y": 1301,
+    "owner": 6,
+    "concentrations": [
+     68,
+     74,
+     101
+    ],
+    "environment": [
+     50,
+     50,
+     50
+    ],
+    "surface_minerals": [
+     591,
+     500,
+     528
+    ],
+    "population": 275,
+    "starbase": {
+     "design": 1,
+     "damage": 0
+    }
+   },
+   {
+    "id": 64,
+    "x": 1436,
+    "y": 1488,
+    "owner": 1,
+    "concentrations": [
+     68,
+     74,
+     101
+    ],
+    "environment": [
+     12,
+     15,
+     96
+    ],
+    "surface_minerals": [
+     591,
+     500,
+     528
+    ],
+    "population": 275,
+    "excess": 0,
+    "mines": 10,
+    "factories": 10,
+    "defenses": 10,
+    "planetary_scanner": 0,
+    "leftover_to_research": false,
+    "starbase": {
+     "design": 0,
+     "damage": 0
+    }
+   },
+   {
+    "id": 65,
+    "x": 1443,
+    "y": 1638,
+    "owner": -1,
+    "concentrations": [
+     107,
+     65,
+     73
+    ],
+    "environment": [
+     72,
+     75,
+     75
+    ]
+   },
+   {
+    "id": 66,
+    "x": 1451,
+    "y": 1415,
+    "owner": -1,
+    "concentrations": [
+     59,
+     16,
+     84
+    ],
+    "environment": [
+     47,
+     86,
      78
     ]
    },
    {
-    "id": 126,
-    "x": 1790,
-    "y": 1025,
+    "id": 67,
+    "x": 1455,
+    "y": 1229,
+    "owner": -1,
+    "concentrations": [
+     89,
+     53,
+     71
+    ],
+    "environment": [
+     60,
+     38,
+     33
+    ]
+   },
+   {
+    "id": 68,
+    "x": 1459,
+    "y": 1712,
+    "owner": -1,
+    "concentrations": [
+     46,
+     76,
+     65
+    ],
+    "environment": [
+     11,
+     68,
+     14
+    ]
+   },
+   {
+    "id": 69,
+    "x": 1463,
+    "y": 1594,
     "owner": -1,
     "concentrations": [
      9,
+     98,
+     99
+    ],
+    "environment": [
+     47,
+     15,
+     59
+    ]
+   },
+   {
+    "id": 70,
+    "x": 1466,
+    "y": 1287,
+    "owner": -1,
+    "concentrations": [
+     46,
+     86,
+     60
+    ],
+    "environment": [
+     14,
+     21,
+     74
+    ]
+   },
+   {
+    "id": 71,
+    "x": 1472,
+    "y": 1393,
+    "owner": -1,
+    "concentrations": [
+     17,
+     63,
+     20
+    ],
+    "environment": [
+     27,
+     88,
+     72
+    ]
+   },
+   {
+    "id": 72,
+    "x": 1483,
+    "y": 1507,
+    "owner": -1,
+    "concentrations": [
+     97,
+     103,
+     23
+    ],
+    "environment": [
+     7,
+     57,
+     91
+    ]
+   },
+   {
+    "id": 73,
+    "x": 1492,
+    "y": 1334,
+    "owner": -1,
+    "concentrations": [
+     84,
+     62,
+     56
+    ],
+    "environment": [
+     29,
+     42,
+     76
+    ]
+   },
+   {
+    "id": 74,
+    "x": 1495,
+    "y": 1316,
+    "owner": -1,
+    "concentrations": [
+     80,
+     53,
+     109
+    ],
+    "environment": [
+     51,
+     92,
+     4
+    ]
+   },
+   {
+    "id": 75,
+    "x": 1503,
+    "y": 1270,
+    "owner": -1,
+    "concentrations": [
+     25,
+     19,
+     4
+    ],
+    "environment": [
+     39,
+     81,
+     99
+    ]
+   },
+   {
+    "id": 76,
+    "x": 1505,
+    "y": 1125,
+    "owner": -1,
+    "concentrations": [
+     65,
+     2,
+     52
+    ],
+    "environment": [
+     88,
+     46,
+     8
+    ]
+   },
+   {
+    "id": 77,
+    "x": 1515,
+    "y": 1300,
+    "owner": -1,
+    "concentrations": [
+     79,
+     47,
+     20
+    ],
+    "environment": [
+     13,
+     53,
+     82
+    ]
+   },
+   {
+    "id": 78,
+    "x": 1518,
+    "y": 1328,
+    "owner": -1,
+    "concentrations": [
+     56,
+     67,
+     3
+    ],
+    "environment": [
+     82,
+     59,
+     45
+    ]
+   },
+   {
+    "id": 79,
+    "x": 1527,
+    "y": 1341,
+    "owner": -1,
+    "concentrations": [
+     30,
+     68,
+     69
+    ],
+    "environment": [
+     23,
+     13,
+     72
+    ]
+   },
+   {
+    "id": 80,
+    "x": 1536,
+    "y": 1093,
+    "owner": -1,
+    "concentrations": [
+     113,
+     51,
+     20
+    ],
+    "environment": [
+     30,
+     86,
+     85
+    ]
+   },
+   {
+    "id": 81,
+    "x": 1539,
+    "y": 1345,
+    "owner": -1,
+    "concentrations": [
+     39,
+     70,
+     78
+    ],
+    "environment": [
+     77,
+     47,
+     13
+    ]
+   },
+   {
+    "id": 82,
+    "x": 1543,
+    "y": 1421,
+    "owner": -1,
+    "concentrations": [
+     71,
+     75,
+     101
+    ],
+    "environment": [
+     84,
+     73,
+     61
+    ]
+   },
+   {
+    "id": 83,
+    "x": 1544,
+    "y": 1034,
+    "owner": -1,
+    "concentrations": [
+     7,
+     81,
+     57
+    ],
+    "environment": [
+     40,
+     30,
+     5
+    ]
+   },
+   {
+    "id": 84,
+    "x": 1547,
+    "y": 1475,
+    "owner": -1,
+    "concentrations": [
+     75,
+     23,
+     76
+    ],
+    "environment": [
+     87,
+     44,
+     30
+    ]
+   },
+   {
+    "id": 85,
+    "x": 1552,
+    "y": 1658,
+    "owner": -1,
+    "concentrations": [
+     50,
+     22,
+     88
+    ],
+    "environment": [
+     58,
+     52,
+     3
+    ]
+   },
+   {
+    "id": 86,
+    "x": 1567,
+    "y": 1329,
+    "owner": -1,
+    "concentrations": [
+     3,
+     43,
+     65
+    ],
+    "environment": [
+     37,
+     25,
+     38
+    ]
+   },
+   {
+    "id": 87,
+    "x": 1573,
+    "y": 1309,
+    "owner": -1,
+    "concentrations": [
+     25,
+     77,
+     80
+    ],
+    "environment": [
+     22,
+     4,
+     97
+    ]
+   },
+   {
+    "id": 88,
+    "x": 1574,
+    "y": 1568,
+    "owner": -1,
+    "concentrations": [
+     111,
+     81,
+     69
+    ],
+    "environment": [
+     90,
+     95,
+     86
+    ]
+   },
+   {
+    "id": 89,
+    "x": 1574,
+    "y": 1129,
+    "owner": -1,
+    "concentrations": [
+     41,
+     92,
+     9
+    ],
+    "environment": [
+     79,
+     25,
+     75
+    ]
+   },
+   {
+    "id": 90,
+    "x": 1574,
+    "y": 1158,
+    "owner": -1,
+    "concentrations": [
+     57,
+     27,
+     76
+    ],
+    "environment": [
+     31,
+     83,
+     56
+    ]
+   },
+   {
+    "id": 91,
+    "x": 1587,
+    "y": 1330,
+    "owner": -1,
+    "concentrations": [
+     46,
      18,
-     26
+     61
     ],
     "environment": [
      38,
+     89,
+     44
+    ]
+   },
+   {
+    "id": 92,
+    "x": 1593,
+    "y": 1424,
+    "owner": -1,
+    "concentrations": [
+     83,
+     27,
+     6
+    ],
+    "environment": [
+     91,
+     91,
+     84
+    ]
+   },
+   {
+    "id": 93,
+    "x": 1598,
+    "y": 1629,
+    "owner": -1,
+    "concentrations": [
+     80,
+     78,
+     54
+    ],
+    "environment": [
+     12,
+     37,
+     33
+    ]
+   },
+   {
+    "id": 94,
+    "x": 1602,
+    "y": 1015,
+    "owner": -1,
+    "concentrations": [
+     12,
+     86,
+     6
+    ],
+    "environment": [
+     89,
+     45,
+     49
+    ]
+   },
+   {
+    "id": 95,
+    "x": 1606,
+    "y": 1363,
+    "owner": -1,
+    "concentrations": [
+     102,
+     86,
+     65
+    ],
+    "environment": [
+     75,
+     66,
+     68
+    ]
+   },
+   {
+    "id": 96,
+    "x": 1607,
+    "y": 1683,
+    "owner": -1,
+    "concentrations": [
+     27,
+     80,
+     55
+    ],
+    "environment": [
+     11,
+     88,
+     14
+    ]
+   },
+   {
+    "id": 97,
+    "x": 1616,
+    "y": 1758,
+    "owner": -1,
+    "concentrations": [
+     95,
+     11,
+     66
+    ],
+    "environment": [
+     75,
+     84,
+     92
+    ]
+   },
+   {
+    "id": 98,
+    "x": 1616,
+    "y": 1311,
+    "owner": -1,
+    "concentrations": [
+     93,
+     8,
+     64
+    ],
+    "environment": [
+     66,
+     84,
+     14
+    ]
+   },
+   {
+    "id": 99,
+    "x": 1621,
+    "y": 1606,
+    "owner": -1,
+    "concentrations": [
+     72,
+     5,
+     81
+    ],
+    "environment": [
+     91,
+     22,
+     83
+    ]
+   },
+   {
+    "id": 100,
+    "x": 1634,
+    "y": 1017,
+    "owner": -1,
+    "concentrations": [
+     8,
+     20,
+     68
+    ],
+    "environment": [
+     41,
+     88,
+     66
+    ]
+   },
+   {
+    "id": 101,
+    "x": 1642,
+    "y": 1310,
+    "owner": -1,
+    "concentrations": [
+     40,
+     100,
+     62
+    ],
+    "environment": [
+     94,
+     20,
+     51
+    ]
+   },
+   {
+    "id": 102,
+    "x": 1650,
+    "y": 1375,
+    "owner": -1,
+    "concentrations": [
+     66,
+     27,
+     90
+    ],
+    "environment": [
+     59,
+     82,
+     59
+    ]
+   },
+   {
+    "id": 103,
+    "x": 1654,
+    "y": 1725,
+    "owner": -1,
+    "concentrations": [
+     15,
+     62,
+     111
+    ],
+    "environment": [
+     16,
+     48,
+     5
+    ]
+   },
+   {
+    "id": 104,
+    "x": 1656,
+    "y": 1240,
+    "owner": -1,
+    "concentrations": [
+     12,
+     6,
+     22
+    ],
+    "environment": [
+     62,
+     18,
+     66
+    ]
+   },
+   {
+    "id": 105,
+    "x": 1657,
+    "y": 1492,
+    "owner": -1,
+    "concentrations": [
+     74,
+     70,
+     93
+    ],
+    "environment": [
+     71,
+     63,
+     57
+    ]
+   },
+   {
+    "id": 106,
+    "x": 1658,
+    "y": 1752,
+    "owner": -1,
+    "concentrations": [
+     69,
+     64,
+     92
+    ],
+    "environment": [
+     22,
+     77,
+     67
+    ]
+   },
+   {
+    "id": 107,
+    "x": 1669,
+    "y": 1246,
+    "owner": -1,
+    "concentrations": [
+     77,
+     65,
+     68
+    ],
+    "environment": [
+     82,
+     73,
+     20
+    ]
+   },
+   {
+    "id": 108,
+    "x": 1672,
+    "y": 1070,
+    "owner": -1,
+    "concentrations": [
+     16,
+     7,
+     92
+    ],
+    "environment": [
+     18,
+     14,
+     95
+    ]
+   },
+   {
+    "id": 109,
+    "x": 1678,
+    "y": 1556,
+    "owner": -1,
+    "concentrations": [
+     86,
+     69,
+     96
+    ],
+    "environment": [
+     69,
+     56,
+     74
+    ]
+   },
+   {
+    "id": 110,
+    "x": 1687,
+    "y": 1137,
+    "owner": -1,
+    "concentrations": [
+     37,
+     105,
+     4
+    ],
+    "environment": [
+     53,
+     86,
+     73
+    ]
+   },
+   {
+    "id": 111,
+    "x": 1689,
+    "y": 1703,
+    "owner": -1,
+    "concentrations": [
+     73,
+     95,
+     61
+    ],
+    "environment": [
+     29,
+     57,
+     51
+    ]
+   },
+   {
+    "id": 112,
+    "x": 1695,
+    "y": 1373,
+    "owner": -1,
+    "concentrations": [
+     1,
+     29,
+     7
+    ],
+    "environment": [
+     73,
+     19,
+     89
+    ]
+   },
+   {
+    "id": 113,
+    "x": 1700,
+    "y": 1684,
+    "owner": -1,
+    "concentrations": [
+     61,
+     18,
+     27
+    ],
+    "environment": [
+     54,
+     37,
+     76
+    ]
+   },
+   {
+    "id": 114,
+    "x": 1711,
+    "y": 1696,
+    "owner": -1,
+    "concentrations": [
+     62,
+     69,
+     100
+    ],
+    "environment": [
      85,
-     24
+     74,
+     83
+    ]
+   },
+   {
+    "id": 115,
+    "x": 1714,
+    "y": 1311,
+    "owner": -1,
+    "concentrations": [
+     76,
+     3,
+     70
+    ],
+    "environment": [
+     31,
+     53,
+     78
+    ]
+   },
+   {
+    "id": 116,
+    "x": 1714,
+    "y": 1624,
+    "owner": -1,
+    "concentrations": [
+     53,
+     69,
+     42
+    ],
+    "environment": [
+     13,
+     28,
+     12
+    ]
+   },
+   {
+    "id": 117,
+    "x": 1738,
+    "y": 1679,
+    "owner": -1,
+    "concentrations": [
+     2,
+     109,
+     103
+    ],
+    "environment": [
+     38,
+     61,
+     71
+    ]
+   },
+   {
+    "id": 118,
+    "x": 1748,
+    "y": 1500,
+    "owner": -1,
+    "concentrations": [
+     55,
+     81,
+     101
+    ],
+    "environment": [
+     96,
+     64,
+     32
+    ]
+   },
+   {
+    "id": 119,
+    "x": 1750,
+    "y": 1755,
+    "owner": -1,
+    "concentrations": [
+     93,
+     76,
+     106
+    ],
+    "environment": [
+     60,
+     27,
+     3
+    ]
+   },
+   {
+    "id": 120,
+    "x": 1758,
+    "y": 1718,
+    "owner": -1,
+    "concentrations": [
+     25,
+     96,
+     89
+    ],
+    "environment": [
+     51,
+     8,
+     5
+    ]
+   },
+   {
+    "id": 121,
+    "x": 1758,
+    "y": 1344,
+    "owner": -1,
+    "concentrations": [
+     81,
+     70,
+     96
+    ],
+    "environment": [
+     37,
+     83,
+     63
+    ]
+   },
+   {
+    "id": 122,
+    "x": 1762,
+    "y": 1053,
+    "owner": -1,
+    "concentrations": [
+     85,
+     78,
+     99
+    ],
+    "environment": [
+     81,
+     13,
+     20
+    ]
+   },
+   {
+    "id": 123,
+    "x": 1769,
+    "y": 1429,
+    "owner": -1,
+    "concentrations": [
+     91,
+     27,
+     11
+    ],
+    "environment": [
+     65,
+     29,
+     2
+    ]
+   },
+   {
+    "id": 124,
+    "x": 1769,
+    "y": 1222,
+    "owner": -1,
+    "concentrations": [
+     72,
+     61,
+     67
+    ],
+    "environment": [
+     86,
+     50,
+     53
+    ]
+   },
+   {
+    "id": 125,
+    "x": 1781,
+    "y": 1330,
+    "owner": -1,
+    "concentrations": [
+     16,
+     23,
+     56
+    ],
+    "environment": [
+     71,
+     77,
+     47
+    ]
+   },
+   {
+    "id": 126,
+    "x": 1784,
+    "y": 1024,
+    "owner": -1,
+    "concentrations": [
+     112,
+     5,
+     50
+    ],
+    "environment": [
+     15,
+     42,
+     83
     ]
    },
    {
     "id": 127,
-    "x": 1790,
-    "y": 1323,
+    "x": 1785,
+    "y": 1241,
     "owner": -1,
     "concentrations": [
-     104,
-     51,
-     88
+     44,
+     97,
+     18
     ],
     "environment": [
-     38,
-     31,
-     71
+     77,
+     52,
+     65
     ]
    }
   ],
@@ -2727,34 +2906,18 @@
    {
     "owner": 1,
     "slot": 1,
-    "hull": "Colony Ship",
+    "hull": "Mini-Colony Ship",
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Settler's Delight"
      },
      {
       "count": 1,
-      "part": "Orbital Construction Module"
+      "part": "Colonization Module"
      }
     ],
-    "mass": 74
-   },
-   {
-    "owner": 1,
-    "slot": 2,
-    "hull": "Midget Miner",
-    "slots": [
-     {
-      "count": 1,
-      "part": "Quick Jump 5"
-     },
-     {
-      "count": 2,
-      "part": "Robo-Midget Miner"
-     }
-    ],
-    "mass": 174
+    "mass": 42
    },
    {
     "owner": 2,
@@ -2763,18 +2926,18 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Fuel Mizer"
      },
      {
       "count": 1,
-      "part": "Bat Scanner"
+      "part": "Possum Scanner"
      },
      {
       "count": 1,
-      "part": "Fuel Tank"
+      "part": "Stealth Cloak"
      }
     ],
-    "mass": 17
+    "mass": 19
    },
    {
     "owner": 2,
@@ -2783,14 +2946,14 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Fuel Mizer"
      },
      {
       "count": 1,
-      "part": "Orbital Construction Module"
+      "part": "Colonization Module"
      }
     ],
-    "mass": 74
+    "mass": 58
    },
    {
     "owner": 2,
@@ -2799,14 +2962,14 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Fuel Mizer"
      },
      {
       "count": 2,
       "part": "Robo-Midget Miner"
      }
     ],
-    "mass": 174
+    "mass": 176
    },
    {
     "owner": 3,
@@ -2815,18 +2978,18 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Long Hump 6"
      },
      {
       "count": 1,
-      "part": "Bat Scanner"
+      "part": "Rhino Scanner"
      },
      {
       "count": 1,
       "part": "Fuel Tank"
      }
     ],
-    "mass": 17
+    "mass": 25
    },
    {
     "owner": 3,
@@ -2835,30 +2998,14 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Long Hump 6"
      },
      {
       "count": 1,
-      "part": "Orbital Construction Module"
+      "part": "Colonization Module"
      }
     ],
-    "mass": 74
-   },
-   {
-    "owner": 3,
-    "slot": 2,
-    "hull": "Midget Miner",
-    "slots": [
-     {
-      "count": 1,
-      "part": "Quick Jump 5"
-     },
-     {
-      "count": 2,
-      "part": "Robo-Midget Miner"
-     }
-    ],
-    "mass": 174
+    "mass": 61
    },
    {
     "owner": 4,
@@ -2867,18 +3014,18 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Long Hump 6"
      },
      {
       "count": 1,
-      "part": "Bat Scanner"
+      "part": "Rhino Scanner"
      },
      {
       "count": 1,
       "part": "Fuel Tank"
      }
     ],
-    "mass": 17
+    "mass": 25
    },
    {
     "owner": 4,
@@ -2887,30 +3034,38 @@
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Long Hump 6"
      },
      {
       "count": 1,
-      "part": "Orbital Construction Module"
+      "part": "Colonization Module"
      }
     ],
-    "mass": 74
+    "mass": 61
    },
    {
     "owner": 4,
     "slot": 2,
-    "hull": "Midget Miner",
+    "hull": "Mini-Miner",
     "slots": [
      {
       "count": 1,
-      "part": "Quick Jump 5"
+      "part": "Long Hump 6"
      },
      {
-      "count": 2,
-      "part": "Robo-Midget Miner"
+      "count": 1,
+      "part": "Rhino Scanner"
+     },
+     {
+      "count": 1,
+      "part": "Orbital Adjuster"
+     },
+     {
+      "count": 1,
+      "part": "Orbital Adjuster"
      }
     ],
-    "mass": 174
+    "mass": 254
    },
    {
     "owner": 5,
@@ -2935,18 +3090,70 @@
    {
     "owner": 5,
     "slot": 1,
-    "hull": "Mini-Colony Ship",
+    "hull": "Colony Ship",
     "slots": [
      {
       "count": 1,
-      "part": "Settler's Delight"
+      "part": "Fuel Mizer"
      },
      {
       "count": 1,
       "part": "Colonization Module"
      }
     ],
-    "mass": 42
+    "mass": 58
+   },
+   {
+    "owner": 6,
+    "slot": 0,
+    "hull": "Scout",
+    "slots": [
+     {
+      "count": 1,
+      "part": "Quick Jump 5"
+     },
+     {
+      "count": 1,
+      "part": "Bat Scanner"
+     },
+     {
+      "count": 1,
+      "part": "Fuel Tank"
+     }
+    ],
+    "mass": 17
+   },
+   {
+    "owner": 6,
+    "slot": 1,
+    "hull": "Colony Ship",
+    "slots": [
+     {
+      "count": 1,
+      "part": "Quick Jump 5"
+     },
+     {
+      "count": 1,
+      "part": "Orbital Construction Module"
+     }
+    ],
+    "mass": 74
+   },
+   {
+    "owner": 6,
+    "slot": 2,
+    "hull": "Midget Miner",
+    "slots": [
+     {
+      "count": 1,
+      "part": "Quick Jump 5"
+     },
+     {
+      "count": 2,
+      "part": "Robo-Midget Miner"
+     }
+    ],
+    "mass": 174
    }
   ],
   "starbase_designs": [
@@ -3010,19 +3217,6 @@
    {
     "owner": 1,
     "slot": 0,
-    "hull": "Orbital Fort",
-    "slots": [
-     null,
-     null,
-     null,
-     null,
-     null
-    ],
-    "mass": 0
-   },
-   {
-    "owner": 1,
-    "slot": 1,
     "hull": "Space Station",
     "slots": [
      null,
@@ -3067,19 +3261,6 @@
    {
     "owner": 2,
     "slot": 0,
-    "hull": "Orbital Fort",
-    "slots": [
-     null,
-     null,
-     null,
-     null,
-     null
-    ],
-    "mass": 0
-   },
-   {
-    "owner": 2,
-    "slot": 1,
     "hull": "Space Station",
     "slots": [
      null,
@@ -3124,19 +3305,6 @@
    {
     "owner": 3,
     "slot": 0,
-    "hull": "Orbital Fort",
-    "slots": [
-     null,
-     null,
-     null,
-     null,
-     null
-    ],
-    "mass": 0
-   },
-   {
-    "owner": 3,
-    "slot": 1,
     "hull": "Space Station",
     "slots": [
      null,
@@ -3181,19 +3349,6 @@
    {
     "owner": 4,
     "slot": 0,
-    "hull": "Orbital Fort",
-    "slots": [
-     null,
-     null,
-     null,
-     null,
-     null
-    ],
-    "mass": 0
-   },
-   {
-    "owner": 4,
-    "slot": 1,
     "hull": "Space Station",
     "slots": [
      null,
@@ -3238,6 +3393,94 @@
    {
     "owner": 5,
     "slot": 0,
+    "hull": "Space Station",
+    "slots": [
+     {
+      "count": 1,
+      "part": "Mass Driver 5"
+     },
+     {
+      "count": 8,
+      "part": "Laser"
+     },
+     {
+      "count": 8,
+      "part": "Mole-skin Shield"
+     },
+     {
+      "count": 8,
+      "part": "Laser"
+     },
+     {
+      "count": 8,
+      "part": "Mole-skin Shield"
+     },
+     {
+      "count": 8,
+      "part": "Mole-skin Shield"
+     },
+     null,
+     {
+      "count": 8,
+      "part": "Laser"
+     },
+     null,
+     {
+      "count": 8,
+      "part": "Laser"
+     },
+     null,
+     {
+      "count": 8,
+      "part": "Mole-skin Shield"
+     }
+    ],
+    "mass": 64
+   },
+   {
+    "owner": 5,
+    "slot": 1,
+    "hull": "Orbital Fort",
+    "slots": [
+     {
+      "count": 1,
+      "part": "Mass Driver 5"
+     },
+     {
+      "count": 6,
+      "part": "Laser"
+     },
+     {
+      "count": 6,
+      "part": "Cow-hide Shield"
+     },
+     {
+      "count": 6,
+      "part": "Laser"
+     },
+     {
+      "count": 6,
+      "part": "Cow-hide Shield"
+     }
+    ],
+    "mass": 24
+   },
+   {
+    "owner": 6,
+    "slot": 0,
+    "hull": "Orbital Fort",
+    "slots": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "mass": 0
+   },
+   {
+    "owner": 6,
+    "slot": 1,
     "hull": "Space Station",
     "slots": [
      null,
@@ -3580,15 +3823,65 @@
     "attack_who": 2,
     "dump_cargo": false,
     "name": "Chicken"
+   },
+   {
+    "owner": 6,
+    "slot": 0,
+    "tactic": 4,
+    "primary": 3,
+    "secondary": 1,
+    "attack_who": 2,
+    "dump_cargo": false,
+    "name": "Default"
+   },
+   {
+    "owner": 6,
+    "slot": 1,
+    "tactic": 4,
+    "primary": 2,
+    "secondary": 3,
+    "attack_who": 2,
+    "dump_cargo": false,
+    "name": "Kill Starbase"
+   },
+   {
+    "owner": 6,
+    "slot": 2,
+    "tactic": 3,
+    "primary": 3,
+    "secondary": 4,
+    "attack_who": 2,
+    "dump_cargo": false,
+    "name": "Max-Defense"
+   },
+   {
+    "owner": 6,
+    "slot": 3,
+    "tactic": 1,
+    "primary": 5,
+    "secondary": 0,
+    "attack_who": 2,
+    "dump_cargo": false,
+    "name": "Sniper"
+   },
+   {
+    "owner": 6,
+    "slot": 4,
+    "tactic": 0,
+    "primary": 1,
+    "secondary": 0,
+    "attack_who": 2,
+    "dump_cargo": false,
+    "name": "Chicken"
    }
   ],
   "fleets": [
    {
     "owner": 0,
     "id": 0,
-    "x": 1475,
-    "y": 1133,
-    "orbiting": 81,
+    "x": 1087,
+    "y": 1657,
+    "orbiting": 10,
     "ships": [
      {
       "design": 0,
@@ -3605,12 +3898,12 @@
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1475,
-      "y": 1133,
+      "x": 1087,
+      "y": 1657,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 81
+       "id": 10
       },
       "task": {
        "kind": "none"
@@ -3621,9 +3914,9 @@
    {
     "owner": 0,
     "id": 1,
-    "x": 1475,
-    "y": 1133,
-    "orbiting": 81,
+    "x": 1087,
+    "y": 1657,
+    "orbiting": 10,
     "ships": [
      {
       "design": 1,
@@ -3640,12 +3933,12 @@
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1475,
-      "y": 1133,
+      "x": 1087,
+      "y": 1657,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 81
+       "id": 10
       },
       "task": {
        "kind": "none"
@@ -3656,9 +3949,9 @@
    {
     "owner": 0,
     "id": 2,
-    "x": 1475,
-    "y": 1133,
-    "orbiting": 81,
+    "x": 1087,
+    "y": 1657,
+    "orbiting": 10,
     "ships": [
      {
       "design": 2,
@@ -3675,12 +3968,12 @@
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1475,
-      "y": 1133,
+      "x": 1087,
+      "y": 1657,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 81
+       "id": 10
       },
       "task": {
        "kind": "none"
@@ -3691,9 +3984,9 @@
    {
     "owner": 0,
     "id": 3,
-    "x": 1475,
-    "y": 1133,
-    "orbiting": 81,
+    "x": 1087,
+    "y": 1657,
+    "orbiting": 10,
     "ships": [
      {
       "design": 2,
@@ -3710,12 +4003,83 @@
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1475,
-      "y": 1133,
+      "x": 1087,
+      "y": 1657,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 81
+       "id": 10
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 0,
+    "id": 5,
+    "x": 1087,
+    "y": 1657,
+    "orbiting": 10,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1087,
+      "y": 1657,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 10
+      },
+      "task": {
+       "kind": "transfer",
+       "to_player": 1
+      }
+     }
+    ]
+   },
+   {
+    "owner": 1,
+    "id": 0,
+    "x": 1436,
+    "y": 1488,
+    "orbiting": 64,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1436,
+      "y": 1488,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 64
       },
       "task": {
        "kind": "none"
@@ -3725,605 +4089,10 @@
    },
    {
     "owner": 1,
-    "id": 0,
-    "x": 1652,
-    "y": 1082,
-    "orbiting": 111,
-    "ships": [
-     {
-      "design": 0,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 300,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1652,
-      "y": 1082,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 111
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 1,
     "id": 1,
-    "x": 1652,
-    "y": 1082,
-    "orbiting": 111,
-    "ships": [
-     {
-      "design": 1,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 200,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1652,
-      "y": 1082,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 111
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 1,
-    "id": 2,
-    "x": 1652,
-    "y": 1082,
-    "orbiting": 111,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1652,
-      "y": 1082,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 111
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 1,
-    "id": 3,
-    "x": 1652,
-    "y": 1082,
-    "orbiting": 111,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1652,
-      "y": 1082,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 111
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 2,
-    "id": 0,
-    "x": 1430,
-    "y": 1317,
-    "orbiting": 72,
-    "ships": [
-     {
-      "design": 0,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 300,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1430,
-      "y": 1317,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 72
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 2,
-    "id": 1,
-    "x": 1430,
-    "y": 1317,
-    "orbiting": 72,
-    "ships": [
-     {
-      "design": 1,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 200,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1430,
-      "y": 1317,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 72
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 2,
-    "id": 2,
-    "x": 1430,
-    "y": 1317,
-    "orbiting": 72,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1430,
-      "y": 1317,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 72
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 2,
-    "id": 3,
-    "x": 1430,
-    "y": 1317,
-    "orbiting": 72,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1430,
-      "y": 1317,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 72
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 3,
-    "id": 0,
-    "x": 1340,
-    "y": 1703,
-    "orbiting": 60,
-    "ships": [
-     {
-      "design": 0,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 300,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1340,
-      "y": 1703,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 60
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 3,
-    "id": 1,
-    "x": 1340,
-    "y": 1703,
-    "orbiting": 60,
-    "ships": [
-     {
-      "design": 1,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 200,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1340,
-      "y": 1703,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 60
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 3,
-    "id": 2,
-    "x": 1340,
-    "y": 1703,
-    "orbiting": 60,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1340,
-      "y": 1703,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 60
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 3,
-    "id": 3,
-    "x": 1340,
-    "y": 1703,
-    "orbiting": 60,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1340,
-      "y": 1703,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 60
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 4,
-    "id": 0,
-    "x": 1163,
-    "y": 1556,
-    "orbiting": 24,
-    "ships": [
-     {
-      "design": 0,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 300,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1163,
-      "y": 1556,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 24
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 4,
-    "id": 1,
-    "x": 1163,
-    "y": 1556,
-    "orbiting": 24,
-    "ships": [
-     {
-      "design": 1,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 200,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1163,
-      "y": 1556,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 24
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 4,
-    "id": 2,
-    "x": 1163,
-    "y": 1556,
-    "orbiting": 24,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1163,
-      "y": 1556,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 24
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 4,
-    "id": 3,
-    "x": 1163,
-    "y": 1556,
-    "orbiting": 24,
-    "ships": [
-     {
-      "design": 2,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 210,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1163,
-      "y": 1556,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 24
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 5,
-    "id": 0,
-    "x": 1348,
-    "y": 1502,
-    "orbiting": 62,
-    "ships": [
-     {
-      "design": 0,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 300,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1348,
-      "y": 1502,
-      "warp": 0,
-      "target": {
-       "kind": "planet",
-       "id": 62
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 5,
-    "id": 1,
-    "x": 1348,
-    "y": 1502,
-    "orbiting": 62,
+    "x": 1436,
+    "y": 1488,
+    "orbiting": 64,
     "ships": [
      {
       "design": 1,
@@ -4340,12 +4109,467 @@
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1348,
-      "y": 1502,
+      "x": 1436,
+      "y": 1488,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 62
+       "id": 64
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 1,
+    "id": 2,
+    "x": 1436,
+    "y": 1488,
+    "orbiting": 64,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 150,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1436,
+      "y": 1488,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 64
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 1,
+    "id": 3,
+    "x": 1436,
+    "y": 1488,
+    "orbiting": 64,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 150,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1436,
+      "y": 1488,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 64
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 2,
+    "id": 0,
+    "x": 1043,
+    "y": 1494,
+    "orbiting": 4,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 50,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1043,
+      "y": 1494,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 4
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 2,
+    "id": 1,
+    "x": 1043,
+    "y": 1494,
+    "orbiting": 4,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 200,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1043,
+      "y": 1494,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 4
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 2,
+    "id": 2,
+    "x": 1043,
+    "y": 1494,
+    "orbiting": 4,
+    "ships": [
+     {
+      "design": 2,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 210,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1043,
+      "y": 1494,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 4
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 2,
+    "id": 3,
+    "x": 1043,
+    "y": 1494,
+    "orbiting": 4,
+    "ships": [
+     {
+      "design": 2,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 210,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1043,
+      "y": 1494,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 4
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 3,
+    "id": 0,
+    "x": 1061,
+    "y": 1292,
+    "orbiting": 5,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1061,
+      "y": 1292,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 5
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 3,
+    "id": 1,
+    "x": 1061,
+    "y": 1292,
+    "orbiting": 5,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 200,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1061,
+      "y": 1292,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 5
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 4,
+    "id": 0,
+    "x": 1263,
+    "y": 1253,
+    "orbiting": 39,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1263,
+      "y": 1253,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 39
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 4,
+    "id": 1,
+    "x": 1263,
+    "y": 1253,
+    "orbiting": 39,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 200,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1263,
+      "y": 1253,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 39
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 4,
+    "id": 2,
+    "x": 1263,
+    "y": 1253,
+    "orbiting": 39,
+    "ships": [
+     {
+      "design": 2,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 210,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1263,
+      "y": 1253,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 39
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 5,
+    "id": 0,
+    "x": 1201,
+    "y": 1415,
+    "orbiting": 30,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1201,
+      "y": 1415,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 30
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 5,
+    "id": 1,
+    "x": 1201,
+    "y": 1415,
+    "orbiting": 30,
+    "ships": [
+     {
+      "design": 1,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 200,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1201,
+      "y": 1415,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 30
       },
       "task": {
        "kind": "none"
@@ -4356,12 +4580,12 @@
    {
     "owner": 5,
     "id": 2,
-    "x": 1348,
-    "y": 1502,
-    "orbiting": 62,
+    "x": 1384,
+    "y": 1411,
+    "orbiting": 56,
     "ships": [
      {
-      "design": 1,
+      "design": 0,
       "count": 1
      }
     ],
@@ -4371,16 +4595,16 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 150,
+    "fuel": 300,
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1348,
-      "y": 1502,
+      "x": 1384,
+      "y": 1411,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 62
+       "id": 56
       },
       "task": {
        "kind": "none"
@@ -4389,11 +4613,46 @@
     ]
    },
    {
-    "owner": 5,
-    "id": 3,
-    "x": 1348,
-    "y": 1502,
-    "orbiting": 62,
+    "owner": 6,
+    "id": 0,
+    "x": 1426,
+    "y": 1301,
+    "orbiting": 63,
+    "ships": [
+     {
+      "design": 0,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 300,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1426,
+      "y": 1301,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 63
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 6,
+    "id": 1,
+    "x": 1426,
+    "y": 1301,
+    "orbiting": 63,
     "ships": [
      {
       "design": 1,
@@ -4406,16 +4665,86 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 150,
+    "fuel": 200,
     "battle_plan": 0,
     "waypoints": [
      {
-      "x": 1348,
-      "y": 1502,
+      "x": 1426,
+      "y": 1301,
       "warp": 0,
       "target": {
        "kind": "planet",
-       "id": 62
+       "id": 63
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 6,
+    "id": 2,
+    "x": 1426,
+    "y": 1301,
+    "orbiting": 63,
+    "ships": [
+     {
+      "design": 2,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 210,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1426,
+      "y": 1301,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 63
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 6,
+    "id": 3,
+    "x": 1426,
+    "y": 1301,
+    "orbiting": 63,
+    "ships": [
+     {
+      "design": 2,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 210,
+    "battle_plan": 0,
+    "waypoints": [
+     {
+      "x": 1426,
+      "y": 1301,
+      "warp": 0,
+      "target": {
+       "kind": "planet",
+       "id": 63
       },
       "task": {
        "kind": "none"
@@ -4424,468 +4753,153 @@
     ]
    }
   ],
-  "objects": [],
+  "objects": [
+   {
+    "kind": "wormhole",
+    "id": 0,
+    "x": 1688,
+    "y": 1742,
+    "partner": 1,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 1,
+    "x": 1247,
+    "y": 1630,
+    "partner": 0,
+    "stability_class": 0,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 2,
+    "x": 1231,
+    "y": 1122,
+    "partner": 3,
+    "stability_class": 0,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 3,
+    "x": 1643,
+    "y": 1688,
+    "partner": 2,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 4,
+    "x": 1048,
+    "y": 1199,
+    "partner": 5,
+    "stability_class": 2,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 5,
+    "x": 1449,
+    "y": 1149,
+    "partner": 4,
+    "stability_class": 2,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   }
+  ],
   "production_queues": []
  },
  "cases": [
   {
-   "id": "RD-P12",
-   "rule": "KERNEL race budget",
-   "setup": "turn-time race penalty P12",
-   "tag": "CONFIRMED",
+   "id": "WU-AICOMP3",
+   "rule": "ORDERS",
+   "setup": "transfer fleet to an expert computer player whose relation to the giver is neutral",
+   "tag": "MEASURED",
    "prediction_held": true,
    "varies_by_stream": false,
    "expect": [
     {
-     "kind": "fleet_gone",
-     "owner": 5,
-     "id": 0,
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 24,
+     "kind": "fleet",
+     "owner": 0,
+     "id": 5,
      "equals": {
-      "surface_minerals": [
-       691,
-       292,
-       438
+      "x": 1087,
+      "y": 1657,
+      "orbiting": 10,
+      "ships": [
+       {
+        "design": 0,
+        "count": 1
+       }
       ],
-      "population": 270
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 60,
-     "equals": {
-      "surface_minerals": [
-       691,
-       292,
-       438
-      ],
-      "population": 270
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 62,
-     "equals": {
-      "surface_minerals": [
-       822,
-       539,
-       551
-      ],
-      "population": 275,
-      "mines": 11,
-      "factories": 13
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 72,
-     "equals": {
-      "surface_minerals": [
-       690,
-       292,
-       438
-      ],
-      "population": 270
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 81,
-     "equals": {
-      "surface_minerals": [
-       776,
-       462,
-       524
-      ],
-      "population": 267,
-      "excess": 50,
-      "mines": 0,
-      "factories": 0,
-      "defenses": 0,
-      "leftover_to_research": false
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "planet",
-     "id": 111,
-     "equals": {
-      "surface_minerals": [
-       692,
-       294,
-       442
-      ],
-      "population": 270
-     },
-     "tolerance": {
-      "surface_minerals": 1
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 0,
-     "equals": {
-      "research_accumulated": {
-       "energy": 32,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 0,
-       "electronics": 0,
-       "biotechnology": 0
+      "cargo": {
+       "ironium": 0,
+       "boranium": 0,
+       "germanium": 0,
+       "colonists": 0
       },
-      "race": {
-       "prt": "AR",
-       "lrt": [
-        "IFE",
-        "TT",
-        "ARM",
-        "UR",
-        "MA",
-        "RS"
-       ],
-       "growth_percent": 7,
-       "habitability": {
-        "gravity": [
-         56,
-         45,
-         67
-        ],
-        "temperature": [
-         255,
-         255,
-         255
-        ],
-        "radiation": [
-         255,
-         255,
-         255
-        ],
-        "order": "center, low, high (255 = immune)"
-       },
-       "colonists_per_resource": 2500,
-       "factory": {
-        "output": 5,
-        "cost": 5,
-        "per_10k": 14
-       },
-       "mine": {
-        "output": 23,
-        "cost": 6,
-        "per_10k": 12
-       },
-       "research_cost": {
-        "energy": "normal",
-        "weapons": "cheap",
-        "propulsion": "expensive",
-        "construction": "normal",
-        "electronics": "cheap",
-        "biotechnology": "cheap"
-       },
-       "leftover_spend": "surface_minerals",
-       "stat_15": 0,
-       "techs_start_high": false,
-       "factories_cost_less": true
-      }
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 1,
-     "equals": {
-      "research_accumulated": {
-       "energy": 38,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 0,
-       "electronics": 0,
-       "biotechnology": 0
-      }
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 2,
-     "equals": {
-      "research_accumulated": {
-       "energy": 38,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 0,
-       "electronics": 0,
-       "biotechnology": 0
-      }
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 3,
-     "equals": {
-      "research_accumulated": {
-       "energy": 38,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 0,
-       "electronics": 0,
-       "biotechnology": 0
-      }
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 4,
-     "equals": {
-      "research_accumulated": {
-       "energy": 38,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 0,
-       "electronics": 0,
-       "biotechnology": 0
-      }
-     },
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 5,
-     "equals": {
-      "research_accumulated": {
-       "energy": 0,
-       "weapons": 0,
-       "propulsion": 0,
-       "construction": 2,
-       "electronics": 0,
-       "biotechnology": 0
-      }
+      "fuel": 300,
+      "battle_plan": 0,
+      "waypoints": [
+       {
+        "x": 1087,
+        "y": 1657,
+        "warp": 0,
+        "target": {
+         "kind": "planet",
+         "id": 10
+        },
+        "task": {
+         "kind": "none"
+        }
+       }
+      ]
      },
      "year": 1
     },
     {
      "kind": "message",
      "player": 0,
-     "message_id": 279,
+     "message_id": 63,
      "present": true,
      "year": 1
     },
     {
      "kind": "message",
      "player": 0,
-     "message_id": 63,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 0,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 33,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 4,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 0,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 386,
+     "message_id": 332,
      "present": true,
      "year": 1
     },
     {
      "kind": "message",
-     "player": 1,
-     "message_id": 63,
+     "player": 0,
+     "message_id": 78,
      "present": true,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 1,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 39,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 4,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 1,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 386,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 63,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 2,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 39,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 4,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 2,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 386,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 63,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 3,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 39,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 4,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 3,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 386,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 63,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 4,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 39,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 4,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 4,
-     "year": 1
-    },
-    {
-     "kind": "player",
-     "id": 5,
-     "equals": {
-      "score_record": {
-       "rank": 1,
-       "score": 7,
-       "resources": 43,
-       "planets": 1,
-       "starbases": 1,
-       "unarmed_ships": 3,
-       "escort_ships": 0,
-       "capital_ships": 0,
-       "tech_level_sum": 2,
-       "victory_conditions_met": []
-      }
-     },
-     "seen_by": 5,
      "year": 1
     }
    ],
-   "verdict": "held"
+   "verdict": "held: refused with message 0x14c (the computer is hostile when the gift is evaluated); only fleet 0/5 and player 0 messages are listed: the computer players plan their own orders"
   }
  ],
  "source": {
-  "experiment": "experiments/rd",
-  "spec_rules": "docs/KERNEL.md \"Production\" (race budget)",
-  "parity": "docs/PARITY.md \"Follow-up: AR spends, growth 0, several players (MEASURED, RD-7, RD-P11, RD-P12)\"",
-  "raw_evidence": "stars-oracle-apparatus evidence/rd/rp12 (private)"
+  "experiment": "experiments/wu",
+  "spec_rules": "docs/ORDERS.md (waypoint upkeep and the remaining tasks)",
+  "parity": "experiments/wu/README.md (turn orders lane)",
+  "raw_evidence": "stars-oracle-apparatus evidence/wu/wuAICOMP3 (private)"
  }
 }

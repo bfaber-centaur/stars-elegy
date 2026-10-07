@@ -36,7 +36,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `xf` | XF-1, PQ-1, WP-1, DS-1 (with ML-1) and their exploration runs | 8 | orders the original client wrote: cargo transfers, production queue, research, waypoint-0 tasks, designs, lay mines | `docs/ORDERS.md`, `docs/ORACLE.md` |
 | `bp` | BP-1, BP-L | 2 | battle plans and fleet plan assignments from the client | `docs/COMBAT.md` |
 | `tk5` | TK-501, TK-502 | 2 | manual cargo transfers to other players' and unowned planets (TK-401..412) | `docs/TAKEOVER.md`, `docs/ORDERS.md` "Cross-owner cargo" |
-| `wu` | WU-A..WU-WARP90 | 26 | waypoint upkeep, repeat, followers, route and transfer tasks, patrol target choice | `docs/ORDERS.md` |
+| `wu` | WU-A..WU-WARP90 | 28 | waypoint upkeep, repeat, followers, route and transfer tasks, patrol target choice | `docs/ORDERS.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
@@ -68,7 +68,9 @@ file, so nothing in it is a default you have to guess.
   options (`random_events`, `slower_tech`, `public_scores`) and
   `victory_conditions` (each with its value in game units and, for the seven
   that can be switched, `enabled`), when the vector's builder read them.
-- `players`: tech levels by field, research accumulated per field, research
+- `players`: `computer: true` for a computer player (the host plans its
+  orders each year; a vector lists only the outcomes its case is about),
+  tech levels by field, research accumulated per field, research
   percent and field, relations to each other player (`neutral`, `friend`,
   `enemy`), Mystery Trader items owned, and the race: PRT, LRTs, growth rate,
   habitability (center, low, high per axis, 255 = immune), colonists per
@@ -303,7 +305,5 @@ go test ./internal/vectors
   states), KX-005 (not merged yet).
 - BP-2 (new games made one after another in one client session), and the
   battle-plan exploration files with no host year.
-- WU-AICOMP3/4 (a gift refused by a computer player): the initial state does
-  not yet say which players are computer players.
 - RD-1..RD-7 and RW (new games: they wait for the `new_game` form). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.

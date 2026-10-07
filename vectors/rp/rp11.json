@@ -531,7 +531,8 @@
     "counts": {
      "ship_designs": 2,
      "starbase_designs": 1
-    }
+    },
+    "computer": true
    }
   ],
   "planets": [

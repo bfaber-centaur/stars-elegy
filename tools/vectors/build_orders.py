@@ -161,6 +161,16 @@ WU = [
      'held: each follower advanced one hop and re-pointed at its leader; the mutual pair met at the midpoint and '
      'both waypoints cleared to plain go-tos'),
 ]
+# Gifts to a computer player (7-player AI base). The computer players plan their
+# own orders each year, so only the gift fleet and player 0's messages are listed.
+AI_NOTE = '; only fleet 0/5 and player 0 messages are listed: the computer players plan their own orders'
+WU_FOCUS = {'wuAICOMP3': ((0, 5), 0), 'wuAICOMP4': ((0, 5), 0)}
+WU += [
+    ('wuAICOMP3', 'WU-AICOMP3', 'transfer fleet to an expert computer player whose relation to the giver is neutral',
+     True, 'held: refused with message 0x14c (the computer is hostile when the gift is evaluated)' + AI_NOTE),
+    ('wuAICOMP4', 'WU-AICOMP4', 'transfer fleet to an expert computer player, both relations neutral', True,
+     'held: refused with message 0x14c' + AI_NOTE),
+]
 NOPRED = ' (no prediction committed)'
 for n in ('CP1', 'CP2', 'CP3', 'CP4'):
     WU.append(('wu' + n, 'WU-' + n, 'patrol: enemies at 60 to 200 ly, Rhino scanner', False,
@@ -184,12 +194,16 @@ WU += [
     ('wuWARP90', 'WU-WARP90', 'patrol range 90', False, 'intercept warp 10' + NOPRED),
 ]
 
-def one(rundir, vid, title, held, verdict, x_orders=True):
+def one(rundir, vid, title, held, verdict, x_orders=True, focus=None):
     bdir = os.path.join(rundir, 'raw', 'before')
     g = [f for f in os.listdir(bdir) if f.endswith('.HST')][0][:-4]
     st0 = B.state(B.dump(os.path.join(bdir, g + '.HST')), B.dump(os.path.join(bdir, g + '.XY')), g,
                   os.path.join(bdir, g + '.XY'))
     _, exps = K.observe(st0, os.path.join(rundir, 'raw', 'after'), g, 1, full=True)
+    if focus:
+        (fo, fid), mp = focus
+        exps = [e for e in exps if e['kind'] in ('fleet', 'fleet_gone') and (e['owner'], e['id']) == (fo, fid)
+                or e['kind'] == 'message' and e['player'] == mp]
     cs = B.case(vid, '', title, {'run': exps}, held, set())
     cs['tag'], cs['verdict'] = 'MEASURED', verdict
     vec = {'schema': B.SCHEMA, 'id': vid, 'title': title, 'years': 1, 'random': 'single_stream', 'streams': 1,
@@ -212,7 +226,7 @@ def build(corpus, ev, out):
         runs = RUNS[corpus]
     for run, vid, title, held, verdict, spec, parity, exp in runs:
         rd = os.path.join(ev, run)
-        vec = one(rd, vid, title, held, verdict, corpus != 'wu')
+        vec = one(rd, vid, title, held, verdict, corpus != 'wu', WU_FOCUS.get(run))
         vec['cases'][0]['rule'] = spec.split(';')[0].split(' (')[0].replace('docs/', '').replace('.md', '')
         vec['source'] = {'experiment': exp, 'spec_rules': spec, 'parity': parity,
                          'raw_evidence': 'stars-oracle-apparatus evidence/%s/%s (private)' % (corpus, run)}

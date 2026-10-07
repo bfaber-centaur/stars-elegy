@@ -196,6 +196,8 @@ public class CombatLab {
                         d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
                         d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
                         Util.read16(d, 0x48), d[0x45]));
+                    // computer player: player struct +0x07 bit 1 (block byte 7)
+                    sb.append(" computer=").append(p.getDecryptedData()[7] >> 1 & 1);
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                     // economy settings (estimates corpus): growth %, colonists per resource / 100,
