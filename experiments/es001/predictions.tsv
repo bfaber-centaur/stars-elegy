@@ -1,0 +1,141 @@
+case	screen	item	prediction
+F00-w1	waypoints	fleet 0 wp 1 distance	28.28 l.y.
+F00-w1	waypoints	fleet 0 wp 1 travel time	2 years
+F00-w1	waypoints	fleet 0 wp 1 est fuel usage	72mg
+F00-w2	waypoints	fleet 0 wp 2 distance	50.0 l.y.
+F00-w2	waypoints	fleet 0 wp 2 travel time	4 years
+F00-w2	waypoints	fleet 0 wp 2 est fuel usage	294mg
+F00-w3	waypoints	fleet 0 wp 3 distance	42.43 l.y.
+F00-w3	waypoints	fleet 0 wp 3 travel time	7 years
+F00-w3	waypoints	fleet 0 wp 3 est fuel usage	401mg (red)
+F00	range	fleet 0 est. range (fuel 400, ideal warp 5)	162 l.y.
+F01-w1	waypoints	fleet 1 wp 1 distance	30.0 l.y.
+F01-w1	waypoints	fleet 1 wp 1 travel time	Never
+F01-w1	waypoints	fleet 1 wp 1 est fuel usage	0mg
+F01-w2	waypoints	fleet 1 wp 2 distance	20.0 l.y.
+F01-w2	waypoints	fleet 1 wp 2 travel time	Never
+F01-w2	waypoints	fleet 1 wp 2 est fuel usage	2mg
+F01	range	fleet 1 est. range (fuel 50, ideal warp 6)	561 l.y.
+F02-w1	waypoints	fleet 2 wp 1 distance	3.61 l.y.
+F02-w1	waypoints	fleet 2 wp 1 travel time	3 years
+F02-w1	waypoints	fleet 2 wp 1 est fuel usage	0mg
+F02-w2	waypoints	fleet 2 wp 2 distance	0.0 l.y.
+F02-w2	waypoints	fleet 2 wp 2 travel time	4 years
+F02-w2	waypoints	fleet 2 wp 2 est fuel usage	0mg
+F02-w3	waypoints	fleet 2 wp 3 distance	57.0 l.y.
+F02-w3	waypoints	fleet 2 wp 3 travel time	6 years
+F02-w3	waypoints	fleet 2 wp 3 est fuel usage	18mg
+F02	range	fleet 2 est. range (fuel 50, ideal warp 5)	833 l.y.
+F03-w1	waypoints	fleet 3 wp 1 distance	100.0 l.y.
+F03-w1	waypoints	fleet 3 wp 1 travel time	4 years
+F03-w1	waypoints	fleet 3 wp 1 est fuel usage	45mg
+F03-w2	waypoints	fleet 3 wp 2 distance	100.0 l.y.
+F03-w2	waypoints	fleet 3 wp 2 travel time	7 years
+F03-w2	waypoints	fleet 3 wp 2 est fuel usage	265mg
+F03	range	fleet 3 est. range (fuel 300, ideal warp 5)	263 l.y.
+F04-w1	waypoints	fleet 4 wp 1 distance	150.0 l.y.
+F04-w1	waypoints	fleet 4 wp 1 travel time	5 years
+F04-w1	waypoints	fleet 4 wp 1 est fuel usage	25mg
+F04-w2	waypoints	fleet 4 wp 2 distance	100.0 l.y.
+F04-w2	waypoints	fleet 4 wp 2 travel time	8 years
+F04-w2	waypoints	fleet 4 wp 2 est fuel usage	127mg
+F04	range	fleet 4 est. range (fuel 500, ideal warp 5)	1176 l.y.
+F05-w1	waypoints	fleet 5 wp 1 distance	68.82 l.y.
+F05-w1	waypoints	fleet 5 wp 1 travel time	2 years
+F05-w1	waypoints	fleet 5 wp 1 est fuel usage	111mg
+F05-w2	waypoints	fleet 5 wp 2 distance	97.75 l.y.
+F05-w2	waypoints	fleet 5 wp 2 travel time	4 years
+F05-w2	waypoints	fleet 5 wp 2 est fuel usage	251mg (red)
+F05-w3	waypoints	fleet 5 wp 3 distance	200.0 l.y.
+F05-w3	waypoints	fleet 5 wp 3 travel time	7 years
+F05-w3	waypoints	fleet 5 wp 3 est fuel usage	829mg (red)
+F05	range	fleet 5 est. range (fuel 200, ideal warp 5)	625 l.y.
+F06-w1	waypoints	fleet 6 wp 1 distance	190.0 l.y.
+F06-w1	waypoints	fleet 6 wp 1 travel time	3 years
+F06-w1	waypoints	fleet 6 wp 1 est fuel usage	167mg (red)
+F06-w2	waypoints	fleet 6 wp 2 distance	190.0 l.y.
+F06-w2	waypoints	fleet 6 wp 2 travel time	6 years
+F06-w2	waypoints	fleet 6 wp 2 est fuel usage	196mg (red)
+F06	range	fleet 6 est. range (fuel 30, ideal warp 8)	209 l.y.
+F07-w1	waypoints	fleet 7 wp 1 distance	25.50 l.y.
+F07-w1	waypoints	fleet 7 wp 1 travel time	1 year
+F07-w1	waypoints	fleet 7 wp 1 est fuel usage	3mg
+F07-w2	waypoints	fleet 7 wp 2 distance	25.0 l.y.
+F07-w2	waypoints	fleet 7 wp 2 travel time	2 years
+F07-w2	waypoints	fleet 7 wp 2 est fuel usage	6mg
+F07	range	fleet 7 est. range (fuel 50, ideal warp 6)	561 l.y.
+F08-w1	waypoints	fleet 8 wp 1 distance	50.0 l.y.
+F08-w1	waypoints	fleet 8 wp 1 travel time	6 years
+F08-w1	waypoints	fleet 8 wp 1 est fuel usage	0mg
+F08-w2	waypoints	fleet 8 wp 2 distance	90.0 l.y.
+F08-w2	waypoints	fleet 8 wp 2 travel time	9 years
+F08-w2	waypoints	fleet 8 wp 2 est fuel usage	0mg
+F08	range	fleet 8 est. range (fuel 20, ideal warp 6)	Infinite
+F09	range	fleet 9 est. range (fuel 23, ideal warp 5)	383 l.y.
+F10	range	fleet 10 est. range (fuel 24, ideal warp 4)	Infinite
+F11	range	fleet 11 est. range (fuel 25, ideal warp 6)	280 l.y.
+F12	range	fleet 12 est. range (fuel 26, ideal warp 7)	226 l.y.
+F13	range	fleet 13 est. range (fuel 27, ideal warp 8)	188 l.y.
+F14	range	fleet 14 est. range (fuel 28, ideal warp 9)	169 l.y.
+F15	range	fleet 15 est. range (fuel 29, ideal warp 10)	175 l.y.
+F16	range	fleet 16 est. range (fuel 30, ideal warp 10)	204 l.y.
+F17	range	fleet 17 est. range (fuel 31, ideal warp 10)	968 l.y.
+F18	range	fleet 18 est. range (fuel 32, ideal warp 6)	Infinite
+F19	range	fleet 19 est. range (fuel 33, ideal warp 5)	Infinite
+F20	range	fleet 20 est. range (fuel 34, ideal warp 10)	430 l.y.
+F21	range	fleet 21 est. range (fuel 35, ideal warp 10)	729 l.y.
+F22	range	fleet 22 est. range (fuel 333, ideal warp 5)	239 l.y.
+P04-0	production	planet 4 item 0 (id 1 x20, 0%)	Unknown
+V04	value	planet 4 value / optimal	100% / 100%
+G04	population	planet 4 population 17200 of 1200000	grow by 2600 to 19800 next year
+M04	value	planet 4 mining rate	1/1/0
+P05-0	production	planet 5 item 0 (id 7 x9, 79%)	1 year
+P05-1	production	planet 5 item 1 (id 8 x30, 0%)	1 - 2 years
+P05-2	production	planet 5 item 2 (id 9 x10, 0%)	2 - 4 years
+V05	value	planet 5 value / optimal	1% / 16%
+G05	population	planet 5 population 181200 of 60000	no growth line
+M05	value	planet 5 mining rate	3/3/3
+V06	value	planet 6 value / optimal	-10% / 53%
+G06	population	planet 6 population 4900 of 60000	planet 6 will kill off approximately 1.0% of your colonists each turn.
+M06	value	planet 6 mining rate	0/0/0
+P11-0	production	planet 11 item 0 (id 8 x1, 59%)	1 year
+P11-1	production	planet 11 item 1 (id 0 x50, 0%)	1 - 8 years
+P11-2	production	planet 11 item 2 (id 2 x50, 0%)	8 - 40 years
+P11-3	production	planet 11 item 3 (id 8 x5, 0%)	40 - 41 years
+V11	value	planet 11 value / optimal	88% / 100%
+G11	population	planet 11 population 79200 of 1056000	grow by 10400 to 89600 next year
+M11	value	planet 11 mining rate	7/7/7
+P12-0	production	planet 12 item 0 (id 11 x1, 25%)	2 years
+P12-1	production	planet 12 item 1 (id 3 x1, 0%)	As Needed
+P12-2	production	planet 12 item 2 (id 7 x8, 99%)	2 - 5 years
+P12-3	production	planet 12 item 3 (id 8 x5, 0%)	5 - 6 years
+V12	value	planet 12 value / optimal	100% / 100%
+G12	population	planet 12 population 34500 of 1200000	grow by 5100 to 39600 next year
+M12	value	planet 12 mining rate	6/6/6
+P15-0	production	planet 15 item 0 (id 7 x197, 69%)	1 - 25 years
+V15	value	planet 15 value / optimal	100% / 100%
+G15	population	planet 15 population 23000 of 1200000	grow by 3400 to 26400 next year
+M15	value	planet 15 mining rate	12/12/12
+V17	value	planet 17 value / optimal	100% / 100%
+G17	population	planet 17 population 28700 of 1200000	grow by 4300 to 33000 next year
+M17	value	planet 17 mining rate	3/3/8
+P18-0	production	planet 18 item 0 (id 7 x1, 9%)	1 year
+P18-1	production	planet 18 item 1 (id 3 x1, 0%)	14 - ??? years
+V18	value	planet 18 value / optimal	68% / 88%
+G18	population	planet 18 population 33000 of 816000	grow by 3400 to 36400 next year
+M18	value	planet 18 mining rate	10/10/10
+P19-0	production	planet 19 item 0 (id 8 x6, 59%)	1 year
+P19-1	production	planet 19 item 1 (id 7 x100, 0%)	1 - ??? years
+V19	value	planet 19 value / optimal	100% / 100%
+G19	population	planet 19 population 46000 of 1200000	grow by 6900 to 52900 next year
+M19	value	planet 19 mining rate	12/12/0
+P21-0	production	planet 21 item 0 (id 7 x5, 24%)	Never
+P21-1	production	planet 21 item 1 (id 8 x3, 0%)	Never
+V21	value	planet 21 value / optimal	100% / 100%
+G21	population	planet 21 population 11500 of 1200000	grow by 1700 to 13200 next year
+M21	value	planet 21 mining rate	0/0/0
+R1	research	resources needed to complete	803
+R2	research	next year's projected research budget	163
+R3	research	estimated time to completion	5 years
+R4	research	annual resources from all planets	578
+R5	research	total resources spent on research last year	107
