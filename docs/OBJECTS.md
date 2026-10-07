@@ -105,7 +105,7 @@ fields of each kind.
   - Frigate with three Speed Trap 20: a 60-mine speed-bump field.
   - Two Mine Dispenser 40 and two Heavy Dispenser 50 on a Mini Mine Layer:
     a standard 160 and a heavy 200, as two fields.
-  - Super Mine Layer doubling: BINARY-ONLY.
+  - Super Mine Layer with two Mine Dispenser 40: 160 (CONFIRMED, OB-024).
 - A fleet with no dispenser of any kind lays nothing and gets a message.
 - **Merging.** Among the owner's fields of the same kind that contain the
   fleet, the one whose centre is nearest takes the new mines, unless it
@@ -118,8 +118,10 @@ fields of each kind.
 - **Duration.** The task carries a duration: "this year only" lays once and
   ends the task (CONFIRMED, OB-002-N); "indefinitely" never ends
   (CONFIRMED, OB-019); 2 to 5 years count down one per year and end after
-  the last (BINARY-ONLY). The fleet's later waypoints stay queued meanwhile
-  (CONFIRMED, OB-019: both waypoints kept for three years).
+  the last. CONFIRMED as a years word `w` laying `w + 1` years for words
+  0–3 (OB-002-N, OB-019-B, OB-025-A, B). The fleet's later waypoints stay
+  queued meanwhile (CONFIRMED, OB-019: both waypoints kept for three
+  years).
 
 ### Decay (CONFIRMED, OB-002, OB-014-A, OB-015, OB-016)
 
@@ -176,11 +178,13 @@ owner as a friend. Stationary fleets are never hit.
 - Destroyed ships' share of cargo is lost; their minerals become salvage
   at the stop point (none at a planet's exact position). A fleet with no
   minerals that loses ships drops `rand(10)` kT of each mineral as salvage
-  (BINARY-ONLY; LEGACY BUG candidate).
+  (MEASURED, OB-024: 0–9 kT per mineral in five fleets; LEGACY BUG
+  candidate).
 - **Mines lost to the hit:** the field of that kind, not owned by a friend,
   whose edge is nearest the stop point, loses `max(10, ⌊N/20⌋)`, or
-  `max(50, ⌊N/100⌋)` when `⌊N/20⌋ > 50`. CONFIRMED for one size: 3000 →
-  2950 before decay (OB-010-S). The victim learns the field. If the field
+  `max(50, ⌊N/100⌋)` when `⌊N/20⌋ > 50`. CONFIRMED: 3000 → 2950 before
+  decay (OB-010-S); heavy 400 → 380 and heavy 6000 → 5940 before decay,
+  speed bump 400 → 380 (OB-024). The victim learns the field. If the field
   owner is SD, it learns the victim's damaged designs (all of its designs
   present if none was damaged).
 
@@ -253,17 +257,20 @@ After laying, every fleet and then every starbase sweeps.
   the year's move; otherwise each coordinate moves by the rounded share.
 - Decay per year by class: 0 none; 1, 2, 3: 10, 25, 50% of each mineral
   (CONFIRMED for classes 2 and 3, OB-003 J, K). A PP owner's packets decay
-  at half those rates, 5, 12 and 25% (BINARY-ONLY). Each non-empty mineral
-  loses at least 10 kT (PP: 5). On the launch year a packet that does not
-  arrive decays half a year. On arrival it decays for the share of the
+  at half those rates, 5, 12 and 25% (CONFIRMED, OB-023: 1000 kT → 950,
+  880, 750). Each non-empty mineral loses at least 10 kT (PP: 5)
+  (CONFIRMED, OB-023: 50 kT of a mineral → 40, PP → 45). On the launch
+  year a packet that does not arrive decays half a year. On arrival it decays for the share of the
   year it flew, but the minimum still applies (CONFIRMED, OB-003-C: a
   class-1 100 kT packet arriving with 5% of a year left lost 10).
 
 ### Impact (CONFIRMED, OB-003, OB-009; marked parts BINARY-ONLY)
 
 Target planet with catcher warp `C` (the planet's own `Dw + t`; 0 if
-unowned or no starbase). Let `w² = W²`, `c² = C²`,
-halved when the target's owner is Interstellar Traveler (BINARY-ONLY).
+unowned or no starbase). Let `w² = W²` and `c² = C²`. When the target's
+owner is Interstellar Traveler, `c² = ⌊C²/2⌋`; `w²` is never halved
+(CONFIRMED, OB-022-D, E). An IT catcher works at half its speed squared in
+every step below, damage included.
 
 1. Caught share, per mille: `q = 1000` if `w² ≤ c²`; `⌊c²·1000/w²⌋` if
    `C > 0`; else 0.
@@ -292,6 +299,8 @@ halved when the target's owner is Interstellar Traveler (BINARY-ONLY).
 
 Vectors (OB-009, growth controlled): 1000 kT at warp 10 into 1000 units, no
 driver, no defenses: 625 killed. Against a Mass Driver 7 catcher: 318.
+IT target (OB-022): no starbase, 625 killed as for any owner; a Mass
+Driver 7 catcher gives `c² = 24`, caught 240‰, surface +324, 475 killed.
 With 50 SDI defenses: 418 killed, defenses 50 → 30. Damage at or above the
 population: uninhabited.
 
@@ -308,7 +317,7 @@ success count toward the PP player's ideal, within the PP player's
 terraform range around the original value (immune axis: half the count
 toward the nearer extreme).
 
-## Stargates (BINARY-ONLY)
+## Stargates (CONFIRMED, OB-021, OB-022, except Jump Gates, friends' gates and range refusal)
 
 A fleet uses gates when its next waypoint's warp is the gate setting.
 
@@ -322,8 +331,10 @@ A fleet uses gates when its next waypoint's warp is the gate setting.
 - **Cargo:** unless the fleet owner is Interstellar Traveler or uses a
   Jump Gate, all ironium, boranium, germanium and colonists are unloaded
   onto the source planet before the jump is checked, so a jump refused for
-  range or mass still empties the hold (LEGACY BUG). Carrying colonists
-  from a planet the fleet owner does not own blocks the jump.
+  range or mass still empties the hold (LEGACY BUG, MEASURED in OB-021: a
+  refused freighter's 100 kT still unloaded; IT kept its cargo in OB-022).
+  Carrying colonists from a planet the fleet owner does not own blocks the
+  jump.
 - **Limits:** range `R` from the source gate only ("any" counts as 8000);
   mass limits `Ms`, `Md` from both gates, compared with each ship's design
   mass. Distance `d` = truncated distance. Refused, with no losses: `d >
@@ -335,9 +346,12 @@ A fleet uses gates when its next waypoint's warp is the gate setting.
 - **Losses** for `0 < pct < 100` (IT: no ships destroyed): each ship is
   destroyed with `rand(100) < ⌊pct/3⌋`; survivors take `max(1,
   ⌊pct·armor/100⌋)` damage each, averaged with old damage (destroyed
-  damaged ships still count in that average: LEGACY BUG candidate). A
-  design with `pct = 100` is lost entirely; if every design is lost, the
-  fleet is gone.
+  damaged ships still count in that average: LEGACY BUG candidate). When
+  one of three identical ships was lost, the fleet's fuel went 100 → 67
+  (MEASURED, OB-021). A design with `pct = 100` is lost entirely; if
+  every design is lost, the fleet is gone. Vectors (OB-021): 5 Laser
+  Destroyers at 13% took 65/500 each; a refused ship over 5× a mass limit
+  did not move and took no damage.
 - Gate travel uses no fuel and crosses no minefields. Landing on a
   wormhole transits it.
 
@@ -363,12 +377,14 @@ bad (Placement).
 Each end separately, in list order:
 
 - Jump chance `pct = clamp(⌊years/5⌋ + class − 2, 0, 6)` percent;
-  `rand(100) < pct` jumps (BINARY-ONLY odds). So class 0, 1, 2 cannot jump
-  before 15, 10, 5 years.
+  `rand(100) < pct` jumps (MEASURED, OB-025: 5 jumps in 60 end-years at
+  6%). So class 0, 1, 2 cannot jump before 15, 10, 5 years (CONFIRMED for
+  class 1, OB-025: no jump in its first three years).
 - **Jump:** years reset to 0; nobody knows the wormhole any more; a new
   position from up to 100 uniform tries over the whole galaxy. MEASURED
   (OB-005-B): a class-2 end at 30 years jumped (−59, −25; years 0) in one
-  of four streams, while its partner jiggled.
+  of four streams, while its partner jiggled. CONFIRMED (OB-025): every
+  jump reset the years and kept the class.
 - **Jiggle:** years +1; up to 100 tries of `(x + rand(25) − 12, y + rand(25)
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
   is rejected. The class never changes.
@@ -390,12 +406,18 @@ placed on the partner end, at the partner's position from before this
 year's wormhole movement. Both ends become known to its owner; other
 players' fleets that were following it lose it. Fuel, mass and stability
 play no part and there is no damage. A fleet that falls short stays in
-normal space. A waypoint on a wormhole its owner no longer knows (after a
-jump) becomes a plain position (BINARY-ONLY).
+normal space.
+
+**Waypoints on a wormhole (CONFIRMED, OB-025-F, OB-027).** A waypoint aimed
+at a wormhole follows it only while the owner knows the wormhole at the
+start of the year. Otherwise, after the wormhole's first move, the
+waypoint becomes a plain position at the wormhole's old position, even if
+the owner sees the wormhole later that year. A jump clears everyone's
+knowledge, so after a jump it always becomes a plain position.
 
 ## Mystery Trader
 
-### Spawn and movement (BINARY-ONLY)
+### Spawn and movement (BINARY-ONLY except where noted)
 
 - From year index 40, with random events on, at the end of production:
   chance 1/2 when `year index mod 100 = 71`, 1/3 when `= 33`, 1/4 when
@@ -415,8 +437,11 @@ jump) becomes a plain position (BINARY-ONLY).
   destination. On arrival it leaves the galaxy if another Trader exists or
   with 1/2; otherwise it stays at the edge, takes warp `max(6, warp − 2) +
   1` and a new destination, and does not move further that year.
+  CONFIRMED (OB-023, OB-026): a warp-9 Trader moved 81 ly; one arriving
+  while another existed was removed; the only Trader stayed, warp 8 → 7,
+  with a new destination on an edge.
 
-### Encounters (CONFIRMED, OB-004; reward details BINARY-ONLY)
+### Encounters (CONFIRMED, OB-004, OB-023, OB-026; marked details BINARY-ONLY)
 
 After battles, each Trader meets every fleet at exactly its position, of
 any owner, whether the fleet targeted it or just ended there. It works
@@ -429,10 +454,11 @@ with random events off (an inserted Trader traded).
   player at the same Trader in the same year was kept.
 - Trading **removes the whole fleet**, ships and cargo.
 - Reward:
-  - a part the player lacks: that part;
+  - a part the player lacks: that part (CONFIRMED, OB-026: the player's
+    Trader part word gained the part's bit; tech unchanged);
   - research (or an offered part already owned): if every tech field is at
     26 (10 for computer players, inferred), with 4/5 a random part not yet
-    owned (else a ship) and with 1/5 nothing; otherwise
+    owned (else a ship) and with 1/5 nothing; otherwise (BINARY-ONLY)
     `L = min(10, 6 + ⌊(cargo − 5000)/1200⌋)` levels, reduced by the sum of
     tech levels `T`: `T ≥ 108` → 1, 96–107 → 2, 84–95 → `L − 3`, 72–83 →
     `L − 2`, 60–71 → `L − 1`. Each level goes with 3/4 to a random field
@@ -441,7 +467,8 @@ with random events off (an inserted Trader traded).
   - a ship: computer players get nothing. One of three Trader designs, 1
     ship (2/3) or 2 (1/3), more after year index 100, at most 5; the new
     fleet has full fuel and the design joins the player's designs (if a
-    design slot and a fleet number are free).
+    design slot and a fleet number are free). CONFIRMED (OB-026): one
+    Nubian at the trade point, added as a new design.
 
 ## Visibility
 
@@ -455,13 +482,12 @@ and nowhere beyond it).
 ## Open experiments
 
 1. Packet launch: warp, class, amounts, same-year merge, the launch-year
-   half move; PP decay rates and terraforming; IT and AR targets.
-2. Wormhole jump odds over many streams; what a jump does to fleets heading
-   for the wormhole.
-3. Mystery Trader spawn, path, part and ship rewards.
-4. Minefield hit odds per ly and mines lost for other field sizes; heavy
-   and speed-bump detonation; the Super Mine Layer doubling.
-5. Stargates: every rule above.
+   half move; PP terraforming; AR targets.
+2. Wormhole jump odds as a measured rate (one stream so far).
+3. Mystery Trader spawning; its leaving with 1/2 at an edge; research
+   rewards.
+4. Minefield hit odds per ly as a rate; heavy and speed-bump detonation.
+5. Stargates: Jump Gates, friend-owned gates, refusal for range.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.
