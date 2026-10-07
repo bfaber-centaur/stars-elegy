@@ -3301,6 +3301,13 @@ at its planet. These agree with the XF-1 observation of the combat oracle
 lane (colonists lost with 0x058 at a foreign homeworld and 0x002 at an
 unowned planet; minerals added), which had no committed prediction.
 
+### Round 6: bombing message variants (TK-601 to TK-606)
+
+Status: predictions committed before the run (`experiments/tk/gen6.py`,
+`experiments/tk/README.md` "Round 6 predictions"). Targets the bombing
+texts `docs/MESSAGES.md` lists as BINARY-ONLY: one installation killed,
+installations only behind defenses, the plural texts, and plural retro.
+
 ### Not tested
 
 Cargo given by hand to another player's fleet: TK-406 to TK-409, TK-413

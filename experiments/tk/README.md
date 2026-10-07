@@ -1577,3 +1577,34 @@ Every planet outcome and every drop message held (TK-401..404, TK-410..411).
 TK-405 and TK-412 put the ironium on the surface but sent no 0x042/0x044:
 a gift to a planet is silent. Raw files, order files and screenshots are in
 apparatus `evidence/tk5/`.
+
+## Round 6 predictions: bombing message variants
+
+`gen6.py` writes `tk601.spec` (one pinned year, cycles 20000, Combat Lab
+base). It aims at bombing texts that `docs/MESSAGES.md` still lists as
+BINARY-ONLY. Which text is sent depends on the installations killed (T),
+the colonists killed (K), whether defenses reduced the bombs, and whether
+the attacker has a second fleet at the planet (plural texts). Player 1 has
+energy 16 (Planetary Shield). `python3 experiments/tk/check6.py RUNDIR`
+reads `RUNDIR/tk601/run-20000/`.
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-601 | one LBU-17 bomber at player 1 planet 13: P 500, one factory, nothing else | planet 13: owner 1, factories 0; 0x063 to player 0 (fleet, planet, colonists killed 1 or 2, 1 installation); 0x06d to player 1 |
+| TK-602 | as TK-601 at player 1 planet 2, plus a player 0 Freighter (plan Nobody) in orbit | planet 2: owner 1, factories 0; 0x169 to player 0; 0x173 to player 1 |
+| TK-603 | one LBU-17 bomber at player 1 planet 14: P 1500, defenses 100, factories 10, mines 10 (69 defenses count after growth, s 0.122) | planet 14: owner 1, pop 1725; 0x067 to player 0 (fleet, planet, 9 installations, defenses stopped a share); no colonists killed; 0x071 to player 1 |
+| TK-604 | as TK-603 at player 1 planet 3, plus a player 0 Freighter (plan Nobody) | planet 3: owner 1, pop 1725; 0x16d to player 0; 0x177 to player 1 |
+| TK-605 | one LBU-17 bomber and a Freighter at player 1 planet 16: P 500, one defense, nothing else | planet 16: owner 1, defenses 0; 0x16e to player 0 (colonists killed, 1 installation, defenses stopped a share); 0x178 to player 1 |
+| TK-606 | three Retro1 bombers and a Freighter at player 1 planet 9: P 87, environment 55/47/52, original 50/50/50 | planet 9: owner 1, env [52, 50, 50]; 0x17a to player 0 (fleet, planet, clicks); no damage message; 0x17b to player 1 |
+
+Predicted never sent (reading, not a run): the texts for "installations
+killed, no colonists killed, no defenses" (0x061, 0x062, owner 0x06b,
+0x06c, plural 0x167, 0x168, 0x171, 0x172) and for "one installation, no
+colonists, defenses" (0x066, 0x070, 0x16c, 0x176). Without defenses any
+bomb that kills installations also has a colonist kill rate, and a
+non-zero rate kills at least one colonist. With defenses the rate can
+round to zero (TK-603), but the installation kill then stays at 2 or
+more (at least 8 for an LBU-17, 2 to 3 for a Multi Contained Munition
+behind 100 Neutron Shields); the bombs that kill 2 installations
+(Lady Finger, Hush-a-Boom) keep a colonist kill unless coverage reaches
+99.8% or 98.3%, and 100 Neutron Shields give 97.9%.
