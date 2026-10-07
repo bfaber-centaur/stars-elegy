@@ -20,9 +20,9 @@ Status tags follow `PARITY.md`:
 - **NEVER SENT**: a message kind exists but no reachable path sends it.
 
 Sources: a private read of every place the original sends a message (387
-kinds, ids 0x000–0x182), checked against 16,637 message records decoded from
-the oracle turn files of the CB, CS, FM, FO, KX, OB, PG, PQ, TK and minefield
-runs. Every record decoded cleanly with the slot counts given here.
+kinds, ids 0x000–0x182), checked against 22,707 message records decoded from
+the oracle turn files of every apparatus corpus (CB, CS, FM, FO, KX, MF, MG,
+OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot counts given here.
 
 ## How messages work (BINARY-ONLY unless marked)
 
@@ -96,8 +96,9 @@ runs. Every record decoded cleanly with the slot counts given here.
 |---|---|
 | P0 | new game creation |
 | P1 | step 1, orders applied |
-| P1a | checks after the orders: registration, race legality, fleets following fleets |
+| P1a | checks after the orders: registration, fleets following fleets |
 | P2 | step 2, waypoint tasks before movement |
+| P2a | race check in a running game, after the waypoint tasks and before movement |
 | P3 | step 3, movement (objects, then fleets) |
 | P3a | minefield detonation, after movement |
 | P3b | Inner Strength colonists breeding in transit |
@@ -137,9 +138,9 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x105 | A fleet lost part of its mineral cargo (registration penalty) | Same fleet roll, other 11/12: if the fleet carries minerals, each mineral loses trunc(amount × p / 100), at least 1, with p = 10–20% drawn once per fleet | fleet owner | fleet, percent | special: registration dialog (inferred) | P7a | BINARY-ONLY |
 | 0x106 | Mines on a planet were destroyed (registration penalty) | Same gate. Each planet of a flagged player that has mines: 1/8 chance to lose trunc(mines × p / 100), at least 1, p = 5–35%. Then no 0x107 roll for that planet that year | planet owner | planet, count | special: registration dialog (inferred) | P7a | BINARY-ONLY |
 | 0x107 | Minerals were stolen from a planet (registration penalty) | Same gate, if 0x106 did not fire: 1/15 chance; one random mineral loses trunc(stock × p / 100), p = 5–45%, at most 30000 kT | planet owner | planet, kT, mineral | special: registration dialog (inferred) | P7a | BINARY-ONLY |
-| 0x117 | The player's race was found illegal and has been adjusted | New game: a human race with a negative advantage-point total, replaced by the default race. Running game: a human race whose advantage points are below 0 is adjusted step by step until the total is 500 or more (first fewer resources per colonist, then lower growth, then cheaper research costs are removed). Not sent to computer players during a running game | that player | - | none | P0 / P1a | CONFIRMED (apparatus #27, rd/rp12; ob/prt-legality, tk2/smoke, kx003) |
+| 0x117 | The player's race was found illegal and has been adjusted | New game: a human race with a negative advantage-point total, replaced by the default race. Running game: a human race whose advantage points are below 0 is adjusted step by step until the total is 500 or more (first fewer resources per colonist, then lower growth, then cheaper research costs are removed). Not sent to computer players during a running game | that player | - | none | P0 / P2a | CONFIRMED (apparatus #27, rd/rp12; ob/prt-legality, tk2/smoke, kx003) |
 | 0x138 | A fleet told to follow a fleet that did not move is waiting for orders | Before movement: a fleet whose only order is to follow another fleet, when that fleet no longer exists, or has no orders of its own and is not following anyone. A follower of a fleet with orders takes over its next waypoint (no message). Chains of followers are resolved over up to 8 passes. Circular chains get no message | fleet owner | fleet | fleet | P1a | CONFIRMED (fo/fo04) |
-| 0x182 | Another player's race was found illegal and adjusted | Same trigger as 0x117. Sent only if the offender is not a computer player | every other player | player | none | P0 / P1a | CONFIRMED (apparatus #27, rd/rp12; ob/prt-legality, tk2/smoke, kx003) |
+| 0x182 | Another player's race was found illegal and adjusted | Same trigger as 0x117. Sent only if the offender is not a computer player | every other player | player | none | P0 / P2a | CONFIRMED (apparatus #27, rd/rp12; ob/prt-legality, tk2/smoke, kx003) |
 
 ### Waypoint tasks, cargo and ground combat
 
@@ -161,10 +162,10 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x00d | Your colonists landed on the planet were wiped out in the fighting | Capture with several attackers, sent to those who did not win | each losing attacker | planet | planet | P2, P6c | BINARY-ONLY |
 | 0x02b | Fleet loaded this much cargo from a location | Load task: any amount > 0 taken from an own planet, own or friendly fleet, salvage, or (by a fleet able to steal) a foreign planet; also fuel load-optimal when the net fuel change is a gain | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
 | 0x02c | Fleet took colonists aboard from a location | Load task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo01) |
-| 0x02d | Fleet unloaded this much cargo to a location | Unload task, amount accepted > 0 (unloads to an enemy player's fleet move nothing, silently); also fuel load-optimal dumping surplus fuel | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo04) |
+| 0x02d | Fleet unloaded this much cargo to a location | Unload task, amount accepted > 0 (unloads to an enemy player's fleet move nothing, silently); also fuel load-optimal dumping surplus fuel | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo04; fuel form mg/mg003) |
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
-| 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement: fuel below the estimated need, but tanks are big enough | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | BINARY-ONLY |
-| 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | BINARY-ONLY |
+| 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement: fuel below the estimated need, but tanks are big enough | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
+| 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
 | 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet or planet ordered by hand: destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
 | 0x044 | Your object received cargo from another player | Counterpart of 0x042 | receiving object's owner | object, amount, mineral, object | destination | P2 | BINARY-ONLY |
@@ -244,7 +245,18 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 - Invasion results go out in player-number order. The defender gets one 0x003/0x004 per attacking player. In a capture, 0x00c/0x00d go out before 0x007.
 - LEGACY BUG? Fuel given by hand to another player gets the colonist-worded variants (0x043/0x045/0x047/0x049/0x04b/0x04d), so a fuel shortfall is reported as colonists lost in space. Colonists given to another player's fleet get the mineral wording.
 - LEGACY BUG? When one fleet lays two mine types in one turn, a merge into an existing field for the first type can make the second type's new field be reported as 0x0c4 (added) instead of 0x0c3.
-- Open (BINARY-ONLY): load-optimal fuel looks as if it never actually takes on fuel. It only dumps surplus or reports 0x03c/0x03d/0x126, so the fuel-gain form of 0x02b may never occur. Needs an oracle check.
+- **Load-optimal fuel (MEASURED, MG-002..004).**
+  - It never took on fuel in any case.
+  - With an own fleet as the target (MG-003), it behaved as read:
+    - fuel short of the next leg's need, tanks big enough: 0x03c with the shortfall, and the fleet stayed put;
+    - tanks smaller than the need: 0x03d with capacity and need, and the fleet stayed put;
+    - fuel above the need: the surplus went to the target fleet (0x02d), and the fleet kept the need for a 20-ly leg.
+  - With a planet as the target, the order did nothing in all 7 cases:
+    - own planets with and without a starbase, and an unowned planet on arrival;
+    - no message, fuel unchanged, and the fleet left on its next leg.
+    - That includes the stationary case, where a fleet target got all the fuel (FO-02 Q).
+  - The planet behavior is not explained by the binary reading yet (open).
+  - 0x126 and the fuel-gain form of 0x02b were not seen.
 - Open: a hand-ordered colonist transfer that cannot be carried out in full looks as if it fails the whole order file, which would stop turn generation. Needs an oracle check.
 - 0x0dd, 0x0db and 0x0dc go to the owner of the object the order names as the source, which need not be the player who wrote the order.
 - Stealing tells only the thief; the victim gets no message from this step.
@@ -274,7 +286,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x0e2 | Stargate jump failed: no gate at the destination. | Gate order to a planet without a stargate. Applies even if the fleet carries a jump gate. | fleet owner | fleet, planet (shown as the departure gate, but holds the destination; see Notes), location (destination planet) | fleet | P3 movement | CONFIRMED (ob/ob021); LEGACY BUG (the departure slot held the destination) |
 | 0x0e3 | Stargate jump failed: destination out of range. | Distance is more than 5× the range of the departure gate. No jump, no losses (cargo already dropped, see 0x0ec). | fleet owner | fleet, planet (where the fleet is), planet (destination) | fleet | P3 movement | BINARY-ONLY |
 | 0x0e4 | Stargate jump failed: a ship type is too heavy. | Some ship design in the fleet weighs more than 5× the mass limit of either gate (range is checked first). Names the first such design. No jump. | fleet owner | fleet, planet (departure), planet (destination), design | fleet | P3 movement | CONFIRMED (ob/ob021); LEGACY BUG? (design slot has no owner) |
-| 0x0e5 | Stargate jump blocked by the destination owner. | The destination gate belongs to a player who is neither you nor a friend. | fleet owner | fleet, planet, planet, planet (all three hold the destination) | fleet | P3 movement | BINARY-ONLY, LEGACY BUG? |
+| 0x0e5 | Stargate jump blocked by the destination owner. | The destination gate belongs to a player who is neither you nor a friend. | fleet owner | fleet, planet, planet, planet (all three hold the destination) | fleet | P3 movement | CONFIRMED (mg/mg001); LEGACY BUG (all three planet slots held the destination) |
 | 0x0e6 | Stargate refused at the departure planet. | The departure gate belongs to a player who is neither you nor a friend. | fleet owner | fleet, planet (departure), planet (departure) | fleet | P3 movement | CONFIRMED (ob/ob021) |
 | 0x0e7 | A fleet vanished in a stargate jump. | Every ship in the fleet was lost in an overloaded jump (beyond range or mass limits). Either every design was past the point of no survival, or all were killed in the random losses. The fleet is gone. | fleet owner | fleet, planet (departure), planet (destination) | fleet | P3 movement | BINARY-ONLY |
 | 0x0e8 | Gate jump made, a few ships lost. | An overloaded jump succeeded with L ships lost (0 < L < 65536) and L < T/4 (T = ships before the jump, integer division). | fleet owner | fleet, planet (departure), planet (destination), count (L) | fleet | P3 movement | BINARY-ONLY |
@@ -316,7 +328,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 
 | Id | What the player is told | Sent when | To | Slots | Focus | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| 0x023 | colonists on the planet are all gone; planet lost | an owned planet ends population growth at 0 colonists (it shrank to 0 this year); the planet becomes unowned | planet owner (not AR) | planet | planet | P4a | BINARY-ONLY; LEGACY BUG? (see Notes) |
+| 0x023 | colonists on the planet are all gone; planet lost | an owned planet ends population growth at 0 colonists (it shrank to 0 this year); the planet becomes unowned | planet owner (not AR) | planet | planet | P4a | CONFIRMED (mg/mg002); LEGACY BUG (see Notes) |
 | 0x024 | AR variant of 0x023: orbiting colonists gone, starbase and planet lost | as 0x023, owner is Alternate Reality | planet owner (AR) | planet | planet | P4a | BINARY-ONLY |
 | 0x025 | population fell from old to new value | owned planet's population shrinks this year but stays above 0, and the planet's hab value for the owner is negative | planet owner | planet, colonists (old), colonists (new) | planet | P4a | CONFIRMED (cb5/cb037-owner, ob/ob007) |
 | 0x026 | population fell by an amount because of overcrowding | as 0x025 but hab value ≥ 0 (planet over capacity) | planet owner | planet, colonists (loss) | planet | P4a | CONFIRMED (kx002) |
@@ -326,15 +338,15 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x032 | several new ships built and sent along the route | as 0x031 with 2 or more ships | planet owner | planet, count, design, planet (route target) | fleet (new) | P4 | CONFIRMED (sl/sltool) |
 | 0x033 | one new ship built but not sent along the route (not enough fuel) | as 0x031 but the route leg got speed 0 | planet owner | planet, design, planet (route target) | fleet (new) | P4 | BINARY-ONLY |
 | 0x034 | several new ships built but not routed (fuel) | as 0x033 with 2 or more ships | planet owner | planet, count, design, planet (route target) | fleet (new) | P4 | BINARY-ONLY |
-| 0x035 | one factory built | exactly 1 factory installed on the planet this year (summed with earlier single-factory messages of the same year) | planet owner | planet | planet | P4 | CONFIRMED (kx001, pq001) |
-| 0x036 | N factories built | factories installed this year total > 1 by the merge rule in Notes | planet owner | count, planet | planet | P4 | CONFIRMED (kx001, kx002, pq001); LEGACY BUG? (split totals) |
+| 0x035 | one factory built | exactly 1 factory installed on the planet this year (summed with earlier single-factory messages of the same year) | planet owner | planet | planet | P4 | CONFIRMED (kx001, pq001, mg/mg002) |
+| 0x036 | N factories built | factories installed this year total > 1 by the merge rule in Notes | planet owner | count, planet | planet | P4 | CONFIRMED (kx001, kx002, pq001, mg/mg002); LEGACY BUG (split totals, mg/mg002) |
 | 0x037 | one mine built | as 0x035 for mines | planet owner | planet | planet | P4 | BINARY-ONLY |
 | 0x038 | N mines built | as 0x036 for mines | planet owner | count, planet | planet | P4 | CONFIRMED (kx001, kx002, pq001); LEGACY BUG? |
 | 0x039 | one defense built | as 0x035 for defenses | planet owner | planet | planet | P4 | BINARY-ONLY |
 | 0x03a | N defenses built | as 0x036 for defenses | planet owner | count, planet | planet | P4 | CONFIRMED (kx001, kx002, pq001); LEGACY BUG? |
 | 0x03e | planet finished its orders; queue now empty | after the planet's queue is processed: the queue became empty, or production reached the end of the queue with no auto item held back by missing minerals. Not sent when production stopped on an unfinished regular item, or when the planet made 0 resources | planet owner | planet | planet | P4 | CONFIRMED (cb6/cltool) |
 | 0x03f | planet has no production queue | every year for every owned planet with no queue | planet owner | planet | planet | P4 | CONFIRMED (cb5/cb035-prevbattle, KX-004, many sets) |
-| 0x040 | colonists left the planet; planet lost | an owned planet already has 0 colonists when population growth runs; planet becomes unowned. Which of 0x040/0x023 is used depends on the previous planet (see Notes) | planet owner (not AR) | planet | planet | P4a | BINARY-ONLY; LEGACY BUG? |
+| 0x040 | colonists left the planet; planet lost | an owned planet already has 0 colonists when population growth runs; planet becomes unowned. Which of 0x040/0x023 is used depends on the previous planet (see Notes) | planet owner (not AR) | planet | planet | P4a | CONFIRMED (mg/mg002); LEGACY BUG (see Notes) |
 | 0x041 | AR variant of 0x040: colonists left the starbase; planet lost | as 0x040, owner is Alternate Reality | planet owner (AR) | planet | planet | P4a | BINARY-ONLY |
 | 0x04f | starbase could not build a ship because the design is gone | a ship design order completes at a planet with a starbase but the design was deleted or can no longer be built; resources are spent and the order is dropped | planet owner | planet, count | planet | P4 | BINARY-ONLY; LEGACY BUG? (slots filled wrongly) |
 | 0x07b | terraforming moved one hab axis up or down to a new value | each terraform unit completed (regular or auto terraform): one click on the best axis; one message per click. A unit with no useful axis is used up with no message | planet owner | planet, value (1 up / 0 down), hab, hab value | planet | P4 | CONFIRMED (kx002) |
@@ -375,9 +387,18 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 - A planet that makes 0 resources this year skips its queue entirely: no limit, cancel or completion messages.
 - 0x03e can come in the same year as a cancel message (0x0b9, 0x129, 0x12a, 0x12f) when that cancel empties the queue. Inferred, not yet observed: a queue holding only auto orders that all finish sends 0x03e every year.
 - 0x08c is sent once per queue order that produced alchemy, so one planet can get several in a year. Alchemy paid into an unfinished partial unit is not counted.
-- Merging of build counts (0x035–0x03a): when a planet builds the same installation twice in one year, earlier *single-unit* messages are removed and added into the new count. Plural messages are not merged, so 3 then 2 factories gives two messages (3 and 2) instead of one with 5. LEGACY BUG? (display only).
+- Merging of build counts (0x035–0x03a): when a planet builds the same installation twice in one year, earlier *single-unit* messages are removed and added into the new count. Plural messages are not merged. LEGACY BUG (display only), CONFIRMED in MG-002 (two factory items on one planet):
+  - 3 then 2 gave two 0x036 messages (3 and 2);
+  - 1 then 4 gave one 0x036 with 5;
+  - 2 then 1 gave 0x036 with 2, then 0x035;
+  - 1 then 1 gave one 0x036 with 2.
 - 0x04f looks wrong: the first slot holds the design's slot number plus 1, not the planet. The message probably names an unrelated planet (the one whose number equals that value) and shows type 0. LEGACY BUG? (not observed). A starbase design that is gone fails without any message, and so does a ship order at a planet with no starbase.
-- 0x040 vs 0x023 (and 0x041 vs 0x024): a planet that dies out during growth gets 0x023/0x024 and no 0x025/0x026. For a planet that already had 0 colonists, the choice uses a value left over from the previous planet processed: 0x023 if that planet shrank, else 0x040. So the "left" message can show up as "died". LEGACY BUG? (inferred). Open question: when an owned planet can still have 0 colonists at this point.
+- 0x040 vs 0x023 (and 0x041 vs 0x024): a planet that dies out during growth gets 0x023/0x024 and no 0x025/0x026. For a planet that already had 0 colonists, the choice uses a value left over from the previous planet processed: 0x023 if that planet shrank, else 0x040. So the "left" message can show up as "died". LEGACY BUG, CONFIRMED in MG-002 (both streams):
+  - planet 3 (0 colonists) after planet 2 shrank from overcrowding: 0x023;
+  - planet 6 (0 colonists) after planet 5 grew: 0x040;
+  - planet 0, the first planet: 0x040.
+  - A packet that hits an owned empty planet also leads to this (MG-001-C: 0x181, then 0x040).
+  - Open question: other ways an owned planet can reach this point with 0 colonists.
 - Comet strike (P4c): 1 in 20 chance per year. The planet is chosen at random. It is protected while the game is in its first 10 years, and while the planet is owned with more than 5,000 colonists before year 20. Severity is chosen at random: small, medium, large or huge, each 1/4. A non-AR owner loses trunc(pop × (25, 45, 65, 85)% ) colonists. MEASURED in KX-004: 9237 → 6928, 5081, 1386; 8110 → 2839. Every mineral gains a little surface mineral. One, two or three randomly chosen minerals gain a lot more, and their concentration rises by 50–99 (huge: 65–128), capped at 200. Hab axes are changed in fixed order (gravity, then temperature, then radiation): small changes one axis, medium two, large and huge all three. Each changes by ±3–5 (huge ±6–10), applied to both the current and the original value, clamped to 1–99. Regular build orders are removed and no 0x0fd is sent. An unowned planet can be hit; then every player gets 0x083–0x086.
 - Comet axis names (0x087, 0x088): the axes named in the message come from a separate random shuffle, not from the axes actually changed. KX-004 S2: a small comet changed gravity (+4) but the message named radiation. LEGACY BUG? For large and huge comets all three axes change, so only the naming order is arbitrary.
 - Climate change (0x0fd): 1 in 20 chance per year, random planet. It has the same protection for large owned planets before year 20, but no 10-year minimum (KX-004 S3: unowned planet changed in year 5 while a comet was suppressed). Shift on one random axis: ±4 or ±5 (1/3 each), or ±6, ±7, ±8 (1/9 each). It is applied to both the current and the original value. The message comes only if the planet is owned; regular build orders are removed either way.
@@ -574,18 +595,24 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x118 | The trader will not trade with you again | Fleet with ≥ 5,000 kT minerals at the trader's position, and its owner has already traded with this trader | fleet owner | fleet | fleet | P6b object encounters (trader, salvage) | CONFIRMED (ob/ob004) |
 | 0x12b | A Mystery Trader has appeared and is offering a trade | A trader is created: game year index ≥ 40 and random events on; chance 1/2 when year mod 100 = 71, 1/3 when = 33, 1/4 when year mod 128 = 49, otherwise 1/7 in even years and none in odd years; nothing is sent if the game has no room for another object | every player | object (trader) | special: trader (inferred) | P4c random events | CONFIRMED (kx004) |
 | 0x130 | The Mystery Trader changed speed and maybe course | Trader moving before fleet movement, trader warp ≤ 12, 1-in-25 chance: warp +1, and with a further 1/3 a new destination on a random edge of the map; the trader then moves at the new warp | every player | object (trader) | special: trader (inferred) | P3 movement | CONFIRMED (WT batch, warp 8 → 9) |
-| 0x131 | Your packet permanently shifted a planet's base environment | PP packet not fully caught; for each mineral (ironium → gravity, boranium → temperature, germanium → radiation, inferred from order) every 100 kT of the uncaught part has a min(kT, 100)/200 chance to terraform, and each success has a 1/10 chance to be permanent; the permanent count moves the original value toward the PP player's ideal (or toward the nearer end for an immune axis); sent when that move is not zero; owned and unowned planets | packet owner | value (raised/lowered), hab, planet, count (clicks) | planet | P3 movement; P5 objects after production | BINARY-ONLY |
-| 0x132 | A packet permanently shifted a planet's base environment (text written for the planet owner) | As 0x131, when another player owns the planet | packet owner (see Notes) | value (raised/lowered), hab, planet, count (clicks) | planet | P3 movement; P5 objects after production | BINARY-ONLY; LEGACY BUG? |
-| 0x133 | Your packet terraformed a planet's environment | PP packet with at least one terraform success on an axis, the PP player's own terraforming tech allows improving that planet, and the change is not zero: the current value moves by the success count toward the PP player's ideal, limited by the PP player's terraform range (immune axis: half the count toward the nearer end) | packet owner | value (raised/lowered), hab, planet, value (new environment value) | planet | P3 movement; P5 objects after production | BINARY-ONLY |
-| 0x134 | A packet terraformed a planet's environment (text written for the planet owner) | As 0x133, when another player owns the planet | packet owner (see Notes) | value (raised/lowered), hab, planet, value (new environment value) | planet | P3 movement; P5 objects after production | BINARY-ONLY; LEGACY BUG? |
+| 0x131 | Your packet permanently shifted a planet's base environment | PP packet not fully caught; for each mineral (ironium → gravity, boranium → temperature, germanium → radiation, inferred from order) every 100 kT of the uncaught part has a min(kT, 100)/200 chance to terraform, and each success has a 1/10 chance to be permanent; the permanent count moves the original value toward the PP player's ideal (or toward the nearer end for an immune axis); sent when that move is not zero; owned and unowned planets | packet owner | value (raised/lowered), hab, planet, count (clicks) | planet | P3 movement; P5 objects after production | CONFIRMED (mg/mg001) |
+| 0x132 | A packet permanently shifted a planet's base environment (text written for the planet owner) | As 0x131, when another player owns the planet | packet owner (see Notes) | value (raised/lowered), hab, planet, count (clicks) | planet | P3 movement; P5 objects after production | CONFIRMED (mg/mg001); LEGACY BUG (went to the packet owner; the planet owner got none) |
+| 0x133 | Your packet terraformed a planet's environment | PP packet with at least one terraform success on an axis, the PP player's own terraforming tech allows improving that planet, and the change is not zero: the current value moves by the success count toward the PP player's ideal, limited by the PP player's terraform range (immune axis: half the count toward the nearer end) | packet owner | value (raised/lowered), hab, planet, value (new environment value) | planet | P3 movement; P5 objects after production | CONFIRMED (mg/mg001) |
+| 0x134 | A packet terraformed a planet's environment (text written for the planet owner) | As 0x133, when another player owns the planet | packet owner (see Notes) | value (raised/lowered), hab, planet, value (new environment value) | planet | P3 movement; P5 objects after production | CONFIRMED (mg/mg001); LEGACY BUG (went to the packet owner; the planet owner got none) |
 | 0x146 | A packet hit your planet but did no damage | Packet reaches an owned planet with no catcher able to slow it (no driver, or IT owner with catch warp 1), and the damage rounds to 0 or the owner is AR | target planet owner | planet, player (packet owner), kT | planet | P3 movement; P5 objects after production | BINARY-ONLY |
 | 0x14f | The trader took your fleet and gave you some of its own ships | Trade whose reward is a ship (the trader's item is a ship, or no part you lack was found in 25 random tries); human players only (inferred); you have a free design slot (or an identical design) and fewer than 512 fleets. Ships: 1 (2/3) or 2 (1/3), plus Random(year/100 + 1) after year 100 (unless a game option turns it off, inferred), at most 5, then up to the same number again for the two larger designs | fleet owner | fleet, count (ships) | fleet (the new fleet) | P6b object encounters (trader, salvage) | CONFIRMED (ob/ob026) |
 | 0x150 | The trader took your fleet and offered a ship reward that could not be delivered (no free design slot or fleet limit) | Ship reward with no free design slot, or 512 fleets already, or the new fleet could not be created | fleet owner | fleet | none | P6b object encounters (trader, salvage) | BINARY-ONLY |
-| 0x181 | A packet hit your planet, but nobody lived there | Owned non-AR planet with no colonists, damage > 0 | target planet owner | planet, kT (holds the packet owner number, see Notes), player (always player 1, see Notes) | planet | P3 movement; P5 objects after production | BINARY-ONLY; LEGACY BUG? |
+| 0x181 | A packet hit your planet, but nobody lived there | Owned non-AR planet with no colonists, damage > 0 | target planet owner | planet, kT (holds the packet owner number, see Notes), player (always player 1, see Notes) | planet | P3 movement; P5 objects after production | CONFIRMED (mg/mg001); LEGACY BUG (the kT slot held 0, not the 1,200 kT that hit) |
 
 - Order within one object pass: objects go by kind (minefields, packets, wormholes, trader) and then by owner and number. For each packet the PP environment messages come first (permanent then current, axis by axis), then the impact message. The trader messages 0x130/0x0c0 come after all packet messages in that pass.
-- **LEGACY BUG? 0x132/0x134:** the text is written for the planet's owner, but the binary sends it to the packet's owner. A PP player who terraforms another player's planet gets two messages per change (0x131 + 0x132, or 0x133 + 0x134), and the planet owner gets neither. Oracle test: a PP packet into an uncaught foreign planet; compare both players' message lists.
-- **LEGACY BUG? 0x181:** the stored values do not match the text. The kT amount shown is the packet owner's player number, and the sender is always player 1 (nothing is shown when the viewer is player 1). This is easy to check with a packet aimed at an owned planet that has no colonists.
+- **LEGACY BUG 0x132/0x134 (CONFIRMED, MG-001-A).** The text is written for the planet's owner, but the binary sends it to the packet's owner.
+  - A PP player who terraforms another player's planet gets two messages per change (0x131 + 0x132, or 0x133 + 0x134), and the planet owner gets neither.
+  - MG-001-A sent a PP packet into player 1's planet. Player 0 got 0x133 + 0x134 on all three axes, and in one stream 0x131 + 0x132 as well. Player 1 got only the impact message 0x0d8.
+  - The same packet into an unowned planet gave 0x133 alone (MG-001-B).
+  - Observed slots, for example (1, 0, planet, 31): raised, gravity, planet, new value. The current environment went from 30/70/30 to 31/68/32.
+- **LEGACY BUG 0x181 (CONFIRMED, MG-001-C).** The stored values do not match the text.
+  - A 1,200 kT packet hit player 1's empty planet 23, and the slots were (23, 0, 0, 0). The amount slot held 0, not 1,200.
+  - The binary reads the amount as the packet owner's number and the sender as always player 1. The packet owner here was player 0, so this run cannot tell those readings from a constant 0.
 - 0x0d5 (caught) can also appear for a packet that was only partly caught when the damage rounds to 0 or the owner is AR. An IT planet with catch warp 1 counts as having no catcher for wording (0x146, 0x0d8, 0x0d9).
 - When a packet hits an unowned planet, nobody gets an impact message. The PP launcher still gets 0x131/0x133.
 - 0x109/0x10a report the number of level steps the trader planned, not the levels actually gained. The gift stops early once your lowest field reaches the cap, and one step can give more than one level.
@@ -614,12 +641,11 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Evidence
 
-- 358 rows cover all 387 kinds (some rows cover a range). 154 rows are
+- 358 rows cover all 387 kinds (some rows cover a range). 183 rows are
   CONFIRMED by at least one oracle run. The rest are BINARY-ONLY.
-- The oracle records come from the existing corpora (apparatus `evidence/`
-  cb, cb4, cb4b, cb5, cb6, cs, fm000–fm004, fm2, fo, kx001–kx004, ob, pg,
-  pq001, tk, tk2, and the minefield runs of apparatus #27). 148 distinct
-  kinds appear in them. Each was checked against its row: slots in that
+- The oracle records come from every corpus in apparatus `evidence/`
+  (22,707 message records, including the MG batch of apparatus #32). 177
+  distinct kinds appear in them, and every one has a CONFIRMED row. Each was checked against its row: slots in that
   order, sent to that player's file, and the trigger present in the run.
 - The minefield facts are CONFIRMED by stars-elegy #47 and apparatus #27:
   - hit messages report damage before shields;
@@ -633,29 +659,29 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 - Run the decoder on any dump with `python3 tools/fleetlab/events.py
   DUMP...`.
 
-## LEGACY BUG? summary
+## LEGACY BUG summary
 
-These kinds are sent with a recipient or slots that do not fit the
+Items marked (CONFIRMED) were seen in oracle runs; the rest are LEGACY BUG? from the binary. These kinds are sent with a recipient or slots that do not fit the
 message's own meaning, or are never sent although their siblings are. Each
 row above says what happens.
 
 - **Wrong recipient:**
-  - 0x132 and 0x134 go to the packet owner instead of the planet owner.
+  - 0x132 and 0x134 go to the packet owner instead of the planet owner (CONFIRMED, MG-001).
   - 0x0f0 and 0x0f1 have their texts swapped between the two kinds of
     watcher.
 - **Wrong slots:**
-  - 0x0e2 and 0x0e5 name the destination gate where the origin belongs.
+  - 0x0e2 and 0x0e5 name the destination gate where the origin belongs (CONFIRMED, OB-021 and MG-001).
   - 0x0e4 names a design without its owner.
   - 0x04f puts a design number in the planet slot.
-  - 0x181 puts a player number in the amount slot.
+  - 0x181 does not carry the packet's kT (CONFIRMED, MG-001).
   - 0x087 and 0x088 name hab axes from a different shuffle than the ones
     changed (KX-004).
   - 0x043–0x04d use colonist wording for fuel.
 - **Wrong choice:**
-  - 0x023 or 0x040 depends on the planet processed just before.
-  - 0x036, 0x038 and 0x03a are not merged with each other.
+  - 0x023 or 0x040 depends on the planet processed just before (CONFIRMED, MG-002).
+  - Plural build counts (0x036, 0x038, 0x03a) are not merged (CONFIRMED for factories, MG-002).
   - 0x0fa uses an observer test that depends on player numbers (CONFIRMED as the `COMBAT.md` CB-037 rule).
-  - 0x180 is never sent in 2-player battles.
+  - 0x180 is never sent in 2-player battles (CONFIRMED, CB-039 and CB-042).
   - 0x13e uses a scrap text for a trader reward.
 - **Never sent:**
   - 0x065, 0x06f, 0x16b and 0x175: bombing that kills only colonists has
@@ -669,11 +695,9 @@ row above says what happens.
   - a missing origin planet after a fleet's own jump gate from deep space;
   - a fleet that was destroyed in the same step;
   - coordinates given for a battle at a planet.
-- **Follow-up oracle batch.** These cheap discriminating checks are listed
-  in the private predictions (stars-decomp `docs/messages-predictions.md`):
-  - 0x132/0x134 recipient;
-  - the 0x181 slots;
-  - the 0x023/0x040 choice;
-  - the merge of build counts;
-  - load-optimal fuel (0x02b, 0x03c, 0x03d, 0x126);
-  - the 0x0e5 slots.
+- **Follow-up batch MG (done).** `experiments/mg` tested the private
+  predictions M-1..M-10. Results are in the rows and notes above and in
+  `PARITY.md` "Messages to players". Still open:
+  - load-optimal fuel with a planet target (did nothing; cause not read);
+  - 0x126;
+  - the tie case of the last-survivor messages (0x0b8/0x0bc).

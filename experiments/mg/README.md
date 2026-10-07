@@ -80,3 +80,50 @@ MG-003 was added after the MG-002 fuel cases missed, and MG-004 after MG-003. Ea
 | MG-004-A | M-5 | Laser DD, fuel 1, load-optimal fuel at own planet 15 with an Orbital Fort, next leg 400 ly at warp 6 | if the order runs as with a fleet target: 0x03c and the fleet waits (no load, H1); if planets are skipped as in MG-002: no message and the fleet leaves |  |
 | MG-004-B | M-5 | Laser DD, fuel 280, load-optimal fuel at own planet 18 with an Orbital Fort, next leg 20 ly | if the order runs: surplus offered to the planet; else no message, fuel kept |  |
 
+
+## Results
+
+Raw evidence is in apparatus `evidence/mg/` (apparatus #32). MG-001 and
+MG-002 ran at cycles 20000 and 30000 and gave the same messages in both,
+apart from the random terraform counts. MG-003 and MG-004 ran at 20000.
+
+- **MG-001-A (M-1) CONFIRMED.** Player 0 got 0x133 + 0x134 for each of the
+  three axes, and in the 30000 stream also 0x131 + 0x132 (one permanent
+  click of temperature). Each pair had the same slots, for example
+  (1, 0, 20, 31): raised, gravity, planet 20, new value. Player 1 got only
+  the impact message 0x0d8 (planet 20, 1,200 kT, player 0, 1,500
+  colonists) and none of 0x131..0x134. Environment 30/70/30 became
+  31/68/32 (20000) and 32/68/31 with original 30/69/30 (30000).
+- **MG-001-B CONFIRMED.** For the unowned planet 22, player 0 got 0x133 alone
+  on each axis, with no 0x134.
+- **MG-001-C (M-2) CONFIRMED** in its discriminating part. Player 1 got 0x181
+  with slots (23, 0, 0, 0). The amount slot held 0, not the 1,200 kT.
+  The packet owner was player 0, so "owner number" and "always player 1"
+  cannot be told from a constant here. Then 0x040 followed for planet 23,
+  which was left with 0 colonists.
+- **MG-001-D (M-8) CONFIRMED.** The gate jump to the enemy gate was
+  refused. The fleet stayed at planet 12 and got 0x0e5 with slots
+  (0, 11, 11, 11).
+- Side effect: a PP race with this habitability fails the race check in a
+  running game. Player 0 got 0x117 and player 1 got 0x182 naming player 0
+  (as in RD-P12). The packet results above are unaffected.
+- **MG-002-A..C (M-3) CONFIRMED.** Both streams:
+  - planet 3 (0 colonists) after planet 2 shrank (0x026, 156 lost): 0x023;
+  - planet 6 after planet 5 grew: 0x040;
+  - planet 0, the first planet: 0x040.
+- **MG-002-D (M-4) CONFIRMED,** all four planets:
+  - 3 then 2 gave 0x036(3) and 0x036(2);
+  - 1 then 4 gave 0x036(5);
+  - 2 then 1 gave 0x036(2) then 0x035;
+  - 1 then 1 gave 0x036(2).
+- **MG-002-E..I (M-5) MISSED.** With a planet as the waypoint-0 target, load-optimal fuel did nothing:
+  - no 0x03c, 0x03d, 0x02d or 0x126;
+  - fuel unchanged by the order;
+  - the fleets left on their next leg (0x08b for the ones that ran dry).
+  - H, with no further waypoint, kept its 280 mg and got 0x04e.
+- **MG-003 (follow-up) H1 CONFIRMED with a fleet target.**
+  - A: 0x03c with slots (−1, target fleet, fleet 0, shortfall 24). X kept 50 and did not move.
+  - B: 0x02d gave 275 to Y. X kept 5 for the 20-ly leg and arrived with 0.
+  - C: 0x03d with capacity 50 and need 305. X kept 2 and did not move.
+- **MG-004 (follow-up).** Own planets with an Orbital Fort behaved like MG-002: no message, and the fleets left. Load-optimal fuel aimed at a planet appears to be skipped. The cause is not yet read from the binary.
+- Not run: the 0x0b8/0x0bc tie case (M-10) and 0x126.

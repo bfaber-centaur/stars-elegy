@@ -3875,8 +3875,23 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
 ## Messages to players
 
 Status: catalogue in `MESSAGES.md` (2026-10-07). All 387 message kinds are
-listed with trigger, recipient, slots, focus and phase. 154 rows are
-CONFIRMED against message records decoded from the existing oracle turn
-files (148 kinds seen), and the rest are BINARY-ONLY. Several LEGACY BUG?
-candidates (wrong recipient or slots) and four never-sent bombing variants
-are listed there. Decoder: `tools/fleetlab/events.py`.
+listed with trigger, recipient, slots, focus and phase. Rows are CONFIRMED
+against message records decoded from the oracle turn files of every corpus
+in the apparatus (166 kinds seen, `tools/fleetlab/events.py`), and the rest
+are BINARY-ONLY. Elegy writes its own message text from the slots (project
+rule); no original string is used.
+
+The MG batch (`experiments/mg`, predictions committed before each run) and
+earlier runs settled the binary reading's LEGACY BUG? candidates:
+
+- **CONFIRMED LEGACY BUG:**
+  - 0x132/0x134 go to the packet owner (MG-001);
+  - 0x181 does not carry the kT (MG-001);
+  - 0x0e2/0x0e5 put the destination in the departure slot (OB-021, MG-001);
+  - 0x023/0x040 is chosen by the previous planet's growth (MG-002);
+  - plural build counts are not merged (MG-002);
+  - 0x180 is never sent in 2-player battles, but is sent in 3-race ones (CB-039, CB-042);
+  - 0x0fa uses the CB-037 observer test.
+- **MEASURED:** load-optimal fuel never takes on fuel.
+  - With a fleet target it reports 0x03c/0x03d or hands over the surplus (MG-003).
+  - With a planet target it did nothing in all 7 cases (MG-002, MG-004). That last rule is not yet explained by the binary reading.
