@@ -74,6 +74,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
+//                                   artifact=1|0 (ancient artifact flag, any planet)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
@@ -358,6 +359,7 @@ public class CombatLab {
             }
         }
         if (p.isHomeworld) sb.append(" homeworld");
+        if (p.hasArtifact) sb.append(" artifact");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -965,6 +967,7 @@ public class CombatLab {
                         pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
                     }
                     break;
+                case "artifact": pl.hasArtifact = !v.equals("0"); break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
