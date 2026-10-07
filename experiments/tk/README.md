@@ -1669,3 +1669,41 @@ screenshots in apparatus `evidence/tk7/`.
   gift. The gift stayed in the receiver's hold. Timing within the year is
   instead shown by the 0x0dd shortfall notices, which the order replay
   sends; a queued gift would have sent 0x046 or 0x04a.
+
+## Round 8 predictions: a gift to a fleet that moves away
+
+Question: a second reading of the binary says a manual gift to another
+player's object is debited when the order is replayed but credited from a
+queue after movement, with gift messages, and lost if the receiver is gone
+by then. Round 7 already fits the in-place reading (0x0dd, no 0x042–0x04d);
+this round asks the timing directly. `gen8.py` writes `tk505`: the
+receivers move 49 ly east in the client's year (waypoint 1 is their own
+position, used up in year 1), and three player 1 Freighters with the same
+legs and no gift are the controls. Fuel decides how far a ship goes, so a
+fuel gift credited before movement moves the receiver like C200; one
+credited after movement leaves it where C0 stops. Predictions below,
+committed before the run. `python3 experiments/tk/check8.py RUNDIR`
+reads `RUNDIR/tk505/y2/`.
+
+### TK505: manual gifts to a player 1 fleet that moves away (client orders)
+
+Controls: C0 = fleet 1/0, C200 = fleet 1/1, C100 = fleet 1/2.
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-415 | giver gives 200 mg of fuel to an empty player 1 Freighter with 0 mg that moves 49 ly east this year | fleet 0/1: fuel 100; fleet 1/3 matches C200: credited when the order is replayed, before movement: the receiver moves and burns fuel exactly like C200 (same x, y and fuel), not like C0. A credit after movement would leave it where C0 is, with C0's fuel + 200; no gift message to either player |
+| TK-416 | giver gives 100 kT ironium to an empty player 1 Freighter with 200 mg that moves 49 ly east this year | fleet 0/2: fe 0; fleet 1/4 matches C100: the 100 kT travels in the hold: same x, y, cargo and fuel as C100 (fuel differs from C200 only if 100 kT changes the burn). A credit after movement would burn like C200 and add the ironium at the destination; no gift message to either player |
+
+
+## Round 8 results
+
+Run 2026-10-07 (cycles 20000, `check8.py`); raw files, order files and
+screenshots in apparatus `evidence/tk8/`.
+
+- TK-415: the receiver moved 49 ly with 124 mg left, exactly as C200;
+  C0 did not move. The giver ended with 100 mg. As predicted: the fuel
+  was aboard before movement.
+- TK-416: the receiver moved 49 ly with 100 kT aboard and 13 mg left,
+  exactly as C100 (C200 kept 124 mg). As predicted: the ironium was
+  aboard for the move.
+- No 0x042–0x04d to either player.

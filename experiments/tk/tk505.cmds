@@ -1,0 +1,12 @@
+# tk505: manual gifts to a player 1 fleet that moves away (client orders) (experiments/tk/gen8.py)
+fleet first
+fleet next
+fleet other 0
+fleet cargo
+xfer ir 100
+xfer ok
+fleet next
+fleet other 0
+fleet cargo
+xfer fuel 200
+xfer ok

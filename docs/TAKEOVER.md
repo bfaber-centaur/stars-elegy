@@ -500,13 +500,21 @@ cargo when the orders are applied (step 1).
   wrong).
 - **When a gift is credited.** A gift that is not a colonist drop is
   credited when the orders are applied (step 1), in place, before any
-  waypoint task (MEASURED for planets: TK-405, TK-412). The binary reading
-  gives fleets the same path: debits are applied before credits, the
-  credit is in place whatever the owners or relation, and the queued-gift
-  step after the loads never receives anything in this build, so its
-  messages (0x042–0x04d) are not sent. A transfer whose source or
-  receiver no longer exists when the order is applied is skipped whole:
-  nothing is taken from the giver (binary reading).
+  waypoint task and before movement (MEASURED for planets: TK-405,
+  TK-412; for fleets: TK-415, TK-416). A player 1 Freighter with 0 mg of
+  fuel that was given 200 mg moved and burned exactly like one that
+  started with 200 mg; one given 100 kT of ironium burned exactly like
+  one that started loaded, so the cargo was aboard for the move. No gift
+  message was sent. The binary reading agrees: debits are applied before
+  credits, the credit is in place whatever the owners or relation, and
+  the queued-gift step after the loads never receives anything in this
+  build, so its messages (0x042–0x04d) are not sent and there is no later
+  credit pass in which a receiver could be missing. A receiver that is
+  merged, scrapped or destroyed later in the year already holds the gift
+  (inferred from the two points above; not run).
+  A transfer whose source or receiver no longer exists when the order is
+  applied is skipped whole: nothing is taken from the giver (binary
+  reading).
 - **Gifts to another player's fleet** (MEASURED, TK-406, TK-407, TK-409).
   Ironium and fuel arrive when the orders are applied, with no message.
   The client does not see the receiver's free room, so it can order more
@@ -683,12 +691,9 @@ resolutions after movement. Random-stream pinning for experiments:
 
 ## Open experiments
 
-Rounds 1–7 (TK-001..TK-606), the FO corpus and the MG runs measured every
+Rounds 1–8 (TK-001..TK-606), the FO corpus and the MG runs measured every
 other rule here. What is left:
 
-- Where a gift is credited relative to the receiver's own waypoint-0
-  tasks in the same year (TK-413 was void; the 0x0dd notices place the
-  credit in the order replay).
 - The draw order of a whole year (drops, battles, bombing, capture tech)
   as seen through the random stream; only the bombing part is measured.
 - Alternate Reality `k = 0` in a contested drop (an AR invasion is refused
