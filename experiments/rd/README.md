@@ -77,3 +77,11 @@ growth lowered when that is not enough).
 
 RD-P4..RD-P8 test that a malformed race with positive points is still
 punished. A second year after a punished case should change nothing.
+
+## Results
+
+`docs/PARITY.md`, "Race design". All new-game predictions held: every
+generated field of RD-1..RD-6, including each race and name. RD-4 ran once
+the three race files with bad checksums were rewritten. Seven of ten
+penalty cases held. RD-P5, P6 and P7 were not punished: the fields were
+clamped silently.

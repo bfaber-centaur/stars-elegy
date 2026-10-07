@@ -895,6 +895,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   oracle reset, while the fleetlab tools were being rebuilt. Rerunning the
   same definition worked. Check that `OUT/raw` has the `.HST` before
   trusting a run.
+- **Race design corpus (RD, observed 2026-10-07).** A race file with a bad
+  checksum stops game creation with "The game file X.r1 appears to be
+  corrupt, unable to load file" and an OK box; `new-game` then times out
+  with `fail.png`. `racelab dump` prints `checksum=BAD` for such a file, and
+  `racelab edit IN OUT` with no keys rewrites the checksum. Definition files
+  may have CRLF line ends: strip `\r` before reading race file names from
+  them in shell.
+- In a running game (RD-P), `hst-edit` race edits to PRT, colonists per
+  resource or race stat 15 are clamped silently by the next generation,
+  while negative points or a malformed habitat are punished (message
+  0x117). Check the event list before treating a race edit as unpunished.
 - **Race files** (`tools/fleetlab/racelab`, observed 2026-10-07, UG):
   `racelab dump FILE.R1…` prints name, PRT, LRTs, growth, habitability,
   the economy stats, the leftover-points spend, whether the checksum is

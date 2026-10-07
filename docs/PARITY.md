@@ -1863,7 +1863,7 @@ moves.
 ### Round 4: rules SCANNING.md marked BINARY-ONLY (SC-024..SC-033)
 
 Predictions were committed before the runs (3547942, follow-ups SC-032 and
-SC-033 in bb65db9); `experiments/sc/README.md` has the case tables and
+SC-033 in bb65db9, SC-034 in 18d99b2); `experiments/sc/README.md` has the case tables and
 `experiments/sc/round2.py` the checker. One pinned stream each (cycles
 20000), 2400 → 2401. Both players JOAT at tech 26, no planetary scanners,
 bare starbases. 86 cases, 4 of them recorded only: 77 held and 5 did not.
@@ -1922,6 +1922,10 @@ defense estimate applies the operable cap SCANNING.md states.
   The SS player's bare Space Station is 75%: at d² 3600 from a P 200
   viewer the planet was reported (level 3) without its starbase. JOAT →
   SS with `lrt 1 0x1b80` gave no message 0x117 (SC-030).
+- **Langston Shell cloak points** (SC-034, added later): 20 per shell. One
+  shell on a Small Freighter gives 10% (seen by a Mole at d² 8100, not
+  8101); five on a Super Freighter give 100 points, 50% (seen at 2500,
+  not 2501).
 - **Design disclosure after battle.** A Laser Cruiser and a Laser
   Destroyer that fought each got the other's design in full, the
   destroyed Destroyer included. Designs seen without a battle stayed
@@ -2832,3 +2836,87 @@ setup reading the first planet's record instead of the homeworld's. It
 is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
+
+## Race design (RD-1..RD-6, RD-P1..RD-P10)
+
+Predictions were committed before the runs (80037c8). `experiments/rd/` holds
+the case tables (`races.tsv`, `README.md`) and the game definitions. Raw race
+files, games and checks are in the private apparatus, `evidence/rd/`. Each
+new game was generated once (`tools/fleetlab/new-game`, cycles 20000), and
+each penalty case is one pinned year (cycles 20000). The comparison with the
+predicted games (every generated field, each player's race and name) was
+private. The behavior it confirmed is recorded here.
+
+### Advantage points and leftover (MEASURED, RD-1..RD-4)
+
+- 48 legal races with predicted points 1..50 (RD-1..RD-3, one per case in
+  `races.tsv`) each got leftover `L = points`, seen in the homeworld's surface
+  minerals: the smallest mineral gains `10·L/4 + (10·L mod 4)` kT, and all
+  three gain `10·L/4` more. The races cover every growth-table row from 3 to
+  20, one to three immunities, a 0–20 axis, the factory and mine settings,
+  colonists per resource from 700 to 2500, AR, NAS with PP, SS and JOAT, LRT
+  sets, research settings, and every PRT. The 48 point values are the
+  `predicted points` column, all confirmed.
+- Boundaries (RD-4): a 0-point race is legal with L 0. Races with 50 and 51
+  points both get L 50.
+- Leftover spends 5 and 6, which the wizard does not offer, act as spend 0
+  (surface minerals).
+- racelab (StarsAPI's calculator) gives the same points except:
+  - it is one lower on 11 races (float truncation; the 9 the decomp named,
+    plus RD-4 e and i);
+  - it disagrees on the growth-0 race.
+  Before 18d99b2 it also ignored "expensive fields start at tech 3" and
+  "factories cost one less germanium", so it overstated races with those
+  traits by about 60 points each.
+
+### Illegal, malformed and Random races at game creation (MEASURED, RD-4..RD-6)
+
+- **Illegal human races are replaced.** A −1-point race and a −1433-point
+  race became the default race: JOAT, growth 15, 15–85 on every axis, the
+  standard economy and research, a computer name (Bulushi, American), L 25,
+  and race flag 0x10.
+- **Malformed fields are repaired, and the race is kept with flag 0x10:**
+  - a habitat centre one off its range midpoint was moved back;
+  - race stat 15 = 1 was reset to 0;
+  - growth 0 became growth 1, which left 5851 points and so L 50.
+- **A race file whose checksum is wrong is refused**, before any of this.
+  The game shows "The game file X.r1 appears to be corrupt, unable to load
+  file" and no game is created. Three corpus files first had bad checksums.
+  They were rewritten with `racelab edit` (only the checksum changed) and
+  RD-4 was run with them.
+- **Random races.** The wizard's Random race (RD-4 k..m; RD-5, RD-6) became
+  a generated race with a computer name. A Random race named Zorgon kept its
+  name. Generated races scored:
+  - 21, 21, 44 and 23 (RD-4);
+  - 12, 5, 35, 38, 8 and 32 (RD-5);
+  - 32, 3, 16 and 42 (RD-6).
+  That is 14 races, all within 0..50. Each matched the decomp's exact
+  prediction, as did every later draw of those games.
+- **Computer players are not checked.** RD-4's computer players kept races
+  worth 963 and −75 points; RD-5 kept one worth −173.
+
+### Turn-time penalty (RD-P1..RD-P10)
+
+Base: a one-player SS game in year 2407 (KX-001 A1). Player 0's race was
+edited with hst-edit, and one year was generated.
+
+| Case | Edit | Points after edit | Observed | vs prediction |
+|---|---|---|---|---|
+| P1 | two economy stats | −444 | message 0x117, flag 0x10; colonists per resource 2500, growth 7 (1042 points) | held |
+| P2 | six economy stats | −2092 | 2500, growth 4 (1602) | held |
+| P3 | P2 + research + LRTs | −3667 | 2500, growth 3 (1457) | held |
+| P4 | habitat centre 51 | 245 | punished: centre back to 50, colonists 1700 (525) | held |
+| P5 | race stat 15 = 1 | 245 | stat reset to 0 silently: no message, no flag, colonists unchanged | **missed** (predicted a penalty) |
+| P6 | colonists per resource 2600 | 845 | clamped to 2500 silently: no message, no flag | **missed** |
+| P7 | PRT 10 | 299 | became JOAT silently: no message, no flag, colonists unchanged | **missed** |
+| P8 | gravity low −5, centre 40 | 212 | punished: gravity 0–85, centre 42, colonists 1800 (532) | held |
+| P9 | 0 points exactly | 0 | not punished, unchanged, no message | held |
+| P10 | −1 point | −1 | 2500, growth 9 (559) | held |
+
+So in a running game, negative points and malformed habitat are punished
+(0x117, flag 0x10, colonists per resource raised until the race reaches 500
+points, growth lowered when that is not enough). Out-of-range PRT,
+colonists per resource and race stat 15 are repaired without any penalty.
+That differs from game creation, where stat 15 = 1 set the flag. The base
+game has one player, so message 0x182 to other players was not observable.
+A second year after a punished case was not run.
