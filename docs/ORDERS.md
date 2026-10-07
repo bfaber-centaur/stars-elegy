@@ -675,16 +675,23 @@ observation that would confirm it; the proposed oracle corpus prefix is
 The fleet-operation clamps, turn placement, the transfer-fleet owner check
 and the Merge-with-Fleet task (including its damage dilution and the missing
 ship-count cap) have since been measured — see the Fleet operations section
-and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
+and `PARITY.md`, "Fleet Operations" (FO-01..07).
 
-- **OX merge-order cap and loss.** The direct merge order's per-design cap is
-  read but untested (only the waypoint task was measured, and it has no cap);
-  push a direct merge past 32767 and confirm a stack of 32767 is kept while one
-  that would reach 32768 or more is slammed to 32766 with the excess lost (not
-  spilled, not refused) — the same boundary as the Merge-with-Fleet task above
-  (32767 kept, 32768+ becomes 32766). Confirms "Merge order".
-- **OX merge-order damage.** Merge (direct order) a damaged stack into healthy
-  ships of the same design and read back the stored percent and per-ship
+**Now client-reachable.** The direct-order cases below (split and Split All,
+the own-fleet transfer-to-fleet order, and direct merges) no longer wait on the
+serial decision: `tools/fleetlab/client-orders` issues them as **legal** client
+orders. Predictions for that round are committed in
+`experiments/fo/client-orders.md` (**CO** prefix). Still open:
+
+- **OX merge-order cap and loss (→ CO-06).** The direct merge order's per-design
+  cap is read but untested. The Merge-with-Fleet *task* (FO-06) keeps 32766 and
+  32767 and **empties the ship slot** at 32768 and above (the fleet record,
+  cargo and fuel stay). Push a direct merge across the same boundary and confirm
+  whether it empties the slot the same way or clamps. **Elegy's chosen rule**
+  for the overflow is 32768+ → **32766** with the excess lost, next to the host
+  behaviour. Confirms "Merge order".
+- **OX merge-order damage (→ CO-05).** Merge (direct order) a damaged stack into
+  healthy ships of the same design and read back the stored percent and per-ship
   damage units; confirm the percent dilutes over the full count like the task
   but the units divide by the damaged count, not the slot total (so the figure
   differs from the task path). Confirms the merge-order damage note.
@@ -701,9 +708,17 @@ and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
   player's minefield, and one naming a field kind that cannot detonate;
   confirm the original accepts both. Confirms "Minefield detonate-setting".
   Keep the crafted inputs in private apparatus.
-- **OX split.** Split some ships off a loaded fleet; confirm the new fleet
-  has exactly the ordered ships, a capacity-proportional share of the cargo,
-  and the source's battle plan and waypoints. Confirms "Split".
+- **OX split (→ CO-01, CO-02).** Split some ships off a loaded fleet; confirm
+  the new fleet has exactly the ordered ships, a capacity-proportional share of
+  the cargo and fuel (rounded down), and the source's battle plan and waypoints.
+  Split All (CO-02) pins where the rounding remainder lands. Confirms "Split".
+- **OX own-fleet transfer order (→ CO-04; elegy implementation Q2).** The direct
+  transfer-to-fleet order between two of the player's own co-located fleets
+  carries an **explicit amount** (load-all / set-amount / fill-to-%), clamped by
+  the destination's free capacity, with the remainder staying aboard the source
+  — **not** a capacity rebalance (which is what moving ships does). Elegy's rule
+  is explicit amounts only; CO-04 discriminates it from the rebalance
+  hypothesis. Confirms "Transfer between the player's own fleets".
 
 The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
 editing**, not crafted order files, so none needed the registered serial, and
