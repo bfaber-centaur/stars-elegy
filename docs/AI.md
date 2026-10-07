@@ -55,6 +55,10 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   player file holds: its planets, fleets, designs, scanned reports) plus a
   private memory it keeps between years (§6). It never reads other
   players' hidden state.
+- It plans from that player's file as the previous generation wrote it.
+  A change made to the host's state between generations (for example a
+  tech level edited in the host file) shows in its orders only one year
+  later, once the player file carries it (MEASURED, `ORACLE.md`).
 - A computer player whose "dormant" flag is set writes an empty order set
   (the flag's meaning is not yet settled).
 - **Random numbers.** Computer players draw from the host's single
@@ -421,6 +425,72 @@ scraps at least one starting fleet at its homeworld.
   no order results.
 - "Computer players form alliances" is read only by personality code
   (`KERNEL.md`); see the personality files.
+
+## 10. Ship designs (BINARY-ONLY unless noted)
+
+Personalities create ship designs into their own slots; which slot, when,
+with which hull and class lists is in each personality file. They all use
+the same builder and the same upkeep.
+
+**Builder.** A ship design is built the way §5 builds a starbase, every
+hull slot at its maximum count, with no variant reduction: the hull must
+be available to the race (`COMPONENTS.md` "Who can build what"), and each
+hull slot takes the first part of its AI part class (§5) that the race
+can build now. Any slot without a part means no design (and no random
+draws). A personality's class list names one class per hull slot.
+
+**Storing a design.** Writing a design into a slot is a design order.
+If the slot still holds a design, a delete order for that slot is
+written first, then the new design. Personalities replace a slot only
+when no ship of its design is alive. If creation then fails, nothing
+more is written: a slot deleted on the way (by an explicit delete or
+the ageing rule below) stays empty. The stored design's creation year
+is the current year.
+
+**Picture.** The first of the hull's four pictures not used by another
+non-empty ship design of the same hull (the design being replaced still
+counts), else `Random(4)`.
+
+**Name.** Up to 20 tries of `Random(n)` from a built-in name group for
+the hull's role, until the name differs from every non-empty ship
+design's name (any hull; the design being replaced counts); after 20
+failures `Random(100)` then `Random(n)`, the name with that number
+appended, unchecked. Groups (n): cruisers to dreadnoughts 16, destroyers
+16, scouts and frigates 10, bombers 12, freighters 8, miners 8,
+Privateer/Rogue/Galleon 8, colony ships 8, everything else (fuel
+transports, mine layers, Nubian, Mini/Meta Morph) 8. Elegy may use its
+own names.
+
+**Ageing.** A personality checks a group of its slots each year with an
+age limit `L`. For each non-empty slot in the group: the group's
+*newest* design is the one with the latest creation year (ties: the lower
+slot), chosen before any deletion. A design older than `L` years
+(`year index − creation > L`) with no ship alive is deleted (a delete
+order); one older than `L` with ships alive is marked *obsolete* for the
+fleet rules. The check reports the ships alive in the group (at most
+32,000). Robotoid uses `L` = 50 before year index 120, 70 before 200, 100
+after.
+
+**Splitting obsolete ships out.** While the player owns at most 500
+fleets: the first own fleet (fleet order) holding both marked and
+unmarked designs is split; the marked designs' ships move to a new fleet
+at the same place with the same waypoints and battle plan, cargo is
+balanced between the two, and the scan restarts. The unmarked ships keep
+the old fleet.
+
+**Merging.** For a set of slots: walking own fleets in fleet order, every
+fleet with ships of those slots (except fleets already at the maximum
+mining rate) is merged into the first such fleet at the same place
+(same orbited planet, or same position in space). Up to 32 places are
+tracked per pass; further places get another pass. Other designs in the
+fleets merge along.
+
+**Queueing items.** A personality adds production items through the same
+production list a human sees: an item the planet cannot build (for
+example a ship design without a starbase able to build it) is not added,
+and a count is clamped to what that list allows. A queue with more than
+200 items gets nothing more. Items go to the front, the back, or replace
+the queue, as each rule says.
 
 ## Open experiments
 
