@@ -527,3 +527,18 @@ Game CB, 1 year(s).
 | A | T-39a | Colonizer (25) in orbit at player 1 planet P=9 (10), 10 Cherry bomb it empty: the colony ship keeps 25, task 0; planet unowned | planet 0: owner -1; fleet 0/0: col 25, task 0 |
 | B | T-39b | Freighter (25, no colony module) in orbit at unowned planet 21 with colonize: keeps 25, task 0, planet unowned with no minerals | planet 21: owner -1, surface 0/0/0; fleet 0/2: col 25, task 0 |
 
+
+## Round 2b results
+
+| Run | Result |
+|---|---|
+| TK-118 | env 65/35/65, original 80/20/80 kept (OK); control env unchanged (OK) |
+| TK-119 | env 50/50/50, original 80/20/80 (OK); TT race legal (no 0x117) |
+| TK-120 | env 80/20/80, no separate original stored (OK) |
+| TK-121 | T-39a and T-39b all OK: the ships kept 25 colonists, task 0; planets unowned, no minerals |
+
+Every environment check held. The population values in TK-118..120 were
+the corpus author's error: at 60/40/60 the race's habitability is below
+100%, so P = 87 grew to 96 (not 100), and the captures then landed 12
+(110 against 96, the ground combat rule) instead of 9. The checker shows
+these as MISS on `pop` only.

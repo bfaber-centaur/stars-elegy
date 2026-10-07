@@ -1775,7 +1775,7 @@ race-restricted parts (Retro) and Mystery Trader parts (Hush-a-Boom, Multi
 Contained Munition): `TAKEOVER.md`, "Design parts dropped when the year is
 generated" (CONFIRMED in one setting there).
 
-### Round 2 (TK-101 to TK-117)
+### Round 2 (TK-101 to TK-121)
 
 Status: MEASURED, 2026-10-07. Predictions from `TAKEOVER.md` (and the
 rules of stars-elegy #34) committed before each run; specs, predictions
@@ -1820,6 +1820,16 @@ end-of-year terraforming covers any revert, so this case could not show it
 defender: the captured planet went back to its original 55/47/52 (the file
 then no longer stores separate original values).
 
+**Claim Adjuster capturing Claim Adjuster (CONFIRMED, T-40, TK-118..120).**
+A CA attacker captured a CA planet at 60/40/60 with original 80/20/80. The
+environment went back to 80/20/80, then the new owner's end-of-year CA
+terraforming moved each axis from the original toward its centre by up to
+the best terraform part it may use, never past the centre: 65/35/65 with
+axis parts (±15, tech 26, no TT), 50/50/50 with Total Terraform (TT,
+±30), and 80/20/80 with no terraform tech (the original then is not stored
+separately). A CA planet at 60/40/60 whose owner had only ±3 parts stayed
+put: no target inside original ± 3 improved it.
+
 **Scrap (CONFIRMED, T-34).** 30 ships costing 180/60/210 kT in total:
 
 | Where | Minerals |
@@ -1859,6 +1869,12 @@ colonists joined before growth (87 + 50 → 157); after movement they did
 not (100 + 50). "Unload exactly" moved `min(v, cargo)`, "set amount to"
 moved `cargo − v`, "set waypoint to" moved `v − planet` colonists (capped
 by cargo), and unloaded minerals went onto the surface.
+
+**Colonize is tried once (CONFIRMED, T-39).** Every colonize failure ended
+the order. A colony ship in orbit at an enemy planet that was bombed empty
+the same year, and a freighter with colonists but no colony module at an
+unowned planet, both kept their colonists with the waypoint task cleared,
+and the planets stayed unowned (TK-121).
 
 **Colonize retries (CONTRADICTED: MISS).** After a tie emptied a planet
 (players 0 and 2 dropping 150 each on 100), a player 0 colony ship whose
