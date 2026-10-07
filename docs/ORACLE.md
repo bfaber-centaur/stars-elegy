@@ -1254,3 +1254,8 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   `ORACLE_DISPLAY` values to run several side by side.
 - The container can be recycled while idle (this happened once), which
   kills the oracle. `$ORACLE_HOME` survived that time; re-run `start`.
+- Multi-year pinned runs with no orders carry messages over (MEASURED,
+  RD-P19, RD-P21; `PARITY.md` "Race design", Round 3): each year's `.M`
+  message block starts with the whole previous block and the new year's
+  messages follow. A message seen in year 2 may be year 1's. Compare with
+  the previous `.M` and count only what follows the carried prefix.

@@ -211,11 +211,13 @@ the race as **tampered**, a per-race flag that is visible in the game files:
   `lo..100` (a high below the low becomes the low), and the centre is
   forced to `lo + (hi − lo)/2`. A value outside 0..100 is therefore
   clamped, never turned into immunity (CONFIRMED: a centre one off was
-  moved back, RD-4; RD-P4; a low of −5 became 0, RD-P8; the immune-marker
-  case and `hi > 100` are BINARY-ONLY). Settings are stored as signed
+  moved back, RD-4; RD-P4; a low of −5 became 0, RD-P8; a low equal to
+  the marker made the axis immune and a high of 120 became 100, both at
+  creation, RW08, and in a running game, RD-P16, RD-P17). Settings are stored as signed
   bytes, so a stored 200 reads as −56 and clamps to the low end.
-- Growth above 20 becomes 20 (BINARY-ONLY). Growth below 1 becomes **1**
-  (CONFIRMED for growth 0, RD-4).
+- Growth above 20 becomes 20 (CONFIRMED: RW08 at creation, RD-P13 and
+  RD-P14 in a running game). Growth below 1 becomes **1** (CONFIRMED for
+  growth 0, RD-4, and −3, RD-P18).
 - Every other setting is clamped to its range in the table above: a value
   below the range becomes the minimum, one above it the maximum. For a
   research field that means below "costs 75% extra" stays "costs 75%
@@ -233,7 +235,8 @@ For each player's race file:
    stops game creation with "The game file X appears to be corrupt"
    (MEASURED, three files in RD-4).
 2. **Repairs** apply as above. A repaired race is kept, with the tampered
-   flag (RD-4: centre, stat 15, growth 0).
+   flag (RD-4: centre, stat 15, growth 0; RW08: immune marker, high 120,
+   growth 25).
 3. **Illegal human races are replaced.** A human race with points < 0
    becomes the default race (JOAT, growth 15, 15–85 on every axis, standard
    economy and research, no LRTs), marked tampered, and is given a random
@@ -253,8 +256,12 @@ Every year, before fleets move, each player's race is checked:
 1. **Silent clamps.** Every race setting is clamped to its range with no
    message and no flag (RD-P5: stat 15 = 1 → 0; RD-P6: colonists per
    resource 2600 → 2500; RD-P7: PRT out of range → JOAT). The research
-   share outside 0–100% becomes 15%; growth below 0 becomes 1, above 20
-   becomes 20 (BINARY-ONLY).
+   share outside 0–100% becomes 15% (RD-P15: 150 → 15); growth below 0
+   becomes 1 (RD-P18: −3 → 1, no message, no flag), above 20 becomes 20
+   (RD-P13: 25 → 20 with no message or flag; RD-P14: the clamp comes
+   before the check, so growth 25 at −440 points was scored at growth 20
+   and punished down to 16). Unlike these, growth 0 is left for the check
+   (step 2).
 2. **Check.** The race is scored. For a human player, the race is
    **punished** if its points are negative, or if the scoring repairs
    something (by now only the habitat, or growth 0) that newly sets the
@@ -279,13 +286,20 @@ Every year, before fleets move, each player's race is checked:
    growth 4; −3667 → 2500, growth 3; −1 → 2500, growth 9 (559); a centre
    of 51 → centre 50, colonists 1700 (525).
 4. A race already marked tampered is punished again only while its points
-   are negative or a new repair is needed (BINARY-ONLY; follows from step 2).
+   are negative or a new repair is needed (follows from step 2). CONFIRMED
+   that a tampered race with positive points and nothing to repair is left
+   alone, with no new message: RD-P19 (two more years after a punishment)
+   and RD-P21 (three races tampered at creation, one year). A second
+   punishment of a race that is negative again is BINARY-ONLY.
 5. **Computer players** get steps 1 and 2 without the penalty: the silent
    clamps, then the scoring repairs (habitat, growth 0 → 1), which do set
    the tampered flag, but no message and no change to colonists, growth or
-   research, whatever the points (BINARY-ONLY).
+   research, whatever the points (CONFIRMED, RD-P20: a computer race at
+   −1173 points with a gravity centre one off was moved back and flagged;
+   nothing else changed and the human player got no message).
 
-This differs from creation, where stat 15 = 1 marked the race tampered.
+This differs from creation, where stat 15 = 1 (RD-4) and growth 25 (RW08)
+marked the race tampered; in a running game both are clamped silently.
 
 Elegy note: the penalty exists to punish hand-edited files. Elegy can keep
 it as a compatibility rule, but it needs the rule above only if it accepts

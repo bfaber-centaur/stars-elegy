@@ -3730,12 +3730,73 @@ In the host file a wormhole has two player masks, the **known** mask
     sampling streams;
   - Trader appearance (KX-004).
 
+### Round 6: the rest of OBJECTS.md's BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001/002)
+
+Status: MEASURED, 2026-10-07. Predictions were committed before the runs
+(stars-elegy ee169d3: `experiments/ob/README.md` "Round 6",
+`experiments/gt/README.md` "GT-003", `experiments/tp/README.md`), one
+pinned year each at cycles 20000; OB-031 also at 30000 and 60000. Every
+predicted case held (16 launch cases, 9 PP cases, 2 OB-030 cases, OB-031
+in three streams, 12 GT-003 cases, 6 TP cases). Raw evidence: apparatus
+`evidence/ob/ob028`..`ob031-*`, `evidence/gt/gt003`, `evidence/tp/`.
+
+- **Packet launch (OB-028).** Warp 9 from a Mass Driver 7 launched as
+  class 2; a speed of 11 (above `Dw + 3`) fell back to 7; two Mass Driver
+  7s in the two orbital slots of a Space Station launched at 8 with the
+  speed unset, Mass Driver 7 with Mass Driver 5 at 7; two items in one
+  queue made one 200 kT packet; no destination: no packet, minerals
+  unchanged, two messages to the owner. Every packet stood at `⌊W²/2⌋` ly
+  after its launch year, decayed for half a year (class 2: 100 → 88;
+  class 3: 75). A class-3 packet that arrived in its launch year after
+  70% of the year kept 413 of 500 kT (half of its 70% share of the
+  year's decay) and added 45 kT to an unowned planet. An Interstellar
+  Traveler launcher added 1 to the class (warp 7: class 1, 90 kT) and
+  stopped at 3 (warp 10).
+- **Launch spend (MEASURED, side check).** 110 kT of the mineral per
+  100 kT item (IT 120, PP 70); 44 of each per mixed item (PP 25).
+- **Packet Physics (OB-029).** Items launched 70 kT, mixed 25 kT of each.
+  1000 kT of only ironium, boranium or germanium at warp 10 into an
+  unowned 20/20/20 planet moved only gravity (+3), temperature (+6) or
+  radiation (+2) toward the PP player's ideal, with the original values
+  unchanged, and added 111 kT. A 500 kT packet into a populated planet
+  killed as the damage rule says (pop 791 as predicted). OB-029-D2: the PP
+  player's file showed no foreign design after hitting a Laser Fort;
+  without a control this does not settle whether the design becomes
+  known.
+- **Alternate Reality target (OB-030-A).** 1000 kT at warp 10: surface
+  +111, population equal to the control planet's: no damage.
+- **Two Traders at one point (OB-030-T).** Trader 0 consumed player 0's
+  first fleet and player 1's fleet and refused player 0's second fleet;
+  Trader 1 consumed it. All three fleets gone.
+- **Lone Trader arrival (OB-031).** A warp-6 Trader 20 ly from its
+  destination arrived, stayed and took warp 7 with a new destination on
+  an edge, in all three streams. With OB-023 that is four lone arrivals,
+  all staying; the 1/2 chance of leaving has not been observed (four
+  stays in a row would happen 1 time in 16 if it holds).
+- **Stargate refusal order (GT-003 R1–R6).** Each fleet had two reasons
+  to be refused and got one message: source gate before destination gate
+  and before a deep-space destination; destination owner before range and
+  before mass; foreign colonists before mass, minerals kept aboard; range
+  before mass, with the hold unloaded onto the source planet first.
+- **Loss-roll wipe-out (GT-003 W0–W5).** A 491 kT freighter (32% loss
+  chance) with a Laser DD through a 100/250 gate: in W2 and W3 the roll
+  destroyed the freighter and the fleet arrived with its Laser DD, so a
+  design wiped out by the roll counts once (GT-002: a design lost
+  entirely at `pct = 100` counts twice). In the other four the freighter
+  survived.
+- **Computer players' planets (TP-001/002).** An expert Turindrone
+  homeworld gained the offered part and lost all its surface minerals; with
+  that part already owned it drew another (bit 6). An expert Automitron
+  homeworld at tech 10,10,10,13,10,10 went to 12,11,11,13,11,11 and paid
+  5,000 kT, germanium first then boranium; at tech sum 150 nothing
+  happened. The human homeworld never traded.
+
 ### Not tested
 
-Packet launch (warp, class, amounts, same-year merge, the launch-year half
-move: O-16..O-19), PP terraforming, AR packet targets (O-25), wormhole jump
-odds to a measured rate (O-28), Mystery Trader spawning (O-32), Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
-a tiny map).
+Packet limits (32,760 and 16,300 kT), PP terraforming as rates and the
+design-known rule, wormhole jump odds to a measured rate (O-28), Mystery
+Trader leaving with 1/2 and ship counts after year index 100, Harder
+computer players' planets.
 
 ## Components (CS-001, CS-002, CS-003)
 
@@ -3894,7 +3955,8 @@ repository. Raw files are kept in private apparatus.
 
 ## Universe generation
 
-Status: MEASURED (UG01 to UG21, 2026-10-07; cloud oracle). Predictions
+Status: MEASURED (UG01 to UG30, 2026-10-07; cloud oracle; UG22..UG30 in
+"Round 3" below). Predictions
 UG-1..UG-9 from the private binary reading (stars-decomp
 `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
 whole predicted game per case were committed before the runs
@@ -3943,10 +4005,10 @@ Planets per game, by size and density:
 
 | size | sparse | normal | dense | packed |
 |---|---|---|---|---|
-| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | |
-| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | |
+| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | 57 (UG22), 59 (UG23) |
+| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | 239 (UG24) |
 | medium | | 288 (UG07, UG16, UG20) | 360 (UG03) | 540 (UG10) |
-| large | | 512 (UG14, UG17) | | 912 (UG04, clumped) |
+| large | | 512 (UG14, UG17) | | 912 (UG04, clumped), 900 (UG25) |
 | huge | | 800 (UG11, UG21) | 940 (UG05) | 940 (UG15) |
 
 With W the galaxy width (400, 800, 1200, 1600, 2000 ly from tiny to
@@ -3954,9 +4016,27 @@ huge), the normal-density counts are W²/5000, sparse 3/4 of that, dense
 5/4 and medium packed 15/8. Large packed and huge dense or packed come
 near the generator's limit of 999 candidates, and the binary reading says
 their count then depends on the seed (a too-close pass removes a variable
-number). Only one seed per size and density was run, so treat those three
-cells as single observations. Huge dense and huge packed gave the
-identical game at the same seed (UG05, UG15).
+number). Huge dense and huge packed gave the identical game at the same
+seed (UG05, UG15). Round 3 confirmed the seed dependence: large packed
+gave 912 and 900 for two seeds, and tiny and small packed fell below their
+usual 60 and 240 for the seeds the model picked (UG22..UG24).
+
+### Round 3: BINARY-ONLY generation rules (UG22..UG30)
+
+Predictions committed before the runs (stars-elegy 7726cc3 on #49,
+`experiments/ug/README.md` "Round 3"; apparatus ff01ff25). All nine games
+matched the whole predicted game field by field (37 to 44 fields each, 0
+mismatches).
+
+- **Seed-dependent counts** (UG22..UG25): 57, 59, 239 and 900 planets, as
+  predicted.
+- **Options with no effect at creation** (UG26..UG28): slower tech,
+  computer alliances and public scores each gave UG01's galaxy planet for
+  planet; only the option word differs.
+- **Second-planet redraw limit (LEGACY BUG, UG29, UG30).** A PP race with
+  40–60 on every axis: in UG29 the second planet used all 100 redraws and
+  took the homeworld's 50/50/50 environment; in UG30 (another seed) it
+  kept its redrawn 40/42/45.
 
 ### Options (CONFIRMED)
 
@@ -4042,7 +4122,7 @@ is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
 
-## Race design (RD-1..RD-7, RD-P1..RD-P12)
+## Race design (RD-1..RD-7, RW08, RD-P1..RD-P21)
 
 Predictions were committed before the runs (80037c8). `experiments/rd/` holds
 the case tables (`races.tsv`, `README.md`) and the game definitions. Raw race
@@ -4150,6 +4230,44 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
   - Player 0 got 0x117, and each of the four other human players got
     0x182 ("hacked race discovered"). The computer player's `.M` file has
     no message block at all, so whether it is told is not observable.
+
+### Round 3: the remaining BINARY-ONLY rules (MEASURED, RW08, RD-P13..RD-P21)
+
+Predictions were committed before the runs (7726cc3, fcbcf6e;
+`experiments/rd/README.md` "Round 3"). `universe.py check` matched RW08
+field by field (65 matches, 0 mismatches) and `races.py turn` matched every
+penalty year. Every prediction held except the RD-P21 candidate, which was
+written to explain an apparent miss and was ruled out.
+
+- **Repairs at creation (RW08).** A gravity low equal to the immune marker
+  made the axis immune (centre and high set to the marker); a high of 120
+  became 100 (centre 57); growth 25 became 20. All three races were kept,
+  marked tampered.
+- **Silent clamps in a running game.** Growth 25 with colonists 2500 (159
+  points) became 20 with no message and no flag (RD-P13). Growth −3 became
+  1, silently (RD-P18). A research share of 150% became 15%, silently
+  (RD-P15; the base share was 0%, and that year's research advanced a
+  field, so the year did research with a nonzero share).
+- **Clamp before the check (RD-P14).** Growth 25 at −440 points was scored
+  at growth 20, still negative, and punished: colonists 2500, growth 16
+  (502 points), message 0x117, flag 0x10.
+- **Habitat repairs (RD-P16, RD-P17).** A high of 120 was repaired to 100
+  and punished (colonists 1800, 538 points). A low equal to the immune
+  marker made the axis immune and was punished (colonists 2500, 527).
+- **No second punishment (RD-P19, RD-P21).** After RD-P1's punishment the
+  race (1042 points, tampered) was left alone for two more years; so were
+  RW08's three tampered races (159 to 413 points) in their first year.
+  The 0x117 and 0x182 messages seen in those years' turn files are the
+  earlier messages carried over (below), not new ones.
+- **Computer player (RD-P20).** A computer race at −1173 points with its
+  gravity centre one below the midpoint: centre moved back, flag 0x10 set,
+  nothing else changed, and the human player got no message.
+- **Message carry-over (MEASURED, an oracle side effect).** In these
+  pinned runs no player submitted orders, and each year's `.M` message
+  block began with the whole previous block, new messages after it
+  (RD-P19: 3, 6, 9 messages in years 1 to 3; RD-P21: the 8 messages written
+  at creation, then 2 new ones). Count only the messages after the carried
+  prefix when a multi-year run has no orders.
 
 ## Messages to players
 

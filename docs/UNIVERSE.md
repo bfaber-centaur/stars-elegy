@@ -23,7 +23,7 @@ and placement badness (`OBJECTS.md` "Wormholes").
   observations. The UG games were compared with a whole predicted game,
   field by field (every planet's position, name, environment,
   concentrations and artifact flag, owners, homeworlds, tech, designs,
-  fleets, wormholes), and all 21 matched exactly. A rule is CONFIRMED when
+  fleets, wormholes), and all 30 (UG01–UG30) matched exactly. A rule is CONFIRMED when
   that comparison exercised it; case ids are given where useful.
 - **MEASURED**: observed, but in one case only or without a full model
   check.
@@ -59,7 +59,8 @@ no-random-events options.
 | options | maximum minerals, slower tech advances, accelerated BBS play, no random events, computer players form alliances, public player scores, galaxy clumping |
 
 Slower tech, computer alliances and public scores change nothing at
-creation (BINARY-ONLY). Their later effects belong to other specs.
+creation but the option word (CONFIRMED, UG26–UG28: each is UG01's galaxy,
+planet for planet). Their later effects belong to other specs.
 
 ## Randomness and seeds (CONFIRMED)
 
@@ -97,16 +98,20 @@ creation (BINARY-ONLY). Their later effects belong to other specs.
 | tiny | 24 | 32 | 40 | 60 |
 | small | 96 | 128 | 160 | 240 |
 | medium | 216 | 288 | 360 | 540 |
-| large | 384 | 512 | 640 | at most 960, seed-dependent (912 in UG04) |
+| large | 384 | 512 | 640 | at most 960, seed-dependent (912 in UG04, 900 in UG25) |
 | huge | 600 | 800 | at most 999, seed-dependent (940 in UG05) | as dense |
 
 In large packed and huge dense or packed games the count depends on the
-seed. Over 316 sampled streams (BINARY-ONLY) it ranged 899–940 for large
-packed and 930–962 for huge dense or packed. Huge dense and huge packed
+seed (CONFIRMED for two seeds each of large packed, UG04 and UG25, and
+huge dense, UG05 and UG15). Over 316 sampled streams of the model it
+ranged 899–940 for large packed and 930–962 for huge dense or packed
+(the ranges BINARY-ONLY). Huge dense and huge packed
 are the same galaxy for the same seed (UG05, UG15).
 
 The other cells are the usual count, but the rule in step 4 can also put
-them below `N` (BINARY-ONLY; 3,000 uniform samples of steps 2–3 per cell).
+them below `N` (CONFIRMED: tiny packed 57 and 59, UG22 and UG23; small
+packed 239, UG24; the rates below are 3,000 uniform samples of the
+model's steps 2–3 per cell, BINARY-ONLY).
 Tiny packed came out 54–60, below 60 in about 13% of games. Tiny dense
 came out 36–40, below 40 in about 4%. Small packed came out 235–240, below
 240 in about 1%. Medium packed came out 531–540, below 540 in about 0.1%.
@@ -384,7 +389,10 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
   environment is redrawn, each axis `2 + rand(97)`, until it reaches 10%,
   at most 100 times. If all 100 redraws were used, the planet takes the
   homeworld's environment instead, even when the last redraw succeeded
-  (LEGACY BUG, BINARY-ONLY).
+  (LEGACY BUG, CONFIRMED: UG29, a PP race with 40–60 on every axis, used
+  all 100 redraws and its second planet took the homeworld's 50/50/50;
+  UG30, the same race on another seed, kept its redrawn 40/42/45. Whether
+  a success on exactly the 100th redraw is also replaced is BINARY-ONLY).
 - 10 mines, 4 factories, starbase design 1, a planetary scanner, surface
   minerals `100 + rand(200)` each, and 2/5 of the homeworld's population.
   The homeworld keeps 4/5.
@@ -418,7 +426,5 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
    and difficulty (BINARY-ONLY), not run.
 2. The tutorial galaxy (fixed tiny galaxy, fixed seed) and
    race-wide "75% extra fields start at 3" combined with JOAT (start 4).
-3. The second-planet redraw limit (needs a race that makes 100 redraws
-   likely).
-4. Seed-dependent planet counts beyond one seed per size and density,
-   including tiny and small packed games that fall below `N`.
+3. Seed-dependent planet counts as distributions (the model's sampled
+   ranges and rates above).

@@ -203,3 +203,22 @@ holds: 0x117 to players 0, 1 and 2, races unchanged. If 0x117 needs a
 punishment or a repair that year: no 0x117, races unchanged. The
 candidate is the prediction. RD-P19 year 3 is run alongside: the
 candidate predicts 0x117 again, race unchanged.
+
+### Round 3 results
+
+Evidence: stars-oracle-apparatus `evidence/rd/rw08`, `rp13`..`rp20`,
+`rp19-y2`, `rp19-y3`, `rp21`. Public record: `docs/PARITY.md` "Race
+design", Round 3.
+
+- RW08: held (`universe.py check` 65 match, 0 mismatch; all three races
+  kept, repaired as predicted, flag 0x10).
+- RD-P13..RD-P20: held (`races.py turn` 1/1 each; messages as predicted:
+  0x117 in P14, P16, P17, P19 year 1; none new in P13, P15, P18, P20).
+- RD-P19 year 2 first looked like a miss (0x117 in the turn file). The
+  turn file carries the previous year's messages over when no orders were
+  submitted: years 1, 2 and 3 held 3, 6 and 9 messages, each block
+  starting with the previous one. RD-P21 showed the same (RW08's eight
+  creation messages, then two new ones). So the original prediction held
+  (no new 0x117, race unchanged in years 2 and 3), and the RD-P21
+  candidate (a new 0x117 every year while flagged) is ruled out: no new
+  0x117, races unchanged.

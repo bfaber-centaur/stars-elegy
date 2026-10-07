@@ -327,28 +327,35 @@ After laying, every fleet and then every starbase sweeps.
 
 ## Mass-driver packets
 
-### Launch (BINARY-ONLY)
+### Launch (CONFIRMED, OB-028, OB-029; marked parts BINARY-ONLY)
 
 - Needs a mass driver on the planet's starbase and a packet destination;
-  otherwise the item is not built and the player gets a message.
+  otherwise the item is not built and the player gets a message (OB-028-F:
+  no packet, minerals unchanged, two messages).
 - Driver warp `Dw`: the best driver's rating; `t` = 1 when two different
   orbital slots each hold that best driver (only starbase hulls with two
-  orbital slots can), else 0.
+  orbital slots can), else 0 (OB-028-C: two Mass Driver 7s give warp 8;
+  OB-028-D: Mass Driver 7 with Mass Driver 5 gives 7).
 - Each item launches 100 kT of one mineral (Packet Physics: 70), or for a
   mixed item 40 kT of each (PP: 25), times the item count, at most 32,760
-  per mineral.
+  per mineral (the cap BINARY-ONLY). Measured spend from the surface: 110 kT
+  per 100 kT item (Interstellar Traveler 120, PP 70) and 44 kT of each per
+  mixed item (PP 25) (MEASURED, OB-028, OB-029).
 - Packet warp `W`: the planet's packet-speed setting; if below 5 or above
-  `Dw + 3`, it becomes `Dw + t`.
+  `Dw + 3`, it becomes `Dw + t` (OB-028-B: 11 with a Mass Driver 7 → 7;
+  unset → `Dw + t`, OB-028-C, D).
 - Decay class `k = max(0, W − Dw − t)`, +1 for an Interstellar Traveler
-  launcher, at most 3.
+  launcher, at most 3 (OB-028-A: warp 9 from a Mass Driver 7 is class 2;
+  IT: warp 7 class 1, warp 10 class 3, OB-028-H, I).
 - A packet launched from the same planet in the same year with the same
   warp, destination and class merges into the first while it is under
-  16,300 kT.
+  16,300 kT (OB-028-B, E: two items, one 200 kT packet; the 16,300 kT limit
+  BINARY-ONLY).
 
-### Flight and decay (CONFIRMED in part, OB-003; rest BINARY-ONLY)
+### Flight and decay (CONFIRMED, OB-003, OB-028; marked parts BINARY-ONLY)
 
-- On its launch year a packet moves `⌊W²/2⌋` ly; after that `W²` ly per
-  year (CONFIRMED for later years, OB-003 J, K), straight toward the
+- On its launch year a packet moves `⌊W²/2⌋` ly (OB-028 A–I); after that
+  `W²` ly per year (OB-003 J, K), straight toward the
   destination planet. It arrives when the truncated distance is at most
   the year's move; otherwise each coordinate moves by the rounded share.
 - Decay per year by class: 0 none; 1, 2, 3: 10, 25, 50% of each mineral
@@ -356,7 +363,11 @@ After laying, every fleet and then every starbase sweeps.
   at half those rates, 5, 12 and 25% (CONFIRMED, OB-023: 1000 kT → 950,
   880, 750). Each non-empty mineral loses at least 10 kT (PP: 5)
   (CONFIRMED, OB-023: 50 kT of a mineral → 40, PP → 45). On the launch
-  year a packet that does not arrive decays half a year. On arrival it decays for the share of the
+  year a packet that does not arrive decays half a year (OB-028: class 2
+  100 kT → 88, class 3 → 75, IT class 1 → 90). A packet that arrives in
+  its launch year decays for half of the share of the year it flew
+  (OB-028-G: 500 kT class 3 arriving after 70% of a year → 413, +45 on an
+  unowned planet). On a later arrival it decays for the share of the
   year it flew, but the minimum still applies (CONFIRMED, OB-003-C: a
   class-1 100 kT packet arriving with 5% of a year left lost 10).
 
@@ -376,14 +387,18 @@ every step below, damage included.
    +22, +11; Mass Driver 7 catching warp 10 (q = 490): 1000 kT gives +546;
    a packet no faster than the catcher: +1000 and no damage.
 3. Fully caught: done.
-4. PP launcher (BINARY-ONLY): the catcher's starbase design becomes known
-   to it, and the packet terraforms (below), on owned and unowned planets.
+4. PP launcher: the packet terraforms (below), on owned and unowned
+   planets (CONFIRMED, OB-029-T1..T3), and the catcher's starbase design
+   becomes known to the PP player (BINARY-ONLY: OB-029-D2 found no foreign
+   design in the PP player's file, but no control shows that such a design
+   would be written there).
 5. Unowned planet: done.
 6. **Damage**, in units of 100 colonists:
    `dmg0 = ⌊(w² − c²)·M/160⌋`, `M` = total cargo after arrival decay;
    `dmg = ⌊s·dmg0⌋`, with `s` the planet's share that gets through its
    defenses (the defense coverage against normal bombs, `TAKEOVER.md`).
-   Alternate Reality planets take no damage (BINARY-ONLY).
+   Alternate Reality planets take no damage (CONFIRMED, OB-030-A: 1000 kT
+   at warp 10, population equal to the control, surface +111).
 7. With population `P` (units of 100): `kill = max(⌊P·dmg/1000⌋, dmg)`.
    `kill ≥ P` leaves the planet uninhabited. Otherwise population drops by
    `kill` and defenses drop by `Dk = ⌊def·dmg/1000⌋`; when that is 0 and
@@ -400,9 +415,12 @@ Driver 7 catcher gives `c² = 24`, caught 240‰, surface +324, 475 killed.
 With 50 SDI defenses: 418 killed, defenses 50 → 30. Damage at or above the
 population: uninhabited.
 
-**PP terraforming (BINARY-ONLY).** For each mineral, the uncaught share
-`u = ⌊m·(1000 − q)/1000⌋` works on one axis (ironium gravity, boranium
-temperature, germanium radiation; the pairing is inferred). For each
+**PP terraforming (CONFIRMED in part, OB-029; the draws BINARY-ONLY).**
+For each mineral, the uncaught share `u = ⌊m·(1000 − q)/1000⌋` works on
+one axis: ironium gravity, boranium temperature, germanium radiation
+(CONFIRMED, OB-029-T1..T3: 1000 kT of one mineral moved only its axis,
+by 3, 6 and 2, toward the PP player's ideal; the original values did not
+change). For each
 100 kT chunk (the last may be partial) one draw `rand(200) < min(chunk,
 100)` is a success; each success draws again and is also permanent with
 `rand(10) == 0`. The permanent count moves the planet's original value
@@ -455,12 +473,18 @@ gate type matched in GT-001 N1–N6 (one stream).
   replace a missing destination gate (CONFIRMED, GT-001 C). A waypoint in
   deep space, or on anything not at a planet's exact position, is refused
   (CONFIRMED for deep space, GT-001 M).
-- **Refusal order** (BINARY-ONLY except that a missing destination gate
-  was reported before colonists, GT-001 F3): source gate (or Jump Gate on every
+- **Refusal order** (CONFIRMED, GT-001 F3, GT-003 R1–R6; the destination
+  planet check BINARY-ONLY in its place): source gate (or Jump Gate on every
   ship), then destination planet, destination gate, destination owner,
   colonists from a planet not the fleet owner's, the cargo unload, then
   range and mass design by design. Only the first failure is reported to
   the fleet owner. A refused fleet stays where it is with its waypoints.
+  GT-003, each fleet with two reasons to be refused, got one message each:
+  source gate before destination gate (R1, and before deep space, R6);
+  destination owner before range (R2) and before mass (R3); foreign
+  colonists before mass, with the minerals kept aboard (R4); range before
+  mass, after the unload (R5: the hold emptied onto the source planet,
+  with an unload message).
 - **Cargo:** unless the fleet owner is Interstellar Traveler or uses a
   Jump Gate, all ironium, boranium, germanium and colonists are unloaded
   onto the source planet before the jump is checked, so a jump refused for
@@ -487,8 +511,9 @@ gate type matched in GT-001 N1–N6 (one stream).
   every design is lost, the fleet is gone.
 - **Mixed fleets (LEGACY BUG, MEASURED GT-001 H2, GT-002):** each design
   lost entirely (`pct = 100`) counts twice against the fleet's number of
-  designs, and a design wiped out by the loss rolls counts once (that
-  part BINARY-ONLY). When the
+  designs, and a design wiped out by the loss rolls (`pct < 100`) counts
+  once (CONFIRMED, GT-003 W0–W5: in W2 and W3 the roll destroyed the 491 kT
+  freighter and the fleet kept its Laser DD). When the
   count comes to exactly 0, the whole fleet is deleted with the "fleet
   lost" message, survivors included: a 500 kT ship with a safe Laser DD
   through a 100 kT gate lost both, and so did two lost designs with two
@@ -650,9 +675,12 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   destination. On arrival it leaves the galaxy if another Trader exists or
   with 1/2; otherwise it stays at the edge, takes warp `max(6, warp − 2) +
   1` and a new destination, and does not move further that year.
-  CONFIRMED (OB-023, OB-026): a warp-9 Trader moved 81 ly; one arriving
-  while another existed was removed; the only Trader stayed, warp 8 → 7,
-  with a new destination on an edge. MEASURED (WT): 4 warp rises 8 → 9 in
+  CONFIRMED (OB-023, OB-026, OB-031): a warp-9 Trader moved 81 ly; one
+  arriving while another existed was removed; the only Trader stayed, warp
+  8 → 7, with a new destination on an edge; a lone warp-6 Trader stayed
+  with warp 7 (`max(6, 4) + 1`) in three streams (OB-031). The 1/2 chance
+  of leaving is still unobserved: all four lone arrivals measured so far
+  stayed (OB-023, OB-031 ×3). MEASURED (WT): 4 warp rises 8 → 9 in
   about 80 Trader-years, each before that year's move and announced to
   every player, one with a new destination on an edge.
 
@@ -684,7 +712,9 @@ with random events off (an inserted Trader traded).
 - Each player gets one reward per Trader: a second fleet of the same
   player at the same Trader in the same year was kept.
 - Trading **removes the whole fleet**, ships and cargo.
-- Order of checks for each fleet (BINARY-ONLY in detail): cargo below 5,000 kT →
+- Order of checks for each fleet (CONFIRMED with two Traders, OB-030-T:
+  Trader 0 took one fleet of each player and refused the second fleet of
+  player 0, which Trader 1 then took): cargo below 5,000 kT →
   refused; else owner already served by this Trader → refused ("still
   recovering from the last transaction"), fleet kept; else the owner is
   marked served, the fleet is consumed, and the reward follows. A fleet
@@ -709,6 +739,13 @@ with random events off (an inserted Trader traded).
     | 10 | Genesis Device | powerful planetary device |
     | 11 | Jump Gate | unique part |
     | 12 | (a ship gift, below) | |
+
+    The same twelve parts can also come from a battle, a capture or
+    scrapping at a starbase: that tech attempt (`COMBAT.md` "Tech from
+    battle", `TAKEOVER.md`) makes up to 13 `rand(13)` item draws, with a
+    `rand(100)` only for an item that has a chance there and that the
+    player lacks. A capture gives no item a chance, so it always makes its
+    13 draws and gives nothing.
 
   - research (or an offered part already owned):
     - If every tech field is at 26: with 1/5 nothing ("unable to teach you
@@ -759,26 +796,30 @@ with random events off (an inserted Trader traded).
     - CONFIRMED (OB-026): one Nubian at the trade point, added as a new
       design.
 
-### Computer players' planets (BINARY-ONLY)
+### Computer players' planets (CONFIRMED in part, TP-001, TP-002; marked parts BINARY-ONLY)
 
 After the fleets, each Trader also trades with computer players' planets.
 Only Harder and Expert computer players take part, and only a planet with
 a starbase, within 100 ly of the Trader, whose owner this Trader has not
 served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
-(3,500 for Harder).
+(3,500 for Harder). (TP measured Expert Turindrone and Automitron
+homeworlds within 100 ly; the Harder threshold, the 100 ly edge and the
+other levels are BINARY-ONLY.)
 
 - **Part item.** If the owner lacks the part, it gains it. If it owns it,
   a random part it lacks is drawn, with up to 50 redraws; bit 12 counts as
   a part here and gives nothing but the bit. The price is all the
-  planet's surface minerals.
+  planet's surface minerals (CONFIRMED, TP-001-A: the bit, surface to 0;
+  TP-002-A: the part owned, a new bit drawn instead).
 - **Research item, or no part found.** If the owner's tech levels sum to
-  150 or more, nothing happens and the Trader stays available to it.
-  Otherwise the lowest field gains a level, six times, at no research
-  cost. The price is 5,000 kT (3,500 for Harder).
-- The price is taken from germanium first, then boranium, then ironium.
-  The owner is marked served. No message is sent.
+  150 or more, nothing happens and the Trader stays available to it
+  (CONFIRMED, TP-002-B). Otherwise the lowest field gains a level, six
+  times, at no research cost (CONFIRMED, TP-001-B: 10,10,10,13,10,10 →
+  12,11,11,13,11,11). The price is 5,000 kT (3,500 for Harder).
+- The price is taken from germanium first, then boranium, then ironium
+  (CONFIRMED, TP-001-B). The owner is marked served. No message is sent.
 
-Human players' planets never trade.
+Human players' planets never trade (CONFIRMED, TP-001-C, TP-002-C).
 
 ## Visibility (see SCANNING.md; CONFIRMED there)
 
@@ -791,20 +832,21 @@ and nowhere beyond it).
 
 ## Open experiments
 
-1. Packet launch: warp, class, amounts, same-year merge, the launch-year
-   half move; PP decay rates and terraforming; IT and AR targets.
+1. Packets: the 32,760 kT and 16,300 kT limits; the PP terraforming
+   draws and permanent changes as rates; whether a PP packet discloses the
+   catcher's starbase design (needs a control, OB-029-D2).
 2. Wormhole jump odds as a measured rate (one stream so far).
-3. Mystery Trader: leaving with 1/2 at an edge; ship counts after year
-   index 100; the 25th-redraw LEGACY BUG; computer players' fleets and
-   planets (O-53, for the computer-players oracle).
+3. Mystery Trader: leaving with 1/2 at an edge (0 of 4 lone arrivals
+   left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
+   the part reroll and late-year conversion at appearance; Harder computer
+   players' planets (3,500 kT) and the 100 ly edge.
 4. Minefields (MF-1..MF-12 done; see PARITY "Minefield lane"): whether
    the 512th field is refused when another space object sorts after the
    player's minefields; the mechanism of the chaser that freezes its
    waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
    (needs crafted orders); OB-010-S under the stops-then-decay order.
-5. Stargates: the rest of the refusal order; a design wiped out by loss
-   rolls in a mixed fleet (counted once); gate losses in more streams.
+5. Stargates: gate losses in more streams.
 6. Wormholes: stability names in the report (O-45, UI).
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
@@ -812,7 +854,9 @@ runs at one generator setting are not independent samples.
 
 ## Sources
 
-- Oracle: OB-001..OB-020 (`PARITY.md`, "Universe objects" and "Scanning",
-  `experiments/ob/`); raw evidence in private `stars-oracle-apparatus`.
+- Oracle: OB-001..OB-031, GT-001..GT-003, TP-001/002, WT (`PARITY.md`,
+  "Universe objects", "Stargates" and "Scanning", `experiments/ob/`,
+  `experiments/gt/`, `experiments/tp/`); raw evidence in private
+  `stars-oracle-apparatus`.
 - White-box readings: private `stars-decomp` (objects, minefield hits and
   stargates in fleet movement, scanning notes).

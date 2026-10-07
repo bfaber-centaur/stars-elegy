@@ -100,6 +100,12 @@ Round 2 observations (UG16..UG21):
   without a spend had planet 0's concentrations floored at 30 and the
   game's one surface-mineral draw.
 
+Round 3 (UG22..UG30): all nine games matched the predicted game field by
+field (0 mismatches): 57, 59, 239 and 900 planets; UG26..UG28 are UG01's
+galaxy; UG29's second planet took the homeworld's 50/50/50 after 100
+redraws and UG30's kept 40/42/45. Evidence: apparatus `evidence/ug/run/ug22`
+.. `ug30`.
+
 Tool note: the model's checker crashed on games with an AR homeworld
 (an owned planet with no installations); a one-line local patch was used
 for the runs, and the fix was sent to the decomp lane.
