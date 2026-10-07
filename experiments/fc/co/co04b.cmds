@@ -1,0 +1,7 @@
+# CO-04b: B (empty) asks for 300 Ir from A (200 Ir) through the client's fleet Cargo dialog.
+fleet first
+fleet next
+fleet other 0
+fleet cargo
+xfer ir -300
+xfer ok

@@ -53,7 +53,8 @@ def parse(path):
             d = dict(kv.split('=', 1) for kv in s.split()[1:] if '=' in kv)
             c = [int(x) for x in d['cargo'].split('/')]
             st['fleet'][(int(d['owner']), int(d['id']))] = dict(
-                fe=c[0], bo=c[1], ge=c[2], col=c[3], ships=d['ships'], x=int(d['x']), y=int(d['y']))
+                fe=c[0], bo=c[1], ge=c[2], col=c[3], ships=d['ships'], x=int(d['x']), y=int(d['y']),
+                fuel=int(d['fuel']) if 'fuel' in d else None)
             last = st['fleet'][(int(d['owner']), int(d['id']))]
         elif s.startswith('  wp ') and last is not None and 'task' not in last:
             last['task'] = int(dict(kv.split('=', 1) for kv in s.split() if '=' in kv)['task'])

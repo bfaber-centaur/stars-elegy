@@ -1,0 +1,6 @@
+# CO-01: split one ship off 4 Freighters holding 410 Ir, fuel 1001.
+fleet first
+fleet next
+fleet split
+ships 0 1
+ships ok

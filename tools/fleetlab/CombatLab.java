@@ -55,6 +55,7 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
+//         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
 //         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
@@ -62,7 +63,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   unload (all colonists) | merge (into the waypoint's
 //                                   fleet) | transfer K (give the fleet to the K-th other
 //                                   player) | lay [YEARS] (lay mines; YEARS
-//                                   word, default 5 = indefinitely) | transport A:V,A:V,A:V,A:V,A:V
+//                                   word, default 5 = indefinitely) | route (follow the
+//                                   planet's route, task 8) | patrol RANGE (patrol within
+//                                   RANGE light-years, task 7) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
 //                                   kT or 100s of colonists; "-" for no order). "target
 //                                   fleet" makes waypoint 0 target a fleet (id number |
@@ -87,6 +90,17 @@ import org.starsautohost.starsapi.items.Items;
 //                                   every object already in BASE. Layout: docs/ORACLE.md
 //                                   "Universe objects". PARTNER is the other wormhole's
 //                                   NUM; DEST a planet number; MASKs are player bit masks.
+//   route N DEST                    set planet N's route destination to planet DEST
+//                                   (stored as wRoute; a fleet with waypoint task "route"
+//                                   at N follows it). Owned full planet blocks only
+//   keepfleets-ordered              keep the base's own fleets and add the spec's
+//                                   fleets alongside them (spec fleet ids must be
+//                                   free), emitting every fleet in owner/id order.
+//                                   Without it the spec's fleets replace all fleets.
+//                                   Needed for multi-player bases whose computer
+//                                   players must keep their fleets to generate a
+//                                   turn. (Distinct from "keepfleets", which keeps
+//                                   the base's fleets but forbids adding new ones.)
 //   planet N [owner P] [pop X] [starbase D|none] [scanner none|on]
 //                                   make planet N player P's (installations copied from
 //                                   P's homeworld, none built), set its population (in
@@ -281,6 +295,36 @@ public class CombatLab {
                 byte[] d = b.getDecryptedData();
                 System.out.printf("%s order research pct=%d field=%d next=%d raw=%s%n", f, d[0] & 0xff, d[1] & 15,
                     (d[1] & 0xff) >> 4, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 23) {
+                // order file: ships moved between two fleets (split, Split All, the
+                // two-fleet Merge dialog). fleet word, other fleet word, kind byte, design
+                // mask word, then one signed word per set bit: the change to the first fleet
+                byte[] d = b.getDecryptedData();
+                int mask = u16(d, 5), o = 7;
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < 16; i++) {
+                    if ((mask >> i & 1) == 0) continue;
+                    sb.append(sb.length() == 0 ? " ships=" : ",").append(i).append(':').append((short) u16(d, o));
+                    o += 2;
+                }
+                System.out.printf("%s order move-ships fleet=%d other=%d kind=%02x%s raw=%s%n", f, u16(d, 0) & 0x1ff,
+                    u16(d, 2) & 0x1ff, d[4] & 0xff, sb, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 24) {
+                // order file: split (fleet word); the move-ships record after it names the new fleet
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order split fleet=%d raw=%s%n", f, u16(d, 0) & 0x1ff, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 37) {
+                // order file: Merge Fleets (the kept fleet word, then each merged fleet's word)
+                byte[] d = b.getDecryptedData();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 2; i + 1 < b.size; i += 2) sb.append(i == 2 ? "" : ",").append(u16(d, i) & 0x1ff);
+                System.out.printf("%s order merge fleet=%d merged=%s raw=%s%n", f, u16(d, 0) & 0x1ff, sb,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 44) {
+                // order file: rename fleet (fleet word, a word, then the name as a Stars! string)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order rename fleet=%d w2=%d name=\"%s\" raw=%s%n", f, u16(d, 0) & 0x1ff, u16(d, 2),
+                    Util.decodeStarsString(java.util.Arrays.copyOfRange(d, 4, b.size)), Util.bytesToString(d, 0, b.size));
             } else if (orders && b.typeId != 8 && b.typeId != 9 && b.typeId != 36 && b.typeId != 0
                     && !(b instanceof BattlePlanBlock) && b.typeId != 42) {
                 // other order records, raw (never the serial block 9 or the password block 36)
@@ -436,6 +480,7 @@ public class CombatLab {
 
     static class FleetSpec {
         int owner, id, x, y, fuel, plan, planet = -1;
+        boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
@@ -459,6 +504,15 @@ public class CombatLab {
                 return 9;
             }
             case "unload": ord[3] = 2 << 12; return 1;
+            case "route": return 8;
+            case "patrol": {
+                // patrol: two order words. word 0 = range in light-years
+                // (bit 15 selects the intercept mode the client offers); word 1 =
+                // the fleet id the host picked to intercept (0 at turn start).
+                int range = Integer.parseInt(t[i + 1]);
+                ord[0] = range & 0xffff;
+                return 7;
+            }
             case "lay": {
                 // lay mines: one word, the years counter (5 = indefinitely)
                 ord[0] = t.length > i + 1 && t[i + 1].matches("\\d+") ? Integer.parseInt(t[i + 1]) : 5;
@@ -545,7 +599,9 @@ public class CombatLab {
         List<FleetSpec> fleets = new ArrayList<>();
         Map<Integer, int[]> planetSpecs = new HashMap<>(); // N -> {owner, pop, starbase, scanner}; -2 = keep, -1 = none
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
+        Map<Integer, Integer> routes = new HashMap<>(); // planet N -> route destination planet
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
+        boolean keepFleetsOrdered = false; // keep the base's own fleets and add the spec's alongside, in owner/id order
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -642,6 +698,8 @@ public class CombatLab {
                         }
                         break;
                     }
+                    case "route": routes.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "keepfleets-ordered": keepFleetsOrdered = true; break;
                     case "planet": {
                         int[] ps = {-2, -2, -2, -2};
                         for (int i = 2; i + 1 < t.length; i += 2) {
@@ -702,13 +760,42 @@ public class CombatLab {
             sbs.put(k, sbDesigns.containsKey(k) ? sbDesigns.get(k).values() : oldSb.getOrDefault(k, List.of()));
         }
 
+        // keepfleets-ordered: preserve the base's own fleets and add the spec's
+        // alongside. Each base fleet is captured as a unit (its FleetBlock plus the
+        // waypoint blocks that follow it) keyed by owner/id, so it can be merged with
+        // the spec's fleets and the whole set emitted in owner/id order — the order
+        // the host expects. Without keepfleets-ordered (default) the spec's fleets
+        // replace all fleets, exactly as before.
+        Map<Integer, Integer> origFleetCount = new HashMap<>();
+        Set<Integer> baseFleetKeys = new HashSet<>();
+        Map<Integer, List<Block>> baseUnits = new TreeMap<>();
+        if (keepFleetsOrdered) {
+            List<Block> cur = null;
+            for (Block b : blocks) {
+                if (b instanceof PartialFleetBlock) {
+                    PartialFleetBlock bf = (PartialFleetBlock) b;
+                    origFleetCount.merge(bf.owner, 1, Integer::sum);
+                    baseFleetKeys.add(bf.owner * 1024 + bf.fleetNumber);
+                    cur = new ArrayList<>();
+                    cur.add(b);
+                    baseUnits.put(bf.owner * 1024 + bf.fleetNumber, cur);
+                } else if (b instanceof WaypointBlock && cur != null) {
+                    cur.add(b);
+                } else {
+                    cur = null;
+                }
+            }
+        }
+
         // Fleets and their waypoints.
         fleets.sort(Comparator.comparingInt((FleetSpec f) -> f.owner).thenComparingInt(f -> f.id));
-        List<Block> newFleets = new ArrayList<>();
+        Map<Integer, List<Block>> fleetUnits = new TreeMap<>(); // owner*1024+id -> [fleet, waypoints...]
         Map<Integer, Integer> fleetCount = new HashMap<>();
         Set<Integer> ids = new HashSet<>();
         for (FleetSpec fs : fleets) {
             if (!ids.add(fs.owner * 1024 + fs.id)) throw new Exception("duplicate fleet " + fs.owner + "/" + fs.id);
+            if (keepFleetsOrdered && baseFleetKeys.contains(fs.owner * 1024 + fs.id))
+                throw new Exception("keepfleets-ordered: fleet " + fs.owner + "/" + fs.id + " already exists in the base; pick a free id");
             byte[] tpl = fleetTemplate.getOrDefault(fs.owner, fleetTemplate.get(0));
             FleetBlock fl = new FleetBlock();
             fl.setDecryptedData(Arrays.copyOf(tpl, tpl.length), tpl.length);
@@ -731,6 +818,7 @@ public class CombatLab {
                 if (fs.ships[i] > 255) big = true;
             }
             fl.byte5 = (byte) (big ? (fl.byte5 & ~8) : (fl.byte5 | 8));
+            if (fs.repeat) fl.byte5 |= 2; else fl.byte5 &= ~2;
             fl.ironium = fs.cargo[0];
             fl.boranium = fs.cargo[1];
             fl.germanium = fs.cargo[2];
@@ -745,7 +833,8 @@ public class CombatLab {
             fl.waypointCount = 1 + fs.wps.size();
             fl.encode();
             fl.setData(fl.getDecryptedData(), fl.size);
-            newFleets.add(fl);
+            List<Block> unit = new ArrayList<>();
+            unit.add(fl);
             List<int[]> all = new ArrayList<>();
             all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
                 : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
@@ -764,12 +853,24 @@ public class CombatLab {
                 } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
                     int o = fs.orders.get(w)[0];
                     wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                } else if (wb.waypointTask == 7) {
+                    // patrol: two words (range, selected target id)
+                    for (int k = 0; k < 2; k++) {
+                        int o = fs.orders.get(w)[k];
+                        wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                    }
                 }
                 wb.encode();
-                newFleets.add(wb);
+                unit.add(wb);
             }
+            fleetUnits.put(fs.owner * 1024 + fs.id, unit);
             fleetCount.merge(fs.owner, 1, Integer::sum);
         }
+
+        // Merge the base's own fleets (keepfleets-ordered) and flatten in owner/id order.
+        if (keepFleetsOrdered) fleetUnits.putAll(baseUnits);
+        List<Block> newFleets = new ArrayList<>();
+        for (List<Block> u : fleetUnits.values()) newFleets.addAll(u);
 
         // Player blocks: tech, design and fleet counts, relations.
         for (PlayerBlock p : players) {
@@ -819,7 +920,7 @@ public class CombatLab {
             }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
-            p.fleets = fleetCount.getOrDefault(k, 0);
+            p.fleets = (keepFleetsOrdered ? origFleetCount.getOrDefault(k, 0) : 0) + fleetCount.getOrDefault(k, 0);
             if (relations.containsKey(k)) {
                 Map<Integer, Integer> rel = relations.get(k);
                 int len = Math.max(p.playerRelations.length, Collections.max(rel.keySet()) + 1);
@@ -911,6 +1012,17 @@ public class CombatLab {
             }
             if (b instanceof PartialPlanetBlock && planetSets.containsKey(((PartialPlanetBlock) b).planetNumber))
                 applyPlanetSet((PartialPlanetBlock) b, planetSets.remove(((PartialPlanetBlock) b).planetNumber));
+            if (b instanceof PartialPlanetBlock && routes.containsKey(((PartialPlanetBlock) b).planetNumber)) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                if (b.typeId != BlockType.PLANET)
+                    throw new Exception("route: planet " + pl.planetNumber + " is not a full planet block");
+                int dest = routes.remove(pl.planetNumber);
+                pl.hasRoute = true;
+                pl.routeShort = (pl.routeShort & ~0x3ff) | ((dest + 1) & 0x3ff);
+                pl.encode();
+                pl.setData(pl.getDecryptedData(), pl.size);
+                pl.decode();
+            }
             if (b instanceof BattlePlanBlock) {
                 BattlePlanBlock bp = (BattlePlanBlock) b;
                 bp.decode();
@@ -955,6 +1067,7 @@ public class CombatLab {
         if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
+        if (!routes.isEmpty()) throw new Exception("route: no planet " + routes.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
     }
@@ -1248,6 +1361,7 @@ public class CombatLab {
                     }
                     i += 2; break;
                 case "planet": fs.planet = Integer.parseInt(t[i + 1]); i += 2; break;
+                case "repeat": fs.repeat = true; i += 1; break;
                 case "target":
                     // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
                     if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
@@ -1270,7 +1384,7 @@ public class CombatLab {
                     int w = fs.wps.size();
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
-                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer")
+                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer") || t[i + 1].equals("patrol")
                         || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
                 }

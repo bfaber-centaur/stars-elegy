@@ -1,0 +1,4 @@
+# CO-02: Split All of 3 Freighters holding 100 Ir, fuel 1000.
+fleet first
+fleet next
+fleet splitall
