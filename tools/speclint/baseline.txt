@@ -42,7 +42,7 @@ docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decom
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
 docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
-docs/ORDERS.md	pr-ref	cites PR #46: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
+docs/ORDERS.md	pr-ref	cites PR #46: MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
 docs/ORDERS.md	pr-ref	cites PR #46: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
 docs/ORDERS.md	pr-ref	cites PR #46: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
 docs/ORDERS.md	pr-ref	cites PR #46: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
@@ -61,7 +61,7 @@ docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-recei
 docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
 docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
-docs/ORDERS.md	pr-ref	cites PR #77: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
+docs/ORDERS.md	pr-ref	cites PR #77: MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
 docs/ORDERS.md	pr-ref	cites PR #77: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
 docs/ORDERS.md	pr-ref	cites PR #77: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
 docs/ORDERS.md	pr-ref	cites PR #77: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the

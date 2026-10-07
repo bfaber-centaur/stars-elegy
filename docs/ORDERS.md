@@ -477,26 +477,32 @@ emptied fleets are removed. There are two ways to order a merge, and they do
 is summed into a signed 16-bit count, one source fleet at a time, with the
 emptied source fleets removed. The boundary, stated exactly:
 
-MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
-ship count at **32765**. A direct merge forced (from an edited start) to reach
-a total of 16766..17000 against a 16000 stack stored **32765** in every case —
-one ship short of 32766 — with the excess lost, the order not refused. So the
-measured cap is **32765**, not the 32766/32767 an earlier read of the signed
-16-bit count suggested.
+MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
+exchange path only**: the host stores at most **32765** ships in a per-design
+stack reached that way. The two-fleet **ship exchange** (the move/transfer
+path) driven to a stored total of 16766..17000 against a 16000 stack held
+**32765** in every case — one ship short of 32766 — with the excess lost and
+the order not refused. The **merge order itself was not reachable** at this
+boundary from a legal client (Merge Fleets is disabled for 16000-ship fleets,
+and the exchange path is what carried the ships across), so the **merge
+order's own clamp is not measured** — the 32765 belongs to the exchange path,
+not to a direct merge.
 
 Client-side caps (what a legal client can even issue): the two-fleet **Ship
 Transfer** stops at **32766**, and **Merge Fleets is disabled** for
 16000-ship fleets (the exact fleet size at which the client disables it is
-unmeasured). So reaching the 32765 host clamp needs an edited start; the
+unmeasured). So the measured **32765** is the ship-move/exchange result; the
 **task** path's "32766/32767 kept, 32768+ empties the slot" (below) is **not
 reachable by any legal order**.
 
-**Elegy's chosen rule** (kept separate from the measurement, reconciliation
-pending with the kernel/orders lanes): the standing overflow rule stores
-**32766**. This differs from the measured **32765** by one ship; an
-implementation should treat 32765 as the host truth and may adopt it as the
-clamp, but the project's chosen-rule text still reads 32766 until the lanes
-reconcile it. Flagged for that reconciliation.
+**Elegy's chosen rule** for the **merge order** overflow (kept separate from
+the measurement, reconciliation pending with the kernel/orders lanes): the
+standing overflow rule stores **32766**, and it is **unconfirmed** — the merge
+order's own clamp was never reached by a legal order (the boundary was only
+measured through the exchange path, which stored 32765). An implementation
+should treat **32765** as the measured truth for the **ship-move/exchange**
+path, while the **merge order keeps 32766** as Elegy's chosen rule until the
+lanes reconcile. Flagged for that reconciliation.
 
 This path also combines damage by its **own** routine, not the one the
 Merge-with-Fleet task uses, and the two do not agree on magnitude —
@@ -827,11 +833,13 @@ serial decision: `tools/fleetlab/client-orders` issues them as **legal** client
 orders. Predictions for that round are committed in
 `experiments/fo/client-orders.md` (**CO** prefix). Still open:
 
-- **OX merge-order cap and loss — RESOLVED (CO-06).** The direct merge order
-  clamps the stored ship count at **32765** (one ship lost) for any merge
-  reaching 32766+; the client caps it earlier (Ship Transfer stops at 32766,
-  Merge Fleets disabled for 16000-ship fleets). The task path's 32766/32767
-  keep and 32768 empty are unreachable by legal orders. See "Merge order".
+- **OX merge-order cap and loss — RESOLVED (CO-06).** The **ship-move/exchange**
+  path stores at most **32765** ships (one short of 32766, excess lost); the
+  direct **merge order** was not reachable at the boundary (Merge Fleets is
+  disabled for 16000-ship fleets, Ship Transfer stops at 32766), so the merge
+  order's own clamp is unmeasured and stays Elegy's chosen rule (32766,
+  unconfirmed). The task path's 32766/32767 keep and 32768 empty are
+  unreachable by legal orders. See "Merge order".
 - **OX merge-order damage — RESOLVED (CO-05).** CONFIRMED: the direct order
   averages damage units over the **damaged** ships only, rounded down
   (`201/2 → 100`); the task's dilution rule is refuted for the direct merge.
