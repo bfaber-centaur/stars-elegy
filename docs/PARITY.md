@@ -1442,6 +1442,51 @@ Interpretation:
 
 Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
 
+#### Mystery Trader appearance (addendum; predictions)
+
+Committed before runs S6–S10 were examined. `OBJECTS.md` gives the
+Trader's appearance rule as BINARY-ONLY ("From year index 40 …"); its
+draws come right after new minerals, so the same replay predicts it. Read
+from the binary, in draw order: the chance draw (`rand(2)` when year index
+mod 100 = 71, `rand(3)` when = 33, `rand(4)` when index mod 128 = 49, else
+none in odd years and `rand(7)` in even ones; a Trader appears on 0);
+warp `8 + rand(5)`; two free coordinates `1020 + rand(361 + 400·size)`
+(start, then destination); `rand(2)`: 0 puts the start on the low edge
+(1020) and the destination on the high edge (`1380 + 400·size`), 1 the
+reverse; `rand(2)`: 0 makes the free coordinate x, 1 makes it y; then the
+item (`OBJECTS.md`). Every player gets the appearance message.
+
+Each run generates one year from an E1 state. Predicted Traders (tiny
+universe: edges 1020 and 1380; item 0 is research, 0x1000 a ship, other
+values a part bit):
+
+| Run | State (index) | Cycles → tick | Trader: warp, start → destination, item |
+|---|---|---|---|
+| S6 | 2449 (49, 1/4) | 10500 → 384 | 8, (1380, 1172) → (1020, 1135), 0x100 |
+| S6 | | 5200 → 768 | 12, (1330, 1020) → (1351, 1380), 0 |
+| S6 | | 3700 → 1098 | 9, (1032, 1020) → (1188, 1380), 0x10 |
+| S6 | | 1165 → 3460 | 8, (1020, 1363) → (1380, 1091), 0 |
+| S6 | | 35000 → 109, 2190 → 1812 | none |
+| S7 | 2471 (71, 1/2) | 11500 → 329 | 10, (1165, 1380) → (1100, 1020), 0 |
+| S7 | | 1490 → 2691 | 9, (1098, 1380) → (1304, 1020), 0x20 |
+| S7 | | 1210 → 3295 | 12, (1020, 1255) → (1380, 1024), 0x20 |
+| S7 | | 2190 → 1812 | 8, (1362, 1380) → (1142, 1020), 0 |
+| S7 | | 6000 → 659, 930 → 4284 | none |
+| S8 | 2472 (72, 1/7) | 1985 → 2032 | 8, (1380, 1121) → (1020, 1283), 0 |
+| S8 | | 880 → 4503 | 11, (1380, 1104) → (1020, 1173), 0x1000 (ship) |
+| S8 | | 5200 → 768 | 12, (1330, 1020) → (1351, 1380), 0 |
+| S8 | | 10500 → 384 | none |
+| S9 | 2473 (73, odd) | 5200, 3700, 1165 | none (the same ticks give Traders at 2449/2471/2472) |
+| S10 | 2533 (133, 1/3) | 35000 → 109 | 12, (1380, 1233) → (1020, 1294), 0x1000 (ship) |
+| S10 | | 1190 → 3405 | 10, (1047, 1380) → (1299, 1020), 0x200 |
+| S10 | | 1135 → 3570 | 11, (1020, 1166) → (1380, 1041), 0x200 |
+| S10 | | 1165 → 3460 | 8, (1020, 1363) → (1380, 1091), 0x20 |
+| S10 | | 11500 → 329 | none |
+
+The comets, climate changes and new minerals of each tick are as at 2430
+(the planet states differ only in population, and no planet is
+protected after index 20).
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
