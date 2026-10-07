@@ -43,9 +43,9 @@ docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip 
 docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
 docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
 docs/ORDERS.md	pr-ref	cites PR #46: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
-docs/ORDERS.md	pr-ref	cites PR #46: apparatus #46): the original **client disables Edit** for any design used by
 docs/ORDERS.md	pr-ref	cites PR #46: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
 docs/ORDERS.md	pr-ref	cites PR #46: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
+docs/ORDERS.md	pr-ref	cites PR #46: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
 docs/ORDERS.md	pr-ref	cites PR #47: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
 docs/ORDERS.md	pr-ref	cites PR #49: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
 docs/ORDERS.md	pr-ref	cites PR #49: elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
@@ -64,7 +64,7 @@ docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / a
 docs/ORDERS.md	pr-ref	cites PR #77: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
 docs/ORDERS.md	pr-ref	cites PR #77: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
 docs/ORDERS.md	pr-ref	cites PR #77: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
-docs/ORDERS.md	pr-ref	cites PR #77: ships already built to the old design. MEASURED (CO-08, stars-elegy #77 /
+docs/ORDERS.md	pr-ref	cites PR #77: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (a two-waypoint repeat fleet came back with only the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three

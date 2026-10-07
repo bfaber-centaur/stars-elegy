@@ -213,19 +213,17 @@ BINARY-ONLY.
 - **Design change into an occupied slot (elegy implementation Q10).** A design
   *change* order names a design slot that may already hold a built design — one
   with **ships in the field**, a **starbase**, or a **production-queue entry**
-  that builds it. Elegy's chosen rule: **refuse** a change to a slot that is in
-  use (ships, starbase, or queued), so a redefinition cannot silently mutate
-  ships already built to the old design. MEASURED (CO-08, stars-elegy #77 /
-  apparatus #46): the original **client disables Edit** for any design used by
-  **ships or a starbase**, so that case is not client-reachable (a client limit,
-  also noted in `ORACLE.md`). A design used **only by a production-queue entry**
-  can be edited: the host **overwrites the slot in place** and the queue entry
-  then builds the edited design. So for the **queue-only** case Elegy's "refuse
-  if queued" is more conservative than the original, which overwrites — an
-  INTENTIONALLY DIFFERENT choice (Elegy avoids silently changing what a queued
-  entry will build); the ships-or-starbase case is unreachable from the client
-  either way. The host's behaviour when a slot in use by **ships** is
-  overwritten by a **crafted** order remains BINARY-ONLY (serial-gated).
+  that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
+  original **client disables Edit** for any design used by **ships or a
+  starbase**, so that case is not client-reachable (a client limit, also noted
+  in `ORACLE.md`). A design used **only by a production-queue entry** can be
+  edited: the host **overwrites the slot in place**, and the queue entry then
+  builds the edited design. Elegy's rule reproduces this: **overwrite the slot
+  in place** for a change to a queue-only design (the queue builds the edited
+  design), and **refuse** only a change to a design in use by **ships or a
+  starbase** — which the client cannot reach anyway, so that refusal never
+  fires on a legal order. The host's behaviour when a slot in use by **ships**
+  is overwritten by a **crafted** order remains BINARY-ONLY (serial-gated).
 - **Design delete effect (elegy implementation Q11).** Deleting a design
   removes every ship of that design: ships in the field are removed, a fleet
   left with no ships is removed, and a **starbase** of that design is removed,
