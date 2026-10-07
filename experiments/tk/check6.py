@@ -27,7 +27,9 @@ def main(rundir):
         for cid, kind, args, want, year in r.checks:
             if kind == 'planet':
                 obj = st['planet'].get(args[0]) or {}
-                got = {k: obj.get(k, -1 if k == 'owner' else None) for k in want}
+                # a planet with no installations left has no installations block
+                got = {k: obj.get(k, -1 if k == 'owner' else 0) for k in want}
+                got = {k: list(v) if isinstance(v, tuple) else v for k, v in got.items()}
                 print(f'  {cid} planet {args[0]}: {"OK" if got == want else "MISS " + str(got)}')
             elif kind == 'msg':
                 seen = [s for p, k, s in ev if p == args[0] and k == args[1]]

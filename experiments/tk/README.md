@@ -1608,3 +1608,13 @@ more (at least 8 for an LBU-17, 2 to 3 for a Multi Contained Munition
 behind 100 Neutron Shields); the bombs that kill 2 installations
 (Lady Finger, Hush-a-Boom) keep a colonist kill unless coverage reaches
 99.8% or 98.3%, and 100 Neutron Shields give 97.9%.
+
+## Round 6 results
+
+All six cases held (`check6.py`: every planet check OK and all twelve
+messages seen, cycles 20000). TK-601: one factory killed and one colonist
+unit (0x063 slots: fleet, planet, 1 colonist unit, 1 installation).
+TK-603/604: 9 installations (1 factory, 7 defenses, 1 mine), population
+untouched at 1725, percent slot 8777 (87.77% stopped, `1 − 0.97^69`).
+TK-605: percent slot 299. TK-606: 8 clicks (3 + 3 + 2). Raw files are in
+apparatus `evidence/tk6/`.

@@ -3303,10 +3303,23 @@ unowned planet; minerals added), which had no committed prediction.
 
 ### Round 6: bombing message variants (TK-601 to TK-606)
 
-Status: predictions committed before the run (`experiments/tk/gen6.py`,
-`experiments/tk/README.md` "Round 6 predictions"). Targets the bombing
-texts `docs/MESSAGES.md` lists as BINARY-ONLY: one installation killed,
-installations only behind defenses, the plural texts, and plural retro.
+Status: CONFIRMED, 2026-10-07, one run (cycles 20000). Predictions
+(`experiments/tk/gen6.py`, `experiments/tk/README.md` "Round 6
+predictions") were committed before the run; raw files are in private
+`stars-oracle-apparatus` `evidence/tk6/`.
+
+| Case | Setup | Observed |
+|---|---|---|
+| TK-601 | one LBU-17 bomber, planet with one factory | factory gone, 1 colonist unit killed; 0x063 / 0x06d |
+| TK-602 | as TK-601 plus a second (unarmed) fleet | 0x169 / 0x173 |
+| TK-603 | one LBU-17 behind 69 counted Planetary Shields | 9 installations, no colonists (kill rate rounds to 0); 0x067 / 0x071, 87.77% stopped |
+| TK-604 | as TK-603 plus a second fleet | 0x16d / 0x177 |
+| TK-605 | LBU-17 and a second fleet, planet with one defense | 0x16e / 0x178 |
+| TK-606 | three Retro bombs and a second fleet | 8 clicks; 0x17a / 0x17b, no damage message |
+
+Every prediction held. The "installations only, no defenses" and "one
+installation, no colonists, defenses" texts are left as not reachable
+(`docs/MESSAGES.md` LEGACY BUG summary).
 
 ### Not tested
 
