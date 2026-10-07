@@ -64,6 +64,9 @@ def techsum(p):
     return sum(int(p[f]) for f in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio'))
 
 
+M_ALL = {}
+
+
 def scan_expect(run, A, B):
     """S-17..S-19 rules: the viewer's expected set of other players' object ids."""
     v = run.scan['viewer']
@@ -73,7 +76,7 @@ def scan_expect(run, A, B):
     scanners = []          # (x, y, R, P, is_fleet)
     for (o, i), f in fleets.items():
         if o == v and 'ppacket' not in run.scan:
-            scanners.append((int(f['x']), int(f['y']), 50, 0, True))
+            scanners.append((int(f['x']), int(f['y']), run.scan.get('R', 50), run.scan.get('P', 0), True))
     if run.scan.get('ppacket'):
         for t in things:
             if t['type'] == 'packet' and int(t['owner']) == v:
@@ -116,6 +119,11 @@ def evaluate(c, A, B, run=None, M=None):
         got = {int(t['id']) for t in M[0] if not (t['type'] in ('minefield', 'packet') and int(t['owner']) == v)}
         diff = dict(missing=sorted(exp - got), extra=sorted(got - exp))
         return exp == got, dict(seen=sorted(got), **diff)
+    if kind == 'thingin':
+        _, mfile, ids, want = k
+        ids = ids if isinstance(ids, list) else [ids]
+        got = [i in {int(t['id']) for t in M_ALL[mfile][0]} for i in ids]
+        return all(g == want for g in got), dict(zip(ids, got))
     if kind == 'scanfleets':
         got = [(o, i, (o, i) in M[2]) for o, i, _ in k[1]]
         return got == [tuple(e) for e in k[1]], got
@@ -227,6 +235,7 @@ def main():
     run = [r for r in gen.RUNS if r.rid == rid][0]
     A, B = load(after), load(before, 'before')
     M = load(after, 'after', 'CB.M%d' % (run.scan['viewer'] + 1)) if run.scan else load(after, 'after', 'CB.M2')
+    M_ALL[1], M_ALL[2] = load(after, 'after', 'CB.M1'), load(after, 'after', 'CB.M2')
     for c in run.cases:
         ok, got = evaluate(c, A, B, run, M)
         print('%-9s %-12s %-12s %s' % (c['id'], c['pred'], {True: 'HELD', False: 'CONTRADICTED', None: 'OBSERVED'}[ok], got))

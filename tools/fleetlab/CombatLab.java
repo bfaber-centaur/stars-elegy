@@ -53,7 +53,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
-//   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved]
+//   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
 //   thing trader NUM X Y DX DY WARP [met MASK] [item I]
 //   thing raw HEX                   (18 bytes)
@@ -799,18 +799,19 @@ public class CombatLab {
                 int owner = Integer.parseInt(t[2]), num = Integer.parseInt(t[3]);
                 int dest = Integer.parseInt(t[6]), warp = Integer.parseInt(t[7]);
                 long ir = Long.parseLong(t[8]), bo = Long.parseLong(t[9]), ge = Long.parseLong(t[10]);
-                int cls = 0, moved = 0;
+                int cls = 0, moved = 0, b15 = 0;
                 for (i = 11; i < t.length; i++) {
                     switch (t[i]) {
                         case "class": cls = Integer.parseInt(t[++i]); break;
                         case "moved": moved = 1; break;
+                        case "bit15": b15 = 1; break;
                         default: throw new Exception("packet: unknown token " + t[i]);
                     }
                 }
                 Util.write16(r, 0, 1 << 13 | owner << 9 | num);
                 Util.write16(r, 2, Integer.parseInt(t[4]));
                 Util.write16(r, 4, Integer.parseInt(t[5]));
-                Util.write16(r, 6, (dest & 0x3ff) | ((warp - 4) & 15) << 10 | moved << 14);
+                Util.write16(r, 6, (dest & 0x3ff) | ((warp - 4) & 15) << 10 | moved << 14 | b15 << 15);
                 Util.write16(r, 8, (int) ir); Util.write16(r, 10, (int) bo); Util.write16(r, 12, (int) ge);
                 Util.write16(r, 14, (int) (((ir + bo + ge + 9) / 10) & 0x3fff) | cls << 14);
                 return r;

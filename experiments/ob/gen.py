@@ -437,7 +437,9 @@ def pkt_after(x, y, dest, warp):
 
 r = run('OB-011', 'scanning of objects by a JOAT viewer with Rhino scouts (R 50, no penetrating range)',
         extra='planet 8 scanner none\n' + SCOUT1)
-r.scan = dict(viewer=1, mask=2)
+# JOAT Scouts carry a built-in 20*elec / 10*elec scanner (SCANNING.md); with the Rhino (50/0) the
+# fleet ranges combine as fourth powers: R = (60^4 + 50^4)^(1/4) = 66, P = 30 at electronics 3.
+r.scan = dict(viewer=1, mask=2, R=66, P=30)
 for (sx, sy) in ((1050, 1040), (1050, 1180), (1050, 1260), (1110, 1360), (1360, 1040), (1370, 1230),
                  (1220, 1060), (1300, 1150)):
     r.fleet(1, sx, sy, '1:1')
@@ -505,6 +507,32 @@ r.case('C', 'O-2', 'SD layer moving 25 ly (warp 5) toward a lay-mines waypoint',
 r.fleet(0, 1360, 1040, '0:1', extra='task lay to 1360 1100 warp 5', fuel=400)
 r.case('D', 'O-2', 'non-SD (player 0) layer with lay on waypoint 0 that moves 25 ly', 'no field', '160 or 80',
        ('nofield', 0, 1360, 1040, 1360, 1065))
+
+
+# ---------------------------------------------------------------- OB-017 known wormholes and packet marks
+# After OB-011 (a wormhole known to player 1 but out of range was not in its file). Player 0 has no
+# scanner at all (homeworld scanner removed, no fleets); player 1 has two Rhino Scouts (R 66, P 30).
+r = run('OB-017', 'known wormholes in range, and packet visibility marks carried between viewers',
+        extra='planet 8 scanner none\nplanet 17 scanner none\n' + SCOUT1)
+r.scan = dict(viewer=1, mask=2, R=66, P=30)
+r.fleet(1, 1050, 1180, '1:1'); r.fleet(1, 1360, 1040, '1:1')
+r.thing('wormhole', 0, '1050 1180 1 0 seen 2'); r.thing('wormhole', 0, '1210 1230 0 0')
+r.case('A', 'S-17', 'wormhole known to player 1, starting on a scout (after its jiggle within the penetrating '
+       'range 30)', 'in player 1\'s file (decomp: known or in range)', 'absent if known wormholes are skipped',
+       ('thingin', 2, 16384, True))
+r.thing('wormhole', 0, '1360 1040 3 0'); r.thing('wormhole', 0, '1290 1240 2 0')
+r.case('B', 'S-17', 'unknown wormhole starting on the other scout', 'in player 1\'s file', '', ('thingin', 2, 16386, True))
+r.case('C', 'S-17', 'the two partners, far from every scanner', 'absent', '', ('thingin', 2, [16385, 16387], False))
+r.thing('packet', 1, '1100 1300 6 5 100 0 0')
+r.case('D', 'S-17', 'player 1 packet, start file mark bit 15 clear, far from player 0 (no scanners)',
+       'absent from player 0\'s file', '', ('thingin', 1, 8704, False))
+r.thing('packet', 1, '1300 1300 6 5 100 0 0 bit15')
+r.case('E', 'S-17', 'player 1 packet with bit 15 set in the start file (as every host file leaves it)',
+       'absent from player 0\'s file (decomp: only host and PP mark packets)', 'present if the mark persists',
+       ('thingin', 1, 8705, False))
+r.thing('packet', 0, '1150 1380 6 5 100 0 0')
+r.case('F', 'S-17', 'player 0 packet far from player 1\'s scouts (player 0 is written first)',
+       'absent from player 1\'s file', 'present if player 0\'s own pass marks it', ('thingin', 2, 8192, False))
 
 
 def main():
