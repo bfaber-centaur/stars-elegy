@@ -3131,6 +3131,13 @@ nothing. The field lost 27% (2% + 25%) and nothing more for the hits:
   - the field lost 50 before its 2% decay: 3000 → 2950 → 2891. Decay
     first would give 2890.
   - The stopped fleet then swept 100, so the field ended at 2791.
+  - Re-checked against the MF-4 year order (stops during movement, then
+    decay counting planets inside the field as the stops left it, then
+    sweeping; no planet lies inside this field at 3000 or 2950): the three
+    no-hit settings ended at 2840 and the three hit settings at 2791, as
+    predicted (stars-elegy `experiments/mf/README.md`). The hit settings
+    have mine-hit messages (0xc6) at the stop point; the no-hit ones have
+    none. No contradiction with MF-4.
 - Hit odds per ly and shrink amounts for other field sizes (O-14, O-15)
   are not yet measured.
 
@@ -3406,7 +3413,7 @@ stars-oracle-apparatus `evidence/gt/`.
   point, added as a new design. The traded fleet was removed.
 - A warp-9 Trader moved 81 ly in a year.
 
-### Minefield lane (MF-1..MF-12)
+### Minefield lane (MF-1..MF-13)
 
 Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
 BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
@@ -3535,6 +3542,15 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
   owner got "failed to lay mines this year due to technical difficulties"
   (0x17e). A layer inside an existing field merged normally in all three
   runs.
+- **Field 511 depends on object order (MEASURED, MF-13; LEGACY BUG
+  candidate).** With numbers 0..510 taken, field 511 was made only when no
+  universe object sorted after the owner's minefields. Objects sort by type
+  (minefields, packets and salvage, wormholes, the Mystery Trader), then
+  owner, then number. A player-1 field elsewhere (MF-13a) or a salvage
+  object (MF-13b) blocked player 0's 512th field: no field, message 0x17e,
+  mines lost. A player-0 field did not block player 1's 512th field, which
+  was made as number 511 (MF-13c). So the limit is 511 fields when anything
+  sorts after the owner's fields, and 512 otherwise (one run each).
 - **Laying order (CONFIRMED):** two layers of 160 in one 390-mine field
   merge one after the other, in fleet-number order. With the east layer
   first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
