@@ -1684,6 +1684,42 @@ Terraforming (T0 at 15 cycles values, T1, T2):
 
 Raw evidence: stars-oracle-apparatus `evidence/kx005/`.
 
+### OT — turn order, breeding in transit, AR loss gate, score speed code
+
+Status: CONFIRMED. Every case matched its committed prediction at cycles
+20000 and 3700 (two streams). Predictions were committed before the runs
+(stars-elegy `2eb2c1e` for OT-1..5, `649078a` for OT-6). Specs, start
+builder and prediction tables: `experiments/ot/`. Raw evidence: private
+apparatus `evidence/ot/`. Rules: `KERNEL.md` "Turn order", "Alternate
+Reality colonists in flight", "Inner Strength colonists breed in transit",
+"Score".
+
+Question: the program fixes the order of each year's steps, but five
+neighbouring pairs that an implementation could visibly get wrong had not
+been separated by a run. Also open: when an Alternate Reality fleet counts
+as moving, how Inner Strength colonists breed in a fleet, and which speed
+code the score's ship power uses.
+
+Setup: one pinned year per case from the CB base (2400, two players,
+random events off), edited with `CombatLab` planet sets (new key
+`driver=DEST[,WARP]` for a starbase's mass-driver destination).
+
+| Case | Separates | Observation | Result |
+|---|---|---|---|
+| OT-1 | Trader encounter (6b) before unload (6c) | A fleet ordered to unload exactly 5,000 kT at the Trader's arrival planet was consumed (reward message 0x109); nothing reached the planet | CONFIRMED |
+| OT-2 | Battle (6) before encounter (6b) | Battle at the Trader's arrival point; no freighter lost; then the freighters traded | CONFIRMED |
+| OT-3 | Launch-year packet flight (5) before bombing (6a) | The packet emptied the planet (0xda); the four bombers orbiting it sent no bombing message | CONFIRMED |
+| OT-4 | CA terraforming (7.3) before Orbital Adjusters (7.4) | Final environment 50/50/51; at 3700 the original also drifted and the result was the same | CONFIRMED |
+| OT-5 | Breeding in transit (3b) before production and growth (4) | Full 2100 kT IS fleet over its own planet: 157 landed (0x158), and the planet ended equal to the control planet that started 157 higher. 200 kT in a 210 kT hold in deep space: +10 (0x0fb), 5 lost. Full fleet over an enemy planet: nothing, no message | CONFIRMED |
+| OT-6 AR | When an AR fleet counts as moving | 22 kT moving: kept, no 0x0c1; 23: 22 with 0x0c1; 100 kT with waypoint 1 on its own position: 97; with no fuel (did not move): 97; chasing: 97 (once); warp 0: 100, no message | CONFIRMED |
+| OT-6 power | Speed code in the score's ship power | A 7-Big-Mutha-Cannon Battle Cruiser counted as an escort for a War Monger owner as well as a non-War Monger one (power 1963 without the WM bonus, 2320 with it); a 9-Disruptor design counted as capital for both (2088). Records: U/E/C 8/1/1 and 1/1/1 | CONFIRMED |
+
+Interpretation: all five orders agree with the program. The AR loss is
+taken when a fleet with a waypoint at warp above 0 starts its move, before
+the fuel limit and chase deferral, and only losses of at least 1 kT send a
+message. The score's power uses the design's own speed code with no race
+bonus.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the

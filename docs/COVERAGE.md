@@ -24,7 +24,7 @@ Levels:
 | Packets, wormholes, Mystery Trader | `OBJECTS.md` | In progress | Wormholes and the Trader are owned by the objects and races lane. Packet launch is Read. |
 | Fleet movement, fuel, chasing, stargates | `KERNEL.md`, `OBJECTS.md` | Confirmed | |
 | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: whether the 512th field depends on object order, the 4050-object limit, SS and SD safe-warp bonuses. |
-| Colonists breeding inside fleets (one primary trait) | none | Missing | How carried colonists grow, and where the overflow goes. |
+| Colonists breeding inside fleets (one primary trait) | `KERNEL.md` | Confirmed | OT-5. The case where a fleet breeds 0 and a random draw gives 1 is Read. |
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | none | Missing | Where built ships go: one new fleet per build, its number and name, full fuel, the per-player fleet limit and what happens at it, routing to the planet's route destination with the warp chosen, a new fleet's default orders, what replacing or upgrading a starbase does to the old one. |
 | Population growth | `KERNEL.md` | Confirmed | |
@@ -64,7 +64,7 @@ Levels:
 5. **Client estimates:** production schedules, arrival years, fuel and
    research estimates.
 
-After those: colonists breeding inside fleets, packet launch, patrol
+After those: packet launch, patrol
 targets, and a single list of limits. Not ranked, because a lane already
 owns them: research and terraforming, random events (CONFIRMED in #44),
 scores and victory, race design, wormholes and the Mystery Trader.

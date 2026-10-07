@@ -42,3 +42,19 @@ the same two cycles values.
 | OT-6-5 | 100 kT, chasing fleet 6 | 97 kT, lost once (pass 0, before the chase is deferred) | no loss for chasers, or a loss per pass |
 | OT-6-7 | 100 kT, waypoint 1 at warp 0 | 100 kT, no message | |
 | OT-6-P | Each player owns one "BMC" (7 Big Mutha Cannons: beam 1785, speed code 5 without War Monger) and one "DIS" (9 Disruptors: beam 1899, speed code 5) | Power: BMC `1785 + ⌊1785·1/10⌋` = 1963 (escort) for both players, because the speed code has no War Monger bonus; DIS 2088 (capital). Score records: player 1 has U/E/C = 1/1/1; player 0 has U/E/C = 8/1/1 | War Monger +2 in the score's speed code (player 1 BMC = 2320, capital: E/C 0/2); no speed term (DIS 1899, escort: E/C 2/0) |
+
+## Results
+
+Every case matched its prediction at both cycles values (20000 and 3700).
+Raw files, hashes and the per-run dumps are in the private apparatus
+repository under `evidence/ot/`.
+
+| Case | Observed (both streams) | Result |
+|---|---|---|
+| OT-1 | The fleet is gone; player 0 got the Trader's research reward (message 0x109); planet 15's surface ironium is 0 | encounter before unload: CONFIRMED |
+| OT-2 | A battle at 1084,1210 (0x9a messages and a battle record); no freighter was lost, and the fleet then traded (0x109) | battle before encounter: CONFIRMED |
+| OT-3 | Planet 19 uninhabited by the packet (0xda to player 1); no bombing message to either player; launch message 0xd3 to player 0 | launch-year flight before bombing: CONFIRMED |
+| OT-4 | Final environment 50/50/51 (0x15b, 0x156). At 3700 the CA's original also drifted (to 50/50/59, 0x15c) and the result was still 50/50/51 | CA terraforming before Orbital Adjusters: CONFIRMED |
+| OT-5 | Planets 15 and 19 both end at 1330, planet 21 at 1150; 0x158 for 157 to planet 15; fleet B 200 → 210 with 0x0fb for 10; fleet C unchanged, no message | breeding before growth, and the breeding rules: CONFIRMED |
+| OT-6-1..7 | Colonists: 22 → 22 (no 0x0c1), 23 → 22, 100 → 97 (own position), 100 → 97 (no fuel; the fleet stayed put), 100 → 97 (chaser, once), 100 → 100 (warp 0, no message). 0x0c1 went to fleets 2, 3, 4 and 5 only | as predicted |
+| OT-6-P | Score records: player 0 U/E/C 8/1/1, player 1 1/1/1; starbases 0; tech sum 156 | speed code without the War Monger bonus: CONFIRMED |

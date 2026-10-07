@@ -158,9 +158,10 @@ every minefield decays. Order CONFIRMED: decay comes before this year's
 laying (OB-002-F); a detonating field decays with the extra 25% in the same
 year (OB-002-M, MF-7, MF-8).
 
-**3b. Colonists breeding in transit** (Inner Strength). Uncovered:
-`COVERAGE.md` lists it as missing; `MESSAGES.md` 0x0fb and 0x158 describe
-the messages. Order BINARY-ONLY.
+**3b. Colonists breeding in transit** (Inner Strength; this file's
+"Inner Strength colonists breed in transit"). Order CONFIRMED (OT-5): the
+overflow lands on the planet before production and growth, and the planet
+grows on it the same year.
 
 ### 4. Production
 
@@ -201,8 +202,9 @@ the after-growth population) and in this internal order.
    jiggle or jump. The Trader does not move. If any object moved, the
    waypoint check runs again (`OBJECTS.md`). Order CONFIRMED: wormholes
    move after fleets, so a fleet transits to the exit's position from
-   before this step (OB-005-C). The launch-year flight's place
-   (BINARY-ONLY) puts a new packet's impact before battles and bombing.
+   before this step (OB-005-C). A packet launched this year can hit
+   before battles and bombing: CONFIRMED (OT-3, a packet emptied the
+   planet and the bombers orbiting it sent no bombing message).
 2. Fleets refuel at starbases (this file's "Refuelling at a starbase").
    A fleet built in step 4 is already full (`PRODUCTION-LAUNCH.md`).
 
@@ -218,14 +220,19 @@ battle no longer protects the planet (T-2); bombing uses the after-growth
 population and tech researched this year (T-8).
 
 **6b. Mystery Trader encounters** (`OBJECTS.md` "Encounters"). Order
-BINARY-ONLY: after battles and bombing, before the unload tasks.
+CONFIRMED: after battles (OT-2: the battle was fought, then the surviving
+freighters traded) and before the unload tasks (OT-1: a fleet ordered to
+unload exactly 5,000 kT at the Trader's arrival planet was consumed and
+nothing was unloaded). Its place against bombing is BINARY-ONLY and has
+no visible effect: bombing never changes a fleet's cargo.
 
 **6c. Waypoint tasks after movement** (`TAKEOVER.md`; mine laying in
 `OBJECTS.md` "Laying"; remote mining in `TAKEOVER.md` "Other waypoint
 tasks").
 
-1. A per-planet working value is cleared. Uncovered; its meaning has not
-   been read.
+1. Every planet's report age is cleared. This is a file detail: it is the
+   value the player's client shows as how many years old its information
+   about a planet is. It has no effect on play.
 2. Unload tasks: each fleet in fleet order runs unload (including invasions
    by arriving transports), colonize, remote mining, mine laying or route.
 3. All queued colonist drops are resolved.
@@ -250,8 +257,9 @@ is BINARY-ONLY.
    terraforming (this file's "Terraforming").
 4. Remote terraforming by Orbital Adjusters (this file's "Terraforming").
    Order CONFIRMED (KX-005): both use this year's researched tech, and a
-   fleet that arrived this year terraforms. The order of 3 against 4 is
-   BINARY-ONLY.
+   fleet that arrived this year terraforms. 3 comes before 4: CONFIRMED
+   (OT-4, a CA planet and a hostile adjuster ended where the CA step
+   followed by the adjuster predicts, in two streams).
 
 **7a. End-of-year checks.**
 
@@ -291,36 +299,20 @@ year's stream.
 
 ### Orders still unpinned
 
-The orders above that are BINARY-ONLY, with a discriminating run for each
-one an implementation could get visibly wrong:
+The OT runs (`PARITY.md` "OT: turn order") measured the five orders an
+implementation could get visibly wrong: 3b before 4, 5 before 6a, 6 before
+6b, 6b before 6c and 7.3 before 7.4. All matched the program.
 
-- **Trader encounter before unloading (6b before 6c).** A fleet with
-  exactly 5,000 kT of minerals and an unload order at an own planet that
-  the Trader reaches this year. Encounter first predicts a trade and the
-  fleet is consumed; unload first predicts the fleet keeps an empty hold
-  and no trade happens. One year, events on, Trader placed by state edit.
-- **Trader encounter after battle (6b after 6).** An armed enemy fleet
-  and an unarmed freighter carrying 5,000 kT at the Trader's arrival point.
-  This order predicts the freighter dies and nothing is traded.
-- **Launch-year packet before bombing (5 before 6a).** A packet launched
-  at an enemy planet close enough to arrive in its first half year, while
-  bombers orbit that planet. This order predicts bombing applies to the
-  population and defenses as the packet left them.
-- **Claim Adjuster terraforming before Orbital Adjusters (7.3 before 7.4).**
-  A CA planet with a hostile Orbital Adjuster fleet in orbit, at a value
-  where the adjuster's choice of axis depends on whether the CA has
-  already moved the environment.
-- **Race check after pre-movement tasks (2a after 2).** Only a
-  hand-edited race file can tell the two orders apart, so no run is
-  proposed.
-- **Breeding in transit before production (3b before 4).** An Inner
-  Strength fleet with a full hold orbiting its own planet. The overflow
-  lands before growth, so the planet grows on it the same year. Pair this
-  with the breeding rules themselves (`COVERAGE.md`).
+What stays BINARY-ONLY:
 
-The remaining BINARY-ONLY items (registration steps, design housekeeping,
-the working-value reset, file-only caches and bits) have no effect on game
-state that an implementation can observe.
+- **The race check after the pre-movement tasks (2a after 2).** Only a
+  hand-edited race file could tell the two orders apart.
+- **The Trader encounter against bombing (6a against 6b).** Bombing does
+  not touch fleets, so no run can separate them.
+- **Mine laying after battles (6c after 6).**
+- **Registration steps, design housekeeping, the report-age reset, and the
+  file-only caches and bits (8.3, 8.4).** None of them changes game state
+  an implementation can observe.
 
 ## Habitability
 
@@ -1249,6 +1241,44 @@ loses nothing. Vectors (TK-117, deep space): 10 → 10, 11 → 11, 40 → 39,
 200 → 194 moving; 200 stationary → 200. TK-107 matches too (25 → 24,
 100 → 97).
 
+What counts as moving (CONFIRMED, OT-6): the loss is taken when the fleet
+starts its move, before the fuel limit and before a chaser is put off to
+the chase passes. A fleet loses if it has a waypoint 1 with a warp above 0,
+even when:
+
+- waypoint 1 is the fleet's own position (100 → 97);
+- the fleet has no fuel and does not move (100 → 97);
+- the fleet is chasing another fleet (100 → 97, once a year, not once per
+  pass).
+
+A fleet loses nothing (the same CONFIRMED runs and TK-117) when it has no
+waypoint 1, when waypoint 1's warp is 0 (100 → 100), or when the
+waypoint-0 task is a transport or mine-laying task that holds it. From the
+program (BINARY-ONLY), the fleets the other movement gates stop also lose
+nothing: the registration penalty, engine failure, and a stargate jump.
+
+The message (`MESSAGES.md` 0x0c1) is sent only when the loss is at least
+1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED,
+OT-6: 22 → 22 with no message, 23 → 22 with one).
+
+### Inner Strength colonists breed in transit (CONFIRMED, OT-5)
+
+Each year, after movement and before production (turn order step 3b), every
+Inner Strength fleet carrying C kT of colonists breeds
+`g = trunc(C·growth/200)` kT, `growth` being the race's growth rate in
+percent. If `g` is 0, a draw `Random(3)` of 0 makes it 1 (BINARY-ONLY).
+
+1. As much of `g` as fits in the fleet's free cargo space is added to its
+   colonists, with message 0x0fb for the amount, if any.
+2. The rest goes to the planet the fleet orbits if the fleet's owner owns
+   it, as population, with message 0x158. Otherwise the rest is lost and
+   there is no message.
+
+Vectors (OT-5, growth 15%): a full 2100 kT fleet over its own planet
+breeds 157, all of it landing on the planet, which then grows on it that
+year; 200 kT in a 210 kT hold in deep space takes 10 and loses 5; a full
+fleet over an enemy planet gains nothing and the planet gets nothing.
+
 ### Fuel cannot be unloaded onto a planet (CONFIRMED, FM-101..105)
 
 A waypoint unload of fuel at a planet moves nothing: the fleet keeps all
@@ -1346,13 +1376,32 @@ Power of a design (summed over its slots):
 
 CONFIRMED for the class boundaries KX-003 reached: 4 Omega Torpedoes
 (1896, escort), 5 (2370, capital), 2 Cherry Bombs (140, escort), an X-Ray
-Laser scout (escort), unarmed scouts. Capacitors, sappers and the speed
-adjustment are BINARY-ONLY.
+Laser scout (escort), unarmed scouts.
+
+Details:
+
+- **Truncation** (BINARY-ONLY). Each slot's term is truncated before the
+  slot terms are summed: a beam slot to `trunc((range + 3)·damage·count/4)`,
+  then `trunc(…/3)` for sappers; a torpedo slot to
+  `trunc((range − 2)·damage·count/2)`. Each capacitor's step of the factor
+  is truncated too. No legal design was found where per-slot truncation
+  moves a ship across the 2000 boundary, so no run can confirm it.
+- **Speed code** (CONFIRMED, OT-6). `speed` is the design's battle speed
+  from its own engines and **empty** mass, with no cargo, no War Monger
+  bonus and no other race bonus, limited to 0..8. OT-6: a Battle Cruiser
+  with 7 Big Mutha Cannons (beam 1785, speed code 5) scored as an escort
+  for both a War Monger and a non-War Monger owner (1785 + 178 = 1963). The
+  War Monger bonus would have made it 2320, a capital ship. A 9-Disruptor
+  design (1899 → 2088) scored as a capital ship for both, so the speed term
+  is applied.
+- Capacitors and sappers are BINARY-ONLY.
 
 ### Yearly score record
 
 Each player's record holds the score, the resources R, the planet count,
-the starbase count, U, E, C, the sum of the six tech levels, the rank and a
+the starbase count (only starbases whose hull has a dock, as for the score:
+an Orbital Fort is not counted; CONFIRMED, KX-003 S1, where player 0's two
+Space Stations and a Fort count 2 and player 1's Fort counts 0), U, E, C, the sum of the six tech levels, the rank and a
 flag word. Rank = 1 + the number of players with a strictly higher score
 (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
 bits, 0x20 always, and one bit per victory condition the player meets
@@ -1372,24 +1421,48 @@ number of conditions needed [1], and the minimum years `(v + 3)·10` [30].
 Each of the first seven is on or off. Tests, per player and year:
 
 - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
-  S1: 24 planets at 20% need 5; 5 met, 4 did not).
+  S1: 24 planets at 20% need 5; 5 met, 4 did not). The rounding is to the
+  nearest whole number with halves rounded up (BINARY-ONLY): 30 planets at
+  25% need 8.
 - Tech: the number of fields at the level or above ≥ the field count
   (CONFIRMED met and unmet, S1).
 - Score ≥ the threshold; resources: `trunc(R/1000)` ≥ the threshold in
   thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
   ships, S1; the others BINARY-ONLY).
 - Lead: with scores sorted, `second·(100 + pct)/100 ≤ top` flags the top
-  player (CONFIRMED, S1: 101·120/100 ≤ 623).
+  player (CONFIRMED, S1: 101·120/100 ≤ 623). When two or more players
+  share the top score, `second` is that same score, so the test fails and
+  nobody is flagged (BINARY-ONLY).
 - Highest score: the year index (years since 2400) ≥ the year count and
   exactly one player has rank 1 (BINARY-ONLY).
 
-Deciding the game (BINARY-ONLY): with one player, nothing further. A
-player with no planets and no ships becomes dead (message to the others).
-If all but one player are dead, the survivor wins. Otherwise, once the
-year index reaches the minimum years, every player meeting at least the
-needed number of **enabled** conditions wins; one winner and several
-winners get different messages, the others a loss message. What happens
-after a win is not covered here.
+Deciding the game (BINARY-ONLY), each year:
+
+1. The "game decided" mark is cleared. It is worked out again from
+   scratch every year; nothing carries over from an earlier win.
+2. With one player in the game, nothing further happens.
+3. A player with no planets and no ships becomes dead (message to the
+   others).
+4. If all but one player are dead, the game is decided. The survivor
+   (the last player in player order with rank 1, if not dead) gets the
+   sole-survivor message 0x0bc, and every other player gets 0x0b8.
+5. Otherwise, once the year index is at least the minimum years, the
+   number needed is the setting's raw value, capped at the number of
+   enabled conditions (the seven conditions, not counting the tech field
+   count, which is part of the tech condition). If the number needed is 0
+   (the raw value is 0, or no condition is enabled), nobody wins. Elegy's
+   "treat a value below 1 as 1" is not the original's rule.
+6. Every player meeting at least the needed number of enabled conditions
+   wins. If anyone wins, the game is decided and: each dead player gets
+   0x0b8; each winner gets 0x0b6 if they are the only winner, or 0x0b7 if
+   there are several; every other player gets 0x0b5.
+
+Because of step 1, a game is decided again in every year its conditions
+still hold, and the messages are sent again each of those years. A year in
+which no one wins leaves the game undecided, even if an earlier year
+decided it. The program also reads the mark when it decides whether other
+players' scores are visible (not measured). `MESSAGES.md` describes the
+message slots.
 
 ## Random events
 
