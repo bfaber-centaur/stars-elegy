@@ -131,6 +131,17 @@ BINARY-ONLY.
   is placed illegally is retargeted to a legal position. The clamp runs
   after the order is accepted, so an out-of-box waypoint is corrected, not
   rejected.
+- **Waypoint warp, target and transport (elegy implementation Q13).** The legal
+  warp set is **0..10**, with **11** reserved for the stargate hop; a nonexistent
+  target object and a negative transport amount are both malformed. Elegy's
+  chosen rule is to **reject** each — a warp outside `0..11`, a waypoint naming a
+  target that does not exist, and a transport order with a negative amount are
+  refused (the order dropped, the rest of the file applying), rather than
+  clamped or coerced. Whether the original clamps the warp (as it clamps
+  coordinates above) or coerces a negative amount is read but unmeasured
+  (BINARY-ONLY); the discriminating OX run submits each malformed value and
+  reads back whether it was clamped or dropped. The coordinate clamp above is
+  the one validation confirmed to correct-rather-than-reject.
 - **Design legality (tech strip).** A design that lists a component the
   player has not yet earned the tech for, or that the chosen hull does not
   allow in that slot, has that component **dropped** from the stored design
@@ -195,6 +206,34 @@ BINARY-ONLY.
   battle-plan number against the owner's plans. See #59 for plan semantics (the
   16-plan limit and the renumbering of later plans when one is deleted).
   Confirming the original's acceptance needs the OX runs.
+- **Design change into an occupied slot (elegy implementation Q10).** A design
+  *change* order names a design slot that may already hold a built design — one
+  with **ships in the field**, a **starbase**, or a **production-queue entry**
+  that builds it. Elegy's chosen rule: **refuse** a change to a slot that is in
+  use (ships, starbase, or queued), so a redefinition cannot silently mutate
+  ships already built to the old design. Whether the original overwrites the
+  slot in place (the ships then reading as the new design) or refuses is read
+  but unmeasured — BINARY-ONLY, pending the OX design-slot run.
+- **Design delete effect (elegy implementation Q11).** Deleting a design
+  removes every ship of that design: ships in the field are removed, a fleet
+  left with no ships is removed, and a **starbase** of that design is removed,
+  following the object-removal rules in `KERNEL.md` (the same path a scrapped or
+  destroyed design takes). A production-queue entry building the deleted design
+  is dropped. Elegy applies this deterministically on the design-delete order;
+  the slot renumbering of later designs follows the same rule as battle plans
+  (see #59 for the plan analogue).
+- **Design read, four malformed cases (elegy implementation Q12).** The four
+  malformed inputs a design read can meet all resolve to **drop-and-keep**, not
+  whole-design rejection, under the rules above: (1) a component above the
+  owner's **research tech** is dropped (tech strip); (2) a component the hull
+  does not allow in that **slot** is dropped; (3) a component present **beyond
+  the slot's capacity** is truncated to capacity; (4) an **empty engine slot**
+  after the strip is back-filled with Quick Jump 5 to capacity. The stored
+  design's mass and cost reflect whatever survived plus the back-fill, and the
+  design is never rejected for ending up short of parts. Elegy's chosen rule
+  departs only in also gating racial/Mystery-Trader entitlement and the hull
+  itself (see "Design legality" above). Confirming all four on one design needs
+  the OX design-strip run.
 
 ### Ownership
 
@@ -361,6 +400,17 @@ can carry them); the exact condition is read but not yet pinned, so an
 implementation should treat "this fleet may carry colonists" as a property of
 the fleet rather than assume every fleet qualifies.
 
+**Elegy implementation Q3 (colonist-carry gate).** Elegy's chosen rule: **any
+fleet with free cargo capacity may carry colonists** (colonists are just a
+cargo kind against the shared hold). A Freighter loaded 30 colonists in FO-01 D,
+so a cargo hull qualifies; the open question is whether a hull with a cargo hold
+but no colony role (e.g. a warship with incidental cargo space) is *also*
+allowed, or whether the gate is hull-role-specific. Discriminating prediction
+(**→ CO/OX colonist-gate**): load colonists onto a warship carrying a small
+cargo pod; Elegy predicts it loads (capacity is the only gate). If the original
+refuses, the gate is hull-role-specific and Elegy's rule is adjusted or labelled
+INTENTIONALLY DIFFERENT. BINARY-ONLY until run.
+
 ### Transfer between the player's own fleets
 
 A direct cargo transfer between two of the submitting player's fleets at the
@@ -373,6 +423,24 @@ while the combined capacity holds; accumulated ship damage is likewise shared
 across the combined ships (BINARY-ONLY — the balancing split itself is read
 from the program, not separately measured). Giving cargo to another player's
 fleet is the deferred cross-owner path above, not this operation.
+
+**Elegy implementation Q4 (transfer preconditions).** Elegy's chosen rules,
+each stated next to the open host question:
+
+- **Co-location required.** A fleet-to-fleet transfer applies only when the two
+  fleets share a position; a transfer naming a fleet elsewhere is **refused**
+  with no change. (The Merge-with-Fleet task's distance behaviour — a target
+  195 ly away did nothing and the task cleared — is measured, FO-03 F; the
+  transfer order's own co-location check is read, BINARY-ONLY, pending the OX
+  run.)
+- **Planet fuel.** Fuel cannot be transferred to or from a **planet** (planets
+  hold no fuel: FO-01 E loaded no fuel from a planet). A transfer order asking
+  for planet fuel is **rejected** for the fuel component; minerals and
+  colonists on the planet path are unaffected.
+- **Deep-space jettison.** Elegy does **not** jettison: an unload with no
+  receiving object (empty space) is **rejected**, cargo stays aboard. Whether
+  the original silently drops such cargo is read but unmeasured (BINARY-ONLY);
+  Elegy's reject rule is the chosen behaviour.
 
 ### Merge
 
