@@ -5,7 +5,7 @@ board is set up, how tokens move, choose targets and fire, how damage is
 applied, and what happens after a battle (salvage, repair, tech). It is
 written for an implementer who works only from this public repository.
 
-`PARITY.md` "Combat" holds the experiment records (CB-000..CB-019) these
+`PARITY.md` "Combat" holds the experiment records (CB-000..CB-022) these
 rules come from, with the measured numbers. This file restates those
 results as rules, links to them rather than copying the data, and adds the
 rules that so far come only from white-box analysis of the original
@@ -200,7 +200,7 @@ side effects).
 
 ## Board setup
 
-### Start squares (CONFIRMED for two players, CB-001..CB-019)
+### Start squares (CONFIRMED for two players, CB-001..CB-021)
 
 The board is 10×10. Each player in the battle's player list `P` has one
 start square, and all of that player's tokens, starbase included, start on
@@ -484,7 +484,7 @@ subtracts 1 when `q` is its current square.
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
 `(armor + shields)·ships`, less its existing damage (at least 1).
 
-## Firing (CONFIRMED by replay: CB-001..CB-019, every hit record)
+## Firing (CONFIRMED by replay: CB-001..CB-021, every hit record)
 
 For each initiative level from the highest to the lowest weapon
 initiative present:
