@@ -814,10 +814,12 @@ Only Harder and Expert computer players take part, and only a planet with
 a starbase, within 100 ly of the Trader, whose owner this Trader has not
 served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
 (3,500 for Harder). (TP measured Expert Turindrone and Automitron
-homeworlds within 100 ly. O-53 CONFIRMED the levels: a Harder planet with
-3,600 kT traded and paid 3,500 kT; a Standard planet and an Expert planet
-with 3,600 kT did not trade. The exact edge at 3,500 kT, the 100 ly edge
-and Easy players are BINARY-ONLY.)
+homeworlds within 100 ly. O-53 CONFIRMED the Harder rule: a Harder
+planet with 3,600 kT traded and paid 3,500 kT. A Standard planet and an
+Expert planet with 3,600 kT did not trade, which fits but does not
+separate "Standard never trades" from "Standard needs 5,000 kT"; the
+exclusion of Standard and Easy players is BINARY-ONLY. The exact edge at
+3,500 kT is NOT RUN, and the 100 ly edge is BINARY-ONLY.)
 
 - **Part item.** If the owner lacks the part, it gains it. If it owns it,
   a random part it lacks is drawn, with up to 50 redraws; bit 12 counts as
@@ -853,7 +855,8 @@ and nowhere beyond it).
 3. Mystery Trader: leaving with 1/2 at an edge (0 of 4 lone arrivals
    left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
    the part reroll and late-year conversion at appearance; the trade's
-   exact 3,500 kT edge for Harder players and its 100 ly edge.
+   exact 3,500 kT edge for Harder players, its 100 ly edge, and whether
+   Standard and Easy players' planets never trade.
 4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the
    4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
