@@ -70,3 +70,16 @@ python3 experiments/gt/check.py OUTDIR/cases.json OUT
 | GT-002-H5 | O-61 | 500 kT + 500 kT + Laser DD in one fleet, 100/250 gate 98 to any/any 91 (100 ly) | at planet 91 with only the Laser DD (count 3 - 2 x 2 = -1) | deleted only when every design is lost |
 | GT-002-H6 | O-61 | 500 kT + 500 kT in one fleet, 100/250 gate 3 to any/any 27 (100 ly) | fleet gone (message 0xe7): every design lost |  |
 | GT-002-H7 | O-61 | 500 kT + Laser DD in one fleet, 100/250 gate 196 to any/any 190 (100 ly) | fleet gone (message 0xe7): count 2 - 2 x 1 = 0 | deleted only when every design is lost |
+
+## Results (2026-10-07, cycles 20000)
+
+`check.py` output for both runs is in stars-oracle-apparatus
+`evidence/gt/gt00N/check.txt`. GT-001: 34 held, H2 missed, L2 is a
+control (1 of 20 warp-9 Cheap Engines fleets failed). GT-002: 5 of 5
+held. Write-up: `docs/PARITY.md` "Stargates, round 2"; rules in
+`docs/OBJECTS.md` "Stargates".
+
+- H2 missed: the 500 kT ship and the safe Laser DD were both deleted
+  (message 0xe7). The reconciled reading (a design lost entirely counts
+  twice against the fleet's design count; deletion at exactly 0) was
+  written into GT-002 before it ran, and held in all five mixes.

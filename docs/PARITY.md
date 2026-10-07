@@ -3249,6 +3249,90 @@ missed when a ship was lost. Details below.
 - **IT (OB-022):** at 13% danger, all 5 DDs survived with the same damage.
   Neither the refused nor the successful freighter unloaded its cargo.
 
+#### Stargates, round 2 (GT-001, GT-002)
+
+Pinned years (cycles 20000) on a new medium universe (`experiments/gt`):
+two human players, tech 26, no random events. Player 0 is JOAT with Cheap
+Engines; player 1 is JOAT. Player 1 lists player 0 as a friend, and
+player 0 lists player 1 as an enemy. The predictions were stars-decomp
+O-54..O-67, committed before the run (47b39ac). GT-001 had 36 cases: 34
+held, 1 missed (H2), and 1 was a control. GT-002 tested the reconciled
+reading (370c76b), and all 5 cases held. Raw evidence is in
+stars-oracle-apparatus `evidence/gt/`.
+
+- **Jump Gates (CONFIRMED).**
+  - Two Jump Gate freighters flew 200 ly from deep space to an own 100/250
+    gate. They kept their 100 kT and their fuel.
+  - At 300 ly, five took 20/500 each. That is danger 5% from the
+    destination gate's 250 ly range, so the destination's limits stand
+    for both ends.
+  - A fleet with one ship lacking the part did not move (message 0xde).
+  - A Jump Gate freighter sitting at an own gated planet used that
+    planet's gate: it unloaded its 60 kT there and took the source gate's
+    danger.
+  - With no gate at the destination (a starbase without one, or no
+    starbase), the jump was refused with message 0xe2.
+- **Friends (CONFIRMED).** What counts is how the gate's owner treats the
+  fleet's owner:
+  - Player 0 (who calls player 1 an enemy) used player 1's gates as
+    source and as destination.
+  - Player 1 (who calls player 0 a friend) was refused at player 0's
+    source gate (0xe6) and destination gate (0xe5).
+  - Player 1 got no message about player 0's fleet arriving at its gate.
+- **Cargo at a friend's gate (CONFIRMED).**
+  - 70 kT of ironium went onto player 1's planet, and both players got
+    message 0xec.
+  - With colonists aboard, the jump was refused (0x15e) and nothing was
+    unloaded.
+  - When the destination also had no gate, the refusal was 0xe2, and
+    nothing was unloaded.
+- **Range refusal and the 5× boundary (CONFIRMED).** A freighter jumping
+  1301 ly from a 100/250 gate was refused (0xe3) after unloading its
+  50 kT. Three Jump Gate DDs (truncated distances to a 100/250 gate):
+  - at 1251 ly: refused, unharmed;
+  - at exactly 1250 ly: the fleet was deleted (0xe7);
+  - at 1249 ly: danger 99%. Two of three were lost, and the survivor
+    carried 495/500 damage.
+- **Mass exactly 5× (CONFIRMED).** A 500 kT ship through a 100 kT gate was
+  lost (0xe7), not refused.
+- **Mixed fleets (MEASURED, LEGACY BUG).** GT-001-H2 missed: a 500 kT ship
+  and a safe Laser DD in one fleet were all deleted (0xe7). GT-002 fits
+  this reading: each design lost entirely counts twice against the
+  fleet's number of designs, and the fleet is deleted when the count
+  comes to exactly zero.
+
+  | Designs in the fleet | Designs lost entirely | Count | Result |
+  |---|---|---|---|
+  | 500 kT, DD, freighter | 1 | 1 | DD and freighter arrive |
+  | 500 kT, 500 kT, DD, freighter | 2 | 0 | deleted |
+  | 500 kT, 500 kT, DD | 2 | −1 | DD arrives |
+  | 500 kT, DD | 1 | 0 | deleted |
+  | 500 kT, 500 kT | 2 | — | deleted (every design lost) |
+
+  The survivors kept only a little fuel (5 and 2 of 100), because fuel
+  goes with the lost capacity.
+- **After the jump (CONFIRMED).**
+  - A stack at 250/500 damage that jumped safely still had 250/500 after
+    the year. The same stack parked, and the same stack refused (0xe2),
+    both repaired to 210.
+  - Every fleet that jumped had the no-repair flag set, and its
+    stationary flag cleared. Refused fleets kept the stationary flag.
+  - In player 1's file, a fleet that had gated showed warp 0 and no
+    heading. A fleet that moved normally showed warp 6 and its heading.
+  - Player 1's fleet chasing a gating fleet kept its waypoint at the
+    departure gate. Player 0's own chaser had its waypoint moved to the
+    destination. A control chaser of a fleet moving normally followed it.
+- **Cheap Engines (CONFIRMED).** 20 gating fleets of the Cheap Engines
+  player all arrived, with no message 0xf2. In the control, 1 of 20 warp-9
+  fleets failed.
+- **No planet at the destination (CONFIRMED).** A warp-11 waypoint in deep
+  space was refused (0x147).
+- **Gate types (CONFIRMED, one stream).** The damage words matched the
+  formula for any/300 at 402 ly (40), 150/600 at 699 ly (20), 300/500 with
+  a 500 kT ship (80), 100/any with 202 kT ships (125; one of three lost,
+  fuel 100 → 67), and any/800 at 905 ly (15). any/any was safe at 901 ly
+  with 202 kT ships.
+
 #### Packets (OB-022, OB-023)
 
 - **Packet Physics decay (CONFIRMED):** classes 1, 2, 3 lost 5, 12 and 25%

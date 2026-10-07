@@ -995,6 +995,16 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   - A thing-target waypoint survives an object's move only if the owner
     knew the object at the start of the year. Set `seen` on the wormhole
     when a case needs the target kept.
+- **Stargate runs on a medium map (GT, 2026-10-07).** Range refusals need
+  more than 1250 ly, which the tiny Combat Lab universe cannot give. GT
+  is a medium two-player game (`experiments/gt/gt.def`) made with
+  `new-game` from PG000.R1 edited to JOAT (`racelab edit … prt=9`, plus
+  `lrt=0x100` for Cheap Engines; both legal). CombatLab built on it
+  unchanged (`pinned-turn … GT`). Exact truncated distances are easiest
+  with deep-space Jump Gate fleets, which may start anywhere. Jump Gate
+  designs loaded with `mt P 0800` set. In the other player's `.M`,
+  `combatlab dump` shows a fleet that gated with `warp=0 dx=-127 dy=-127`.
+  Message parameters name the fleet as `0x8000 | owner << 9 | id`.
 - **JOAT built-in scanner.** JOAT Scout, Frigate and Destroyer hulls scan
   20·electronics / 10·electronics on top of their parts (S-10). Player 1
   at electronics 3 with a Rhino: R = ⌊⁴√(50⁴ + 60⁴)⌋ = 66, P = 30.
