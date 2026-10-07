@@ -291,3 +291,9 @@ Freighter with Quick Jump 5 29, Medium Freighter with Quick Jump 5 64.
 | F3 | player 1's tank scout at player 0's homeworld (player 0 neutral to it), fuel 10 | 10 | refuelled |
 | F4 | tank scout at player 0's Orbital Fort planet 13, fuel 10 | 10 (no dock) | refuelled |
 | F5 | tank scout at player 0's homeworld (Space Station), fuel 10 | 300 | |
+
+### Batch 4 results
+
+Every fleet matched in both streams. The messages were 0x74 for the
+colonist loss, 0x8b for the chaser running dry (warp 1), and none for
+fleet K.

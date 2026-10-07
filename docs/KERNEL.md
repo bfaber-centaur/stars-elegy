@@ -1097,7 +1097,9 @@ For a move of `L` light-years at warp `w`:
 2. Assign the fleet's cargo (minerals and colonists in kT; fuel has no
    mass) to designs in order of increasing `f(w)`, each up to `n ×` its cargo
    capacity. Designs with equal `f(w)` keep the fleet's own design order
-   (BINARY-ONLY).
+   (CONFIRMED, KB-4A Q: a Small Freighter and a Medium Freighter, both
+   Quick Jump 5, 111 kT: 57 mg with the Small Freighter filled first; the
+   other order gives 56).
 3. Cost in tenths of a mg per design: `trunc(f(w)·L·(n·m + cargo assigned)
    / 2000)`; designs with `f(w) = 0` cost nothing.
 4. Fleet cost in mg: `trunc((Σ tenths + 9) / 10)` (rounded up once per
@@ -1162,8 +1164,9 @@ Vectors (CONFIRMED):
   distance, and it has still run dry if that leaves 0 and the destination
   is further away. A fleet that arrives with exactly enough fuel has not.
 - A fleet that cannot afford the whole leg but keeps some fuel after this
-  year's move has not run dry: it keeps its warp (BINARY-ONLY; no corpus
-  case).
+  year's move has not run dry: it keeps its warp (CONFIRMED, KB-4A K:
+  20 mg for a 39 mg leg, 15 left after the year, warp 6 kept, no
+  message).
 - Top-up (CONFIRMED, FM-004 TU): a fleet that had enough fuel for the whole
   leg at the start of the year ends the year with at least the fuel the
   rest of the leg needs (capped at its tank; the cap was not exercised), so
@@ -1256,7 +1259,10 @@ warp 3 gains 50 (raw 90, capped).
    `rem > 0`.
 5. Fuel is charged on the year's total distance (`moved + step`), refunding
    the previous round's charge, so rounds add no extra rounding.
-6. BINARY-ONLY (FM-001..003 chasers all had full tanks): each round applies
+6. CONFIRMED for a chaser whose target has finished moving (KB-4A C: 5 mg,
+   `R` 7, moved 7 ly toward the target's end position, 0 mg, warp lowered
+   to 1, out-of-fuel message); BINARY-ONLY for the per-round steps
+   (FM-001..003 chasers all had full tanks): each round applies
    the ordinary fuel rules to the step, with `R` reduced by `moved` and
    "the whole leg" meaning the distance to the target's current position.
    A chaser limited by `R` moves only that far and ends with 0; a chaser
@@ -1337,8 +1343,9 @@ alternative is Elegy's choice, not the original's.
 
 ### Refuelling at a starbase (CONFIRMED, FM-004 DK)
 
-After production, a fleet orbiting a planet with its own starbase (one
-with a dock) is set to its tank capacity, including a fleet that arrived
+After production, a fleet orbiting a planet with a starbase that has a
+dock (not an Orbital Fort), owned by the fleet's owner or by a player who
+treats the fleet's owner as a friend (KB-4A), is set to its tank capacity, including a fleet that arrived
 there this year. Fuel above capacity is reduced to capacity there, but not
 in deep space (a scout holding 400 mg of 300 keeps 400 away from a
 starbase). A fleet that leaves the planet this year is not refuelled, nor
@@ -1427,11 +1434,15 @@ in one isolated function (32-bit wrap of the integer-form product) so it
 can be switched off. FM-105 used an edited design; whether the original's
 ship designer lets a player save one is not established.
 
-### Other movement rules (BINARY-ONLY except where marked)
+### Other movement rules
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
-  For mine laying this is CONFIRMED (OB-014-D, OB-019: `OBJECTS.md`
-  "Laying"); for transport it is BINARY-ONLY.
+  A transport task stays current until a load phase finds every load
+  satisfied, so an unmet "wait for" holds the fleet, while a satisfied
+  transport (an unload, for instance) is cleared before movement and the
+  fleet moves. CONFIRMED for mine laying (OB-014-D, OB-019: `OBJECTS.md`
+  "Laying") and for transport (KB-4A T1: "wait for 50% ironium" at a
+  planet with none held the fleet; T2: "unload all" unloaded and moved).
 - Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
   Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
   each ship is destroyed with probability 1/10 each year it moves
@@ -1441,17 +1452,27 @@ ship designer lets a player save one is not established.
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
   fleet does not move (MEASURED, FM round 2: 2 of 40 fleets stopped at
   warp 7, 0 of 20 at warp 6).
-- Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`.
+- Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`
+  (CONFIRMED, KB-4A E: warp 6, 36 ly, 295 mg left, 294 without IFE; C at
+  warp 9).
 - Radiating Hydro-Ram Scoop engines kill
   `max(1, trunc(colonists·trunc((86 − mid)/2)/100))` kT of carried
   colonists (at most all of them) per year moved, where `mid` =
   `trunc((radiation low + radiation high)/2)`; not for radiation-immune
-  races or when low + high ≥ 170.
+  races or when low + high ≥ 170. CONFIRMED for `mid` 50 (KB-4A H: 70 →
+  58 moving, message 0x74; 70 kept when stationary); the immune and
+  ≥ 170 exemptions are BINARY-ONLY.
 - Fuel transports add 200 mg each per year to a stationary fleet
   (CONFIRMED, CS-003-W: 200 with one, 600 with three, 200 with a
   Super-Fuel Xport). Fuel generators (anti-matter) add 50 mg each. Both
-  are capped at the tank (BINARY-ONLY).
-- Refuelling at a friend's starbase, and at a starbase without a dock.
+  are capped at the tank (CONFIRMED, KB-4A G, X: 100 → 150 and 230 → 250
+  with a 250 tank; 1,000 → 1,200 and 2,150 → 2,250 with a 2,250 tank).
+- Refuelling at a starbase (above) also happens at another player's
+  planet whose owner treats the fleet's owner as a friend, and not at a
+  starbase without a dock (an Orbital Fort). CONFIRMED (KB-4A F1–F5: a
+  friend's Space Station filled 10 → 300 and lowered 400 → 300; a neutral
+  owner's did not; the own Orbital Fort did not; the own Space Station
+  did).
 
 ## Scores and victory conditions
 
@@ -1736,15 +1757,65 @@ The game's option flags that matter after creation:
 
 ## Open experiments
 
-None for this specification. The three earlier items (Auto Alchemy before
-a multi-count item, zero maximum population, cost modifiers) were settled
-by KX-001; see the rules above and `PARITY.md`. KX-002 measured the
-BINARY-ONLY rules a playable game meets every year; the ones it could not
-reach are listed at the end of its section in `PARITY.md`.
+The KB sweep (`PARITY.md`, "KB batch 1" to "KB batch 4") tested the
+BINARY-ONLY rules that Elegy's turn engine meets every year: economy,
+population, production, research, the year's random draw order and
+movement fuel. What is still BINARY-ONLY falls into two groups.
+
+**Cannot be oracled, or has no observable effect.** An implementation
+follows the reading; no experiment can contradict it in play.
+
+- The duplicate-serial penalty and everything behind the cheater flag:
+  halved growth, the ×4/5 resource cut (so a planet with 0 resources),
+  the level-10 research cap and the registration movement gate. These
+  need a duplicated or invalid serial, which oracle runs cannot use.
+  Elegy has no registration scheme.
+- The `max(1, …)` in hostile deaths on an empty planet (growth never runs
+  there), and the floor of 10 on the maximum mines and factories (no
+  planet reaches it).
+- A zero-item queue arising in play. KB-2A wrote one directly; no order
+  creates one.
+- Ties between a mineral and resources as the limiting component of a
+  unit, and the order of an Alternate Reality planet's two mining steps.
+  Both orders give the same state.
+- An Alternate Reality planet with maximum 0 reached by deleting the
+  starbase's design. The result is the divide-by-zero crash above
+  (LEGACY BUG; Elegy chooses its own rule).
+- A fleet with no free warp when it runs dry: every J-RC3 engine is free
+  at warp 1.
+- Step order where nothing observable differs: the race check against
+  the pre-movement tasks (2a), the Trader encounter against bombing (6a,
+  6b), the registration steps, design housekeeping, the report-age reset,
+  and the file-only caches and option bits (8.3, 8.4).
+- Options the turn generator never reads (accelerated BBS play, maximum
+  minerals, galaxy clumping).
+
+**Could be oracled, not yet run.** None of these is exercised by an
+ordinary year. Each needs a targeted start, and they are queued behind
+questions raised by Elegy's implementation:
+
+- Scores and victory: per-slot truncation, capacitors and sappers in the
+  power rating; the planets rounding at exact halves; the score and
+  resources thresholds; the lead test with tied top scores; the highest
+  score condition; deciding the game, and public scores (a) and (b).
+- Rare events, by seed replay: an Alternate Reality owner hit by a comet,
+  the 180 cap on new minerals, the Trader item reroll and conversion, and
+  whether the original environment moves with the current one. The event
+  probabilities themselves are confirmed only as draw-and-threshold logic
+  in replayed streams, not as sampled rates.
+- Movement: chasers taking per-round steps with limited fuel; the copying
+  rule for fleets following a fleet; mine laying after battles; the other
+  movement gates sparing Alternate Reality colonists; the Radiating
+  Hydro-Ram Scoop exemptions (immune radiation, low + high ≥ 170); the
+  `Random(3)` when Inner Strength breeding rounds to 0.
+- Maximum population: Hyper-Expansion with OBRM, and OBRM on an Alternate
+  Reality starbase maximum.
+- Drops after movement: the capture tech attempt and artifact draws in
+  the year's sequence. These are coordinated with the takeover lane.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001, KX-001..005 and TK-117 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001..005, KB-1..4, OT-1..6 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes, and the turn

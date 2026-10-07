@@ -1830,6 +1830,30 @@ draws after the events. Capture and artifact draws, battles, Trader
 rewards and the movement-phase draws keep the places read from the
 program (BINARY-ONLY).
 
+### KB batch 4 — movement and fuel leftovers
+
+Status: CONFIRMED. Every fleet matched the prediction in both streams
+(cycles 20000 and 3700). Predictions were committed before the run
+(stars-elegy `a71bc70`), and `experiments/kb/` has the spec and table.
+Raw evidence: apparatus `evidence/kb/`. Rules: `KERNEL.md` "Fuel cost",
+"Not enough fuel", "Chasing another fleet", "Refuelling at a starbase"
+and "Other movement rules".
+
+Setup (KB-4A): player 0 is an Interstellar Traveler with Improved Fuel
+Efficiency at tech 26. Player 1 treats player 0 as a friend.
+
+| Fleet | Rule | Observation | Result |
+|---|---|---|---|
+| KB-4A G1, G2 | Anti-matter Generator +50, capped | 100 → 150; 230 → 250 (tank 250) | CONFIRMED |
+| KB-4A X1, X2 | Fuel transport +200, capped | 1,000 → 1,200; 2,150 → 2,250 (tank 2,250) | CONFIRMED |
+| KB-4A E | IFE factor `f − trunc(15f/100)` | 300 → 295 at warp 6 over 36 ly (294 without IFE) | CONFIRMED |
+| KB-4A K | A fleet that cannot afford the leg but keeps fuel keeps its warp | 20 → 15, warp 6, no out-of-fuel message | CONFIRMED |
+| KB-4A H, H0 | Radiating Hydro-Ram Scoop colonist loss | 70 → 58 moving (message 0x74); 70 stationary | CONFIRMED |
+| KB-4A Q | Equal engine factors keep the fleet's design order for cargo | 300 → 243 (the other order gives 244) | CONFIRMED |
+| KB-4A C | Fuel-limited chaser of a finished target | 5 mg, moved 7 ly to (1026, 1013), 0 mg, warp 1, out-of-fuel message, waypoint on the target's end | CONFIRMED |
+| KB-4A T1, T2 | Transport task holds a fleet until satisfied | "wait for 50%" with nothing to load held the fleet; "unload all" unloaded 10 kT and the fleet moved 25 ly | CONFIRMED |
+| KB-4A F1–F5 | Refuelling: dock required, own or friend's starbase | friend's Space Station 10 → 300, 400 → 300; neutral owner's 10; own Orbital Fort 10; own Space Station 10 → 300 | CONFIRMED |
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
