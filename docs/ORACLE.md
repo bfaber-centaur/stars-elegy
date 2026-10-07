@@ -785,8 +785,8 @@ What the client did, at 1152x864:
   `client-orders` detects the missing Rename dialog by the pixel at
   (600, 405).
 - Fleets: Goto (232, 169) in "Fleets in Orbit" selects the first fleet
-  there ("Armed Probe #1" = fleet 0). The fleet panel's Next (144, 132)
-  went #1 → #4 → #3 → #2 → #1 with four fleets.
+  there (`Armed Probe #1` = fleet 0). The fleet panel's Next (144, 132)
+  went `#1` → `#4` → `#3` → `#2` → `#1` with four fleets.
 - The fleet panel's Battle Plan list (combo at 380, 309) ignored keys;
   use the mouse. Its first item is "Battle Plans..." (opens the dialog),
   then the plans. Six rows of 14 px from y 320. A scroll bar (arrows at

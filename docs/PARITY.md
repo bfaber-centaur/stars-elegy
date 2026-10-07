@@ -2386,7 +2386,7 @@ ba6b0d1 before its second run. Experiment READMEs hold the details.
 
 - **Mystery Trader items from battle, CONFIRMED (CB-048: 24 runs, 20
   streams; control 12).** The round-6 miss is resolved by the
-  reconciled rule (stars-decomp #28, COMBAT.md #54):
+  reconciled rule (decomp combat pass, COMBAT.md):
   - each kill event adds, for each Mystery Trader part type on the
     destroyed design, its slot count to that item's chance;
   - the chance is capped at 25, and hulls never count.
@@ -2424,8 +2424,8 @@ ba6b0d1 before its second run. Experiment READMEs hold the details.
 
 ### Ship launch (SL-01 to SL-12)
 
-Predictions from the decomp ship-launch reading (stars-decomp #27,
-PRODUCTION-LAUNCH.md #57), committed here before the runs (4c2ae44). Two
+Predictions from the decomp ship-launch reading and the public
+ship-launch spec, committed here before the runs (4c2ae44). Two
 setups were added later, each committed before its own runs: a starbase
 control (70745c8) and an SL-10 follow-up (428e68d). Each case ran on 2
 pinned streams, and the two always agreed. Details are in
@@ -2434,7 +2434,7 @@ pinned streams, and the two always agreed. Details are in
 The SL races were illegal: player 0 (JOAT + ISB) was at −42 advantage
 points and player 1 (AR + ISB) at −94. The host degraded them before
 production, raising colonists per resource to 2,400 and 2,500. That
-changes resources only. PRODUCTION-LAUNCH.md (stars-elegy #57) explains
+changes resources only. The ship-launch spec explains
 why no other SL result depends on it. Combat Lab builds now refuse a
 negative race score unless `COMBATLAB_ALLOW_ILLEGAL_RACE=1` is set.
 
