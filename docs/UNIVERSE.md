@@ -291,8 +291,8 @@ in `RACES.md`. Every race in the UG corpus had at least 50.
 
 - Six types (HE, SS, IS, CA, PP and AR races built into the original) and
   four levels (easy, standard, harder, expert). A definition file may
-  leave either random. Their race settings are original game data and are
-  not specified here.
+  leave either random. Their race settings are in `AI.md` ("Built-in
+  races").
 - Harder and expert computer players whose spend is surface minerals also
   get the concentration boost (with `L = 50`).
 - Expert: homeworld population +10%.
