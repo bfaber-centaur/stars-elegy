@@ -72,8 +72,12 @@ order shown. "Fleet order" means by owner, then by fleet number
    player, the last of them always 0, and they are the first draws of the
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
-   The permutation itself is BINARY-ONLY, because no run has replayed
-   conflicting orders from two players.
+   The permutation itself is BINARY-ONLY. With orders a client can save,
+   it has no observable effect: each player's orders edit only that
+   player's own objects, and every effect on another player's object
+   (cargo gifts, drops, fleet transfers) is queued to a fixed later step.
+   Only crafted order files that act on another player's object could
+   show it (`ORDERS.md`, "Conflicts between players").
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`
@@ -1787,7 +1791,8 @@ follows the reading; no experiment can contradict it in play.
   (LEGACY BUG; Elegy chooses its own rule).
 - A fleet with no free warp when it runs dry: every J-RC3 engine is free
   at warp 1.
-- Step order where nothing observable differs: the race check against
+- The player-order permutation (step 1) with legal orders, and the step
+  order where nothing observable differs: the race check against
   the pre-movement tasks (2a), the Trader encounter against bombing (6a,
   6b), the registration steps, design housekeeping, the report-age reset,
   and the file-only caches and option bits (8.3, 8.4).
