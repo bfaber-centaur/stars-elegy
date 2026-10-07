@@ -173,8 +173,17 @@ BINARY-ONLY.
   engine was stripped: the basic engine is available to every race, so the
   back-fill is legitimate repair to a buildable ship, not a trust gap.
   Confirming the hull-keep and the engine back-fill needs the OX runs.
-- **Battle-plan fields.** A battle-plan definition with a tactic or primary
-  target outside its legal set is rejected; a legal one is stored.
+- **Battle-plan fields.** BINARY-ONLY (plan semantics from the combat decomp,
+  stars-elegy #59 / stars-decomp #28). The original does **not** range-check a
+  battle-plan definition: a hand-built definition with an out-of-range tactic
+  (6) or target (8) is stored as given, and one can even **delete plan 0** (the
+  default plan). Nor does anything validate the plan number a
+  *fleet battle-plan assignment* names. These are multiplayer trust gaps of the
+  same shape as the ownership asymmetry below. Elegy's chosen rule: reject an
+  out-of-range tactic or target, never delete plan 0, and validate a fleet's
+  battle-plan number against the owner's plans. See #59 for plan semantics (the
+  16-plan limit and the renumbering of later plans when one is deleted).
+  Confirming the original's acceptance needs the OX runs.
 
 ### Ownership
 
@@ -212,6 +221,13 @@ the same shape as the not-re-checked fleet orders above. Elegy's chosen rule,
 matching what the normal client can send, accepts a detonate setting only on
 the submitter's **own** minefields and only for field kinds that can
 detonate. Confirming the original's open acceptance needs the OX runs.
+
+**Production queue (starbase dock).** BINARY-ONLY and LEGACY BUG (launch
+context in stars-elegy #57, `PRODUCTION-LAUNCH.md`). The host does **not**
+check a starbase's dock capacity when it reads a production-queue change, so a
+hand-built queue can build a ship at a starbase whose dock could never queue it
+through the normal client. Elegy's chosen rule rejects such a queue order when
+it is given. Confirming the original's open acceptance needs the OX runs.
 
 ### Cross-owner cargo
 
@@ -403,9 +419,14 @@ tidies it, then runs the tasks that were not covered above (route, patrol,
 transfer fleet). This is distinct from the order-time edits: it works on a
 fleet's own stored waypoints and state, so every behavior here can be set up
 by editing the host state (fleetlab HST editing) and reading the next turn —
-none of it needs a crafted order file or the registered serial. Status
-BINARY-ONLY throughout (read from the program, not yet measured), unless a
-line says otherwise.
+none of it needs a crafted order file or the registered serial.
+
+Most of this section has now been **measured** with that method: the WU oracle
+batch (`CombatLab`-built starts on the two-player Combat Lab base, one pinned
+host turn each; raw evidence in private `stars-oracle-apparatus`
+`evidence/wu/`). Lines below are tagged CONFIRMED where a measurement agrees
+with the binary reading, and BINARY-ONLY where still only read from the
+program.
 
 ### Reaching a waypoint
 
@@ -414,32 +435,69 @@ that waypoint is consumed, and how depends on the fleet's **repeat-orders**
 flag:
 
 - **Repeat off:** the reached waypoint is dropped — the list shortens by one
-  and the fleet goes on to what was the next waypoint.
+  and the fleet goes on to what was the next waypoint. CONFIRMED (a three-
+  waypoint fleet run onto its second waypoint came back with two).
 - **Repeat on:** the reached waypoint is instead moved to the **end** of the
-  list, so the fleet cycles through its waypoints indefinitely. Two cases
-  fall back to a plain drop even with repeat on: a list of only two
+  list, so the fleet cycles through its waypoints indefinitely. CONFIRMED (the
+  same fleet with repeat on kept three waypoints, the reached one now last).
+  Two cases fall back to a plain drop even with repeat on: a list of only two
   waypoints, and a reached waypoint whose position already equals the current
-  last waypoint (no duplicate is appended).
-- A **patrol** waypoint never repeats, even with repeat orders on.
+  last waypoint (no duplicate is appended) — both BINARY-ONLY.
+- A **patrol** waypoint never repeats, even with repeat orders on. BINARY-ONLY.
 - When a fleet reaches its **last** waypoint with no continuing task and no
   planet route to follow, it goes idle and its owner is messaged that the
-  orders are complete.
+  orders are complete. CONFIRMED (a fleet run onto its only waypoint ended
+  idle with the completion message).
 
 ### Targets that moved, died or were captured
 
-A waypoint can name a fleet as its target instead of fixed coordinates. Each
-upkeep pass re-resolves that target:
+A waypoint can name a fleet (or a moving universe object) as its target
+instead of fixed coordinates. Each upkeep pass re-resolves that target:
 
 - **Target still exists:** the waypoint's coordinates are refreshed to the
   target's current position, so a fleet ordered to meet a moving fleet keeps
-  chasing it. Only a position; the target's owner is not re-checked, so a
-  waypoint keeps tracking a target fleet even if it has changed hands
-  (been captured). An exception bit on the waypoint suppresses the refresh
-  (the waypoint then holds its coordinates).
+  chasing it. CONFIRMED (a waypoint aimed at a fleet that moved north came
+  back with the target's new coordinates). Only a position is copied; the
+  target's owner is not re-checked, so a waypoint keeps tracking a target fleet
+  even if it has changed hands (been captured) — the captured case is
+  BINARY-ONLY. An exception bit on the waypoint suppresses the refresh (the
+  waypoint then holds its coordinates) — BINARY-ONLY.
 - **Target gone (destroyed, or no longer a fleet):** the target is cleared
   and the waypoint becomes a plain go-to-coordinates waypoint at the
   last-known position; the fleet still travels there and then treats it as an
-  ordinary reached waypoint. The order is not dropped outright.
+  ordinary reached waypoint. The order is not dropped outright. CONFIRMED (a
+  waypoint aimed at a fleet id that did not exist came back cleared to a plain
+  go-to at the last coordinates, not dropped).
+- **Ordering with moving objects:** this re-resolution runs *after* Mystery
+  Traders and mineral packets have moved but *before* fleets move, so a
+  waypoint aimed at a moving Trader or packet reads that object's post-move
+  position for the turn; wormholes move after fleets (objects decomp, stars-
+  elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
+  position as of this same upkeep pass.
+
+### Following another fleet (leader linkage)
+
+BINARY-ONLY (from KERNEL.md's complete turn order, stars-elegy #53). A fleet
+whose waypoint targets another fleet is a **follower**; the targeted fleet is
+its **leader**. Upkeep resolves the link each turn (the tracking rule above
+fixes the follower's waypoint onto the leader's current position), and the
+movement phase then resolves chains and cycles of followers:
+
+- The leader is simply the fleet named by the waypoint target; a follower can
+  itself be a leader to another follower (a **chain**), and two fleets can name
+  each other (a **cycle**).
+- Chains and cycles are what produce the chase-order freeze recorded in
+  `KERNEL.md`: fleets move in id order, a follower that lands on its leader
+  finishes, and a leader that is itself an unfinished follower stops for the
+  year where it is caught. This document defers the movement resolution to
+  `KERNEL.md` (the chaser rules, CONFIRMED there via FM-001..003) and records
+  only that the upkeep link is the plain waypoint target, re-resolved each
+  turn.
+
+Prediction (WU-style, fleetlab HST editing): build a two-fleet cycle (each
+waypoint targets the other) and a three-fleet chain, run a turn, and confirm
+the leader each follower resolves to and the resulting freeze match the
+`KERNEL.md` chaser rules.
 
 ### Route task
 
@@ -457,13 +515,39 @@ automatically sent on to that destination (a fresh two-waypoint order):
 This chains across hops: each arrival re-routes. A planet with no route set,
 or not owned by the fleet, leaves the fleet idle rather than re-routing.
 
+CONFIRMED for the ideal-warp case: a fleet carrying the route task at a planet
+whose route pointed to another planet ~161 ly away came back with a fresh
+two-waypoint order to that planet at warp 6 (the Long Hump 6 ideal warp, with
+fuel to spare) and had begun moving. The stargate case is BINARY-ONLY (the
+base starbases have no gate). This routing rule is the same one new fleets use
+when they leave production; the shared statement lives in `PRODUCTION-LAUNCH.md`
+(stars-elegy #57), which this section defers to rather than restating.
+
 ### Patrol task
 
-Patrol sets a fleet to watch for enemy fleets within a stored **range** and
-move to intercept one. It never repeats (above). The rule for **which**
-in-range enemy a patrolling fleet intercepts, and the warp it uses, is read
-but not yet pinned down — this is the one item in this section that most
-needs a direct measurement, not a chosen rule.
+Patrol sets a fleet to watch for enemy fleets and move to intercept one. It
+never repeats (above). The target choice and warp were the one item here that
+needed a direct measurement rather than a reading; the WU patrol runs pin them.
+CONFIRMED:
+
+- **Which enemy:** the patrol fleet intercepts the **nearest** enemy fleet
+  within an engage radius of about **50 ly** (an enemy at 50 ly was engaged, one
+  at 55 ly was not). That radius is a property of the patrol, not of scanning:
+  it did not widen when the patrol fleet carried a 300 ly scanner, and enemies
+  it could plainly see at 80–200 ly were left alone. Enemies beyond the radius
+  are ignored even when in sensor range.
+- **Ties:** among enemies at equal distance the choice is by **fleet order**
+  (the lowest-numbered / first-found fleet), **not** by fleet strength — the
+  same fleet was chosen whether it was the strong or the weak stack.
+- **Warp:** the intercept warp is `min(10, range / 5)`, where *range* is the
+  fleet's stored patrol range (patrol range 20 → warp 4, 40 → warp 8, 90 and
+  250 → warp 10). The normal client's smallest patrol range already saturates
+  this at warp 10.
+- The intercept is written as a fleet-targeted waypoint at the enemy's
+  position; the patrol fleet does not move the turn it acquires the target.
+
+Elegy reproduces this: nearest enemy within the ~50 ly radius, ties by fleet
+order, intercept warp `min(10, range/5)`.
 
 ### Transfer fleet (give a whole fleet to another player)
 
@@ -473,14 +557,18 @@ reproduces the original:
 
 - **Recipient is not a real, active player** — an empty or eliminated slot,
   or a **computer player**. A computer player never receives a gifted fleet.
-  Refused, with a message to the giver.
+  Refused, with a message to the giver. BINARY-ONLY (the oracle base has no
+  computer player).
 - **Recipient treats the giver as an enemy.** If the recipient's relation
   toward the giver is "enemy" (or the recipient otherwise declines gifts),
-  the transfer is refused.
+  the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
+  the giver was "enemy" was refused; the fleet kept its owner, with a message).
 - **The fleet carries colonists.** A colonist-carrying fleet cannot be
-  gifted; the transfer is refused.
+  gifted; the transfer is refused. CONFIRMED (a colonist-carrying gift to a
+  willing non-enemy was refused; the fleet kept its owner).
 
-Otherwise the fleet changes owner. (The computer-player and
+Otherwise the fleet changes owner — CONFIRMED (an empty fleet gifted to a
+willing non-enemy human became that player's fleet). (The computer-player and
 treated-as-enemy refusals are the two the coverage audit flagged as
 missing; the colonist refusal was already read.)
 
@@ -534,33 +622,30 @@ and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
   and the source's battle plan and waypoints. Confirms "Split".
 
 The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
-editing**, not crafted order files, so none needs the registered serial:
+editing**, not crafted order files, so none needed the registered serial, and
+most have now been **run** (the WU batch; `experiments/wu/` here, raw evidence
+in private `stars-oracle-apparatus` `evidence/wu/`). Measured and folded into
+the sections above as CONFIRMED: repeat vs drop, the idle message, live and
+gone fleet targets, the route task (ideal-warp case), the enemy and
+colonist transfer refusals plus the empty-fleet success, and the patrol target
+rule (nearest enemy within ~50 ly, ties by fleet order, warp `min(10,range/5)`).
 
-- **WU repeat vs drop.** Give a fleet three waypoints and run it onto the
-  second, once with the repeat-orders flag off and once on; confirm the
-  reached waypoint is dropped in the first case and moved to the end of the
-  list in the second. Confirms "Reaching a waypoint".
+Still open (fleetlab HST editing, no serial):
+
 - **WU repeat fallbacks.** Repeat case with only two waypoints, and with a
   reached waypoint equal to the last; confirm both fall back to a plain drop.
 - **WU patrol no-repeat.** Repeat flag on, a patrol waypoint reached; confirm
   it is not rotated to the end.
-- **WU dead target.** Point a waypoint at another fleet, destroy that fleet,
-  and run a turn; confirm the waypoint keeps its last-known coordinates, loses
-  its target, and is not dropped. Confirms "Targets that moved, died or were
-  captured".
-- **WU live target.** Point a waypoint at a moving fleet; confirm the
-  waypoint's coordinates track the target's new position each turn.
-- **WU route task.** Set a planet's route destination and send an owned fleet
-  in on the route task; confirm it is re-dispatched to the destination at the
-  ideal warp (reduced for fuel), and that an empty fleet between two gated
-  planets is sent through the stargate. Confirms "Route task".
-- **WU patrol target.** Set a patrol range with enemy fleets at chosen
-  distances and strengths; observe which one the fleet intercepts and at what
-  warp. This is the measurement that pins the patrol target rule.
-- **WU transfer refusals.** Order a fleet gifted to: a computer player, a
-  player who treats the giver as an enemy, and (carrying colonists) a willing
-  ally; confirm each is refused, and that an empty fleet to a willing
-  non-enemy human transfers. Confirms "Transfer fleet".
+- **WU captured target.** Track a fleet target that changes owner mid-turn;
+  confirm the waypoint keeps tracking it (owner not re-checked), and that the
+  suppress bit holds coordinates instead.
+- **WU route stargate.** Route between two gated planets with an empty fleet;
+  confirm it is sent through the stargate rather than at warp.
+- **WU computer-player transfer.** Gift a fleet to a computer player; confirm
+  it is refused (needs a base with an AI player).
+- **WU follower linkage.** Build a two-fleet cycle and a three-fleet chain of
+  fleet-target waypoints; confirm the leader each resolves to and the freeze
+  match the `KERNEL.md` chaser rules (stars-elegy #53).
 
 The order-ingestion predictions remain open:
 
@@ -581,9 +666,15 @@ The order-ingestion predictions remain open:
 - **OX design-strip.** Submit a design carrying a component above the
   player's tech; confirm the stored design has that component dropped and its
   mass/cost reflect the survivors. Confirms "Design legality".
-- **OX battle-plan-range.** Submit a battle plan with an out-of-range tactic;
-  confirm it is rejected and a legal plan is stored. Confirms "Battle-plan
-  fields".
+- **OX battle-plan-range.** Submit a battle-plan definition with an
+  out-of-range tactic (6) and target (8), a definition that deletes plan 0, and
+  a fleet battle-plan assignment naming a plan the owner does not have; confirm
+  the original stores the out-of-range plan, lets plan 0 be deleted, and
+  applies the bad fleet assignment (rather than rejecting any of them).
+  Confirms "Battle-plan fields" (stars-elegy #59).
+- **OX starbase-dock.** Submit a production-queue change that builds a ship at
+  a starbase whose dock could not queue it; confirm the original accepts it.
+  Confirms "Production queue (starbase dock)" (stars-elegy #57).
 - **OX ownership.** For each not-re-checked kind, have one player submit an
   order naming another player's object; confirm the original applies it
   (and, for cargo, applies the cross-owner redirection). Confirms

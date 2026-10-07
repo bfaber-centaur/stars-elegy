@@ -53,6 +53,7 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
+//         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
 //         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
@@ -60,7 +61,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   unload (all colonists) | merge (into the waypoint's
 //                                   fleet) | transfer K (give the fleet to the K-th other
 //                                   player) | lay [YEARS] (lay mines; YEARS
-//                                   word, default 5 = indefinitely) | transport A:V,A:V,A:V,A:V,A:V
+//                                   word, default 5 = indefinitely) | route (follow the
+//                                   planet's route, task 8) | patrol RANGE (patrol within
+//                                   RANGE light-years, task 7) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
 //                                   kT or 100s of colonists; "-" for no order). "target
 //                                   fleet" makes waypoint 0 target a fleet (id number |
@@ -83,6 +86,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   every object already in BASE. Layout: docs/ORACLE.md
 //                                   "Universe objects". PARTNER is the other wormhole's
 //                                   NUM; DEST a planet number; MASKs are player bit masks.
+//   route N DEST                    set planet N's route destination to planet DEST
+//                                   (stored as wRoute; a fleet with waypoint task "route"
+//                                   at N follows it). Owned full planet blocks only
 //   planet N [owner P] [pop X] [starbase D|none] [scanner none|on]
 //                                   make planet N player P's (installations copied from
 //                                   P's homeworld, none built), set its population (in
@@ -329,6 +335,7 @@ public class CombatLab {
 
     static class FleetSpec {
         int owner, id, x, y, fuel, plan, planet = -1;
+        boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
@@ -352,6 +359,15 @@ public class CombatLab {
                 return 9;
             }
             case "unload": ord[3] = 2 << 12; return 1;
+            case "route": return 8;
+            case "patrol": {
+                // patrol: two order words. word 0 = range in light-years
+                // (bit 15 selects the intercept mode the client offers); word 1 =
+                // the fleet id the host picked to intercept (0 at turn start).
+                int range = Integer.parseInt(t[i + 1]);
+                ord[0] = range & 0xffff;
+                return 7;
+            }
             case "lay": {
                 // lay mines: one word, the years counter (5 = indefinitely)
                 ord[0] = t.length > i + 1 && t[i + 1].matches("\\d+") ? Integer.parseInt(t[i + 1]) : 5;
@@ -437,6 +453,7 @@ public class CombatLab {
         List<FleetSpec> fleets = new ArrayList<>();
         Map<Integer, int[]> planetSpecs = new HashMap<>(); // N -> {owner, pop, starbase, scanner}; -2 = keep, -1 = none
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
+        Map<Integer, Integer> routes = new HashMap<>(); // planet N -> route destination planet
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
@@ -523,6 +540,7 @@ public class CombatLab {
                         }
                         break;
                     }
+                    case "route": routes.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "planet": {
                         int[] ps = {-2, -2, -2, -2};
                         for (int i = 2; i + 1 < t.length; i += 2) {
@@ -612,6 +630,7 @@ public class CombatLab {
                 if (fs.ships[i] > 255) big = true;
             }
             fl.byte5 = (byte) (big ? (fl.byte5 & ~8) : (fl.byte5 | 8));
+            if (fs.repeat) fl.byte5 |= 2; else fl.byte5 &= ~2;
             fl.ironium = fs.cargo[0];
             fl.boranium = fs.cargo[1];
             fl.germanium = fs.cargo[2];
@@ -645,6 +664,12 @@ public class CombatLab {
                 } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
                     int o = fs.orders.get(w)[0];
                     wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                } else if (wb.waypointTask == 7) {
+                    // patrol: two words (range, selected target id)
+                    for (int k = 0; k < 2; k++) {
+                        int o = fs.orders.get(w)[k];
+                        wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                    }
                 }
                 wb.encode();
                 newFleets.add(wb);
@@ -776,6 +801,17 @@ public class CombatLab {
             }
             if (b instanceof PartialPlanetBlock && planetSets.containsKey(((PartialPlanetBlock) b).planetNumber))
                 applyPlanetSet((PartialPlanetBlock) b, planetSets.remove(((PartialPlanetBlock) b).planetNumber));
+            if (b instanceof PartialPlanetBlock && routes.containsKey(((PartialPlanetBlock) b).planetNumber)) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                if (b.typeId != BlockType.PLANET)
+                    throw new Exception("route: planet " + pl.planetNumber + " is not a full planet block");
+                int dest = routes.remove(pl.planetNumber);
+                pl.hasRoute = true;
+                pl.routeShort = (pl.routeShort & ~0x3ff) | ((dest + 1) & 0x3ff);
+                pl.encode();
+                pl.setData(pl.getDecryptedData(), pl.size);
+                pl.decode();
+            }
             if (b instanceof BattlePlanBlock) {
                 BattlePlanBlock bp = (BattlePlanBlock) b;
                 bp.decode();
@@ -820,6 +856,7 @@ public class CombatLab {
         if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
+        if (!routes.isEmpty()) throw new Exception("route: no planet " + routes.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
     }
@@ -1028,6 +1065,7 @@ public class CombatLab {
                     }
                     i += 2; break;
                 case "planet": fs.planet = Integer.parseInt(t[i + 1]); i += 2; break;
+                case "repeat": fs.repeat = true; i += 1; break;
                 case "target":
                     // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
                     if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
@@ -1050,7 +1088,7 @@ public class CombatLab {
                     int w = fs.wps.size();
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
-                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer")
+                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer") || t[i + 1].equals("patrol")
                         || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
                 }
