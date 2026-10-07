@@ -174,7 +174,7 @@ the research order is written only if the field changes.
 
 Robotoid, Turindrone, Automitron, Rototill and Cybertron maintain their
 starbase designs every year, before their own work. Macinti has its own
-starbase rules (docs/ai/macinti.md).
+starbase rules (docs/ai/macinti.md, planned).
 
 **Slots and families.** Starbase design slots 0–9 form two families of
 Space Stations, A = (0, 2, 4) and B = (5, 7, 9), and two of Orbital
@@ -298,7 +298,7 @@ After its own work, every computer player runs these steps, in order.
 
 1. Keep fleets moving (fleet rules: personality files).
 2. **Starbases for hubs** (not Macinti; in a tutorial game only before
-   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md).
+   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md, planned).
    The others: every own planet with no starbase, population ≥ 8,000, not
    marked by the personality's own pass, that is a hub (§6), gets the
    current starbase design (slot 0, or 5 when slot 5 is newer) ×1 appended
@@ -416,7 +416,7 @@ scraps at least one starting fleet at its homeworld.
   before 200, 100 after) orbiting an own planet is scrapped when that
   planet has a starbase, else with chance 1/5 per year.
 - **Macinti (MEASURED, AI-5)** scraps its early fleets and repeatedly
-  builds and scraps its first colonizer; docs/ai/macinti.md.
+  builds and scraps its first colonizer; docs/ai/macinti.md (planned).
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -521,7 +521,7 @@ formula, to be published with the personality stage that needs it).
   slots 2–5 + 2 × ships in slots 6–7`. It is "too weak" when `strength <
   P` (the personality's armada potency). Turindrone calls the same rule
   for its bomber check, where slots 2–7 are not its warships (see
-  docs/ai/turindrone.md): LEGACY BUG, reproduced as written.
+  docs/ai/turindrone.md, planned): LEGACY BUG, reproduced as written.
 
 **Nearest colonizable planet.** Candidates are unowned planets that no
 other own fleet is already heading to (its waypoint 1 is that planet:
