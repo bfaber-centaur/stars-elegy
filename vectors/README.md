@@ -28,7 +28,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
 | `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
 | `mf` | MF-01..11c | 20 | minefields: hits, sweeping, decay, detonation, speed bumps | `docs/OBJECTS.md` "Minefields" |
-| `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty" |
+| `rp` | RD-P1..P21 | 21 | turn-time race penalty and repairs; P13..P21 (Round 3, MEASURED) add silent clamps, clamp before the check, habitat repairs, no second punishment and a computer player's repair | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty", "Race design" Round 3 |
 | `cb7` | CB-048, CB-049, SC-035, SC-036 | 5 | combat round 7 (Mystery Trader items from battle, movement) and scanning after battles | `docs/COMBAT.md`, `docs/SCANNING.md` |
 | `tk3` | TK-201..203 | 3 | takeover round 3: order across planets, unloads, mines floor, scrapping tech | `docs/TAKEOVER.md` |
 | `sl` | SL-01..12 (9 setups) | 9 | ship launch: new fleets, route warps, the 512-fleet limit, starbase replacement | `docs/ORDERS.md` |
@@ -353,5 +353,8 @@ go test ./internal/vectors
   states), KX-005 (not merged yet).
 - BP-2 (new games made one after another in one client session), and the
   battle-plan exploration files with no host year.
+- RD-P19 years 2 and 3 (`rp19-y2`, `rp19-y3`): their start files are the
+  previous year's output, not a separate edit; the year-1 vector covers the
+  edit and PARITY "Race design" Round 3 records the later years.
 - RD-1..RD-7 and RW (new games: they wait for the `new_game` form). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.
