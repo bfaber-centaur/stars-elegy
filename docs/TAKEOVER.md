@@ -196,7 +196,11 @@ Installations first, when `I > 0` and `T = mines + factories + defenses >
 1. factories lose `⌊I·F/T⌋`, plus 1 if `rand(T) < (I·F mod T)`, at most F;
 2. defenses lose `⌊I·D/T⌋`, plus 1 if `rand(T) < (I·D mod T)`, at most D;
 3. mines lose the rest, `I − factories lost − defenses lost`, at most the
-   mines there.
+   mines there. When the two rounded-up kills together exceed `I`, the rest
+   is negative and mines lose nothing; they never increase and never go
+   below 0 (BINARY-ONLY). Example: `I = 1`, one factory and one defense, no
+   mines: each can lose 1 with chance ½, so 2 installations can die from
+   `I = 1`.
 
 A draw is made only when its remainder is non-zero.
 
@@ -249,6 +253,12 @@ planet invades it exactly as an enemy's (T-29, order set in the file; the
 UI may not offer it).
 
 Fuel is never unloaded to or loaded from a planet (BINARY-ONLY).
+
+**Minerals** unloaded on a planet the fleet's owner does not own (another
+player's, whatever the relation, or an unowned one) are added to that
+planet's surface, and the fleet loses them (BINARY-ONLY). Only cargo to
+another player's **fleet** checks the relation: nothing moves to an enemy's
+fleet.
 
 ### Unload and load amounts (BINARY-ONLY)
 
@@ -484,6 +494,8 @@ resolutions after movement. Random-stream pinning for experiments:
 - Tech learned on capture; ancient artifacts.
 - Colonize retries (below).
 - Fuel unloaded at a planet: is the fleet debited?
+- Minerals unloaded on another player's planet, and the bomb case where
+  rounded factory and defense kills exceed `I`.
 - Loading every colonist from one's own planet: does the planet stay owned
   at 0 population?
 - Takeover round 2 can test, with pinned streams where random: bombing
