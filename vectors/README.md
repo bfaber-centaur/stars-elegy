@@ -28,7 +28,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
 | `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
 | `mf` | MF-01..11c | 20 | minefields: hits, sweeping, decay, detonation, speed bumps | `docs/OBJECTS.md` "Minefields" |
-| `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/RACES.md` |
+| `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty" |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -65,7 +65,7 @@ file, so nothing in it is a default you have to guess.
   `enemy`), Mystery Trader items owned, and the race: PRT, LRTs, growth rate,
   habitability (center, low, high per axis, 255 = immune), colonists per
   resource, factory and mine settings, research cost per field, the leftover
-  points spend and race stat 15 (`RACES.md`). An out-of-range PRT is given
+  points spend (`UNIVERSE.md` "Leftover advantage points") and race stat 15 (PARITY "Turn-time penalty"). An out-of-range PRT is given
   as its stored number.
 - `planets`: position, owner (-1 none), mineral concentrations, environment
   (gravity, temperature, radiation as stored values), original environment,

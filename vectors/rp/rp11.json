@@ -4429,7 +4429,7 @@
  "cases": [
   {
    "id": "RD-P11",
-   "rule": "RACES turn-time penalty",
+   "rule": "KERNEL race budget",
    "setup": "turn-time race penalty P11",
    "tag": "CONFIRMED",
    "prediction_held": true,
@@ -5058,7 +5058,7 @@
  ],
  "source": {
   "experiment": "experiments/rd",
-  "spec_rules": "docs/RACES.md",
+  "spec_rules": "docs/KERNEL.md \"Production\" (race budget)",
   "parity": "docs/PARITY.md \"Follow-up: AR spends, growth 0, several players (MEASURED, RD-7, RD-P11, RD-P12)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/rd/rp11 (private)"
  }

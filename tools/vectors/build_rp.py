@@ -26,8 +26,8 @@ def build(ev, out):
         verdict = VERDICT.get(k, 'held')
         vid = 'RD-P%d' % k
         vec = K.chained(vid, 'turn-time race penalty P%d' % k, {'run': [os.path.join(ev, run)]},
-                        (held, 'CONFIRMED' if held else 'MEASURED', verdict, '', 'RACES turn-time penalty'))
-        vec['source'] = {'experiment': 'experiments/rd', 'spec_rules': 'docs/RACES.md',
+                        (held, 'CONFIRMED' if held else 'MEASURED', verdict, '', 'KERNEL race budget'))
+        vec['source'] = {'experiment': 'experiments/rd', 'spec_rules': 'docs/KERNEL.md "Production" (race budget)',
                          'parity': PARITY.get(k, 'docs/PARITY.md "Turn-time penalty (RD-P1..RD-P10)"'),
                          'raw_evidence': 'stars-oracle-apparatus evidence/rd/%s (private)' % run}
         with open(os.path.join(out, run + '.json'), 'w') as f:

@@ -949,7 +949,7 @@
  "cases": [
   {
    "id": "RD-P1",
-   "rule": "RACES turn-time penalty",
+   "rule": "KERNEL race budget",
    "setup": "turn-time race penalty P1",
    "tag": "CONFIRMED",
    "prediction_held": true,
@@ -1117,7 +1117,7 @@
  ],
  "source": {
   "experiment": "experiments/rd",
-  "spec_rules": "docs/RACES.md",
+  "spec_rules": "docs/KERNEL.md \"Production\" (race budget)",
   "parity": "docs/PARITY.md \"Turn-time penalty (RD-P1..RD-P10)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/rd/rp01 (private)"
  }
