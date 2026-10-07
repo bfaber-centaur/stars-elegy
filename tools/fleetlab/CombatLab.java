@@ -341,7 +341,7 @@ public class CombatLab {
     }
 
     // Takeover detail: installations, carry byte, environment.
-    static void printPlanetDetail(String f, PartialPlanetBlock p) {
+    static void printPlanetDetail(String f, PartialPlanetBlock p) throws Exception {
         StringBuilder sb = new StringBuilder();
         if (p.canSeeEnvironment())
             sb.append(String.format(" conc=%d/%d/%d env=%d/%d/%d", p.ironiumConc, p.boraniumConc, p.germaniumConc,
@@ -360,6 +360,7 @@ public class CombatLab {
         }
         if (p.isHomeworld) sb.append(" homeworld");
         if (p.hasArtifact) sb.append(" artifact");
+        if (p.hasInstallations && (p.getDecryptedData()[installationByte6(p)] & 0x40) != 0) sb.append(" artbit");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -986,12 +987,17 @@ public class CombatLab {
 
     // The host reads a planet's artifact from the file flag only when the record has no installations
     // block; with one (owned planets), it takes bit 6 of the block's seventh byte, which StarsAPI does not
-    // write. Set it here, after encode() (TK round 4).
-    static void setInstallationArtifactBit(PartialPlanetBlock pl) throws Exception {
-        byte[] d = pl.getDecryptedData();
+    // write (tools/fleetlab/fleetlab patches its decoder to accept the bit). Set it after encode().
+    static int installationByte6(PartialPlanetBlock pl) throws Exception {
         int tail = (pl.hasStarbase ? (pl.typeId == BlockType.PARTIAL_PLANET ? 1 : pl.starbaseBytes.length) : 0)
                 + (pl.hasRoute && pl.typeId == BlockType.PLANET ? 2 : 0) + (pl.turn >= 0 ? 2 : 0);
-        d[pl.size - tail - 8 + 6] |= 0x40;
+        return pl.size - tail - 8 + 6;
+    }
+
+    static void setInstallationArtifactBit(PartialPlanetBlock pl) throws Exception {
+        byte[] d = pl.getDecryptedData();
+        d[installationByte6(pl)] |= 0x40;
+        pl.setDecryptedData(d, pl.size); // encode() leaves two copies; the writer uses this one
     }
 
     // One 18-byte universe-object record (docs/ORACLE.md "Universe objects").
