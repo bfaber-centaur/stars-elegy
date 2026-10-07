@@ -153,6 +153,23 @@ BINARY-ONLY.
   isolated LEGACY BUG, reproduced (if ever wanted) behind a single named
   switch rather than in the normal design-read path. This follows the same
   "choose and state a rule" approach used for the Ownership gap above.
+- **Design legality (hull not entitled, or every part stripped).**
+  BINARY-ONLY. The design read checks only that the submitter owns the design
+  slot; it does **not** tech- or entitlement-gate the **hull** itself, so a
+  design built on a hull the owner has not earned is accepted and stored. Nor
+  is a design rejected for ending up short of parts: after the per-slot strip,
+  if the hull's primary slot (its engine slot) is left empty it is
+  **back-filled with the basic engine at that slot's capacity**, and any other
+  stripped slot simply stays empty — the stored design is never rejected for
+  want of parts, and the mass/cost reflect whatever survived plus any
+  back-fill.
+  **Chosen rule.** Validate the hull against the owner's entitlement on design
+  read and **reject** a design on an un-entitled hull, consistent with the
+  component rule above (Elegy does not carry the hull gap forward). But
+  **reproduce the engine-slot back-fill** rather than rejecting a design whose
+  engine was stripped: the basic engine is available to every race, so the
+  back-fill is legitimate repair to a buildable ship, not a trust gap.
+  Confirming the hull-keep and the engine back-fill needs the OX runs.
 - **Battle-plan fields.** A battle-plan definition with a tactic or primary
   target outside its legal set is rejected; a legal one is stored.
 
@@ -183,6 +200,15 @@ the Alternate-Reality divide-by-zero case in `KERNEL.md`: the parity record
 states the original behavior; the implementation does not carry the gap
 forward. This document states the rule; it does not provide a recipe for
 exercising the original's gap.
+
+**Minefield detonate-setting.** BINARY-ONLY (minefield context in
+stars-elegy #50, `OBJECTS.md`). A detonate-setting order names a minefield,
+and the host applies it **without** checking either that the submitter owns
+that field or that the field's type is one that can detonate — a trust gap of
+the same shape as the not-re-checked fleet orders above. Elegy's chosen rule,
+matching what the normal client can send, accepts a detonate setting only on
+the submitter's **own** minefields and only for field kinds that can
+detonate. Confirming the original's open acceptance needs the OX runs.
 
 ### Cross-owner cargo
 
@@ -273,8 +299,26 @@ emptied fleets are removed. There are two ways to order a merge, and they do
 **not** behave the same at the limits.
 
 **Merge order** (a direct "merge these fleets now" order). Each per-design
-stack is held to at most 32766 ships. BINARY-ONLY — this path is read from
-the program but not yet oracle-tested.
+stack is held to at most 32766 ships; ships beyond that are **lost** — the
+merge caps the stack at 32766, the emptied source fleets are removed, and the
+excess neither spills back into a source fleet nor refuses the order. Elegy's
+chosen clamp matches this (cap at 32766, drop the remainder). The cap bites
+only when the running signed-16-bit total would pass 32767; a total of exactly
+32767 is kept, as on the task path.
+
+This path also combines damage by its **own** routine, not the one the
+Merge-with-Fleet task uses, and the two do not agree on magnitude. The
+**percentage** combines the same way — a damaged stack merged into healthy
+ships of the same design has its percent spread over the full post-merge
+count, `ceil(100·ΣD/n)` with `D` the damaged-ship count per stack and `n` the
+slot total. But the per-ship **damage units** are averaged over the
+**damaged** ships only (`Σ(D·units)/ΣD`), not over all `n`, so the merge order
+keeps a higher per-ship figure than the task's dilution: for the task's own
+example (10 ships at 100 units/50% + 10 at 200 units/20%) both give 35%, but
+the merge order yields ~129 units/ship where the task gives 45. An
+implementation should therefore not assume ORDERS.md's single damage rule
+(stated for the task) holds verbatim here. BINARY-ONLY — this whole path is
+read from the program but not yet oracle-tested.
 
 **Merge-with-Fleet waypoint task** (CONFIRMED, FO-01..07). The ordering fleet
 joins a target fleet on arrival; ship counts add per design and cargo and
@@ -303,6 +347,17 @@ waypoint-0 target fleet is elsewhere is refused and the task is cleared, with
 both fleets unchanged (CONFIRMED, FO — a target 195 ly away did nothing). The
 normal game only ever creates this task against a fleet the ordering fleet is
 travelling to meet, so in normal play the merge happens on arrival.
+
+The task also validates the target before merging (BINARY-ONLY): it resolves
+the target fleet by id and merges only when that fleet still exists, is not a
+fleet that has **already merged away** earlier in the same replay, and belongs
+to the **same owner**. A target that is gone or already merged produces a
+"cannot merge" message and no change; a target owned by **another player**
+produces a different "not your fleet" message and no change. There is no
+distance test in this check — co-location is enforced only by the task firing
+on arrival (above). So an implementation that refuses a foreign-owner or
+already-merged target, exactly as Elegy does, matches the original; confirming
+the precise messages needs the OX runs.
 
 ### Split
 
@@ -341,9 +396,27 @@ and the Merge-with-Fleet task (including its damage dilution and the missing
 ship-count cap) have since been measured — see the Fleet operations section
 and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
 
-- **OX merge-order cap.** The direct merge order's 32766 per-design cap is
-  read but untested (only the waypoint task was measured, and it has no cap);
-  confirm whether the order path clamps.
+- **OX merge-order cap and loss.** The direct merge order's 32766 per-design
+  cap is read but untested (only the waypoint task was measured, and it has no
+  cap); push a direct merge past 32766 and confirm the stack caps at 32766
+  with the excess lost (not spilled, not refused). Confirms "Merge order".
+- **OX merge-order damage.** Merge (direct order) a damaged stack into healthy
+  ships of the same design and read back the stored percent and per-ship
+  damage units; confirm the percent dilutes over the full count like the task
+  but the units divide by the damaged count, not the slot total (so the figure
+  differs from the task path). Confirms the merge-order damage note.
+- **OX merge-target validation.** With the Merge-with-Fleet task, aim it at a
+  co-located fleet owned by another player, and at a fleet that has already
+  merged away the same turn; confirm each is refused with no change. Confirms
+  the merge-target note.
+- **OX design hull/parts.** Submit a design on a hull above the player's tech,
+  and one whose engine is stripped; confirm the original stores both (hull
+  kept, engine slot back-filled with the basic engine) rather than rejecting.
+  Confirms "Design legality (hull not entitled, or every part stripped)".
+- **OX minefield detonate.** Submit a detonate-setting order naming another
+  player's minefield, and one naming a field kind that cannot detonate;
+  confirm the original accepts both. Confirms "Minefield detonate-setting".
+  Keep the crafted inputs in private apparatus.
 - **OX split.** Split some ships off a loaded fleet; confirm the new fleet
   has exactly the ordered ships, a capacity-proportional share of the cargo,
   and the source's battle plan and waypoints. Confirms "Split".
