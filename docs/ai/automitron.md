@@ -148,8 +148,9 @@ The first rule that matches the fleet applies.
    This applies to every fleet, not only scouts. Otherwise the fleet is
    left as it is (MEASURED, AP-004: the two-waypoint Scout fleet at 0 mg
    got a scrap task; AP-005: with fuel it kept its route. Its second
-   waypoint's warp was re-picked 6 → 5 in both runs, by the shared core
-   after this pass, not by this rule; `AI.md`).
+   waypoint's warp was re-picked 6 → 5 in both runs by the shared core's
+   whole-year arrival slowdown after this pass, not by this rule; `AI.md`,
+   AI-11).
 2. **Privateers** (slot 6), with one waypoint and no task, get the
    lay-mines task with both parameters 5.
 3. **Colonizers** (slot 1):

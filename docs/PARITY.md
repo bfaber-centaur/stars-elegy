@@ -4741,9 +4741,8 @@ private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
   One prediction missed: Automitron's Scout fleet with fuel (AP-005) was
   predicted to get no order, but in both runs its second waypoint's warp
   went 6 → 5, target and task unchanged. The personality's rule did leave
-  the fleet alone; the change is attributed (inferred) to the shared
-  core's waypoint upkeep, which is the AI shared core's open question
-  (`AI.md`). Extra queue lines in both runs were the shared automation's.
+  the fleet alone; the change is the shared core's whole-year arrival
+  slowdown (`AI.md`, AI-11). Extra queue lines in both runs were the shared automation's.
 
 ## Computer players (AI-0..AI-9)
 
