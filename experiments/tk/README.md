@@ -644,3 +644,99 @@ RUNDIR` prints the table below from the dumps.
 
 Side observation: the bombing message's installation count is `f + d +
 rest` with a negative rest kept (LEGACY BUG, `MESSAGES.md`).
+
+
+# Round 4: TK-301 to TK-305
+
+Round 4 closes what legal orders can reach on TAKEOVER.md's open list:
+Laser Battery and Planetary Shield against bombs and troops, the "load
+exactly" action, ancient artifacts (random events on, and with slower
+tech), and Mystery Trader parts scrapped at a starbase. Specs and
+predictions are written by `gen4.py`; the predictions below were committed
+before any of these runs. Colonists given to a foreign planet by a manual
+cargo transfer need crafted order files and wait on the serial decision;
+the year's full draw order went to the owner of `KERNEL.md`'s turn order.
+
+## Round 4 setup
+
+- Combat Lab, two JOAT players (the unedited races, which the host leaves
+  unchanged), enemies, research 0%. Player 0 tech 26 (TK-303/304: 10 in
+  every field, so artifact points are not added to a maxed field).
+- TK-301/302: player 1 energy 10 (best defense Laser Battery, `c = 24`) or
+  16 (Planetary Shield, `c = 30`), other fields 3.
+- TK-303/304 run on a copy of the base whose `.XY` game options byte
+  (offset 0x10) is 0x00 (random events on) or 0x02 (random events on,
+  slower tech); Combat Lab has 0x80. CombatLab's new `planetset N
+  artifact=1` sets a planet's ancient-artifact flag, and the dump prints
+  `artifact`.
+- TK-305: player 1 tech 0; player 0's twelve designs each carry 2
+  Hush-a-Boom, so the scrapped fleet "shows" 24 Hush-a-Booms (the binary
+  caps the count at 25).
+
+## Round 4 predictions
+
+The working for TK-301/302 is in `gen4.py` (single-precision coverage, as
+`TAKEOVER.md` "Planetary defenses against bombs").
+
+### TK301: Laser Battery (player 1 energy 10) against bombs and troops; "load exactly"
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| B | defenses | 10 Cherry2 bombers (20 Cherry) at player 1 planet 13: P 870, defenses 100, no other installations; best defense Laser Battery | planet 13: owner 1, pop 811, defenses 0 |
+| S | defenses | 10 Smart2 bombers (20 Smart) at player 1 planet 2: P 870, defenses 100 | planet 2: owner 1, pop 858, defenses 100 |
+| G | defenses | Freighter (600 colonists) unloads on player 1 planet 14 before movement: P 500, defenses 20 | planet 14: owner 1, pop 35 |
+| L1 | load exactly | player 0 planet 11 (P 100): empty Freighter loads exactly 30 colonists | fleet 0/3: col 30; planet 11: owner 0, pop 80 |
+| L2 | load exactly | player 0 planet 12 (P 100, surface ironium 25): load exactly 40 ironium | fleet 0/4: fe 25; planet 12: owner 0, surface 0/0/0 |
+| L3 | load exactly | player 0 planet 16 (P 100, surface ironium 500): load exactly 300 ironium into a 210 kT hold | fleet 0/5: fe 210; planet 16: owner 0, surface 290/0/0 |
+
+### TK302: Planetary Shield (player 1 energy 16) against bombs and troops; "load exactly"
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| B | defenses | 10 Cherry2 bombers (20 Cherry) at player 1 planet 13: P 870, defenses 100, no other installations; best defense Planetary Shield | planet 13: owner 1, pop 852, defenses 0 |
+| S | defenses | 10 Smart2 bombers (20 Smart) at player 1 planet 2: P 870, defenses 100 | planet 2: owner 1, pop 874, defenses 100 |
+| G | defenses | Freighter (600 colonists) unloads on player 1 planet 14 before movement: P 500, defenses 20 | planet 14: owner 1, pop 75 |
+| L1 | load exactly | player 0 planet 11 (P 100): empty Freighter loads exactly 30 colonists | fleet 0/3: col 30; planet 11: owner 0, pop 80 |
+| L2 | load exactly | player 0 planet 12 (P 100, surface ironium 25): load exactly 40 ironium | fleet 0/4: fe 25; planet 12: owner 0, surface 0/0/0 |
+| L3 | load exactly | player 0 planet 16 (P 100, surface ironium 500): load exactly 300 ironium into a 210 kT hold | fleet 0/5: fe 210; planet 16: owner 0, surface 290/0/0 |
+
+### TK303: ancient artifacts, random events on
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000. Base: random events on.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A1 | artifact | Freighter (100) captures player 1 planet 14 (P 10, artifact) before movement | planet 14: owner 0; 0x05e to player 0: planet 14, a field 0-5, points 100-400 added to that field's research; the planet's artifact flag cleared |
+| A2 | artifact | Colonizer (25) colonizes unowned planet 21 (artifact) before movement | planet 21: owner 0; 0x05e to player 0: planet 21, points 100-400; flag cleared |
+| A3 | artifact | Colonizer (5) colonizes unowned planet 22 (artifact) before movement | planet 22: owner 0; 0x05e: points scaled by 5/10, so 50-200; flag cleared |
+| A4 | artifact | Freighter (10) unloads on player 1 planet 3 (P 100, artifact): the defender wins | planet 3: owner 1; no 0x05e; flag kept |
+| A5 | artifact | player 1 planet 9 (P 87, artifact), no fleet | no 0x05e; flag kept (an owned artifact planet gives nothing) |
+
+### TK304: ancient artifacts, random events on, slower tech
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000. Base: random events on, slower tech.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A1 | artifact | Freighter (100) captures player 1 planet 14 (P 10, artifact) before movement | planet 14: owner 0; 0x05e to player 0: planet 14, a field 0-5, points 100-400 added to that field's research; the planet's artifact flag cleared |
+| A2 | artifact | Colonizer (25) colonizes unowned planet 21 (artifact) before movement | planet 21: owner 0; 0x05e to player 0: planet 21, points 100-400; flag cleared |
+| A3 | artifact | Colonizer (5) colonizes unowned planet 22 (artifact) before movement | planet 22: owner 0; 0x05e: points scaled by 5/10, so 50-200; flag cleared |
+| A4 | artifact | Freighter (10) unloads on player 1 planet 3 (P 100, artifact): the defender wins | planet 3: owner 1; no 0x05e; flag kept |
+| A5 | artifact | player 1 planet 9 (P 87, artifact), no fleet | no 0x05e; flag kept (an owned artifact planet gives nothing) |
+| Y | artifact | slower tech on | points are not halved (binary: the halving comes after the points are added and is unused, LEGACY BUG): A1/A2 still 100-400, A3 50-200. If halving applied, every A1/A2 value would be at most 200 |
+
+### TK305: Mystery Trader parts scrapped at a starbase; player 1 tech 0
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000, 17000, 11500, 9800, 6000, 5200, 3700.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| S0 | scrap MT | a fleet of 12 Hush-a-Boom bombers (12 designs, 2 Hush-a-Boom each) scraps at player 1 planet 0 with an Orbital Fort |  |
+| S2 | scrap MT | a fleet of 12 Hush-a-Boom bombers (12 designs, 2 Hush-a-Boom each) scraps at player 1 planet 2 with an Orbital Fort |  |
+| S3 | scrap MT | a fleet of 12 Hush-a-Boom bombers (12 designs, 2 Hush-a-Boom each) scraps at player 1 planet 3 with an Orbital Fort |  |
+| Y | scrap MT | player 1 at the end of the year | one gain at most per stream. Each attempt: 1/2 to pass; then 13 rand(13) picks, each giving Hush-a-Boom with chance 24% when it names Hush-a-Boom (P(part) = 1 - (1 - 0.24/13)^13 = 0.215); otherwise a level in a field the bombers needed (construction, propulsion, weapons, electronics or biotech), never energy. The first attempt that passes gains (P = 0.875 per stream). A part gain sends 0x13c and sets player 1's Hush-a-Boom bit; a level sends 0x13d |
+
