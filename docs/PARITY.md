@@ -4648,7 +4648,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players: Turindrone and Automitron designs (AP-001..AP-003)
+## Computer players: Turindrone and Automitron designs (AP-001..AP-005)
 
 Specs: `docs/ai/turindrone.md`, `docs/ai/automitron.md`. Predictions were
 committed in the private binary reading before the runs. Raw evidence:
@@ -4722,6 +4722,28 @@ private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
     tech 3 in every field (predicted exactly);
   - queued no ships, because homeworld population was below the
     production threshold.
+
+- **AP-004, AP-005 (MEASURED, one stream each).** One generated year from
+  AP-001's year-2401 game (apparatus `evidence/ai/ap/`, run001/y2401
+  base), predictions committed before the runs. AP-005 ran it unedited;
+  AP-004 emptied both homeworld queues, raised Automitron's homeworld to
+  160,000 colonists and set its Scout fleet's fuel to 0. Held:
+  - Turindrone deleted and rewrote slots 1, 2 and 12 (none of their ships
+    alive) exactly as predicted and kept slot 0;
+  - Turindrone queued nothing while its queue held a ship (AP-005); with
+    an empty queue it queued four colony ships, then three Privateers
+    (AP-004);
+  - Turindrone's starting Scout got a scrap task at the homeworld;
+  - Automitron rewrote slot 1 as predicted; it queued nothing at 25,800
+    colonists (AP-005) and three of design 6 at 160,000 (AP-004);
+  - Automitron's two-waypoint Scout fleet at 0 mg was scrapped (AP-004).
+
+  One prediction missed: Automitron's Scout fleet with fuel (AP-005) was
+  predicted to get no order, but in both runs its second waypoint's warp
+  went 6 → 5, target and task unchanged. The personality's rule did leave
+  the fleet alone; the change is attributed (inferred) to the shared
+  core's waypoint upkeep, which is the AI shared core's open question
+  (`AI.md`). Extra queue lines in both runs were the shared automation's.
 
 ## Computer players (AI-0..AI-9)
 

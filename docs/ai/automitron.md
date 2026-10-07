@@ -16,6 +16,10 @@ counts, "empty" and "replaced").
   from the binary, then captured from the original. Every design record
   matched: hull, and every slot's part and count.
 - **MEASURED** (AP-003): orders in the AI01 capture, 2400–2402.
+- **MEASURED** (AP-004, AP-005): one predicted year each from AP-001's
+  year-2401 game, one stream each (apparatus `evidence/ai/ap/`): the
+  production threshold, a mine-layer draw, and the fuel scrap of fleet
+  rule 1. Marked below.
 - **BINARY-ONLY**: everything else here.
 
 ## Order of the turn (BINARY-ONLY)
@@ -99,7 +103,11 @@ marks its own negative-value planets.
 Production runs at an own planet with a starbase and population
 ≥ 150,000 whose queue holds no ship-design item. With the starting
 population this means no ship production for several years: AP-003 queued
-only the shared factories and mines in 2400–2402. Q means "append one".
+only the shared factories and mines in 2400–2402, and AP-005 none at
+25,800 colonists. MEASURED (AP-004): at 160,000 colonists with an empty
+queue the homeworld queued three of design 6 (step 3's draw succeeded)
+and nothing else from the personality; the shared automation then
+appended defenses. Q means "append one".
 The steps run in order.
 
 1. **Freighters.** This uses Turindrone's step 2 with group (4, 5): N, the
@@ -138,7 +146,10 @@ The first rule that matches the fleet applies.
    not a ramscoop (it comes before Radiating Hydro-Ram Scoop in the engine
    list) and the fleet has less than 2 mg of fuel, the fleet is scrapped.
    This applies to every fleet, not only scouts. Otherwise the fleet is
-   left as it is.
+   left as it is (MEASURED, AP-004: the two-waypoint Scout fleet at 0 mg
+   got a scrap task; AP-005: with fuel it kept its route. Its second
+   waypoint's warp was re-picked 6 → 5 in both runs, by the shared core
+   after this pass, not by this rule; `AI.md`).
 2. **Privateers** (slot 6), with one waypoint and no task, get the
    lay-mines task with both parameters 5.
 3. **Colonizers** (slot 1):

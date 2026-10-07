@@ -16,6 +16,10 @@ and the two personalities share several rules, marked below.
   order files. Every design record matched: hull, and every slot's part and
   count.
 - **MEASURED** (AP-003): year-2400 orders in the AI01 capture.
+- **MEASURED** (AP-004, AP-005): one predicted year each from AP-001's
+  year-2401 game, one stream each (apparatus `evidence/ai/ap/`): the yearly
+  rewrite of empty design slots, no production at a planet whose queue holds
+  a ship, the production steps in order, and the Scout scrap. Marked below.
 - **BINARY-ONLY**: everything else here. It was read from the original
   and has not yet been tested against its output.
 
@@ -134,8 +138,9 @@ Consequences (BINARY-ONLY):
 - When no Scout is alive, slot 0 is deleted. Until a Frigate can be built,
   it stays empty, and no scouts are queued.
 - When no colony ship is alive, the Colony Ship design is deleted and
-  written again every year (Automitron does the same with its colonizer,
-  MEASURED there).
+  written again every year, and so are slots 2 (Miner) and 12 (Privateer)
+  while none of their ships is alive; slot 0 is kept while its Scout lives
+  (MEASURED, AP-005).
 
 ## Planet pass (BINARY-ONLY)
 
@@ -152,12 +157,17 @@ For every planet:
   **invasion target** and count it.
 - **Own planet with negative value:** mark it as unwanted.
 - **Own planet with a starbase and population ≥ 20,000** whose queue
-  holds no ship-design item: run production (below).
+  holds no ship-design item: run production (below). A queue holding a
+  ship item means no production there (MEASURED, AP-005).
 
 ### Production
 
 Q means "append one of this design to the planet's queue". The steps run
-in order.
+in order. MEASURED (AP-004): with an empty queue at T = 2, the homeworld
+queued four colony ships (step 3), then three Privateers (step 4's 1/3
+draw succeeded), with no scout, freighter-warship, bomber or fill item.
+The shared automation (`AI.md`) may append its own queue lines after the
+personality's.
 
 1. **Scouts.** In year 2400 (T = 0), queue design 0 once for each step of
    `n = P; while n > 0: n −= (n ≥ 191 ? 100 : 30)`. That gives P = 128 → 5
@@ -242,7 +252,8 @@ The first rule that matches the fleet applies.
 6. **Scouts and destroyers** (slots 0, 10, 11). A fleet with ships of
    slot 0, while construction > 5 and slot 0 is still a Scout hull, is
    scrapped. That retires the starting Scout so that a Frigate replaces
-   it. Otherwise the shared scout targeting applies: in AP-003 the starting
+   it (MEASURED, AP-004, AP-005: the Scout fleet got a scrap task at the
+   homeworld at construction 13). Otherwise the shared scout targeting applies: in AP-003 the starting
    Scout got one waypoint to an unexplored planet at warp 6.
 7. **A lone Privateer fleet** with one waypoint and no task gets the
    lay-mines task with both task parameters 5.
