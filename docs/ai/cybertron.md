@@ -39,9 +39,11 @@ the leaking armada parameters (§1 step 3).
      `(y − 100)/22 + 6`, at most 12), but never uses them. Its armada rule
      reads the shared values another computer player left
      (`../AI.md` §1, "State leaking between computer players", LEGACY
-     BUG, MEASURED by the PP-B2 oracle run: with those values zeroed,
-     every idle armada left home in 11 of 11 armada-years where AIX's
-     stayed);
+     BUG, MEASURED, AI-18: with those values zeroed, every idle armada
+     left home in 11 of 11 armada-years where AIX's stayed). Elegy's
+     default clean per-player state gives Cybertron the values 0; the
+     original's values come only with the legacy-compatibility switch
+     (`../AI.md` §1);
    - design age limit `L` = 50 while `y < 120`, 70 while `y < 200`, 100
      while `y < 400`, else 300.
 5. Design ageing (§3).

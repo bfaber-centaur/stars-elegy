@@ -6,16 +6,28 @@ can see, which orders it writes. It covers what all six personalities
 share. Each personality's own turn (fleets, ship designs, colonizing,
 war) gets its own file under docs/ai/:
 
-| Type (definition file) | Personality | PRT | File |
-|---|---|---|---|
-| 1 | Robotoid | HE | `docs/ai/robotoid.md` |
-| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
-| 3 | Automitron | IS | docs/ai/automitron.md (planned) |
-| 4 | Rototill | CA | docs/ai/rototill.md (planned) |
-| 5 | Cybertron | PP | docs/ai/cybertron.md |
-| 6 | Macinti | AR | docs/ai/macinti.md (planned; legacy reference only: ship designs checked, fleet pass not fully checked) |
+| Type (definition file) | Personality | PRT | File | Elegy |
+|---|---|---|---|---|
+| 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
+| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
+| 5 | Cybertron | PP | `docs/ai/cybertron.md` | faithful candidate |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
 
-Elegy reproduces these personalities (project decision). Related specs:
+**Project policy (2026-10-07).** Elegy reproduces faithfully only the
+personalities whose behavior has been checked against the original
+with oracle captures: Robotoid, Rototill and Cybertron, each matched over
+every captured player-year of its corpus (`../PARITY.md` cases). These
+are candidates for faithful implementation. Turindrone, Automitron and
+Macinti are documented as legacy-reference behavior: read from the
+original, only partly checked, and optional future work. Reproducing all
+six personalities is not an objective. Further computer-player
+experiments need a concrete reason: an Elegy implementation blocker, a
+contradiction in an existing spec, or a cheap experiment that closes a
+bounded question. The shared rules in this file apply to all six.
+
+Related specs:
 game creation and the starting setup of computer players are in
 `UNIVERSE.md`; the research, tech and terraforming mechanics the AI's
 choices feed are in `KERNEL.md` ("Research", "Terraforming"); part and
@@ -75,8 +87,8 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   file keeps, it has no memory between years: the original writes a
   private computer-player memory block into the history file each year
   but never reads it back on this path, so every turn starts from an
-  empty one (BINARY-ONLY; consistent with 61 years of captured history
-  files, AI-10). Elegy keeps no private computer-player state across
+  empty one (CONFIRMED, AI-10: replacing or editing that block before a
+  year left the computer player's orders and memory output unchanged). Elegy keeps no private computer-player state across
   years.
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
@@ -99,10 +111,36 @@ The host runs all computer players of a year one after another in one
 program, in player order (lowest player number first; human players are
 skipped). Two pieces of state survive from one computer player to the
 next within that run. Each makes a computer player's orders depend on
-which computer players ran before it that year. Elegy reproduces both
-behind one named switch, for example `legacy_ai_state_leak`. With the
-switch off, each computer player starts from clean state: empty slots read
-as never used, and the armada parameters below are the personality's own.
+which computer players ran before it that year.
+
+Elegy keeps each computer player's state separate by default: this
+**clean per-player state** is Elegy's normal behavior, and it is
+INTENTIONALLY DIFFERENT from the original. The original's whole-program
+behavior is reproduced only behind a named legacy-compatibility switch,
+for example `legacy_ai_state_leak`, off by default (project decision,
+2026-10-07). Clean state means every computer player reads shared state
+as the first computer player of a run does in the original:
+
+- an empty ship design slot reads as all zero, creation year 0;
+- the armada parameters read as 0 unless that computer player set them
+  earlier in its own turn.
+
+What this changes for the checked personalities:
+
+- **Robotoid**: nothing measured. It ran first in every captured game,
+  so its checks (AI-8, AI-9, AI-12) were taken under clean state.
+- **Rototill**: nothing in normal play. It reads design slots 0 and 1
+  without a presence check, but it never deletes its starting designs
+  (`docs/ai/rototill.md` §4).
+- **Cybertron**: its armadas see armada parameters of 0, so every
+  Cybertron armada idle at an own planet leaves home instead of waiting.
+  This is measured (AI-18: 11 of 11 armada-years with the values at 0).
+  In the AIX corpus, where Automitron ran just before Cybertron, the
+  original kept these armadas home in 16 armada-years (2452–2460).
+  Cybertron's captured orders are matched only with the switch on and the
+  original's player order.
+
+Both leaks are documented below as the switch reproduces them.
 
 - **Empty design slots keep the previous player's bytes.** Loading a
   computer player's file marks its unused ship design slots empty but
@@ -118,7 +156,14 @@ as never used, and the armada parameters below are the personality's own.
     2442), so Macinti did not create slot 4 in 2445–2460 although it
     could build the design every year (Scanning lane's Macinti reading;
     the Macinti check matches AIX in 61 of 61 years only when this is
-    modelled). Details in docs/ai/macinti.md (planned).
+    modelled). MEASURED by an edit test (AI-13): with only Cybertron's
+    slot-3 creation year moved from 2442 to 2428, Macinti created slot 4
+    (a Cruiser) in 2449 in both random streams tried, while Cybertron's
+    own orders were unchanged. In AIX the leaked year decides Macinti's
+    slot-4 rule in 16 of 61 Macinti player-years (2445–2460). Because all
+    players share one random stream, the change then spread to other
+    computer players' orders in later years. Details in docs/ai/macinti.md
+    (planned).
   - Robotoid's slots 12 and 13 test the previous slot's age without a
     presence check (docs/ai/robotoid.md §2). Robotoid is often the first
     computer player in a run, as in AIX, where this never mattered.
@@ -131,7 +176,21 @@ as never used, and the armada parameters below are the personality's own.
   never read). So Cybertron uses the values left by the last of those
   computer players that ran before it in the same run, or all 0 when none
   did. In AIX, Automitron runs just before Cybertron, so the values
-  happened to match Cybertron's own formulas.
+  happened to match Cybertron's own formulas. MEASURED by an edit test
+  (AI-18): when Robotoid, Turindrone and Automitron submitted their
+  captured orders without their computer-player turns running, the
+  values stayed 0. Every Cybertron armada idle at an own planet then left
+  home (11 of 11 armada-years in AIX 2453–2460), where with Automitron's
+  values all stayed. In AIX the values decide this in 9 of 61 Cybertron
+  player-years (2452–2460, 16 armada-years).
+
+All computer players in one host run also draw from one shared random
+stream, in player order. So any change to an earlier computer player's
+turn shifts the draws of every later one (MEASURED, AI-18: skipping
+Robotoid's turn alone changed 17 to 19 of Cybertron's random-dependent
+order lines). The switch does not change this: Elegy runs the computer
+players on one shared stream in player order either way, and only the
+two leaks above depend on the switch.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
@@ -501,6 +560,9 @@ scraps at least one starting fleet at its homeworld.
   AIX is the one built in 2400, not a starting ship. Macinti merges its
   fleets every year before its fleet pass (§10 "Merging"), so the scrap
   rules see that turn's merged fleets.
+- **Rototill** scraps only an idle empty colony ship it cannot send home
+  and a nearly unfuelled Quick Jump 5 scout (`docs/ai/rototill.md` §3;
+  neither seen in 166 player-years).
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -567,7 +629,9 @@ fleet with ships of those slots (except fleets already at the maximum
 mining rate) is merged into the first such fleet at the same place
 (same orbited planet, or same position in space). Up to 32 places are
 tracked per pass; further places get another pass. Other designs in the
-fleets merge along.
+fleets merge along. A merge removes the merged fleet from the fleet list and closes the gap,
+so the walk then skips the fleet that followed it (LEGACY BUG,
+BINARY-ONLY: not exercised in AIX).
 
 **Queueing items.** A personality adds production items through the same
 production list a human sees: an item the planet cannot build (for
@@ -618,8 +682,13 @@ formula, to be published with the personality stage that needs it).
 player's own view (§1: a planet never scanned counts as unowned) that no
 other own fleet is already heading to (its waypoint 1 is that planet:
 for Robotoid and Macinti only when that waypoint's task is colonize; for
-the others any task). Robotoid and Macinti take any unowned planet; the
-others skip planets whose habitability value for the race is negative.
+the others any task). Robotoid and Macinti take any unowned planet,
+including planets they have never seen. The others take only planets in
+their view (their turn file or history file, §1) and skip planets whose
+habitability for the race, after the terraforming the player could
+currently do, is negative (MEASURED for Rototill, AI-16: ignoring the
+test, using present habitability, or dropping history-only planets each
+breaks the Rototill replay).
 The nearest candidate to the fleet wins. Robotoid and Macinti recompute
 the marks for every fleet; the others compute them once per turn, so a
 planet chosen earlier in the same turn is not excluded for them. Then, if

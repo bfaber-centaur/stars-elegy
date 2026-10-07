@@ -1,0 +1,10 @@
+# LQ-6 (Q-8, base B 40 items): remove row 1 (39 left), add Defenses at top (40), then try Mineral Alchemy at top (41st).
+queue open
+queue select 1
+queue remove 1
+queue select 0
+queue add 8 1
+queue select 0
+queue add 9 1
+shot after41
+queue ok
