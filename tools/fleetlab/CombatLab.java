@@ -169,6 +169,8 @@ public class CombatLab {
                     }
                     if (nq == 0) sb.append("none");
                     sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
+                    // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
+                    sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
@@ -197,9 +199,20 @@ public class CombatLab {
                 if (fl.kindByte == PartialFleetBlock.FULL_KIND)
                     for (int i = 0; i < 16; i++) if ((fl.damagedShipTypes & (1 << i)) != 0)
                         dmg.append(String.format(" dmg%d=%d/%d%%", i, fl.damagedShipInfo[i] >> 7, fl.damagedShipInfo[i] & 0x7f));
-                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d%s%n",
+                if (fl.kindByte != PartialFleetBlock.FULL_KIND)   // another player's fleet: heading, warp, mass;
+                    // each heading byte stores the component + 127 (SC-027); a fleet that did not move has 0/0
+                    dmg.append(String.format(" dx=%d dy=%d warp=%d wbits=%02x mass=%d",
+                        (fl.deltaX & 0xff) - 127, (fl.deltaY & 0xff) - 127, fl.warp, fl.unknownBitsWithWarp, fl.mass));
+                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d b2=%02x b3=%02x b5=%02x wps=%d%s%n",
                     f, fl.owner, fl.fleetNumber, fl.kindByte, fl.x, fl.y, fl.positionObjectId, ships,
-                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan, dmg);
+                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan,
+                    fl.byte2 & 0xff, fl.byte3 & 0xff, fl.byte5 & 0xff, fl.waypointCount, dmg);
+            } else if (b.typeId == BlockType.FLEET_NAME) {
+                // a custom fleet name (block 21) follows its fleet block; Stars-encoded text
+                byte[] d = b.getDecryptedData();
+                String name;
+                try { name = Util.decodeStarsString(Arrays.copyOf(d, b.size)); } catch (Exception e) { name = "?"; }
+                System.out.printf("%s   fleetname \"%s\" raw=%s%n", f, name, Util.bytesToString(d, 0, b.size));
             } else if (b instanceof WaypointBlock) {
                 WaypointBlock w = (WaypointBlock) b;
                 byte[] d = w.getDecryptedData();
@@ -216,8 +229,9 @@ public class CombatLab {
             } else if (b instanceof PlanetBlock || b instanceof PartialPlanetBlock) {
                 PartialPlanetBlock p = (PartialPlanetBlock) b;
                 if (!host) // report detail: flag bits 0-6 of the second word
-                    System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s%n", f, p.planetNumber,
-                        p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase);
+                    System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s env=%s popest=%d defest=%d surface=%s%n", f,
+                        p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
+                        p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
                 if (p.owner >= 0 || p.hasStarbase)
                     System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
                         p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
@@ -243,6 +257,7 @@ public class CombatLab {
                 StringBuilder h = new StringBuilder();
                 for (int i = 0; i < b.size; i++) h.append(String.format("%02x", d[i]));
                 System.out.printf("%s events raw=%s%n", f, h);
+                printMessages(f, d, b.size);
             } else if (b.typeId == BlockType.OBJECT) {
                 System.out.printf("%s %s%n", f, thingString(b.getDecryptedData(), b.size));
             } else if (b.typeId == BlockType.PLANETS) {
@@ -318,6 +333,8 @@ public class CombatLab {
                 p.excessPop, p.mines, p.factories,
                 (p.defenses & 0xff) | ((p.unknownInstallationsByte & 0x0f) << 8),
                 ((p.unknownInstallationsByte >> 4) & 15) | (p.hasScanner ? 0 : 16), p.contributeOnlyLeftoverResourcesToResearch));
+        // route destination word (planet id + 1 in bits 0-9 per the decomp; 0 = none)
+        if (p.hasRoute) sb.append(String.format(" route=%04x", p.routeShort));
         if (sb.length() > 0) System.out.printf("%s pdetail %d owner=%d%s%n", f, p.planetNumber, p.owner, sb);
     }
 
@@ -508,6 +525,16 @@ public class CombatLab {
                         break;
                     }
                     case "fleet": fleets.add(parseFleet(t)); break;
+                    case "fleets": {
+                        // fleets OWNER FROM-TO <fleet tokens>: one fleet per id in the range
+                        String[] r = t[2].split("-");
+                        for (int id = Integer.parseInt(r[0]); id <= Integer.parseInt(r[r.length - 1]); id++) {
+                            String[] one = t.clone();
+                            one[2] = "" + id;
+                            fleets.add(parseFleet(one));
+                        }
+                        break;
+                    }
                     case "thing": {
                         byte[] r = parseThing(t);
                         int id = u16(r, 0);
@@ -880,6 +907,14 @@ public class CombatLab {
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
                     break;
                 }
+                case "route":
+                    // route=DEST (planet number; stored as DEST + 1), route=none, or route=raw:HEX (whole word)
+                    if (v.equals("none")) { pl.hasRoute = false; pl.routeShort = 0; }
+                    else {
+                        pl.hasRoute = true;
+                        pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
+                    }
+                    break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
@@ -990,6 +1025,61 @@ public class CombatLab {
         }
     }
 
+    // Turn messages (block 12). Each record: word w (id = w & 0x1ff, size flags =
+    // w >> 9), word obj, then the message's parameters, parameter k being 2 bytes
+    // when flag bit k is set and 1 byte otherwise. How many parameters each id takes
+    // is read at run time from the local original game (STARS_EXE, default the
+    // oracle run copy); without it only the raw line is printed.
+    static byte[] msgParams;
+    static final Map<Integer, String> MSG_NAMES = new HashMap<>();
+    static {
+        String[] n = {"c2", "mine-swept", "c3", "mine-laid", "c4", "mine-added", "c5", "mine-stopped",
+            "c6", "mine-hit", "c7", "mine-hit-losses", "c8", "mine-annihilated", "c9", "own-mine-stopped",
+            "ca", "own-mine-hit", "cb", "own-mine-hit-kills", "cc", "own-mine-annihilated",
+            "be", "own-mine-swept", "bf", "lay-no-pod", "f4", "starbase-swept", "111", "target-field-gone",
+            "15f", "detonate-annihilated", "160", "detonate-hit", "161", "detonate-hit-losses",
+            "162", "own-detonate-annihilated", "163", "own-detonate-hit", "164", "own-detonate-hit-kills",
+            "17e", "lay-failed"};
+        for (int i = 0; i < n.length; i += 2) MSG_NAMES.put(Integer.parseInt(n[i], 16), n[i + 1]);
+    }
+
+    static byte[] msgParams() {
+        if (msgParams != null) return msgParams.length == 0 ? null : msgParams;
+        msgParams = new byte[0];
+        String exe = System.getenv("STARS_EXE");
+        if (exe == null) exe = System.getProperty("user.home")
+            + "/.stars-oracle/run/StarsBox.app/Contents/Resources/c_drive/STARS/stars.exe";
+        try {
+            byte[] x = Files.readAllBytes(Paths.get(exe));
+            byte[] sum = java.security.MessageDigest.getInstance("SHA-256").digest(x);
+            if (String.format("%02x%02x%02x%02x", sum[0], sum[1], sum[2], sum[3]).equals("10f8b5f9"))
+                msgParams = Arrays.copyOfRange(x, 0x1eca6, 0x1eca6 + 0x1c0);
+        } catch (Exception e) {
+            // no local game: raw only
+        }
+        return msgParams.length == 0 ? null : msgParams;
+    }
+
+    static void printMessages(String f, byte[] d, int size) {
+        byte[] t = msgParams();
+        if (t == null) return;
+        int i = 0;
+        while (i + 4 <= size) {
+            int w = u16(d, i), id = w & 0x1ff, fl = w >> 9, obj = u16(d, i + 2);
+            i += 4;
+            if (id >= t.length) { System.out.printf("%s msg bad id=0x%x at=%d%n", f, id, i - 4); return; }
+            StringBuilder p = new StringBuilder();
+            for (int k = 0; k < (t[id] & 0xff); k++) {
+                int v;
+                if ((fl >> k & 1) != 0) { v = u16(d, i); i += 2; } else { v = d[i] & 0xff; i += 1; }
+                p.append(k == 0 ? "" : ",").append(v);
+            }
+            System.out.printf("%s msg id=0x%x name=%s obj=0x%04x p=%s%n", f, id,
+                MSG_NAMES.getOrDefault(id, "-"), obj, p);
+        }
+        if (i != size) System.out.printf("%s msg trailing=%d%n", f, size - i);
+    }
+
     // Dump line for one object block (count or 18-byte record).
     static String thingString(byte[] d, int size) {
         if (size == 2) return "things count=" + u16(d, 0);
@@ -1017,6 +1107,7 @@ public class CombatLab {
         FleetSpec fs = new FleetSpec();
         fs.owner = Integer.parseInt(t[1]);
         fs.id = Integer.parseInt(t[2]);
+        if (fs.id < 0 || fs.id > 511) throw new Exception("fleet id 0-511 expected, got " + fs.id);
         int i = 3;
         while (i < t.length) {
             switch (t[i]) {

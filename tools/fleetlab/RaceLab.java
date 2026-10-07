@@ -83,6 +83,11 @@ public class RaceLab {
         ResearchCostLevel[] lv = new ResearchCostLevel[6];
         for (int f = 0; f < 6; f++) lv[f] = d[0x3e + f] == 0 ? ResearchCostLevel.Extra : d[0x3e + f] == 2 ? ResearchCostLevel.Less : ResearchCostLevel.Standard;
         r.setResearchCost(new ResearchCost(lv[0], lv[1], lv[2], lv[3], lv[4], lv[5]));
+        // the trait word's high bits (RD corpus): 29 expensive research fields start
+        // at tech 3, 31 factories cost one less germanium
+        int traits = (d[0x48] & 0xff) | (d[0x49] & 0xff) << 8;
+        r.setTechsStartHigh((traits >> 13 & 1) != 0);
+        r.setFactoriesCostLess((traits >> 15 & 1) != 0);
         return RacePointsCalculator.getAdvantagePoints(r);
     }
 
