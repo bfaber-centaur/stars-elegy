@@ -44,7 +44,7 @@ no-random-events options.
   (tiny) to 4 (huge). Coordinates run from 1000 to `1000 + W` on both axes.
 - `d²` is `dx² + dy²`. Divisions truncate.
 - `rand(n)` is a uniform integer in `0..n−1`.
-- Environment values are on the 1–100 click scale used by `KERNEL.md`
+- Environment values are on the 0–100 click scale used by `KERNEL.md`
   (axes in order gravity, temperature, radiation); minerals in order
   ironium, boranium, germanium.
 
@@ -81,7 +81,7 @@ creation (BINARY-ONLY). Their later effects belong to other specs.
    packed, `N += N/4` again; at most 999.
 2. The generator places `M = min(999, N + N/7)` candidate points, each
    uniform with `x, y ∈ 1010 .. 1010 + W − 20`.
-3. **Minimum spacing** (CONFIRMED). The candidates are sorted by `x`.
+3. **Minimum spacing** (CONFIRMED, UG01..UG21). The candidates are sorted by `x`.
    Taking each surviving candidate in that order, every later candidate
    within `d² ≤ 144` (12 ly) of it is removed. A removed candidate removes
    nothing, so the later member of each too-close pair goes. No two
@@ -126,7 +126,7 @@ other planet `b` (`d²`). If `d² > 144`, move `a` toward `b`, per axis:
 
 Clumping can bring planets closer than the 12 ly minimum spacing.
 
-### Names (CONFIRMED)
+### Names (CONFIRMED, UG01..UG21)
 
 Every planet gets a distinct name index from the original's 999-name
 list: a uniform index, stepped to the next unused one. The name texts are
@@ -201,7 +201,7 @@ Placement:
 
 ## Starting players
 
-### Starting tech (CONFIRMED)
+### Starting tech (CONFIRMED, UG01..UG21)
 
 Energy/weapons/propulsion/construction/electronics/biotech by primary
 racial trait:
@@ -225,8 +225,8 @@ Then:
   it is lower.
 - CE: propulsion +1. IFE: propulsion +1 (not in the tutorial).
 
-Research starts at 15% of resources for every player (MEASURED in every
-UG dump; see Relations, research and production). No research is banked.
+Research starts at 15% of resources for every player (MEASURED,
+UG01..UG21; see Relations, research and production). No research is banked.
 
 ### Homeworld (CONFIRMED)
 
@@ -257,7 +257,7 @@ planet).
 **BBS option** (CONFIRMED, UG03, UG09, UG21): homeworld population ×
 `(growth% · k + 5)/5`, `k = 2` for HE and 1 otherwise.
 
-**AR** (CONFIRMED): no mines, factories or defenses and no planetary
+**AR** (CONFIRMED, UG01..UG15 computer players): no mines, factories or defenses and no planetary
 scanner. Starbase design 1 (a Space Station) orbits the homeworld, and
 design 0 is an empty Orbital Fort.
 
@@ -282,7 +282,7 @@ installations and surface minerals unchanged (CONFIRMED, RD-7: spends 2,
 A race's points, the replacement of illegal races and the Random race are
 in `RACES.md`. Every race in the UG corpus had at least 50.
 
-### Computer players (CONFIRMED)
+### Computer players (CONFIRMED, UG01..UG15)
 
 - Six types (HE, SS, IS, CA, PP and AR races built into the original) and
   four levels (easy, standard, harder, expert). A definition file may
@@ -294,10 +294,10 @@ in `RACES.md`. Every race in the UG corpus had at least 50.
 - Each computer player without a name gets one of 24 built-in names;
   duplicate names and duplicate logos are resolved at random.
 
-### Starbases (CONFIRMED except where noted)
+### Starbases (CONFIRMED, UG01..UG21, except where noted)
 
 - Design 0 for every race: a Space Station. The homeworld's starbase uses
-  it. Its 12 slots in hull order (CONFIRMED, every UG game): empty, 8 Laser,
+  it. Its 12 slots in hull order (CONFIRMED, UG01..UG21): empty, 8 Laser,
   8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, 8 Mole-skin Shield,
   empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield. That is 32
   Lasers and 32 Mole-skin Shields.
@@ -313,7 +313,7 @@ in `RACES.md`. Every race in the UG corpus had at least 50.
   additions), and it orbits the homeworld. Design 0 is an Orbital Fort
   with all five slots empty.
 
-### Starting ships (CONFIRMED)
+### Starting ships (CONFIRMED, UG01..UG21)
 
 Each ship below is a one-ship fleet at the homeworld with full fuel and
 battle plan 0. The fleets are numbered in this order, and each new design
@@ -352,7 +352,7 @@ The base designs (Quick Jump 5 engine, Bat Scanner, plus the items named):
 | Midget Miner | Midget Miner | 2 Robo-Midget Miners; no scanner |
 | Mini Mine Layer | Mini Mine Layer | 2 × 2 Mine Dispenser 40 (SD's second: 2 × 2 Speed Trap 20) |
 
-**Part upgrades** (CONFIRMED for the cases run): in every starting design,
+**Part upgrades** (CONFIRMED for the cases run, UG01..UG21): in every starting design,
 a basic part is replaced by the first part in its list that the player may
 build (race restrictions and tech, `COMPONENTS.md`):
 
@@ -371,7 +371,7 @@ For example, an SS scout carries a Possum Scanner (electronics 5) and a
 WM scout a Yakimora Light Phaser (weapons 6). Starting starbase designs
 are not upgraded.
 
-### Second planet: PP and IT (CONFIRMED)
+### Second planet: PP and IT (CONFIRMED, UG16..UG21)
 
 On a map larger than tiny, a PP or IT player also owns a second planet:
 
@@ -403,7 +403,7 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
 - No planet has a production queue at the start (no queue in any UG
   dump).
 
-## Space objects at the start
+## Space objects at the start (CONFIRMED, UG01..UG21)
 
 - **Wormholes** exist only with random events on. Their number, classes
   and positions follow `OBJECTS.md` "Wormholes" (creation and placement

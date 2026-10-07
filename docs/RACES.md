@@ -35,7 +35,7 @@ Rules this file relies on but does not restate: habitability (`KERNEL.md`
 - Habitat values are on the 0–100 scale of `KERNEL.md`. Axes in order
   gravity, temperature, radiation.
 
-## Race settings
+## Race settings (CONFIRMED, RD-1..RD-7)
 
 | Setting | Range | Default race |
 |---|---|---|

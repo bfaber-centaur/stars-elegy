@@ -417,9 +417,8 @@ toward the nearer extreme).
 
 A fleet uses gates when its next waypoint's warp is the gate setting
 (waypoint warp 11). Routing that picks gates on its own uses the same
-rules: a new ship's route (`PRODUCTION-LAUNCH.md`, "Routing", stars-elegy
-#57) and the route task (`ORDERS.md`, "Waypoint upkeep", stars-elegy #51)
-choose warp 11 only when both ends are gated and the jump is safe.
+rules: a new ship's route (`PRODUCTION-LAUNCH.md`, "Routing") and the
+route task (`ORDERS.md`, "Waypoint upkeep") choose warp 11 only when both ends are gated and the jump is safe.
 
 Gate types (stats in `COMPONENTS.md`, `safe_mass`/`safe_range` of the
 seven orbital stargates; "any" is `null` there):
@@ -639,8 +638,9 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   player is told.
 - Item offered: research or a ship with probability `r/10`, `r` = 5 before
   year index 100, 3 before 250, 2 after, +1 below warp 10, −1 above; then
-  ship with 1/6, else research. Otherwise one of 13 parts, rerolled once
-  for four of them, and three of those turn into research with 1/2 before
+  ship with 1/6, else research. Otherwise one of 13 bits, uniformly: the
+  twelve parts of the bit table in "Encounters" below, or bit 12, a ship gift;
+  rerolled once for four of the parts, and three of those turn into research with 1/2 before
   year index 120, 150 or 180.
 
 ### Movement (BINARY-ONLY except where noted; not part of KX-004)
@@ -780,7 +780,7 @@ served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
 
 Human players' planets never trade.
 
-## Visibility
+## Visibility (see SCANNING.md; CONFIRMED there)
 
 Which of these objects each player sees, and what seeing them discloses
 (including the Packet Physics, Interstellar Traveler and Space Demolition
