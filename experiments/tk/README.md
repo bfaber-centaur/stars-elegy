@@ -1618,3 +1618,28 @@ TK-603/604: 9 installations (1 factory, 7 defenses, 1 mine), population
 untouched at 1725, percent slot 8777 (87.77% stopped, `1 − 0.97^69`).
 TK-605: percent slot 299. TK-606: 8 clicks (3 + 3 + 2). Raw files are in
 apparatus `evidence/tk6/`.
+
+## Round 7 predictions: gifts to another player's fleet
+
+`gen7.py` writes `tk503`/`tk504` specs and client command files (same
+shape as round 5; the client gives each gift through the fleet panel's
+"Other Fleets Here" Cargo button). Predictions are the revised ones in
+`manual-transfers.md`, committed before the runs.
+`python3 experiments/tk/check7.py RUNDIR` reads `RUNDIR/<name>/y2/`.
+
+### TK503: manual gifts to an enemy fleet (client orders)
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-406 | giver offers 100 ironium to a player 1 Freighter holding 160 kT (50 free) | fleet 1/0: fe 210; credited at order time: receiver full at 210; no 0x046/0x048 (the client may cap the order at 50; 0x0dd to player 0 if 100 reached the host) |
+| TK-407 | giver offers 100 ironium to a full player 1 Freighter (210 kT) | fleet 1/1: fe 210; nothing received; no 0x04a/0x04c (the client may refuse the order) |
+| TK-408 | giver gives 20 colonists to an empty player 1 Freighter | fleet 1/2: col 20; fleet 0/3: col 0; received in full at order time; no message to either player |
+| TK-409 | giver gives 50 mg of fuel to a player 1 Freighter with 100 mg | fleet 1/3: fuel 150; fleet 0/4: fuel 150; received at order time; no message |
+| TK-413 | at player 1 planet 2 (P 87, no starbase, surface 0): giver gives 100 ironium to a player 1 Freighter whose waypoint-0 task is unload all | fleet 1/4: fe 0; planet 2: owner 1, surface [100, 0, 0]; the receiver unloads the gift before movement the same year: 0x02d to player 1 (a queued gift would arrive after the unload and stay in the hold) |
+
+### TK504: manual gifts to a friend's fleet (client orders)
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-414 | players 0 and 1 are friends; giver gives 20 colonists to an empty player 1 Freighter | fleet 1/0: col 20; as TK-408 |
+
