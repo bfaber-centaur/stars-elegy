@@ -453,7 +453,57 @@ def build3():
     return s
 
 
+SS_GATE = ('Space Station, 1 Stargate any/any, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, '
+           '8 Mole-skin Shield, empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield = Starbase')
+SS_GATE10 = ('Space Station, empty, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, '
+             '8 Mole-skin Shield, empty, 8 Laser, empty, 8 Laser, 1 Stargate any/any, 8 Mole-skin Shield = Gate slot 10')
+HEAD4 = ''.join(l + '\n' for l in HEAD3.replace('# GT-003', '# GT-004').splitlines()
+                if not l.startswith('tech 1 ') and not l.startswith('sbdesign 0 0 ') and not l.startswith('sbdesign 1 0 ')) + \
+    'sbdesign 0 0 %s\nsbdesign 1 0 %s\nsbdesign 0 9 %s\n' % (SS_GATE, SS_GATE, SS_GATE10)
+
+
+def build4():
+    """GT-004: how a planet's gate and a gate waypoint are encoded (for the route-stargate upkeep case).
+    Starbase design 0 itself is redefined as a Space Station whose first (orbital) slot holds a Stargate
+    any/any, as Turn orders tried; player 1 keeps its base tech (3 in every field). Written before GT-004."""
+    s = Spec()
+    A = s.planet(0, 0); B = s.planet(0, 0, near=XY[A], d=300)
+    f = s.gate(0, A, B, '%d:1' % DD)
+    s.case('G1', 'gate encoding', 'player 0 (tech 26) Laser DD at planet %d, starbase design 0 = Space Station with '
+           'Stargate any/any in its first orbital slot, waypoint warp 11 to planet %d with the same design, %d ly'
+           % (A, B, dist(XY[A], XY[B])), 'at planet %d, fuel 100 (no fuel used), no refusal message' % B,
+           'stays at %d; fuel used' % A, dict(kind='fleet', owner=0, id=f, at=XY[B], fuel=100))
+    A = s.planet(1, 0); B = s.planet(1, 0, near=XY[A], d=300)
+    f = s.gate(1, A, B, '0:1')
+    s.case('G2', 'gate encoding', 'player 1 (base tech 3, below the gate\'s requirement) Laser DD, the same setup, '
+           'planets %d to %d' % (A, B), 'at planet %d, fuel 100: gate use does not check the owner\'s tech' % B,
+           'refused (0xe6 or 0xe2)', dict(kind='fleet', owner=1, id=f, at=XY[B], fuel=100))
+    A = s.planet(0, 9); B = s.planet(0, 0, near=XY[A], d=300)
+    f = s.gate(0, A, B, '%d:1' % DD)
+    s.case('G3', 'gate encoding', 'player 0 Laser DD at planet %d whose Space Station has the gate in its second '
+           'orbital slot (slot 10), to planet %d' % (A, B), 'at planet %d, fuel 100 (any orbital slot counts)' % B,
+           'refused 0xe6 (only the first slot read)', dict(kind='fleet', owner=0, id=f, at=XY[B], fuel=100))
+    A = s.planet(0, 0); B = s.planet(0, SB_NOGATE, near=XY[A], d=300)
+    f = s.gate(0, A, B, '%d:1' % DD)
+    s.case('G4', 'gate encoding', 'player 0 Laser DD at gated planet %d, warp 11 to planet %d whose starbase has no gate'
+           % (A, B), 'stays at %d, fuel 100, only 0xe2 (destination gate)' % A, 'moves at normal warp; fuel used',
+           dict(kind='fleet', owner=0, id=f, at=XY[A], fuel=100, msg=0xe2, only=True))
+    for c in s.cases:
+        c['id'] = c['id'].replace('GT-001', 'GT-004')
+    return s
+
+
 def main():
+    if sys.argv[1:2] == ['--four']:
+        s = build4()
+        if sys.argv[2:] == ['--list']:
+            for c in s.cases:
+                print('| %s | %s | %s | %s | %s |' % (c['id'], c['pred'], c['what'], c['expect'], c['alt']))
+            return
+        out = sys.argv[2]
+        open(os.path.join(out, 'gt004.spec'), 'w').write(HEAD4 + ''.join(s.planets) + '\n'.join(s.lines) + '\n')
+        json.dump(s.cases, open(os.path.join(out, 'cases4.json'), 'w'), indent=1)
+        return
     if sys.argv[1:2] == ['--three']:
         s = build3()
         if sys.argv[2:] == ['--list']:

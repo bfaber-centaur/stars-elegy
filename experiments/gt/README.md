@@ -106,3 +106,19 @@ count once against the design count, so the Laser DD survives.
 | GT-003-W3 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 104 to 76 | at planet 76 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
 | GT-003-W4 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 202 to 183 | at planet 183 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
 | GT-003-W5 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 107 to 84 | at planet 84 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+
+## GT-004: how a planet's gate and a gate waypoint are encoded (before the run)
+
+For Turn orders' route-stargate upkeep case. Reading (private decomp, behavior only): a planet has a
+gate when it has a starbase and that starbase's design (the planet's starbase design number, in the
+owner's starbase designs) holds a stargate in any orbital slot with a count above 0. Nothing else on
+the planet records the gate. A waypoint asks for the gate with warp 11 (the waypoint's warp value
+11). Owner tech is not checked when a gate is used. Written with `python3 experiments/gt/gen.py --four
+OUTDIR`, built on `base/raw/GT.HST`, one pinned year, checked with `check.py OUTDIR/cases4.json OUT`.
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| GT-004-G1 | gate encoding | player 0 (tech 26) Laser DD at planet 0, starbase design 0 = Space Station with Stargate any/any in its first orbital slot, waypoint warp 11 to planet 56 with the same design, 297 ly | at planet 56, fuel 100 (no fuel used), no refusal message | stays at 0; fuel used |
+| GT-004-G2 | gate encoding | player 1 (base tech 3, below the gate's requirement) Laser DD, the same setup, planets 193 to 158 | at planet 158, fuel 100: gate use does not check the owner's tech | refused (0xe6 or 0xe2) |
+| GT-004-G3 | gate encoding | player 0 Laser DD at planet 98 whose Space Station has the gate in its second orbital slot (slot 10), to planet 27 | at planet 27, fuel 100 (any orbital slot counts) | refused 0xe6 (only the first slot read) |
+| GT-004-G4 | gate encoding | player 0 Laser DD at gated planet 3, warp 11 to planet 39 whose starbase has no gate | stays at 3, fuel 100, only 0xe2 (destination gate) | moves at normal warp; fuel used |
