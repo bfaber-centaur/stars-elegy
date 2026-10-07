@@ -1,0 +1,33 @@
+player	design	description	mass	initiative	moves
+0	0	Scout: 1 Quick Jump 5	12	1	3/4
+0	1	Scout: 1 Trans-Star 10	13	1	2
+0	2	Scout: 1 Fuel Mizer	14	1	1
+0	3	Scout: 1 Long Hump 6, -, 1 Battle Computer	18	2	1
+0	4	Scout: 1 Interspace-10, -, 1 Battle Super Computer	34	3	2
+0	5	Frigate: 1 Long Hump 6, -, 2 Laser	19	4	1
+0	6	Destroyer: 1 Long Hump 6, 1 Laser, 1 Laser, -, 2 Tritanium	161	3	1/2
+0	7	Destroyer: 1 Long Hump 6, 1 Laser, 1 Laser, -, -, 1 Maneuvering Jet	46	3	1 1/4
+0	8	Small Freighter: 1 Quick Jump 5	29	0	3/4
+0	9	Medium Freighter: 1 Long Hump 6	69	0	1
+0	10	Cruiser: 2 Trans-Star 10, 1 Overthruster, -, 2 Laser, 2 Laser	109	5	2 1/2
+0	11	Privateer: 1 Long Hump 6	74	3	3/4
+0	12	Scout: 1 Daddy Long Legs 7	21	1	1 1/4
+0	13	Scout: 1 Alpha Drive 8	25	1	1 1/2
+0	14	Scout: 1 Enigma Pulsar	28	1	2 1/4
+0	15	Scout: 1 Galaxy Scoop	16	1	2
+1	0	Scout: 1 Settler's Delight	10	1	1
+1	1	Scout: 1 Trans-Galactic Mizer Scoop	19	1	2
+1	2	Scout: 1 Radiating Hydro-Ram Scoop	18	1	1
+1	3	Scout: 1 Sub-Galactic Fuel Scoop	28	1	1 1/4
+1	4	Scout: 1 Trans-Galactic Drive	33	1	1 3/4
+1	5	Scout: 1 Trans-Galactic Fuel Scoop	27	1	1 1/2
+1	6	Scout: 1 Trans-Galactic Super Scoop	26	1	1 3/4
+1	7	Scout: 1 Long Hump 6, -, 1 Battle Nexus	18	4	1
+1	8	Frigate: 1 Long Hump 6, -, 3 Maneuvering Jet	32	4	1 3/4
+1	9	Frigate: 1 Long Hump 6, -, 3 Overthruster	32	4	2 1/2
+1	10	Battleship: 4 Long Hump 6	258	10	1
+1	11	Battleship: 1 Long Hump 6	231	10	1/2
+1	12	Large Freighter: 2 Long Hump 6	143	0	3/4
+1	13	Large Freighter: 1 Long Hump 6	134	0	3/4
+1	14	Destroyer: 1 Long Hump 6, -, -, -, 2 Tritanium	159	3	1/2
+1	15	Battleship: 4 Trans-Star 10, -, -, -, -, -, -, -, 6 Tritanium	602	10	1 1/2

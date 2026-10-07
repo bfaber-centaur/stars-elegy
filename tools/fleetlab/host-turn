@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Generate one turn of a multi-player game in Host Mode from a CombatLab-built
+# host file and collect the raw result.
+#   tools/fleetlab/host-turn START.HST BASEDIR OUTDIR [GAME]
+# GAME (default CB) is the game file prefix on D:. BASEDIR holds the game's
+# other files (GAME.XY, GAME.M1, GAME.M2, ...). Resets the run copy to the
+# `registered` snapshot, installs BASEDIR's files and START.HST as GAME.HST,
+# opens GAME.HST (Stars! shows the Host Mode dialog), presses Generate Now,
+# confirms, waits for the host file's turn to advance, exits Stars! and
+# copies every GAME file plus CombatLab dumps into OUTDIR.
+# OUTDIR holds registered-copy output: keep it out of this repository.
+set -euo pipefail
+[[ $# -ge 3 ]] || { echo "usage: host-turn START.HST BASEDIR OUTDIR [GAME]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+oracle="$here/../../scripts/oracle"
+start="$1" base="$2" out="$3" game="${4:-CB}"
+home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+games="$home/run/games/stars_games"
+mkdir -p "$out/raw/before" "$out/raw/after"
+"$oracle/stop" >/dev/null 2>&1 || true
+"$oracle/reset" registered
+cp "$base/$game".* "$games/"
+cp "$start" "$games/$game.HST"
+cp "$games/$game".* "$out/raw/before/"
+"$oracle/start"
+"$oracle/wait-for" "$home/refs/main-menu-open.png" 367 802 60
+hdr() { (cd "$here/../.." && go run ./cmd/stars-header "$games/$game.HST") | awk -F'\t' '{print $4}'; }
+turn() { hdr | sed -n 's/.* turn=\([0-9]*\).*/\1/p'; }
+before="$(turn)"; echo "before: $(hdr)" | tee "$out/turn.log"
+"$oracle/key" alt+o
+sleep 1
+"$oracle/type" "${game,,}.hst"
+"$oracle/key" Return
+"$oracle/wait-stable" 30 2 >/dev/null
+"$oracle/screenshot" "$out/host-dialog.png" >/dev/null
+"$oracle/click" 737 361      # Generate Now
+sleep 2
+"$oracle/key" alt+y          # "Are you sure you wish to generate now?" Yes
+t0=$SECONDS
+until [[ "$(turn)" != "$before" ]]; do
+  ((SECONDS - t0 < 120)) || { echo "host-turn: turn did not advance" >&2; exit 1; }
+  sleep 1
+done
+"$oracle/wait-stable" 60 2 >/dev/null
+echo "after:  $(hdr)" | tee -a "$out/turn.log"
+"$oracle/key" alt+c          # Close the Host Mode dialog
+sleep 2
+"$oracle/key" alt+x          # Exit Stars!
+sleep 2
+"$oracle/stop"
+cp "$games/$game".* "$out/raw/after/"
+"$here/combatlab" dump "$out/raw/before/$game.HST" > "$out/before.dump"
+"$here/combatlab" dump "$out/raw/after/"* > "$out/after.dump"
+(cd "$out" && find raw -type f -print0 | sort -z | xargs -0 sha256sum > manifest.sha256)
+echo "host-turn: results in $out"
