@@ -1,0 +1,81 @@
+case	screen	item	prediction
+F00-w1	waypoints	fleet 0 wp 1 distance	84.86 l.y.
+F00-w1	waypoints	fleet 0 wp 1 travel time	1 year
+F00-w1	waypoints	fleet 0 wp 1 est fuel usage	0mg
+F00-w2	waypoints	fleet 0 wp 2 distance	27.0 l.y.
+F00-w2	waypoints	fleet 0 wp 2 travel time	3 years
+F00-w2	waypoints	fleet 0 wp 2 est fuel usage	4mg
+T00	report	fleet 0 report ETA	1y
+F01-w1	waypoints	fleet 1 wp 1 distance	84.86 l.y.
+F01-w1	waypoints	fleet 1 wp 1 travel time	Unload
+F01-w1	waypoints	fleet 1 wp 1 est fuel usage	0mg
+T01	report	fleet 1 report ETA	Unload
+F02-w1	waypoints	fleet 2 wp 1 distance	319.1 l.y.
+F02-w1	waypoints	fleet 2 wp 1 travel time	Danger
+F02-w1	waypoints	fleet 2 wp 1 est fuel usage	0mg
+T02	report	fleet 2 report ETA	Danger
+F03-w1	waypoints	fleet 3 wp 1 distance	200.0 l.y.
+F03-w1	waypoints	fleet 3 wp 1 travel time	Danger
+F03-w1	waypoints	fleet 3 wp 1 est fuel usage	0mg
+T03	report	fleet 3 report ETA	Danger
+F04-w1	waypoints	fleet 4 wp 1 distance	96.61 l.y.
+F04-w1	waypoints	fleet 4 wp 1 travel time	Never
+F04-w1	waypoints	fleet 4 wp 1 est fuel usage	0mg
+T04	report	fleet 4 report ETA	Never
+F05-w1	waypoints	fleet 5 wp 1 distance	138.22 l.y.
+F05-w1	waypoints	fleet 5 wp 1 travel time	Uncertain
+F05-w1	waypoints	fleet 5 wp 1 est fuel usage	0mg
+T05	report	fleet 5 report ETA	Uncertain
+F06-w1	waypoints	fleet 6 wp 1 distance	40.71 l.y.
+F06-w1	waypoints	fleet 6 wp 1 travel time	Never
+F06-w1	waypoints	fleet 6 wp 1 est fuel usage	0mg
+T06	report	fleet 6 report ETA	Never
+F07-w1	waypoints	fleet 7 wp 1 distance	100.66 l.y.
+F07-w1	waypoints	fleet 7 wp 1 travel time	Never
+F07-w1	waypoints	fleet 7 wp 1 est fuel usage	0mg
+T07	report	fleet 7 report ETA	Never
+F08-w1	waypoints	fleet 8 wp 1 distance	17.12 l.y.
+F08-w1	waypoints	fleet 8 wp 1 travel time	Never
+F08-w1	waypoints	fleet 8 wp 1 est fuel usage	0mg
+T08	report	fleet 8 report ETA	Never
+F09-w1	waypoints	fleet 9 wp 1 distance	25.32 l.y.
+F09-w1	waypoints	fleet 9 wp 1 travel time	1 year
+F09-w1	waypoints	fleet 9 wp 1 est fuel usage	0mg
+F09-w2	waypoints	fleet 9 wp 2 distance	84.86 l.y.
+F09-w2	waypoints	fleet 9 wp 2 travel time	2 years
+F09-w2	waypoints	fleet 9 wp 2 est fuel usage	0mg
+T09	report	fleet 9 report ETA	1y
+F10-w1	waypoints	fleet 10 wp 1 distance	20.2 l.y.
+F10-w1	waypoints	fleet 10 wp 1 travel time	1 year
+F10-w1	waypoints	fleet 10 wp 1 est fuel usage	2mg
+F10-w2	waypoints	fleet 10 wp 2 distance	10.5 l.y.
+F10-w2	waypoints	fleet 10 wp 2 travel time	2 years
+F10-w2	waypoints	fleet 10 wp 2 est fuel usage	3mg
+F10-w3	waypoints	fleet 10 wp 3 distance	3.16 l.y.
+F10-w3	waypoints	fleet 10 wp 3 travel time	3 years
+F10-w3	waypoints	fleet 10 wp 3 est fuel usage	3mg
+F10-w4	waypoints	fleet 10 wp 4 distance	5.10 l.y.
+F10-w4	waypoints	fleet 10 wp 4 travel time	4 years
+F10-w4	waypoints	fleet 10 wp 4 est fuel usage	4mg
+T10	report	fleet 10 report ETA	1y
+F11-w1	waypoints	fleet 11 wp 1 distance	3.0 l.y.
+F11-w1	waypoints	fleet 11 wp 1 travel time	1 year
+F11-w1	waypoints	fleet 11 wp 1 est fuel usage	0mg
+F11-w2	waypoints	fleet 11 wp 2 distance	7.7 l.y.
+F11-w2	waypoints	fleet 11 wp 2 travel time	2 years
+F11-w2	waypoints	fleet 11 wp 2 est fuel usage	1mg
+T11	report	fleet 11 report ETA	1y
+P11-0	production	planet 11 item 0 (id 7 x1, 29%)	1 year
+P11-1	production	planet 11 item 1 (id 2 x50, 0%)	Skipped
+P11-2	production	planet 11 item 2 (id 1 x20, 0%)	1 - 6 years
+P11-3	production	planet 11 item 3 (id 7 x5, 0%)	6 - 7 years
+P18-0	production	planet 18 item 0 (id 0 x50, 0%)	Skipped
+R1	research	player 0 field weapons level 4 -> resources needed	801
+R2	research	player 0 next year's projected research budget	261
+R3	research	player 0 estimated time to completion (GR)	7 years
+R4	research	player 0 annual resources from all planets	349
+S1	research	player 1 field weapons level 3 -> resources needed	595
+S2	research	player 1 next year's projected research budget	38
+S3	research	player 1 estimated time to completion	16 years
+S4	research	player 1 annual resources from all planets	38
+S5	research	player 1 energy (level 26) selected: resources needed	Maxed Out

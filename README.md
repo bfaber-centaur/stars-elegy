@@ -6,6 +6,7 @@ This repository contains the behavioral side of the project:
 
 - controlled experiments against the original game;
 - `docs/PARITY.md`, the canonical public record of measured/documented behavior;
+- `vectors/`, machine-readable oracle test cases for implementers (see `vectors/README.md`);
 - headless oracle tooling;
 - Stars! file inspection/recording tools;
 - sanitized research fixtures and experiment infrastructure.
