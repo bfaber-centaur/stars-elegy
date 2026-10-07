@@ -63,7 +63,11 @@ These steps slot into `KERNEL.md`'s turn order.
    transit on arrival.
 5. Salvage and packets decay; detonating minefields go off; then every
    minefield decays. CONFIRMED: decay comes before this year's laying
-   (OB-002-F) and before a hit's loss is counted (OB-010-S).
+   (OB-002-F). A stop's mine loss is taken during step 4 from the field's
+   count at that moment, and decay then counts the planets inside the field
+   as the stops left it (CONFIRMED, MF-4: every MF run's final count fit
+   exactly). This replaces an earlier reading of OB-010-S as decay before
+   the hit's loss; OB-010-S is to be re-checked under this order.
 6. Production: packets are launched. At the end, random events may spawn a
    Mystery Trader.
 7. Packets launched this year fly half a year (and may hit). Wormholes
@@ -105,7 +109,7 @@ fields of each kind.
   - Frigate with three Speed Trap 20: a 60-mine speed-bump field.
   - Two Mine Dispenser 40 and two Heavy Dispenser 50 on a Mini Mine Layer:
     a standard 160 and a heavy 200, as two fields.
-  - Super Mine Layer doubling: BINARY-ONLY.
+  - Super Mine Layer with two Mine Dispenser 40: 160 (OB-024).
 - A fleet with no dispenser of any kind lays nothing and gets a message.
 - **Merging.** Among the owner's fields of the same kind that contain the
   fleet, the one whose centre is nearest takes the new mines, unless it
@@ -114,17 +118,46 @@ fields of each kind.
   `⌊(x_field·N_field + x_fleet·laid) / (N_field + laid)⌋`, using the
   field's count after this year's decay. Otherwise a new field is created
   at the fleet. CONFIRMED (OB-002-G): a 390 field 10 ly west of the layer,
-  plus 160, became 550 centred 2 ly east of the old centre.
+  plus 160, became 550 centred 2 ly east of the old centre. The 999,999
+  cap is CONFIRMED (MF-10): a field holding 1,050,000 after decay made the
+  layer start a new 160 field; one holding 999,500 merged.
 - **Duration.** The task carries a duration: "this year only" lays once and
   ends the task (CONFIRMED, OB-002-N); "indefinitely" never ends
-  (CONFIRMED, OB-019); 2 to 5 years count down one per year and end after
-  the last (BINARY-ONLY). The fleet's later waypoints stay queued meanwhile
-  (CONFIRMED, OB-019: both waypoints kept for three years).
+  (CONFIRMED, OB-019); a duration of `k` years lays `k` times, one per
+  year, and then ends the task (CONFIRMED for 2 and 3 years, OB-019 and
+  OB-025, and still laying after three years with 4; BINARY-ONLY for 5).
+  The fleet's later waypoints stay queued meanwhile (CONFIRMED, OB-019:
+  both waypoints kept for three years).
+- **Order (CONFIRMED, MF-12).** Fleets lay one at a time in fleet order (owner,
+  then fleet number). Each fleet lays standard, then heavy, then speed-bump
+  mines, and each kind is merged (rule above) before the next fleet lays.
+  So two layers inside one field in the same year merge one after the
+  other, and the centre depends on their order. Vector: a 390 field at
+  (0, 0) after decay, with layers at (10, 0) and then (0, 10) laying 160
+  each, ends at (1, 2) with 710. In the other order it ends at (2, 1). One
+  simultaneous weighted mean would give (2, 2). MF-12 measured both orders:
+  each ended at 710 with the centre the sequential merge gives.
+- **Limits.** A player owns at most 512 minefields, all kinds together,
+  numbered 0..511 (MEASURED, MF-11: with 511 fields a layer in open space
+  made field 511; with 512 it made none, the owner got a message and the
+  mines were lost; a layer inside an existing field merged normally). The
+  binary reading predicted 511, and refines to this: the last number, 511,
+  is given only when no other space object sorts after that player's
+  minefields (objects sort by kind, minefields first, then by owner and
+  number), so a higher-numbered player's minefield or any packet, salvage,
+  wormhole or Mystery Trader holds the player to 511 (BINARY-ONLY; LEGACY
+  BUG candidate, to be checked). Elegy's plain rule is 512; the 511 case
+  goes behind a switch if it is confirmed. The universe holds at most 4050
+  space objects of all kinds (BINARY-ONLY). A lay that needs a new field
+  when there is no room creates nothing: the owner gets a message and
+  those mines are lost. A lay that merges needs no room.
 
-### Decay (CONFIRMED, OB-002, OB-014-A, OB-015, OB-016)
+### Decay (CONFIRMED, OB-002, OB-014-A, OB-015, OB-016, MF-4)
 
 Each year, every field loses `p` percent, where `n` is the number of
-planets inside it (any owner, including none):
+planets inside it (any owner, including none), counted after this year's
+stops have shrunk it (MF-4: a field that lost two of its five planets to
+the stops decayed 14%, not 22%):
 
 ```
 p = min(50, 4·n + 2)        owner not SD
@@ -139,16 +172,46 @@ The field disappears when `loss ≥ N`. Vectors: no planets 1000 → 980,
 planets 1000 → 960; 22 planets 40000 → 20000, SD 40000 → 30400;
 detonating with no planets 1000 → 730.
 
-### Hits on moving fleets (CONFIRMED in part, OB-010; rest BINARY-ONLY)
+### Hits on moving fleets (CONFIRMED, OB-010, OB-024, MF-1..MF-9; marked parts BINARY-ONLY)
 
 Applies to a fleet moving at warp 1–10 (not through a stargate) across a
 field whose owner is not the fleet owner and does not treat the fleet
-owner as a friend. Stationary fleets are never hit.
+owner as a friend. Stationary fleets are never hit. The field owner's
+relation decides, not the victim's (CONFIRMED, MF-5: with the owner
+treating the victim as a friend and the victim treating the owner as an
+enemy, 24 fleets crossed with no stop; reversed, they were stopped at the
+usual rate). The owner's own fleets are never stopped (MF-6).
 
 - **Effective warp** `e` comes from the distance `D` actually travelled
-  this year, not the ordered warp: the smallest of 3..10 with
+  in the movement step being checked, not the ordered warp: the smallest of 3..10 with
   `e² ≥ D − 1`. CONFIRMED: five warp-9 fleets moving 30 ly inside a heavy
-  field (safe 6, `e` = 6) were never hit in 30 fleet-years (OB-010 H0–H4).
+  field (safe 6, `e` = 6) were never hit in 30 fleet-years (OB-010 H0–H4);
+  warp-9 fleets whose waypoint was 17 ly ahead in a standard field or 36 ly
+  ahead in a heavy field were never stopped, and a 26-ly leg in a standard
+  field (`e` = 5) stopped 1 fleet of 12 (MF-3).
+- **Chasers (CONFIRMED, MF-2; one LEGACY BUG).** A chaser moving in
+  rounds (`KERNEL.md`, "Chasing another fleet") is checked once per round,
+  with `D` that round's step. A chaser whose target has already finished
+  moving takes its whole remaining distance in one round and is checked
+  like any other fleet. A chaser whose target has not finished moves in
+  fifths: at warp 9 its steps are 17 ly, so `e` = 4 and no field can hit
+  it. Which case applies depends on fleet order (owner, then number):
+  - Two fleets chasing each other: 24 fleet-years in a heavy field with no
+    stop, in 17-ly steps (MF-02b).
+  - A chain C ← B ← A (B follows C, A follows B), numbered C < B < A: B and
+    A each moved their whole remainder in one step after their target
+    finished, and A was stopped in 2 of 6 chains.
+  - The same chain numbered A < B < C: A moved first and reached B's start
+    in its first 17-ly step. **B then never moved at all**: a chaser that
+    lands on a target that has not moved yet ends that target's movement
+    for the year (MEASURED, 6 of 6; LEGACY BUG). It is a movement rule
+    rather than a minefield rule and belongs with `KERNEL.md` "Chasing
+    another fleet"; the binary mechanism is not yet read. Elegy reproduces
+    it behind a switch.
+- **Cloak** plays no part in hits (CONFIRMED, MF-1: cloaked fleets were
+  stopped at 29.1 per mille, uncloaked ones at 36.1) or in detonation,
+  laying or sweeping (BINARY-ONLY). It matters for minefields only through what a Space
+  Demolition field sees (`SCANNING.md`).
 - **Safe warp** by kind: standard 4, heavy 6, speed bump 5; +1 if the
   fleet owner is Super Stealth, +2 if Space Demolition. No check when `e`
   is at or below the safe warp, or when the fleet was already at its
@@ -159,14 +222,20 @@ owner as a friend. Stationary fleets are never hit.
   Overlapping stretches of one kind merge. Stretches are visited in order
   of entry across all kinds. For each whole ly of a stretch, one draw:
   `rand(1000) < (e − safe)·h` is a hit, with `h` = 3 (standard), 10
-  (heavy), 35 (speed bump) per mille.
+  (heavy), 35 (speed bump) per mille. CONFIRMED as rates (MF-1): heavy at
+  warp 9 gave 32.3 per mille over 2137 draws (predicted 30), standard 15.9
+  over 2709 (predicted 15). A stop on the first draw leaves the fleet where
+  it entered the field.
 - **On a hit** the fleet stops there (distance from its start = entry + the
   ly index); no further checks this year; no ram-scoop fuel this year; the
   fuel for the full planned leg is already spent. CONFIRMED: stop points
   55 and 64 ly into a field (OB-010-S).
-- **Damage** (standard and heavy; speed bumps only stop): per ship per
+- **Damage** (CONFIRMED, MF-9, for every engine, shield and fleet-size
+  case; standard and heavy; speed bumps only stop, OB-024: the stopped
+  fleet was undamaged): per ship per
   engine, standard 100 and heavy 500, or 125 and 600 when any design in
-  the fleet has an engine that burns no fuel at warp 4. Fleets of fewer
+  the fleet has an engine that burns no fuel at warp 4 (the Fuel Mizer
+  as well as the ram scoops, MF-9). Fleets of fewer
   than 5 ships get at least 500 (standard) or 2000 (heavy) in total, 600
   and 2500 with such an engine, the shortfall added to the first design.
   Per design: `D = (ships·per + shortfall)·engines`; shields absorb at most
@@ -176,24 +245,55 @@ owner as a friend. Stationary fleets are never hit.
 - Destroyed ships' share of cargo is lost; their minerals become salvage
   at the stop point (none at a planet's exact position). A fleet with no
   minerals that loses ships drops `rand(10)` kT of each mineral as salvage
-  (BINARY-ONLY; LEGACY BUG candidate).
-- **Mines lost to the hit:** the field of that kind, not owned by a friend,
-  whose edge is nearest the stop point, loses `max(10, ⌊N/20⌋)`, or
-  `max(50, ⌊N/100⌋)` when `⌊N/20⌋ > 50`. CONFIRMED for one size: 3000 →
-  2950 before decay (OB-010-S). The victim learns the field. If the field
-  owner is SD, it learns the victim's damaged designs (all of its designs
-  present if none was damaged).
+  (MEASURED, OB-024: 0–9 kT of each in five fleets; LEGACY BUG candidate).
+- **Mines lost to the hit:** one field of the kind that stopped the fleet
+  pays. It loses `max(10, ⌊N/20⌋)`, or `max(50, ⌊N/100⌋)` when
+  `⌊N/20⌋ > 50`. CONFIRMED for 400 (−20), 3000 (−50) and 6000 (−60) before
+  decay, and for a 400 speed bump (−20) (OB-010-S, OB-024).
+- **Which field pays (CONFIRMED, MF-4).** Among the fields of that kind whose
+  owner is not the victim and does not treat the victim as a friend, the
+  one with the smallest `d² − N` at the stop point, where `d` is the
+  distance from the field's centre. On a tie, the first in object order
+  pays. This is not the field with the nearest edge or the nearest centre.
+  Vector: a stop point 90 ly from the centre of a 10,000 field (value
+  8,100 − 10,000 = −1,900) and at the centre of a 100 field (value −100):
+  the 10,000 field pays. MF-4: a 400 field wholly inside a 10,000 field
+  only decayed while the big field paid all 11 stops, 10 of them inside
+  the small one.
+- The victim learns the paying field. If its owner is SD, that owner
+  learns the victim's damaged designs, or all of the victim's designs
+  present if none was damaged. This applies to hits and to detonations
+  (CONFIRMED for detonations, MF-7: an SD owner got the full designs of
+  both enemy designs its detonating field damaged).
 
-### Detonation (MEASURED, OB-002-M)
+### Detonation (CONFIRMED, OB-002-M, MF-7, MF-8)
 
-A field set to detonate (an SD standard-field order, BINARY-ONLY) goes off
-each year before decay: every fleet inside it, of any owner including the
+A field set to detonate goes off each year before decay: every fleet inside it, of any owner including the
 field's owner, takes hit damage as above, except the owner's own Mini Mine
 Layer and Super Mine Layer hulls. No stop, no salvage, at most one
 detonation per fleet per year. The field then decays with the extra 25%.
 OB-002-M: the owner's five Laser Destroyers took half their armor, the
 enemy's five Medium Freighters 100 each, the layer nothing; the field went
 1000 → 730.
+
+- **Kinds (CONFIRMED, MF-7, MF-8).** A detonating heavy field deals heavy
+  hit damage the same way: an enemy Tank, the owner's own Tank and a
+  friend's Tank each took 2000, the owner's Mini Mine Layer nothing, and
+  nobody moved. A detonating speed-bump field damages and stops nobody.
+  Every kind decays with the extra 25% (1000 → 730, with no minimum of 10
+  for a speed bump). Damage adds to existing damage: an enemy fleet of 5
+  Tanks at 250/500 went to 265/500, and the owner's Laser Destroyer at
+  250/500 was destroyed.
+- **The detonate setting (BINARY-ONLY; LEGACY BUG).** The original client
+  offers the setting only to a Space Demolition player, and only on that
+  player's own standard fields. The host checks only that the order names
+  a minefield. It does not check the field's owner, its kind or the
+  submitter's race. So a hand-built order can turn detonation on or off
+  for any player's field of any kind. This is the same kind of gap as the
+  orders that are not re-checked under `ORDERS.md` "Ownership". **Chosen
+  rule for an independent implementation:** accept the setting only from
+  the field's owner, only when that owner is SD, and only for a standard
+  field. That is exactly what an unmodified client can produce.
 
 ### Sweeping (CONFIRMED, OB-001, OB-007, OB-008, OB-010-S)
 
@@ -459,8 +559,12 @@ and nowhere beyond it).
 2. Wormhole jump odds over many streams; what a jump does to fleets heading
    for the wormhole.
 3. Mystery Trader spawn, path, part and ship rewards.
-4. Minefield hit odds per ly and mines lost for other field sizes; heavy
-   and speed-bump detonation; the Super Mine Layer doubling.
+4. Minefields (MF-1..MF-12 done; see PARITY "Minefield lane"): whether
+   the 512th field is refused when another space object sorts after the
+   player's minefields; the mechanism of the chaser that freezes its
+   waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
+   fleets jumping through a gate inside a field; the detonate-order gap
+   (needs crafted orders); OB-010-S under the stops-then-decay order.
 5. Stargates: every rule above.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
