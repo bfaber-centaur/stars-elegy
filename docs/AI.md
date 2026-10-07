@@ -13,7 +13,7 @@ war) gets its own file under docs/ai/:
 | 3 | Automitron | IS | docs/ai/automitron.md (planned) |
 | 4 | Rototill | CA | docs/ai/rototill.md (planned) |
 | 5 | Cybertron | PP | docs/ai/cybertron.md |
-| 6 | Macinti | AR | docs/ai/macinti.md (planned) |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned; legacy reference only: ship designs checked, fleet pass not fully checked) |
 
 Elegy reproduces these personalities (project decision). Related specs:
 game creation and the starting setup of computer players are in
