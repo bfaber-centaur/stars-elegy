@@ -500,8 +500,10 @@ subtracts 1 when `q` is its current square.
 **Beam slot.** `v = damage × count`, then:
 
 1. `× capacitor/100`.
-2. If `x > 0`: `v = v + (x·v)/(−10)/r`. Here `r` includes the starbase
-   +1, unlike real fire.
+2. If `x > 0` and `r > 0`: `v = v + (x·v)/(−10)/r`. Here `r` includes
+   the starbase +1, unlike real fire. With `r = 0` (a ship's range-0
+   beam, reached only when ignoring range) there is no dropoff
+   (BINARY-ONLY).
 3. `× B's deflector/100`.
 4. A sapper is capped at `B`'s shield per ship × `A`'s ships.
 5. Out of reach (only when ignoring range):
@@ -912,7 +914,10 @@ draws come in that order.
   - A player makes an attempt when the battle was at its own planet.
   - **LEGACY BUG (BINARY-ONLY).** Otherwise, the game means to give an
     attempt to observers: players present at the location but not in the
-    battle, and the owner of a planet there without a starbase. It tests
+    battle, and the owner of a planet there without a starbase. That
+    owner's bit is in the observer set even when the owner is also a
+    participant (BINARY-ONLY); a participant never gets the observer
+    attempt itself, but its bit still counts for other players. It tests
     the player's **number** against the observer set instead of the
     player's bit: player `i` qualifies when `i AND observers ≠ 0`, where
     `observers` has bit `j` set for observer `j`. Player 0 never
