@@ -39,7 +39,7 @@ def predictions(path):
 
 def messages(mpath):
     ids = []
-    for s in B.dump(mpath):
+    for s in B.last_section(B.dump(mpath)):
         m = re.match(r'msg id=0x([0-9a-f]+)', s)
         if m and int(m.group(1), 16) not in ids:
             ids.append(int(m.group(1), 16))
@@ -54,6 +54,7 @@ CONDITIONS = [(0x40, 'planets_owned_percent'), (0x80, 'tech_level'), (0x100, 'sc
 def score_records(mpath):
     """Yearly score records in a .M file (KERNEL.md "Yearly score record")."""
     out = subprocess.run([B.HSTEDIT, 'dump', mpath], capture_output=True, text=True).stdout
+    out = out[max(out.rfind(' header '), 0):]  # the generated year's section
     recs = []
     for m in re.finditer(r' scores ([0-9a-f]+)', out):
         b = bytes.fromhex(m.group(1))
@@ -66,19 +67,19 @@ def score_records(mpath):
     return recs
 
 
-def observe(st_prev, adir, g, year):
+def observe(st_prev, adir, g, year, full=False):
     """Expectations for one generated year: host-file changes since the
     previous year, message ids and score records from every player file."""
     st1 = B.state(B.dump(os.path.join(adir, g + '.HST')), B.dump(os.path.join(adir, g + '.XY')), g)
     exps = []
-    for e in C.diff(st_prev, st1):
+    for e in C.diff(st_prev, st1, full):
         if e['kind'] == 'planet' and 'surface_minerals' in e['equals']:
             e['tolerance'] = {'surface_minerals': 1}
         exps.append(dict(e, year=year))
     bs = {}
     for f in sorted(os.listdir(adir)):
         if re.fullmatch(re.escape(g) + r'\.M\d+', f):
-            bs.update(C.battles(B.dump(os.path.join(adir, f))))
+            bs.update(C.battles(B.last_section(B.dump(os.path.join(adir, f)))))
     for b in sorted(bs.values(), key=lambda b: (b['x'], b['y'])):
         acts = b.pop('actions')
         exps.append(dict(b, year=year))
