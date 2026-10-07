@@ -239,13 +239,13 @@ and cargo (`trunc(x·survivors/ships)`). The 1-in-10 chance per ship
 
 ## Minefields (CONFIRMED in the Technology Browser, CS-001)
 
-| Field | Safe speed | Hit chance per ly | Damage to a ship (with ram scoop) | To a fleet, at least (with ram scoop) |
+| Field | Safe speed | Hit chance per ly per warp above safe | Damage to a ship (with ram scoop) | To a fleet, at least (with ram scoop) |
 |---|---|---|---|---|
 | standard | warp 4 | 0.3% | 100 (125) | 500 (600) |
 | heavy | warp 6 | 1.0% | 500 (600) | 2000 (2500) |
 | speed bump | warp 5 | 3.5% | 0 | 0 |
 
-How minefields act is not specified here.
+How minefields act (effective warp, hits, damage) is in `OBJECTS.md`.
 
 ## Defense coverage (CONFIRMED, CS-001)
 
