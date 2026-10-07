@@ -1069,7 +1069,13 @@ the `hst-edit` keys `field=` and `conc=` added for this corpus.
 
 ### KX-003 — scores, victory conditions, slower tech, Claim Adjuster, Super Stealth
 
-Status: PREDICTED. Predictions committed before any case ran.
+Status: PREDICTED. Predictions committed before any case ran. Correction
+before S2 and S3 ran (after S1): the first prediction commit fed research
+with resources after growth, a script error; `KERNEL.md` says research
+uses this year's resources before growth. S2's populations were changed
+to keep the case discriminating and the S2/S3 research figures
+recomputed; no rule changed. S1's score predictions are unaffected (the
+score uses resources after growth).
 
 Question: how does the original score a player and test the victory
 conditions, which a playable game needs and `KERNEL.md` does not describe;
@@ -1142,8 +1148,8 @@ escort), 10 Omega5 (5 torpedoes, 2370, capital). Player 1: tech 3, 4, 6,
 | 1 | 1+2+1+4 = 8 | 0 | 498 → 16 | 69 (level sum 39) | 0 + 8 = 8 | **101** | `0x0021` (4 planets < 5; 4 would pass with truncation) | 2 |
 
 Populations after growth: 287, 1001, 1000, 5739, 7412 and 287, 1148, 1,
-3450. No victory: the 30-year minimum is not reached. Player 1's 498
-research goes to energy (cost 600), no level.
+3450. No victory: the 30-year minimum is not reached. Player 1's research
+goes to energy (cost 600), no level.
 
 S2 (`kx3s2.spec`, slower tech: game record byte `0x10` = `0x82`; two
 years). Rule under test: the stored accumulation S is half-scale; each
@@ -1153,12 +1159,12 @@ researching energy with all resources (no queue).
 
 | Player | Year | Research | Energy level | Stored | Normal-speed result |
 |---|---|---:|---:|---:|---|
-| 0 (planet 3510) | 2401 | 435 | 3 | 218 (`ceil(435/2)`) | level 4, 45 |
-| 0 | 2402 | 487 | 4 | 72 (`436 + 487 − 780 = 143`) | |
-| 1 (planet 9010) | 2401 | 953 | 4 | 87 (`953 − 780 = 173`) | level 5, 33 |
-| 1 | 2402 | 972 | 5 | 43 (`174 + 972 − 1060 = 86`) | |
+| 0 (planet 4000) | 2401 | 435 | 3 | 218 (`ceil(435/2)`) | level 4, 45 |
+| 0 | 2402 | 485 | 4 | 71 (`436 + 485 − 780 = 141`) | |
+| 1 (planet 9020) | 2401 | 937 | 4 | 79 (`937 − 780 = 157`) | level 5, 17 |
+| 1 | 2402 | 954 | 5 | 26 (`158 + 954 − 1060 = 52`) | |
 
-If S were not doubled, player 0 would stay at level 3 in 2402 (`218 + 487
+If S were not doubled, player 0 would stay at level 3 in 2402 (`218 + 485
 < 780`).
 
 S3 (`kx3s3.spec`, player 0 Claim Adjuster, player 1 Super Stealth, both
@@ -1176,10 +1182,10 @@ legal; JOAT → SS is checked for message 0x117.
 - Super Stealth (rule under test: after all players research, an SS
   player gains, per field, `trunc(trunc(spent/players)/2)` where spent
   is every player's research in that field, its own included, when that
-  is more than 1; message 0x159): player 0 spends 403 on weapons (level 4,
-  13 left), player 1 spends 107 on energy. Player 1 ends with energy
-  **133** (107 + 26) and weapons **100**. Excluding its own research
-  would give energy 107.
+  is more than 1; message 0x159): player 0 spends 355 on weapons (no level),
+  player 1 spends 95 on energy. Player 1 ends with energy **118**
+  (95 + 23) and weapons **88**. Excluding its own research would give
+  energy 95.
 
 ## Fleet Movement
 
