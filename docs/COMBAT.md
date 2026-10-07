@@ -370,7 +370,9 @@ For each involved fleet, in location order:
 A starbase token is placed for the starbase of an involved owner (see "Starbases in battle").
 
 Then the token order is shuffled: for `i = 0..n−1`, swap token `i` with
-token `i + rand(n − i)`. Token order matters for movement ties, firing
+token `i + rand(n − i)` (CONFIRMED by the exact replays CB-041, CB-042,
+CB-044, CB-046 and CB-048..CB-051; see "Random draws in a battle").
+Token order matters for movement ties, firing
 order and target ties.
 
 **Energy Dampener** (CONFIRMED, CB-002 C8): if any token in the battle
@@ -478,7 +480,7 @@ armor, it does not trust a stored value):
 
 At most 16 rounds, numbered 0..15. Each round (BINARY-ONLY ordering,
 consistent with every replayed record; movement then the jitter draw,
-steps 3 and 4, CONFIRMED by the exact replays CB-041..CB-049 under
+steps 3 and 4, CONFIRMED by the exact replays (CB-041, CB-049 and others) under
 "Choosing a square"):
 
 1. From round 1 on, regenerate shields (see RS).
@@ -678,7 +680,7 @@ built for it, and every move replays (6 streams each):
   any" stack switched to "any" once the freighter left, so the test is
   made again on every move.
 
-### Square score (CONFIRMED by replay, CB-041..CB-051; see "Choosing a square")
+### Square score (CONFIRMED by the exact replays CB-041 to CB-051 listed under "Choosing a square")
 
 The score of square `q` for token `T` is computed as follows:
 
@@ -906,6 +908,13 @@ own `N` draws.
   reruns);
 - otherwise each torpedo hits on `rand(100) < p`: `N` draws.
 
+The draws are CONFIRMED by the CB-049 replay (6 streams). Each of its 87
+torpedo targets got its hits from the stream, `N` draws for the
+torpedoes still unfired, and the resulting misses matched every miss
+record. In 4 salvos the torpedoes left after a kill went on to a second
+target with fresh draws, and every later move stayed in step with the
+stream.
+
 Per salvo, while torpedoes remain:
 
 1. Choose a target, then compute `H` for it. Let `d` = the part's
@@ -1043,6 +1052,13 @@ torpedoes draw nothing.
 file give byte-identical battle records (`PARITY.md`, round 2 method),
 and one-mover battles replay square by square from these rules
 (CB-012, CB-019, CB-020, CB-021).
+
+The order of draws 1 to 3 is CONFIRMED by the exact replays (CB-041,
+CB-042, CB-044, CB-046, CB-048..CB-051). Each run's stream was located
+from its setup draws alone: the recorded starting jitters and the
+shuffled token order. Every movement tie, jitter and torpedo draw after
+that fell in place, round after round, including the estimate's draws
+in item 4.
 
 ## After the battle
 
