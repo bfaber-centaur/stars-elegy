@@ -127,7 +127,7 @@ class Run:
             s += ' dmg ' + ','.join('%d:%d:100' % du for du in dmg.items())
         if follow is not None:
             tx, ty, tid = follow
-            s += ' to %d %d fleet %d warp %d' % (tx, ty, tid, warp)
+            s += ' to %d %d fleet %d %d warp %d' % (tx, ty, owner, tid, warp)
         elif to is not None:
             s += ' to %d %d warp %d' % (to[0], to[1], warp)
         self.lines.append(s)

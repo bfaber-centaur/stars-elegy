@@ -27,6 +27,14 @@ import org.starsautohost.starsapi.items.Items;
 //                                   1 auto factories, 2 auto defenses, 3 auto alchemy,
 //                                   4 auto min terraform, 5 auto max terraform, 6 auto packets)
 //   defleftover P 0|1               set P's default "only leftover to research" for new colonies
+//   mt P HEX                        set the Mystery Trader items P owns (16-bit mask, one bit
+//                                   per item; 0 = none). Designs may use Mystery Trader parts
+//                                   by name whatever the mask (see docs/ORACLE.md)
+//   queue N ID:COUNT[:PCT]:KIND[,...]|none
+//                                   replace planet N's production queue (owned planets).
+//                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
+//                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
+//                                   = percent of the first unit already done (default 0)
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -45,16 +53,18 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
-//         [task TASK] [to X Y [planet N|thing ID|fleet [P:]N] warp W [task TASK]]...
-//                                   ("fleet [P:]N": follow fleet N of player P, default the
-//                                   same owner; X Y its position)
+//         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
-//                                   unload (all colonists) | lay [YEARS] (lay mines; YEARS
+//                                   unload (all colonists) | merge (into the waypoint's
+//                                   fleet) | transfer K (give the fleet to the K-th other
+//                                   player) | lay [YEARS] (lay mines; YEARS
 //                                   word, default 5 = indefinitely) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
-//                                   kT or 100s of colonists; "-" for no order)
+//                                   kT or 100s of colonists; "-" for no order). "target
+//                                   fleet" makes waypoint 0 target a fleet (id number |
+//                                   owner << 9, type 0x12) for merge and fleet transport
 //   planetset N KEY=V...            planet N's fields after any "planet" line: mines=
 //                                   factories= defenses= excess= fe= bo= ge= (installed/
 //                                   surface values; owned planets) scanner=ID (planetary
@@ -142,6 +152,7 @@ public class CombatLab {
                     for (int i = 0; i < 6; i++) sb.append(' ').append(TECH[i]).append('=').append(p.fullDataBytes[0x12 + i]);
                     sb.append(String.format(" prt=%d lrt=%04x", p.fullDataBytes[0x44],
                         ((p.fullDataBytes[0x47] & 0xff) << 8) | (p.fullDataBytes[0x46] & 0xff)));
+                    sb.append(String.format(" mt=%04x", Util.read16(p.fullDataBytes, 0x4a)));
                     sb.append(" accum=");
                     for (int i = 0; i < 6; i++)
                         sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
@@ -192,9 +203,16 @@ public class CombatLab {
                     // each heading byte stores the component + 127 (SC-027); a fleet that did not move has 0/0
                     dmg.append(String.format(" dx=%d dy=%d warp=%d wbits=%02x mass=%d",
                         (fl.deltaX & 0xff) - 127, (fl.deltaY & 0xff) - 127, fl.warp, fl.unknownBitsWithWarp, fl.mass));
-                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d%s%n",
+                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d b2=%02x b3=%02x b5=%02x wps=%d%s%n",
                     f, fl.owner, fl.fleetNumber, fl.kindByte, fl.x, fl.y, fl.positionObjectId, ships,
-                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan, dmg);
+                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan,
+                    fl.byte2 & 0xff, fl.byte3 & 0xff, fl.byte5 & 0xff, fl.waypointCount, dmg);
+            } else if (b.typeId == BlockType.FLEET_NAME) {
+                // a custom fleet name (block 21) follows its fleet block; Stars-encoded text
+                byte[] d = b.getDecryptedData();
+                String name;
+                try { name = Util.decodeStarsString(Arrays.copyOf(d, b.size)); } catch (Exception e) { name = "?"; }
+                System.out.printf("%s   fleetname \"%s\" raw=%s%n", f, name, Util.bytesToString(d, 0, b.size));
             } else if (b instanceof WaypointBlock) {
                 WaypointBlock w = (WaypointBlock) b;
                 byte[] d = w.getDecryptedData();
@@ -315,6 +333,8 @@ public class CombatLab {
                 p.excessPop, p.mines, p.factories,
                 (p.defenses & 0xff) | ((p.unknownInstallationsByte & 0x0f) << 8),
                 ((p.unknownInstallationsByte >> 4) & 15) | (p.hasScanner ? 0 : 16), p.contributeOnlyLeftoverResourcesToResearch));
+        // route destination word (planet id + 1 in bits 0-9 per the decomp; 0 = none)
+        if (p.hasRoute) sb.append(String.format(" route=%04x", p.routeShort));
         if (sb.length() > 0) System.out.printf("%s pdetail %d owner=%d%s%n", f, p.planetNumber, p.owner, sb);
     }
 
@@ -326,6 +346,7 @@ public class CombatLab {
 
     static class FleetSpec {
         int owner, id, x, y, fuel, plan, planet = -1;
+        int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -341,6 +362,12 @@ public class CombatLab {
             case "colonize": return 2;
             case "scrap": return 5;
             case "mine": return 3;
+            case "merge": return 4;
+            case "transfer": {
+                // transfer fleet: one word, the recipient as an index over the other players
+                ord[0] = Integer.parseInt(t[i + 1]);
+                return 9;
+            }
             case "unload": ord[3] = 2 << 12; return 1;
             case "lay": {
                 // lay mines: one word, the years counter (5 = indefinitely)
@@ -418,7 +445,8 @@ public class CombatLab {
         Map<String, Integer> tech = new HashMap<>();
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
-        Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>();
+        Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
+        Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
@@ -449,6 +477,13 @@ public class CombatLab {
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "mt": {
+                        int v = Integer.parseInt(t[2].replaceFirst("^0x", ""), 16);
+                        if (v < 0 || v > 0xffff) throw new Exception("mt: 16-bit mask expected");
+                        mts.put(Integer.parseInt(t[1]), v);
+                        break;
+                    }
+                    case "queue": queues.put(Integer.parseInt(t[1]), parseQueue(t[2])); break;
                     case "defqueue": {
                         List<Integer> q = new ArrayList<>();
                         if (!t[2].equals("none"))
@@ -490,6 +525,16 @@ public class CombatLab {
                         break;
                     }
                     case "fleet": fleets.add(parseFleet(t)); break;
+                    case "fleets": {
+                        // fleets OWNER FROM-TO <fleet tokens>: one fleet per id in the range
+                        String[] r = t[2].split("-");
+                        for (int id = Integer.parseInt(r[0]); id <= Integer.parseInt(r[r.length - 1]); id++) {
+                            String[] one = t.clone();
+                            one[2] = "" + id;
+                            fleets.add(parseFleet(one));
+                        }
+                        break;
+                    }
                     case "thing": {
                         byte[] r = parseThing(t);
                         int id = u16(r, 0);
@@ -610,7 +655,8 @@ public class CombatLab {
             fl.setData(fl.getDecryptedData(), fl.size);
             newFleets.add(fl);
             List<int[]> all = new ArrayList<>();
-            all.add(fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
+            all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
+                : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
             all.addAll(fs.wps);
             for (int w = 0; w < all.size(); w++) {
                 int[] wp = all.get(w);
@@ -623,7 +669,7 @@ public class CombatLab {
                 if (wb.waypointTask == 1) {
                     // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
                     for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
-                } else if (wb.waypointTask == 6) {
+                } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
                     int o = fs.orders.get(w)[0];
                     wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
                 }
@@ -654,6 +700,7 @@ public class CombatLab {
                 if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
             }
+            if (mts.containsKey(k)) Util.write16(p.fullDataBytes, 0x4a, mts.get(k));
             if (defLeftover.containsKey(k))
                 p.fullDataBytes[0x4e] = (byte) ((p.fullDataBytes[0x4e] & ~1) | (defLeftover.get(k) & 1));
             if (defQueues.containsKey(k)) {
@@ -681,7 +728,11 @@ public class CombatLab {
         // Pass 2: rebuild the block list.
         List<Block> result = new ArrayList<>();
         boolean shipDone = false, fleetsDone = false, sbDone = false, thingsDone = false;
+        int lastPlanet = -1;
+        Set<Integer> queuesDone = new HashSet<>();
         for (Block b : blocks) {
+            // a planet's production queue block follows its planet block
+            if (b instanceof ProductionQueueBlock && queues.containsKey(lastPlanet)) continue;
             if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 if (!d.isStarbase && !shipDone) {
@@ -777,11 +828,47 @@ public class CombatLab {
                 }
             }
             result.add(b);
+            if (b instanceof PartialPlanetBlock) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                lastPlanet = pl.planetNumber;
+                byte[] q = queues.get(lastPlanet);
+                if (q != null) {
+                    if (pl.owner < 0) throw new Exception("queue: planet " + lastPlanet + " has no owner");
+                    if (q.length > 0) {
+                        ProductionQueueBlock pq = new ProductionQueueBlock();
+                        pq.setDecryptedData(Arrays.copyOf(q, q.length), q.length);
+                        pq.setData(q.clone(), q.length);
+                        result.add(pq);
+                    }
+                    queuesDone.add(lastPlanet);
+                }
+            }
         }
+        if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
+    }
+
+    // Production queue items: two little-endian words per item, as the game stores
+    // them (and scripts/oracle/hst-edit writes them): w0 = (id & 63) << 10 | count,
+    // w1 = pct << 4 | kind << 1 | id >> 6.
+    static byte[] parseQueue(String spec) throws Exception {
+        if (spec.equals("none")) return new byte[0];
+        String[] items = spec.split(",");
+        byte[] d = new byte[items.length * 4];
+        for (int j = 0; j < items.length; j++) {
+            String[] f = items[j].split(":");
+            if (f.length != 3 && f.length != 4) throw new Exception("queue: ID:COUNT[:PCT]:KIND expected, got " + items[j]);
+            int id = Integer.parseInt(f[0]), cnt = Integer.parseInt(f[1]);
+            int pct = f.length == 4 ? Integer.parseInt(f[2]) : 0, kind = Integer.parseInt(f[f.length - 1]);
+            if (id < 0 || id > 127 || cnt < 0 || cnt > 1023 || pct < 0 || pct > 100 || kind < 0 || kind > 7)
+                throw new Exception("queue: bad item " + items[j]);
+            Util.write16(d, 4 * j, ((id & 0x3f) << 10) | cnt);
+            Util.write16(d, 4 * j + 2, (pct << 4) | (kind << 1) | (id >> 6));
+        }
+        return d;
     }
 
     static void applyPlanetSet(PartialPlanetBlock pl, Map<String, String> kv) throws Exception {
@@ -820,6 +907,14 @@ public class CombatLab {
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
                     break;
                 }
+                case "route":
+                    // route=DEST (planet number; stored as DEST + 1), route=none, or route=raw:HEX (whole word)
+                    if (v.equals("none")) { pl.hasRoute = false; pl.routeShort = 0; }
+                    else {
+                        pl.hasRoute = true;
+                        pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
+                    }
+                    break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
@@ -1012,6 +1107,7 @@ public class CombatLab {
         FleetSpec fs = new FleetSpec();
         fs.owner = Integer.parseInt(t[1]);
         fs.id = Integer.parseInt(t[2]);
+        if (fs.id < 0 || fs.id > 511) throw new Exception("fleet id 0-511 expected, got " + fs.id);
         int i = 3;
         while (i < t.length) {
             switch (t[i]) {
@@ -1023,6 +1119,11 @@ public class CombatLab {
                     }
                     i += 2; break;
                 case "planet": fs.planet = Integer.parseInt(t[i + 1]); i += 2; break;
+                case "target":
+                    // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
+                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
+                    fs.wp0Fleet = Integer.parseInt(t[i + 3]) | Integer.parseInt(t[i + 2]) << 9;
+                    i += 4; break;
                 case "plan": fs.plan = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "fuel": fs.fuel = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "dmg":
@@ -1040,7 +1141,8 @@ public class CombatLab {
                     int w = fs.wps.size();
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
-                    i += t[i + 1].equals("transport") || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
+                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer")
+                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
                 }
                 case "to": {
@@ -1051,13 +1153,9 @@ public class CombatLab {
                     if (t[i].equals("planet")) { obj = Integer.parseInt(t[i + 1]); type = 0x11; i += 2; }
                     else if (t[i].equals("thing")) { obj = Integer.decode(t[i + 1]); type = 0x18; i += 2; }
                     else if (t[i].equals("fleet")) {
-                        // the target's object id: owner << 9 | fleet number ("P:N", or N for the same owner)
-                        String[] pn = t[i + 1].split(":");
-                        obj = pn.length == 2 ? Integer.parseInt(pn[0]) << 9 | Integer.parseInt(pn[1])
-                            : fs.owner << 9 | Integer.parseInt(pn[0]);
-                        type = 0x12; i += 2;
+                        obj = Integer.parseInt(t[i + 2]) | Integer.parseInt(t[i + 1]) << 9; type = 0x12; i += 3;
                     }
-                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet [P:]N] warp W");
+                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet OWNER ID] warp W");
                     fs.wps.add(new int[]{x, y, obj, type, Integer.parseInt(t[i + 1])});
                     i += 2;
                     break;

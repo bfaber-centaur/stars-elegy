@@ -547,12 +547,42 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   byte) on the planet line. LRT bits used: 1 Total
   Terraforming, 4 Generalized Research, 9 Only Basic Remote Mining.
   `TURNS=3 edit-turn …` ran three years in a row without trouble.
+- Added for KX-003 (2026-10-07): `hst-edit xy IN.XY OUT.XY OFF:HEX…`
+  sets bytes of the game record (block type 7 in the `.XY` file):
+  `0x10` game options (bit 1 slower tech, bit 7 no random events; CB has
+  `0x80`), `0x14 + i` victory condition i (bit 7 enabled, low 7 bits the
+  value; `KERNEL.md`, "Victory conditions"). An unedited `.XY` round-trips
+  byte for byte. Put the edited `CB.XY` in the `pinned-turn` base
+  directory: the generated year used it (S2's slower tech took effect).
+  `dump` prints `game` (the record's first 32 bytes) for a `.XY` and
+  `scores` (block type 45) for a `.M`: per record, word 0 the flag word,
+  word 1 the rank, then score (32 bits), resources (32), planets,
+  starbases, unarmed, escort and capital ship counts and the tech-level
+  sum (16 bits each). A player's `.M` held only its own record. The
+  `race` line now prints 14 stats (8–13 the research cost settings). On
+  a Combat Lab file, `hst-edit edit` needs `planet=` set to a planet player
+  0 owns (the default 7 is not).
 - An edited race must stay within the race wizard's point budget. KX-001
   M3 (cheaper factories and mines, nothing paid for them) was flagged in
   the generated year: message id 0x117 in the `.M1`, and the race's
   colonists-per-resource stat raised from 10 to 24 before production, which
   changes every resource figure. Check the `race` line of the after-dump
   and the event list for 0x117 before trusting a race-edit case.
+  JOAT → Super Stealth (`prt 1 1`) is over budget (KX-003 S3: 0x117,
+  colonists-per-resource 24); LRTs `0x1b80` made it legal (S3L). JOAT →
+  Claim Adjuster is legal.
+- KX-004 (2026-10-07): long runs go one year per `pinned-turn` process
+  (`experiments/kx004/run-kx4.sh`, about 13 s a year), with a different
+  cycles value each year so each year draws from a different random
+  stream. Running several `stars.exe -g` in one DOSBox autoexec does not
+  work: Windows stays up after the first generated year.
+- Event records in a `.M` file's events block (the `events` hex from
+  `hst-edit dump`): a 16-bit word whose low 9 bits are the message id and
+  whose bits 9 and up flag which parameters take 2 bytes; a 16-bit
+  object word; then the parameters, 1 byte each unless flagged. The number
+  of parameters depends on the message id (a table in the original
+  program; the private KX-004 checker carries it). Example: `5901 feff 00
+  17` is message 0x159 with object −2 and parameters 0 and 23.
 - A state the game cannot process shows a Windows "Application Error"
   dialog (KX-001 Z1: "integer divide by 0") and no year is written; `turn`
   and `host-turn` then time out with the dialog still open. Take a
@@ -651,6 +681,76 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   To sample a random outcome, compare record hashes and count streams,
   not runs.
 - A generation takes a few seconds after DOSBox starts.
+- **Which stream a cycles value reaches** (KX-004, 2026-10-07). The
+  startup tick is `trunc(k·54.925)` ms for a small integer k, about
+  `k ≈ 70000/cycles`. Ticks identified by replaying random events: 35000
+  and 45000 → 109; 11500 → 329; 10500, 9800 → 384; 6000 → 659; 5200 → 768;
+  3700 → 1098; 2260, 2190 → 1812; 1985–1955 → 2032; 1750, 1710 → 2306;
+  1490 → 2691; 1210 → 3295; 1190, 1170, 1160 → 3405; 1165, 1155 → 3460;
+  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. Below
+  about 1200 the mapping is not monotonic. Runs down to cycles 880 still
+  took well under a minute each.
+- A range like `15000 + 37·year` reaches only two or three ticks, so a
+  long run of pinned years repeats the same few streams; with nothing else
+  drawing, yearly random events read the same draws every year (KX-004 E1:
+  148 years, no event). To sample random outcomes, choose cycles values
+  that reach different ticks.
+
+- In the round-5 starts, 20000 and 25000 always gave the same stream,
+  and so did 30000, 35000, 40000 and 45000: twelve values from 5000 to
+  50000 gave 8 streams. On CB-041, 6000, 7000, 9000 and 14000 added new
+  streams; 11000 repeated 10000, 18000 repeated 14000, and 22000 and
+  27000 repeated 20000.
+
+### Production queues and Mystery Trader parts (observed 2026-10-07, CL-TOOL)
+
+CombatLab `queue N ITEMS|none` replaces planet N's production queue in
+the host file, and `mt P HEX` sets the Mystery Trader items player P owns
+(a 16-bit mask; `combatlab dump` prints it as `mt=`). Queue items use
+hst-edit's layout, `ID:COUNT[:PCT]:KIND`, with kind 2 for a ship design
+and kind 1 for a planetary item. Designs may name Mystery Trader parts
+like any other part (StarsAPI names, e.g. `Anti Matter Torpedo`,
+`Multi Cargo Pod`, `Mini Morph`).
+
+One turn on the Combat Lab base (`experiments/cltool`, cycles 20000):
+
+- `queue 8 1:2:2` (two of player 1's design 1, a bare Scout): the
+  homeworld built both that year, as one new fleet, and the queue was
+  empty afterwards.
+- Player 0 owned no Mystery Trader items (`mt=0000`). Its Anti Matter
+  Torpedo Destroyer and a Mini Morph with Multi Cargo Pods, a Multi
+  Function Pod, a Mega Poly Shell and a Langston Shell were both kept by
+  the turn. The torpedoes fired, and the stars-decomp checker replayed
+  all 10 hits. Parts the owner lacks the tech for are still stripped
+  (SC-021); hidden Mystery Trader parts are not.
+- `mt 1 0x0003` survived the turn unchanged.
+
+### Route destinations and fleet ranges (observed 2026-10-07, SL-TOOL)
+
+- `planetset N route=DEST` gives planet N a route destination. DEST is
+  a planet number, and the tool writes DEST + 1. `route=raw:HEX` writes
+  the whole word, and `route=none` clears it. `combatlab dump` prints
+  the word as `route=` in the `pdetail` line.
+- `fleets OWNER FROM-TO <fleet tokens>` makes one fleet per id in the
+  range. Fleet ids are 0..511.
+- Fleet lines now show bytes 2, 3 and 5 and the waypoint count. A
+  fleet-name block (block 21), if present, prints as `fleetname`.
+- Starbase design ids in a queue are 16 + slot, kind 2 (`17:1:2` builds
+  starbase design 1).
+- Giving `sbdesign` lines for a player replaces that player's whole
+  starbase design list. Restate slot 0 if a planet's existing starbase
+  uses it.
+
+One turn on the Combat Lab base (`experiments/sltool`, cycles 30000):
+
+- Both route words came back unchanged.
+- Each new fleet had waypoint 1 at the route destination, task 8
+  (route).
+- Two Scouts from one queue item became one fleet with full fuel.
+- An Orbital Fort in the queue replaced a Space Station.
+- A player at 510 fleets built one more (fleet 510). Its queue kept the
+  rest at 28%, which looks resource-limited.
+- No fleet-name blocks were written.
 
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
@@ -781,6 +881,47 @@ python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs 
 - Claim Adjuster owners terraform their planets to the best their tech
   allows at the end of the year, so a CA new owner hides the capture-time
   revert of the environment.
+
+### Fleet operations experiments (observed 2026-10-07, FO-01..FO-07)
+
+```sh
+python3 experiments/fo/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fo01.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT 20000
+python3 experiments/fo/check.py RUNDIR    # RUNDIR/fo01/after.dump ...
+```
+
+- New spec syntax: `target fleet OWNER ID` points waypoint 0 at a fleet
+  (id `number | owner << 9`, target type 0x12); `to X Y fleet OWNER ID warp
+  W` adds a fleet-targeted waypoint; `task merge` (task 4) and `task
+  transfer K` (task 9, one word: the K-th player other than the owner).
+  All three were accepted by the host as written.
+- After the task ran (or was refused), the host had rewritten waypoint 0
+  to deep space or the planet. The stars-decomp reading keeps a
+  fleet-targeted waypoint 0 at turn start only for transport and merge.
+- `combatlab dump` prints an empty `ships=` for a fleet record that has no
+  ships (seen after a merge above 32767 ships).
+- Relations are per direction: `relation 1 0 2` is player 1's view of
+  player 0. Cross-player cargo and fleet transfers depend on the
+  receiver's view.
+
+### Movement round 2 (observed 2026-10-07, FM-101..FM-105)
+
+```sh
+python3 experiments/fm2/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fm101.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT/fm101/run 20000
+python3 experiments/fm2/check.py OUT
+```
+
+- `combatlab build` replaces all of a player's starbase designs with the
+  spec's. A homeworld whose starbase design is not restated keeps
+  pointing at a missing design, so restate design 0 (`sbdesign P 0 Space
+  Station = ...`) whenever a spec adds starbase designs.
+- JOAT with IFE plus NRSE, CE, OBRM, LSP and BET (`lrt 0x1b81`) is legal
+  (no message 0x117).
+- A part restricted to another PRT (the Anti-matter Generator, IT only)
+  stayed in a JOAT design and worked.
 
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
@@ -940,6 +1081,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   homeworld's 10 defenses' coverage for the best defense the tech allows.
 - CS-002: designs using engines the race may not build (HE-only, IFE,
   NRSE) were kept at tech 26; parts above the owner's tech are not.
+- CS-003: a Combat Lab player's designs are read in the designer after
+  one generation: copy the run's `raw/after/CB.*` into the games
+  directory, open `cb.m1`, dismiss "Note: 2 years of data read" with
+  Return, then F4. The designer opens on "Existing Designs"; click the
+  combo (730, 212) twice and step with Down as for hulls. The panel shows
+  mass, max fuel, armor, shields, cloak/jam, initiative/moves and, when
+  the design has any scanning part, "Scanner Range" normal / penetrating.
+- Battle records (`combatlab dump` hit lines): torpedo and missile hits
+  carry flag 0x04, missile hits also 0x08. Records with 0x80 added left
+  the target unchanged; against the unshielded targets of CS-003-C2 there
+  was one for each shot that missed. The CS-003 checker skips them.
 
 ### Turn messages and minefield runs (observed 2026-10-07, MF)
 
@@ -959,10 +1111,12 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   versions (0xc9..0xcc) drop the owner. Detonation messages are 0x160..0x164.
   Sweep messages give the swept count and the field's kind and centre.
   Fleet parameters are object ids, `0x8000 | owner << 9 | number`.
-- Follow orders (`to X Y fleet [P:]N warp W`) must name the target's object
+- Follow orders (`to X Y fleet OWNER ID warp W`) store the target's object
   id, `owner << 9 | number`. A bare number aims at player 0's fleet: FleetLab's
   `wpf` (FM corpus, player 0 only) is fine, but a player-1 follower aimed
-  that way flies to the waypoint coordinates (first MF-02 run).
+  that way flies to the waypoint coordinates (first MF-02 run). The MF
+  specs in the apparatus were built with an interim `fleet N` (same owner)
+  form that wrote the same ids.
 - Pinned streams for the MF starts: cycles 20000 and 25000 gave the same
   stream, as did 30000, 35000 and 40000; 15000 was a third. Runs at the
   same cycles reuse the same draws even with different fleets, so
