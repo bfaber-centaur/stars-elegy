@@ -57,4 +57,10 @@ repository under `evidence/ot/`.
 | OT-4 | Final environment 50/50/51 (0x15b, 0x156). At 3700 the CA's original also drifted (to 50/50/59, 0x15c) and the result was still 50/50/51 | CA terraforming before Orbital Adjusters: CONFIRMED |
 | OT-5 | Planets 15 and 19 both end at 1330, planet 21 at 1150; 0x158 for 157 to planet 15; fleet B 200 → 210 with 0x0fb for 10; fleet C unchanged, no message | breeding before growth, and the breeding rules: CONFIRMED |
 | OT-6-1..7 | Colonists: 22 → 22 (no 0x0c1), 23 → 22, 100 → 97 (own position), 100 → 97 (no fuel; the fleet stayed put), 100 → 97 (chaser, once), 100 → 100 (warp 0, no message). 0x0c1 went to fleets 2, 3, 4 and 5 only | as predicted |
-| OT-6-P | Score records: player 0 U/E/C 8/1/1, player 1 1/1/1; starbases 0; tech sum 156 | speed code without the War Monger bonus: CONFIRMED |
+| OT-6-P | Score records: player 0 U/E/C 8/1/1, player 1 1/1/1; each player 1 planet and 1 starbase, tech sum 156 | speed code without the War Monger bonus: CONFIRMED |
+
+Note (found after the runs): OT-6's two races were not legal (advantage
+points −27 for the AR player and −12 for the War Monger), so at the start
+of the year the host degraded colonists per resource from 1000 to 2400 and
+2300. None of OT-6's measured quantities (colonists carried, ship power,
+U/E/C) depends on that. OT-1..5 used legal races.

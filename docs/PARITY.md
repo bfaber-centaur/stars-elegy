@@ -1714,6 +1714,10 @@ random events off), edited with `CombatLab` planet sets (new key
 | OT-6 AR | When an AR fleet counts as moving | 22 kT moving: kept, no 0x0c1; 23: 22 with 0x0c1; 100 kT with waypoint 1 on its own position: 97; with no fuel (did not move): 97; chasing: 97 (once); warp 0: 100, no message | CONFIRMED |
 | OT-6 power | Speed code in the score's ship power | A 7-Big-Mutha-Cannon Battle Cruiser counted as an escort for a War Monger owner as well as a non-War Monger one (power 1963 without the WM bonus, 2320 with it); a 9-Disruptor design counted as capital for both (2088). Records: U/E/C 8/1/1 and 1/1/1 | CONFIRMED |
 
+OT-6's two races were not legal (advantage points below 0), so the host
+degraded colonists per resource at the start of the year. No OT-6
+measurement depends on it.
+
 Interpretation: all five orders agree with the program. The AR loss is
 taken when a fleet with a waypoint at warp above 0 starts its move, before
 the fuel limit and chase deferral, and only losses of at least 1 kT send a
