@@ -99,7 +99,7 @@ The homeworld's starbase uses starbase design 0.
 
 - **In the client:** Edit Selected Design is disabled for a design that ships use, and for the starbase design in use. It is enabled for a design used only in a queue. Delete is enabled in every case. Its alert, in substance: "you have 4 Freighters and 2 in production with some work done; deleting destroys the ships and/or removes them from the queues". For the starbase design: "you have 1 Starbase; deleting destroys it".
 - **CO-07, deleting the Freighter: CONFIRMED except renumbering.**
-  - Fleet 1 lost its two Freighters and kept the Looker. Its fuel went from 500 to 27 (the Looker holds 50; 27 is observed, not explained).
+  - Fleet 1 lost its two Freighters and kept the Looker. Its fuel went from 500 to 27. The fleet was stationary and the Looker holds 50, so this is not a clamp: the deleted ships took floor(500 · 900/950) = 473, and the remainder stayed.
   - Fleet 2 was removed.
   - The queue's Freighter entry was dropped (no Freighter was built). The Queued design was built that year and took the freed fleet number 2.
   - The slot was cleared, and the Looker and Queued kept slots 7 and 8. **No renumbering** (predicted: later designs renumber).
@@ -107,3 +107,4 @@ The homeworld's starbase uses starbase design 0.
 - **CO-08, editing:**
   - A design that ships or a starbase use can't be edited in the client, so prediction A holds there.
   - For the queued-only design, the client wrote a full design record for slot 8 (Bat Scanner added), and the host **overwrote the slot in place**. The queue entry still pointed at slot 8 and now builds the edited design. This is prediction B's "overwrite", for a slot that only a queue uses.
+- **CO-07c, fuel and cargo after a delete: CONFIRMED** (prediction in `co/PREDICTIONS.md`). The fleet had 2 Freighters and a Looker, with 300 mg of fuel and 100 kT of Ir, and lost the Freighters. It kept **16 mg** = 300 − floor(300 · 900/950), where a clamp to the Looker's tank would give 50. It kept **0 kT** of Ir, because the deleted ships' share of the hold was all of it. So fuel and cargo leave with the deleted ships in proportion to their capacity, rounded down, as with a ship move. The remainder stays.
