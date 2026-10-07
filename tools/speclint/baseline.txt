@@ -37,7 +37,6 @@ docs/ORDERS.md	missing-file	LIMITS.md does not exist
 docs/ORDERS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
 docs/ORDERS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
 docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
-docs/ORDERS.md	missing-section	docs/TAKEOVER.md has no section "Manual cargo transfers to other players"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
@@ -69,8 +68,6 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: ordinary reached waypoint. T
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
-docs/ORDERS.md	unknown-case	TK-501 is not in PARITY.md or vectors/
-docs/ORDERS.md	unknown-case	TK-501 is not in PARITY.md or vectors/
 docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
