@@ -29,3 +29,14 @@ distance 3 from both (300 of 300 simulated streams). There it delivers
 
 Six pinned cycle settings (5000, 7000, 10000, 14000, 20000, 30000);
 streams counted by record hash.
+
+## Results
+
+Six runs, 6 distinct streams. Every hit replayed with the decomp's
+checker (8 of 8 per run).
+
+- **No leftover after a starbase hit: CONFIRMED, 6 of 6.** Player 0's
+  stack fired first in round 2 from column 5, at distance 3, in every
+  stream. That action held exactly one hit record, the Fort destroyed.
+- The guard stack never moved. It was first hit in round 3, by the
+  phaser stack's next shot.

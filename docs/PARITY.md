@@ -2397,14 +2397,14 @@ ba6b0d1 before its second run. Experiment READMEs hold the details.
   also named exactly the gaining streams and the item in each, in all
   36 runs. The checker replayed every hit.
 - **Battle movement beyond the replayed cases (CB-049, 6 streams):
-  recorded, replay pending.** There were seven moving stacks on tactics
-  1 to 4, with target-type mismatches, weapons of ranges 1, 3 and 4,
-  capacitors, deflectors, sappers and shields. The checker replayed
-  every hit in 5 streams. In cycles 7000 it missed one: a Mixed DD
-  (phaser, laser, torpedo, capacitor) hit on the shielded, deflected
-  Shield DD, in round 4. That one is open for the decomp pass. The
-  unarmed freighter token was recorded with tactic 0 under a tactic-3
-  plan.
+  replayed.** There were seven moving stacks on tactics 1 to 4, with
+  target-type mismatches, weapons of ranges 1, 3 and 4, capacitors,
+  deflectors, sappers and shields. The decomp's battle replay (round 8)
+  matched every move and every hit in all 6 streams. The one hit the
+  checker first missed (cycles 7000, round 4, a Mixed DD on the shielded,
+  deflected Shield DD) was a checker fault in pairing torpedo records,
+  not a rule gap. The unarmed freighter token was recorded with tactic 0
+  under a tactic-3 plan.
 - **Scanning after bombing, CONFIRMED (SC-035, 2 streams).** A
   scannerless bomber fleet emptied an enemy colony with no starbase.
   Its owner then got a normal report of the now-unowned planet; at an
@@ -2506,6 +2506,20 @@ all 18 runs and every hit in CB-051.
   else any" stack falls back to "any" after the freighter leaves; the
   full replay through fire shows the fallback is rechecked on every
   move.
+
+### Round 9 (CB-052)
+
+Prediction from the decomp combat pass, restated in
+`experiments/cb052/README.md` and committed before the runs (ac73ab4).
+
+- **No leftover after a starbase hit, CONFIRMED (CB-052, 6 of 6).** Ten
+  destroyers with one Colloidal Phaser each (plan: starbase, else any)
+  first fired in round 2 at distance 3, putting 234 into an unarmed
+  Orbital Fort with 100 armor. A stack of 5 enemy destroyers sat on the
+  Fort's square in range, on a plan with no target type present. Each
+  stream's fire action held one record, the Fort destroyed. A carry
+  would have added a record on that stack (133 damage). The stack never
+  moved and was first hit in round 3. Every hit replayed.
 
 ### Battle plans through the client (BP)
 
