@@ -492,3 +492,12 @@ measured beams against mines).
 | OB-026-B | trader | Trader 1 offering part bit 0 moves 64 ly onto a player 1 fleet of 24 Medium Freighters with 5000 kT | fleet removed; player 1 gains exactly one Mystery Trader part bit; tech unchanged | research levels |
 | OB-026-C | trader | Trader 2 offering a ship moves 64 ly onto a second player 1 fleet with 5000 kT | fleet removed; a new player 1 fleet of 1 or 2 ships of one new design (added to its designs) at (1084,1300); tech unchanged | research levels; nothing |
 | OB-026-D | trader | Trader 3, warp 9, mid-crossing | at (1101,1050) warp 9 (24/25), or warp 10 at (1120,1050), perhaps with a new destination |  |
+
+### OB-027: scouts targeting wormholes known (seen bit) and unknown at the start of the year
+
+Added after OB-025-F1 contradicted its prediction, before this run.
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-027-A | O-31 | scouts at warp 1 targeting class-1 wormholes 0-3, known to player 0 (seen bit set) | waypoint keeps the wormhole as target (obj id kept) | deep space at the old position as in OB-025-F1 |
+| OB-027-B | O-31 | scouts targeting wormholes 4-7, unknown at the start (as OB-025) | deep-space waypoint at the old position (repeats OB-025-F1) |  |

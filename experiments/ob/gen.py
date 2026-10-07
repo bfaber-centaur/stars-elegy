@@ -874,6 +874,25 @@ r.case('D', 'trader', 'Trader 3, warp 9, mid-crossing', 'at (1101,1050) warp 9 (
        'perhaps with a new destination', '', ('traderend', 3, None, None))
 
 
+
+# ---------------------------------------------------------------- OB-027 wormhole targets known vs unknown (after OB-025-F1)
+# OB-025-F1: thing-target waypoints on wormholes player 0 had not seen at the start of the year became
+# deep-space waypoints at the old position after the first jiggle. The decomp reading: the target is kept
+# (and follows) only when the owner has the wormhole's seen bit.
+r = run('OB-027', 'scouts targeting wormholes known (seen bit) and unknown at the start of the year')
+KW = [(1040, 1050), (1120, 1050), (1200, 1040), (1280, 1150), (1040, 1170), (1100, 1220), (1180, 1240), (1260, 1230)]
+for i, (x, y) in enumerate(KW):
+    partner = i + 1 if i % 2 == 0 else i - 1
+    r.thing('wormhole', 0, '%d %d %d 1%s' % (x, y, partner, ' seen 1' if i < 4 else ''))
+    r.fleet(0, x, y + 20, '10:1', plan=1, fuel=50, extra='to %d %d thing 0x%x warp 1' % (x, y, 0x4000 + i))
+r.case('A', 'O-31', 'scouts at warp 1 targeting class-1 wormholes 0-3, known to player 0 (seen bit set)',
+       'waypoint keeps the wormhole as target (obj id kept)', 'deep space at the old position as in OB-025-F1',
+       ('wormfollow', [(0, i, i) for i in range(4)]))
+r.case('B', 'O-31', 'scouts targeting wormholes 4-7, unknown at the start (as OB-025)',
+       'deep-space waypoint at the old position (repeats OB-025-F1)', '',
+       ('wormlost', [(0, i, i) for i in range(4, 8)]))
+
+
 def main():
     if sys.argv[1:2] == ['--defs']:
         out = sys.argv[2]

@@ -340,6 +340,16 @@ def evaluate(c, A, B, run=None, M=None):
             out.append(dict(fleet=fid, wp1=got, worm_before=bpos.get(wid), worm_after=pos.get(wid)))
             ok &= bool(w1) and int(w1['obj']) == wid
         return ok, out
+    if kind == 'wormlost':
+        out, ok = [], True
+        for owner, fid, wnum in k[1]:
+            ws = wps.get((owner, fid), [])
+            w1 = ws[1] if len(ws) > 1 else None
+            b1 = B[4][(owner, fid)][1]
+            got = (int(w1['obj']), w1['type'], (int(w1['x']), int(w1['y']))) if w1 else None
+            out.append(dict(fleet=fid, wp1=got))
+            ok &= bool(w1) and w1['type'] == '14' and (int(w1['x']), int(w1['y'])) == (int(b1['x']), int(b1['y']))
+        return ok, out
     raise SystemExit('unknown check ' + kind)
 
 
