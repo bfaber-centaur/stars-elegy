@@ -4446,7 +4446,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-11)
+## Computer players (AI-0..AI-12)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4477,6 +4477,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-9 | Robotoid production: each planet's newly queued ships follow the order freighter, colonizers, frigates, armada or warships, slot 14/15, using each group's newest design; none at planets without a starbase or with fewer than 20,000 colonists (`docs/ai/robotoid.md` §3) | MEASURED: 1,205 of 1,205 planet-years (AIX), 70 with ships queued |
 | AI-10 | Computer players keep no memory between years: the memory block in the history file is never read back (`AI.md` §1) | MEASURED indirectly: in AIX's 61 years of history files, Cybertron's per-planet attack cooldown is only ever 0 or its starting value, never a decremented one; an edit test is pending |
 | AI-11 | Waypoint-1 warp re-pick at the end of every computer player's turn (`AI.md` §11 "Warp choice") | CONFIRMED: AIX 1,680 of 1,680 rewritten warps, 2,043 of 2,043 fleets left alone, 207 of 207 warps set earlier in the turn; 38 fleets in enlarged foreign minefields all in the random set; the AI oracle's round-2 runs all agree, including a Scout's 6 → 5 |
+| AI-12 | Robotoid fleet orders each year: waypoint-0 task and waypoint-1 target and task per own fleet (`docs/ai/robotoid.md` §4), with the planet view of `AI.md` §1 | MEASURED: every own Robotoid fleet in AIX's 61 years agrees (146 colonize targets, 58 unloads at foreign planets, 219 freighter targets, 22 armada and 123 attack orders as outcome sets, 1,251 fleets left alone); obsolete fleets, join-up and wormholes never occurred |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

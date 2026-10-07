@@ -52,20 +52,29 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - If an order file for that player already exists when the host runs, the
   computer player does not act that year; the existing file is used.
 - **What it sees.** Exactly that player's own view of the game (what its
-  player file holds: its planets, fleets, designs, scanned reports), not
-  the true game state. A planet it has never scanned has no owner in its
-  view, so for example it counts as colonizable even when another player
-  owns it (MEASURED, AI-4: editing owners in the host file, or adding owner
-  records to the computer player's history file, left its orders
-  byte-identical; the computer player flew colonizers to planets it had
-  never scanned). Elegy must run each computer player on that player's
-  own view. It never reads other players' hidden state, except through the two leaks
-  below. It keeps no memory between
-  years: the original writes a private memory block into the player's
-  history file each year but never reads it back on this path, so every
-  turn starts from an empty one (BINARY-ONLY; consistent with 61 years of
-  captured history files, AI-10). Elegy keeps no computer-player state
-  across years.
+  player file holds: its planets, fleets, designs, scanned reports) plus
+  the planet history its history file keeps, not the true game state
+  (MEASURED, AI-4, AI-12):
+  - A planet the player file does not report keeps the owner the history
+    last recorded, so a foreign planet seen earlier still counts as
+    foreign.
+  - A planet the history records as the player's own that the player
+    file no longer lists (a colony it lost) counts as unowned.
+  - A planet it has never seen counts as unowned, so it is colonizable
+    even when another player owns it. Robotoid flew colonizers to
+    planets it had never scanned.
+  - Editing owners in the host file changes nothing until the player's
+    own files carry it.
+
+  Elegy must run each computer player on that player's
+  own view. It never reads other players' hidden state, except through
+  the two leaks below. Beyond the planet history every player's history
+  file keeps, it has no memory between years: the original writes a
+  private computer-player memory block into the history file each year
+  but never reads it back on this path, so every turn starts from an
+  empty one (BINARY-ONLY; consistent with 61 years of captured history
+  files, AI-10). Elegy keeps no private computer-player state across
+  years.
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
   tech level edited in the host file) shows in its orders only one year
