@@ -1306,6 +1306,62 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 - Minefields, stargates, wormholes, and movement
   that interacts with other players were deliberately not tested.
 
+### Round 2 (FM-101 to FM-105)
+
+Status: MEASURED, 2026-10-07. Tests the KERNEL.md movement and fuel rules
+that FM-001..004 did not reach. Combat Lab (two JOAT players, tech 26),
+pinned generations; FM-104 runs two years. Predictions were committed
+before the runs, mostly computed by `experiments/fm2/model.py` (KERNEL.md
+as code). Every case and value is in `experiments/fm2/README.md`; raw
+evidence is in stars-oracle-apparatus `evidence/fm2/`. 54 of 56 checks
+held.
+
+**CONFIRMED:**
+
+- Improved Fuel Efficiency: factor `f − trunc(15f/100)`, both in the cost
+  of a move and in the range of a fleet short of fuel (two discriminating
+  cases).
+- Cheap Engines: 2 of 40 fleets at warp 7 did not move (they kept their
+  fuel and waypoint); none of 20 at warp 6 (MEASURED, one sample).
+- Warp 10 on engines not rated for it: 11 of 100 ships lost, and 5 of 50
+  in a fleet whose other 50 ships had a rated engine (MEASURED, one
+  sample each). Fuel leaves with the lost ships in proportion:
+  `30000 − trunc(30000·11/100)` before the survivors pay for the move.
+- Ram scoops with two engines per ship: `k` scales with the engine
+  count (192 at warp 4, 80 at warp 2, Radiating Hydro-Ram Scoop).
+- Anti-matter generator +50 and Super-Fuel Xport +200 per ship per year,
+  moving or not, capped at the tank.
+- Refuelling: at a friend's Space Dock and Space Station, but not at a
+  friend's Orbital Fort, an enemy's Space Dock or the player's own Orbital
+  Fort. The planet owner's relation toward the fleet's owner decides.
+- A fleet laying mines at waypoint 0 does not move. A transport task that
+  finished before movement does not hold the fleet (it moved on).
+- A fleet that cannot afford its whole leg but keeps fuel keeps its warp.
+- Designs with equal engine factors take cargo in design order.
+- A chaser of a stationary fleet follows the ordinary fuel rules
+  (fuel-limited, ram scoop, top-up).
+- Fleets of player 0 move before player 1's, whatever their numbers (a
+  mutual chase).
+- Rounding toward smaller coordinates is half away from zero.
+- Radiating Hydro-Ram Scoop colonist losses (JOAT radiation 15–85):
+  18 of 100, 1 of 3, none when stationary.
+- Waypoint chains over two years: no carry-over after a waypoint; a first
+  waypoint at the fleet's own position uses up the year; a fleet that ran
+  dry crawls at warp 1 the next year and its scoop gives 1 mg.
+
+**Contradicted:**
+
+- **Fuel unloaded onto a planet** by a waypoint "unload all" is not lost:
+  nothing moved and the fleet kept its fuel (the task was cleared).
+  KERNEL.md says it is lost; a direct cargo order is not tested.
+- **A design whose engine slot is not full** (a Large Freighter with one
+  of its two engines) moved its whole warp-5 distance and emptied its
+  tank. The range estimate overflows 32 bits (99999 × 1000 × 134 wraps),
+  so the fleet moves `fuel·1000/25748` ly at most, here 25, then pays
+  16750 mg it does not have. Three more cases (200, 50 and 500 mg: 7, 1
+  and 19 ly) followed that rule (FM-105, predicted before the run).
+  Probably only reachable with edited designs (LEGACY BUG candidate).
+
 ## Fleet Operations
 
 Status: MEASURED, 2026-10-07 (FO-01 to FO-07). Tests the "Fleet

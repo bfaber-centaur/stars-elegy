@@ -789,6 +789,24 @@ python3 experiments/fo/check.py RUNDIR    # RUNDIR/fo01/after.dump ...
   player 0. Cross-player cargo and fleet transfers depend on the
   receiver's view.
 
+### Movement round 2 (observed 2026-10-07, FM-101..FM-105)
+
+```sh
+python3 experiments/fm2/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fm101.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT/fm101/run 20000
+python3 experiments/fm2/check.py OUT
+```
+
+- `combatlab build` replaces all of a player's starbase designs with the
+  spec's. A homeworld whose starbase design is not restated keeps
+  pointing at a missing design, so restate design 0 (`sbdesign P 0 Space
+  Station = ...`) whenever a spec adds starbase designs.
+- JOAT with IFE plus NRSE, CE, OBRM, LSP and BET (`lrt 0x1b81`) is legal
+  (no message 0x117).
+- Parts restricted to a PRT or LRT (Anti-matter Generator, Super-Fuel
+  Xport) stayed in player 0's designs and worked.
+
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
 ```sh

@@ -122,3 +122,67 @@ left. Random cases predict a range.
 | B | FM-102 F follow-up | Large Freighter with 1 of 2 LH6, warp 5, +100 x, 50 mg: wrapped range 1 ly, so it moves 1 and ends with 0, warp 5 kept | fleet 0/1: x 1006, y 1011, fuel 0, warp 5 |
 | C | FM-102 F follow-up | Large Freighter with 1 of 2 LH6, warp 5, +100 x, 500 mg: wrapped range 19 ly, so it moves 19 and ends with 0, warp 5 kept | fleet 0/2: x 1024, y 1017, fuel 0, warp 5 |
 
+
+## Results
+
+Run 2026-10-07, cycles 20000; FM-104's second year started from its first
+year's output. Checked with `python3 experiments/fm2/check.py RUNDIR`.
+Raw files, dumps and the checker output are in stars-oracle-apparatus
+`evidence/fm2/`.
+
+**56 checks: 54 OK, 2 MISS** (FM-102 F and N). FM-105 was added after F
+and held.
+
+| Run | Case | Predicted | Observed |
+|---|---|---|---|
+| FM-102 | F, Large Freighter with 1 of 2 engines, 2600 mg, warp 5 | moves 3 ly (factor 99999) | moved the whole **25 ly**, ended with 0 mg, warp 5 kept |
+| FM-102 | N, transport "unload all" fuel at own planet, 300 mg | ends with 0 (fuel lost) | **kept 300**; the task was cleared |
+
+- **FM-102 F / FM-105.** The 99999 factor does apply, but the range
+  estimate overflows: 99999 × 1000 × 134 in 32 bits wraps to 514964112,
+  giving 25748 mg per 1000 ly, so 2600 mg "reaches" 100 ly; the 25 ly
+  move then costs 16750 mg and the tank is emptied. With 200, 50 and
+  500 mg the fleet moved 7, 1 and 19 ly (the wrapped range), each ending
+  with 0 mg and its warp unchanged (FM-105 A–C, predicted before the run).
+  The game's designer does not seem to produce such a design; this matters
+  only for edited or crafted designs.
+- **FM-102 N.** A waypoint "unload all" of fuel at a planet moved nothing
+  and the fleet kept its fuel. KERNEL.md's "fuel unloaded onto a planet is
+  lost" does not hold for the waypoint task; a direct cargo order is not
+  tested.
+
+Held, with the numbers:
+
+- **IFE**: three QJ5 scouts at warp 4 over 16 ly paid 3 mg (plain factor:
+  4), and a 2 mg QJ5 scout at warp 6 went 17 ly (plain: 14). FM-101 A and
+  B could not tell IFE from plain (same rounded cost).
+- **Cheap Engines**: 2 of 40 fleets at warp 7 did not move (kept 300 mg
+  and their waypoint); 0 of 20 at warp 6.
+- **Warp 10**: 11 of 100 LH6 scouts were lost; the fleet's fuel was
+  exactly `30000 − trunc(30000·11/100)` minus the survivors' cost. In a
+  mixed fleet 5 of 50 LH6 scouts were lost and all 50 Trans-Star 10
+  scouts kept; 50 Trans-Star 10 scouts alone lost none.
+- **Ram scoops with two engines**: 2 × 6 × 16 = 192 at warp 4 and
+  2 × 10 × 4 = 80 at warp 2.
+- **Generators**: anti-matter generator +50 (moving or not, capped at the
+  tank), Super-Fuel Xport +200 per ship.
+- **Starbases**: refuelled at a friend's Space Dock and Space Station; not
+  at a friend's Orbital Fort, an enemy's Space Dock, or the player's own
+  Orbital Fort; the planet owner's relation toward the fleet's owner
+  decides (FM-103 D).
+- **Task gates**: a fleet laying mines at waypoint 0 did not move; one
+  whose "unload all" finished before movement moved on.
+- **Keeping warp**: a scout that could not afford its leg but kept 5 mg
+  kept warp 6.
+- **Equal factors**: cargo went to the stack listed first in design order
+  (14 mg one way round, 15 mg the other).
+- **Chasers of a stationary fleet** followed the ordinary fuel rules:
+  fuel-limited (ends 0, warp 1), ram scoop (+16) and top-up.
+- **Owner order**: player 0's chaser moved first (12 ly) though its fleet
+  number was higher, then player 1's met it.
+- **Negative directions** rounded half away from zero; RHRS colonist
+  losses 18 of 100 and 1 of 3 when moving, none when stationary.
+- **Two-year chains**: no carry-over after reaching a waypoint, a first
+  waypoint at the fleet's own position used up the year, one short
+  waypoint per year, a fleet that ran dry crawled 1 ly at warp 1 the next
+  year and gained 1 mg, and per-year rounding (2 mg each year for 25 ly).
