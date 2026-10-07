@@ -1,0 +1,27 @@
+# tk503: manual gifts to an enemy fleet (client orders) (experiments/tk/gen7.py)
+fleet first
+fleet next
+fleet other 0
+fleet cargo
+xfer ir 100
+xfer ok
+fleet next
+fleet other 0
+fleet cargo
+xfer fuel 50
+xfer ok
+fleet next
+fleet other 0
+fleet cargo
+xfer col 20
+xfer ok
+fleet next
+fleet other 0
+fleet cargo
+xfer ir 100
+xfer ok
+fleet next
+fleet other 0
+fleet cargo
+xfer ir 100
+xfer ok

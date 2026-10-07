@@ -40,6 +40,7 @@ GAMES = {
     'CB5P': dict(name='CB5P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB16P': dict(name='CB16P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'RD07': dict(name='RD07'),
+    'GT': dict(name='GT', size='medium'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal'),
 }
@@ -484,7 +485,10 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus in ('kx001', 'kx002', 'kx003', 'kx004'):
+    if corpus in ('cb7', 'tk3', 'sl', 'gt'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        __import__('build_obs').build(corpus, ev, out)
+    elif corpus in ('kx001', 'kx002', 'kx003', 'kx004'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         kx = __import__('build_kx')
         kx.build(corpus, ev, out) if corpus in ('kx001', 'kx002') else getattr(kx, 'build_' + corpus)(ev, out)

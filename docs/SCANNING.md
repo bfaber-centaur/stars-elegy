@@ -122,7 +122,8 @@ Every scanner has a **normal** range `R` and a **penetrating** range `P`
 - **Penetrating planetary scanners (CONFIRMED, SC-013).** A penetrating
   planetary scanner of range `S` has `R = S` and `P = trunc(S/2)`. Vector:
   320 / 160.
-- **No scanner (CONFIRMED by every SC run that removed one).** A planet
+- **No scanner (CONFIRMED, SC-035: every scanner removed, the bombers'
+  player saw a planet they orbited by position only).** A planet
   without a planetary scanner does not scan.
 - **NAS (CONFIRMED, SC-019).** The best non-penetrating planetary scanner is
   used, and its range doubles. No penetration.
@@ -252,6 +253,24 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
   colony with a starbase and at an unowned planet. So the starbase decides,
   not the homeworld. BINARY-ONLY: a battle plan that would not attack the
   owner (for example "nobody") gives only the orbit report.
+  **When it is decided (CONFIRMED, SC-035).** The test is made at the bombing
+  step, right after battles, against the state at that moment: the planet
+  is owned by another player (not unowned) and has no starbase, and the
+  viewer's fleet orbits it with a plan that attacks that owner. The report
+  itself is the ordinary end-of-year report, written from the planet as it
+  stands at the end of the year, provided the fleet is still in orbit. So
+  the two can differ when the planet changes between bombing and the end
+  of the year. The case that matters: bombing that kills the last colonists
+  leaves the planet unowned, and the viewer still gets a normal report of
+  it, where an end-of-year test would give the orbit report only.
+  SC-035 (two streams): two scannerless bombers killed
+  the 100 colonists of an enemy planet with no starbase. The planet ended
+  the year unowned, and the viewer got a normal report of it (environment
+  and the unowned state). Bombers orbiting a planet unowned from the start
+  got position only. A first setup, on a planet outside the colonists'
+  habitat, gave position only at both planets; that fits the rule if, as
+  inferred, the colonists died in population growth (`KERNEL.md` "Turn
+  order", step 4), before the bombing step.
 - **Remote miners (BINARY-ONLY).** A stationary fleet remote-mining an
   unowned planet that yields minerals gets a detailed report of it.
 - **Interstellar Traveler through gates, IT (CONFIRMED, OB-013).** From
@@ -368,7 +387,12 @@ fleet's or planet's ranges.
   already known, or `d² ≤ P²`, or `d² ≤ ⌊R²/16⌋` (OB-018 H, I; OB-017 A, B).
   BINARY-ONLY: the "already known" case covers the band between `R/4` and
   `R` without penetration. A wormhole is known once seen, and every player
-  forgets it when it jumps.
+  forgets it when it jumps. The penetrating branch is CONFIRMED for ends
+  that had just jumped and so were unknown (WT batch, O-44): 4 of 18 jumped ends were seen again that year by a newly received
+  M.T. ship, at 21, 27, 72 and 107 ly, within its penetrating range (about
+  33 ly for an M.T. Scout, 132 ly for a Lifeboat) and beyond `R/4`; an end
+  52 ly from an M.T. Scout, beyond both, was not seen. This matches the
+  binary reading above, which already includes `d² ≤ P²`.
 - **Mineral packets.** Seen within `R` (about 48 ly seen and 53 not with
   R 50; OB-018 J, K). A Packet Physics (PP) player sees every packet in the
   universe (OB-012).
@@ -435,6 +459,14 @@ fleet's or planet's ranges.
   SC-015, SC-015L).
 - A design is disclosed in full to every player whose forces fought it in
   a battle, even when every ship of it was destroyed (CONFIRMED, SC-031).
+  "Fought it" means took part in the same battle, whatever the sides
+  (CONFIRMED for allies, SC-036): each player in a battle gets, in full, the
+  design of every ship stack and starbase of every other player in that
+  battle's record, a friend on the same side included. Each other player
+  in the battle also becomes a known player. SC-036 (two streams, three
+  players, 0 and 1 friends, 2 an enemy of both, one
+  Destroyer each, no scanners): after the battle each player's file held
+  both other players' designs in full and a player block for each.
   BINARY-ONLY: also to the owner of an SD minefield it struck, and
   (starbases) to a PP player whose packet that starbase caught.
 - A planet report without its starbase (starbase cloak) reveals no
@@ -443,6 +475,8 @@ fleet's or planet's ranges.
 ### Players
 
 - Another known player is identified by name only (CONFIRMED, SC corpus).
+- Taking part in a battle makes every other player in it known, allies
+  included (CONFIRMED, SC-036; see Designs).
 - A **Claim Adjuster** viewer also receives each known player's
   habitability ranges, with every tech level shown as zero. With no contact
   it receives nothing about the other player (CONFIRMED, SC-016, SC-016N).
@@ -462,8 +496,10 @@ While knowledge is computed, a fleet whose waypoint is another fleet it
 can no longer see is retargeted: to the planet that fleet entered orbit at,
 or else to its last known position. The player gets a message saying the
 target was destroyed, entered orbit, or outran the scanners. A waypoint on
-a wormhole, minefield or the Mystery Trader that no longer exists is
-dropped with a message. A fleet patrolling (single waypoint, patrol task)
+a wormhole, minefield or the Mystery Trader that the player can no
+longer see is kept, pointing at the empty space where the object was, and
+the player is told (`MESSAGES.md` 0x0f8, 0x110, 0x111); one on a wormhole
+that no longer exists is dropped silently (0x0f8). A fleet patrolling (single waypoint, patrol task)
 picks the nearest visible enemy fleet it can attack within
 `(patrol warp + 1) × 50` ly, or at any distance for the "any" setting.
 
@@ -488,6 +524,8 @@ picks the nearest visible enemy fleet it can attack within
 9. Design disclosure after SD mine hits and PP packet catches.
 10. Three or more players, and scanners on moving fleets mid-year.
 11. Headings of chasers and of fleets travelling by stargate.
+12. Done: SC-035 (bombing check at the bombing step) and SC-036 (allies
+   in a battle) are CONFIRMED (PARITY "Round 7 (CB-048, CB-049) and scanning SC-035/SC-036").
 
 ## Notes for comparing with original-game files
 

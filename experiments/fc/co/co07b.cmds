@@ -1,0 +1,6 @@
+# CO-07b: delete the starbase design in use at the homeworld.
+design open
+design starbases
+design select 0
+design delete yes
+design done

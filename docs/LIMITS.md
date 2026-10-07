@@ -47,7 +47,7 @@ What happens at a limit is one of:
 
 | Limit | Value | At the limit | Tag | Where |
 |---|---|---|---|---|
-| Fleets per player | 512 | built ships join a fleet at the planet, or are lost | CONFIRMED (SL-08..SL-10) | the production-launch spec, "The 512-fleet limit" (open PR) |
+| Fleets per player | 512 | built ships join a fleet at the planet, or are lost | CONFIRMED (SL-08..SL-10) | `PRODUCTION-LAUNCH.md` "The 512-fleet limit" |
 | Fleets made by a split order | no check in the host; the client refuses a split at 512 | a crafted split past 512 would spill into the owner bits | BINARY-ONLY, serial-gated | |
 | Design stacks per fleet | 16 (one per design slot) | — | BINARY-ONLY | |
 | Ships per stack | 32,767 | the Merge-with-Fleet task has no cap and a total of 32,768 or more leaves no ships (LEGACY BUG); the merge order keeps 32,767 and turns more into 32,766 | CONFIRMED (task, FO-01..FO-07); order BINARY-ONLY | `ORDERS.md` "Merge" |
@@ -56,7 +56,7 @@ What happens at a limit is one of:
 | Movement chase rounds | 10 | — | CONFIRMED (FM-001..003) | `KERNEL.md` "Chasing another fleet" |
 | Waypoints per fleet | **UNKNOWN.** The host checks only that a new waypoint's index is at most the current count; its count is a byte | — | UNKNOWN | |
 | Waypoint task | 0–9 | a larger task is refused | BINARY-ONLY | |
-| Fleet name | the design name cut to 28 characters plus " #n" | client display | BINARY-ONLY | the production-launch spec, "Fleet names" (open PR) |
+| Fleet name | the design name cut to 28 characters plus " #n" | client display | BINARY-ONLY | `PRODUCTION-LAUNCH.md` "Fleet names" |
 
 ## Space objects
 
@@ -85,7 +85,7 @@ object table.
 | Count per item (host) | 1023 (the stored field) | — | BINARY-ONLY | |
 | New-colony default queue | 12 items | a longer template order is refused | BINARY-ONLY | |
 | Installations ordered | the planet's cap | clipped, message 0x12a | CONFIRMED (PQ-001 C10) | `KERNEL.md` "Caps" |
-| Starbase dock | not checked by the host (LEGACY BUG) | — | CONFIRMED (SL-12) | the production-launch and turn-order specs (open PRs) |
+| Starbase dock | not checked by the host (LEGACY BUG) | — | CONFIRMED (SL-12) | `PRODUCTION-LAUNCH.md`; the turn-order spec (open PR) |
 | Planetary scanner | one per planet | a second one is removed from the queue, message 0xb9 | BINARY-ONLY | |
 | Completion estimate | 99 years | the client shows "never" beyond | BINARY-ONLY | `ESTIMATES.md` |
 

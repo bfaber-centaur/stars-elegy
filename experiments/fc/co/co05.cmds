@@ -1,0 +1,5 @@
+# CO-05: Merge Fleets, damaged X (10 Freighters, 100 units on 50%) into healthy Y (10 Freighters).
+fleet first
+fleet next
+# on Y (fleet 2); Merge Fleets rows: 1 (X), 2 (Y)
+fleet merge 0 1

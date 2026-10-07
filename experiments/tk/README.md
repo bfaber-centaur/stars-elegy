@@ -1577,3 +1577,95 @@ Every planet outcome and every drop message held (TK-401..404, TK-410..411).
 TK-405 and TK-412 put the ironium on the surface but sent no 0x042/0x044:
 a gift to a planet is silent. Raw files, order files and screenshots are in
 apparatus `evidence/tk5/`.
+
+## Round 6 predictions: bombing message variants
+
+`gen6.py` writes `tk601.spec` (one pinned year, cycles 20000, Combat Lab
+base). It aims at bombing texts that `docs/MESSAGES.md` still lists as
+BINARY-ONLY. Which text is sent depends on the installations killed (T),
+the colonists killed (K), whether defenses reduced the bombs, and whether
+the attacker has a second fleet at the planet (plural texts). Player 1 has
+energy 16 (Planetary Shield). `python3 experiments/tk/check6.py RUNDIR`
+reads `RUNDIR/tk601/run-20000/`.
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-601 | one LBU-17 bomber at player 1 planet 13: P 500, one factory, nothing else | planet 13: owner 1, factories 0; 0x063 to player 0 (fleet, planet, colonists killed 1 or 2, 1 installation); 0x06d to player 1 |
+| TK-602 | as TK-601 at player 1 planet 2, plus a player 0 Freighter (plan Nobody) in orbit | planet 2: owner 1, factories 0; 0x169 to player 0; 0x173 to player 1 |
+| TK-603 | one LBU-17 bomber at player 1 planet 14: P 1500, defenses 100, factories 10, mines 10 (69 defenses count after growth, s 0.122) | planet 14: owner 1, pop 1725; 0x067 to player 0 (fleet, planet, 9 installations, defenses stopped a share); no colonists killed; 0x071 to player 1 |
+| TK-604 | as TK-603 at player 1 planet 3, plus a player 0 Freighter (plan Nobody) | planet 3: owner 1, pop 1725; 0x16d to player 0; 0x177 to player 1 |
+| TK-605 | one LBU-17 bomber and a Freighter at player 1 planet 16: P 500, one defense, nothing else | planet 16: owner 1, defenses 0; 0x16e to player 0 (colonists killed, 1 installation, defenses stopped a share); 0x178 to player 1 |
+| TK-606 | three Retro1 bombers and a Freighter at player 1 planet 9: P 87, environment 55/47/52, original 50/50/50 | planet 9: owner 1, env [52, 50, 50]; 0x17a to player 0 (fleet, planet, clicks); no damage message; 0x17b to player 1 |
+
+Predicted never sent (reading, not a run): the texts for "installations
+killed, no colonists killed, no defenses" (0x061, 0x062, owner 0x06b,
+0x06c, plural 0x167, 0x168, 0x171, 0x172) and for "one installation, no
+colonists, defenses" (0x066, 0x070, 0x16c, 0x176). Without defenses any
+bomb that kills installations also has a colonist kill rate, and a
+non-zero rate kills at least one colonist. With defenses the rate can
+round to zero (TK-603), but the installation kill then stays at 2 or
+more (at least 8 for an LBU-17, 2 to 3 for a Multi Contained Munition
+behind 100 Neutron Shields); the bombs that kill 2 installations
+(Lady Finger, Hush-a-Boom) keep a colonist kill unless coverage reaches
+99.8% or 98.3%, and 100 Neutron Shields give 97.9%.
+
+## Round 6 results
+
+All six cases held (`check6.py`: every planet check OK and all twelve
+messages seen, cycles 20000). TK-601: one factory killed and one colonist
+unit (0x063 slots: fleet, planet, 1 colonist unit, 1 installation).
+TK-603/604: 9 installations (1 factory, 7 defenses, 1 mine), population
+untouched at 1725, percent slot 8777 (87.77% stopped, `1 − 0.97^69`).
+TK-605: percent slot 299. TK-606: 8 clicks (3 + 3 + 2). Raw files are in
+apparatus `evidence/tk6/`.
+
+## Round 7 predictions: gifts to another player's fleet
+
+`gen7.py` writes `tk503`/`tk504` specs and client command files (same
+shape as round 5; the client gives each gift through the fleet panel's
+"Other Fleets Here" Cargo button). Predictions are the revised ones in
+`manual-transfers.md`, committed before the runs.
+`python3 experiments/tk/check7.py RUNDIR` reads `RUNDIR/<name>/y2/`.
+
+### TK503: manual gifts to an enemy fleet (client orders)
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-406 | giver offers 100 ironium to a player 1 Freighter holding 160 kT (50 free) | fleet 1/0: fe 210; credited at order time: receiver full at 210; no 0x046/0x048 (the client may cap the order at 50; 0x0dd to player 0 if 100 reached the host) |
+| TK-407 | giver offers 100 ironium to a full player 1 Freighter (210 kT) | fleet 1/1: fe 210; nothing received; no 0x04a/0x04c (the client may refuse the order) |
+| TK-408 | giver gives 20 colonists to an empty player 1 Freighter | fleet 1/2: col 20; fleet 0/3: col 0; received in full at order time; no message to either player |
+| TK-409 | giver gives 50 mg of fuel to a player 1 Freighter with 100 mg | fleet 1/3: fuel 150; fleet 0/4: fuel 150; received at order time; no message |
+| TK-413 | at player 1 planet 2 (P 87, no starbase, surface 0): giver gives 100 ironium to a player 1 Freighter whose waypoint-0 task is unload all | fleet 1/4: fe 0; planet 2: owner 1, surface [100, 0, 0]; the receiver unloads the gift before movement the same year: 0x02d to player 1 (a queued gift would arrive after the unload and stay in the hold) |
+
+### TK504: manual gifts to a friend's fleet (client orders)
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-414 | players 0 and 1 are friends; giver gives 20 colonists to an empty player 1 Freighter | fleet 1/0: col 20; as TK-408 |
+
+
+## Round 7 results
+
+Run 2026-10-07 (cycles 20000, `check7.py`); raw files, order files and
+screenshots in apparatus `evidence/tk7/`.
+
+- The client wrote a cargo record to the other player's fleet for
+  ironium and fuel, and did **not** cap the amount: the Cargo Transfer
+  dialog shows a foreign fleet's fuel and hold as 0, so 100 ironium went
+  out for TK-406 and TK-407.
+- TK-406: the receiver ended at 210 kT (50 received), the giver ended
+  empty (all 100 gone), and player 0 got 0x0dd (fleet, shortfall 50,
+  ironium, request 100). No 0x046/0x048. As revised.
+- TK-407: nothing received, the giver lost 100, 0x0dd (shortfall 100,
+  request 100). No 0x04a/0x04c. As revised.
+- TK-409: 50 mg of fuel moved, giver 150, receiver 150, no message. As
+  revised.
+- TK-408 and TK-414: the client did not move colonists to another
+  player's fleet (the arrow click left 20 colonists on the giver's side)
+  and wrote no record, enemy or friend. Not predicted: a legal client
+  cannot give colonists to another player's fleet.
+- TK-413 is void: the receiver's transport task was cleared at the end of
+  year 1 (nothing to unload, 0x04e), so year 2 had no unload to carry the
+  gift. The gift stayed in the receiver's hold. Timing within the year is
+  instead shown by the 0x0dd shortfall notices, which the order replay
+  sends; a queued gift would have sent 0x046 or 0x04a.
