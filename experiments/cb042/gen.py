@@ -101,6 +101,16 @@ specs["cb046-morph"] = base46 + [
     f"design 1 0 {MORPH} = Morph",
     f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:80 plan 1 fuel 280",
     f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:3 plan 1 fuel 400"]
+# CB-048 (round 7, MT-A): 30 one-ship Morph fleets, so every kill is its own
+# kill event; the control puts all 30 Morphs in one fleet.
+specs["cb048"] = base46 + [
+    f"design 1 0 {MORPH} = Morph",
+    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:80 plan 1 fuel 280"] + [
+    f"fleet 1 {i} at {DEEP[0]} {DEEP[1]} ships 0:1 plan 1 fuel 400" for i in range(30)]
+specs["cb048-ctl"] = base46 + [
+    f"design 1 0 {MORPH} = Morph",
+    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:80 plan 1 fuel 280",
+    f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:30 plan 1 fuel 400"]
 
 # CB-047: queued ships lost with a starbase. Player 1's homeworld queues 50
 # Laser Destroyers, then 20 factories (planetary item 7). Player 0's Phaser
