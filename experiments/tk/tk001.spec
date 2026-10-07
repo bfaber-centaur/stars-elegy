@@ -91,17 +91,17 @@ fleet 0 14 planet 16 at 1284 1383 ships 0:5 plan 3 fuel 200
 planet 22 owner 1 pop 800 starbase none
 planetset 22 env=50,50,50 excess=0 scanner=31
 fleet 0 15 planet 22 at 1368 1292 ships 0:5 plan 4 fuel 200
-# T-20 5+5 Cherry, first fleet attacks, second nobody, P=800
+# T-20 6+4 Cherry, first fleet attacks, second nobody, P=800
 planet 18 owner 1 pop 800 starbase none
 planetset 18 env=50,50,50 excess=0 scanner=31
 fleet 0 16 planet 18 at 1324 1192 ships 0:3 plan 0 fuel 200
 fleet 0 17 planet 18 at 1324 1192 ships 0:2 plan 1 fuel 200
-# T-20 5+5 Cherry, first fleet nobody, second attacks, P=800
+# T-20 6+4 Cherry, first fleet nobody, second attacks, P=800
 planet 19 owner 1 pop 800 starbase none
 planetset 19 env=50,50,50 excess=0 scanner=31
 fleet 0 18 planet 19 at 1342 1123 ships 0:3 plan 1 fuel 200
 fleet 0 19 planet 19 at 1342 1123 ships 0:2 plan 0 fuel 200
-# T-20 5+5 Cherry, both attack, P=800
+# T-20 6+4 Cherry, both attack, P=800
 planet 20 owner 1 pop 800 starbase none
 planetset 20 env=50,50,50 excess=0 scanner=31
 fleet 0 20 planet 20 at 1348 1290 ships 0:3 plan 0 fuel 200

@@ -51,8 +51,8 @@ cases).
 | 16 | T-19: plan "player 1 only" | 800 → 920 | **690** | 920 |
 | 22 | T-19: plan "everyone" | 800 → 920 | **690** | 920 |
 | 18 | T-20: 3+2 ships (6+4 Cherry), first fleet attacks, second "nobody" | 800 → 920 | **690** (one pass, 25%) | 704 (two passes) |
-| 19 | T-20: same, first fleet "nobody", second attacks | 800 → 920 | **805** (the earlier non-attacking fleet is left out: 12.5%; medium confidence) | 690 |
-| 20 | T-20: same, both attack | 800 → 920 | **690** | 704 |
+| 19 | T-20: same, first fleet "nobody", second attacks | 800 → 920 | **828** (the earlier non-attacking fleet is left out: only the second fleet's 4 Cherry, 10%; medium confidence) | 690 |
+| 20 | T-20: same, both attack | 800 → 920 | **690** | 714 |
 | 23 | T-13: 10 Smart + 10 Cherry | 801 → 921 | **606** (smart first, then 25% of the rest) | 607 normal first |
 
 Starbases, ground combat, colonization (TK-002; enemies, SDI).
