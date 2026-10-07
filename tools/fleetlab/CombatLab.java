@@ -39,11 +39,12 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
-//         [task TASK] [to X Y [planet N] warp W [task TASK]]...
+//         [task TASK] [to X Y [planet N|thing ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
-//                                   unload (all colonists) | transport A:V,A:V,A:V,A:V,A:V
+//                                   unload (all colonists) | lay [YEARS] (lay mines; YEARS
+//                                   word, default 5 = indefinitely) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
 //                                   kT or 100s of colonists; "-" for no order)
 //   planetset N KEY=V...            planet N's fields after any "planet" line: mines=
@@ -51,6 +52,18 @@ import org.starsautohost.starsapi.items.Items;
 //                                   surface values; owned planets) scanner=ID (planetary
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
+//   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
+//   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved]
+//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
+//   thing trader NUM X Y DX DY WARP [met MASK] [item I]
+//   thing raw HEX                   (18 bytes)
+//                                   universe objects (objects corpus), written as the
+//                                   host file's object blocks: a count block, then one
+//                                   18-byte record per object sorted by id (type << 13 |
+//                                   owner << 9 | number), before the battle plans. Replaces
+//                                   every object already in BASE. Layout: docs/ORACLE.md
+//                                   "Universe objects". PARTNER is the other wormhole's
+//                                   NUM; DEST a planet number; MASKs are player bit masks.
 //   planet N [owner P] [pop X] [starbase D|none] [scanner none|on]
 //                                   make planet N player P's (installations copied from
 //                                   P's homeworld, none built), set its population (in
@@ -181,6 +194,8 @@ public class CombatLab {
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.ironium, p.boranium, p.germanium, p.population);
                 if (host || p.owner >= 0) printPlanetDetail(f, p);
+            } else if (b.typeId == BlockType.OBJECT) {
+                System.out.printf("%s %s%n", f, thingString(b.getDecryptedData(), b.size));
             } else if (b.typeId == BlockType.PLANETS) {
                 PlanetsBlock p = (PlanetsBlock) b;
                 int x = 1000;
@@ -281,6 +296,11 @@ public class CombatLab {
             case "scrap": return 5;
             case "mine": return 3;
             case "unload": ord[3] = 2 << 12; return 1;
+            case "lay": {
+                // lay mines: one word, the years counter (5 = indefinitely)
+                ord[0] = t.length > i + 1 && t[i + 1].matches("\\d+") ? Integer.parseInt(t[i + 1]) : 5;
+                return 6;
+            }
             case "transport": {
                 String[] w = t[i + 1].split(",");
                 if (w.length != 5) throw new Exception("transport needs 5 A:V entries");
@@ -358,6 +378,7 @@ public class CombatLab {
         List<FleetSpec> fleets = new ArrayList<>();
         Map<Integer, int[]> planetSpecs = new HashMap<>(); // N -> {owner, pop, starbase, scanner}; -2 = keep, -1 = none
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
+        TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -406,6 +427,12 @@ public class CombatLab {
                         break;
                     }
                     case "fleet": fleets.add(parseFleet(t)); break;
+                    case "thing": {
+                        byte[] r = parseThing(t);
+                        int id = u16(r, 0);
+                        if (things.put(id, r) != null) throw new Exception("duplicate thing id " + id);
+                        break;
+                    }
                     case "planetset": {
                         Map<String, String> kv = planetSets.computeIfAbsent(Integer.parseInt(t[1]), k -> new LinkedHashMap<>());
                         for (int i = 2; i < t.length; i++) {
@@ -533,6 +560,9 @@ public class CombatLab {
                 if (wb.waypointTask == 1) {
                     // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
                     for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
+                } else if (wb.waypointTask == 6) {
+                    int o = fs.orders.get(w)[0];
+                    wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
                 }
                 wb.encode();
                 newFleets.add(wb);
@@ -575,7 +605,7 @@ public class CombatLab {
 
         // Pass 2: rebuild the block list.
         List<Block> result = new ArrayList<>();
-        boolean shipDone = false, fleetsDone = false, sbDone = false;
+        boolean shipDone = false, fleetsDone = false, sbDone = false, thingsDone = false;
         for (Block b : blocks) {
             if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
@@ -590,6 +620,21 @@ public class CombatLab {
                 continue;
             }
             if (b instanceof PartialFleetBlock || b instanceof WaypointBlock) continue;
+            if (b.typeId == BlockType.OBJECT && !things.isEmpty()) continue;
+            if (!things.isEmpty() && !thingsDone && (b instanceof BattlePlanBlock || b.typeId == BlockType.FILE_FOOTER)) {
+                if (!fleetsDone) { result.addAll(newFleets); fleetsDone = true; }
+                ObjectBlock cb = new ObjectBlock();
+                byte[] c = new byte[2];
+                Util.write16(c, 0, things.size());
+                cb.setDecryptedData(c, 2);
+                result.add(cb);
+                for (byte[] r : things.values()) {
+                    ObjectBlock ob = new ObjectBlock();
+                    ob.setDecryptedData(Arrays.copyOf(r, 18), 18);
+                    result.add(ob);
+                }
+                thingsDone = true;
+            }
             if (b instanceof PartialPlanetBlock && planetSpecs.containsKey(((PartialPlanetBlock) b).planetNumber)) {
                 PartialPlanetBlock pl = (PartialPlanetBlock) b;
                 int[] ps = planetSpecs.remove(pl.planetNumber);
@@ -716,6 +761,114 @@ public class CombatLab {
         pl.decode();
     }
 
+    // One 18-byte universe-object record (docs/ORACLE.md "Universe objects").
+    static byte[] parseThing(String[] t) throws Exception {
+        byte[] r = new byte[18];
+        String kind = t[1];
+        if (kind.equals("raw")) {
+            if (t[2].length() != 36) throw new Exception("thing raw needs 36 hex digits");
+            for (int i = 0; i < 18; i++) r[i] = (byte) Integer.parseInt(t[2].substring(2 * i, 2 * i + 2), 16);
+            return r;
+        }
+        int i;
+        switch (kind) {
+            case "minefield": {
+                int owner = Integer.parseInt(t[2]), num = Integer.parseInt(t[3]);
+                Util.write16(r, 0, owner << 9 | num);
+                Util.write16(r, 2, Integer.parseInt(t[4]));
+                Util.write16(r, 4, Integer.parseInt(t[5]));
+                Util.write32(r, 6, Long.parseLong(t[6]));
+                for (i = 7; i < t.length; i++) {
+                    switch (t[i]) {
+                        case "kind": r[12] = (byte) Arrays.asList("std", "heavy", "bump").indexOf(t[++i]); if (r[12] < 0) throw new Exception("kind std|heavy|bump"); break;
+                        case "det": r[13] = 1; break;
+                        case "known": Util.write16(r, 10, Integer.decode(t[++i])); break;
+                        case "seen": Util.write16(r, 14, Integer.decode(t[++i])); break;
+                        default: throw new Exception("minefield: unknown token " + t[i]);
+                    }
+                }
+                return r;
+            }
+            case "packet": {
+                int owner = Integer.parseInt(t[2]), num = Integer.parseInt(t[3]);
+                int dest = Integer.parseInt(t[6]), warp = Integer.parseInt(t[7]);
+                long ir = Long.parseLong(t[8]), bo = Long.parseLong(t[9]), ge = Long.parseLong(t[10]);
+                int cls = 0, moved = 0;
+                for (i = 11; i < t.length; i++) {
+                    switch (t[i]) {
+                        case "class": cls = Integer.parseInt(t[++i]); break;
+                        case "moved": moved = 1; break;
+                        default: throw new Exception("packet: unknown token " + t[i]);
+                    }
+                }
+                Util.write16(r, 0, 1 << 13 | owner << 9 | num);
+                Util.write16(r, 2, Integer.parseInt(t[4]));
+                Util.write16(r, 4, Integer.parseInt(t[5]));
+                Util.write16(r, 6, (dest & 0x3ff) | ((warp - 4) & 15) << 10 | moved << 14);
+                Util.write16(r, 8, (int) ir); Util.write16(r, 10, (int) bo); Util.write16(r, 12, (int) ge);
+                Util.write16(r, 14, (int) (((ir + bo + ge + 9) / 10) & 0x3fff) | cls << 14);
+                return r;
+            }
+            case "wormhole": {
+                int num = Integer.parseInt(t[2]);
+                int years = 0;
+                Util.write16(r, 0, 2 << 13 | num);
+                Util.write16(r, 2, Integer.parseInt(t[3]));
+                Util.write16(r, 4, Integer.parseInt(t[4]));
+                Util.write16(r, 12, 2 << 13 | Integer.parseInt(t[5]));
+                int cls = Integer.parseInt(t[6]);
+                for (i = 7; i < t.length; i++) {
+                    switch (t[i]) {
+                        case "years": years = Integer.parseInt(t[++i]); break;
+                        case "seen": Util.write16(r, 8, Integer.decode(t[++i])); break;
+                        case "seen2": Util.write16(r, 10, Integer.decode(t[++i])); break;
+                        default: throw new Exception("wormhole: unknown token " + t[i]);
+                    }
+                }
+                Util.write16(r, 6, (cls & 3) | (years & 0x3ff) << 2);
+                return r;
+            }
+            case "trader": {
+                int num = Integer.parseInt(t[2]);
+                Util.write16(r, 0, 3 << 13 | num);
+                for (int k = 0; k < 4; k++) Util.write16(r, 2 + 2 * k, Integer.parseInt(t[3 + k]));
+                Util.write16(r, 10, Integer.parseInt(t[7]) & 15);
+                for (i = 8; i < t.length; i++) {
+                    switch (t[i]) {
+                        case "met": Util.write16(r, 12, Integer.decode(t[++i])); break;
+                        case "item": Util.write16(r, 14, Integer.decode(t[++i])); break;
+                        default: throw new Exception("trader: unknown token " + t[i]);
+                    }
+                }
+                return r;
+            }
+            default: throw new Exception("thing: unknown kind " + kind);
+        }
+    }
+
+    // Dump line for one object block (count or 18-byte record).
+    static String thingString(byte[] d, int size) {
+        if (size == 2) return "things count=" + u16(d, 0);
+        StringBuilder h = new StringBuilder();
+        for (int i = 0; i < size; i++) h.append(String.format("%02x", d[i]));
+        int id = u16(d, 0), type = id >> 13, owner = (id >> 9) & 15, num = id & 0x1ff;
+        String head = String.format("thing id=%d type=%s owner=%d num=%d x=%d y=%d", id,
+            new String[]{"minefield", "packet", "wormhole", "trader"}[type], owner, num, u16(d, 2), u16(d, 4));
+        String body;
+        switch (type) {
+            case 0: body = String.format(" count=%d known=%04x kind=%d det=%d seen=%04x w10=%04x",
+                Util.read32(d, 6), u16(d, 10), d[12] & 0xff, d[13] & 0xff, u16(d, 14), u16(d, 16)); break;
+            case 1: body = String.format(" dest=%d warp=%d moved=%d bit15=%d cargo=%d/%d/%d total10=%d class=%d w16=%04x",
+                u16(d, 6) & 0x3ff, ((u16(d, 6) >> 10) & 15) + 4, (u16(d, 6) >> 14) & 1, u16(d, 6) >> 15,
+                u16(d, 8), u16(d, 10), u16(d, 12), u16(d, 14) & 0x3fff, u16(d, 14) >> 14, u16(d, 16)); break;
+            case 2: body = String.format(" class=%d years=%d seen=%04x seen2=%04x partner=%d w14=%04x w16=%04x",
+                u16(d, 6) & 3, (u16(d, 6) >> 2) & 0x3ff, u16(d, 8), u16(d, 10), u16(d, 12) & 0x1ff, u16(d, 14), u16(d, 16)); break;
+            default: body = String.format(" dest=%d,%d warp=%d w10=%04x met=%04x item=%04x w16=%04x",
+                u16(d, 6), u16(d, 8), u16(d, 10) & 15, u16(d, 10), u16(d, 12), u16(d, 14), u16(d, 16)); break;
+        }
+        return head + body + " raw=" + h;
+    }
+
     static FleetSpec parseFleet(String[] t) throws Exception {
         FleetSpec fs = new FleetSpec();
         fs.owner = Integer.parseInt(t[1]);
@@ -748,7 +901,7 @@ public class CombatLab {
                     int w = fs.wps.size();
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
-                    i += t[i + 1].equals("transport") ? 3 : 2;
+                    i += t[i + 1].equals("transport") || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
                 }
                 case "to": {
@@ -757,7 +910,8 @@ public class CombatLab {
                     i += 3;
                     int obj = 0, type = 0x14;
                     if (t[i].equals("planet")) { obj = Integer.parseInt(t[i + 1]); type = 0x11; i += 2; }
-                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N] warp W");
+                    else if (t[i].equals("thing")) { obj = Integer.decode(t[i + 1]); type = 0x18; i += 2; }
+                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID] warp W");
                     fs.wps.add(new int[]{x, y, obj, type, Integer.parseInt(t[i + 1])});
                     i += 2;
                     break;
