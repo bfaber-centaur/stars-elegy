@@ -4524,13 +4524,15 @@ the capture keeps them. Each player-year is compared with the prediction.
   - With one planet left free, the first fleet went to colonize it, and the
     other two were scrapped. A planet one colonizer takes is not offered to
     the next in the same year.
-- **MEASURED: a computer player plans from its own player file.**
-  - Changing planet owners only in the host file, or only in the player's
-    history file, left its orders unchanged. The first setups therefore did
-    not test AI-4: the colonizers flew to the newly owned planets and came
-    back.
-  - The owners as recorded in its own player file decide which planets count
-    as targets. That file reflects the previous year's turn.
+- **MEASURED: a computer player plans from its own view, not the host file.**
+  - Changing planet owners only in the host file left its orders unchanged.
+    The first setups therefore did not test AI-4: the colonizers flew to the
+    newly owned planets and came back.
+  - Owner records added to its player file changed the orders as predicted.
+  - Owner records added only to its history file left the orders unchanged.
+    Those records named a player that the history file has no record of. The
+    decomp lane's reading is that the history file is part of the view. So
+    this run does not show that the history file is ignored.
 - **CONFIRMED: computer planets trade with a waiting Mystery Trader (O-53).**
   - Setup: four computer planets near the Trader's end point, each with a
     starbase, one at each of Standard, Harder and Expert (two Expert).
