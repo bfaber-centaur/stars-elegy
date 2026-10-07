@@ -40,36 +40,344 @@ Each rule says what that scope was.
   the oracle corpus are therefore correlated, not independent samples.
   Tests of random rules should inject the generator.
 
-## Turn order (BINARY-ONLY except where noted)
+## Turn order
 
-One year, in order:
+This is the authoritative, ordered list of everything the host does when it
+generates one year. The list comes from reading the original's generation
+routine from start to end (private `stars-decomp`, `turn.md`). Each step
+names the specification that owns its rules, or says **uncovered** if no
+public specification owns it yet.
 
-1. Players' orders are applied, one player at a time in a random order.
-   How the host ingests and validates each player's order file before this
-   step (file acceptance, per-order validation, ownership, cross-owner
-   cargo, conflict resolution) is specified in `ORDERS.md`.
-2. Waypoint tasks that act before movement (unload, scrap, colonist drops,
-   load).
-3. Mineral packets, wormholes and other space objects move; then fleets
-   move (see Movement).
-4. Production, in this order inside the phase: mining for every planet,
-   then per planet resources, research tax and production queue, then
-   population growth for every planet, then research level-ups, then
-   random events.
-   CONFIRMED (PG-001..003, PQ-001): mining and resources use the population
-   **before** this year's growth; installation caps for auto items use
-   population **after** growth (see Production); research uses this year's
-   resources.
-5. Space objects move again; fleets refuel.
-6. Battles (`COMBAT.md`); then waypoint tasks that act after movement:
-   unload (including remote mining), colonist drops, a **second research
-   level-up check**, then load. The second check raises every field whose
-   accumulated research now covers its next level. Research gained from a
-   battle therefore becomes a level in the same year (CONFIRMED, CB-018,
-   CB-021); the step-4 level-ups have already run by then.
-7. Mine sweeping, ship repair, automatic and remote terraforming.
-8. The year advances; scores and victory conditions are computed (see
-   Scores and victory conditions); files are written.
+Two tags appear on each step. The step's own rules carry their usual tags
+in the owning specification. The **Order** tag says how well the step's
+**place in the sequence** is known:
+
+- **CONFIRMED** means an oracle run separated this step from its
+  neighbour and matched this order (the run is named).
+- **BINARY-ONLY** means the order was read from the program and no run has
+  yet distinguished it.
+
+Top-level step numbers 1–8 and the letter sub-steps are the phase labels
+`MESSAGES.md` uses (P1, P1a, …). Numbered items inside a step run in the
+order shown. "Fleet order" means by owner, then by fleet number
+(`TAKEOVER.md`, "Order inside a phase").
+
+### 1. Orders
+
+1. The game is loaded. The random generator is reseeded only in tutorial
+   mode, so generation otherwise continues the stream it was started with.
+2. **Player order.** The players are shuffled. For each position `i` from
+   the first to the last, the host draws `Random(n − i)` (`n` players) and
+   swaps position `i` with position `i +` the draw. That is one draw per
+   player, the last of them always 0, and they are the first draws of the
+   year. CONFIRMED as two draws before mining for two players (KX-004,
+   KB-1C, KB-3A: every replay matched only with these two draws first).
+   The permutation itself is BINARY-ONLY. With orders a client can save,
+   it has no observable effect: each player's orders edit only that
+   player's own objects, and every effect on another player's object
+   (cargo gifts, drops, fleet transfers) is queued to a fixed later step.
+   Only crafted order files that act on another player's object could
+   show it (`ORDERS.md`, "Conflicts between players").
+3. Each player's order file, in that order, is accepted or skipped,
+   validated and applied: direct cargo moves, transfers, merges, splits,
+   waypoint and production changes, research settings. Owner: `ORDERS.md`
+   (file acceptance, per-order validation, conflicts, fleet operations).
+   Order CONFIRMED (FO-01..07): direct cargo, transfer, merge and split
+   orders take effect before any movement.
+
+**1a. Checks after the orders** (Order BINARY-ONLY)
+
+1. **Registration check.** Players with an invalid or duplicated serial
+   are flagged, and the penalty notices are sent. Owner: `ORDERS.md`
+   "Registered-copy gate", this file's "Duplicate-serial penalty",
+   `MESSAGES.md` 0x100–0x103. Elegy has no registration scheme, so this
+   step does nothing in Elegy.
+2. Ship-design housekeeping: starbase designs are marked as starbases.
+   Uncovered. No observable effect is known.
+3. **Following fleets.** A fleet whose only waypoint (waypoint 0) is
+   aimed at another fleet follows it. If the leader has a next waypoint,
+   or is itself a follower, the follower gets a copy of the leader's
+   waypoint 1, carrying its own waypoint-0 task onto it. Up to 8 passes
+   resolve chains of followers. A follower whose leader no longer exists
+   gets message 0x138 (`MESSAGES.md`, CONFIRMED fo/fo04) and stops
+   following. The copying rule is BINARY-ONLY. This is separate from
+   chasing, where waypoint 1 is aimed at a fleet (this file's "Chasing
+   another fleet"). Then the **waypoint check**
+   runs: coordinates are clamped to the galaxy and waypoints aimed at a
+   fleet or object are moved to its current position (`ORDERS.md`
+   "Waypoint upkeep"). Every fleet's "fought this year, no repair" mark is
+   cleared before this (`COMBAT.md` "Repair").
+
+### 2. Waypoint tasks before movement
+
+Owner: `TAKEOVER.md` "Where each task happens in the year"; route and
+transfer-fleet tasks in `ORDERS.md` "Waypoint upkeep and the remaining
+tasks"; cross-owner cargo in `ORDERS.md`.
+
+1. Every planet records whether it is owned (`TAKEOVER.md`, "At the start
+   of this phase").
+2. Unload tasks: each fleet in fleet order runs its waypoint-0 task:
+   unload (including colonist drops on other players' planets), scrap,
+   colonize or route.
+3. All queued colonist drops are resolved (ground combat, new colonies).
+4. Research level-up check (see Research). The year has three such
+   checks: here, in step 4b and in step 6c.
+5. Load tasks: each fleet in fleet order runs load, merge or route.
+6. Cargo given to other players moves.
+
+Order CONFIRMED (TK-001..003): these tasks act before movement and before
+growth. A transport already in orbit invades, and a colony ship already in
+orbit colonizes, before the year's growth (T-5, T-1).
+
+**2a. Race check.** Each player's race is clamped and checked for
+legality, with the penalty for a human race. Owner: `RACES.md` "In a
+running game". Order BINARY-ONLY: in the program this runs **after** step
+2 and before any movement, so the degraded race already applies to
+that year's production. MEASURED (SL-12 and OT-6, whose test races were
+not legal): colonists per resource had been raised before the year's
+resources were computed. `MESSAGES.md` labels messages 0x117/0x182 for
+this step.
+
+### 3. Movement
+
+1. Every minefield forgets which players saw it this year (`OBJECTS.md`
+   "Visibility").
+2. **Objects move.** The Mystery Trader moves, and every packet already in
+   flight moves and, if it arrives, hits its target (`OBJECTS.md`). If any
+   object moved, the **waypoint check** runs again, so waypoints aimed at
+   the Trader or a wormhole move to its new position before any fleet
+   moves. Order CONFIRMED: Trader before fleets with the waypoint refresh
+   (WT-001 F1, WT-005); packet impacts before growth (OB-009).
+3. **Fleets move**, in fleet order, ordinary fleets first: the movement
+   gates (a waypoint-0 transport or lay-mines task holds the fleet; the
+   registration penalty; engine failure), stargate jumps, travel with
+   minefield hits on the way, and wormhole transit on arrival. Owners: this
+   file's "Fleet movement"; `OBJECTS.md` (minefield hits, stargates,
+   wormholes).
+4. **Chasing fleets** move after every ordinary fleet, over passes 1–10.
+   Owner: this file's "Chasing another fleet". Order CONFIRMED (FM-003,
+   MF-02, the chain freeze).
+5. Reached waypoints are consumed or rotated (`ORDERS.md` "Reaching a
+   waypoint").
+6. Every planet's homeworld mark is cleared, then set on each player's
+   homeworld. This mark feeds the homeworld floor in Mining. Which
+   planet keeps the mark after its owner changes is covered in
+   `TAKEOVER.md`.
+
+Order CONFIRMED (MF-4): a minefield stop's mine loss is taken during this
+step from the field's count at that moment, before step 3a's decay.
+
+**3a. Decay and detonation** (`OBJECTS.md` "Turn placement" step 5).
+Salvage decays, packets decay, detonating minefields go off, and then
+every minefield decays. Order CONFIRMED: decay comes before this year's
+laying (OB-002-F); a detonating field decays with the extra 25% in the same
+year (OB-002-M, MF-7, MF-8).
+
+**3b. Colonists breeding in transit** (Inner Strength; this file's
+"Inner Strength colonists breed in transit"). Order CONFIRMED (OT-5): the
+overflow lands on the planet before production and growth, and the planet
+grows on it the same year.
+
+### 4. Production
+
+Owner: this file's "Mining", "Resources and installation caps",
+"Research" and "Production".
+
+1. Mining on every planet.
+2. Per planet, in planet order: resources (including resources from ships
+   scrapped there this year, and the duplicate-serial ×4/5), the research
+   tax, then the production queue. Ships completed here become new fleets
+   (`PRODUCTION-LAUNCH.md`). Packets launched here start their flight
+   (`OBJECTS.md` "Launch"). Terraforming items follow this file's
+   "Terraforming".
+
+Order CONFIRMED (PG-001..003, PQ-001): mining and resources use the
+population **before** this year's growth. Installation caps for automatic
+items use population **after** growth (see Production). Production uses
+the tech levels from **before** this year's research (KX-005).
+
+**4a. Population growth** on every planet (this file's "Population
+growth"). Order CONFIRMED (TK-001..003, OB-009, PG): growth comes after
+the pre-movement tasks, packet impacts and mining.
+
+**4b. Research level-ups** (this file's "Research": the check that
+spends this year's research). Order CONFIRMED
+(KX-005): production used the old tech levels, and the terraforming in
+step 7 used the new ones.
+
+**4c. Random events**, when the option is on: comet strike, climate
+change, new minerals, then the Mystery Trader's appearance (this file's
+"Random events"; `OBJECTS.md` "Spawn and movement"). Order CONFIRMED
+(KX-004): the events run after growth (protection and comet losses use
+the after-growth population) and in this internal order.
+
+### 5. Objects move again; fleets refuel
+
+1. Packets launched this year fly half a year and may hit. Wormholes
+   jiggle or jump. The Trader does not move. If any object moved, the
+   waypoint check runs again (`OBJECTS.md`). Order CONFIRMED: wormholes
+   move after fleets, so a fleet transits to the exit's position from
+   before this step (OB-005-C). A packet launched this year can hit
+   before battles and bombing: CONFIRMED (OT-3, a packet emptied the
+   planet and the bombers orbiting it sent no bombing message).
+2. Fleets refuel at starbases (this file's "Refuelling at a starbase").
+   A fleet built in step 4 is already full (`PRODUCTION-LAUNCH.md`).
+
+### 6. Battles, bombing and tasks after movement
+
+1. Every planet records whether it is owned, before anything else in the
+   phase (`TAKEOVER.md`, "Order inside a phase").
+2. Battles at every location (`COMBAT.md`).
+
+**6a. Bombing**, after every battle at every location (`TAKEOVER.md`
+"Orbital bombing"). Order CONFIRMED: a starbase destroyed in this year's
+battle no longer protects the planet (T-2); bombing uses the after-growth
+population and tech researched this year (T-8).
+
+**6b. Mystery Trader encounters** (`OBJECTS.md` "Encounters"). Order
+CONFIRMED: after battles (OT-2: the battle was fought, then the surviving
+freighters traded) and before the unload tasks (OT-1: a fleet ordered to
+unload exactly 5,000 kT at the Trader's arrival planet was consumed and
+nothing was unloaded). Its place against bombing is BINARY-ONLY and has
+no visible effect: bombing never changes a fleet's cargo.
+
+**6c. Waypoint tasks after movement** (`TAKEOVER.md`; mine laying in
+`OBJECTS.md` "Laying"; remote mining in `TAKEOVER.md` "Other waypoint
+tasks").
+
+1. Every planet's report age is cleared. This is a file detail: it is the
+   value the player's client shows as how many years old its information
+   about a planet is. It has no effect on play.
+2. Unload tasks: each fleet in fleet order runs unload (including invasions
+   by arriving transports), colonize, remote mining, mine laying or route.
+3. All queued colonist drops are resolved.
+4. **Research level-up check** (the one `TAKEOVER.md` calls the second
+   check). Order CONFIRMED
+   (CB-018, CB-021): research gained from a battle becomes a level the
+   same year, after step 4b has run.
+5. Load tasks: each fleet in fleet order runs load, merge or transfer
+   fleet.
+
+Order CONFIRMED: an arriving colony ship colonizes after growth (T-1);
+mines are laid before sweeping (OB-007-D). That laying comes after battles
+is BINARY-ONLY.
+
+### 7. Sweeping, repair and terraforming
+
+1. Mine sweeping, by every fleet and then every starbase (`OBJECTS.md`
+   "Sweeping"). Order CONFIRMED: after laying (OB-007-D).
+2. Repair (`COMBAT.md` "Repair"). Order CONFIRMED (CB-017): it comes after
+   battles, and a fleet that fought gets none.
+3. Automatic terraforming: Claim Adjuster drift and the CA's free
+   terraforming (this file's "Terraforming").
+4. Remote terraforming by Orbital Adjusters (this file's "Terraforming").
+   Order CONFIRMED (KX-005): both use this year's researched tech, and a
+   fleet that arrived this year terraforms. 3 comes before 4: CONFIRMED
+   (OT-4, a CA planet and a hostile adjuster ended where the CA step
+   followed by the adjuster predicts, in two streams).
+
+**7a. End-of-year checks.**
+
+1. Registration penalties (`MESSAGES.md` 0x104–0x107). This step does
+   nothing in Elegy.
+2. The waypoint check (`ORDERS.md` "Waypoint upkeep").
+3. Each player's estimates of other players' planets (population and
+   defenses, with a random error) are refreshed. Owner: `SCANNING.md`.
+
+### 8. Year end, scores and files
+
+Order BINARY-ONLY: no state that play can observe depends on the order of
+these items. Their rules carry their own tags.
+
+1. The previous host file is backed up, and the year advances.
+2. Scores, the yearly score record and the victory conditions (this file's
+   "Scores and victory conditions").
+3. Per-design caches written to the files: each design's scanner range,
+   a "can no longer be built" mark, and the cloak percentage of other
+   players' designs (`SCANNING.md`; uncovered as a file detail).
+4. Three per-year random bits in the game options are redrawn
+   (`Random(8)`). This affects the file contents only. Uncovered.
+
+**8a. Files are written**: the host file, then each player's file, with
+that player's knowledge (`SCANNING.md` "When knowledge is computed") and
+the checks on later waypoints that `MESSAGES.md` places at P8a.
+
+### Random draws
+
+Any step that draws from the generator moves every later draw, so an
+implementation that wants the original's streams must draw in this order.
+Each item is tagged with how its place in the sequence is known.
+
+1. **Player shuffle** (step 1): one draw per player, `Random(n − i)`.
+   CONFIRMED (KX-004, KB-1C, KB-3A).
+2. **Before movement** (step 2), in the order the tasks run:
+   - A scrap at a planet with a starbase makes a tech attempt for the
+     planet's owner, as in `COMBAT.md` "Tech from battle": `rand(100)`,
+     and nothing more below 50. Otherwise up to 13 `rand(13)` Trader tries,
+     each with a second `rand(100)` only when that item has a chance and
+     the player lacks it. Then up to 6 `rand(6)` field tries. A player who
+     has already gained a tech this year makes no draws. CONFIRMED (KB-3A:
+     before mining).
+   - Colonist drops are resolved by planet, in the order of each planet's
+     first queued drop (`TAKEOVER.md`). A capture makes one tech attempt,
+     against the old owner's levels. A planet with an ancient artifact
+     adds `rand(6)` then `rand(301)`. Colonization draws nothing except
+     those artifact draws. BINARY-ONLY.
+3. **Movement** (steps 3–3b): the movement gates, minefield hits, the
+   Trader's and wormholes' movement, salvage and packet decay with
+   detonations, and breeding in transit. BINARY-ONLY as a place in the
+   sequence; their rules carry their own tags.
+4. **Production** (step 4). Mining makes one `Random(100)` per mineral
+   whose output has a non-zero remainder, planets in id order, ironium,
+   boranium, then germanium. CONFIRMED (KB-1C, KB-3A).
+5. **Random events** (step 4c): comet strike, climate change, new
+   minerals, then the Mystery Trader's appearance (this file's "Random
+   events"). CONFIRMED after mining (KB-1C, KB-3A) and before bombing
+   (KB-3A).
+6. **After movement** (step 6):
+   - battles (`COMBAT.md`);
+   - bombing passes, in fleet order. Each pass draws, in order:
+     factories `rand(T)`, defenses `rand(T)`, population `rand(1000)`,
+     each only when its remainder is non-zero. Retro bombs draw nothing.
+     CONFIRMED after the events (KB-3A);
+   - Trader rewards (step 6b);
+   - colonist drops after movement, as in item 2, with the same tech
+     attempt and artifact draws.
+   Battles, rewards and drops are BINARY-ONLY as places in the sequence.
+7. **Year end**: Claim Adjuster drift (step 7), the estimates of other
+   players' planets (7a) and the option bits (8). BINARY-ONLY, except
+   that with events off the drift began right after mining (KX-005,
+   below).
+
+MEASURED (KX-004, KX-005): in quiet states with no fleets in motion,
+battles or drops, the random events (KX-004) and the Claim Adjuster drift
+with events off (KX-005) both began at draw 4 of the year's stream. Those
+four draws are the two-player shuffle (2) and the two homeworlds'
+germanium mining (2). CONFIRMED (KB-1C): with 17 mining draws, the events
+began at draw 19. CONFIRMED (KB-3A, `PARITY.md` "KB batch 3"): a scrap
+tech attempt, five mining draws, the events and one bombing pass in one
+year matched the replay in all 11 streams whose start is known. The 12
+other streams each matched at some start, and two of them showed a
+climate change exactly where this order puts it. With mining before the
+scrap attempt, all 11 streams of known start would differ; with bombing
+before the events, 3 of them and both climate streams would.
+
+### Orders still unpinned
+
+The OT runs (`PARITY.md`, "OT — turn order, breeding in transit, AR loss gate, score speed code") measured the five orders an
+implementation could get visibly wrong: 3b before 4, 5 before 6a, 6 before
+6b, 6b before 6c and 7.3 before 7.4. All matched the program.
+
+What stays BINARY-ONLY:
+
+- **The race check after the pre-movement tasks (2a after 2).** Only a
+  hand-edited race file could tell the two orders apart.
+- **The Trader encounter against bombing (6a against 6b).** Bombing does
+  not touch fleets, so no run can separate them.
+- **Mine laying after battles (6c after 6).**
+- **Registration steps, design housekeeping, the report-age reset, and the
+  file-only caches and bits (8.3, 8.4).** None of them changes game state
+  an implementation can observe.
 
 ## Habitability
 
@@ -97,15 +405,16 @@ Vectors (race center 50, low 15, high 85 on every axis):
 |---|---:|---|
 | 50, 50, 50 | 100 | CONFIRMED (PG001) |
 | 60, 50, 50 | 92 | CONFIRMED (KX-002 H1) |
-| 70, 50, 50 | 79 | BINARY-ONLY |
+| 70, 50, 50 | 79 | CONFIRMED (KB-1A, through the maximum population) |
 | 85, 50, 50 | 41 | CONFIRMED (KX-002 H4) |
 | 70, 70, 50 | 58 | CONFIRMED (KX-002 H2) |
 | 80, 80, 80 | 3 | CONFIRMED (KX-002 H3) |
 | 90, 50, 50 | −5 | CONFIRMED (KX-002 H5) |
 | 10, 95, 50 | −15 | CONFIRMED (KX-002 H6) |
 
-The cap of 15 per hostile axis is BINARY-ONLY: with this race no value
-can be more than 14 outside 15–85.
+The cap of 15 per hostile axis is CONFIRMED (KB-1A: a race with range
+40–60 on a planet at 90/50/50 lost 15 of 1,000 units, hab −15, not −30;
+at 90/90/50 it lost 30, hab −30, not −60).
 
 ## Maximum population
 
@@ -118,11 +427,16 @@ In units. Rule:
 - Hyper-Expansion: `max −= trunc(max/2)`. Jack of all Trades:
   `max += trunc(max/5)`. Then Only Basic Remote Mining:
   `max += trunc(max/10)`. CONFIRMED one at a time at hab 100 (KX-002 P1:
-  HE 5,000; P2: JOAT 12,000; P3: OBRM 11,000). Combining them, and the
-  order of the truncations, is BINARY-ONLY.
+  HE 5,000; P2: JOAT 12,000; P3: OBRM 11,000), and JOAT with OBRM
+  combined (KB-1A: hab 79 gives 10,428, not the 10,270 of adding both
+  bonuses to the base). That case does not tell the order of the
+  truncations apart, and HE with OBRM is BINARY-ONLY.
 - Alternate Reality: 0 unless the planet has the owner's starbase; then by
   starbase hull, in hull order: 2,500, 5,000, 10,000, 20,000, 30,000 units,
-  regardless of habitability (OBRM +10% still applies). BINARY-ONLY.
+  regardless of habitability. CONFIRMED for all five hulls (KB-1B:
+  Orbital Fort, Space Dock, Space Station, Ultra Station and Death Star
+  planets each held at the maximum plus 5, and the Space Dock at hab 3).
+  OBRM's +10% on top is BINARY-ONLY.
 - Alternate Reality with maximum 0 (population on a planet without the
   owner's starbase): the original cannot generate the year. If the planet's
   habitability is ≥ 0, population growth divides by the maximum and the
@@ -138,7 +452,7 @@ In units. Rule:
 
 Vectors: HE at hab 100 → 5,000; JOAT at hab 100 → 12,000; OBRM at hab
 100 → 11,000; hab 3 → 500 (all CONFIRMED, KX-002); JOAT+OBRM at hab 79 →
-10,428 (BINARY-ONLY).
+10,428 (CONFIRMED, KB-1A).
 
 ## Population growth
 
@@ -253,11 +567,14 @@ per 100 units).
 1. Effective population `E = P` if `P ≤ max`, else
    `min(2·max, max + trunc((P − max)/2))`. Above max: CONFIRMED (KX-002 G1,
 `P` 12,000 at max 10,000 → `E` 11,000; H5, H6, hostile planets above
-their 500); the `2·max` limit is BINARY-ONLY.
+their 500); the `2·max` limit is CONFIRMED (KB-1A: 45,000 units at
+maximum 13,200 gave 2,650 resources, from `E = 26,400`, not 2,920).
 2. Non-AR: `resources = trunc(E / R0) + trunc((F·n + 9) / 10)`, where
    `n = min(installed factories, operable factories)`.
 3. Alternate Reality: `trunc(sqrt((E / R0)·max(1, energy tech))·
    max(25, hab)·0.1 + 0.999)`, all in floating point, including `E / R0`.
+   The `max(25, hab)` floor is CONFIRMED (KB-1B: with an AR planet at hab
+   3, the player's yearly resources were 8,054, not 7,803).
    CONFIRMED at one point (KX-001 Z2: `E = 486`, `R0 = 10`, energy 2,
    hab 100 → `trunc(9.859·100·0.1 + 0.999) = 99`; truncating `E / R0`
    first would give 98).
@@ -274,9 +591,9 @@ every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
 
 | Quantity | Rule | Status |
 |---|---|---|
-| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | CONFIRMED at hab 41: 410 (KX-002 C3); the floor of 10 and AR: BINARY-ONLY |
-| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | CONFIRMED at hab 58: 580 (KX-002 C1); the floor of 10 and AR: BINARY-ONLY |
-| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | CONFIRMED at hab 3: 12 (KX-002 C2); the other branches and AR: BINARY-ONLY |
+| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | CONFIRMED at hab 41: 410 (KX-002 C3); AR 0 (KB-1B); the floor of 10 cannot be reached (below) |
+| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | CONFIRMED at hab 58: 580 (KX-002 C1); AR 0 (KB-1B); the floor of 10 cannot be reached |
+| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | CONFIRMED at hab 3: 12 (KX-002 C2); the cap of 100 (KB-1A: 95 + 5 built at hab 100), the floor of 10 (KB-1A: hab −15, 5 + 5) and AR 0 (KB-1B) |
 | operable mines | `max(1, min(max mines, trunc(P'·Mo/100)))` | CONFIRMED for auto mines (PQ C04, C09, C14) |
 | operable factories | `max(1, min(max factories, trunc(P'·Fo/100)))` | CONFIRMED for auto factories (PQ C09) |
 | operable defenses | `min(max defenses, 1000, ceil(P'/25))` | CONFIRMED (PQ C13) |
@@ -294,6 +611,11 @@ kind:
   `max(maximum, operable) − installed` are cut to it when the queue
   reaches them, with a message; the order is edited permanently, and
   removed if that is 0 or less. CONFIRMED (PQ C10).
+
+The floor of 10 on maximum mines and factories never acts in a legal
+game: the smallest maximum population is 250 units (Hyper-Expansion below
+hab 5), and the race wizard's lowest mines and factories operated is 5
+per 10,000 colonists, which gives 12.
 
 Vectors (PG race, `Mo = Fo = 10`, 100% planet, so maximum mines and
 factories are 1000 and maximum defenses 100):
@@ -320,11 +642,13 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    `eff` = race mine output (AR: 10).
 3. Surface minerals gain `trunc(amt/100)`, plus 1 with probability
    `(amt mod 100)/100` (one `rand(100) < amt mod 100` draw per mineral with a
-   non-zero remainder). The `+1` mechanism is BINARY-ONLY; the oracle's +0/+1
-   pattern is consistent with it but its draws are correlated (see
-   Conventions). Draw order (BINARY-ONLY): every planet is mined before any
+   non-zero remainder). Draw order: every planet is mined before any
    planet's production, planets in id order, and within a planet ironium,
-   boranium, germanium.
+   boranium, germanium. CONFIRMED (KB-1C): 17 mining draws on 7 planets in
+   11 random streams, 77 planet results, all as replaying each stream with
+   this rule gives (mining starting at draw 2, right after the shuffle;
+   starting at draw 4 would have changed 68 of them), and the year's
+   random events then followed at draw 19.
 4. Depletion uses `p = trunc(prod/100)` (before `eff` and before the random
    +1) and the stored `conc` clamped for this purpose to
    `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
@@ -332,7 +656,8 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    - `cc` from the current stored `conc`, re-evaluated on every repetition
      (CONFIRMED, KX-002 N2: germanium 84 → 79 in one year, fraction 34;
      the `cc = 25` clamp, ironium at 20 and 19; the `cc = 10` clamp below
-     5 is BINARY-ONLY);
+     5 is CONFIRMED by KB-1A: concentration 4 with 500 mines ended with
+     fraction 251, where the clamp 25 gives 245);
    - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
    - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
    - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
@@ -374,12 +699,33 @@ population frozen at max; 2407 as PG with ironium concentration set to
 | 2409 | 19/96/74 | 189/11/77 | +300/+1040/+790 |
 | 2410 | 19/88/70 | 35/241/11 | +300/+960/+740 |
 
-Remote mining (BINARY-ONLY): a fleet with a remote-mining task, at an
-unowned planet, that did not move this year, mines after production with
-its mining-robot rate as `m` and `eff` ignored (`amt = prod`), same random
-+1 and depletion; no homeworld floor. Robot rates per robot: Robo-Midget 5,
-Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27, Robo-Ultra 25, Alien 10;
-a fleet's total is capped at 4,000.
+### Remote mining
+
+A fleet with a remote-mining task that did not move this year mines the
+planet it orbits after production (turn order step 6c), with `m` = the
+sum over its ships of each mining robot's rate, capped at 4,000 per
+fleet: Robo-Midget 5, Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27,
+Robo-Ultra 25, Alien 10. Output `amt = prod = conc·m` (the race's mine
+output is ignored), with the same random +1 and depletion as planetary
+mining, and no homeworld floor.
+
+- **Unowned planets** (CONFIRMED, T-35: 24 robot points at 100/50/25 mined
+  24/12/6 kT a year; CS-003-B: 10 robot points at 100 mined 10 kT; KB-1A:
+  4,320 robot points at 68/78/76 mined 2,720/3,120/3,040 kT, the 4,000
+  cap, with concentrations and fractions exactly as the depletion rule
+  gives). A fleet that arrived this year mines nothing until the next
+  year (T-35).
+- **Owned planets.** Miners at a planet owned by a race other than
+  Alternate Reality mine nothing, whether the planet is their owner's or
+  another player's (CONFIRMED, T-35). At an Alternate Reality planet, the
+  planet owner's own miners do mine it (CONFIRMED, KB-1B). Their output
+  is a separate mining step, not extra mines added to the planet's own:
+  each step truncates and depletes on its own. KB-1B: an AR Space Station
+  planet at 15/82/45 with 100 own mines and an 8-point miner ended with
+  boranium fraction 106, which two separate steps give; one step with 108
+  mines gives 107. The order of the two steps is BINARY-ONLY (both give
+  the same result here). Another player's miners at an AR planet are
+  BINARY-ONLY.
 
 ## Research
 
@@ -408,9 +754,14 @@ half scale. Each year `L = 2S + research`; levels are taken while
 field at 3, energy): research 435 → level 3, stored 218 (a normal game
 levels with 45 left); next year 485 → `436 + 485 − 780` → level 4, stored
 71. Research 937 → level 4, stored 79; next year 954 → `158 + 954 − 1060`
-→ level 5, stored 26. Under Generalized Research the other fields get
-half their 15% share, and stolen research (Super Stealth) is halved
-rounding up (BINARY-ONLY).
+→ level 5, stored 26. Under Generalized Research the current field's
+half is treated like normal research (stored as half, rounded up), and
+each other field's 15% share `o` is added to its stored value as
+`trunc(o/2)` (CONFIRMED, KX-005 R2: research 1,995, energy current →
+stored 499, every other field 150 (`o` = 300); weapons at level 0 did not
+level). Stolen research (Super Stealth) is halved rounding up: the
+message shows the full `s`, and `ceil(s/2)` is stored (CONFIRMED, KB-2B:
+stolen 23 and 88 stored as 12 and 44).
 
 ### Allocation
 
@@ -431,12 +782,35 @@ rounding up (BINARY-ONLY).
   to "same field"; "lowest field" stays set. CONFIRMED (KX-002 R3: energy
   → weapons → propulsion in one year, "lowest" kept; R4: leftover 100 to
   biotech, choice reset). Only a level-up in the current field switches
-  fields, also with Generalized Research (BINARY-ONLY).
+  fields: under Generalized Research a field fed by its 15% share levels
+  up in place and research stays in the current field (CONFIRMED, KX-005
+  R1: weapons 0 → 1 from a 300 share, carry 30; energy stayed current with
+  next "lowest" set).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
+- When the current field reaches 26 and the next-field choice is "same
+  field", research moves that year, with the leftover, to the lowest
+  field (first in field order on ties), and the stored choice stays "same
+  field" (CONFIRMED, KX-005 R3: energy 25 → 26 with 15 left over; weapons
+  became current with 15 stored, choice still "same"). For the rest of
+  that year the switch logic acts as if "lowest field" were chosen
+  (CONFIRMED, KB-2A: energy 25 → 26 with 1,115 left; weapons 0 → 1, then
+  propulsion 0 → 1, then back to weapons with 185 stored; the stored
+  choice stayed "same").
+- **Messages.** Each level gained sends the player one message naming the
+  field, the new level and the field research continues in (Generalized
+  Research players get a variant). It is followed by one message per part
+  that the level makes available: a part the race may use (race-restricted
+  parts and Mystery Trader parts the player does not own are skipped)
+  whose requirement in that field equals the new level **and** whose other
+  five requirements are already met. CONFIRMED (KX-005 R1: energy 9 → 10
+  announced Bear Neutrino Barrier, Laser Battery and Temp Terraform ±11,
+  not Battle Nexus, which also needs electronics 19; a GR weapons 0 → 1
+  announced Radiation Terraform ±3). So a part is normally announced
+  when its last missing requirement is reached (follows from the rule).
 - Super Stealth: after every player's research, an SS player gains, per
   field, `s = trunc(trunc(spent/players)/2)` when `s > 1`, where `spent` is
   every player's research in that field this year, its own included, and
@@ -505,7 +879,7 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Mine (and Auto Mines) | race mine cost | CONFIRMED (PQ-001 cost 5; KX-001 M3b cost 8) |
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
-| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED for 100 and 70 (KX-002 T1, T2); Claim Adjuster BINARY-ONLY |
+| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -567,21 +941,29 @@ completes with the remaining 8 resources (410 in all). Unit 2 the same:
 and the remaining 78 become Mineral Alchemy @78%. Minerals: +8 kT each,
 8 kT of germanium used.
 
-Additional rules, BINARY-ONLY:
+Additional rules (CONFIRMED by KB-2A unless marked):
 
 - A planet with a production queue of zero items contributes nothing to
-  research that year, not even the research tax. (A queue emptied during
-  the year is removed, so the next year takes the no-queue path and sends
-  everything to research.)
+  research that year, not even the research tax, and gets no production
+  message; the empty queue stays. (A queue emptied during the year is
+  removed, so the next year takes the no-queue path and sends everything
+  to research.) A zero-item queue does not arise in play; KB-2A wrote one
+  directly.
 - Resources from ships scrapped at a planet this year with Ultimate
-  Recycling (`x`) raise that planet's production resources `r` to
-  `r + trunc(x·r/(x + r))`.
+  Recycling (`x`, the ships' resource cost for their owner) raise that
+  planet's production resources `r` to `r + trunc(x·r/(x + r))`, also on
+  a planet without a queue. The scrap message shows the added amount
+  (KB-2A: `x` 2,410, `r` 500 → 914, message 414).
 - A planetary scanner order on a planet that already has one is removed
   with a message; a mass-driver packet order without a driver or
-  destination is removed with a message; a terraform order above the
-  remaining terraform capacity is clipped (or removed at 0; CONFIRMED for
-  terraforming, KX-002 T1, T3; see "Terraforming").
-- A planet with 0 resources builds nothing and sends no messages.
+  destination is removed with a message. Either way, a queue left empty
+  is freed with the "completed its orders" message and the planet's
+  resources go to research. A terraform order above the remaining
+  terraform capacity is clipped, or removed at 0 (KX-002 T1, T3; KB-2C;
+  see "Terraforming").
+- A planet with 0 resources builds nothing and sends no messages
+  (BINARY-ONLY; an owned planet with population has at least 1 resource,
+  so only the duplicate-serial ×4/5 cut of a 1-resource planet reaches it).
 
 ### Terraforming
 
@@ -597,7 +979,10 @@ BINARY-ONLY where marked):
   only toward the race's centre, stopping at it. CONFIRMED: Gravity
   Terraform ±3 from 60 reaches 57 (T1), and from a current 58 with
   original 60 only 57 remains (T3); TT ±3 applies to gravity and
-  temperature (T2). An immune axis is not terraformed (BINARY-ONLY).
+  temperature (T2). An immune axis is not terraformed and adds nothing to
+  the capacity (CONFIRMED, KB-2C: a gravity-immune race at 20/47/50 had
+  Terraform ×5 cut to ×3 and reached 20/50/50; at 10/50/50 ×2 was
+  removed with nothing built).
 - **Capacity.** The clicks still available are the sum over axes of the
   distance from the current value to its limit. An order (or the part of
   it left) above that is cut to it when the queue reaches it, with a
@@ -610,27 +995,64 @@ BINARY-ONLY where marked):
   the next click. The highest score wins, the first axis (gravity,
   temperature, radiation) on ties. CONFIRMED at one point (T2: from
   60/45/50 with ±3, temperature 101 against gravity 67, and both units went
-  to temperature); ties BINARY-ONLY.
+  to temperature). Ties go to the first axis (CONFIRMED, KX-005: 50/60/60
+  with gravity at the centre, temperature and radiation tied, one unit →
+  50/59/60).
 - **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
-  for Claim Adjuster (BINARY-ONLY); no minerals.
-- Auto Max Terraform builds Terraform Environment units up to the
-  capacity; Auto Min Terraform does so only while the planet's population
-  would shrink this year or its habitability is 0 or less. Orbital
-  Adjuster fleets move a planet one click per part each year with the
-  fleet owner's tech and the planet owner's habitat, away from the centre
-  for an enemy. All BINARY-ONLY.
+  for Claim Adjuster (CONFIRMED, KX-005: a CA planet with 120 resources
+  and Terraform ×3 built two and left ×1 at 41%); no minerals.
+- **Tech used.** Production uses the owner's tech before this year's
+  research; the Claim Adjuster year-end step and Orbital Adjusters run
+  after research and use the levels just reached (CONFIRMED, KX-005: both
+  players went from energy 3 to 5 during the year; production still
+  reached ±3 in temperature, the CA planets and the adjusters ±7).
+- **Auto Max Terraform** builds units up to the capacity, whatever the
+  population (CONFIRMED, KX-005: ×9 with capacity 6 built 6; 50/60/58 →
+  50/57/55). **Auto Min Terraform** builds up to the capacity only when
+  the planet's population change this year is negative or its
+  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED,
+  KX-005: a growing planet built none; a planet at −1% habitability built
+  its one unit; an overcrowded planet at 83% built 6). The count of an
+  auto item is a per-year limit and the item stays in the queue.
+- **Orbital Adjusters** (CONFIRMED, KX-005 T0–T2). After movement, every
+  fleet orbiting an owned planet with Orbital Adjusters makes one click
+  per adjuster (whatever the part's value) on that planet, with the
+  **fleet owner's** reach (its terraform parts, at its levels after this
+  year's research) and the **planet owner's** habitat. A fleet that
+  arrived this year counts.
+  - Fleet owner = planet owner, or the fleet owner treats the planet owner
+    as a friend: each click improves the planet as a production unit
+    would, from `orig ± reach`, starbase or not (planet 60/60/60, reach
+    gravity 11, temperature 7, radiation 3: two clicks → 60/58/60, also on
+    a planet with a starbase).
+  - Otherwise (neutral or enemy): nothing if the planet has a starbase.
+    Else each click worsens the planet: per axis the target is whichever
+    of `orig − reach` and `orig + reach` (clipped to 1–99) is farther from
+    the owner's centre, provided it is farther than the current value
+    (the lower end on a tie), and the axis is chosen by the same score
+    (60/60/60 → 62/60/60: gravity toward 71 scores 137 against 67).
+  - The fleet owner gets a message per planet changed, the planet owner
+    one too when its habitability changed.
 - **Claim Adjuster.** At the end of the year (after production and growth)
   every axis of each CA planet moves in one step to the full reachable
   value, as far as the reach rule above allows, with no items built and no
   resources spent (CONFIRMED, KX-003 S3/S3L at reach 3: 60/42/56 →
   57/45/53, and 58/50/50 with original 60/50/50 → 57/50/50; growth that
-  year used the old environment; TK-118..121 at reach 15 and 30 after a
-  capture). The CA owner's terraform parts follow the normal tech and LRT
+  year used the old environment; TK-108 and TK-118..121 at reach 15 and
+  30 after a capture). After a capture the reach is measured from the
+  original value the capture restored (`TAKEOVER.md`), so a CA capturing a
+  CA planet ends the year at original ± reach toward its own centre:
+  55/47/52 → 50/50/50, 80/20/80 → 65/35/65 (±15) or 50/50/50 (TT ±30). The CA owner's terraform parts follow the normal tech and LRT
   rules (Total Terraform still needs TT). The original value of an axis
-  can also drift one click toward the centre: per planet and year, a
-  random axis, then a 1-in-10 roll, then a roll passed when the population
-  is 1000 units or more or `random(1000) <` the population (BINARY-ONLY;
-  no drift in the one KX-003 planet-year that could show it).
+  can also drift one click toward the centre, before the year-end step
+  (so the reach is measured from the new original): for each CA planet in
+  planet order, `rand(3)` picks an axis; if that axis's original value
+  differs from the centre (and the axis is not immune), `rand(10)` must
+  be 0, then the drift happens if the population (after growth) is 1000
+  units or more, else if `rand(1000) <` the population. Message to the
+  owner. CONFIRMED (KX-005: 17 runs from 15 random streams, 13 drifts on
+  8 CA planets, every one reproduced by replaying these draws, and none
+  where the replay gave none).
 
 ## Fleet movement
 
@@ -686,7 +1108,9 @@ For a move of `L` light-years at warp `w`:
 2. Assign the fleet's cargo (minerals and colonists in kT; fuel has no
    mass) to designs in order of increasing `f(w)`, each up to `n ×` its cargo
    capacity. Designs with equal `f(w)` keep the fleet's own design order
-   (BINARY-ONLY).
+   (CONFIRMED, KB-4A Q: a Small Freighter and a Medium Freighter, both
+   Quick Jump 5, 111 kT: 57 mg with the Small Freighter filled first; the
+   other order gives 56).
 3. Cost in tenths of a mg per design: `trunc(f(w)·L·(n·m + cargo assigned)
    / 2000)`; designs with `f(w) = 0` cost nothing.
 4. Fleet cost in mg: `trunc((Σ tenths + 9) / 10)` (rounded up once per
@@ -751,8 +1175,9 @@ Vectors (CONFIRMED):
   distance, and it has still run dry if that leaves 0 and the destination
   is further away. A fleet that arrives with exactly enough fuel has not.
 - A fleet that cannot afford the whole leg but keeps some fuel after this
-  year's move has not run dry: it keeps its warp (BINARY-ONLY; no corpus
-  case).
+  year's move has not run dry: it keeps its warp (CONFIRMED, KB-4A K:
+  20 mg for a 39 mg leg, 15 left after the year, warp 6 kept, no
+  message).
 - Top-up (CONFIRMED, FM-004 TU): a fleet that had enough fuel for the whole
   leg at the start of the year ends the year with at least the fuel the
   rest of the leg needs (capped at its tank; the cap was not exercised), so
@@ -835,14 +1260,20 @@ warp 3 gains 50 (raw 90, capped).
    `min(rem, trunc((rem + moved + 4)/5))` (a fifth of `w²`, rounded up). It
    heads for the target's current position, using the distance, arrival
    and rounding rules above with `A = min(trunc(D + 0.9999), step)`.
-3. A chaser that arrives on its target has finished. If that target is
-   itself a chaser that has not finished, the target stops for the year
-   (its waypoint is then settled by rule 8 below).
+3. A chaser that arrives on its target has finished, and the target is
+   marked as having finished moving. If that target is itself a chaser
+   that has not finished, it therefore stops for the year (its waypoint is
+   then settled by rule 8 below), and any other chaser of it now takes
+   its whole remainder in one step (rule 2). LEGACY BUG (CONFIRMED; see
+   "Chain freeze" below).
 4. Otherwise `moved += step`, `rem −= step`, and it stays deferred while
    `rem > 0`.
 5. Fuel is charged on the year's total distance (`moved + step`), refunding
    the previous round's charge, so rounds add no extra rounding.
-6. BINARY-ONLY (FM-001..003 chasers all had full tanks): each round applies
+6. CONFIRMED for a chaser whose target has finished moving (KB-4A C: 5 mg,
+   `R` 7, moved 7 ly toward the target's end position, 0 mg, warp lowered
+   to 1, out-of-fuel message); BINARY-ONLY for the per-round steps
+   (FM-001..003 chasers all had full tanks): each round applies
    the ordinary fuel rules to the step, with `R` reduced by `moved` and
    "the whole leg" meaning the distance to the target's current position.
    A chaser limited by `R` moves only that far and ends with 0; a chaser
@@ -853,7 +1284,10 @@ warp 3 gains 50 (raw 90, capped).
 After every fleet has moved, waypoints are settled (CONFIRMED, FM-001..003):
 
 7. Every waypoint whose destination is a fleet takes that fleet's position
-   at the end of movement.
+   at the end of movement. Exception: when the target went through a
+   stargate or a wormhole this year, other players' waypoints aimed at it
+   stop at its departure point and lose it, while its owner's own follow
+   it (`OBJECTS.md` "Stargates" and "Travel").
 8. Every fleet whose position equals its next waypoint exactly completes
    that waypoint ("completed orders" when it was the last one). This
    applies to a fleet that has used its movement or never moved.
@@ -881,10 +1315,48 @@ after the year):
 | FM-003 0–2, A chases B, B chases Z, Z +60 | A 1200 → 1215 | B stays 1215 | A completes; B keeps chasing Z, waypoint 1250 |
 | FM-002 41/42, C3 chases T3 head-on | T3 1080 → 1055 | C3 1040 → 1055 | C3 completes; T3 keeps its own waypoint |
 
+#### Chain freeze (LEGACY BUG, CONFIRMED)
+
+The original uses one "finished moving" mark both for "this fleet has used
+its movement" and for "a chaser landed on this fleet". So whether a
+chaser in a chain moves at all depends on fleet numbers, not on geometry:
+
+- With A chasing B and B chasing C, numbered **A < B < C**: C (ordinary
+  or chasing) and B are both deferred. A moves first in each round; if
+  its first step reaches B's start, B is marked finished and never
+  moves that year. A ends on B's start.
+- Numbered **C < B < A** (or any order where B's turn comes before A
+  reaches it): B moves toward C in its rounds (the whole remainder in one
+  step once C has finished), then A follows B; each covers the full
+  distance its speed allows.
+
+Measured: FM-003 (A 1200 chasing B 1215, B chasing Z, Z moving +60; ids
+A < B < Z: B did not move; B < A < Z: all ended at 1250). MF-02 (stars-elegy
+#47, PARITY "Minefield lane", "Followers"): C flies 81 ly, B 10 ly behind
+follows C, A 10 ly behind B follows B; numbered A < B < C, A reached B's
+start in its first 17-ly step and B never moved, 6 of 6 chains. Numbered
+C < B < A, B and A each moved their whole remainder in one step after
+their target finished. In a minefield the numbering also changes the stop
+odds, since the check uses each step's length: a frozen fleet does not
+move, and a fleet moving its whole remainder in one step crosses at a
+higher effective warp (A was stopped in 2 of 6 C < B < A chains;
+`OBJECTS.md`, minefields).
+
+Binary (stars-decomp `fleet-movement.md`, "Following a fleet"): landing
+on the target sets the target's processed bit, which is the bit a
+deferred chaser checks to know it is done.
+
+**Implementing:** Elegy reproduces the freeze behind a named switch
+(project default for deterministic LEGACY BUGs), with the processed mark
+shared exactly as above. With the switch off, a chaser landing on a
+waiting chaser would leave the target to move in its own rounds; that
+alternative is Elegy's choice, not the original's.
+
 ### Refuelling at a starbase (CONFIRMED, FM-004 DK)
 
-After production, a fleet orbiting a planet with its own starbase (one
-with a dock) is set to its tank capacity, including a fleet that arrived
+After production, a fleet orbiting a planet with a starbase that has a
+dock (not an Orbital Fort), owned by the fleet's owner or by a player who
+treats the fleet's owner as a friend (KB-4A), is set to its tank capacity, including a fleet that arrived
 there this year. Fuel above capacity is reduced to capacity there, but not
 in deep space (a scout holding 400 mg of 300 keeps 400 away from a
 starbase). A fleet that leaves the planet this year is not refuelled, nor
@@ -898,6 +1370,44 @@ before the move, with a message to the owner. A fleet that does not move
 loses nothing. Vectors (TK-117, deep space): 10 → 10, 11 → 11, 40 → 39,
 200 → 194 moving; 200 stationary → 200. TK-107 matches too (25 → 24,
 100 → 97).
+
+What counts as moving (CONFIRMED, OT-6): the loss is taken when the fleet
+starts its move, before the fuel limit and before a chaser is put off to
+the chase passes. A fleet loses if it has a waypoint 1 with a warp above 0,
+even when:
+
+- waypoint 1 is the fleet's own position (100 → 97);
+- the fleet has no fuel and does not move (100 → 97);
+- the fleet is chasing another fleet (100 → 97, once a year, not once per
+  pass).
+
+A fleet loses nothing when it has no waypoint 1 or when waypoint 1's
+warp is 0 (CONFIRMED, OT-6 and TK-117: 100 → 100). From the program
+(BINARY-ONLY), the fleets that the other movement gates stop also lose
+nothing: a waypoint-0 transport or mine-laying task, the registration
+penalty, engine failure, and a stargate jump.
+
+The message (`MESSAGES.md` 0x0c1) is sent only when the loss is at least
+1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED,
+OT-6: 22 → 22 with no message, 23 → 22 with one).
+
+### Inner Strength colonists breed in transit (CONFIRMED, OT-5)
+
+Each year, after movement and before production (turn order step 3b), every
+Inner Strength fleet carrying C kT of colonists breeds
+`g = trunc(C·growth/200)` kT, `growth` being the race's growth rate in
+percent. If `g` is 0, a draw `Random(3)` of 0 makes it 1 (BINARY-ONLY).
+
+1. As much of `g` as fits in the fleet's free cargo space is added to its
+   colonists, with message 0x0fb for the amount, if any.
+2. The rest goes to the planet the fleet orbits if the fleet's owner owns
+   it, as population, with message 0x158. Otherwise the rest is lost and
+   there is no message.
+
+Vectors (OT-5, growth 15%): a full 2100 kT fleet over its own planet
+breeds 157, all of it landing on the planet, which then grows on it that
+year; 200 kT in a 210 kT hold in deep space takes 10 and loses 5; a full
+fleet over an enemy planet gains nothing and the planet gets nothing.
 
 ### Fuel cannot be unloaded onto a planet (CONFIRMED, FM-101..105)
 
@@ -935,26 +1445,45 @@ in one isolated function (32-bit wrap of the integer-form product) so it
 can be switched off. FM-105 used an edited design; whether the original's
 ship designer lets a player save one is not established.
 
-### Other movement rules (BINARY-ONLY)
+### Other movement rules
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
+  A transport task stays current until a load phase finds every load
+  satisfied, so an unmet "wait for" holds the fleet, while a satisfied
+  transport (an unload, for instance) is cleared before movement and the
+  fleet moves. CONFIRMED for mine laying (OB-014-D, OB-019: `OBJECTS.md`
+  "Laying") and for transport (KB-4A T1: "wait for 50% ironium" at a
+  planet with none held the fleet; T2: "unload all" unloaded and moved).
 - Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
   Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
   each ship is destroyed with probability 1/10 each year it moves
   (MEASURED, FM round 2: 11 of 100 and 5 of 50 ships lost; fuel left with
-  the lost ships in proportion).
+  the lost ships in proportion; CS-003-W: 58 of 660, none of 300 with
+  rated engines).
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
   fleet does not move (MEASURED, FM round 2: 2 of 40 fleets stopped at
   warp 7, 0 of 20 at warp 6).
-- Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`.
+- Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`
+  (CONFIRMED, KB-4A E: warp 6, 36 ly, 295 mg left, 294 without IFE; C at
+  warp 9).
 - Radiating Hydro-Ram Scoop engines kill
   `max(1, trunc(colonists·trunc((86 − mid)/2)/100))` kT of carried
   colonists (at most all of them) per year moved, where `mid` =
   `trunc((radiation low + radiation high)/2)`; not for radiation-immune
-  races or when low + high ≥ 170.
-- Fuel generators (anti-matter) add 50 mg each and fuel transports 200 mg
-  each per year, capped at the tank.
-- Refuelling at a friend's starbase, and at a starbase without a dock.
+  races or when low + high ≥ 170. CONFIRMED for `mid` 50 (KB-4A H: 70 →
+  58 moving, message 0x74; 70 kept when stationary); the immune and
+  ≥ 170 exemptions are BINARY-ONLY.
+- Fuel transports add 200 mg each per year to a stationary fleet
+  (CONFIRMED, CS-003-W: 200 with one, 600 with three, 200 with a
+  Super-Fuel Xport). Fuel generators (anti-matter) add 50 mg each. Both
+  are capped at the tank (CONFIRMED, KB-4A G, X: 100 → 150 and 230 → 250
+  with a 250 tank; 1,000 → 1,200 and 2,150 → 2,250 with a 2,250 tank).
+- Refuelling at a starbase (above) also happens at another player's
+  planet whose owner treats the fleet's owner as a friend, and not at a
+  starbase without a dock (an Orbital Fort). CONFIRMED (KB-4A F1–F5: a
+  friend's Space Station filled 10 → 300 and lowered 400 → 300; a neutral
+  owner's did not; the own Orbital Fort did not; the own Space Station
+  did).
 
 ## Scores and victory conditions
 
@@ -996,13 +1525,32 @@ Power of a design (summed over its slots):
 
 CONFIRMED for the class boundaries KX-003 reached: 4 Omega Torpedoes
 (1896, escort), 5 (2370, capital), 2 Cherry Bombs (140, escort), an X-Ray
-Laser scout (escort), unarmed scouts. Capacitors, sappers and the speed
-adjustment are BINARY-ONLY.
+Laser scout (escort), unarmed scouts.
+
+Details:
+
+- **Truncation** (BINARY-ONLY). Each slot's term is truncated before the
+  slot terms are summed: a beam slot to `trunc((range + 3)·damage·count/4)`,
+  then `trunc(…/3)` for sappers; a torpedo slot to
+  `trunc((range − 2)·damage·count/2)`. Each capacitor's step of the factor
+  is truncated too. No legal design was found where per-slot truncation
+  moves a ship across the 2000 boundary, so no run can confirm it.
+- **Speed code** (CONFIRMED, OT-6). `speed` is the design's battle speed
+  from its own engines and **empty** mass, with no cargo, no War Monger
+  bonus and no other race bonus, limited to 0..8. OT-6: a Battle Cruiser
+  with 7 Big Mutha Cannons (beam 1785, speed code 5) scored as an escort
+  for both a War Monger and a non-War Monger owner (1785 + 178 = 1963). The
+  War Monger bonus would have made it 2320, a capital ship. A 9-Disruptor
+  design (1899 → 2088) scored as a capital ship for both, so the speed term
+  is applied.
+- Capacitors and sappers are BINARY-ONLY.
 
 ### Yearly score record
 
 Each player's record holds the score, the resources R, the planet count,
-the starbase count, U, E, C, the sum of the six tech levels, the rank and a
+the starbase count (only starbases whose hull has a dock, as for the score:
+an Orbital Fort is not counted; CONFIRMED, KX-003 S1, where player 0's two
+Space Stations and a Fort count 2 and player 1's Fort counts 0), U, E, C, the sum of the six tech levels, the rank and a
 flag word. Rank = 1 + the number of players with a strictly higher score
 (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
 bits, 0x20 always, and one bit per victory condition the player meets
@@ -1022,24 +1570,48 @@ number of conditions needed [1], and the minimum years `(v + 3)·10` [30].
 Each of the first seven is on or off. Tests, per player and year:
 
 - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
-  S1: 24 planets at 20% need 5; 5 met, 4 did not).
+  S1: 24 planets at 20% need 5; 5 met, 4 did not). The rounding is to the
+  nearest whole number with halves rounded up (BINARY-ONLY): 30 planets at
+  25% need 8.
 - Tech: the number of fields at the level or above ≥ the field count
   (CONFIRMED met and unmet, S1).
 - Score ≥ the threshold; resources: `trunc(R/1000)` ≥ the threshold in
   thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
   ships, S1; the others BINARY-ONLY).
 - Lead: with scores sorted, `second·(100 + pct)/100 ≤ top` flags the top
-  player (CONFIRMED, S1: 101·120/100 ≤ 623).
+  player (CONFIRMED, KX-003 S1: 101·120/100 ≤ 623). When two or more players
+  share the top score, `second` is that same score, so the test fails and
+  nobody is flagged (BINARY-ONLY).
 - Highest score: the year index (years since 2400) ≥ the year count and
   exactly one player has rank 1 (BINARY-ONLY).
 
-Deciding the game (BINARY-ONLY): with one player, nothing further. A
-player with no planets and no ships becomes dead (message to the others).
-If all but one player are dead, the survivor wins. Otherwise, once the
-year index reaches the minimum years, every player meeting at least the
-needed number of **enabled** conditions wins; one winner and several
-winners get different messages, the others a loss message. What happens
-after a win is not covered here.
+Deciding the game (BINARY-ONLY), each year:
+
+1. The "game decided" mark is cleared. It is worked out again from
+   scratch every year; nothing carries over from an earlier win.
+2. With one player in the game, nothing further happens.
+3. A player with no planets and no ships becomes dead (message to the
+   others).
+4. If all but one player are dead, the game is decided. The survivor
+   (the last player in player order with rank 1, if not dead) gets the
+   sole-survivor message 0x0bc, and every other player gets 0x0b8.
+5. Otherwise, once the year index is at least the minimum years, the
+   number needed is the setting's raw value, capped at the number of
+   enabled conditions (the seven conditions, not counting the tech field
+   count, which is part of the tech condition). If the number needed is 0
+   (the raw value is 0, or no condition is enabled), nobody wins. Elegy's
+   "treat a value below 1 as 1" is not the original's rule.
+6. Every player meeting at least the needed number of enabled conditions
+   wins. If anyone wins, the game is decided and: each dead player gets
+   0x0b8; each winner gets 0x0b6 if they are the only winner, or 0x0b7 if
+   there are several; every other player gets 0x0b5.
+
+Because of step 1, a game is decided again in every year its conditions
+still hold, and the messages are sent again each of those years. A year in
+which no one wins leaves the game undecided, even if an earlier year
+decided it. The program also reads the mark when it decides whether other
+players' scores are visible (not measured). `MESSAGES.md` describes the
+message slots.
 
 ## Random events
 
@@ -1138,6 +1710,33 @@ naming radiation, queue cut to Auto Factories ×5.
 Vectors (CONFIRMED): +13 ironium, +8 germanium, +16, +10, +19, +5, +14 on
 owned and unowned planets; unowned planets get no message.
 
+### Mystery Trader appearance
+
+Runs right after new minerals. This section is the rule for when a
+Trader appears and what it carries, with the draw order an exact replay
+needs. `OBJECTS.md` "Spawn and movement" covers its flight:
+
+1. Nothing below year index 40. Chance draw: `rand(2)` when the year index
+   mod 100 is 71, else `rand(3)` when it is 33, else `rand(4)` when the
+   index mod 128 is 49, else no Trader in odd years and `rand(7)` in even
+   ones. A Trader appears when the draw is 0.
+2. Warp `8 + rand(5)`.
+3. Two free coordinates, start then destination, each
+   `1020 + rand(361 + 400·size)`.
+4. `rand(2)`: 0 puts the start on the low edge (1020) and the destination
+   on the high edge (`1380 + 400·size`); 1 the reverse.
+5. `rand(2)`: 0 makes the free coordinate x, 1 makes it y.
+6. Item: `rand(10) < r` (r as in `OBJECTS.md`) gives a ship when
+   `rand(6) = 0`, else research; otherwise a part bit `1 << rand(13)`, with
+   the reroll and late-year conversion of `OBJECTS.md`.
+7. Every player gets the appearance message.
+
+CONFIRMED by KX-004 S6–S10 (`PARITY.md`): 24 runs at year indexes 49, 71,
+72, 73 and 133 gave 15 Traders and 9 empty years, each exactly as
+replayed (warp, start, destination, item, messages). Index 133 shows the
+mod-100 tests come before the odd-year rule. The part reroll and its
+conversion to research were not exercised (BINARY-ONLY).
+
 ### Implementing
 
 Elegy draws from its own generator, so only the rules matter, not the
@@ -1169,16 +1768,68 @@ The game's option flags that matter after creation:
 
 ## Open experiments
 
-None for this specification. The three earlier items (Auto Alchemy before
-a multi-count item, zero maximum population, cost modifiers) were settled
-by KX-001; see the rules above and `PARITY.md`. KX-002 measured the
-BINARY-ONLY rules a playable game meets every year; the ones it could not
-reach are listed at the end of its section in `PARITY.md`.
+The KB sweep (`PARITY.md`, "KB batch 1" to "KB batch 4") tested the
+BINARY-ONLY rules that Elegy's turn engine meets every year: economy,
+population, production, research, the year's random draw order and
+movement fuel. What is still BINARY-ONLY falls into two groups.
+
+**Cannot be oracled, or has no observable effect.** An implementation
+follows the reading; no experiment can contradict it in play.
+
+- The duplicate-serial penalty and everything behind the cheater flag:
+  halved growth, the ×4/5 resource cut (so a planet with 0 resources),
+  the level-10 research cap and the registration movement gate. These
+  need a duplicated or invalid serial, which oracle runs cannot use.
+  Elegy has no registration scheme.
+- The `max(1, …)` in hostile deaths on an empty planet (growth never runs
+  there), and the floor of 10 on the maximum mines and factories (no
+  planet reaches it).
+- A zero-item queue arising in play. KB-2A wrote one directly; no order
+  creates one.
+- Ties between a mineral and resources as the limiting component of a
+  unit, and the order of an Alternate Reality planet's two mining steps.
+  Both orders give the same state.
+- An Alternate Reality planet with maximum 0 reached by deleting the
+  starbase's design. The result is the divide-by-zero crash above
+  (LEGACY BUG; Elegy chooses its own rule).
+- A fleet with no free warp when it runs dry: every J-RC3 engine is free
+  at warp 1.
+- The player-order permutation (step 1) with legal orders, and the step
+  order where nothing observable differs: the race check against
+  the pre-movement tasks (2a), the Trader encounter against bombing (6a,
+  6b), the registration steps, design housekeeping, the report-age reset,
+  and the file-only caches and option bits (8.3, 8.4).
+- Options the turn generator never reads (accelerated BBS play, maximum
+  minerals, galaxy clumping).
+
+**Could be oracled, not yet run.** None of these is exercised by an
+ordinary year. Each needs a targeted start, and they are queued behind
+questions raised by Elegy's implementation:
+
+- Scores and victory: per-slot truncation, capacitors and sappers in the
+  power rating; the planets rounding at exact halves; the score and
+  resources thresholds; the lead test with tied top scores; the highest
+  score condition; deciding the game, and public scores (a) and (b).
+- Rare events, by seed replay: an Alternate Reality owner hit by a comet,
+  the 180 cap on new minerals, the Trader item reroll and conversion, and
+  whether the original environment moves with the current one. The event
+  probabilities themselves are confirmed only as draw-and-threshold logic
+  in replayed streams, not as sampled rates.
+- Movement: chasers taking per-round steps with limited fuel; the copying
+  rule for fleets following a fleet; mine laying after battles; the other
+  movement gates sparing Alternate Reality colonists; the Radiating
+  Hydro-Ram Scoop exemptions (immune radiation, low + high ≥ 170); the
+  `Random(3)` when Inner Strength breeding rounds to 0.
+- Maximum population: Hyper-Expansion with OBRM, and OBRM on an Alternate
+  Reality starbase maximum.
+- Drops after movement: the capture tech attempt and artifact draws in
+  the year's sequence. These are coordinated with the takeover lane.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001, KX-001..004 and TK-117 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001..005, KB-1..4, OT-1..6 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
-  research, mining, production, movement and fuel notes; model checks that
+  research, mining, production, movement and fuel notes, and the turn
+  generation routine for "Turn order"; model checks that
   reproduce the PG, PQ and FM observations listed above).

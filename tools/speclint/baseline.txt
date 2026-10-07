@@ -1,11 +1,10 @@
 # speclint baseline: accepted findings (file, check, message), one per line.
 # Regenerate with: go run ./tools/speclint -write-baseline
-docs/COMPONENTS.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
+docs/KERNEL.md	missing-section	docs/OBJECTS.md has no section "Spawn and movement"
+docs/KERNEL.md	missing-section	docs/OBJECTS.md has no section "Spawn and movement"
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED met and unmet, S1).
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: - **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: 2. Stop if the year index is below 10 (CONFIRMED, S3). No protection.
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: There is no year-index minimum (CONFIRMED, S3: unowned planet 18 at
@@ -15,17 +14,8 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: Vectors (CONFIRMED): small 9
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: Which component limits a unit (CONFIRMED where cases are cited,
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: `15 + rand(15)`; capped at 200 (CONFIRMED: huge comet, 112 → 200).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: message, and removed if it is 0 (CONFIRMED, T1: ×5 → ×3; T3: ×5 → ×1;
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: only toward the race's centre, stopping at it. CONFIRMED: Gravity
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: player (CONFIRMED, S1: 101·120/100 ≤ 623).
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: temperature, radiation) on ties. CONFIRMED at one point (T2: from
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: this year **whether or not the condition is enabled** (CONFIRMED for
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
-docs/OBJECTS.md	missing-section	docs/KERNEL.md has no section "Chain freeze"
-docs/OBJECTS.md	missing-section	docs/KERNEL.md has no section "Mystery Trader appearance"
-docs/ORDERS.md	missing-file	LIMITS.md does not exist
-docs/ORDERS.md	missing-file	LIMITS.md does not exist
-docs/ORDERS.md	missing-file	LIMITS.md does not exist
 docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
@@ -63,7 +53,6 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED 
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
 docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
-docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
 docs/PARITY.md	pr-ref	cites PR #17: stars-decomp #17); predictions committed before the runs. Each ran at six

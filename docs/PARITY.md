@@ -179,19 +179,24 @@ population-capacity purposes.
   preserved PG-003 `.HST` files (apparatus `evidence/pg003/`) for
   2408–2436; it matches the carry of the same rule every year (values in
   `KERNEL.md`).
-- Exact handling of `excessPop` / growth carry when habitability or crowding
-  introduces additional fractional modifiers.
-- Whether growth carry persists across ordinary gameplay changes to effective
-  growth rate.
-- Exact order of operations between:
-  - habitability modifier
-  - racial growth rate
-  - crowding modifier
-  - growth carry / integer truncation
-- Exact behavior at 100% capacity.
-- Exact overcrowding death curve between 100% and 400%.
-- Lifecycle of `excessPop` across migration, colonization, ownership changes,
-  hostile-world deaths, and other population-changing mechanics.
+- ~~Carry handling with habitability and crowding modifiers.~~ Resolved:
+  CONFIRMED in `KERNEL.md` "Population growth" (KX-002 H3–H6, P1–P3,
+  G1–G3; KB-1A).
+- ~~Whether the carry persists across changes to the effective growth
+  rate.~~ Resolved: the carry is a per-planet byte. Each year's rule adds
+  that year's remainder to it, whatever `g` is (`KERNEL.md`; KX-002
+  vectors start from a non-zero carry).
+- ~~Order of operations: habitability, growth rate, crowding, carry.~~
+  Resolved: `g = G·hab`, then crowding, then `t`, `q`, `r` and the carry
+  (`KERNEL.md` "Population growth", CONFIRMED).
+- ~~Behavior at 100% capacity.~~ Resolved: from `max` to `max + 10` the
+  population and carry are frozen (KX-002 G2, KB-1A planet 13).
+- ~~Overcrowding death curve.~~ Resolved: `g = 4·max(−300, trunc(c/−10) +
+  99)` (KX-002 G1), CONFIRMED.
+- ~~Lifecycle of `excessPop`.~~ Resolved for the cases that change it: an
+  emptied or captured planet keeps its carry (`TAKEOVER.md`, T-27), and
+  hostile deaths use it (KX-002 H5, H6). Growth and deaths run only on
+  owned planets with population.
 
 ### Measured behavior — PG-002, first crowded turn
 
@@ -1442,7 +1447,7 @@ Interpretation:
 
 Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
 
-#### Mystery Trader appearance (addendum; predictions)
+#### Mystery Trader appearance (addendum)
 
 Committed before runs S6–S10 were examined. `OBJECTS.md` gives the
 Trader's appearance rule as BINARY-ONLY ("From year index 40 …"); its
@@ -1486,6 +1491,368 @@ values a part bit):
 The comets, climate changes and new minerals of each tick are as at 2430
 (the planet states differ only in population, and no planet is
 protected after index 20).
+
+**Results.** All 24 runs matched: the 15 predicted Traders appeared with
+exactly the predicted warp, start, destination and item, every player got
+the appearance message (0x12b, parameter: the Trader's object id), and
+none appeared in the 9 runs predicted empty, including all three at the
+odd index 73 whose ticks give Traders at 49, 71 and 72. The comets,
+climate changes and new minerals in the same runs also matched. Items
+seen: research (0), a ship (0x1000) twice, and parts 0x10, 0x20 (×3),
+0x100 and 0x200 (×2). The index-133 runs show `mod 100 = 33` is tested
+before the odd-year rule (133 is odd). Status of the appearance rule:
+CONFIRMED (draw order, chance per index class, warp, edges and
+coordinates, item draw for the outcomes seen). Not exercised: the part
+reroll and its late-year research conversion, and the `mod 128 = 49`
+branch at an index where `mod 100` also matches.
+
+### KX-005 — research, tech progression and terraforming
+
+Status: CONFIRMED (research GR under slow tech, GR-fed level-ups, part
+announcements, level 26; terraform ties, Auto Min/Max, Claim Adjuster cost
+and drift, Orbital Adjusters), with two prediction misses explained below.
+Predictions were committed before any case ran (stars-elegy `0b610f8`).
+Rules: `KERNEL.md` "Research" and "Terraforming".
+
+Question: which research and terraforming rules in `KERNEL.md` are still
+BINARY-ONLY, and do they hold? Already settled elsewhere: level cost,
+cost settings, field switching, Generalized Research shares, level-26 loss
+(KX-002); slower tech and Super Stealth stealing (KX-003); miniaturization
+and what a race can build (`COMPONENTS.md`, CS-001); tech gained from
+battles, captures and scrapping (`COMBAT.md` "Tech from battle",
+`TAKEOVER.md`). Still open: Generalized Research under slower tech, a
+GR-fed field levelling without switching, reaching level 26 with "same
+field", which parts a level-up announces, and the terraforming rules
+marked BINARY-ONLY (ties, Auto Min/Max, Claim Adjuster cost, Orbital
+Adjusters, Claim Adjuster drift).
+
+Binary reading (stars-decomp `docs/research.md`, `mining-terraform.md`):
+
+- **Part announcements.** After a level-up in field `f`, every part the
+  race may use whose requirement in `f` equals the new level is announced,
+  **provided all six requirements are met** after the level-up (the lookup
+  returns "available" only then). Race-restricted parts and Mystery Trader
+  parts the player does not own are not announced. (An earlier private
+  note read the check as field `f` only; corrected.)
+- **Generalized Research under slower tech.** The current field gets
+  `(res+1)/2` at full scale, so it is stored as half (rounded up) like
+  normal research; each other field's 15% share `o` is added to its stored
+  value as `trunc(o/2)`.
+- **Level-ups in a GR-fed field** do not switch fields; their message is
+  the GR variant (as every level-up message of a GR player).
+- **Reaching 26** in a field whose next-field choice is "same field" turns
+  the choice into "lowest field", so research moves to the lowest field
+  (first in field order on ties) the same year with the leftover.
+- **Auto Min Terraform** builds (up to the terraform capacity) only when
+  the planet's population change this year is negative or its
+  habitability for the owner is 0 or less; Auto Max always up to the
+  capacity.
+- **Claim Adjuster** terraform items cost half (100 → 50).
+- **Orbital Adjusters:** after movement, each fleet orbiting an owned
+  planet makes one click per Orbital Adjuster (whatever its value), with
+  the fleet owner's terraform tech and the planet owner's habitat. If the
+  fleet's owner is the planet's owner or has the planet owner as a
+  *friend*, the click improves the planet (axis chosen as for production);
+  otherwise (neutral or enemy) it worsens it, pushing each axis to the
+  reachable end farther from the owner's centre (`orig ± reach`), unless
+  the planet has a starbase, in which case nothing happens. No test of
+  whether the fleet moved this year.
+- **Claim Adjuster drift:** per CA planet in planet order, `rand(3)` picks
+  an axis; if that axis's original value differs from the centre,
+  `rand(10) = 0` is needed, then population ≥ 1000 units passes, else
+  `rand(1000) < population`; the original value moves 1 toward the centre
+  before the year-end terraform.
+
+Method: Combat Lab game CB (two JOAT players), one year per run with
+`pinned-turn`; specs `experiments/kx005/`. Population in units of 100;
+resources = population / 10 (no factories) plus 35 at each homeworld.
+
+#### Research cases
+
+`kx5r`: player 0 Generalized Research, levels 10/0/3/3/3/3, energy
+current, next "lowest", 100% research, four planets of 4,900 (research
+1,995); player 1 levels 9/3/3/3/3/3, energy, next "same", eight planets
+of 5,000 (research 4,035). Run R1 on the normal base, R2 on base `0x82`
+(slower tech). `kx5l` (run R3): player 0 energy 25 with stored 85,080,
+next "same", homeworld only (35).
+
+| Run | Player | Predicted levels | Predicted stored research | Predicted messages |
+|---|---|---|---|---|
+| R1 | 0 (GR) | 10/**1**/3/3/3/3 | 998/30/300/300/300/300; field energy, next lowest (no switch) | GR level-up weapons 1 (continuing energy); part: Radiation Terraform ±3 |
+| R1 | 1 | **10**/3/3/3/3/3 | 25/0/0/0/0/0 | level-up energy 10; parts: Bear Neutrino Barrier, Laser Battery, Temp Terraform ±11 (not Battle Nexus, which needs electronics 19) |
+| R2 | 0 (GR, slow) | 10/0/3/3/3/3 (no level) | 499/150/150/150/150/150 | none |
+| R2 | 1 (slow) | 9/3/3/3/3/3 | 2018/0/0/0/0/0 | none |
+| R3 | 0 | **26**/3/3/3/3/3 | 0/**15**/0/0/0/0; field **weapons**, next lowest | level-up energy 26, continuing in weapons; no parts |
+| R3 | 1 | 3/3/3/3/3/3 | 35/0/0/0/0/0 | none |
+
+Alternatives these discriminate: GR shares stored at full scale under
+slow tech (R2 player 0 would gain weapons 1, stored 30/…); announcements
+checked on field `f` only (R1 player 1 would also announce Battle Nexus);
+level 26 keeping "same field" (R3: research stays in energy and is lost,
+weapons stored 0).
+
+#### Terraforming cases
+
+`kx5t0`, `kx5t1`, `kx5t2` differ only in player 1's relation to player 0
+(neutral, friend, enemy). Player 0: JOAT, tech 3 (reach ±3 per axis),
+research 0%. Player 1: Claim Adjuster, propulsion 10, biotech 6 (reach
+gravity ±11, temperature and radiation ±3), research 0%, and Orbital
+Adjuster fleets (one Mini-Miner with two adjusters each). Player 0 sees
+player 1 as a friend, so no battle.
+
+| Planet (owner) | Start (env = orig) | Queue / fleet | Predicted end of year |
+|---|---|---|---|
+| 0 (P0) | 50/60/60, pop 1000 (100 res.) | Terraform ×1 | 50/**59**/60: temperature and radiation tie, first axis wins |
+| 1 (P0) | 50/60/58, pop 8000 (800) | Auto Max ×9 | 6 built (capacity), 50/57/55 |
+| 2 (P0) | 50/60/60, pop 3000, growing | Auto Min ×5 | nothing built, unchanged |
+| 3 (P0) | 50/86/50 (hab −1), pop 2000 (120) | Auto Min ×1 | 1 built, 50/85/50 |
+| 9 (P0) | 50/60/60, pop 16000 (over capacity, shrinking; 1298) | Auto Min ×9 | 6 built, 50/57/57 |
+| 5 (P1, CA) | 60/60/60, pop 1200 (120) | Terraform ×3 | queue left **Terraform ×1 at 41%** (cost 50: two built); at cost 100 it would be ×2 at 20%. Year end: env 50/57/57 |
+| 15 (P0) | 60/60/60 | P1 fleet in orbit, 2 adjusters | neutral, enemy: **62**/60/60; friend: **58**/60/60 |
+| 19 (P0, starbase) | 60/60/60 | P1 fleet in orbit | neutral, enemy: unchanged; friend: 58/60/60 |
+| 21 (P0) | 60/60/60 | P1 fleet arriving this year (30 ly at warp 6) | as planet 15 |
+| 4, 6, 13, 14, 16 (P1, CA) | 60/60/60, pop 3000 | none | env 50/57/57 (year-end Claim Adjuster), orig 60/60/60 unless drifted |
+| 7 (P1, CA) | 60/60/60, pop 500 | none | as above; drift needs `rand(1000) <` its grown population (~554) |
+
+Hostile adjusters: gravity's reachable ends are 49 and 71; 71 is farther
+from the centre 50, and its average habitability loss per click (score
+137) beats temperature's and radiation's (67), so both clicks go to
+gravity. Friendly: gravity toward 50 (score 111) beats the others.
+
+Claim Adjuster drift, replayed from each startup tick at draw offset 4
+(the offset at which KX-004's events began; it is one value for every run
+from this state and is fitted if 4 misses), planets in order 4, 5, 6, 7,
+8, 13, 14, 16 (8 is the homeworld, original = centre, one draw):
+
+| Cycles → tick | Predicted drift (original value moves 1 toward 50) |
+|---|---|
+| 35000 → 109 | 14 radiation (env 50/57/**56**) |
+| 3700 → 1098 | 14 temperature (env 50/**56**/57) |
+| 2190 → 1812 | 5 temperature |
+| 1490 → 2691 | 4 radiation |
+| 1210 → 3295 | 6 radiation |
+| 1165 → 3460 | 4 temperature, 6 gravity (env unchanged: target stays 50), 14 temperature |
+| 1135 → 3570 | 13 radiation |
+| 11500 → 329, 10500 → 384, 6000 → 659, 5200 → 768, 1985 → 2032, 1190 → 3405, 930 → 4284, 880 → 4503 | none |
+
+Runs: T0 (neutral) at all 15 cycles values; T1 (friend) at 3700; T2
+(enemy) at 1165.
+
+#### Results
+
+Research (R1–R3, one run each; no randomness involved):
+
+- R1: as predicted for both players, every stored value and level. Player
+  0's GR message for weapons 1 named energy as the field continuing, and
+  one part message (Radiation Terraform ±3). Player 1 got its level-up
+  message and exactly three part messages (Bear Neutrino Barrier, Laser
+  Battery, Temp Terraform ±11); Battle Nexus was not announced.
+- R2: as predicted (499/150×5; 2018), no messages.
+- R3: energy 26, weapons current with 15 stored, energy 0, level-up
+  message naming weapons, as predicted. **Miss:** the stored next-field
+  choice stayed "same field", not "lowest". Re-reading the binary: the
+  promotion to "lowest" is held in a local variable; the switch writes
+  only the new current field and keeps the stored choice. `KERNEL.md`
+  states the observed rule.
+- The non-GR level-up message is event id 0x50 in the `.M` file (the
+  private note had 0x150; the id arithmetic wraps).
+
+Terraforming (T0 at 15 cycles values, T1, T2):
+
+- Production on player 0's planets was identical in all 17 runs and as
+  predicted: planet 0 → 50/59/60 (tie to temperature); planet 1: six
+  units, 50/57/55, Auto Max ×9 kept; planet 2: nothing; planet 3: one
+  unit, 50/85/50; planet 9 (overcrowded, population 16000 → 15667): six
+  units, 50/57/57. Claim Adjuster planet 5: queue left Terraform ×1 at
+  41% (cost 50).
+- **Miss (prediction setup, not a rule):** both players researched
+  during the year (planets without a queue send everything to research)
+  and went from energy 3 to 5, which gives Temp Terraform ±7. Production
+  had already run, so it used ±3; the Claim Adjuster year-end step and
+  the Orbital Adjusters ran after research and used ±7. Year-end CA
+  environment was 50/53/57, not the predicted 50/57/57; recomputed with
+  reach 11/7/3 every CA planet matches (and 50/52/57 or 50/53/56 after a
+  temperature or radiation drift).
+- Orbital Adjusters: neutral (T0, all 15 runs) and enemy (T2): planets 15
+  and 21 → 62/60/60 as predicted (gravity, unchanged by the energy
+  change); planet 19 (starbase) unchanged. Friend (T1): 60/58/60 on all
+  three, including the starbase planet; predicted 58/60/60 with the
+  start-of-year reach, 60/58/60 with the reach after research (temperature
+  toward 53 scores higher than gravity). The fleet arriving that year
+  terraformed in every run. Messages: friendly 0x12c, hostile 0x15a, to
+  both players, with (fleet, planet, old habitability, new habitability).
+- Claim Adjuster drift: 17 of 17 runs exactly as replayed at offset 4,
+  13 drifts in all (the predicted table above, plus T1 at 1098 and T2 at
+  3460 as for those ticks). A gravity drift on planet 6 changed only the
+  original value (its target stays at the centre). Each drift sent the
+  owner message 0x15c.
+
+Raw evidence: stars-oracle-apparatus `evidence/kx005/`.
+
+### OT — turn order, breeding in transit, AR loss gate, score speed code
+
+Status: CONFIRMED. Every case matched its committed prediction at cycles
+20000 and 3700 (two streams). Predictions were committed before the runs
+(stars-elegy `2eb2c1e` for OT-1..5, `649078a` for OT-6). Specs, start
+builder and prediction tables: `experiments/ot/`. Raw evidence: private
+apparatus `evidence/ot/`. Rules: `KERNEL.md` "Turn order", "Alternate
+Reality colonists in flight", "Inner Strength colonists breed in transit",
+"Score".
+
+Question: the program fixes the order of each year's steps, but five
+neighbouring pairs that an implementation could visibly get wrong had not
+been separated by a run. Also open: when an Alternate Reality fleet counts
+as moving, how Inner Strength colonists breed in a fleet, and which speed
+code the score's ship power uses.
+
+Setup: one pinned year per case from the CB base (2400, two players,
+random events off), edited with `CombatLab` planet sets (new key
+`driver=DEST[,WARP]` for a starbase's mass-driver destination).
+
+| Case | Separates | Observation | Result |
+|---|---|---|---|
+| OT-1 | Trader encounter (6b) before unload (6c) | A fleet ordered to unload exactly 5,000 kT at the Trader's arrival planet was consumed (reward message 0x109); nothing reached the planet | CONFIRMED |
+| OT-2 | Battle (6) before encounter (6b) | Battle at the Trader's arrival point; no freighter lost; then the freighters traded | CONFIRMED |
+| OT-3 | Launch-year packet flight (5) before bombing (6a) | The packet emptied the planet (0xda); the four bombers orbiting it sent no bombing message | CONFIRMED |
+| OT-4 | CA terraforming (7.3) before Orbital Adjusters (7.4) | Final environment 50/50/51; at 3700 the original also drifted and the result was the same | CONFIRMED |
+| OT-5 | Breeding in transit (3b) before production and growth (4) | Full 2100 kT IS fleet over its own planet: 157 landed (0x158), and the planet ended equal to the control planet that started 157 higher. 200 kT in a 210 kT hold in deep space: +10 (0x0fb), 5 lost. Full fleet over an enemy planet: nothing, no message | CONFIRMED |
+| OT-6 AR | When an AR fleet counts as moving | 22 kT moving: kept, no 0x0c1; 23: 22 with 0x0c1; 100 kT with waypoint 1 on its own position: 97; with no fuel (did not move): 97; chasing: 97 (once); warp 0: 100, no message | CONFIRMED |
+| OT-6 power | Speed code in the score's ship power | A 7-Big-Mutha-Cannon Battle Cruiser counted as an escort for a War Monger owner as well as a non-War Monger one (power 1963 without the WM bonus, 2320 with it); a 9-Disruptor design counted as capital for both (2088). Records: U/E/C 8/1/1 and 1/1/1 | CONFIRMED |
+
+OT-6's two races were not legal (advantage points below 0), so the host
+degraded colonists per resource at the start of the year. No OT-6
+measurement depends on it.
+
+Interpretation: all five orders agree with the program. The AR loss is
+taken when a fleet with a waypoint at warp above 0 starts its move, before
+the fuel limit and chase deferral, and only losses of at least 1 kT send a
+message. The score's power uses the design's own speed code with no race
+bonus.
+
+### KB batch 1 — population, resources, mining, AR, remote mining
+
+Status: CONFIRMED, with one refinement (AR planets' own miners). Every case
+ran at two cycles values (KB-1C at 11). Predictions were committed before
+the runs (stars-elegy `e936175`); `experiments/kb/` has the specs, the
+model (`kbmodel.py`, public rules only) and the tables. Raw evidence:
+private apparatus `evidence/kb/`. Rules: `KERNEL.md` "Habitability",
+"Maximum population", "Resources and installation caps", "Mining" and
+"Remote mining".
+
+Question: which of KERNEL.md's population, resource and mining rules that
+were still BINARY-ONLY hold?
+
+| Case | Rule | Observation | Result |
+|---|---|---|---|
+| KB-1A 13 | JOAT + OBRM maximum; hab 79 at 70/50/50 | Population 10,430 frozen: maximum 10,428 | CONFIRMED |
+| KB-1A 9 | Effective population at most `2·max` | 45,000 units at maximum 13,200 gave 2,650 resources (not 2,920); the player's research total was 4,652 as predicted | CONFIRMED |
+| KB-1A 12 | Depletion clamp 10 below concentration 5 | Concentration 4, fraction 251 (clamp 25 gives 245) | CONFIRMED |
+| KB-1A 16, 10 | Maximum defenses `min(100, max(10, 4·hab))` | 95 + 5 at hab 100; 5 + 5 at hab −15 | CONFIRMED |
+| KB-1A 10, 11 | Hostile cap of 15 per axis | 1,000 → 985 (one axis 30 outside), → 970 (two axes) | CONFIRMED |
+| KB-1A 14 | Remote mining capped at 4,000 per fleet | 4,320 robot points mined 2,720/3,120/3,040 kT, depletion exact | CONFIRMED |
+| KB-1B | AR maximum population by starbase hull | Fort, Dock, Station, Ultra Station and Death Star planets frozen at 2,500, 5,000, 10,000, 20,000 and 30,000 plus 5, one of them at hab 3 | CONFIRMED |
+| KB-1B 12 | AR maximum mines, factories and defenses 0 | Auto Mines, Factories and Defenses built nothing | CONFIRMED |
+| KB-1B | AR resources `max(25, hab)` | Yearly resources 8,054 (7,803 without the floor) | CONFIRMED |
+| KB-1B 12 | The owner's miner at an AR planet | It mined, as a separate step from the planet's own mines: boranium fraction 106 (one combined step gives 107) | Refined |
+| KB-1C | Mining's random +1 and its draw order | 77 planet results in 11 streams as replayed; climate change on planets 20 and 22 as replayed | CONFIRMED |
+
+Interpretation: all the readings tested hold. The remote-mining reading
+that an AR owner's miners add their robot points to the planet's mines is
+replaced by "a separate mining step".
+
+Also found: an earlier ship-launch discrepancy (SL-12, a Station upgrade
+at 88% with about 120 resources where 170 were expected) came from that
+batch's illegal test races. The host degraded colonists per resource
+from 1,000 to 2,400 before production, and with that value the resource
+rule gives exactly 120 left after the research tax. CombatLab's dump now
+prints each player's advantage points so a start can be checked first.
+
+### KB batch 2 — production pre-checks, research switching, slow-tech stealing, immune terraforming
+
+Status: CONFIRMED. Each case ran at cycles 20000 and 3700 with identical
+results. Predictions were committed before the runs (stars-elegy
+`734498a`); `experiments/kb/` has the specs, model and tables. Raw
+evidence: private apparatus `evidence/kb/`. Rules: `KERNEL.md`
+"Research" ("Level cost", "Allocation"), "Production" and
+"Terraforming".
+
+Question: do KERNEL.md's remaining production and research rules hold,
+including the Ultimate Recycling bonus, the queue pre-checks and the
+zero-item queue? And field switching after a "same field" research reaches
+26, stealing under slower tech, and terraforming with an immune axis?
+
+| Case | Rule | Observation | Result |
+|---|---|---|---|
+| KB-2A 13 | Ultimate Recycling scrap bonus `r + trunc(x·r/(x+r))` | 10 ships of owner cost 241 (`x` 2,410) at a 500-resource planet with no queue: research total 1,449 (500 + 414 + others); the message carried 414. Minerals 378/0/99 = `9C/20` | CONFIRMED |
+| KB-2A 9 | A scanner order on a planet with a scanner | Removed (0xb9), queue freed (0x3e), 300 resources to research | CONFIRMED |
+| KB-2A 12 | A packet order with no driver | Removed (0x129), queue freed (0x3e), 200 to research | CONFIRMED |
+| KB-2A 16 | Zero-item queue | Nothing to research, no message; the empty queue block stayed | CONFIRMED |
+| KB-2A P0 | "Same field" at 26 acts as "lowest" for the rest of the year | Research 1,135: energy 26, weapons 1, propulsion 1, then weapons current with 185; three level messages naming weapons, propulsion, weapons as next; stored choice still "same" ("same" kept would give weapons 2 with 155) | CONFIRMED |
+| KB-2B | Stolen research halved rounding up under slower tech | Super Stealth stored energy 48 + 12 = 60 and weapons 44 (two 0x159 messages showing 23 and 88); the other player's weapons 355 stored as 178 | CONFIRMED |
+| KB-2C | An immune axis is not terraformed and adds no capacity | Gravity-immune race: 20/47/50, Terraform ×5 cut to ×3 (0x12f) → 20/50/50; 10/50/50, ×2 removed (0x12f), nothing built | CONFIRMED |
+
+Interpretation: every reading tested holds. KB-2C's first run was void.
+Its race marked gravity immune with only the centre byte at −1, and the
+host repaired it before production: message 0x117, gravity centre forced
+to the midpoint of low and high (50), and both planets were then
+terraformed in gravity. An immune axis needs centre, low and high all at
+−1 (`docs/ORACLE.md`); the rerun used that.
+
+### KB batch 3 — the year-wide random draw order
+
+Status: CONFIRMED. Predictions were committed before the runs
+(stars-elegy `75900b5`). `experiments/kb/` has the spec and the table.
+The replay tool is private, and the raw evidence is in apparatus
+`evidence/kb/`. Rule: `KERNEL.md` "Random draws".
+
+Question: in one year with a tech attempt from scrapping at a starbase,
+mining, the random events and a bombing pass, do the draws follow the
+program's order? That order is the shuffle, the scrap attempt, mining,
+the events, then bombing.
+
+Setup (KB-3A): events on, year 2400. Player 0 scraps a Scout with a Long
+Hump 6 at player 1's Orbital Fort planet; player 1 is at tech 0. Mining
+makes five draws. Player 0's one-LBU-17 bomber orbits player 1's planet
+13, with 45 factories, 25 mines, no defenses and 1,012 population after
+growth.
+
+| Streams | Observation | Result |
+|---|---|---|
+| 11 of known tick | Player 1's propulsion gain (with 0x13d, else 0x141), every mining gain, and planet 13's factories, mines and population all as replayed | CONFIRMED in 11 of 11 |
+| 12 of unknown tick | Each matched the predicted order at some k (`trunc(k·54.925)`). 2100 and 2060 both showed planet 10's radiation 35 → 28, the climate change predicted at k = 35, with every other value matching. Under either alternative order no k matches them | CONFIRMED, with a visible event |
+
+Alternatives ruled out: mining before the scrap attempt (11 of 11
+known-tick streams differ), and bombing before the events (3 of 11 differ,
+and neither climate stream matches).
+
+Interpretation: the scrap tech attempt draws before mining, and bombing
+draws after the events. Capture and artifact draws, battles, Trader
+rewards and the movement-phase draws keep the places read from the
+program (BINARY-ONLY).
+
+### KB batch 4 — movement and fuel leftovers
+
+Status: CONFIRMED. Every fleet matched the prediction in both streams
+(cycles 20000 and 3700). Predictions were committed before the run
+(stars-elegy `a71bc70`), and `experiments/kb/` has the spec and table.
+Raw evidence: apparatus `evidence/kb/`. Rules: `KERNEL.md` "Fuel cost",
+"Not enough fuel", "Chasing another fleet", "Refuelling at a starbase"
+and "Other movement rules".
+
+Setup (KB-4A): player 0 is an Interstellar Traveler with Improved Fuel
+Efficiency at tech 26. Player 1 treats player 0 as a friend.
+
+| Fleet | Rule | Observation | Result |
+|---|---|---|---|
+| KB-4A G1, G2 | Anti-matter Generator +50, capped | 100 → 150; 230 → 250 (tank 250) | CONFIRMED |
+| KB-4A X1, X2 | Fuel transport +200, capped | 1,000 → 1,200; 2,150 → 2,250 (tank 2,250) | CONFIRMED |
+| KB-4A E | IFE factor `f − trunc(15f/100)` | 300 → 295 at warp 6 over 36 ly (294 without IFE) | CONFIRMED |
+| KB-4A K | A fleet that cannot afford the leg but keeps fuel keeps its warp | 20 → 15, warp 6, no out-of-fuel message | CONFIRMED |
+| KB-4A H, H0 | Radiating Hydro-Ram Scoop colonist loss | 70 → 58 moving (message 0x74); 70 stationary | CONFIRMED |
+| KB-4A Q | Equal engine factors keep the fleet's design order for cargo | 300 → 243 (the other order gives 244) | CONFIRMED |
+| KB-4A C | Fuel-limited chaser of a finished target | 5 mg, moved 7 ly to (1026, 1013), 0 mg, warp 1, out-of-fuel message, waypoint on the target's end | CONFIRMED |
+| KB-4A T1, T2 | Transport task holds a fleet until satisfied | "wait for 50%" with nothing to load held the fleet; "unload all" unloaded 10 kT and the fleet moved 25 ly | CONFIRMED |
+| KB-4A F1–F5 | Refuelling: dock required, own or friend's starbase | friend's Space Station 10 → 300, 400 → 300; neutral owner's 10; own Orbital Fort 10; own Space Station 10 → 300 | CONFIRMED |
 
 ## Fleet Movement
 
@@ -1712,19 +2079,25 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 
 ### Open
 
-- IFE and other LRTs (the binary reading has IFE cut engine fuel by 15%
-  and Cheap Engines fail at warp 7–10 at random), warp-10 ship losses
-  (random in the binary reading), fuel transports and anti-matter
-  generators, and fuel transfer orders: not tested.
-- The chase candidates above are now explained by the binary reading
-  (white-box: chasers move after the other fleets in steps of about a fifth
-  of warp² while their target has not moved; a chaser landing on a target
-  that is itself chasing stops it for the year). The oracle side has only
-  the FM-001..003 cases.
+Settled since this list was written (kept for the record):
+
+- ~~IFE and other LRTs, warp-10 ship losses, fuel transports and
+  anti-matter generators~~: CONFIRMED in Round 2 (FM-101..105) and KB batch
+  4 (KB-4A: IFE factor, generator and transport caps, refuelling at a
+  friend's or own dock). Cheap Engines failures and warp-10 losses are
+  MEASURED rates (Round 2).
+- ~~Fuel transfer orders~~: `ORDERS.md` "Cargo amounts and clamps"
+  (FO-01..07).
+- ~~Chase candidates, oracle side only FM-001..003~~: chasing a finished
+  target CONFIRMED (KB-4A C); per-pass steps and the chain freeze MEASURED
+  (MF-02, MF-02b, "Followers" below).
+- ~~Minefields, stargates, wormholes~~: covered by the MF, GT and WT
+  corpora (`OBJECTS.md`).
+
+Still open:
+
 - Whether chain freezing and the mutual-chase scheme hold for three-way
   cycles and in the next year.
-- Minefields, stargates, wormholes, and movement
-  that interacts with other players were deliberately not tested.
 
 ### Round 2 (FM-101 to FM-105)
 
@@ -4796,7 +5169,7 @@ private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
   the fleet alone; the change is the shared core's whole-year arrival
   slowdown (`AI.md`, AI-11). Extra queue lines in both runs were the shared automation's.
 
-## Computer players (AI-0..AI-12)
+## Computer players (AI-0..AI-23)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4812,6 +5185,8 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 - **AI01**: another small map (seed 4101), same line-up, 2400–2402; a
   rerun at the same cycles gave identical orders, and another stream
   changed only design names, starbase pictures and packet destinations.
+- **AI02, AI03, AI04**: the stage-1 games, one computer player of each
+  type at easy, standard and harder; 2400–2424, 2400–2424 and 2400–2454.
 - **UG**: the universe-generation corpus's computer players (73 players).
 
 ### Cases
@@ -4825,9 +5200,15 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-5 | Macinti scraps early fleets and builds and scraps its slot-1 colonizer each year until design 7 exists | MEASURED: AIX 2400–2406 |
 | AI-8 | Robotoid ship designs each year: ageing deletes, the design ladder, the slot-0 Frigate rebuild; slot, hull, parts, counts and picture (`docs/ai/robotoid.md` §2) | CONFIRMED: 61 of 61 player-years (AIX), covering 7 design orders and every year without one |
 | AI-9 | Robotoid production: each planet's newly queued ships follow the order freighter, colonizers, frigates, armada or warships, slot 14/15, using each group's newest design; none at planets without a starbase or with fewer than 20,000 colonists (`docs/ai/robotoid.md` §3) | MEASURED: 1,205 of 1,205 planet-years (AIX), 70 with ships queued |
-| AI-10 | Computer players keep no memory between years: the memory block in the history file is never read back (`AI.md` §1) | MEASURED indirectly: in AIX's 61 years of history files, Cybertron's per-planet attack cooldown is only ever 0 or its starting value, never a decremented one; an edit test is pending |
+| AI-10 | Computer players keep no memory between years: the memory block in the history file is never read back (`AI.md` §1) | CONFIRMED (prediction committed before the runs): for one AIX year, replacing Robotoid's memory block with junk hubs, with hubs on all its planets, or putting an attack cooldown into Cybertron's block left the orders and memory output unchanged; a rerun reproduced the year exactly. Only a header word of the written history file differed when the input file size changed. Earlier indirect evidence: Cybertron's cooldown is never a decremented value in 61 years |
 | AI-11 | Waypoint-1 warp re-pick at the end of every computer player's turn (`AI.md` §11 "Warp choice") | CONFIRMED: AIX 1,680 of 1,680 rewritten warps, 2,043 of 2,043 fleets left alone, 207 of 207 warps set earlier in the turn; 38 fleets in enlarged foreign minefields all in the random set; the AI oracle's round-2 runs all agree, including a Scout's 6 → 5 |
 | AI-12 | Robotoid fleet orders each year: waypoint-0 task and waypoint-1 target and task per own fleet (`docs/ai/robotoid.md` §4), with the planet view of `AI.md` §1 | MEASURED: every own Robotoid fleet in AIX's 61 years agrees (146 colonize targets, 58 unloads at foreign planets, 219 freighter targets, 22 armada and 123 attack orders as outcome sets, 1,251 fleets left alone); obsolete fleets, join-up and wormholes never occurred. The planet-view rule is CONFIRMED by two edited AI oracle runs (history-file owners of other players → scrap; the same planets as its own → colonize) |
+| AI-13 | Cross-player leak of empty design slots (`AI.md` §1 "State leaking between computer players"): Macinti's slot-4 rule reads the creation year Cybertron left in slot 3 | MEASURED (prediction committed before the runs): from AIX 2448, moving only Cybertron's slot-3 creation year from 2442 to 2428 made Macinti create slot 4 (a Cruiser) in 2449 in 2 of 2 random streams; unedited controls never did; Cybertron's own orders were unchanged. Later years then differed for other computer players through the shared random stream |
+| AI-14 | Rototill never makes, deletes, ages, splits or merges ship designs (`docs/ai/rototill.md` §1) | MEASURED: no ship design order in 166 Rototill player-years (AIX 2400–2460, AI02/AI03 2400–2424, AI04 2400–2454); only starbase design orders |
+| AI-15 | Rototill production: at most one Colony Ship a year, on the lowest-id own planet with a starbase and 100,000 colonists, when none is alive or alive + 1 < U (`docs/ai/rototill.md` §2) | MEASURED: 3 colony ships queued as predicted (AIX 2444, 2446; AI02 2414), 108 qualifying planet-years and 70 other planet-years with none; the alive + 1 < U branch never reached (U ≤ 2) |
+| AI-16 | Rototill colony ships: invasion unload or route cut in pass 1; load 2,500 colonists and colonize the nearest seen planet habitable after terraforming, or a wormhole, in pass 2; empty ones go home (`docs/ai/rototill.md` §3) | MEASURED: 98 idle colony-ship years (4 colonize, 2 wormhole, 92 no target), 1 unload, 1 cut, 1 move home, colonist loads in 166 of 166 years; ignoring habitability breaks 89 rows |
+| AI-17 | Rototill scouts move to the nearest never-seen planet (in neither turn file nor history file) not targeted by another own fleet, 5% wormhole when orbiting (`docs/ai/rototill.md` §3) | MEASURED: 75 of 75 scout moves; counting history-only planets as never seen breaks 31; fallbacks not exercised |
+| AI-18 | Cross-player leak of armada parameters (`AI.md` §1 "State leaking between computer players"): Cybertron's armada stay-or-leave test reads values only Robotoid, Turindrone, Automitron and Macinti set | MEASURED (prediction committed before the runs): for AIX 2453–2460, with the earlier computer players' captured orders submitted but their turns not run (values 0), every Cybertron armada idle at an own planet left home, 11 of 11 armada-years; with Automitron's values all stayed. Skipping a turn alone does not move them. Skipping Robotoid's turn shifted 17–19 of Cybertron's random-dependent order lines (shared random stream) |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the
@@ -4918,3 +5299,54 @@ the capture keeps them. Each player-year is compared with the prediction.
   One miss: the Automitron changed its scout's second waypoint to a new
   planet, where the prediction left a two-waypoint fleet alone. This went to
   the objects lane.
+
+## Production-queue edits through the client (LQ-0..LQ-7)
+
+Status: CONFIRMED for LQ-1..LQ-4, LQ-5b and LQ-6; MEASURED for LQ-5 and
+LQ-7 (predictions missed), 2026-10-07. Rules: `LIMITS.md` "Production-queue
+replace" and "Production queue"; the case table is `LIMITS.md` "LQ".
+
+### Question
+
+What the host keeps when the client replaces a planet's production queue,
+and which limits the client's Production dialog enforces.
+
+### Method
+
+Predictions from the decomp lane, committed before each batch. Combat Lab
+with research at 100%, so production barely touches the queue, and a
+pinned base year. Each case is one client session
+(`tools/fleetlab/client-orders`) and one pinned year (cycles 20000). LQ-3
+edits the host file's old queue between the client's view and the host
+year, so the client submits progress the host has no record of. Commands
+and specs: `experiments/lq/`. Raw files: private apparatus `evidence/lq/`.
+
+### Result
+
+- A partially built item keeps its progress when moved or when its count
+  changes; an item removed and added again starts at 0.
+- The host keeps a submitted percentage only against an old partial item of
+  the same id and kind, matched in queue order, count ignored: in LQ-3 the
+  client's 49% Factory was kept against an old 20% Factory ×9, and the
+  client's 30% Mine, second Factory and 50% Probe went to 0.
+- Clear leaves no queue and message 0x3f.
+- The dialog refuses a 41st item, clips a count at 1020 and holds Auto
+  Alchemy at 1.
+- Missed: Add with the Top row selected merged into the Factory below it
+  (LQ-7); and the factories in the whole queue are limited to 1020 (LQ-5),
+  after which Factory leaves the buildable list.
+
+## Ship-count boundary through the client (CO-06)
+
+Status: MEASURED, 2026-10-07. Full record: `experiments/fc/README.md`
+"CO-06, ship-count boundary". Summary for `LIMITS.md`:
+
+- The client's Merge Fleets was disabled for two 16000-ship fleets (it was
+  enabled for 10 + 10 and 2 + 2), so the direct merge order's boundary is
+  not reachable with legal orders.
+- The two-fleet ship exchange instead: the client stops the destination at
+  32766; the host stored 32765 each time (the extra ship lost), and moved
+  cargo and fuel by the share of ships moved. Controls kept 32765 and 32000.
+
+The same file records the other client-order cases, among them CO-07 and
+CO-08 (deleting and editing designs in use).

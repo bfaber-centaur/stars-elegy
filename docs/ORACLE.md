@@ -1028,6 +1028,15 @@ python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs 
   showed the race's first stat byte (as `hst-edit` prints it) raised from
   10 to 24; the trait stayed. BET in 0x1b80
   changes miniaturization, so ship costs differ from JOAT's.
+- Check `points=` in `combatlab dump` before running: it must be 0 or
+  more. Legal starts used in KB: JOAT + UR + NAS + LSP + BET (`lrt P 7200`,
+  123 points); AR with `lrt P 7296` (198). An immune axis needs centre, low
+  and high all at −1: `hab P 255,50,50,255,45,45,255,55,55` is gravity
+  immune (700 points with `lrt P 7552`). Only the centre at 255 is
+  repaired by the host before production: message 0x117, and the centre
+  is forced to the midpoint of low and high (KB-2C's void first run).
+- Queue `N empty` (CombatLab) writes a production queue block holding
+  zero items. The game keeps it, and the planet sends nothing to research.
 - A second year: run `pinned-turn` again with the first run's
   `raw/after/CB.HST` as START and `raw/after` as BASEDIR (TK-111).
 - Three players: `tools/fleetlab/new-game` with three `pg000.r1` lines in

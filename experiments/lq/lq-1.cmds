@@ -1,0 +1,10 @@
+# LQ-1 (Q-1, Q-3): move the partial Armed Probe to the top; take 2 off the partial Mine.
+queue open
+queue select 5
+queue up
+queue up
+queue up
+queue up
+queue select 3
+queue remove 2
+queue ok

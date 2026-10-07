@@ -32,8 +32,9 @@ import org.starsautohost.starsapi.items.Items;
 //   mt P HEX                        set the Mystery Trader items P owns (16-bit mask, one bit
 //                                   per item; 0 = none). Designs may use Mystery Trader parts
 //                                   by name whatever the mask (see docs/ORACLE.md)
-//   queue N ID:COUNT[:PCT]:KIND[,...]|none
-//                                   replace planet N's production queue (owned planets).
+//   queue N ID:COUNT[:PCT]:KIND[,...]|none|empty
+//                                   replace planet N's production queue (owned planets;
+//                                   "empty" writes a queue block holding zero items).
 //                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
 //                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
 //                                   = percent of the first unit already done (default 0)
@@ -81,6 +82,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   packet=DEST,WARP|none (packet destination planet and
 //                                   packet speed setting; WARP 4 = unset, the game then
 //                                   uses the driver's warp)
+//                                   driver=DEST[,WARP] (mass-driver packet destination
+//                                   planet and chosen packet warp; needs a starbase)
 //                                   artifact=1|0 (ancient artifact: the file flag, and on
 //                                   owned planets the installations bit the host reads)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
@@ -183,6 +186,9 @@ public class CombatLab {
                     sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
                     sb.append(" hab=");
                     for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
+                    // advantage points (RaceLab, StarsAPI racebuilder): negative = a race the
+                    // host degrades at the start of the year (message 0x117)
+                    try { sb.append(" points=").append(RaceLab.points(p.fullDataBytes)); } catch (Exception e) { sb.append(" points=?"); }
                     // default production queue for new colonies (count at 0x4f, words id | count << 6 from 0x50)
                     // and the default "only leftover to research" bit (0x4e bit 0)
                     sb.append(" defqueue=");
@@ -1079,7 +1085,7 @@ public class CombatLab {
                 byte[] q = queues.get(lastPlanet);
                 if (q != null) {
                     if (pl.owner < 0) throw new Exception("queue: planet " + lastPlanet + " has no owner");
-                    if (q.length > 0) {
+                    if (q.length > 0 || q == EMPTY_QUEUE) {
                         ProductionQueueBlock pq = new ProductionQueueBlock();
                         pq.setDecryptedData(Arrays.copyOf(q, q.length), q.length);
                         pq.setData(q.clone(), q.length);
@@ -1101,8 +1107,11 @@ public class CombatLab {
     // Production queue items: two little-endian words per item, as the game stores
     // them (and scripts/oracle/hst-edit writes them): w0 = (id & 63) << 10 | count,
     // w1 = pct << 4 | kind << 1 | id >> 6.
+    static final byte[] EMPTY_QUEUE = new byte[0];
+
     static byte[] parseQueue(String spec) throws Exception {
         if (spec.equals("none")) return new byte[0];
+        if (spec.equals("empty")) return EMPTY_QUEUE;
         String[] items = spec.split(",");
         byte[] d = new byte[items.length * 4];
         for (int j = 0; j < items.length; j++) {
@@ -1166,6 +1175,17 @@ public class CombatLab {
                         if (dest < 0 || dest > 1022 || warp < 4 || warp > 19) throw new Exception("planetset packet: bad " + v);
                         w = (w & ~0x3fff) | (dest + 1) | (warp - 4) << 10;
                     }
+                    pl.starbaseBytes[2] = (byte) w; pl.starbaseBytes[3] = (byte) (w >> 8);
+                    break;
+                }
+                case "driver": {
+                    // driver=DEST[,WARP]: mass-driver packet destination (planet number, stored
+                    // +1 in bits 0-9 of starbase word 1) and the chosen packet warp (bits 10-13,
+                    // warp - 4; default 0, which launches at the driver's own warp)
+                    if (pl.starbaseBytes == null) throw new Exception("planetset " + pl.planetNumber + ": no starbase");
+                    String[] dw = v.split(",");
+                    int w = (Integer.parseInt(dw[0]) + 1) & 0x3ff;
+                    if (dw.length > 1) w |= ((Integer.parseInt(dw[1]) - 4) & 15) << 10;
                     pl.starbaseBytes[2] = (byte) w; pl.starbaseBytes[3] = (byte) (w >> 8);
                     break;
                 }
