@@ -541,6 +541,11 @@ python3 tools/fleetlab/summarize.py OUTDIR            # per-fleet start/end/fuel
   generated a turn without any visible complaint (FM-000 to FM-003). Only
   `PG001.HST` is replaced; the old `PG001.M1` is opened, and the turn reads
   the host file. The 2408 `.M1` reflects the edited fleets.
+- FM-004 also loaded cloned designs with engines the race cannot normally
+  build (Fuel Mizer, Settler's Delight), fleets placed in orbit
+  (`fleet ID planet P at X Y`), and fuel above tank capacity; the turn used
+  them as given. `fleetlab dump` lists planets with starbases and the
+  starbase hulls.
 - `OUTDIR` holds registered-copy output: preserve it in the apparatus
   repository, never here.
 

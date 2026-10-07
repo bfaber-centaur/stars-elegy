@@ -34,3 +34,13 @@ the turn was generated:
   139 out of fuel with the new warp, 243 fuel produced.
 - `fitted`: the FM-001..003 description (`experiments/fmcheck.py`), which
   does not model starbase refuelling or fuel gain above warp 1.
+
+## Result (run 2026-10-07, one turn)
+
+All 55 fleets matched the decomp prediction in position, fuel, waypoint-1
+warp, orbited planet, waypoints left and event ids (`compare.py`). The
+fitted FM-001..003 description failed 37: every LR case by 1 ly, all fuel
+gain above warp 1, all MS and CA cases, the two top-ups, and starbase
+refuelling. Observed values: `results.tsv`. Raw files: private apparatus
+repository, `evidence/fm004/`. Write-up: `docs/PARITY.md`, "Binary-model
+check (FM-004)".
