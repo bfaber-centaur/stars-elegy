@@ -3022,7 +3022,7 @@ took all 50 off player 0's planet 12 and off its homeworld 17 (0x02c). Both
 planets were lost at growth (0x040: the planet before each had grown) and
 were unowned at the end of the year.
 
-**Homeworld mark (CONFIRMED, TK-201 G2, I).** The emptied homeworld 17 kept
+**Homeworld mark (CONFIRMED, T-41: MG-005, TK-201 G2, I).** MG-005 (`experiments/mg`) captured player 1's homeworld 8 before movement: it stayed marked under player 0, with player 1's record still naming it. The emptied homeworld 17 kept
 its mark at the end of that year and of a second year, with player 0's
 record still naming it. Player 1's homeworld 8, captured while player 1 kept
 other planets, stayed marked under player 0; player 1's record still named
