@@ -392,7 +392,23 @@ def sc033():
     return r
 
 
-RUNS = [sc024, sc025, sc026, sc027, sc028, sc029, sc030, sc031, sc032, sc033]
+def sc034():
+    """Langston Shell cloak points (20 per shell; the last part with BINARY-ONLY
+    cloak points after CS-003). Added after the round-4 results, before its run."""
+    r = Run('sc034', 'Langston Shell cloak points (Mole 100 viewer)')
+    r.add('design 0 0 Small Freighter, 1 Quick Jump 5, 1 Mole Scanner, empty = Mole')
+    designs1(r, ['Small Freighter, 1 Quick Jump 5, empty, 1 Langston Shell = Langston1',
+                 'Super Freighter, 3 Quick Jump 5, empty, 5 Langston Shell, empty = Langston5'])
+    for (vx, vy), d, pts, cid in (((1060, 1060), 4, 20, 'SC034-L1'), ((1340, 1340), 5, 100, 'SC034-L5')):
+        r.fleet(0, vx, vy, '0:1', note='viewer Mole 100')
+        c = pct_from_pts(pts)
+        b = cloak_bound(100, c)
+        place_pair(r, vx, vy, b, None, '%d:1' % d, '%d points -> %d%%' % (pts, c), cid,
+                   'no cloak points: out seen (bound 10000)')
+    return r
+
+
+RUNS = [sc024, sc025, sc026, sc027, sc028, sc029, sc030, sc031, sc032, sc033, sc034]
 
 
 # ------------------------------------------------------------------ checking

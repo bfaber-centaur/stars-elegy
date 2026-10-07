@@ -151,6 +151,7 @@ popest defest surface`.
 | SC-031 | Planet report after battle; design disclosure after battle | A player 0 Laser Cruiser (no scanner) and a player 1 Laser Destroyer orbit player 1's colony 5 and fight: player 0 gets a normal report (level 3) of planet 5, and each side gets the other's fighting design in full. Control: a blind player 0 freighter orbiting player 1 colony 12 with an unarmed player 1 freighter: position only, and both freighter designs partial. |
 | SC-032 (follow-up) | Blind orbit reports; planet report after battle | Committed after SC-024/SC-031 and before its run. Blind orbiters at an enemy colony with a starbase (1), an enemy homeworld with its starbase removed (3 if the starbase decides, 1 if the homeworld flag does), an enemy colony without one (3) and an unowned planet (1). Cruisers fighting Laser Destroyers at an unowned planet and at an enemy colony with a starbase: normal reports (3). |
 | SC-033 (follow-up) | Three Tachyon Detectors | SC-028-T75 repeated with the viewer at (1200,1200): the SC-028 out case had been clamped to the universe edge. |
+| SC-034 (follow-up) | Langston Shell cloak points | Added after the round-4 results, before its run. Mole (100) viewers. A Small Freighter with one Langston Shell has 20 points, 10%: seen at d² 8100, not at 8101. A Super Freighter with five has 100 points, 50%: seen at 2500, not at 2501. Shells with no cloak points would be seen out to 10000. |
 
 ## Results
 
