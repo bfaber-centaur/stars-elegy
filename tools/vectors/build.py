@@ -35,9 +35,11 @@ MT_ITEMS = ['Multi Cargo Pod', 'Multi Function Pod', 'Langston Shell', 'Mega Pol
             'Hush-a-Boom', 'Anti Matter Torpedo', 'Multi Contained Munition', 'Mini Morph', 'Enigma Pulsar',
             'Genesis Device', 'Jump Gate', 'ship']
 GAMES = {
-    'CB': dict(name='Combat Lab', size='tiny', bounds=[1000, 1000, 1400, 1400], density='sparse',
-               random_events=False, players=2),
-    'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400], random_events=False, players=3),
+    'CB': dict(name='Combat Lab', size='tiny', bounds=[1000, 1000, 1400, 1400], density='sparse'),
+    'CB3P': dict(name='CB3P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'CB5P': dict(name='CB5P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'CB16P': dict(name='CB16P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
 }
 
 
@@ -97,9 +99,42 @@ def waypoint(d, owner, nplayers):
     return wp
 
 
-def state(hst, xy, game):
+HSTEDIT = os.path.join(ROOT, 'scripts', 'oracle', 'hst-edit')
+VICTORY = [('planets_owned_percent', lambda v: (v + 4) * 5), ('tech_level', lambda v: v + 8),
+           ('tech_fields', lambda v: v + 2), ('score', lambda v: (v + 1) * 1000),
+           ('lead_over_second_percent', lambda v: (v + 2) * 10), ('resources_thousands', lambda v: (v + 1) * 10),
+           ('capital_ships', lambda v: (v + 1) * 10), ('highest_score_after_years', lambda v: (v + 3) * 10),
+           ('conditions_needed', lambda v: v), ('minimum_years', lambda v: (v + 3) * 10)]
+TOGGLED = {'planets_owned_percent', 'tech_level', 'score', 'lead_over_second_percent', 'resources_thousands',
+           'capital_ships', 'highest_score_after_years'}
+
+
+def game_settings(xy_path):
+    """Options and victory conditions from the .XY game record (ORACLE.md, hst-edit xy)."""
+    out = subprocess.run([HSTEDIT, 'dump', xy_path], capture_output=True, text=True, check=True).stdout
+    g = bytes.fromhex(re.search(r' game ([0-9a-f]+)', out).group(1))
+    o = g[0x10]
+    vc = {}
+    for i, (name, f) in enumerate(VICTORY):
+        b = g[0x14 + i]
+        vc[name] = {'value': f(b & 0x7f)}
+        if name in TOGGLED:
+            vc[name]['enabled'] = bool(b & 0x80)
+    return {'slower_tech': bool(o & 2), 'random_events': not o & 0x80, 'public_scores': bool(o & 0x40),
+            'victory_conditions': vc}
+
+
+def queue_item(i):
+    it = {'id': int(i[0]), 'count': int(i[1])}
+    if int(i[2]):
+        it['percent'] = int(i[2])
+    it['kind'] = int(i[3])
+    return it
+
+
+def state(hst, xy, game, xy_path=None):
     """Initial state from a host-file dump and the .XY dump."""
-    st = dict(year=None, game=GAMES[game], players=[], planets=[], designs=[], starbase_designs=[],
+    st = dict(year=None, game=dict(GAMES.get(game, {'name': game})), players=[], planets=[], designs=[], starbase_designs=[],
               battle_plans=[], fleets=[], objects=[], production_queues=[])
     pos = {}
     for s in xy:
@@ -173,8 +208,7 @@ def state(hst, xy, game):
             planets[n] = p
         elif s.startswith('queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
-            st['production_queues'].append({'planet': int(d['planet']), 'items': [
-                {'id': int(i[0]), 'count': int(i[1]), 'kind': int(i[3]) if len(i) > 3 else None} for i in items]})
+            st['production_queues'].append({'planet': int(d['planet']), 'items': [queue_item(i) for i in items]})
         elif s.startswith('fleet '):
             ships = [{'design': int(a), 'count': int(b)} for a, b in
                      (x.split(':') for x in d['ships'].split(',') if x)]
@@ -190,7 +224,7 @@ def state(hst, xy, game):
                      'waypoints': []}
             st['fleets'].append(fleet)
         elif s.startswith('  wp ') and fleet is not None:
-            fleet['waypoints'].append(waypoint(d, fleet['owner'], GAMES[game]['players']))
+            fleet['waypoints'].append(waypoint(d, fleet['owner'], len(owners)))
         elif s.startswith('thing ') and 'type' in d:
             st['objects'].append(thing(d))
         if not s.startswith('  wp ') and not s.startswith('fleet '):
@@ -199,6 +233,10 @@ def state(hst, xy, game):
         if n in sb:
             p['starbase'] = sb[n]
     st['planets'] = [planets[n] for n in sorted(planets)]
+    st['game']['players'] = len(st['players'])
+    if xy_path:
+        st['game'].pop('random_events', None)
+        st['game'].update(game_settings(xy_path))
     return st
 
 
@@ -303,19 +341,26 @@ def expectation(kind, args, year, res, want, got):
 
 
 def merge_streams(per):
-    """{stream: [expectation]} -> one list. An expectation the same in every
-    stream is listed once; one that differs is listed per stream (`stream`)."""
+    """{stream: [expectation]} -> one list. An expectation found unchanged in
+    every stream is listed once; the rest are listed per stream (`stream`)."""
     streams = sorted(per)
     if len(streams) == 1:
         return per[streams[0]], False
-    out, varies = [], False
-    for i in range(max(len(v) for v in per.values())):
-        col = [(st, per[st][i]) for st in streams if i < len(per[st])]
-        if len(col) == len(streams) and all(e == col[0][1] for _, e in col):
-            out.append(col[0][1])
-        else:
-            varies = True
-            out += [dict(e, stream=st) for st, e in col]
+    key = lambda e: json.dumps(e, sort_keys=True)
+    common = set(map(key, per[streams[0]]))
+    for st in streams[1:]:
+        common &= set(map(key, per[st]))
+    out, seen = [], set()
+    for e in per[streams[0]]:
+        if key(e) in common and key(e) not in seen:
+            seen.add(key(e))
+            out.append(e)
+    varies = False
+    for st in streams:
+        for e in per[st]:
+            if key(e) not in common:
+                varies = True
+                out.append(dict(e, stream=st))
     return out, varies
 
 
@@ -397,7 +442,8 @@ def build(corpus, ev, out):
             continue
         base = os.path.join(ev, r.name, rdirs[0], 'raw', 'before')
         game = getattr(r, 'game', 'CB')
-        st = state(dump(os.path.join(base, game + '.HST')), dump(os.path.join(base, game + '.XY')), game)
+        st = state(dump(os.path.join(base, game + '.HST')), dump(os.path.join(base, game + '.XY')), game,
+                   os.path.join(base, game + '.XY'))
         rid = run_id(c['prefix'], r.name)
         vec = {'schema': SCHEMA, 'id': rid, 'title': getattr(r, 'title', ''),
                'source': {'experiment': c['path'], 'spec_rules': c['doc'], 'parity': c['parity'],
@@ -427,7 +473,11 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus == 'wt':
+    if corpus == 'cb':
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import build_cb
+        build_cb.build(ev, out)
+    elif corpus == 'wt':
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import build_wt
         build_wt.build(ev, out)
