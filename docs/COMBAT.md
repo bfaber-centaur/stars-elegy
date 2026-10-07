@@ -246,8 +246,15 @@ for other `n`.
 For each involved fleet, in location order:
 
 1. The fleet is marked as having fought: it gets no repair this turn.
-2. If its plan has "dump cargo", its minerals go to the planet's surface,
-   or to deep-space salvage. Colonists are not dumped (inferred).
+2. If its plan has "dump cargo" and it carries any minerals, all three
+   minerals are dumped (BINARY-ONLY). Colonists and fuel stay aboard.
+   - At a planet, the planet's surface gains the full amount; the
+     `× 8/10` and `× 5/10` factors of "Salvage" do not apply.
+   - In deep space, the full amount goes into this battle's salvage
+     object, with no quarter lost. The dump happens at setup, before any
+     ship is destroyed, so it is the first addition to that object. The
+     object then exists even if nobody is destroyed. Kill events add to
+     it afterwards as described in "Salvage".
 3. One token is created per design with ships in the fleet.
 
 A starbase token is placed for the starbase of an involved owner (see "Starbases in battle").
@@ -363,6 +370,10 @@ consistent with every replayed record):
    - In the one-player battle the self-entry keeps B in while A drops
      out. The battle then ends either way, so the outcome matches CB-022
      (BINARY-ONLY).
+   - This check only decides whether the battle ends now (BINARY-ONLY).
+     A player found out here keeps its tokens: they still fire in step 6
+     and move next round. Nobody stays out: the check starts again from
+     the players with live tokens every round.
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
@@ -391,6 +402,9 @@ Inside a phase, tokens go in **descending jittered weight**:
   lowers the counter by 1. A move when the counter is 0 takes it off the
   board, so it leaves on its 8th move. It is then out of the battle,
   not destroyed.
+- Every move the token is given counts, including one where it stays on
+  its square (BINARY-ONLY). The counter is lowered before the square is
+  chosen, so the result of the move does not matter.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
@@ -486,8 +500,10 @@ subtracts 1 when `q` is its current square.
 **Beam slot.** `v = damage × count`, then:
 
 1. `× capacitor/100`.
-2. If `x > 0`: `v = v + (x·v)/(−10)/r`. Here `r` includes the starbase
-   +1, unlike real fire.
+2. If `x > 0` and `r > 0`: `v = v + (x·v)/(−10)/r`. Here `r` includes
+   the starbase +1, unlike real fire. With `r = 0` (a ship's range-0
+   beam, reached only when ignoring range) there is no dropoff
+   (BINARY-ONLY).
 3. `× B's deflector/100`.
 4. A sapper is capped at `B`'s shield per ship × `A`'s ships.
 5. Out of reach (only when ignoring range):
@@ -512,6 +528,12 @@ initiative present:
 
 - Tokens act in **reverse token order**, while at least two players are
   still in the battle.
+  - "Still in" here means having a live token; attack sets do not count
+    (BINARY-ONLY). It is checked again before each token acts, so kills
+    earlier in the round count. Once only one player has live tokens,
+    no further token fires in this round and the battle ends after it.
+  - Tokens of a player that round step 5 found out still act; they fire
+    at whatever their own attack set allows.
 - A token fires each of its weapon slots whose weapon initiative equals
   the level.
 - The slot's `N = ships × count`.
@@ -531,6 +553,11 @@ first in token order wins ties, and a score of 0 is never chosen.
 
 **Cost.** Take the target design's current cost (resources + boranium,
 see "Design cost") × ships.
+
+- For a starbase token this is the starbase design's plain owner cost
+  (BINARY-ONLY). The starbase build-cost rule of `COMPONENTS.md` (ISB or
+  AR `c − c/5`, then halved) applies only to what production charges;
+  target choice does not use it.
 
 - Multiply by 100 if that is below 100000. Otherwise use 10^7.
 
@@ -567,35 +594,26 @@ CONFIRMED consequences (CB-009):
 - An already damaged stack is chosen before a fresh one.
 - The lower token index is chosen between identical stacks.
 
-### Design cost (BINARY-ONLY)
+### Design cost
 
-A design's cost is computed for its owner, in four components (resources,
-ironium, boranium, germanium). It is the hull's cost plus, for each slot,
-`count ×` that part's cost. For the hull and each part:
+A design's cost, for its owner, is its hull's cost plus `count ×` each
+part's cost, in four components (resources, ironium, boranium,
+germanium). Each hull and part cost is the owner cost of
+[`COMPONENTS.md`](COMPONENTS.md), "Cost for an owner": miniaturization,
+then the race adjustment, then Bleeding Edge Technology doubling, with
+the base costs in `data/components.json`. That section is CONFIRMED
+(CS-001) and is the rule to implement; it includes two cases this file
+used to leave out:
 
-1. Start from the part's base cost.
-2. **Miniaturization.**
-   - Let `m` be the smallest of `level − requirement` over the six fields
-     in which the part has a requirement above 0.
-   - If the part has no requirement, `m` is the owner's lowest level in
-     any field.
-   - If `m > 0`, let `d = 4·min(m, 19)`, at most 75. With Bleeding Edge
-     Technology, `d = 5·min(m, 19)`, at most 80.
-   - Each nonzero component `c` becomes `c − round(c·d/100)`, rounding
-     halves up, and at least 1.
-3. **Race.** The first case that matches applies, and no other:
-   - Interstellar Traveler, stargates: `c − c/4`.
-   - War Monger, beams, torpedoes and bombs: `c − c/4`.
-   - Inner Strength, beams, torpedoes and bombs: `c + c/4`.
-   - Cheap Engines, engines: `c − c/2`.
-4. **Bleeding Edge Technology.** If `m ≤ 0` and the part has a
-   requirement, every component is doubled. One game-wide flag, not
-   identified, suppresses this.
+- Bleeding Edge Technology never doubles terraform or planetary items.
+- Claim Adjuster pays half the resources for terraform items.
 
-Divisions truncate. Oracle evidence: target choice among designs of
-different cost in CB-009 (Humanoid JOAT at tech 26), and colony-ship
-minerals in TK T-30 (`TAKEOVER.md`, Colonization), which match steps 1–2
-exactly at tech 3 and 26, including the rounding of the reduction.
+In combat the design cost is used only for target choice ("Cost" above).
+Oracle evidence from combat is indirect: target choice among designs of
+different cost in CB-009 (Humanoid JOAT at tech 26). Colony-ship minerals
+in TK T-30 (`TAKEOVER.md`, Colonization) match the base cost and
+miniaturization exactly at tech 3 and 26, including the rounding of the
+reduction.
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
@@ -603,7 +621,11 @@ exactly at tech 3 and 26, including the rounding of the reduction.
 
 1. Choose a target.
 2. `dp = R × capacitor/100 × target deflector/100`.
-3. If the distance `x > 0`, `dp = (100 − x·10/range)·dp/100`.
+3. If the distance `x > 0` and the part's range is above 0,
+   `dp = (100 − x·10/range)·dp/100`.
+   - A range-0 beam (Blackjack, Bludgeon, Blunderbuss) has no dropoff
+     (BINARY-ONLY). On a starbase its reach is 1, and it hits at full
+     damage at distance 1.
    - `x·10/range` is an integer, so a range-3 weapon loses 3% at
      distance 1, 6% at 2 and 10% at 3.
    - **`range` is the part's own range, without the starbase +1.** So a
@@ -776,6 +798,12 @@ cargo. The share is computed as follows (BINARY-ONLY):
 - That amount is split per mineral as `cargo_i · moved / C` (truncated).
   Any remainder goes 1 kT at a time over ironium, boranium, germanium
   and colonists, one pass, only to types still holding cargo.
+- Fuel is shared the same way, but by **fuel capacity**: the fleet
+  loses `F · Σ lost ships·fuel capacity / Σ ships before·fuel capacity`
+  (truncated), with `F` the fleet's fuel (BINARY-ONLY). Fuel capacity is
+  the design's: hull fuel plus fuel tanks and similar parts.
+- Each kill event takes its share from what the fleet holds at that
+  moment, so a fleet hit several times loses a share each time.
 - Only minerals become salvage. The lost ships' share of fuel and
   colonists is destroyed.
 
@@ -818,11 +846,11 @@ smaller), and `pct` is kept:
 | at its own planet with a starbase without a dock (Orbital Fort) | 40 |
 | at its own planet with a dock (Space Dock or larger) | 100 |
 
-- Interstellar Traveler doubles `r` (BINARY-ONLY).
+- Inner Strength doubles `r` (BINARY-ONLY). `f` is not doubled.
 - `f` = 50 if the fleet has a Super-Fuel Xport, else 25 if it has a Fuel
   Transport, else 0. `f` is added to every stack.
-- A starbase that did not fight this turn repairs 50 units (IS 75)
-  (BINARY-ONLY).
+- A starbase that did not fight this turn repairs 50 units, or 75 for
+  Inner Strength (BINARY-ONLY).
 
 ### Tech from battle (CONFIRMED in part, CB-018, CB-021, Q-11)
 
@@ -863,20 +891,43 @@ homeworld against three frigates. The gain came in exactly the three
 streams predicted from this draw order, and the frigates' squares
 matched in all six.
 
-Who makes an attempt (BINARY-ONLY in detail):
+Who makes an attempt (BINARY-ONLY in detail). After the battle, every
+player of the game is considered once, in player-number order, so the
+draws come in that order.
 
-- In a two-player battle with two tokens, each participant makes an
-  attempt when the battle was in deep space, at an unowned planet, or at
-  its own planet. This includes a participant that lost nothing and
-  destroyed nothing. There is no attempt at another player's planet.
-  CONFIRMED by the exact replays: CB-021 (the attacker at the defender's
-  planet makes no attempt) and the round-2 CB-012 chain (a player that
-  lost nothing at its own planet does attempt).
-- In larger battles, participants make an attempt under the same
-  location rule, and probably only when ships other than their own were
-  destroyed; this condition is not fully settled.
-- A player that is not in the battle makes an attempt when the battle was
-  at its own planet.
+- **Participants** (players in the battle's player list):
+  - Location rule: only when the battle was in deep space, at an
+    unowned planet, or at the participant's own planet. There is no
+    attempt at another player's planet. CONFIRMED by CB-021 (the
+    attacker at the defender's planet makes no attempt).
+  - When `n = 2` (two involved players), only a participant that still
+    has something after the battle (a ship, or its starbase alive). A
+    participant that lost nothing and destroyed nothing does attempt.
+    CONFIRMED by the round-2 CB-012 chain (a player that lost nothing at
+    its own planet). That a wiped-out participant makes no attempt is
+    BINARY-ONLY.
+  - When `n` is not 2 (one involved player, or three or more), every
+    participant makes an attempt, whatever it lost or destroyed.
+  - If the battle destroyed an Alternate Reality starbase, no
+    participant makes an attempt.
+  - Nothing is destroyed in some of these battles; the attempt still
+    makes its draws (step 2 onwards), and the field step then finds no
+    field behind.
+- **Players not in the battle:**
+  - A player makes an attempt when the battle was at its own planet.
+  - **LEGACY BUG (BINARY-ONLY).** Otherwise, the game means to give an
+    attempt to observers: players present at the location but not in the
+    battle, and the owner of a planet there without a starbase. That
+    owner's bit is in the observer set even when the owner is also a
+    participant (BINARY-ONLY); a participant never gets the observer
+    attempt itself, but its bit still counts for other players. It tests
+    the player's **number** against the observer set instead of the
+    player's bit: player `i` qualifies when `i AND observers ≠ 0`, where
+    `observers` has bit `j` set for observer `j`. Player 0 never
+    qualifies; player 1 qualifies when player 0 is an observer, player 2
+    when player 1 is, player 3 when player 0 or 1 is, and so on. A
+    qualifying player also needs a fleet at the location. The location
+    rule does not apply here.
 
 ## Open experiments
 
@@ -889,17 +940,25 @@ Not yet tested:
 - the movement order by jittered weight, and any battle with several
   moving tokens on both sides (e.g. a CB-018 replay);
 - the plan-0 value X on the first location of a turn (not 0 or 1 in
-  CB-022; unexplained), and a starbase owner in the player list but not
-  involved (start-square rank past row `n` with `n ≥ 2`);
-- design-cost race adjustments and Bleeding Edge doubling;
+  CB-022). It is a leftover value from code that ran before battles, so
+  reading the binary alone does not settle it; it needs a debugger run or
+  more oracle cases;
+- a starbase owner in the player list but not involved (start-square rank past row `n` with `n ≥ 2`);
 - three or more players, start squares for `n ≠ 2`, and friends joining;
 - the token cap;
-- the tech-attempt condition in larger battles, and for players outside
-  the battle;
+- the tech-attempt rules beyond the two-player cases: a wiped-out
+  participant, three or more players, the AR starbase case, and players
+  outside the battle (including the observer LEGACY BUG);
+- a starbase token's cost in target choice, and a range-0 beam on a
+  starbase;
 - Mystery Trader items from battle;
 - queued ships lost with a starbase; AR starbase loss;
-- the "moved" repair rate, starbase repair, IS repair;
-- salvage at more than one point; dump cargo;
+- the "moved" repair rate, starbase repair, Inner Strength repair;
+- salvage at more than one point; dump cargo, at a planet and in deep
+  space;
+- the fuel share lost with destroyed ships;
+- step 5 removing a player whose tokens can still fire, and a
+  disengaging token that stays on its square;
 - War Monger and cargo in the speed code.
 
 The dampener mass question (19 vs 23) is closed: 19 is the game's value
