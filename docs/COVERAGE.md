@@ -20,7 +20,7 @@ Levels:
 
 | Behavior | Spec | Level | What is missing |
 |---|---|---|---|
-| Accepting and replaying orders, random player order, serial checks | `ORDERS.md`, `KERNEL.md` | Partial | Validation, ownership, fleet operations and design legality are covered. Nothing states the effects of the plain setting orders (research settings, relations, planet flags, renames), or that replacing a production queue keeps the progress of matching items. |
+| Accepting and replaying orders, random player order, serial checks | `ORDERS.md`, `KERNEL.md`, `LIMITS.md` | Partial | Validation, ownership, fleet operations and design legality are covered. Production-queue replace (CONFIRMED, LQ-1..LQ-6) and the setting orders (Read) are in `LIMITS.md`, to be folded into `ORDERS.md`. |
 | Race checks at the start of the year | `RACES.md`, `KERNEL.md` "Item costs" | Confirmed | Advantage points and the degrading of an over-budget race. |
 | Tasks before movement: unload, scrap, colonize, drops, load, merge, cargo to other players | `TAKEOVER.md`, `ORDERS.md` | Confirmed | Scrap and transfer details are Read. |
 | Packets, wormholes, Mystery Trader | `OBJECTS.md`, `KERNEL.md` "Random events" | Confirmed / Read | Wormholes (WT), the Trader's appearance, movement, meeting and rewards. Packet launch is Read. |
@@ -30,14 +30,14 @@ Levels:
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | `PRODUCTION-LAUNCH.md` | Confirmed | SL-01..SL-12. The same-hull replacement cost and the research share of an unbuilt ship are Read. |
 | Population growth | `KERNEL.md` | Confirmed | |
-| Research and tech progression | `KERNEL.md` "Research" | Confirmed | KX-005. |
+| Research and tech progression | `KERNEL.md` "Research" | Confirmed | KX-002, KX-003, KX-005 and KB-2 (field switching at 26, stealing under slower tech). The level-10 cap for capped players is Read. |
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` "Random events", `OBJECTS.md` | Confirmed | KX-004. |
 | Battles, battle plans | `COMBAT.md` | Confirmed | Battle movement confirmed by exact replays. |
 | Bombing, invasion, colonization, capture | `TAKEOVER.md` | Confirmed | |
 | Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `ORDERS.md`, `SCANNING.md`, `TAKEOVER.md` | Read / Partial | Route, patrol and transfer-fleet rules (with the computer-player and enemy refusals) are in `ORDERS.md`, mostly Read and waiting on the WU batch. |
 | Waypoint upkeep | `ORDERS.md` "Waypoint upkeep and the remaining tasks", `SCANNING.md` | Read | Repeat orders, reached and dropped waypoints, targets that moved, died or were captured. Waiting on the WU batch. |
 | Sweeping, repair | `OBJECTS.md`, `COMBAT.md` | Confirmed | |
-| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` "Terraforming" | Confirmed | KX-005, OT-4. |
+| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` "Terraforming" | Confirmed | KX-005 (drift, year-end step, half-price terraform), OT-4, TK-108 and TK-118..120 (after a capture). |
 | Duplicate-serial penalties | `KERNEL.md`, `MESSAGES.md` | Read | |
 | What each player knows | `SCANNING.md` | Confirmed | |
 | Scores and victory | `KERNEL.md` "Scores and victory conditions" | Confirmed / Read | Score KX-003; the victory conditions are Read. |
@@ -45,7 +45,7 @@ Levels:
 | Messages to players | `MESSAGES.md` | Confirmed / Read | All 387 kinds are catalogued (sender, recipients, values, phase); 198 rows are CONFIRMED. The rest are listed under "Kinds not yet observed, and how to reach them" and as gap 4 below. Player-to-player mail is not covered. |
 | Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Each personality's own turn is in progress (`docs/ai/`). Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
 | What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings; ES-002 confirmed stargate legs, "Skipped", Generalized Research, "Maxed Out" and the distance display. |
-| Limits: fleets, space objects, minefields, designs, queue length | `PRODUCTION-LAUNCH.md` (fleets), `OBJECTS.md` (minefields and objects) | Partial | Fleets (512) and minefields (512, or 511) are CONFIRMED or MEASURED. Design-slot and queue limits are not collected anywhere. |
+| Limits: fleets, space objects, minefields, designs, queue length | `LIMITS.md`, `PRODUCTION-LAUNCH.md` (fleets), `OBJECTS.md` (minefields and objects) | Partial | Collected in `LIMITS.md`. Fleets (512), minefields (512, or 511) and the client's queue limits (LQ) are CONFIRMED or MEASURED. Open: the 4050-object limit (not run), waypoints per fleet, the host's 16th battle plan and other crafted-order cases (serial-gated). |
 
 ## Largest gaps for a playable game
 

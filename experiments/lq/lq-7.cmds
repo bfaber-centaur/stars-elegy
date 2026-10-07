@@ -1,0 +1,6 @@
+# LQ-7: Factory x8 with Top selected; queued factories reach the planet's room.
+queue open
+queue select 0
+queue add 6 8
+shot list
+queue ok

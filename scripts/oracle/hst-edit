@@ -11,7 +11,7 @@
 # queue=SPEC|none, where SPEC
 # is id:count:pct:kind[,...] with kind 1 = planetary item, 2 = ship design.
 # Player 0 race and tech: prt= lrt=HEX stat=I:V[/I:V] hab=... growth=N tech=E,W,P,C,EL,B
-# mt=HEX field=CUR,NEXT conc=I,B,G (see starsapi/ProdTool.java).
+# mt=HEX field=CUR,NEXT accum=E,W,P,C,EL,B (stored research per field) conc=I,B,G (see starsapi/ProdTool.java).
 #   scripts/oracle/hst-edit xy IN.XY OUT.XY OFF:HEX...  # game record: options, victory conditions
 # Needs git and a JDK; network on first run.
 source "$(dirname "$0")/lib.sh"
