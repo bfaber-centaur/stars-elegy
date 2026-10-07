@@ -1165,8 +1165,9 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   on (8,5) of the 10×10 board (P-2; 32 battles).
 - One token per (fleet, design). Token values in the record matched the
   prediction: initiative, weapon initiative, computer % (BSC 30), jammer %
-  (20, 50), capacitor (2 × Flux + Energy Capacitor → 132%), deflector
-  (90%), shield and armor per ship, mass and speed code (P-3).
+  (20, 50), capacitor (one Flux Capacitor and one Energy Capacitor
+  compound once per item, 1.2 × 1.1 → 132%), deflector (90%), shield
+  and armor per ship, mass and speed code (P-3).
 - Regenerating Shields: shield per ship is 7/5 of the design value
   (2 Mole-skin → 70), and armor from armor parts is halved (2 Tritanium on
   a Destroyer → 250, although the edited design record said 300: the game
