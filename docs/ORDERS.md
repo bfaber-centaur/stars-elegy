@@ -217,10 +217,13 @@ exercising the original's gap.
 stars-elegy #50, `OBJECTS.md`). A detonate-setting order names a minefield,
 and the host applies it **without** checking either that the submitter owns
 that field or that the field's type is one that can detonate — a trust gap of
-the same shape as the not-re-checked fleet orders above. Elegy's chosen rule,
-matching what the normal client can send, accepts a detonate setting only on
-the submitter's **own** minefields and only for field kinds that can
-detonate. Confirming the original's open acceptance needs the OX runs.
+the same shape as the not-re-checked fleet orders above. Elegy's chosen rule
+matches what the normal client can send: it accepts a detonate setting only
+from a **Space Demolition** player, only on that player's **own** minefields,
+and only on **standard** minefields — the three conditions the client's offer
+is held to (see `OBJECTS.md`). Every field kind can in fact detonate (MF-7 and
+MF-8 in `PARITY.md`), so the limit is the client's offer, not a test of which
+kinds detonate. Confirming the original's open acceptance needs the OX runs.
 
 **Production queue (starbase dock).** BINARY-ONLY and LEGACY BUG (launch
 context in stars-elegy #57, `PRODUCTION-LAUNCH.md`). The host does **not**

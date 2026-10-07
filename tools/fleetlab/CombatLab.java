@@ -91,6 +91,12 @@ import org.starsautohost.starsapi.items.Items;
 //   route N DEST                    set planet N's route destination to planet DEST
 //                                   (stored as wRoute; a fleet with waypoint task "route"
 //                                   at N follows it). Owned full planet blocks only
+//   keepfleets                      keep the base's own fleets and add the spec's
+//                                   fleets alongside them (spec fleet ids must be
+//                                   free). Without it the spec's fleets replace
+//                                   all fleets. Needed for multi-player bases whose
+//                                   computer players must keep their fleets to
+//                                   generate a turn
 //   planet N [owner P] [pop X] [starbase D|none] [scanner none|on]
 //                                   make planet N player P's (installations copied from
 //                                   P's homeworld, none built), set its population (in
@@ -504,6 +510,7 @@ public class CombatLab {
         Map<Integer, Map<String, String>> planetSets = new HashMap<>();
         Map<Integer, Integer> routes = new HashMap<>(); // planet N -> route destination planet
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
+        boolean keepFleets = false; // keep the base's own fleets and add the spec's alongside
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -601,6 +608,7 @@ public class CombatLab {
                         break;
                     }
                     case "route": routes.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "keepfleets": keepFleets = true; break;
                     case "planet": {
                         int[] ps = {-2, -2, -2, -2};
                         for (int i = 2; i + 1 < t.length; i += 2) {
@@ -661,13 +669,42 @@ public class CombatLab {
             sbs.put(k, sbDesigns.containsKey(k) ? sbDesigns.get(k).values() : oldSb.getOrDefault(k, List.of()));
         }
 
+        // keepfleets: preserve the base's own fleets and add the spec's alongside.
+        // Each base fleet is captured as a unit (its FleetBlock plus the waypoint
+        // blocks that follow it) keyed by owner/id, so it can be merged with the
+        // spec's fleets and the whole set emitted in owner/id order — the order
+        // the host expects. Without keepfleets (default) the spec's fleets replace
+        // all fleets, exactly as before.
+        Map<Integer, Integer> origFleetCount = new HashMap<>();
+        Set<Integer> baseFleetKeys = new HashSet<>();
+        Map<Integer, List<Block>> baseUnits = new TreeMap<>();
+        if (keepFleets) {
+            List<Block> cur = null;
+            for (Block b : blocks) {
+                if (b instanceof PartialFleetBlock) {
+                    PartialFleetBlock bf = (PartialFleetBlock) b;
+                    origFleetCount.merge(bf.owner, 1, Integer::sum);
+                    baseFleetKeys.add(bf.owner * 1024 + bf.fleetNumber);
+                    cur = new ArrayList<>();
+                    cur.add(b);
+                    baseUnits.put(bf.owner * 1024 + bf.fleetNumber, cur);
+                } else if (b instanceof WaypointBlock && cur != null) {
+                    cur.add(b);
+                } else {
+                    cur = null;
+                }
+            }
+        }
+
         // Fleets and their waypoints.
         fleets.sort(Comparator.comparingInt((FleetSpec f) -> f.owner).thenComparingInt(f -> f.id));
-        List<Block> newFleets = new ArrayList<>();
+        Map<Integer, List<Block>> fleetUnits = new TreeMap<>(); // owner*1024+id -> [fleet, waypoints...]
         Map<Integer, Integer> fleetCount = new HashMap<>();
         Set<Integer> ids = new HashSet<>();
         for (FleetSpec fs : fleets) {
             if (!ids.add(fs.owner * 1024 + fs.id)) throw new Exception("duplicate fleet " + fs.owner + "/" + fs.id);
+            if (keepFleets && baseFleetKeys.contains(fs.owner * 1024 + fs.id))
+                throw new Exception("keepfleets: fleet " + fs.owner + "/" + fs.id + " already exists in the base; pick a free id");
             byte[] tpl = fleetTemplate.getOrDefault(fs.owner, fleetTemplate.get(0));
             FleetBlock fl = new FleetBlock();
             fl.setDecryptedData(Arrays.copyOf(tpl, tpl.length), tpl.length);
@@ -705,7 +742,8 @@ public class CombatLab {
             fl.waypointCount = 1 + fs.wps.size();
             fl.encode();
             fl.setData(fl.getDecryptedData(), fl.size);
-            newFleets.add(fl);
+            List<Block> unit = new ArrayList<>();
+            unit.add(fl);
             List<int[]> all = new ArrayList<>();
             all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
                 : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
@@ -732,10 +770,16 @@ public class CombatLab {
                     }
                 }
                 wb.encode();
-                newFleets.add(wb);
+                unit.add(wb);
             }
+            fleetUnits.put(fs.owner * 1024 + fs.id, unit);
             fleetCount.merge(fs.owner, 1, Integer::sum);
         }
+
+        // Merge the base's own fleets (keepfleets) and flatten in owner/id order.
+        if (keepFleets) fleetUnits.putAll(baseUnits);
+        List<Block> newFleets = new ArrayList<>();
+        for (List<Block> u : fleetUnits.values()) newFleets.addAll(u);
 
         // Player blocks: tech, design and fleet counts, relations.
         for (PlayerBlock p : players) {
@@ -776,7 +820,7 @@ public class CombatLab {
             }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
-            p.fleets = fleetCount.getOrDefault(k, 0);
+            p.fleets = (keepFleets ? origFleetCount.getOrDefault(k, 0) : 0) + fleetCount.getOrDefault(k, 0);
             if (relations.containsKey(k)) {
                 Map<Integer, Integer> rel = relations.get(k);
                 int len = Math.max(p.playerRelations.length, Collections.max(rel.keySet()) + 1);
