@@ -13,6 +13,7 @@ import org.starsautohost.starsapi.encryption.Decryptor;
 //       starbase=0|1 (planet's has-starbase flag; 1 keeps the existing design slot)
 //       race edits on player 0: prt=N lrt=HEX (32-bit LRT word) stat=I:V[/I:V...] (race stat I = byte 0x36+I of the full data)
 //       hab=C,C,C,L,L,L,H,H,H (race hab centre/low/high per axis grav,temp,rad; full data bytes 8..16)
+//       env=G,T,R (planet's current environment, clicks) orig=G,T,R (original environment; marks the planet terraformed)
 //       tech=E,W,P,C,EL,B (current tech levels; full data bytes 0x12..0x17)
 //       mt=HEX (Mystery Trader items owned, 16-bit mask; full data bytes 0x4a..0x4b, little-endian)
 public class ProdTool {
@@ -34,9 +35,10 @@ public class ProdTool {
         PartialPlanetBlock q=(PartialPlanetBlock)b; if (q.owner<0) continue;
         int def12 = (q.defenses & 0xff) | ((q.unknownInstallationsByte & 0x0f) << 8);
         int scan = ((q.unknownInstallationsByte & 0xf0) >> 4) | (q.hasScanner?0:16);
-        System.out.printf("%s planet=%d owner=%d fe=%d bo=%d ge=%d pop=%d excess=%d mines=%d factories=%d defenses=%d leftover=%b scannerField=%d conc=%d/%d/%d hab=%d/%d/%d starbase=%s%n",
+        System.out.printf("%s planet=%d owner=%d fe=%d bo=%d ge=%d pop=%d excess=%d mines=%d factories=%d defenses=%d leftover=%b scannerField=%d conc=%d/%d/%d hab=%d/%d/%d%s starbase=%s%n",
           n, q.planetNumber, q.owner, q.ironium, q.boranium, q.germanium, q.population, q.excessPop, q.mines, q.factories, def12,
-          q.contributeOnlyLeftoverResourcesToResearch, scan, q.ironiumConc, q.boraniumConc, q.germaniumConc, q.gravity, q.temperature, q.radiation, q.hasStarbase ? Integer.toString(q.starbaseDesign) : "none");
+          q.contributeOnlyLeftoverResourcesToResearch, scan, q.ironiumConc, q.boraniumConc, q.germaniumConc, q.gravity, q.temperature, q.radiation,
+          q.isTerraformed ? String.format(" orig=%d/%d/%d", q.origGravity, q.origTemperature, q.origRadiation) : "", q.hasStarbase ? Integer.toString(q.starbaseDesign) : "none");
       }
       else if (b instanceof ProductionQueueBlock) {
         byte[] d=b.getDecryptedData(); StringBuilder sb=new StringBuilder();
@@ -94,6 +96,9 @@ public class ProdTool {
             case "defenses": { int d=Integer.parseInt(v); q.defenses=d&0xff; q.unknownInstallationsByte=(byte)((q.unknownInstallationsByte&0xf0)|((d>>8)&0x0f)); break; }
             case "leftover": q.contributeOnlyLeftoverResourcesToResearch=v.equals("1"); break;
             case "starbase": q.hasStarbase=v.equals("1"); break;
+            case "env": { String[] g=v.split(","); q.gravity=Integer.parseInt(g[0]); q.temperature=Integer.parseInt(g[1]); q.radiation=Integer.parseInt(g[2]); break; }
+            case "orig": { String[] g=v.split(","); if (!q.isTerraformed) { q.isTerraformed=true; }
+              q.origGravity=Integer.parseInt(g[0]); q.origTemperature=Integer.parseInt(g[1]); q.origRadiation=Integer.parseInt(g[2]); break; }
           }
         }
         q.encode();
