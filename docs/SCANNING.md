@@ -368,7 +368,13 @@ fleet's or planet's ranges.
   already known, or `d² ≤ P²`, or `d² ≤ ⌊R²/16⌋` (OB-018 H, I; OB-017 A, B).
   BINARY-ONLY: the "already known" case covers the band between `R/4` and
   `R` without penetration. A wormhole is known once seen, and every player
-  forgets it when it jumps.
+  forgets it when it jumps. The penetrating branch is CONFIRMED for ends
+  that had just jumped and so were unknown (WT batch, O-44, stars-elegy
+  #55): 4 of 18 jumped ends were seen again that year by a newly received
+  M.T. ship, at 21, 27, 72 and 107 ly, within its penetrating range (about
+  33 ly for an M.T. Scout, 132 ly for a Lifeboat) and beyond `R/4`; an end
+  52 ly from an M.T. Scout, beyond both, was not seen. This matches the
+  binary reading above, which already includes `d² ≤ P²`.
 - **Mineral packets.** Seen within `R` (about 48 ly seen and 53 not with
   R 50; OB-018 J, K). A Packet Physics (PP) player sees every packet in the
   universe (OB-012).
