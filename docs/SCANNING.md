@@ -53,7 +53,7 @@ wormhole knowledge carried between years (below).
 A player always knows everything about its own planets, fleets, designs and
 race. A player knows another player exists (name, and the race data
 described under Disclosure) once it sees any of that player's planets,
-fleets, starbases, minefields or packets, or receives a message from them.
+fleets, starbases or minefields, or receives a message from them.
 
 ## Scanner ranges
 
@@ -255,7 +255,7 @@ report. A newer report replaces the fields it contains and leaves the rest
 (for example old surface minerals) as they were. The host does not use
 this history.
 
-## Space objects (CONFIRMED, OB-011..OB-018; details in `OBJECTS.md`)
+## Space objects (BINARY-ONLY)
 
 - **Minefields.** A player's own minefields are always known. An enemy
   minefield is seen from a fleet or planet when `d² ≤ P²`, or
@@ -263,12 +263,9 @@ this history.
   the fleet is inside the field. A minefield the player has seen before is
   seen again within the full normal range. A minefield's owner becomes a
   known player.
-- **Wormholes.** Only within `R`: there, an unknown wormhole is seen
-  within `P` or a quarter of `R`, and one the player already knows is seen
-  anywhere within `R`. A known wormhole beyond `R` is not seen (OB-011-H).
+- **Wormholes.** An unknown wormhole is seen within `P` or a quarter of `R`. A persistent known-bit is kept after discovery; the binary-derived model predicts that a known wormhole is seen again within full normal range. This persistence/range rule is BINARY-ONLY.
 - **Mineral packets.** Seen within `R`. A Packet Physics (PP) player knows
-  every packet in the universe. A seen packet's owner becomes a known
-  player.
+  every packet in the universe.
 - **Mystery Trader.** Known to every player while it exists, at any
   distance.
 - **PP packet scanners.** A PP player's own moving packets scan as

@@ -438,36 +438,12 @@ with random events off (an inserted Trader traded).
     fleet has full fuel and the design joins the player's designs (if a
     design slot and a fleet number are free).
 
-## Visibility (CONFIRMED, OB-011..OB-014, OB-017, OB-018)
+## Visibility
 
-Seen when each player's file is written, with the scanner ranges of
-`SCANNING.md` (`R` normal, `P` penetrating):
-
-- **Minefields** (other players'): `d² ≤ P²`, or `d² ≤ ⌊R²/16⌋`, or the
-  scanning fleet is inside the field, or the player already knows the
-  field and `d² ≤ R²`. A player knows a field once it has seen it, been
-  hit by it or swept it. Own fields are always known.
-- **Wormholes:** `d² ≤ R²` first, then `d² ≤ P²`, `d² ≤ ⌊R²/16⌋`, or the
-  player already knows it. **Knowing a wormhole never shows it beyond
-  `R`** (OB-011-H); within `R` it shows a known one (OB-017; the band
-  between `R/4` and `R` is BINARY-ONLY). A jump makes everyone forget it.
-- **Packets:** `d² ≤ R²` (about 48 ly seen and 53 not with `R` 50). Every
-  packet is in a Packet Physics player's file.
-- **Mystery Trader:** in every player's file at any distance.
-- Seeing another player's minefield or packet makes that player known (its
-  player data is written), even with none of its planets or fleets seen.
-  Wormholes and the Trader have no owner.
-- **Packet Physics:** each own packet in flight scans as a penetrating
-  scanner of range `warp²` ly: fleets (orbiting too, cloak rule), every
-  space object, and planets (OB-012: warp 5 saw at 20 ly, not at 30).
-- **Interstellar Traveler:** from each own planet whose starbase has a
-  gate, every planet whose starbase has any gate within that gate's range
-  is seen as by a penetrating scan (no limit for "any"; OB-013: seen at 75
-  ly from a range-250 gate, not at 259 ly; a starbase without a gate is not
-  seen).
-- **Space Demolition:** each own minefield sees every fleet inside it that
-  is not orbiting a planet; a cloaked one only when `rand(100) ≥ cloak`
-  (OB-014-B, uncloaked, one stream).
+Which of these objects each player sees, and what seeing them discloses
+(including the Packet Physics, Interstellar Traveler and Space Demolition
+rules), is specified in `SCANNING.md`, which owns all visibility rules.
+The oracle records are OB-011..OB-014, OB-017 and OB-018 in `PARITY.md`.
 
 ## Open experiments
 
@@ -475,8 +451,9 @@ Seen when each player's file is written, with the scanner ranges of
    stays and lays again the next year (field 160 → 310 → 460), and its next
    waypoint stays queued. The OB-014-D summary reported that waypoint
    removed; the preserved after-turn file still lists it.
-2. A known wormhole between `R/4` and `R` (no penetration) is seen; an
-   unknown one at the same distance is not.
+2. A known wormhole between a quarter of normal range and full normal
+   range (no penetration) is seen; an unknown one at the same distance is
+   not (`SCANNING.md`).
 3. Packet launch: warp, class, amounts, same-year merge, the launch-year
    half move; PP decay rates and terraforming; IT and AR targets.
 4. Wormhole jump odds over many streams; what a jump does to fleets heading
