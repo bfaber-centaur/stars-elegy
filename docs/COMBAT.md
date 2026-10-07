@@ -55,12 +55,108 @@ lesser racial traits are BINARY-ONLY unless a case says otherwise.
 - Relations are per player and need not be symmetric: friend, neutral or
   enemy.
 
-## Where battles happen in the turn (BINARY-ONLY)
+## Battle plans
+
+A player has between 1 and 16 battle plans, numbered 0..15 without gaps.
+The client stops at 15: its copy button does nothing once a player has
+15 plans (MEASURED twice as BP-L in the BP-1..BP-2 client runs; the host
+kept 15). A 16th plan reaches
+the host only through crafted orders (BINARY-ONLY).
+Each plan has a name and the fields listed under "Conventions". Every
+fleet names one of its owner's plans. A starbase always fights with its
+owner's plan 0.
+
+**Starting plans** (MEASURED, UG01..UG21: every player of every new game,
+2 to 16 players, single-human and multi-human). Every player starts with
+the same five plans:
+
+| plan | name | tactic | primary | secondary | attack-who | dump cargo |
+|---|---|---|---|---|---|---|
+| 0 | Default | 4 maximize damage ratio | 3 armed ships | 1 any | neutrals and enemies | no |
+| 1 | Kill Starbase | 4 maximize damage ratio | 2 starbase | 3 armed ships | neutrals and enemies | no |
+| 2 | Max-Defense | 3 maximize net damage | 3 armed ships | 4 bombers and freighters | neutrals and enemies | no |
+| 3 | Sniper | 1 disengage if challenged | 5 unarmed ships | 0 none | neutrals and enemies | no |
+| 4 | Chicken | 0 disengage | 1 any | 0 none | neutrals and enemies | no |
+
+Starting fleets use plan 0 (`UNIVERSE.md`). A ship built into a new fleet
+also gets plan 0 (MEASURED: CB-047-ctl, 2 runs, and over 40 new fleets in
+the round-7 ship-launch runs, `PARITY.md` "Round 7"; BINARY-ONLY in
+general).
+Ships split off keep their source fleet's plan (`ORDERS.md`).
+
+**"Default" always attacks "neutrals and enemies"** (MEASURED: UG01..UG21
+in fresh runs, and BP-2, three single-player games created one after
+another in one client session). The original's plan setup also has a
+rule that sets "Default" to "everyone" in a single-human game, but it
+reads a game setting that every way of creating a game clears first, so
+it never takes effect (BINARY-ONLY reading). Elegy has no such rule.
+
+**Adding, replacing and deleting** (CONFIRMED for deletion, BP-1;
+BINARY-ONLY otherwise). Validation of the fields is in `ORDERS.md`
+("Battle-plan fields").
+
+- A definition for an existing plan number replaces that plan.
+- A new plan takes the next number (the current count). The 17th plan is
+  refused.
+- A definition whose number is beyond the next free one (above the
+  current count) is refused. The order is dropped and the plans are
+  unchanged (BINARY-ONLY).
+- Deleting plan `k` moves every later plan down by one number. Every
+  fleet of that player whose plan number is `k` or higher has it lowered
+  by one. So a fleet on a later plan keeps the same plan, and a fleet on
+  the deleted plan moves to the plan just before it, `k − 1` (BP-1: with
+  plans 0..6 and fleets on 3, 5, 2 and 6, deleting plan 3 left six plans
+  and the fleets on 2, 4, 2 and 5, the later plans keeping their fields).
+  The client
+  asks for confirmation first when some fleet uses plan `k`. It never
+  offers to delete plan 0.
+
+**Order validation** (BINARY-ONLY unless marked; Elegy's choices for
+values only crafted orders can carry are marked "Elegy").
+
+- **Plan limit.** The host holds at most 16 plans, because the plan
+  number in an order has room only for 0..15. The client stops at 15
+  (MEASURED, BP-L in the BP-1..BP-2 client runs). Elegy enforces the
+  host's 16; the 15 is a client limit.
+- **Fields the host checks.** The host refuses a tactic above 6 and a
+  primary or secondary target above 8. So 6 and 8, one past the legal
+  sets (tactics 0..5, target types 0..7), get through. Elegy refuses
+  anything outside the legal sets, as `ORDERS.md` states for
+  battle-plan fields.
+- **Attack-who is not checked.** The host stores any value the order
+  carries (0..31). The client offers only nobody, enemies, neutrals and
+  enemies, everyone, and each other player in the game; it never offers
+  the player itself or a player who is not in the game. In battle a
+  named player is the value minus 4.
+  - A plan naming a player who is not in the game attacks no one through
+    that choice: no such player is ever present.
+  - A plan naming its own owner marks that owner as its own target.
+    Tokens never fire at their own side, but how this mark enters the
+    choice of who fights at a location was not traced.
+  - Elegy refuses both.
+- **Names.** The client limits a plan name to 31 characters and checks
+  nothing else (an empty name is not refused; inferred from the dialog).
+  The host stores the name the order carries with no length or content
+  check. Its plan record has room for 31 characters, so a longer crafted
+  name overruns it. Elegy refuses a name longer than 31 characters.
+
+## Where battles happen in the turn (CONFIRMED in part; see each rule)
 
 Battles are fought after movement and production, at the start of the
 post-movement waypoint phase (step 6 of the turn order in `KERNEL.md`):
 before bombing, before the post-movement unload/load tasks, mine sweeping
 and repair. Repair later in the same turn skips every fleet that fought.
+
+- After production: a starbase destroyed in battle loses the ship items
+  of its queue, but a ship built that year still fights (CONFIRMED,
+  CB-047).
+- Before bombing: a starbase destroyed in this year's battle no longer
+  protects its planet from the same year's bombing (CONFIRMED, T-2).
+- Before the second research level-up check: research gained from a
+  battle becomes a level in the same year (CONFIRMED, CB-018, CB-021).
+- Before repair, which skips fleets that fought (CONFIRMED, CB-017).
+- The order relative to the unload/load tasks and mine sweeping is
+  BINARY-ONLY.
 
 There is at most one battle per location per turn. A location is a set of
 fleets at **exactly** the same x and y. Planets are not members of a
@@ -75,7 +171,7 @@ random stream and for the plan-0 legacy bug below.
 
 1. **Aggressors.** A fleet is an aggressor when its plan's primary target
    is not "none", its attack-who is not "nobody", and it is armed (has at
-   least one beam weapon or torpedo; bombs do not count). CONFIRMED:
+   least one beam weapon or torpedo; bombs do not count). CONFIRMED (CB-005, CB-006):
    - No battle when both sides attack nobody (CB-005, P-5).
    - No battle when the only side that attacks enemies is unarmed
      (CB-006).
@@ -84,8 +180,8 @@ random stream and for the plan-0 legacy bug below.
    plan says. CONFIRMED: six lone-starbase configurations (CB-002 C9/C10,
    CB-003 S2, CB-004 S2, CB-006 both planets) and the Q-1 controls
    (CB-011..014 S2/S3).
-3. **The procedure** (BINARY-ONLY in its details; CONFIRMED where
-   marked). For one location:
+3. **The procedure** (BINARY-ONLY in its details; the steps confirmed
+   by oracle cases are marked). For one location:
    1. **Present set `P`**: the owner of a starbase at the location's
       planet, armed or not, plus the owner of every fleet at the location.
    2. **Attack sets** start empty. Each player has one.
@@ -182,7 +278,11 @@ random stream and for the plan-0 legacy bug below.
      tokens, 127 and 128. Player 1's fleet 12 sat out and fleet 11
      fought.
    - Players with a left-out fleet are told that some fleets missed the
-     battle.
+     battle, except in a 2-player battle, where neither player is told
+     (LEGACY BUG, CONFIRMED: CB-039 left 25 fleets out with no message;
+     in the three-player CB-042 each player with left-out fleets was
+     told). Elegy reproduces this behind its legacy-bug switch; the
+     message is 0x180 in `MESSAGES.md`.
 8. **Excluded fleets** (BINARY-ONLY): a fleet carrying a particular
    status flag is not grouped with the others. What sets that flag is not
    known.
@@ -302,7 +402,9 @@ For each involved fleet, in location order:
 A starbase token is placed for the starbase of an involved owner (see "Starbases in battle").
 
 Then the token order is shuffled: for `i = 0..n−1`, swap token `i` with
-token `i + rand(n − i)`. Token order matters for movement ties, firing
+token `i + rand(n − i)` (CONFIRMED by the exact replays CB-041, CB-042,
+CB-044, CB-046 and CB-048..CB-051; see "Random draws in a battle").
+Token order matters for movement ties, firing
 order and target ties.
 
 **Energy Dampener** (CONFIRMED, CB-002 C8): if any token in the battle
@@ -355,8 +457,15 @@ armor, it does not trust a stored value):
   freighters" matches 4 or 7. "Unarmed" matches 5, 6 or 7. "Fuel
   transports" matches 6. "Freighters" matches 7. "Starbase" matches
   starbases. "Any" matches all.
-- **Tactic and targets**: armed tokens take tactic, primary and secondary
-  from the fleet's plan. Unarmed tokens use tactic 0 (disengage).
+- **Tactic and targets**: primary and secondary come from the fleet's
+  plan. Only an armed token (class 3) takes the plan's tactic; every
+  other class (bomber, unarmed, fuel transport, freighter) uses tactic 0
+  (disengage), whatever the plan says. A token with no weapons also has
+  its primary target set to none, so it scores against its secondary.
+  MEASURED (CB-049, 6 streams): an unarmed Medium Freighter stack under
+  a plan with tactic 3, primary any, secondary none is recorded with
+  tactic 0, primary none, secondary none, and its moves replay with those
+  values. BINARY-ONLY for the other classes.
 - **Speed code**:
 
   `w − 4 + jets + 2·overthrusters + Multi Function Pods
@@ -402,7 +511,9 @@ armor, it does not trust a stored value):
 ## Rounds
 
 At most 16 rounds, numbered 0..15. Each round (BINARY-ONLY ordering,
-consistent with every replayed record):
+consistent with every replayed record; movement then the jitter draw,
+steps 3 and 4, CONFIRMED by the exact replays (CB-041, CB-049 and others) under
+"Choosing a square"):
 
 1. From round 1 on, regenerate shields (see RS).
 2. The battle ends if at most one player still has live tokens.
@@ -445,7 +556,7 @@ A token with speed code `s` gets `(s + 2)/4` moves in round `r`, plus 1 when:
 The average is `(s + 2)/4` squares per round (½ … 2½). For example,
 code 1 moves 1, 1, 0, 1 and code 5 moves 2, 2, 1, 2.
 
-### Movement order (CONFIRMED in 2 streams, CB-030)
+### Movement order (CONFIRMED, CB-030; exact replays CB-041, CB-042, CB-044, CB-046)
 
 Movement runs in three phases, `a = 3, 2, 1`. In phase `a`, every token
 with at least `a` moves left moves one square.
@@ -453,6 +564,10 @@ with at least `a` moves left moves one square.
 Inside a phase, tokens go in **descending jittered weight**:
 `W = mass + mass·(j − 7)·2/100`, where `j` is the token's current jitter
 (0..14). Ties keep token order. Starbases never move.
+
+The exact replays (see "Choosing a square") reproduced the order of every
+move, including battles of 255 identical one-ship tokens where only the
+jitter separates them.
 
 ### Disengaging (CONFIRMED, P-10, CB-003/004 D, CB-025, CB-034)
 
@@ -490,9 +605,13 @@ Inside a phase, tokens go in **descending jittered weight**:
     moved: the Runner went to (9,9) and stayed there for six moves.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
-  hits do not count). It keeps firing until it leaves.
+  hits do not count). It keeps firing until it leaves. CONFIRMED (CB-049,
+  6 streams): the tactic-1 Shield DD stack switched at its first armor
+  damage, its action records show the fresh counter from then on, and
+  every later move replays as tactic 0. Without the switch,
+  5 of the 6 replays fail. A starbase never switches (BINARY-ONLY).
 
-### Choosing a square (BINARY-ONLY in general; CONFIRMED for one mover vs a station, CB-012, CB-019, CB-020, CB-021)
+### Choosing a square (CONFIRMED by exact replay, CB-041, CB-042, CB-044, CB-046, CB-049..CB-051; one mover CB-012, CB-019, CB-020, CB-021)
 
 For each single-square move, the token computes a **radius** and possibly
 a **goal**:
@@ -540,7 +659,60 @@ toward it, using the scores of its 8 neighbours:
 
 A step that would leave the board leaves the token where it is.
 
-### Square score (BINARY-ONLY)
+**Exact replays.** Every battle below was replayed from its random stream
+with this section, "Square score", "Movement order" and the draws in
+"Random draws in a battle"; shots were taken from the record. Every move
+of every round came out on the recorded square, in the recorded order,
+with every tie draw in place:
+
+- CB-041 (40 runs): two movers, a tactic-5 Destroyer stack and tactic-0
+  Super Freighters, against a Fort.
+- CB-046 (40 runs): beam Destroyers against torpedo Destroyers and
+  against shielded, armed Mini Morphs.
+- CB-042 (2 streams): three mutually hostile players, 255 one-ship
+  Laser Frigates, 2,032 moves and about 7,800 tie draws.
+- CB-044 (2 streams): two players, 255 one-ship Laser Frigates, 1,611
+  moves and about 8,700 tie draws.
+- CB-049 (6 streams): seven moving stacks on tactics 1 to 4 (one
+  becoming 0 under fire, one unarmed on 0), primary types that match
+  some enemies and none, weapons of ranges 1, 3 and 4 on one design,
+  sappers, capacitors, deflectors and shields; 133 moves and 579 tie
+  draws.
+
+To check that CB-049 exercises a rule, the replay was rerun with that
+rule removed or changed, and counted how many of the 6 streams still
+replay. These broke at least one stream, so each is CONFIRMED by it:
+
+| changed rule | streams still replaying |
+|---|---|
+| no `rand(100)` draws inside the torpedo estimate | 0 |
+| tactics 3 and 4 scored like tactic 2, or like tactic 5 | 0 |
+| every enemy counted as matching the target type | 0 |
+| no out-of-reach division | 0 |
+| tactic 1 never switching to 0 | 1 |
+| reach using the longest range for tactics 3 and 5 | 2 |
+| no out-of-reach floor | 3 |
+| no sapper cap | 3 |
+| no capacitor or deflector | 4 |
+| the range-3 exception counting sapper ranges | 5 |
+| no range-3 / shielded-enemy exception at all | 5 |
+
+CB-049 did not exercise two rules, so round 8 tested each with a setup
+built for it, and every move replays (6 streams each):
+
+- CB-050: the torpedo estimate's shield term. A shielded tactic-0 stack
+  facing a Jihad Missile stack and an Upsilon Torpedo stack that cannot
+  target it went to (9,9) and stayed for 7 moves. Without the term it
+  would alternate between (9,9) and (8,9), which is what the unshielded
+  control (CB-050-ctl) did.
+- CB-051: the fallback from the primary to the secondary target type. A
+  stack with primary "starbase" (none on the board) and secondary
+  "armed ships" moved toward the enemy's armed stack from its first
+  move; without the fallback it would never move. A "freighters, else
+  any" stack switched to "any" once the freighter left, so the test is
+  made again on every move.
+
+### Square score (CONFIRMED by the exact replays CB-041 to CB-051 listed under "Choosing a square")
 
 The score of square `q` for token `T` is computed as follows:
 
@@ -604,6 +776,14 @@ subtracts 1 when `q` is its current square.
 
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
 `(armor + shields)·ships`, less its existing damage (at least 1).
+
+The replays exercised every step above: the beam estimate
+with capacitor, dropoff, deflector, sapper cap and the out-of-reach
+division and floor; the torpedo estimate, including its random hits
+(see "Random draws in a battle"); the cap with shields; the sum and
+maximum over many enemies of two other players; the target-type test on
+`give`; every row of the tactic table; the tactic-0 own-token and
+current-square terms; and the torpedo shield term (CB-050).
 
 ## Firing (CONFIRMED by replay: CB-001..CB-021, every hit record)
 
@@ -760,6 +940,13 @@ own `N` draws.
   reruns);
 - otherwise each torpedo hits on `rand(100) < p`: `N` draws.
 
+The draws are CONFIRMED by the CB-049 replay (6 streams). Each of its 87
+torpedo targets got its hits from the stream, `N` draws for the
+torpedoes still unfired, and the resulting misses matched every miss
+record. In 4 salvos the torpedoes left after a kill went on to a second
+target with fresh draws, and every later move stayed in step with the
+stream.
+
 Per salvo, while torpedoes remain:
 
 1. Choose a target, then compute `H` for it. Let `d` = the part's
@@ -781,7 +968,8 @@ Per salvo, while torpedoes remain:
 3. **Misses** do `misses·d/8` to shields only, if that is above 0.
    CONFIRMED (CB-009 K8, Q-14): 14 Beta misses did 21. A target without
    shields left takes nothing from misses, and no miss record is written
-   for it (BINARY-ONLY).
+   for it (CONFIRMED, CB-009, 2 runs: salvos with 163 and 172 misses on
+   an unshielded stack wrote no miss record, and every hit replays).
 4. **Hits.** Let `h = hits·d/2`, truncated once for the whole group of
    hits. `h` goes to shields first, and a further `h` goes to armor
    directly; shield damage that gets past the shields is added to it. The
@@ -789,11 +977,20 @@ Per salvo, while torpedoes remain:
    `hits·d` is odd. CONFIRMED (CS-003-C2): one Alpha Torpedo hit
    (`d = 5`) did 4.
    - A hit record is written for every target the salvo reaches, even
-     with 0 hits. A 0-hit record changes nothing (BINARY-ONLY). This
+     with 0 hits. A 0-hit record changes nothing (CONFIRMED once, CB-049:
+     the 0-hit record after a miss record left the target as it was). This
      accounts for the no-change records with flag 0x80 that CS-003-C2
      saw on an unshielded target, one per missed shot (7 for the Alpha
      Torpedo, 12 and 11 for the missiles). They are hit records, not
      miss records.
+   - A torpedo hit record carries the miss records' flag 0x80 exactly
+     when it does no armor damage, which means 0 hits. On a
+     shielded target an all-miss salvo therefore writes two 0x80
+     records on that target: the miss record first, then the 0-hit hit
+     record. CONFIRMED (CB-049): reading the first as the hit record
+     drops the misses' shield damage, which is what made one later
+     cycles-7000 hit look wrong; read in this order, every CB-049 hit
+     replays.
 5. **One kill per torpedo**: hits kill at most `n` ships, and any
    damage left after that limit is lost. CONFIRMED (CB-009 K1, Q-8): 202
    Jihads killed 202 ships per salvo with armor for 272.
@@ -850,7 +1047,11 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
   that year still fights. Packets queued there are lost too
   (BINARY-ONLY).
 - Either way, **no damage is left over** after a hit on a starbase. A
-  beam stops there, even after destroying it (BINARY-ONLY).
+  beam stops there, even after destroying it. CONFIRMED (CB-052, 6
+  streams): a one-slot phaser stack put 234 into an Orbital Fort with 100
+  armor. Its fire action held only the Fort's record, though an enemy
+  stack sat on the same square in range; that stack was first hit by the
+  next round's shot. CB-041 agrees with a 2-point overkill.
 - Destroying an Alternate Reality race's starbase leaves the planet
   uninhabited (CONFIRMED, CB-041: 17 of 17 streams).
 
@@ -875,7 +1076,8 @@ What a battle draws, in order. All draws are uniform.
    estimate simulates `ships × count × 200` torpedoes, which is exactly
    200 for one ship with one torpedo in the slot. Then the estimate makes
    200 `rand(100)` draws, so it is random, and it shifts later draws
-   (BINARY-ONLY quirk). The expected value `200·p/100` is the natural
+   (CONFIRMED quirk, CB-049: the replays fail in all 6 streams without
+   these draws). The expected value `200·p/100` is the natural
    deterministic replacement. It differs from the original only in that
    one case.
 5. **After the battle:** tech-learning attempts (below); salvage with no
@@ -888,6 +1090,13 @@ torpedoes draw nothing.
 file give byte-identical battle records (`PARITY.md`, round 2 method),
 and one-mover battles replay square by square from these rules
 (CB-012, CB-019, CB-020, CB-021).
+
+The order of draws 1 to 3 is CONFIRMED by the exact replays (CB-041,
+CB-042, CB-044, CB-046, CB-048..CB-051). Each run's stream was located
+from its setup draws alone: the recorded starting jitters and the
+shuffled token order. Every movement tie, jitter and torpedo draw after
+that fell in place, round after round, including the estimate's draws
+in item 4.
 
 ## After the battle
 
@@ -999,8 +1208,9 @@ A tech attempt, for one player:
 With no trader items in play and exactly one field behind, the chance is
 `½ · (1 − (5/6)^6) ≈ 0.33` per attempt.
 
-**Mystery Trader chances** (BINARY-ONLY; consistent with CB-046 per
-stream, below). Every item's chance is 0 when the battle starts. Each
+**Mystery Trader chances** (CONFIRMED, CB-048: 20 streams and a 12-stream
+control, `PARITY.md` "Round 7"; consistent with CB-046 per stream,
+below). Every item's chance is 0 when the battle starts. Each
 time a hit destroys at least one ship of a token, every slot of that
 token's design that holds a Mystery Trader part adds the slot's part count
 to that item's chance, up to 25 (`c = min(25, c + count)`). So the chance
@@ -1110,16 +1320,24 @@ Trader item; the chances were small and the replay predicts no gain in
 every stream). The one CB-042 hit per stream that did not replay was a
 checker defect (it reused an earlier shot's carried amount), not a rule.
 
+Round 7 (CB-048, CB-049) confirmed Mystery Trader items from battle
+(10 of 20 streams gained, the one-fleet control 1 of 12, and the replay
+named exactly the gaining streams and items) and the movement rules for
+tactics 1 to 4 with mixed designs (every move in 6 streams). The one
+CB-049 hit that did not replay was again a checker defect (record
+pairing; see "Torpedoes and missiles").
+
+Round 8 (CB-050, CB-051) confirmed the torpedo estimate's shield term
+and the fallback to the secondary target type. The battle-plan runs
+confirmed deletion (BP-1), measured the client's 15-plan limit (BP-L),
+and found "Default" never set to "everyone" (BP-2; see "Battle plans").
+
 Not yet tested:
 
-- a nonzero Mystery Trader chance actually giving an item. A setup that
-  reaches 25 on several items (for example many one-ship fleets of a
-  Mini Morph carrying five Mystery Trader part types) gives about a
-  third per stream, and the replay can name the gaining streams from the
-  battle record;
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
-- salvage at more than one point.
+- salvage at more than one point;
+- the host's 16-plan limit, which needs crafted orders.
 
 The firing live-token recheck has no observable effect (see "Firing").
 

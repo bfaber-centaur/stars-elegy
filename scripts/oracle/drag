@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Drag with the left button from one guest point to another (screenshot
+# coordinates), e.g. a component onto a design slot.
+#
+#   scripts/oracle/drag X1 Y1 X2 Y2
+#
+# Locks the DOSBox mouse (ctrl+F10) on first use after start. In locked mode,
+# with Windows acceleration off, the guest cursor was measured to move one
+# guest pixel per host pixel of relative motion (docs/ORACLE.md, Mouse, which
+# also lists the misses). The script drives the cursor far past the top-left
+# corner, where the guest pins it at (0,0), walks it to (X1,Y1), presses,
+# walks to (X2,Y2) and releases. Same homing as click. Check
+# with a screenshot before relying on clicks near small targets.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 4 ]] || die "usage: drag X1 Y1 X2 Y2"
+x="$1" y="$2" x2="$3" y2="$4"
+
+w="$(focus_window)"
+if [[ ! -f "$STATE/mouse-locked" ]]; then
+	xdotool key ctrl+F10
+	touch "$STATE/mouse-locked"
+	sleep 0.3
+fi
+eval "$(xdotool getwindowgeometry --shell "$w")" # WIDTH HEIGHT
+step="$ORACLE_MOUSE_STEP" pause="$ORACLE_MOUSE_PAUSE"
+
+# relmove DX DY: relative motion in steps of at most $step, $pause apart.
+relmove() {
+	local dx="$1" dy="$2" args=() sx sy
+	while ((dx != 0 || dy != 0)); do
+		sx=$((dx > step ? step : (dx < -step ? -step : dx)))
+		sy=$((dy > step ? step : (dy < -step ? -step : dy)))
+		args+=(mousemove_relative -- "$sx" "$sy" sleep "$pause")
+		dx=$((dx - sx)) dy=$((dy - sy))
+	done
+	((${#args[@]} == 0)) || xdotool "${args[@]}"
+}
+
+# Home. The host pointer starts at the bottom-right of the X screen so the
+# sweep never runs into the screen edge before the guest reaches (0,0).
+eval "$(xdpyinfo | awk '/dimensions:/ { split($2, d, "x"); printf "SW=%d SH=%d\n", d[1], d[2] }')"
+xdotool mousemove "$((SW - 1))" "$((SH - 1))"
+relmove "$((-(WIDTH + 16)))" "$((-(HEIGHT + 16)))"
+relmove "$x" "$y"
+sleep 0.2
+xdotool mousedown 1
+sleep 0.3
+relmove "$((x2 - x))" "$((y2 - y))"
+sleep 0.3
+xdotool mouseup 1

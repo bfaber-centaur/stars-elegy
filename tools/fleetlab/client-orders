@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+# Drive the original client to give one player's orders, and keep the order
+# file it writes.
+#
+#   tools/fleetlab/client-orders DIR OUTDIR CMDS [MFILE] [GAME]
+#
+# Resets the oracle to the `registered` snapshot, copies DIR/GAME.* (default
+# CB) to D:, starts Stars! at normal speed, opens MFILE (default cb.m1),
+# dismisses the "years of data read" note, runs the commands in the file
+# CMDS (one per line, # comments), saves (File > Save), copies the order
+# file GAME.Xn and GAME.Hn into OUTDIR, exits Stars! and stops the oracle.
+# A screenshot follows every command (OUTDIR/screens/NN-verb.png).
+# Run the year afterwards with pinned-turn, using a base directory holding
+# DIR's files plus the order file. OUTDIR holds registered-copy output
+# (order files carry the serial) and screenshots: keep it out of this
+# repository. Check what the client wrote with `combatlab dump GAME.Xn`.
+#
+# Commands (positions measured on the 1152x864 guest screen, docs/ORACLE.md
+# "Client orders"; indexes are 0-based positions in the client's lists):
+#   plans                  open Commands > Battle Plans (F6)
+#   plan select K          select plan K in the Plan list
+#   plan copy NAME         Copy the selected plan, name the copy NAME
+#   plan rename NAME       rename the selected plan
+#   plan primary I | secondary I | tactic I | who I
+#                          set that field to item I of its list
+#   plan dump              toggle Dump Cargo
+#   plan delete [confirm]  Delete the selected plan; "confirm" answers OK to
+#                          the alert shown when fleets use the plan
+#   plans close            close the Battle Plans dialog
+#   fleet first            Goto the first fleet in the homeworld's
+#                          "Fleets in Orbit" list (planet view, at start)
+#   fleet next | fleet prev
+#                          the fleet panel's Next / Prev buttons
+#   fleet plan K           set the selected fleet's battle plan to item K
+#   fleet xfer             open Cargo Transfer with what the fleet orbits
+#   xfer ITEM N            ITEM fuel|ir|bo|ge|col; N > 0 moves N from the
+#                          fleet to the other side, N < 0 the reverse
+#   xfer ok | xfer cancel  close the Cargo Transfer dialog
+#   wp select K            select row K of the fleet's waypoint list
+#                          (0 = where it is now)
+#   wp task T              Waypoint Task item T (0 none, 1 transport,
+#                          2 colonize, 3 remote mining, 4 merge, 5 scrap,
+#                          6 lay mine field, 7 patrol, 8 route, 9 transfer)
+#   wp transport ITEM ACTION [N]
+#                          transport order for one cargo item (see below)
+#   design open            Commands > Ship Design (F4), existing ship designs
+#   design select I        item I of the design list
+#   design copy            Copy Selected Design (opens the editor)
+#   design part ROW X Y    drag the component in visible row ROW (0-3) of
+#                          the editor's list onto the slot at X,Y
+#   design scroll N        scroll the component list down N rows
+#   design category I      component list filter I (0 all, 1 armor, 2 beam
+#                          weapons, 3 bombs, 4 electrical, 5 engines,
+#                          6 mechanical, 7 mine layers, 8 mining robots,
+#                          9 scanners, 10 shields, 11 torpedoes, 12 weapons);
+#                          the list follows the player's tech
+#   design name NAME       the design's name
+#   design ok | done | cancel
+#                          editor OK; list Done (or editor Cancel)
+#   design delete [yes]    Delete Selected Design; "yes" answers the alert
+#                          shown when ships use it (they are destroyed)
+#   queue open             Production > Change for the selected planet
+#   queue select R         select queue row R (0 = "Top of the Queue");
+#                          Add inserts after the selected row
+#   queue add I N          add N of available item I (row in the left list)
+#   queue remove [N]       take N (default 1) off the selected queue item
+#   queue up | down | clear | leftover | ok
+#                          Item Up / Item Down / Clear / the "only
+#                          leftover resources to research" box / OK
+#   research open          Commands > Research (F5)
+#   research field K       field K (0 energy … 5 biotechnology)
+#   research budget D      D percent up (D > 0) or down (D < 0)
+#   research next I        "Next field" item I (0 same, 1..6 fields, 7 lowest)
+#   research done          Done
+#   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
+#   drag X1 Y1 X2 Y2       raw left-button drag (scripts/oracle/drag)
+#   shot NAME              extra screenshot
+set -euo pipefail
+[[ $# -ge 3 ]] || { echo "usage: client-orders DIR OUTDIR CMDS [MFILE] [GAME]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+O="$here/../../scripts/oracle"
+dir="$1" out="$2" cmds="$3" mfile="${4:-cb.m1}" game="${5:-CB}"
+home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+export DISPLAY="${ORACLE_DISPLAY:-:77}"   # for the bare xdotool clicks below
+games="$home/run/games/stars_games"
+xn="${mfile##*.[mM]}"
+mkdir -p "$out/screens"
+cp "$cmds" "$out/commands.txt"
+step=0
+shot() { step=$((step + 1)); "$O/screenshot" "$out/screens/$(printf %02d "$step")-$1.png" >/dev/null; }
+pause() { sleep "${1:-0.8}"; }
+pixel() { "$O/screenshot" "$out/.probe.png" >/dev/null; convert "$out/.probe.png" -format "%[pixel:p{$1,$2}]" info:; rm -f "$out/.probe.png"; }
+downs() { local i; for ((i = 0; i < $1; i++)); do "$O/key" Down; done; }
+# fleet panel Battle Plan list: item 0 is "Battle Plans..." (opens the
+# dialog), item K+1 is plan K; 6 rows of 14 px with centres from y 327; a
+# scroll bar (x 380, arrows at y 327 and 397) only when there are more items
+fleetplan() {
+	local item=$(($1 + 1))
+	"$O/click" 380 309; pause 0.6           # open the list
+	if [[ "$(pixel 380 360)" == "srgb(195,195,195)" ]]; then
+		"$O/click" 380 327; xdotool click --repeat 20 --delay 120 1; pause 0.3   # scroll to the top
+		if ((item <= 5)); then
+			"$O/click" 300 $((327 + 14 * item))
+		else
+			"$O/click" 380 397; ((item > 6)) && xdotool click --repeat $((item - 6)) --delay 120 1
+			pause 0.3; "$O/click" 300 397
+		fi
+	else
+		"$O/click" 300 $((327 + 14 * item))
+	fi
+	pause
+}
+
+# Cargo Transfer dialog (fleet panel Xfer): rows fuel/ir/bo/ge/col; the
+# arrows at x 585 move fleet -> other side, x 567 the reverse. A click
+# moves 1 (kT or mg), shift-click 10, ctrl-click 100, each capped by what
+# is there and what fits.
+xfer() {
+	local item="$1" n="$2" x=585 y
+	case "$item" in fuel) y=340 ;; ir) y=380 ;; bo) y=400 ;; ge) y=420 ;; col) y=440 ;;
+	*) echo "client-orders: xfer: unknown item $item" >&2; exit 2 ;; esac
+	((n < 0)) && { x=567; n=$((-n)); }
+	nclick "$x" "$y" "$n"
+}
+# nclick X Y N: press the button at X,Y for N units, where a click is 1,
+# shift-click 10 and ctrl-click 100 (Cargo Transfer arrows, Production Add
+# and Remove)
+nclick() {
+	local x="$1" y="$2" n="$3"
+	((n == 0)) && return
+	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; counts 1
+	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
+	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
+	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1
+	pause 0.5
+}
+# rclick X Y N: N plain clicks (spinner arrows)
+rclick() {
+	"$O/click" "$1" "$2"
+	(($3 > 1)) && xdotool click --repeat $(($3 - 1)) --delay 200 1
+	pause 0.5
+}
+
+"$O/stop" >/dev/null 2>&1 || true
+"$O/reset" registered >/dev/null
+cp "$dir/$game".* "$games/"
+rm -f "$games/$game.X$xn"
+"$O/start" >/dev/null
+"$O/wait-for" "$home/refs/main-menu-open.png" 367 802 90 >/dev/null
+"$O/key" alt+o; pause 1; "$O/type" "d:\\$mfile"; "$O/key" Return
+"$O/wait-stable" 30 2 >/dev/null; shot open
+"$O/key" Return    # "Note: N years of data read."
+"$O/wait-stable" 30 2 >/dev/null; shot main
+
+while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
+	[[ -z "$verb" || "$verb" == \#* ]] && continue
+	echo "client-orders: $verb $a $b $rest"
+	case "$verb $a" in
+	"plans ") "$O/key" F6; pause 1.2 ;;
+	"plans close") "$O/click" 621 513; pause ;;
+	"plan select") "$O/key" alt+p Home; downs "$b"; pause 0.4 ;;
+	"plan copy")
+		"$O/key" alt+c; pause 1
+		# the Rename Battle Plan dialog's title bar covers (600,405) when the copy was made
+		if [[ "$(pixel 600 405)" == "srgb(166,203,243)" ]]; then
+			"$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause
+		else
+			echo "client-orders: copy refused (no Rename dialog)" | tee -a "$out/refused.txt"
+		fi ;;
+	"plan rename") "$O/key" alt+r; pause 1; "$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause ;;
+	"plan primary") "$O/key" alt+e shift+Tab Home; downs "$b"; pause 0.4 ;;
+	"plan secondary") "$O/key" alt+e Home; downs "$b"; pause 0.4 ;;
+	"plan tactic") "$O/key" alt+t Home; downs "$b"; pause 0.4 ;;
+	"plan who") "$O/key" alt+w Home; downs "$b"; pause 0.4 ;;
+	"plan dump") "$O/click" 686 478; pause 0.4 ;;
+	"plan delete")
+		"$O/key" alt+d; pause 1
+		if [[ "$b" == confirm ]]; then shot alert; "$O/key" Return; pause; fi ;;
+	"fleet first") "$O/click" 232 169; pause 1 ;;
+	"fleet next") "$O/click" 144 132; pause ;;
+	"fleet prev") "$O/click" 144 108; pause ;;
+	"fleet plan") fleetplan "$b" ;;
+	"fleet xfer") "$O/click" 161 213; pause 1.5 ;;
+	"xfer ok") "$O/click" 627 555; pause ;;
+	"xfer cancel") "$O/click" 705 555; pause ;;
+	xfer\ *) xfer "$a" "$b" ;;
+	"wp select") "$O/click" 60 $((262 + 14 * b)); pause 0.4 ;;
+	"wp task") "$O/click" 181 441; pause 0.6; "$O/click" 60 $((459 + 14 * b)); pause 0.8 ;;
+	"wp transport")
+		# wp transport ITEM ACTION [N]: ITEM 0 fuel, 1 ir, 2 bo, 3 ge, 4 col; ACTION is
+		# the row of the action list (0 none, 1 load all, 2 unload all, 3 load
+		# exactly, 4 unload exactly, 5 fill up to %, 6 wait for %, 7 load dunnage,
+		# 8 set amount to, 9 set waypoint to)
+		read -r wact wn <<< "$rest"
+		"$O/click" 160 467; pause 0.6; "$O/click" 40 $((486 + 16 * b)); pause 0.5
+		"$O/click" 123 490; pause 0.6; "$O/click" 40 $((508 + 14 * wact)); pause 0.5
+		if [[ -n "$wn" ]]; then "$O/click" 152 490; "$O/key" Home shift+End; "$O/type" "$wn"; "$O/key" Tab; pause 0.4; fi ;;
+	"design open") "$O/key" F4; pause 1.5 ;;
+	"design select") "$O/click" 848 212; pause 0.6; "$O/click" 700 $((229 + 14 * b)); pause 0.6 ;;
+	"design copy") "$O/click" 369 393; pause 1.5 ;;
+	"design part") read -r px py <<< "$rest"; "$O/drag" 320 $((260 + 66 * b)) "$px" "$py"; pause ;;
+	"design scroll") rclick 518 483 "$b" ;;
+	"design category") "$O/click" 518 212; pause 0.6; "$O/click" 330 $((229 + 13 * b)); pause 0.6 ;;
+	"design name") "$O/click" 736 212; "$O/key" Home shift+End; "$O/type" "$b${rest:+ $rest}"; pause 0.4 ;;
+	"design ok") "$O/click" 688 670; pause 1.2 ;;
+	"design done" | "design cancel") "$O/click" 765 670; pause 1.2 ;;
+	"design delete") "$O/click" 369 425; pause 1; if [[ "$b" == yes ]]; then shot alert; "$O/key" alt+y; pause; fi ;;
+	"queue open") "$O/click" 231 332; pause 1.5 ;;
+	"queue select") "$O/click" 790 $((181 + 16 * b)); pause 0.4 ;;
+	"queue add") "$O/click" 300 $((181 + 16 * b)); nclick 575 244 "${rest:-1}" ;;
+	"queue remove") nclick 575 294 "${b:-1}" ;;
+	"queue up") "$O/click" 575 344; pause 0.4 ;;
+	"queue down") "$O/click" 575 394; pause 0.4 ;;
+	"queue clear") "$O/click" 575 444; pause 0.4 ;;
+	"queue leftover") "$O/click" 213 700; pause 0.4 ;;
+	"queue ok") "$O/click" 824 700; pause ;;
+	"research open") "$O/key" F5; pause 1.5 ;;
+	"research field") "$O/click" 313 $((345 + 21 * b)); pause 0.4 ;;
+	"research budget") if ((b > 0)); then rclick 841 474 "$b"; elif ((b < 0)); then rclick 841 485 $((-b)); fi ;;
+	"research next") "$O/click" 835 379; pause 0.6; "$O/click" 780 $((395 + 13 * b)); pause 0.4 ;;
+	"research done") "$O/click" 742 580; pause ;;
+	key\ *) "$O/key" $a $b $rest; pause ;;
+	drag\ *) read -r dx2 dy2 <<< "$rest"; "$O/drag" "$a" "$b" "$dx2" "$dy2"; pause ;;
+	click\ *) "$O/click" "$a" "$b"; pause ;;
+	wait\ *) sleep "$a" ;;
+	shot\ *) ;;
+	*) echo "client-orders: unknown command: $verb $a" >&2; exit 2 ;;
+	esac
+	shot "$verb${a:+-$a}"
+done 3< "$cmds"
+
+"$O/key" alt+f; pause 0.6; "$O/key" s    # File > Save
+t0=$SECONDS
+until [[ -f "$games/$game.X$xn" ]]; do
+	((SECONDS - t0 < 30)) || { echo "client-orders: no $game.X$xn written" >&2; exit 1; }
+	sleep 0.5
+done
+sleep 2; shot saved
+cp "$games/$game.X$xn" "$out/"
+[[ -f "$games/$game.H$xn" ]] && cp "$games/$game.H$xn" "$out/"
+"$O/key" alt+f x; "$O/wait-stable" 30 2 >/dev/null || true
+"$O/stop" >/dev/null
+"$here/combatlab" dump "$out/$game.X$xn" > "$out/orders.dump"
+cat "$out/orders.dump"

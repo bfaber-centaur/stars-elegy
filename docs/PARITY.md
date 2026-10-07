@@ -2378,6 +2378,172 @@ queues and Mystery Trader parts".
   streams and the two biotechnology gains exactly. A nonzero chance
   giving an item is still untested.
 
+### Round 7 (CB-048, CB-049) and scanning SC-035/SC-036
+
+Predictions committed here before each batch: 11b00a2 (CB-048), 1f528ce
+(CB-049) and 7229c97 (SC-035/036). The SC-035 setup was changed in
+ba6b0d1 before its second run. Experiment READMEs hold the details.
+
+- **Mystery Trader items from battle, CONFIRMED (CB-048: 24 runs, 20
+  streams; control 12).** The round-6 miss is resolved by the
+  reconciled rule (decomp combat pass, COMBAT.md):
+  - each kill event adds, for each Mystery Trader part type on the
+    destroyed design, its slot count to that item's chance;
+  - the chance is capped at 25, and hulls never count.
+
+  Thirty one-ship Mini Morph fleets (five Mystery Trader part types)
+  gave one item in 10 of 20 streams. The same 30 Morphs in one fleet
+  gave one in 1 of 12. The decomp's replay matched every move. It
+  also named exactly the gaining streams and the item in each, in all
+  36 runs. The checker replayed every hit.
+- **Battle movement beyond the replayed cases (CB-049, 6 streams):
+  replayed.** There were seven moving stacks on tactics 1 to 4, with
+  target-type mismatches, weapons of ranges 1, 3 and 4, capacitors,
+  deflectors, sappers and shields. The decomp's battle replay (round 8)
+  matched every move and every hit in all 6 streams. The one hit the
+  checker first missed (cycles 7000, round 4, a Mixed DD on the shielded,
+  deflected Shield DD) was a checker fault in pairing torpedo records,
+  not a rule gap. The unarmed freighter token was recorded with tactic 0
+  under a tactic-3 plan.
+- **Scanning after bombing, CONFIRMED (SC-035, 2 streams).** A
+  scannerless bomber fleet emptied an enemy colony with no starbase.
+  Its owner then got a normal report of the now-unowned planet; at an
+  unowned control planet it got position only.
+- **Designs and players from a three-player battle, CONFIRMED (SC-036,
+  2 streams).** Players 0 and 1 (friends) and player 2 (enemy of both)
+  fought in deep space. Each participant's file then held the other two
+  players' designs in full, the ally's included, and player blocks for
+  both. Before the battle it held only its own.
+- **Battle plans.** New fleets got plan 0 in every SL run, over 40 new
+  fleets (below).
+  - Not run: the 16-plan limit and delete-and-renumber, which need
+    client or crafted orders.
+  - Not run: the stale "Default" attack-who, which needs two games in
+    one client session.
+  - Not re-run: the five starting plans, already MEASURED on 22 games.
+
+### Ship launch (SL-01 to SL-12)
+
+Predictions from the decomp ship-launch reading and the public
+ship-launch spec, committed here before the runs (4c2ae44). Two
+setups were added later, each committed before its own runs: a starbase
+control (70745c8) and an SL-10 follow-up (428e68d). Each case ran on 2
+pinned streams, and the two always agreed. Details are in
+`experiments/sl/README.md`.
+
+The SL races were illegal: player 0 (JOAT + ISB) was at −42 advantage
+points and player 1 (AR + ISB) at −94. The host degraded them before
+production, raising colonists per resource to 2,400 and 2,500. That
+changes resources only. The ship-launch spec explains
+why no other SL result depends on it. Combat Lab builds now refuse a
+negative race score unless `COMBATLAB_ALLOW_ILLEGAL_RACE=1` is set.
+
+- **New fleets, CONFIRMED (SL-01..03).**
+  - Each queue item makes its own fleet with full fuel, plan 0 and one
+    waypoint at the planet.
+  - A new fleet takes the lowest unused number (2 and 4 when 0, 1 and 3
+    were in use).
+  - Byte 5 bit 0x20 is clear on a new fleet in its build year and set
+    on fleets that stayed put.
+  - Fleets routed to their own planet still lacked it in year 2, and so
+    did a remote-mining AR Mini-Miner.
+- **Route warp, CONFIRMED (SL-04..07, 28 of 28 warps).** Waypoint 1 is
+  the route destination with task 8. The warp is the engine's ideal
+  warp, stepped down while `trunc(trunc(d/w)/w)` is unchanged and while
+  the leg costs more than the fuel aboard.
+  - The dock rule applies only when the destination is the builder's
+    own planet with a dock and both planets have starbases: Scout 7 and
+    QJ5 9 at 72 ly, where the no-dock rule gives 5/5. The builder's Fort
+    and the other player's Station gave the no-dock warps.
+  - Safe gates at both ends gave warp 11. Beyond the gate's 250 ly range
+    the dock rule applied.
+  - A route to the building planet itself gave warp 2.
+  - Route words are planet + 1 and survive the turn.
+- **The 512-fleet limit, CONFIRMED (SL-08..10).**
+  - At 511 fleets, the next item makes fleet 511 and the following item
+    joins it.
+  - At 512 with no fleet at the planet, ships are not built, their
+    queue items go, and their minerals are spent (12/6/13 kT below the
+    control). Research could not be compared, because both runs were at
+    tech 26.
+  - At 512 with fleets at the planet, the lowest-numbered fleet whose
+    stack stays at most 32765 receives the ships.
+  - The merged damage follows the prediction: 10 Scouts at 50% / 100
+    units plus 1 gave 45% / 125. At 300 units it gave 45% / 375. The
+    starbase's repair of 100 units that year came afterwards (observed
+    25 and 275).
+- **Default orders, CONFIRMED (SL-11).** An AR builder's new Mini-Miner
+  has waypoint 0 task remote mining; a JOAT builder's has task none.
+  The AR miner did not mine in its build year and did in year 2.
+  - Not predicted: an AR planet with no mines and no miner gained
+    +19/+3/+27 kT a year (control).
+- **Replacing a starbase, CONFIRMED (SL-12).**
+  - Station → Dock and Death Star → Ultra Station removed the queued
+    ships; Dock → Station and Station → Station did not.
+  - A replaced starbase keeps its damage, which is then repaired as
+    usual: 200 → 150, the same as the unreplaced control.
+  - An Orbital Fort builds ships.
+  - A Space Dock built a 574 kT Mini-Miner (LEGACY BUG: no dock-size
+    check).
+
+### Round 8 (CB-050, CB-051)
+
+Predictions from the decomp combat pass, restated in the experiment
+READMEs and committed before the runs (2a7107c). Each setup ran on 6
+distinct streams, and the decomp's battle replay matched every move in
+all 18 runs and every hit in CB-051.
+
+- **Torpedo estimate shield term, CONFIRMED (CB-050, 6 of 6).** A
+  shielded runner (tactic 0) facing an Upsilon Torpedo stack and a Jihad
+  Missile stack that never fire moved to (9,9) and stayed there for
+  7 moves before leaving. The unshielded control alternated between
+  (9,9) and (8,9) in all 6 streams, starting on (9,9) in 4 of them and
+  on (8,9) in 2. The shield term in the estimate decides between the
+  two squares.
+- **Secondary target fallback, CONFIRMED (CB-051, 6 of 6).** A stack
+  whose primary target type (starbase) has no match on the board moves
+  on its secondary (armed ships) from its first move. A "freighters,
+  else any" stack falls back to "any" after the freighter leaves; the
+  full replay through fire shows the fallback is rechecked on every
+  move.
+
+### Round 9 (CB-052)
+
+Prediction from the decomp combat pass, restated in
+`experiments/cb052/README.md` and committed before the runs (ac73ab4).
+
+- **No leftover after a starbase hit, CONFIRMED (CB-052, 6 of 6).** Ten
+  destroyers with one Colloidal Phaser each (plan: starbase, else any)
+  first fired in round 2 at distance 3, putting 234 into an unarmed
+  Orbital Fort with 100 armor. A stack of 5 enemy destroyers sat on the
+  Fort's square in range, on a plan with no target type present. Each
+  stream's fire action held one record, the Fort destroyed. A carry
+  would have added a record on that stack (133 damage). The stack never
+  moved and was first hit in round 3. Every hit replayed.
+
+### Battle plans through the client (BP)
+
+The original client gave the orders (`tools/fleetlab/client-orders`), and
+one pinned host year applied them. Predictions from the decomp lane's
+battle-plan rules were committed first (5aaa4d1). Details:
+`experiments/bp/README.md`.
+
+- **Delete renumbering, CONFIRMED (BP-1).** With plans 0..6 and fleets on
+  plans 3, 5, 2 and 6, deleting plan 3 left six plans. The fleets ended on
+  2, 4, 2 and 5: every fleet on a plan at or above the deleted one moves
+  down one, so the users of the deleted plan get the plan before it, not
+  plan 0, and later plans keep their identity (P5 and P6 kept their
+  fields). The client warns before deleting a plan that fleets use, and
+  its Delete is disabled for plan 0.
+- **Plan limit in the client: 15, MEASURED (BP-L, twice).** The client
+  refused a 16th plan (Copy did nothing), and the host kept 15. After a
+  delete the client copied again. The host's own limit of 16 can't be
+  reached with client orders, so it stays BINARY-ONLY.
+- **Stale single-human Default: MISSED (BP-2).** Three single-player games
+  made one after another in one client session all had attack-who 2 on
+  Default for both players. The predicted carry-over of the single-human
+  setting to the next game did not show in this path.
+
 ### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
@@ -3058,12 +3224,89 @@ chance 0.555), never 2 and never another field; the gaining scrap sent
 Player 1's leftover research reached energy 1 only in the runs without the
 gain (level costs rise with levels held).
 
+### Round 4 (TK-301 to TK-306)
+
+Status: MEASURED, 2026-10-07. The rest of `TAKEOVER.md`'s open list that
+legal host-file orders reach. Predictions in `experiments/tk/gen4.py` and
+`experiments/tk/README.md` "Round 4" were committed before the runs; raw
+files in private `stars-oracle-apparatus` `evidence/tk4/`. TK-303 and
+TK-304 ran on copies of the Combat Lab base with random events on (and,
+for TK-304, slower tech).
+
+**Laser Battery and Planetary Shield (CONFIRMED, TK-301, TK-302).** Player
+1 at energy 10 and 16. On planet 13 (1000 after growth, 100 defenses, 40
+counted) 20 Cherry left 811 and 852 and destroyed every defense; on planet
+2, 20 Smart left 858 and 874 with the defenses kept. 600 troops against 500
+with 20 defenses: strength 469 and 434, so the defender kept 31 and 66
+(grown to 35 and 75). All as predicted.
+
+**Load exactly (CONFIRMED, TK-301, TK-302).** 30 colonists from a 100
+planet (fleet 30, planet 70 then growth); 40 ironium asked with 25 there
+(fleet 25, surface 0); 300 asked with 500 there and a 210 kT hold (fleet
+210, surface 290).
+
+**Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED,
+six cycle settings for colonies, three for owned planets).** A colony on an
+unowned artifact planet sent 0x05e to the new owner with a field 0–5 (all
+six seen) and 122–272 points with 2,500 colonists, 53–196 with 500; the
+artifact was gone. TK-304 with slower tech gave identical fields and points
+in every setting: no halving. TK-303's owned-planet cases (A1, A4, A5) were
+void: Combat Lab had set only the file flag, which the host ignores on a
+planet with an installations block, so every owned planet lost its
+artifact unseen. After the fix TK-306 held all 12 checks: a capture gave
+0x05e to the captor, a defender that beat off 10 troops got 0x05e itself
+(392 points, enough to raise construction 3 → 4 that year), and an
+untouched owned planet and an own-planet unload kept the artifact with no
+message. The TK-303 prediction for A4 (no 0x05e when the defender holds)
+contradicted the binary reading it cited; TK-306 C2 follows the reading
+and held.
+
+**Mystery Trader parts from scrapping (MEASURED, TK-305, 12 cycle
+settings).** A 12-design Hush-a-Boom fleet scrapped at each of player 1's
+three starbases (player 1 at tech 0). First starbase: the Hush-a-Boom
+(0x13c, player 1's part bit set) in 5 settings, a level in 5 (0x13d:
+electronics, propulsion, construction, biotechnology twice), nothing in 2;
+the other two starbases always sent 0x141. The electronics level also sent
+0x157 (new planetary scanner). Predicted: an attempt passes half the
+time, and a passing attempt gives the part with chance 0.215. Observed
+10 of 12 first attempts passed and 5 of 10 gains were the part, both above
+the model (TK-203 also gained more often than predicted: 7 of 12 first
+attempts against 0.33). Open.
+
+### Round 5: manual cargo transfers (TK-501, TK-502)
+
+Status: MEASURED, 2026-10-07, one run each (cycles 20000). The transfers
+were given in the original client through client automation
+(client-orders, added to `docs/ORACLE.md` by the combat oracle lane): one pinned year from a Combat Lab start
+made player 0's turn, the client gave the orders, and a second pinned year
+ran them. Predictions (`experiments/tk/gen5.py`, TK-401 to TK-412 in
+`experiments/tk/manual-transfers.md`) were committed before the runs; raw
+files, order files and screenshots are in private `stars-oracle-apparatus`
+`evidence/tk5/`.
+
+| Case | Transfer | Predicted | Observed |
+|---|---|---|---|
+| TK-401 | 30 colonists to an enemy planet of 100 | defender keeps 67 (77 after growth); 0x000 / 0x003 | as predicted |
+| TK-402 | 200 colonists to an enemy planet of 100 | captured with 109 (125); 0x00c / 0x007 | as predicted |
+| TK-403 | 200 by hand and 50 by an unload task, same planet | one fight of 250: 159 (182) | as predicted; 0x007 names 250 colonists |
+| TK-404 | 30 colonists to an unowned planet | lost, planet unowned, 0x002 | as predicted |
+| TK-405 | 100 ironium to an enemy planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+| TK-410 | 30 colonists to the enemy homeworld (starbase) | lost; 0x058 | as predicted |
+| TK-411 | 200 colonists to a friend's planet | captured as an enemy's | as predicted |
+| TK-412 | 100 ironium to a friend's planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+
+The planets were resolved in the order of the client's order records
+(fleets 7, 6, 5, 2, 1), and the unload task's drop joined the manual drop
+at its planet. These agree with the XF-1 observation of the combat oracle
+lane (colonists lost with 0x058 at a foreign homeworld and 0x002 at an
+unowned planet; minerals added), which had no committed prediction.
+
 ### Not tested
 
-Ancient artifacts; colonists given to a foreign planet by a manual cargo
-transfer; the year's full draw order through the random stream; Laser
-Battery and Planetary Shield against bombs and troops; scrapping Mystery
-Trader parts at a starbase.
+Cargo given by hand to another player's fleet (0x042–0x04d); the year's
+full draw order through the random stream (owned by the KERNEL
+experiments); Alternate Reality `k = 0` in a contested drop (not reachable
+with legal orders).
 
 ## Universe objects
 
@@ -4203,6 +4446,40 @@ stays BINARY-ONLY.
 
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
+
+## Computer players (AI-0..AI-9)
+
+`docs/AI.md` specifies the original computer players' shared rules. They
+were read from the original program (private `stars-decomp` `docs/ai.md`)
+and checked by capturing every computer player's order file as the host
+wrote it during pinned generations (the host deletes these files after
+use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
+
+### Corpora
+
+- **AIX**: small map, seed 211, one human race that submits nothing and
+  one expert computer player of each type; 61 pinned generations,
+  2400–2460, cycles 20000.
+- **AI01**: another small map (seed 4101), same line-up, 2400–2402; a
+  rerun at the same cycles gave identical orders, and another stream
+  changed only design names, starbase pictures and packet destinations.
+- **UG**: the universe-generation corpus's computer players (73 players).
+
+### Cases
+
+| Case | Prediction | Result |
+|---|---|---|
+| AI-0 | Built-in race table (`AI.md` §3) equals every computer player's race record | CONFIRMED: 85 players (UG 73, AIX 6, AI01 6), 23 of 24 type × level pairs, no mismatch |
+| AI-1 | Research budget, field and next field each year, and when the research order is written (`AI.md` §4) | CONFIRMED: 384 of 384 player-years (AIX 366, AI01 18) |
+| AI-2 | Starbase designs created each year: slots, hull, parts, counts, picture (`AI.md` §5) | CONFIRMED: 320 of 320 player-years (HE SS IS CA PP), including the 2450 family switch |
+| AI-3 | Robotoid scraps fleets holding its slot-0 Scout until year index 20 | MEASURED once: AIX 2400, the Scout fleet is scrapped and gone the next year |
+| AI-5 | Macinti scraps early fleets and builds and scraps its slot-1 colonizer each year until design 7 exists | MEASURED: AIX 2400–2406 |
+| AI-8 | Robotoid ship designs each year: ageing deletes, the design ladder, the slot-0 Frigate rebuild; slot, hull, parts, counts and picture (`docs/ai/robotoid.md` §2) | CONFIRMED: 61 of 61 player-years (AIX), covering 7 design orders and every year without one |
+| AI-9 | Robotoid production: each planet's newly queued ships follow the order freighter, colonizers, frigates, armada or warships, slot 14/15, using each group's newest design; none at planets without a starbase or with fewer than 20,000 colonists (`docs/ai/robotoid.md` §3) | MEASURED: 1,205 of 1,205 planet-years (AIX), 70 with ships queued |
+
+In 2400 every expert type except Rototill scrapped at least one starting
+fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the
+next year).
 
 ## Computer players: stage 1 (AI-1..AI-5, O-53)
 
