@@ -941,6 +941,36 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
 - CS-002: designs using engines the race may not build (HE-only, IFE,
   NRSE) were kept at tech 26; parts above the owner's tech are not.
 
+### Turn messages and minefield runs (observed 2026-10-07, MF)
+
+- `combatlab dump` decodes each `.M` file's message block (block type
+  12), after the `events raw=` line: `msg id=0xNN name=... obj=0xOOOO
+  p=P1,P2,...`. A record is a word `w` (message id `w & 0x1ff`, size flags
+  `w >> 9`), a word `obj`, then the message's parameters: parameter k is 2
+  bytes if flag bit k is set, else 1 byte. How many parameters each id
+  takes is read at run time from the local original game (`STARS_EXE`,
+  default the oracle run copy; checked by hash); without it only the raw
+  line prints. All 728 message blocks in the apparatus evidence parse
+  exactly. Names are given for the minefield ids (0xbe..0xcc, 0xf4,
+  0x15f..0x164, 0x17e); others print `name=-`.
+- Minefield message parameters seen: hit messages (0xc5..0xc8, victim)
+  are fleet, field owner, field kind (0 standard, 1 heavy, 2 speed bump),
+  x, y of the stop and damage (before shields); the field owner's
+  versions (0xc9..0xcc) drop the owner. Detonation messages are 0x160..0x164.
+  Sweep messages give the swept count and the field's kind and centre.
+  Fleet parameters are object ids, `0x8000 | owner << 9 | number`.
+- Follow orders (`to X Y fleet [P:]N warp W`) must name the target's object
+  id, `owner << 9 | number`. A bare number aims at player 0's fleet: FleetLab's
+  `wpf` (FM corpus, player 0 only) is fine, but a player-1 follower aimed
+  that way flies to the waypoint coordinates (first MF-02 run).
+- Pinned streams for the MF starts: cycles 20000 and 25000 gave the same
+  stream, as did 30000, 35000 and 40000; 15000 was a third. Runs at the
+  same cycles reuse the same draws even with different fleets, so
+  MF-01, MF-05b, MF-02's leaders and MF-09h's first fleets stopped at the
+  same offsets. Pool rate samples across distinct streams only.
+- Minefield counts are 32-bit in the object record; fields of 2,100,000
+  load and decay normally.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take

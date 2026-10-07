@@ -208,3 +208,42 @@ steps. Mutual chases keep both fleets deferred:
 |---|---|---|---|---|
 | MF-02b-A | MF-2 | 12 pairs 80 ly apart on one line, each Tank following the other at warp 9 | no stops: each moves in steps of about 17 ly (effective warp 4, below heavy safe 6) until they meet | per-year effective warp (9: 30 per mille per ly over about 40 ly each, 70% per fleet) |
 
+
+## Results
+
+Evidence: stars-oracle-apparatus `evidence/mf/` (54335b2), one directory
+per run with `check.txt`. Summary in `docs/PARITY.md` "Minefield lane".
+
+| Case | Result | Observed |
+|---|---|---|
+| MF-01-A | HELD | heavy e 9: 24 stops in 526 draws (45.6 per mille, 30.0–65.7); pooled over streams 20000, 15000, 30000: 69 in 2137, 32.3 (25.4–40.3); cloaked 29.1, uncloaked 36.1 |
+| MF-01-B | HELD | every stopped Tank 312/500 (2000) |
+| MF-01-C | HELD | 6 own Tanks at their waypoints, undamaged |
+| MF-05a-A | HELD | owner friend to victim: 0 stops in 1944 draws |
+| MF-05b-A | HELD | owner enemy to victim (victim friend to owner): as MF-01 (same stream) |
+| MF-02-A | CONTRADICTED | numbered A<B<C: A never stopped, but it landed on B in its first step and B never moved; numbered C<B<A: A stopped in 2 of 6 (whole remainder in one step) |
+| MF-02b-A | HELD | mutual chases: 0 of 24 stopped (streams 20000 and 15000); moved 46 and 34 ly in 17-ly steps |
+| MF-03s-A | HELD | 17-ly legs (e 4): 0 stops in 204 draws |
+| MF-03s-B | OBSERVED | 26-ly legs (e 5): 1 of 12 stopped |
+| MF-03s-C | HELD | 81-ly legs: 16.6 (8.0–29.8); pooled with MF-09s (2 streams) 15.9 (11.6–21.0) |
+| MF-03h-A | HELD | 36-ly legs (e 6): 0 stops in 432 draws |
+| MF-03h-B | HELD | 50-ly legs (e 7): 17.0 (7.4–32.7) |
+| MF-04-A | HELD | 11 stops, 10 inside F2; F2 400 → 390 (decay only); F1 paid all |
+| MF-04b-A | HELD | F1 alone: same count 6422 (after correcting the prediction: decay counts the planets inside the field after the stops, 3 not 5) |
+| MF-04d-A | HELD | F2 alone: 9 stops, 400 → 244 |
+| MF-07-A | HELD | heavy detonation: enemy and own Tank 312/500, layer untouched, field 730 |
+| MF-07-B | HELD | speed-bump detonation: no damage, field 730; "stopped" messages to both fleets |
+| MF-07-C | HELD | Laser DD destroyed; 5 Tanks 265/500; single Tank 78/500; field 730 |
+| MF-07-D, E | HELD | (1301,1252) 710 and (1382,1051) 710 |
+| MF-07f-A | HELD | friend's Tank 312/500 |
+| MF-07sd-A | HELD | SD owner got full designs of both damaged designs; Scoop Tank 93/500, Shield Tank 39/500; field 730 |
+| MF-09s-A, MF-09h-A | HELD | every stopped fleet matched (table in PARITY.md); Fuel Mizer takes the no-fuel-at-warp-4 figures |
+| MF-10a-A | HELD | 1,050,000 after decay: new 160 field at the layer |
+| MF-10b-A | HELD | 999,500 after decay: merged, centre (1199,1200) |
+| MF-11a-A | CONTRADICTED | with 511 fields a 512th (number 511) was made |
+| MF-11b-A | HELD | with 510 fields, field number 510 made |
+| MF-11c-A | HELD | with 512 fields: no field, message 0x17e, mines lost |
+| MF-11a/b/c-B | HELD | the layer inside a tiny field merged (90 + 160 = 250) |
+
+Field counts in every run fit: stops shrink the field during movement,
+then decay (planets counted in the shrunken field), then sweeping.

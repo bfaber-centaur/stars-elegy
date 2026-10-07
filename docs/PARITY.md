@@ -2597,13 +2597,149 @@ missed when a ship was lost. Details below.
   point, added as a new design. The traded fleet was removed.
 - A warp-9 Trader moved 81 ly in a year.
 
+### Minefield lane (MF-1..MF-12)
+
+Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
+BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
+the runs (`experiments/mf/README.md`: 789bffa, follow-ups 7241879, 631b0ce,
+416ad73). One pinned year per run (cycles 20000 unless stated); the rate
+cases were repeated at cycles 15000 and 30000, the only other distinct
+streams for these starts. 33 of 35 cases held. MF-11 (the per-player
+field limit) missed by one, and the MF-2 chain claim held only for one
+fleet numbering. MF-04b first missed because the prediction counted the
+planets inside the field before the year's stops (see "Order" below).
+
+Setup: both players at tech 26, unarmed 3200-armor "Tank" destroyers on
+straight 81-ly warp-9 legs through 50,000-mine fields. Damage is read from
+the damage word, stops from the fleet position and from the hit messages.
+
+#### Stop odds (CONFIRMED, MF-1, MF-3)
+
+- A fleet makes one draw per whole ly travelled inside the field. The
+  stop odds per ly are (e − safe) × {3, 10, 35} per mille for standard,
+  heavy and speed-bump fields, with safe warps 4, 6 and 5. A stop on the
+  first draw leaves the fleet where it started (offset 0).
+  - Heavy, warp 9: 69 stops in 2137 draws over 3 streams, 32.3 per mille
+    (95% interval 25.4–40.3; predicted 30).
+  - Standard, warp 9: 43 in 2709 draws over 2 streams, 15.9 (11.6–21.0;
+    predicted 15).
+- **Effective warp comes from the distance travelled this year** (e = the
+  smallest warp 3..10 with e² ≥ d − 1), not the waypoint warp. Warp-9
+  fleets whose waypoint was 17 ly ahead in a standard field (e 4 = safe) or
+  36 ly ahead in a heavy field (e 6 = safe) were never stopped (0 in 204
+  and 432 draws; waypoint warp would give 23% and 66% per fleet). A 26-ly
+  leg (standard, e 5) stopped 1 fleet of 12; a 50-ly leg (heavy, e 7) gave
+  17 per mille (7.4–32.7; predicted 10).
+- **Cloak plays no part:** Super-Stealth-cloaked Tanks were stopped at 29.1
+  per mille (34 in 1168 draws) and uncloaked ones at 36.1 (35 in 969).
+- **Relation (MF-5, MF-6):** what counts is the field owner's relation
+  toward the fleet's owner. With the owner treating the victim as a friend
+  (the victim treating the owner as an enemy), 24 fleets crossed with no
+  stop in 1944 draws; reversed, they were stopped as in MF-1. The owner's
+  own fleets are never stopped.
+- One stopping hit per fleet per year; the fleet ends at the stop point.
+
+#### Damage (CONFIRMED, MF-9)
+
+Per design, (ships × {100, 500} + shortfall) × engines, with {125, 600}
+when the engine burns no fuel at warp 4. A fleet under 5 ships is brought
+up to a fleet minimum of {500, 2000} ({600, 2500}), all of the shortfall
+going to the first design. Shields absorb at most half. Every stopped fleet
+in two standard and one heavy run matched:
+
+| Fleet | Standard | Heavy |
+|---|---|---|
+| Tank (Trans-Galactic Drive) | 500 → 78/500 | 2000 → 312/500 |
+| Tank with Trans-Galactic Fuel Scoop | 600 → 93/500 | 2500 → 390/500 |
+| Tank with Fuel Mizer (not a ram scoop, no fuel at warp 4) | 600 → 93/500 | 2500 → 390/500 |
+| Tank with Complete Phase Shield (500) | 250 → 39/500 | 1500 → 234/500 |
+| Tank + cloaked Tank (2 ships) | 400 and 100 → 62/500, 15/500 | 1500 and 500 → 234/500, 78/500 |
+
+The engine rule is "no fuel at warp 4", not "is a ram scoop" (the Fuel
+Mizer took the higher figures). The hit messages report the damage before
+shields (the shielded Tank's message said 500, its damage word 250).
+
+#### Which field loses mines; order in the year (CONFIRMED, MF-4)
+
+- Heavy F1 (10,000 at 1160,1200) and heavy F2 (400 at 1210,1200, wholly
+  inside F1): 11 stops, 10 of them inside F2. F2 only decayed (400 → 390),
+  so F1 paid every stop: the paying field is the one with the smallest
+  d² − count at the stop point, not the nearest centre or edge. F1 alone
+  with the same fleets ended at the same count; F2 alone lost 20 per stop.
+- **Order:** stops shrink the field as the fleets move (each stop takes
+  max(10, count/20), or max(50, count/100) when count/20 > 50, from the
+  current count). Decay comes after movement and counts the planets inside
+  the shrunken field: F1 lost two of its five planets to the stops, so it
+  decayed 14%, not 22%. Starbase sweeping comes after decay. This order
+  fit the final count of every run exactly (for example MF-01: 50,000,
+  24 stops, 50% decay, 1,280 swept → 18,367).
+
+#### Followers (MF-2: chains CONTRADICTED as predicted, mutual chases CONFIRMED)
+
+The minefield check of a fleet following another fleet uses the step it
+moves in each movement pass, not its year's distance.
+
+- **Mutual chases** (MF-02b): 12 pairs of Tanks 80 ly apart in a heavy
+  field, each following the other at warp 9: no stop in either stream
+  (per-year warp 9 would stop about 70% of them). Each pass moves a fifth
+  of warp² (17 ly, effective warp 4). The west fleet, processed first,
+  moved 17 + 17 + 12 ly and landed on the east one, which had moved 34 ly
+  and moved no further.
+- **Chains (MF-02):** C flies 81 ly, B (10 ly behind) follows C, A (10 ly
+  behind B) follows B.
+  - Numbered C < B < A: B and A each moved their whole remainder in one
+    step after their target finished, and A was stopped in 2 of 6 chains.
+    The prediction "A is never stopped" does not hold for this numbering.
+  - Numbered A < B < C: A moved first, reached B's start in its first
+    17-ly step (10 ly) and was never stopped. **B never moved at all**: a
+    follower that lands on a still-waiting target ends the target's
+    movement for the year (LEGACY BUG candidate, MEASURED 6 of 6).
+
+#### Detonation (CONFIRMED, MF-7, MF-8)
+
+Fields were set to detonate by HST edit; owners were not SD unless stated.
+
+- **Heavy** field of 1000: the enemy Tank and the owner's own Tank each
+  took 2000 (312/500). The owner's Mini Mine Layer took nothing. Nobody
+  moved. The field decayed 27% to 730. With the owner treating the victim
+  as a friend, the victim's Tank took the same 2000.
+- **Speed bump** field of 1000: no damage, field 730 (no minimum of 10).
+  Each fleet inside still got a "stopped in a mine field" message
+  (0xc5/0xc9), though none was moving.
+- **Standard** field of 1000 (MF-8): the owner's Laser DD at 250/500
+  damage was destroyed (100 + 400 shortfall on 200 armor). An enemy fleet
+  of 5 Tanks at 250/500 went to 265/500 (1600 + 100 per ship). A fresh
+  single Tank took 500 (78/500).
+- **SD owner:** a detonating standard field gave the SD owner full designs
+  of both enemy designs it damaged (a Scoop Tank, 600, and a Shield Tank,
+  250 after shields). A non-SD owner got only the partial designs it saw.
+  The field decayed 27% (SD planet factor 1, no planets).
+
+#### Laying (MF-10, MF-11, MF-12)
+
+- **Merge cap (CONFIRMED):** an own standard field that held 1,050,000
+  mines after decay made the layer start a new 160-mine field. One that
+  held 999,500 merged (centre moved 1 ly toward the layer).
+- **Per-player field limit (MEASURED; predicted 511, measured 512).** With
+  511 own fields (numbers 0..510), a layer in open space made field number
+  511. With 512 fields (0..511) it made none: the mines were lost and the
+  owner got "failed to lay mines this year due to technical difficulties"
+  (0x17e). A layer inside an existing field merged normally in all three
+  runs.
+- **Laying order (CONFIRMED):** two layers of 160 in one 390-mine field
+  merge one after the other, in fleet-number order. With the east layer
+  first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
+  single weighted merge would give (+2,+2) in both.
+
+Not tested: the detonate-order validation gap (needs crafted orders), SS
+and SD safe-warp bonuses, fleets moving through gates in a field, and
+salvage from mine kills (OB-024).
+
 ### Not tested
 
 Packet launch (warp, class, amounts, same-year merge, the launch-year half
 move: O-16..O-19), PP terraforming, AR packet targets (O-25), wormhole jump
-odds to a measured rate (O-28), Mystery Trader spawning (O-32), minefield
-hit odds per ly as a rate (O-14), detonation of heavy and speed-bump fields,
-Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
+odds to a measured rate (O-28), Mystery Trader spawning (O-32), Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
 a tiny map).
 
 ## Components (CS-001, CS-002)
