@@ -595,8 +595,13 @@ def gate_check(st, fleet, j):
         return 0
     dp = st['planets'].get(dst, {})
     if dp.get('owner') != st['owner']:
-        # an unowned planet reported this year: refused; anyone else's: unknown
-        return 0 if dp.get('owner') == '-1' else -1
+        # an unowned planet in the viewer's reports this year: refused;
+        # anything else (another player's, or not reported): unknown.
+        # st['reported'] is the set of planet ids in the viewer's .M file
+        # (ES-002 G8); without it every unowned planet counts as reported.
+        reported = st.get('reported')
+        seen = reported is None or dst in reported
+        return 0 if dp.get('owner') == '-1' and seen else -1
     dgate = gate_of(st, dst)
     if dgate is None:
         return 0

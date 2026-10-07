@@ -3,7 +3,12 @@
 (experiments/es001/estimates.py, docs/ESTIMATES.md).
 
   (combatlab dump CB.HST; combatlab dump CB.XY) > after.dump
-  python3 experiments/es002/predict.py after.dump > predictions.tsv
+  python3 experiments/es002/predict.py after.dump [m1.dump] > predictions.tsv
+
+m1.dump (optional, `combatlab dump CB.M1` of the generated year) gives
+the planets player 0's report lists. predictions.tsv was made without it,
+which treated every unowned planet as reported; that missed G8 (F07,
+T07). With it the model gives "Uncertain" there (results in check.py).
 
 Player 0: every waypoint's distance, travel time (stargate legs
 included), est. fuel usage; fleet report ETA; production completion;
@@ -36,9 +41,23 @@ def research_rows(st, race, owner, tag):
     ]
 
 
-def main(path):
+def reported(path):
+    """Planet ids in the last .M file block of a combatlab dump."""
+    seen = set()
+    for line in open(path, encoding='latin-1'):
+        b = line.split(' ', 1)[1]
+        if b.startswith('file '):
+            seen = set()
+        elif b.startswith('seen planet ') or b.startswith('planet '):
+            seen.add(int(b.split()[1 if b.startswith('planet ') else 2]))
+    return seen
+
+
+def main(path, mpath=None):
     rows = []
     st = E.parse_dump(path, 0)
+    if mpath:
+        st['reported'] = reported(mpath)
     for line in open(path, encoding='latin-1'):      # .XY positions
         b = line.split(' ', 1)[1]
         if b.startswith('xy planet '):
@@ -82,4 +101,4 @@ def main(path):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(*sys.argv[1:3])

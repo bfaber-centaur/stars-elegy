@@ -14,20 +14,23 @@ Every estimate is computed by the client from the player's own file (the
 
 | Estimate | Where it appears | Status |
 |---|---|---|
-| Travel time | Fleet Waypoints tile, fleet report ETA column | CONFIRMED (ES-001); stargate legs BINARY-ONLY |
+| Travel time | Fleet Waypoints tile, fleet report ETA column | CONFIRMED (ES-001, stargate legs ES-002) |
 | Est. fuel usage | Fleet Waypoints tile, fleet report colours | CONFIRMED (ES-001) |
 | Est. range | Fleet Composition tile | CONFIRMED (ES-001, every engine) |
-| Leg distance | Fleet Waypoints tile | CONFIRMED (ES-001); the `x.0y` display BINARY-ONLY |
-| Production completion | Production tile and dialog, queue colours | CONFIRMED (ES-001); "Skipped" BINARY-ONLY |
-| Research estimates | Research dialog | CONFIRMED (ES-001); Generalized Research, "Maxed Out" BINARY-ONLY |
+| Leg distance | Fleet Waypoints tile | CONFIRMED (ES-001, `x.0y` display ES-002: LEGACY BUG) |
+| Production completion | Production tile and dialog, queue colours | CONFIRMED (ES-001, "Skipped" ES-002) |
+| Research estimates | Research dialog | CONFIRMED (ES-001, Generalized Research and "Maxed Out" ES-002); slower-tech doubling BINARY-ONLY |
 | Population growth | population popup | CONFIRMED (ES-001) |
 | Value and optimal value | planet report, planet summary | CONFIRMED (ES-001) |
 | Mining rate | planet report | CONFIRMED (ES-001) |
 
 ES-001 (one Combat Lab year, `experiments/es001`) compared 149 readings
 of the original client with the rules below and all 149 matched
-(`PARITY.md` "Client estimates"). BINARY-ONLY rows were read from the
-original program and not yet exercised.
+(`PARITY.md` "Client estimates"). ES-002 (`experiments/es002`) then
+exercised the five items ES-001 left out: 81 of 83 predictions matched,
+and the two misses (one fleet, one cause) corrected the stargate rule
+below. BINARY-ONLY items were read from the original program and not yet
+exercised.
 
 ## Fleets
 
@@ -43,11 +46,25 @@ is the fleet's position.
 2. Travel time to waypoint `i` is the sum over legs `0 … i−1`.
 3. Any leg at warp 0 makes it "Never" (the tile's warp box then reads
    "Stopped!").
-4. Warp above 10 (a stargate leg, BINARY-ONLY): the client asks whether the
-   fleet can use the gates. "Never" if it cannot, "Uncertain" when that is
-   not known, 1 year if it can. With cargo that cannot pass the gate it
-   shows "Unload", and "Danger" for gate trips that risk the ships.
-   Inter-Stellar Traveler (IT) fleets skip the cargo check.
+4. Warp above 10 (a stargate leg, CONFIRMED ES-002 except where marked):
+   the client checks the leg in this order.
+   - No planet at the leg's destination: "Never".
+   - Destination planet not the viewer's: "Uncertain", except an unowned
+     planet that is in the viewer's reports this year, which is "Never"
+     (that exception is BINARY-ONLY; ES-002 saw "Uncertain" for another
+     player's planet and for an unowned planet absent from this year's
+     reports).
+   - Viewer's destination planet without a stargate: "Never".
+   - Source not the viewer's planet with a stargate: "Never".
+   - Otherwise each design in the fleet is checked against both gates
+     with the jump rules in `OBJECTS.md` (range of the source gate, mass
+     limits of both gates). A design that cannot jump at all makes it
+     "Never". If any design would take losses: "Danger". Else, if the
+     fleet carries any cargo and its race is not Inter-Stellar Traveler:
+     "Unload". Else the leg takes 1 year.
+   A usable leg (1 year, "Danger" or "Unload") counts 1 year towards the
+   cumulative time of later waypoints; the gate texts themselves replace
+   the time only for the gate leg's own waypoint.
 
 The trunc matters: a 25.495 ly leg at warp 5 is 1 year (ES-001 F07). It
 agrees with the movement rule in `KERNEL.md` ("Distance and arrival"):
@@ -60,7 +77,11 @@ Display:
   the next waypoint (waypoint 1) and labels the row "Next Way Pt".
 - Fleet report, "ETA" column: waypoint 1 only, short form "Ny"; "--" for a
   fleet with no orders. "Never" and the ETA of a fleet that lacks the fuel
-  for that leg (next section) are drawn in red.
+  for that leg (next section) are drawn in red. Gate texts appear here as
+  in the tile ("Danger", "Unload", "Uncertain", "Never", "1y").
+- Gate legs (ES-002): the tile's warp box reads "Use Stargate" in yellow,
+  "Est Fuel Usage" is 0mg for the leg, and "Never" is red while
+  "Uncertain", "Danger" and "Unload" are olive.
 
 Vectors (ES-001, CONFIRMED):
 
@@ -71,6 +92,21 @@ Vectors (ES-001, CONFIRMED):
 | F02 | 3.61 @1, 0.0 @5, 57.0 @7 | 3, 4, 6 years |
 | F07 | 25.50 @5, 25.0 @5 | 1, 2 years |
 | F08 | 50.0 @3, 90.0 @6 | 6, 9 years |
+
+Stargate vectors (ES-002, CONFIRMED; gates 100/250 unless noted):
+
+| Fleet | Leg | Shown |
+|---|---|---|
+| Scout | own gate → own gate 84.86, then 27.0 @5 | 1 year; 3 years |
+| Scout | own gate (Space Station) → own gate 25.32 → own gate 84.86 | 1 year; 2 years |
+| Freighter with cargo | own gate → own gate 84.86 | Unload |
+| Scout | own gate → own gate 319.1 (beyond 250) | Danger |
+| 120 kT freighter | own 150/600 gate → own 100/250 gate, 200.0 | Danger |
+| Scout | own gate → own planet without gate | Never |
+| Scout | own planet without gate → own gate | Never |
+| Scout | own gate → deep space | Never |
+| Scout | own gate → another player's planet | Uncertain |
+| Scout | own gate → unowned planet not in this year's reports | Uncertain |
 
 ### Est. fuel usage (CONFIRMED, ES-001)
 
@@ -165,9 +201,11 @@ freighter and Fuel Transport with 500 mg → 1176 l.y.
 "Distance" in the Fleet Waypoints tile: `c = trunc(D·100 + 0.5)`, printed
 as `trunc(c/100)` "." `c mod 100` with no zero padding, then "Light
 Years". CONFIRMED for 28.28, 3.61, 25.50, 68.82, 97.75 and whole
-distances ("50.0"). BINARY-ONLY: a distance like 20.05 has `c mod 100 =
-5` and would print "20.5" (not observed; if confirmed, a LEGACY BUG of the
-display).
+distances ("50.0"). LEGACY BUG (display, CONFIRMED ES-002): a hundredths
+part below 10 loses its zero, so 319.01 shows "319.1", 20.02 "20.2", 10.05
+"10.5", 7.07 "7.7" and 3.0 "3.0", while 3.16 and 5.10 print as expected.
+Elegy may print two decimals; if it copies the original, it should do so
+behind a named switch.
 
 ## Production completion (CONFIRMED, ES-001)
 
@@ -213,7 +251,7 @@ Display, Production tile "Completion:" and Production dialog:
 | `first` = 100, any other item | Never |
 | `last` = 100 | `first` - ??? years |
 | `last ≠ first` | `first` - `last` years |
-| skipped | Skipped (BINARY-ONLY) |
+| skipped | Skipped |
 | auto alchemy before another item | As Needed |
 | otherwise | 1 year / N years |
 
@@ -235,6 +273,13 @@ Vectors (ES-001, CONFIRMED; queue after the generated year):
 | No Exit | Mine ×6 (59%), Factory ×100 | 1 year; 1 - ??? years |
 | New Kalapuya | Mine ×1 (59%), Auto Mines ×50, Auto Defenses ×50, Mine ×5 | 1 year; 1 - 8 years; 8 - 40 years; 40 - 41 years |
 
+ES-002 (CONFIRMED): a queue of Mine ×1 (29%), Auto Defenses ×50 on a
+planet already at its defense limit, Auto Factories ×20, Mine ×5 gives
+1 year; Skipped (grey); 1 - 6 years; 6 - 7 years. The planet report's
+Production column (MEASURED) shows "--- Queue is Empty ---" for a planet
+whose only item is a skipped Auto Mines ×50 (500 mines, at its limit); its
+Production dialog shows that item as "Skipped" in grey.
+
 The planet report shows the same text's colour for the queue's first
 item, and its "Resources" column shows "A / R": `R` the planet's
 resources and `A` what is left for production after research.
@@ -245,7 +290,9 @@ Research dialog, for the current field:
 
 - "Resources needed to complete": the next level's cost (`KERNEL.md`
   "Level cost") minus the resources already spent in the field, at least
-  0. "Maxed Out" at level 26 (BINARY-ONLY). In a slower-tech game, where
+  0. "Maxed Out" at level 26 (CONFIRMED ES-002; the dialog's
+  heading then reads "Tech Level 27" and the time to completion is also
+  "Maxed Out"). In a slower-tech game, where
   the stored amount is kept at half scale (`KERNEL.md` "Level cost"), the
   client doubles the stored amount before subtracting (BINARY-ONLY).
 - "Annual resources from all planets": the sum of the player's planets'
@@ -260,11 +307,18 @@ Research dialog, for the current field:
 - "Estimated time to completion": 1 year if nothing is needed; "Never"
   with a budget of 0; otherwise `ceil(needed / b)` years, where `b` is the
   projected budget, or `budget − trunc(budget/2)` with Generalized
-  Research (BINARY-ONLY).
+  Research (CONFIRMED ES-002: 801 needed, projected 261 → 7 years, where
+  plain division would give 4).
 
 Vector (ES-001): weapons 4 → 5, cost 910 with 107 spent → 803 needed;
 annual resources 578, last year 107, budget 10%, projected 163 →
 5 years.
+
+Vector (ES-002, `KERNEL.md` KX-005 rule): a player researching energy at
+level 25 with "Same field" next reached 26; the dialog then showed
+weapons 3 → 4 as the current field (595 needed, annual 38, last year 35,
+15%, projected 38 → 16 years) with "Next field to research" still
+`<Same field>`.
 
 ## Planets
 

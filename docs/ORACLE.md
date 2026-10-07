@@ -1162,6 +1162,12 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   `scripts/oracle/click` releases at once, so press with `xdotool
   mousedown 1` after moving the pointer the way `click` does.
 - F5 opens the Research dialog.
+- ES-002 (`experiments/es002`, same commands with `es002.spec`;
+  `predict.py` takes `after.dump` with the `.XY` dump appended, and
+  optionally the `.M1` dump for the planets player 0 has reports of).
+  To read another player's view, exit the game and use File → Open: the
+  dialog starts in `c:\stars`, so type the full path (`d:\cb.m2`). With
+  the fleet view up, alt+r p did not open the planet report; F3 did.
 
 ## Known fragility
 
