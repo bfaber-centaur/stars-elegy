@@ -305,7 +305,5 @@ go test ./internal/vectors
   battle-plan exploration files with no host year.
 - WU-AICOMP3/4 (a gift refused by a computer player): the initial state does
   not yet say which players are computer players.
-- RD-1..RD-7 and RW (new games: they wait for the `new_game` form) and the
-  MF-07 verdicts (tagged MEASURED until the owner says whether OBSERVED or
-  held is canonical). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
+- RD-1..RD-7 and RW (new games: they wait for the `new_game` form). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.

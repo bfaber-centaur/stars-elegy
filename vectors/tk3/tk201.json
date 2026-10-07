@@ -2179,7 +2179,8 @@
       "owner": -1,
       "population": 0,
       "defenses": 0,
-      "planetary_scanner": null
+      "planetary_scanner": null,
+      "starbase": null
      },
      "year": 1
     },
