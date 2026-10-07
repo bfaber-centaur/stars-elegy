@@ -217,6 +217,7 @@ scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
 scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
+scripts/oracle/drag X1 Y1 X2 Y2       # left-button drag, same homing as click
 scripts/oracle/register [SERIAL_FILE] # type the serial ($STARS_SERIAL by default) into the first-run dialog
 scripts/oracle/bootstrap [DIR]        # fresh machine → registered snapshot (see Durable setup)
 scripts/oracle/turn GAME.M1           # open a game, press F9 once, exit Stars!
@@ -856,6 +857,39 @@ What the client did, at 1152x864:
   - Scrap at a foreign homeworld removed the fleet, gave its cargo and
     scrap minerals to that planet, and sent message 0x05a.
   Commands: `wp select K`, `wp task T`, `wp transport ITEM ACTION [N]`.
+
+- **Designs** (DS-1, 2026-10-07). F4 opens the Ship & Starbase Designer
+  on "Existing Designs". The design list (848, 212) has rows every 14 px
+  from y 229: the newest design was listed first in one session, and
+  Hauler before MD40 Frigate in another. The buttons are Copy Selected
+  Design (369, 393), Delete Selected Design (369, 425) and Done
+  (765, 670). Edit is disabled for a design that ships use.
+  - Copy opens the editor with the copy named "NAME (2)". The name box
+    is at (736, 212).
+  - The component list on the left has 4 visible rows, 66 px apart from
+    y 260 (x 320). Its filter list (518, 212) has rows every 13 px from
+    y 229: All, Armor, Beam Weapons, Bombs, Electrical, Engines,
+    Mechanical, Mine Layers, Mining Robots, Scanners, Shields,
+    Torpedoes, Weapons. The list follows the player's tech, so pick a
+    filter first.
+  - A part is placed by dragging it onto a slot (`scripts/oracle/drag`).
+    The Medium Freighter's slots are at (583, 355) engine, (775, 355)
+    shield/armor and (838, 355) scanner/elect/mech.
+  - The editor has OK (688, 670) and Cancel (765, 670).
+  - Deleting a design that ships use asks "You currently have N Xs. If
+    you delete this design, these ships will be destroyed" (Yes is
+    `alt+y`).
+  - The client wrote two design records for one new design: the plain
+    copy, then the edited one. A delete is a 2-byte design record.
+  - The host stored the new design (Bat Scanner included) in ship slot 0.
+    Deleting the in-use Hauler destroyed all three Haulers that year.
+  Commands: `design open`, `design select I`, `design copy`,
+  `design category I`, `design part ROW X Y`, `design scroll N`,
+  `design name NAME`, `design ok`, `design done`, `design delete [yes]`.
+- **Lay mines** (ML-1). Waypoint task 6, Lay Mine Field, adds a duration
+  list ("indefinitely" by default) and the fleet's rate ("This fleet can
+  lay 80 mines per year."). The host laid an 80-mine field at the
+  fleet's deep-space position that year, with message 0x0c3.
 
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 

@@ -80,14 +80,14 @@ def minefield(t):
 
 def fields(A, Bf, owner, x, y, r=6):
     """Minefields of owner near (x, y) after the year; a start field there
-    that is gone becomes mines 0."""
+    that is gone becomes object_gone."""
     now = C.fields_near(A[0], owner, x, y, r)
     out = [minefield(t) for t in now]
     nums = {int(t['num']) for t in now}
     for t in C.fields_near(Bf[0], owner, x, y, r):
         if int(t['num']) not in nums and not any(int(u['num']) == int(t['num']) for u in A[0]
                                                  if u['type'] == 'minefield' and int(u['owner']) == owner):
-            out.append({'kind': 'minefield', 'owner': owner, 'id': int(t['num']), 'equals': {'mines': 0}})
+            out.append({'kind': 'object_gone', 'subject': {'kind': 'minefield', 'owner': owner, 'id': int(t['num'])}})
     return out
 
 

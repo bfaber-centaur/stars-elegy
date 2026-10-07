@@ -133,6 +133,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -206,6 +208,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -1339,7 +1343,8 @@
     "y": 1200,
     "mines": 1000,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1349,7 +1354,8 @@
     "y": 1180,
     "mines": 1000,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1359,7 +1365,8 @@
     "y": 1250,
     "mines": 1000,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1369,7 +1376,8 @@
     "y": 1220,
     "mines": 1000,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    }
   ],
   "production_queues": []

@@ -133,6 +133,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -206,6 +208,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -1819,7 +1823,8 @@
     "y": 1050,
     "mines": 2101,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1829,7 +1834,8 @@
     "y": 1098,
     "mines": 1045,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1839,7 +1845,8 @@
     "y": 1125,
     "mines": 741,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1849,7 +1856,8 @@
     "y": 1110,
     "mines": 492,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1859,7 +1867,8 @@
     "y": 1119,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1869,7 +1878,8 @@
     "y": 1134,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1879,7 +1889,8 @@
     "y": 1146,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1889,7 +1900,8 @@
     "y": 1155,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1899,7 +1911,8 @@
     "y": 1053,
     "mines": 2365,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1909,7 +1922,8 @@
     "y": 1047,
     "mines": 1775,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1919,7 +1933,8 @@
     "y": 1080,
     "mines": 942,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1929,7 +1944,8 @@
     "y": 1029,
     "mines": 530,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1939,7 +1955,8 @@
     "y": 1026,
     "mines": 411,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1949,7 +1966,8 @@
     "y": 1131,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1959,7 +1977,8 @@
     "y": 1140,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1969,7 +1988,8 @@
     "y": 1149,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1979,7 +1999,8 @@
     "y": 1170,
     "mines": 400,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    }
   ],
   "production_queues": []

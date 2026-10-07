@@ -133,6 +133,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -206,6 +208,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -1306,7 +1310,8 @@
     "y": 1040,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1316,7 +1321,8 @@
     "y": 1053,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1326,7 +1332,8 @@
     "y": 1260,
     "mines": 1000,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1336,7 +1343,8 @@
     "y": 1300,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": []
    },
    {
     "kind": "minefield",
@@ -1346,7 +1354,10 @@
     "y": 1080,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": [
+     1
+    ]
    },
    {
     "kind": "minefield",
@@ -1356,7 +1367,10 @@
     "y": 1040,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": [
+     1
+    ]
    },
    {
     "kind": "minefield",
@@ -1366,7 +1380,10 @@
     "y": 1091,
     "mines": 100,
     "type": "standard",
-    "detonating": false
+    "detonating": false,
+    "known_to": [
+     1
+    ]
    },
    {
     "kind": "packet",

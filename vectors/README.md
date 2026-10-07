@@ -23,6 +23,12 @@ vectors/<corpus>/<run>.json      one oracle run
 | `fo` | FO-01..07 | 48 | transport tasks, merges, scrapping, transfers between players | `docs/ORDERS.md` "Fleet operations" |
 | `tk2` | TK-101..121 | 64 | planet takeover: bombing, invasion, what the new owner gets | `docs/TAKEOVER.md` |
 | `wt` | WT-001..005 | 31 | wormholes and the Mystery Trader | `docs/OBJECTS.md` |
+| `sc` | SC-001..034 | 680 | scanning: what each player's file shows of fleets, planets, designs and player blocks | `docs/SCANNING.md` |
+| `kx001`, `kx002` | KX-001, KX-002 cases | 38 | planet economy: production, Auto Alchemy, growth, research, mining (one year from an edited PG001 file) | `docs/KERNEL.md` |
+| `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
+| `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
+| `mf` | MF-01..11c | 20 | minefields: hits, sweeping, decay, detonation, speed bumps | `docs/OBJECTS.md` "Minefields" |
+| `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty" |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 | `cs` | CS-003 W, B, S, C, C2, D | 80 | warp 10 losses, fuel generation, bombs, colonizing, Orbital Adjuster, minefield sweeping and laying, torpedo hits, designer readouts | `docs/COMPONENTS.md` |
 | `es` | ES-001, ES-002 | 153 | client estimates: waypoint distance, travel time and fuel, range, report ETA, production completion, research, population, value, mining rate | `docs/ESTIMATES.md` |
@@ -64,7 +70,9 @@ file, so nothing in it is a default you have to guess.
   percent and field, relations to each other player (`neutral`, `friend`,
   `enemy`), Mystery Trader items owned, and the race: PRT, LRTs, growth rate,
   habitability (center, low, high per axis, 255 = immune), colonists per
-  resource, factory and mine settings, research cost per field.
+  resource, factory and mine settings, research cost per field, the leftover
+  points spend (`UNIVERSE.md` "Leftover advantage points") and race stat 15 (PARITY "Turn-time penalty"). An out-of-range PRT is given
+  as its stored number.
 - `planets`: position, owner (-1 none), mineral concentrations, environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
@@ -119,13 +127,19 @@ unconstrained by that case.
 | `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
 | `production_queue` | planet `planet` | the queue as `{id, count, percent}` items (`percent` omitted when 0) |
 | `design` | design `owner`/`slot` | `hull`, `slots` |
-| `player` | player `id` | `tech`, `research_accumulated`, `mystery_trader_items`, `ship_design_count` |
+| `player` | player `id` | `tech`, `research_accumulated`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it) |
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
+
+`tolerance` as an object (`{"surface_minerals": 1}`) allows that much
+difference in the named field. Kernel vectors use it for surface minerals,
+because mining's +1 remainder is random (`KERNEL.md`).
+
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
 | `object` | a new or changed map object | the object, as in `initial_state.objects` |
+| `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
 | `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
 | `view` | what player `viewer` knows of `subject` (`{kind, owner, id}`: a planet, fleet, wormhole, minefield, design or player) | the fields the case checks, e.g. `level` (report level), `known`, `starbase_visible`, `heading`, `design_count` |
 | `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage` |
@@ -203,6 +217,10 @@ decoded quantities above. Implementers never need to run it.
 python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
+python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
+python3 tools/vectors/build.py mf  ../stars-oracle-apparatus/evidence/mf
+python3 tools/vectors/build.py rp  ../stars-oracle-apparatus/evidence/rd
+python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
 go test ./internal/vectors
 ```
 
@@ -213,6 +231,13 @@ go test ./internal/vectors
   checker output.
 - CB-000 (ship designer readouts, no turn), CB-018 batch 1 (confounded by
   research), the superseded CB-046 morph v1, and CB-017's second year.
-- Scanning (`sc`), races (`rd`), minefields (`mf`) and kernel (`kx*`): in
-  progress. Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
+- SC-015 (the tamper check fired; SC-015L repeats it) and SC-021 (invalid
+  setup).
+- KX-001 M3 (the prediction was void: the race edit tripped the tamper
+  check), KX-001 Z1/Z1h (the original crashed: no year was generated; see
+  PARITY "KX-001 Z"), KX-004 E0/E1 (the long runs that made the start
+  states), KX-005 (not merged yet).
+- RD-1..RD-7 and RW (new games: they wait for the `new_game` form) and the
+  MF-07 verdicts (tagged MEASURED until the owner says whether OBSERVED or
+  held is canonical). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.

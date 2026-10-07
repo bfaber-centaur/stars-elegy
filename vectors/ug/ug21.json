@@ -111,6 +111,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "mines",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -160,6 +162,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "factories",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -209,6 +213,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "defenses",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -258,6 +264,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -307,6 +315,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -356,6 +366,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "mines",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -414,6 +426,8 @@
       "electronics": "normal",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -471,6 +485,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": true
     },
@@ -528,6 +544,8 @@
       "electronics": "expensive",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": true
     },
@@ -586,6 +604,8 @@
       "electronics": "expensive",
       "biotechnology": "cheap"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": false
     },
@@ -643,6 +663,8 @@
       "electronics": "expensive",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": false
     },
@@ -700,6 +722,8 @@
       "electronics": "expensive",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -757,6 +781,8 @@
       "electronics": "normal",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": true
     },
@@ -814,6 +840,8 @@
       "electronics": "expensive",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": true
     },
@@ -872,6 +900,8 @@
       "electronics": "expensive",
       "biotechnology": "expensive"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": false
     },
@@ -930,6 +960,8 @@
       "electronics": "expensive",
       "biotechnology": "cheap"
      },
+     "leftover_spend": "mineral_concentrations",
+     "stat_15": 0,
      "techs_start_high": true,
      "factories_cost_less": false
     },

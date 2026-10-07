@@ -86,7 +86,7 @@ def observe(chk, obs, designs=None):
         _, owner, num, x, y, n = chk
         got = [t for t in fields if int(t['owner']) == owner and int(t['num']) == num]
         return ([minefield(got[0])] if got else
-                [{'kind': 'minefield', 'owner': owner, 'id': num, 'equals': {'mines': 0}}]), True
+                [{'kind': 'object_gone', 'subject': {'kind': 'minefield', 'owner': owner, 'id': num}}]), True
     if k == 'newfield':
         _, owner, x, y, n = chk
         return [minefield(t) for t in fields if int(t['owner']) == owner and (int(t['x']), int(t['y'])) == (x, y)], True

@@ -1015,7 +1015,11 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
   that year still fights. Packets queued there are lost too
   (BINARY-ONLY).
 - Either way, **no damage is left over** after a hit on a starbase. A
-  beam stops there, even after destroying it (BINARY-ONLY).
+  beam stops there, even after destroying it. CONFIRMED (CB-052, 6
+  streams): a one-slot phaser stack put 234 into an Orbital Fort with 100
+  armor. Its fire action held only the Fort's record, though an enemy
+  stack sat on the same square in range; that stack was first hit by the
+  next round's shot. CB-041 agrees with a 2-point overkill.
 - Destroying an Alternate Reality race's starbase leaves the planet
   uninhabited (CONFIRMED, CB-041: 17 of 17 streams).
 

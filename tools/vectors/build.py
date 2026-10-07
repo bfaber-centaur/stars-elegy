@@ -39,6 +39,7 @@ GAMES = {
     'CB3P': dict(name='CB3P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB5P': dict(name='CB5P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB16P': dict(name='CB16P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'RD07': dict(name='RD07'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal'),
 }
@@ -163,7 +164,7 @@ def state(hst, xy, game, xy_path=None):
                 'relations': {str(q): RELATION[r] for q, r in enumerate(rel) if q != p},
                 'mystery_trader_items': [MT_ITEMS[b] for b in mask_players(int(d['mt'], 16), 13)],
                 'race': {
-                    'prt': PRT[int(d['prt'])], 'lrt': [LRT[b] for b in mask_players(lrt, 14)],
+                    'prt': PRT[int(d['prt'])] if int(d['prt']) < len(PRT) else int(d['prt']), 'lrt': [LRT[b] for b in mask_players(lrt, 14)],
                     'growth_percent': int(d['growth']),
                     'habitability': {'gravity': hab[0::3], 'temperature': hab[1::3], 'radiation': hab[2::3],
                                      'order': 'center, low, high (255 = immune)'},
@@ -171,6 +172,9 @@ def state(hst, xy, game, xy_path=None):
                     'factory': {'output': econ[1], 'cost': econ[2], 'per_10k': econ[3]},
                     'mine': {'output': econ[4], 'cost': econ[5], 'per_10k': econ[6]},
                     'research_cost': dict(zip(TECH, (RCOST[int(x)] for x in d['rcost'].split(',')))),
+                    'leftover_spend': ['surface_minerals', 'mineral_concentrations', 'mines', 'factories',
+                                       'defenses'][int(d['spend'])] if 0 <= int(d['spend']) < 5 else int(d['spend']),
+                    'stat_15': int(d.get('stat15', 0)),
                     'techs_start_high': bool(int(d['traits'], 16) >> 13 & 1),
                     'factories_cost_less': bool(int(d['traits'], 16) >> 15 & 1),
                 },
@@ -201,11 +205,14 @@ def state(hst, xy, game, xy_path=None):
                 p['original_environment'] = [int(x) for x in d['orig'].split('/')]
             if 'surface' in d:
                 p['surface_minerals'] = [int(x) for x in d['surface'].split('/')]
-                p['population'] = int(d['pop'])
-                for k in ('excess', 'mines', 'factories', 'defenses'):
-                    p[k] = int(d[k])
-                p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
-                p['leftover_to_research'] = d['leftover'] == 'true'
+                for k, name in (('pop', 'population'), ('excess', 'excess'), ('mines', 'mines'),
+                                ('factories', 'factories'), ('defenses', 'defenses')):
+                    if k in d:
+                        p[name] = int(d[k])
+                if 'scanner' in d:
+                    p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
+                if 'leftover' in d:
+                    p['leftover_to_research'] = d['leftover'] == 'true'
             planets[n] = p
         elif s.startswith('queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
@@ -258,8 +265,11 @@ def thing(d):
         return {'kind': 'packet', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'destination_planet': int(d['dest']),
                 'warp': int(d['warp']), 'minerals': c, 'decay_class': int(d['class'])}
     if t == 'minefield':
-        return {'kind': 'minefield', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'mines': int(d['count']),
-                'type': ['standard', 'heavy', 'speed_bump'][int(d['kind'])], 'detonating': d['det'] == '1'}
+        m = {'kind': 'minefield', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'mines': int(d['count']),
+             'type': ['standard', 'heavy', 'speed_bump'][int(d['kind'])], 'detonating': d['det'] == '1'}
+        if 'known' in d:
+            m['known_to'] = mask_players(int(d['known'], 16))
+        return m
     raise ValueError(t)
 
 
@@ -474,7 +484,11 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus in ('cb', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
+    if corpus in ('kx001', 'kx002', 'kx003', 'kx004'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        kx = __import__('build_kx')
+        kx.build(corpus, ev, out) if corpus in ('kx001', 'kx002') else getattr(kx, 'build_' + corpus)(ev, out)
+    elif corpus in ('cb', 'sc', 'mf', 'rp', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
     else:
