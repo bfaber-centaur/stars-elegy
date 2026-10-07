@@ -45,14 +45,18 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
-//         [task TASK] [to X Y [planet N|thing ID] warp W [task TASK]]...
+//         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
-//                                   unload (all colonists) | lay [YEARS] (lay mines; YEARS
+//                                   unload (all colonists) | merge (into the waypoint's
+//                                   fleet) | transfer K (give the fleet to the K-th other
+//                                   player) | lay [YEARS] (lay mines; YEARS
 //                                   word, default 5 = indefinitely) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
-//                                   kT or 100s of colonists; "-" for no order)
+//                                   kT or 100s of colonists; "-" for no order). "target
+//                                   fleet" makes waypoint 0 target a fleet (id number |
+//                                   owner << 9, type 0x12) for merge and fleet transport
 //   planetset N KEY=V...            planet N's fields after any "planet" line: mines=
 //                                   factories= defenses= excess= fe= bo= ge= (installed/
 //                                   surface values; owned planets) scanner=ID (planetary
@@ -316,6 +320,7 @@ public class CombatLab {
 
     static class FleetSpec {
         int owner, id, x, y, fuel, plan, planet = -1;
+        int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -331,6 +336,12 @@ public class CombatLab {
             case "colonize": return 2;
             case "scrap": return 5;
             case "mine": return 3;
+            case "merge": return 4;
+            case "transfer": {
+                // transfer fleet: one word, the recipient as an index over the other players
+                ord[0] = Integer.parseInt(t[i + 1]);
+                return 9;
+            }
             case "unload": ord[3] = 2 << 12; return 1;
             case "lay": {
                 // lay mines: one word, the years counter (5 = indefinitely)
@@ -600,7 +611,8 @@ public class CombatLab {
             fl.setData(fl.getDecryptedData(), fl.size);
             newFleets.add(fl);
             List<int[]> all = new ArrayList<>();
-            all.add(fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
+            all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
+                : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
             all.addAll(fs.wps);
             for (int w = 0; w < all.size(); w++) {
                 int[] wp = all.get(w);
@@ -613,7 +625,7 @@ public class CombatLab {
                 if (wb.waypointTask == 1) {
                     // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
                     for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
-                } else if (wb.waypointTask == 6) {
+                } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
                     int o = fs.orders.get(w)[0];
                     wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
                 }
@@ -958,6 +970,11 @@ public class CombatLab {
                     }
                     i += 2; break;
                 case "planet": fs.planet = Integer.parseInt(t[i + 1]); i += 2; break;
+                case "target":
+                    // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
+                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
+                    fs.wp0Fleet = Integer.parseInt(t[i + 3]) | Integer.parseInt(t[i + 2]) << 9;
+                    i += 4; break;
                 case "plan": fs.plan = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "fuel": fs.fuel = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "dmg":
@@ -975,7 +992,8 @@ public class CombatLab {
                     int w = fs.wps.size();
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
-                    i += t[i + 1].equals("transport") || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
+                    i += t[i + 1].equals("transport") || t[i + 1].equals("transfer")
+                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
                 }
                 case "to": {
@@ -985,7 +1003,10 @@ public class CombatLab {
                     int obj = 0, type = 0x14;
                     if (t[i].equals("planet")) { obj = Integer.parseInt(t[i + 1]); type = 0x11; i += 2; }
                     else if (t[i].equals("thing")) { obj = Integer.decode(t[i + 1]); type = 0x18; i += 2; }
-                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID] warp W");
+                    else if (t[i].equals("fleet")) {
+                        obj = Integer.parseInt(t[i + 2]) | Integer.parseInt(t[i + 1]) << 9; type = 0x12; i += 3;
+                    }
+                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet OWNER ID] warp W");
                     fs.wps.add(new int[]{x, y, obj, type, Integer.parseInt(t[i + 1])});
                     i += 2;
                     break;
