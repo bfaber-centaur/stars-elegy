@@ -2130,3 +2130,27 @@ StarsAPI's `UNEDITED.MOD` agrees with the binary table on every item:
 names (its file has a damaged ± character), tech, mass, cost, category
 values, hull cargo, fuel, armor and slots. No disagreement between binary,
 game and StarsAPI was found.
+
+## Turn Orders
+
+Status: PARTIALLY MEASURED. The ingestion and validation rules are
+restated for implementers in `ORDERS.md`; this section holds the
+experiment records behind them. Only the registered-copy gate is measured
+so far; the rest of `ORDERS.md` is BINARY-ONLY and listed there under Open
+experiments (oracle prefix OX).
+
+### OX registered-copy gate (MEASURED, 2026-10-07)
+
+Ruleset: J-RC3, registered host.
+
+A player order file that carried the host's expected registration
+credential and set research to a new allocation changed that player's
+research when generated. The byte-identical order file with the credential
+absent (and nothing else changed) left the player's research unchanged
+across three consecutive generations, and set no cheater or tamper flag.
+
+Interpretation: a registered host accepts a player's order file only when
+it carries the expected registration credential; a file without it is
+silently skipped, and a missing credential is distinct from the anti-tamper
+cheater check. The credential value is not recorded in this public
+repository. Raw files are kept in private apparatus.
