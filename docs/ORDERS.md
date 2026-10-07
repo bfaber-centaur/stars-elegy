@@ -132,16 +132,23 @@ BINARY-ONLY.
   after the order is accepted, so an out-of-box waypoint is corrected, not
   rejected.
 - **Waypoint warp, target and transport (elegy implementation Q13).** The legal
-  warp set is **0..10**, with **11** reserved for the stargate hop; a nonexistent
-  target object and a negative transport amount are both malformed. Elegy's
-  chosen rule is to **reject** each — a warp outside `0..11`, a waypoint naming a
-  target that does not exist, and a transport order with a negative amount are
-  refused (the order dropped, the rest of the file applying), rather than
-  clamped or coerced. Whether the original clamps the warp (as it clamps
-  coordinates above) or coerces a negative amount is read but unmeasured
-  (BINARY-ONLY); the discriminating OX run submits each malformed value and
-  reads back whether it was clamped or dropped. The coordinate clamp above is
-  the one validation confirmed to correct-rather-than-reject.
+  travel-warp set is **0..10**. A stargate hop is encoded with a distinct warp
+  value; the specific value is **UNVERIFIED** — a WU gate run (`wuGATE`) found a
+  waypoint with warp **11** behaving as an *out-of-range travel warp* (the fleet
+  stayed put and burned fuel) rather than a gate, so "11 = gate" is not the
+  original's encoding as far as measured. The gate encoding (the planet-gate
+  flag and the waypoint gate value) is under investigation by the Objects lane
+  (stargates / `objects.py` gatejump); this bullet defers to that result for the
+  gate value. A nonexistent target object and a negative transport amount are
+  both malformed. Elegy's chosen rule is to **reject** each — a travel warp
+  outside `0..10` (and anything that is not the real gate value once fixed), a
+  waypoint naming a target that does not exist, and a transport order with a
+  negative amount are refused (the order dropped, the rest of the file
+  applying), rather than clamped or coerced. Whether the original clamps the
+  warp (as it clamps coordinates above) or coerces a negative amount is read but
+  unmeasured (BINARY-ONLY); the discriminating OX run submits each malformed
+  value and reads back whether it was clamped or dropped. The coordinate clamp
+  above is the one validation confirmed to correct-rather-than-reject.
 - **Design legality (tech strip).** A design that lists a component the
   player has not yet earned the tech for, or that the chosen hull does not
   allow in that slot, has that component **dropped** from the stored design
@@ -818,16 +825,26 @@ Still open (fleetlab HST editing, no serial). Each needs a setup the current
 CombatLab directives do not yet build, so they are not part of the plain WU
 batch:
 
-- **WU captured target.** Track a fleet target that changes owner **mid-turn**;
-  confirm the waypoint keeps tracking it (owner not re-checked), and that the
-  suppress bit holds coordinates instead. Needs a deterministic ownership
-  change during the generated turn (combat capture or takeover), which host
-  editing alone cannot stage from a quiet start.
+- **WU captured target (planet-invasion variant).** A fleet does not change
+  owner in place — a gift removes it and makes a new fleet for the recipient
+  (that is the "target gone" case above, CONFIRMED). The reachable analogue of
+  the owner-not-re-checked claim is a **planet** target whose owner changes by
+  invasion mid-turn: fleet B holds a waypoint targeting planet P (target type
+  11); another player-0 fleet drops colonists onto an **undefended** foreign P
+  in the first drop step (before movement, TK-501), so P becomes player 0's
+  that turn. **Prediction:** at waypoint upkeep (after the drop step) B's
+  waypoint still targets P — P still exists, so only its position is re-copied
+  and its owner is not re-checked; the waypoint is not dropped. The
+  **suppress-bit** variant holds B's stored coordinates instead of re-resolving.
+  Staged with `planetset` (zero P's defenses) + a colonist-unload drop.
 - **WU route stargate.** Route between two **gated** planets with an empty
-  fleet; confirm it is sent through the stargate rather than at warp. Needs a
-  starbase design carrying a stargate on both planets; CombatLab's `planet …
-  starbase` copies the homeworld starbase (no gate), so it cannot build this
-  without a stargate-bearing starbase design.
+  fleet; confirm it is sent through the stargate rather than at warp.
+  CombatLab's `sbdesign` *builds* a gated starbase design, but a WU gate run
+  (`wuGATE`) showed the host did not perform a gate hop from it (a routed fleet
+  warped; a warp-11 waypoint burned fuel and did not move), so the planet-gate
+  flag and the waypoint gate value are not yet understood. The gate encoding is
+  with the Objects lane (stargates / `objects.py` gatejump); this case waits on
+  their staging recipe (see also the Q13 note above).
 
 (**WU patrol no-repeat** is now MEASURED — see the patrol bullet above, run
 `wuPNR`.)
