@@ -1067,6 +1067,426 @@ Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
 model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with
 the `hst-edit` keys `field=` and `conc=` added for this corpus.
 
+### KX-003 — scores, victory conditions, slower tech, Claim Adjuster, Super Stealth
+
+Status: MEASURED (5 runs, 2026-10-07). Every predicted value held, except
+a side note in S1 (player 1's research, a prediction-script error below)
+and S3, where the Super Stealth race was over budget; S3L repeated it
+legally and matched. Predictions were committed (this work's first commit) before any
+case ran. Correction
+before S2 and S3 ran (after S1): the first prediction commit fed research
+with resources after growth, a script error; `KERNEL.md` says research
+uses this year's resources before growth. S2's populations were changed
+to keep the case discriminating and the S2/S3 research figures
+recomputed; no rule changed. S1's score predictions are unaffected (the
+score uses resources after growth).
+
+Question: how does the original score a player and test the victory
+conditions, which a playable game needs and `KERNEL.md` does not describe;
+and do the remaining BINARY-ONLY research and terraforming rules (slower
+tech, Claim Adjuster, Super Stealth research stealing) hold?
+
+Method: Combat Lab two-player starts (game 82222, `experiments/kx003/*.spec`
+built with `tools/fleetlab/combatlab`), generated with
+`tools/fleetlab/pinned-turn`. Game options and victory conditions are set
+in the game record of `CB.XY` with the new `hst-edit xy` command; the
+edited `CB.XY` goes in the run's base directory. Both races: JOAT (except
+S3), centre 50 and range 15–85 on every axis, growth 15%, every research
+cost normal. Population is in units of 100 colonists. Scores are read from
+the score block (type 45) in each player's `.M` file, which `hst-edit
+dump` now prints as hex. Predictions come from a script implementing
+`KERNEL.md` growth and resources plus the score rule below (private
+evidence, `tools/`).
+
+#### Score rule under test (from the binary reading)
+
+Computed per player once a year, after production and growth:
+
+- **Planets:** each owned planet scores `min(6, ceil(colonists/100000))` (`ceil(pop/1000)` in units of 100).
+- **Starbases:** 3 for each owned starbase whose hull has dock capacity
+  (an Orbital Fort scores 0; a Space Station scores 3).
+- **Resources:** `trunc(R/30)`, R = the year's resources over all owned
+  planets.
+- **Tech:** per field at level L: L for L ≤ 3, `2L − 3` for 4–6,
+  `3(L − 3)` for 7–9, `4L − 18` for 10 and above.
+- **Ships:** every ship in the player's fleets is unarmed (power 0),
+  an escort (power below 2000) or a capital ship (2000 and above). With N
+  owned planets, U unarmed, E escorts and C capital ships:
+  `trunc(min(N, U)/2) + 2·min(N, E) + trunc(8·N·C/(N + C))` (last term 0
+  when C = 0).
+- **Power of a design:** beams `(range + 3)·damage·count/4` (÷3 for
+  sappers), multiplied by the capacitor factor (each capacitor multiplies
+  1000 by `(100 + pct)/100`; if not 1000, `beam·min(255, f/10)/100`), then
+  `beam + beam·(speed − 4)/10` with the COMBAT.md battle speed; torpedoes
+  and missiles `(range − 2)·damage·count/2`; bombs
+  `(kill% in tenths + installations killed)·count·2`. The sum.
+
+Victory conditions (game record bytes `0x14 + i`, bit 7 enabled, low
+7 bits v): 0 owns `(v + 4)·5`% of all planets, counted as
+`round(total·pct/100)`; 1/2 tech level `v + 8` in `v + 2` fields;
+3 score `(v + 1)·1000`; 4 lead `(v + 2)·10`% over second place;
+5 resources `(v + 1)·10` thousand; 6 capital ships `(v + 1)·10`;
+7 highest score after `(v + 3)·10` years; 8 the number needed; 9 minimum
+years `(v + 3)·10`. The yearly record holds a flag per condition met,
+whether or not the condition is enabled: 0x40 planets, 0x80 tech, 0x100
+score, 0x200 lead, 0x400 resources, 0x800 capital ships, 0x1000 highest
+score; low 5 bits the player, 0x20 always set. Rank is 1 + the number of
+strictly higher scores.
+
+#### Predictions
+
+S1 (`kx3s1.spec`; victory bytes `80 81 81 00 80 00 00 00 01 00`:
+planets 20% enabled, tech level 9 in 3 fields enabled, score 1000 off,
+lead 20% enabled, resources 10k off, capital ships 10 **off**, highest
+score off, 1 needed, 30 minimum years). Player 0: tech 26 everywhere,
+homeworld 250 with a Space Station, planets of 871 (Orbital Fort), 870
+(Space Station), 5300 and 7100, 7 unarmed scouts, 2 Omega4 (4 Omega
+torpedoes, power 1896, escort), 1 Mini Bomber with 2 Cherry bombs (140,
+escort), 10 Omega5 (5 torpedoes, 2370, capital). Player 1: tech 3, 4, 6,
+7, 9, 10; homeworld 250 with an Orbital Fort, planets of 999, 1 and 3000,
+5 X-Ray scouts (escort), 1 unarmed scout.
+
+| Player | Planets | Starbases | Resources | Tech | Ships | Score | Flags word | Rank |
+|---|---|---|---|---|---|---:|---|---:|
+| 0 | 1+2+1+6+6 = 16 | 2 → 6 | 1552 → 51 | 6·86 = 516 | 2 + 6 + 26 = 34 | **623** | `0x0ae0` (planets 5 ≥ 5, tech, lead, capital ships though disabled) | 1 |
+| 1 | 1+2+1+4 = 8 | 0 | 498 → 16 | 69 (level sum 39) | 0 + 8 = 8 | **101** | `0x0021` (4 planets < 5; 4 would pass with truncation) | 2 |
+
+Populations after growth: 287, 1001, 1000, 5739, 7412 and 287, 1148, 1,
+3450. No victory: the 30-year minimum is not reached. Player 1's research
+goes to energy (cost 600), no level.
+
+S2 (`kx3s2.spec`, slower tech: game record byte `0x10` = `0x82`; two
+years). Rule under test: the stored accumulation S is half-scale; each
+year `L = 2S + research`, a level costs twice the normal cost, and what
+is left is stored as `ceil(L/2)`. Both players at level 3 in every field,
+researching energy with all resources (no queue).
+
+| Player | Year | Research | Energy level | Stored | Normal-speed result |
+|---|---|---:|---:|---:|---|
+| 0 (planet 4000) | 2401 | 435 | 3 | 218 (`ceil(435/2)`) | level 4, 45 |
+| 0 | 2402 | 485 | 4 | 71 (`436 + 485 − 780 = 141`) | |
+| 1 (planet 9020) | 2401 | 937 | 4 | 79 (`937 − 780 = 157`) | level 5, 17 |
+| 1 | 2402 | 954 | 5 | 26 (`158 + 954 − 1060 = 52`) | |
+
+If S were not doubled, player 0 would stay at level 3 in 2402 (`218 + 485
+< 780`).
+
+S3 (`kx3s3.spec`, player 0 Claim Adjuster, player 1 Super Stealth, both
+tech 3; player 0 researches weapons, player 1 energy). JOAT → CA is known
+legal; JOAT → SS is checked for message 0x117.
+
+- Claim Adjuster (rule under test: after production each CA planet's
+  axes move in one step to the full reachable value, `orig ± t` toward the
+  centre, here t = 3 from the ±3 parts): planet 0 60/42/56 (original the
+  same) → **57/45/53**; planet 1 58/50/50 (original 60) → **57/50/50**;
+  no Terraform items built, no resources spent. The original value can
+  drift one click toward the centre at random (a 1-in-10 roll per planet
+  and year, then a population-weighted roll); if it does on an axis,
+  that axis ends one click further.
+- Super Stealth (rule under test: after all players research, an SS
+  player gains, per field, `trunc(trunc(spent/players)/2)` where spent
+  is every player's research in that field, its own included, when that
+  is more than 1; message 0x159): player 0 spends 355 on weapons (no level),
+  player 1 spends 95 on energy. Player 1 ends with energy **118**
+  (95 + 23) and weapons **88**. Excluding its own research would give
+  energy 95.
+
+#### Results
+
+| Run | Predicted | Observed | |
+|---|---|---|---|
+| S1 player 0 record | score 623, R 1552, 5 planets, 2 starbases, U/E/C 7/3/10, tech sum 156, flags `0x0ae0`, rank 1 | the same | OK |
+| S1 player 1 record | score 101, R 498, 4 planets, 0 starbases, U/E/C 1/5/0, tech sum 39, flags `0x0021`, rank 2 | the same | OK |
+| S1 player 1 research | 498 into energy | 435 | prediction-script error: research uses resources before growth (`KERNEL.md`), the script used the after-growth figure; found here and corrected before S2/S3 ran (the second commit) |
+| S2 2401 | P0 3 / 218, P1 4 / 79 | P0 3 / 218, P1 4 / 79 | OK |
+| S2 2402 | P0 4 / 71, P1 5 / 26 | P0 4 / 71, P1 5 / 26 | OK |
+| S3 CA planets | 57/45/53, 57/50/50; originals unchanged | the same | OK |
+| S3 SS | energy 118, weapons 88 | energy 56, weapons 88; message 0x117 and the SS race's colonists-per-resource raised from 10 to 24 | void: JOAT → SS is over the race budget. Its own research (45) still gave 45 + 11 = 56, which fits the rule |
+| S3L (S3 + LRTs `0x1b80` for player 1) | energy 118, weapons 88; CA as S3 | energy 118, weapons 88, two messages 0x159 (23 energy, 88 weapons); CA 57/45/53 and 57/50/50; no 0x117 | OK |
+
+S2 and S3L's score records also follow the score rule (worked from their
+populations, levels and starbases): S2 2401 43 and 61, 2402 46 and 64;
+S3L 40 and 26. In every run each player's `.M` held only that player's
+score record.
+
+Interpretation:
+
+- The score rule, the class boundaries for ships (power 1896 escort,
+  2370 capital), the starbase dock rule (an Orbital Fort scores 0), the
+  planet cap of 6 and the use of after-growth resources hold. Rank is
+  1 + the number of higher scores.
+- Victory-condition flags are set when a condition is met even if it is
+  disabled (capital ships, disabled in S1, flagged). The planets threshold
+  rounds (5 of 24 at 20%; 4 did not count).
+- Slower tech stores research at half scale and doubles it back the next
+  year (S2 player 0 levelled in 2402 only because of the doubling).
+- Super Stealth steals half of each field's per-player average,
+  including its own research.
+- Claim Adjuster planets jump to the full reachable environment at the
+  end of the year; growth that year used the old environment.
+
+Still BINARY-ONLY after KX-003: capacitor, sapper and speed adjustments
+to power; the score, resources and highest-score flags; deciding the game
+(dead players, minimum years, number needed, win messages); CA original
+drift; CA's half-price terraform items; slower tech with GR or stolen
+research.
+
+Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
+`evidence/kx003/` (specs, edited `CB.XY`, every resulting file, dumps,
+the model and a SHA-256 manifest). Tooling: `hst-edit xy` and the score
+and game-record dump lines.
+
+### KX-004 — random events and turn-time game options
+
+Status: CONFIRMED (comets, climate change, new minerals, public scores,
+random events off), with one draw-order correction (two draws, not three,
+for the struck-mineral shuffle) found in S1 and applied before S2–S5.
+Predictions were committed before any case ran; round 2 predictions
+before S2–S4 were examined. Rules: `KERNEL.md` "Random events" and "Game
+options during a turn".
+
+Question: what do the yearly random events (comet strikes, planetary
+climate change, new mineral deposits) do, when, and how often; and what do
+the game options change during a turn? Mystery Trader and wormholes are
+in `OBJECTS.md`, creation-time options (maximum minerals, BBS, clumping)
+in `UNIVERSE.md`, and slower tech in `KERNEL.md` (KX-003).
+
+Method: Combat Lab game CB (tiny, 24 planets, two JOAT players), start
+`experiments/kx004/kx4e1.spec`: planets 0–7 and 9–16 owned (population
+30, 45, 600 or 3000; environment 50/50/50; no mines, factories or
+defenses; queue Auto Factories ×5, Factory ×1, design 0 ×1), 18–23
+unowned, homeworlds 8 and 17. With no mines, an owned planet's
+concentrations, surface minerals and environment change only through
+events. `experiments/kx004/run-kx4.sh` generates one year per
+`pinned-turn` process with cycles `15000 + 37·year` (a different random
+stream each year).
+
+- **E1:** game option byte `0x40` (random events on, public scores on),
+  300 years (2400 → 2700) planned; stopped after 148 (see Results).
+- **E0 (control):** option byte `0x80` (random events off, public scores
+  off), 40 years.
+
+Messages are read from each player's `.M` event list (format in
+`ORACLE.md`).
+
+#### Rules under test (from the binary reading)
+
+At the end of production, after research, when random events are on, in
+this order:
+
+1. **Comet strike.** With chance 1/20 a uniformly random planet (any
+   owner, or none) is chosen. Nothing happens before year index 10, or
+   if the planet is owned with more than 5,000 colonists and the year
+   index is below 20. Size `e` = 0–3 (small, medium, large, huge), equally
+   likely.
+   - Every player gets a message naming the planet. A non-AR owner's
+     message says the colonists killed (25/45/65/85%) and names `e + 1`
+     environment axes (all three for e = 3).
+   - A non-AR owner loses `trunc(P·(20e + 25)/100)` of its population P
+     (after this year's growth).
+   - `min(e + 1, 3)` distinct random minerals each gain concentration
+     `50 + rand(50)` (huge: a further `15 + rand(15)`), capped at 200.
+   - Surface minerals: each struck mineral gains
+     `trunc((50 + rand(250) + 3000 + rand(17000))/16)` kT (190–1268); every
+     other mineral gains `trunc((50 + rand(250))/16)` (3–18).
+   - Environment: axes gravity, then temperature, then radiation, the
+     first `min(e + 1, 3)` of them (not a random choice), each move by
+     `±(3 + rand(3))` (huge: `±(6 + rand(3) + rand(3))`, 6–10), the current
+     and the original value alike, clamped to 1–99.
+   - The production queue loses every item except the auto items (Auto
+     Mines, Factories, Defenses, Alchemy, Min/Max Terraform, Mineral
+     Packets), which keep their counts.
+   - The owner's message names its axes from a separate random shuffle,
+     so for small and medium comets it can name axes other than the ones
+     that moved.
+2. **Climate change.** With chance 1/20 a random planet, with the same
+   protection (owned, more than 5,000 colonists, year index below 20); no
+   year-10 minimum. One random axis moves by 4 or 5 (1/3 each) or 6, 7
+   or 8 (1/9 each), sign random, current and original alike, clamped
+   1–99. The owner (if any) gets a message naming the axis; its queue is
+   cut to the auto items.
+3. **New minerals.** With chance `1/(15 − size)` (1/15 on tiny) a random
+   planet; nothing before year index 10. One random mineral: the owner
+   (if any) gets a message even when nothing changes; the concentration
+   rises by `5 + rand(15)` if it is below 180.
+
+With random events off, none of these happen.
+
+Public scores: a player's file contains another player's score record
+only if the game is decided, that player is dead, or public scores are on
+and the year index is at least 20.
+
+#### Predictions
+
+E1, per year, from each year's before and after files:
+
+1. Every change of an owned planet's environment, concentration or
+   surface minerals, and every change of an unowned planet's environment
+   or concentration, is explained by exactly the events above. No other
+   change happens.
+2. Comets: none before 2410. For each, every player has a comet message
+   for that planet; the size `e` from the message matches the number of
+   struck minerals and moved axes and the ranges above. Gravity always
+   moves, and temperature for `e ≥ 1`, whichever axes the message names.
+   A non-AR owner's population is the year's growth result minus
+   `trunc(G·(20e + 25)/100)`. The queue keeps only Auto Factories ×5.
+3. Climate: one axis, `|Δ|` in {4, 5, 6, 7, 8} unless clamped, current and
+   original alike; the owner's message names that axis; queue cut to Auto
+   Factories ×5. None on a protected planet before 2420.
+4. New minerals: none before 2410; one mineral `+5..+19`; an owner message
+   for owned planets.
+5. Frequencies are reported against the expected counts (about 14.5
+   comets, 15 climate changes and 19 new-mineral events over 300 years);
+   these counts test nothing exact.
+6. Queues of owned planets without an event stay as set.
+7. Public scores: each `.M` holds only its own score record through 2419
+   and both from 2420 on.
+
+E0: no environment or concentration change on any planet other than the
+homeworlds' mining, no event message of these kinds, and only the own
+score record in every year, 2420 on included.
+
+#### Round 2 predictions: replaying the random stream
+
+Committed after E1 years 1–148 and the first cycles sweep (S1), before S2,
+S3 and S4 were examined.
+
+E1 drew no event at all in 148 years (public scores matched). The reason
+is the harness, not the game: a `pinned-turn` process seeds its random
+stream from the startup tick, which under fixed cycles is
+`trunc(k·54.925)` ms for a small k, so the cycles range E1 used
+(15037–26100) reaches only two or three streams, and with no mines,
+battles or other random draws the year's events always read the same
+draw positions. ORACLE.md "Pinned battle RNG" already warned that few
+streams are reachable. A year's events are therefore a deterministic
+function of the startup tick, and the original's generator
+(stars-decomp `tools/starsrng.py`) can be replayed for any tick.
+
+S1 (one year from E1's 2430 state, 29 cycles values from 60000 to 3400)
+gave three comets and two new-mineral events. Replaying each candidate
+tick with the event rules located the events four draws after seeding
+and showed one correction: the shuffle that picks the struck minerals
+makes two draws, not three. With that, every S1 run's planet changes and
+messages are reproduced exactly by exactly the tick its cycles value
+reaches, including a large comet on the owned planet 17 (population 8110
+after growth → 2839, `8110 − trunc(8110·65/100)`).
+
+Predictions for the remaining runs, each from the replay at draw
+position 4 (tiny universe, 24 planets):
+
+- **S2** (2430 state, cycles `70000/k` for k = 20..80): each run shows
+  exactly the events the replay gives for the tick it reaches, and none
+  otherwise. Ticks with events at year index 30 include:
+  - 1812: a medium comet on owned planet 11 (boranium +85, germanium
+    +86; gravity +3, temperature +4; the owner's message names axes 1
+    and 0), then new minerals on homeworld 8 (boranium +5);
+  - 2032: a huge comet on owned planet 2 (concentrations +88/+84/+76;
+    environment −7/+8/+10; the owner loses 85% of its grown population);
+  - 3460: climate change on owned planet 7, radiation −6, owner message
+    naming axis 2, queue cut to the auto items;
+  - 4284: a small comet on owned planet 15 (ironium +86, gravity +4).
+  Owned-planet comets: population `G − trunc(G·(20e + 25)/100)`, the
+  queue keeps Auto Factories ×5 only.
+- **S3** (E1's 2405 state, year index 5): cycles 10500 (tick 384): the
+  comet is too early and changes nothing, but climate change still moves
+  unowned planet 18's gravity by −6 (no year minimum). Ticks 109 and 768
+  (cycles 35000, 5200): no new-mineral change before year index 10.
+  Ticks 329, 659: no comet. Tick 1098 (cycles 3700): no change
+  (protected and early).
+- **S4** (E1's 2415 state, year index 15): ticks 329, 384 and 659 give the
+  same unowned comets as at 2430 (year index ≥ 10 suffices); 109 and 768
+  give the same new minerals; 1098 changes nothing: planet 17 has more
+  than 5,000 colonists and the year index is below 20.
+
+#### Results
+
+S1–S5 used `experiments/kx004/sweep.sh` (one year from a saved E1 state
+per cycles value).
+
+| Run | State | Runs | Outcome |
+|---|---|---|---|
+| E0 | events off, public scores off | 40 years | no event message, no environment or concentration change; own score record only (2401–2440) — as predicted |
+| E1 | events on, public scores on | 148 years (2401–2548) | public scores as predicted: own record only through 2419, both from 2420. No random event in any year: the cycles range reached only a few ticks (above) |
+| S1 | 2430, cycles 60000–3400 | 29 | 3 comets, 1 large comet on owned planet 17, 2 new-mineral finds; all reproduced after the shuffle correction |
+| S2 | 2430, cycles 3500–880 | 61 | medium comet on owned 11 with new minerals on 8, small comet on owned 15, 8 new-mineral finds; the rest no event; every run as replayed |
+| S3 | 2405 (index 5) | 6 | comet at tick 384 suppressed (too early), climate change on unowned 18 (gravity −6) still happens; new minerals at ticks 109 and 768 suppressed; tick 1098 nothing |
+| S4 | 2415 (index 15) | 5 | unowned comets (ticks 329, 384) and new minerals (109, 768) as at 2430; owned planet 17 protected at tick 1098 |
+| S5 | 2430, cycles 1995–1135 | 12 | huge comet on owned planet 2; climate change on owned planet 7 (radiation −6, message axis 2, queue cut) |
+
+Every event run is reproduced exactly by one tick's replay: each changed
+planet's concentrations and environment, every event message with its
+parameters, and for owned planets the surface minerals, population and
+queue. Totals: 9 comets (small, medium, large and huge; owned and
+unowned), 2 climate changes, 12 new-mineral finds, from 17 distinct
+startup ticks. E1 year 2422 failed once to generate and succeeded on a
+retry with identical inputs; `run-kx4.sh` now retries once.
+
+Owned-planet comet vectors (population after growth → after the comet):
+small 9237 → 6928, medium 9237 → 5081, large 8110 → 2839, huge 9237 →
+1386, i.e. `P − trunc(P·(20e + 25)/100)`. Each queue kept Auto Factories ×5
+only.
+
+Interpretation:
+
+- The comet's environment change hits the first `e + 1` axes in index
+  order, while the owner's message names axes from a separate shuffle.
+  S2's small comet on planet 15 moved gravity and its message named
+  radiation: a deterministic LEGACY BUG in the message.
+- The oracle's random events are a fixed function of the startup tick
+  for a given state. Sampling frequencies needs different streams, not
+  more years; the probabilities stay BINARY-ONLY.
+- Not reached: an Alternate Reality owner (plain message, no population
+  loss), the 180 concentration cap for new minerals, a clamp at 1 or 99,
+  the original environment value (not in the dumps used), and deciding
+  the game or dead players for score visibility.
+
+Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
+
+#### Mystery Trader appearance (addendum; predictions)
+
+Committed before runs S6–S10 were examined. `OBJECTS.md` gives the
+Trader's appearance rule as BINARY-ONLY ("From year index 40 …"); its
+draws come right after new minerals, so the same replay predicts it. Read
+from the binary, in draw order: the chance draw (`rand(2)` when year index
+mod 100 = 71, `rand(3)` when = 33, `rand(4)` when index mod 128 = 49, else
+none in odd years and `rand(7)` in even ones; a Trader appears on 0);
+warp `8 + rand(5)`; two free coordinates `1020 + rand(361 + 400·size)`
+(start, then destination); `rand(2)`: 0 puts the start on the low edge
+(1020) and the destination on the high edge (`1380 + 400·size`), 1 the
+reverse; `rand(2)`: 0 makes the free coordinate x, 1 makes it y; then the
+item (`OBJECTS.md`). Every player gets the appearance message.
+
+Each run generates one year from an E1 state. Predicted Traders (tiny
+universe: edges 1020 and 1380; item 0 is research, 0x1000 a ship, other
+values a part bit):
+
+| Run | State (index) | Cycles → tick | Trader: warp, start → destination, item |
+|---|---|---|---|
+| S6 | 2449 (49, 1/4) | 10500 → 384 | 8, (1380, 1172) → (1020, 1135), 0x100 |
+| S6 | | 5200 → 768 | 12, (1330, 1020) → (1351, 1380), 0 |
+| S6 | | 3700 → 1098 | 9, (1032, 1020) → (1188, 1380), 0x10 |
+| S6 | | 1165 → 3460 | 8, (1020, 1363) → (1380, 1091), 0 |
+| S6 | | 35000 → 109, 2190 → 1812 | none |
+| S7 | 2471 (71, 1/2) | 11500 → 329 | 10, (1165, 1380) → (1100, 1020), 0 |
+| S7 | | 1490 → 2691 | 9, (1098, 1380) → (1304, 1020), 0x20 |
+| S7 | | 1210 → 3295 | 12, (1020, 1255) → (1380, 1024), 0x20 |
+| S7 | | 2190 → 1812 | 8, (1362, 1380) → (1142, 1020), 0 |
+| S7 | | 6000 → 659, 930 → 4284 | none |
+| S8 | 2472 (72, 1/7) | 1985 → 2032 | 8, (1380, 1121) → (1020, 1283), 0 |
+| S8 | | 880 → 4503 | 11, (1380, 1104) → (1020, 1173), 0x1000 (ship) |
+| S8 | | 5200 → 768 | 12, (1330, 1020) → (1351, 1380), 0 |
+| S8 | | 10500 → 384 | none |
+| S9 | 2473 (73, odd) | 5200, 3700, 1165 | none (the same ticks give Traders at 2449/2471/2472) |
+| S10 | 2533 (133, 1/3) | 35000 → 109 | 12, (1380, 1233) → (1020, 1294), 0x1000 (ship) |
+| S10 | | 1190 → 3405 | 10, (1047, 1380) → (1299, 1020), 0x200 |
+| S10 | | 1135 → 3570 | 11, (1020, 1166) → (1380, 1041), 0x200 |
+| S10 | | 1165 → 3460 | 8, (1020, 1363) → (1380, 1091), 0x20 |
+| S10 | | 11500 → 329 | none |
+
+The comets, climate changes and new minerals of each tick are as at 2430
+(the planet states differ only in population, and no planet is
+protected after index 20).
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
@@ -1461,7 +1881,7 @@ AI player.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, round 5 CB-035 to CB-041, 2026-10-07; cloud
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, round 5 CB-035 to CB-041, round 6 CB-042 to CB-047, 2026-10-07; cloud
 oracle). Predictions from the private binary reading (stars-decomp
 `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
 at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
@@ -1903,7 +2323,51 @@ counted by distinct battle record. Every hit replayed with the checker,
   discriminated: a **JOAT** owner at its own planet with ten Freighters
   left, after losing its Fort and destroying propulsion-9 Destroyers,
   never gained in 8 streams (about 4% at the expected 1/3), and gained in
-  1 of 4 streams where its Fort survived. Open.
+  1 of 4 streams where its Fort survived. Resolved after the round by the
+  Combat decomp pass's exact replay of every CB-041 battle from its stream
+  (stars-decomp #22): the JOAT result is as predicted in 12 of 12 streams
+  (the 0 of 8 was chance), and in 4 AR streams an attempt would have
+  gained and none did, so the AR no-attempt rule holds (CONFIRMED by
+  replay, no new run).
+
+### Round 6 (CB-042 to CB-047)
+
+Predictions from the Combat decomp pass (stars-decomp #22, COMBAT.md #38)
+and committed here before each batch (bd91da5; 62e2792 and 69e1ef9 for
+two setups added after the first runs). Pinned runs; streams counted by
+battle record. The tooling check for this round is ORACLE.md "Production
+queues and Mystery Trader parts".
+
+- **Token cap, CONFIRMED (CB-042 to CB-044, 2 streams each).** Each
+  player first gets `255 / n` stacks; a starbase counts toward the 255
+  but not toward a quota; the second pass skips a fleet that does not fit
+  and goes on.
+  - Three players with 100 fleets each: 255 tokens, 85 each; left out
+    player 0's fleets 1..15 and players 1 and 2's fleets 0..14.
+  - At player 1's planet with an armed Orbital Fort, 140 and 131 fleets
+    (one with three designs): player 0 127 stacks, player 1 127 stacks
+    plus the Fort; left out player 0's 1..13 and player 1's 0..5.
+  - CB-039 with player 1's fleet 12 holding two designs: 255 tokens, 127 /
+    128; fleet 12 sat out and fleet 11 fought.
+  - The checker replayed every hit except one carried-damage hit in each
+    three-player stream (open for the decomp pass).
+- **Cargo in the speed code, CONFIRMED (CB-045, 2 streams).** Each ship's
+  mass is its design mass plus `C · c / F`, truncated (fleet cargo `C`,
+  the ship's cargo capacity `c`, fleet capacity `F`): a Medium and a Small
+  Freighter sharing 140 kT weighed 174 and 69 (codes 0 and 2); three
+  Medium Freighters with 212 kT weighed 139 each and with 213 kT 140.
+- **Queued ships lost with a starbase, CONFIRMED (CB-047, 2 streams).**
+  Player 1's homeworld queued 50 Destroyers, then 20 factories. Without
+  attackers the queue ended the year as 49 Destroyers (92% done on the
+  next) and the factories. When the Station was destroyed the Destroyer
+  item was gone and the factories stayed; the Destroyer built that year
+  (production comes before battles) fought and died.
+- **Mystery Trader items from battle: none gained (CB-046, MISSED).** A
+  player with every field at 26 and no Mystery Trader items destroyed six
+  Anti Matter Torpedo Destroyers (12 streams) or three Mini Morphs with
+  five more Mystery Trader parts (12 streams) and never gained an item.
+  With its biotechnology at 3 instead, the same 12 streams gave a
+  biotechnology level in 2 and still no item, so attempts happen. Open.
 
 ### Resolved reconciliation
 
@@ -1915,9 +2379,9 @@ counted by distinct battle record. Every hit replayed with the checker,
 
 ### Not tested
 
-Queued ships lost with a starbase (P-25), salvage at more than one point
-(E-8), the firing live-token recheck (no observable effect), Mystery
-Trader items from battle, the AR no-attempt rule (CB-041), minefields. Bombing and invasion: see
+Salvage at more than one point (E-8), the firing live-token recheck (no
+observable effect), minefields. Mystery Trader items from battle were
+never observed (CB-046). Bombing and invasion: see
 "Planet Takeover".
 
 ## Scanning

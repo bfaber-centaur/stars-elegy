@@ -391,8 +391,9 @@ fleet's or planet's ranges.
 - A **Claim Adjuster** viewer also receives each known player's
   habitability ranges, with every tech level shown as zero. With no contact
   it receives nothing about the other player (CONFIRMED, SC-016, SC-016N).
-- BINARY-ONLY: scores of other players are shown when public scores are
-  enabled and more than 20 years have passed.
+- Scores of other players are in a player's file when public scores are
+  enabled and the file's year index is at least 20, i.e. from 2420 on
+  (CONFIRMED, KX-004; `KERNEL.md` "Game options during a turn").
 
 ### Allies (CONFIRMED in one run, SC-001F)
 
