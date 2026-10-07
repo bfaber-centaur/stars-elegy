@@ -192,7 +192,16 @@ def runs():
     r6.target(16, "T-19 neutral: plan player 1 only, P=800", 800); r6.orbit(16, "0:5", plan=3)
     r6.target(22, "T-19 neutral: plan everyone, P=800", 800); r6.orbit(22, "0:5", plan=4)
     r6.target(5, "control: P=87", 87)
-    return [r1, r2, r3, r4, r5, r6]
+    # R7: many independent random roundings per generation (distribution and a
+    # per-run fingerprint of the random stream)
+    r7 = Run("tk007")
+    for n in (0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 13, 14, 15, 16):
+        r7.target(n, "T-11 1 Hush-a-Boom, P=44", 44); r7.orbit(n, "6:1")
+    for n in (12, 20):
+        r7.target(n, "T-13 10 Smart + 10 Cherry, P=870", 870); r7.orbit(n, "1:5"); r7.orbit(n, "0:5")
+    for n in (18, 22):
+        r7.target(n, "T-15 1 LBU-17, P=870, mines 20 factories 10", 870, mines=20, factories=10); r7.orbit(n, "4:1")
+    return [r1, r2, r3, r4, r5, r6, r7]
 
 
 if __name__ == "__main__":

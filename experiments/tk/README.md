@@ -123,3 +123,10 @@ with only four player-1 planets.
 | TK-006 | 16 | neutral, plan "player 1 only" | 800 → 920 | 690 |
 | TK-006 | 22 | neutral, plan "everyone" | 800 → 920 | 690 |
 | TK-006 | 5 | control | 87 → 100 | 100 |
+
+TK-007 (random cases, committed before running): 14 Hush-a-Boom planets
+as in TK-004 planet 0 (48 with p 501/1000, else 49), two T-13 planets
+(658 with p 749/1000, else 657) and two T-15 planets (factories 5 / mines
+9 with p 2/3, else 4 / 10), one generation per cycles value. The draws
+should be independent across planets; the vector of outcomes identifies
+the random stream of each run.
