@@ -27,6 +27,8 @@ vectors/<corpus>/<run>.json      one oracle run
 | `kx001`, `kx002` | KX-001, KX-002 cases | 38 | planet economy: production, Auto Alchemy, growth, research, mining (one year from an edited PG001 file) | `docs/KERNEL.md` |
 | `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
 | `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
+| `mf` | MF-01..11c | 20 | minefields: hits, sweeping, decay, detonation, speed bumps | `docs/OBJECTS.md` "Minefields" |
+| `rp` | RD-P1..P12 | 12 | turn-time race penalty and repairs | `docs/RACES.md` |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -62,7 +64,9 @@ file, so nothing in it is a default you have to guess.
   percent and field, relations to each other player (`neutral`, `friend`,
   `enemy`), Mystery Trader items owned, and the race: PRT, LRTs, growth rate,
   habitability (center, low, high per axis, 255 = immune), colonists per
-  resource, factory and mine settings, research cost per field.
+  resource, factory and mine settings, research cost per field, the leftover
+  points spend and race stat 15 (`RACES.md`). An out-of-range PRT is given
+  as its stored number.
 - `planets`: position, owner (-1 none), mineral concentrations, environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
@@ -129,6 +133,7 @@ because mining's +1 remainder is random (`KERNEL.md`).
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
 | `object` | a new or changed map object | the object, as in `initial_state.objects` |
+| `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
 | `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
 | `view` | what player `viewer` knows of `subject` (`{kind, owner, id}`: a planet, fleet, wormhole, minefield, design or player) | the fields the case checks, e.g. `level` (report level), `known`, `starbase_visible`, `heading`, `design_count` |
 | `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage` |
@@ -207,6 +212,8 @@ python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
 python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
+python3 tools/vectors/build.py mf  ../stars-oracle-apparatus/evidence/mf
+python3 tools/vectors/build.py rp  ../stars-oracle-apparatus/evidence/rd
 python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
 go test ./internal/vectors
 ```
@@ -224,5 +231,7 @@ go test ./internal/vectors
   check), KX-001 Z1/Z1h (the original crashed: no year was generated; see
   PARITY "KX-001 Z"), KX-004 E0/E1 (the long runs that made the start
   states), KX-005 (not merged yet).
-- Races (`rd`) and minefields (`mf`): in progress. Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
+- RD-1..RD-7 and RW (new games: they wait for the `new_game` form) and the
+  MF-07 verdicts (tagged MEASURED until the owner says whether OBSERVED or
+  held is canonical). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.

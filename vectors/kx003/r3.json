@@ -125,6 +125,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -196,6 +198,8 @@
       "electronics": "normal",
       "biotechnology": "normal"
      },
+     "leftover_spend": "surface_minerals",
+     "stat_15": 0,
      "techs_start_high": false,
      "factories_cost_less": false
     },
@@ -1167,6 +1171,52 @@
        "construction": 0,
        "electronics": 0,
        "biotechnology": 0
+      },
+      "race": {
+       "prt": "SS",
+       "lrt": [],
+       "growth_percent": 15,
+       "habitability": {
+        "gravity": [
+         50,
+         15,
+         85
+        ],
+        "temperature": [
+         50,
+         15,
+         85
+        ],
+        "radiation": [
+         50,
+         15,
+         85
+        ],
+        "order": "center, low, high (255 = immune)"
+       },
+       "colonists_per_resource": 2400,
+       "factory": {
+        "output": 10,
+        "cost": 10,
+        "per_10k": 10
+       },
+       "mine": {
+        "output": 10,
+        "cost": 5,
+        "per_10k": 10
+       },
+       "research_cost": {
+        "energy": "normal",
+        "weapons": "normal",
+        "propulsion": "normal",
+        "construction": "normal",
+        "electronics": "normal",
+        "biotechnology": "normal"
+       },
+       "leftover_spend": "surface_minerals",
+       "stat_15": 0,
+       "techs_start_high": false,
+       "factories_cost_less": false
       }
      },
      "year": 1

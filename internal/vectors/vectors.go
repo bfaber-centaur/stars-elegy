@@ -92,7 +92,7 @@ type Player struct {
 }
 
 type Race struct {
-	PRT           string   `json:"prt"`
+	PRT           any      `json:"prt"` // a name, or the stored number when out of range
 	LRT           []string `json:"lrt"`
 	GrowthPercent int      `json:"growth_percent"`
 	Habitability  struct {
@@ -105,6 +105,8 @@ type Race struct {
 	Factory              Economy           `json:"factory"`
 	Mine                 Economy           `json:"mine"`
 	ResearchCost         map[string]string `json:"research_cost"`
+	LeftoverSpend        any               `json:"leftover_spend"`
+	Stat15               int               `json:"stat_15"`
 	TechsStartHigh       bool              `json:"techs_start_high"`
 	FactoriesCostLess    bool              `json:"factories_cost_less"`
 }
@@ -309,7 +311,7 @@ var (
 		"no_new_fleets": true, "planet": true, "production_queue": true, "design": true, "player": true,
 		"wormhole": true, "trader": true, "packet": true, "packet_gone": true, "salvage_at": true,
 		"message": true, "sample": true, "battle": true, "battle_actions": true, "no_battle": true,
-		"object": true, "minefield": true, "view": true, "client_estimate": true}
+		"object": true, "object_gone": true, "minefield": true, "view": true, "client_estimate": true}
 )
 
 // Load decodes one vector strictly.

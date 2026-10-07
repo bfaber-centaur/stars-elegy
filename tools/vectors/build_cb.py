@@ -159,7 +159,7 @@ def diff(st0, st1):
             ex.append({'kind': 'planet', 'id': p['id'], 'equals': ch})
     pl0 = {p['id']: p for p in st0['players']}
     for p in st1['players']:
-        ch = {k: p[k] for k in ('tech', 'research_accumulated', 'mystery_trader_items') if p[k] != pl0[p['id']][k]}
+        ch = {k: p[k] for k in ('tech', 'research_accumulated', 'mystery_trader_items', 'race') if p[k] != pl0[p['id']][k]}
         if ch:
             ex.append({'kind': 'player', 'id': p['id'], 'equals': ch})
     q0 = {q['planet']: q['items'] for q in st0['production_queues']}
@@ -167,12 +167,20 @@ def diff(st0, st1):
         if q0.get(q['planet']) != q['items']:
             ex.append({'kind': 'production_queue', 'planet': q['planet'],
                        'equals': [{k: v for k, v in i.items() if k != 'kind'} for i in q['items']]})
-    o0 = [o for o in st0['objects']]
+    ident = lambda o: (o['kind'], o.get('owner'), o['id'])
+    o0 = {ident(o): o for o in st0['objects']}
+    o1 = {ident(o): o for o in st1['objects']}
     for o in st1['objects']:
         if o['kind'] == 'packet' and o['destination_planet'] == 1023:
             ex.append({'kind': 'salvage_at', 'x': o['x'], 'y': o['y'], 'equals': {'minerals': o['minerals']}})
-        elif o not in o0:
+        elif o['kind'] == 'minefield' and o0.get(ident(o)) != o:
+            ex.append({'kind': 'minefield', 'owner': o['owner'], 'id': o['id'],
+                       'equals': {k: v for k, v in o.items() if k not in ('kind', 'owner', 'id')}})
+        elif o0.get(ident(o)) != o:
             ex.append({'kind': 'object', 'equals': o})
+    for k, o in o0.items():
+        if k not in o1 and not (o['kind'] == 'packet' and o['destination_planet'] == 1023):
+            ex.append({'kind': 'object_gone', 'subject': {'kind': o['kind'], 'owner': o.get('owner'), 'id': o['id']}})
     return ex
 
 
