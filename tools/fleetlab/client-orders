@@ -64,6 +64,10 @@
 #   design open            Commands > Ship Design (F4), existing ship designs
 #   design select I        item I of the design list
 #   design copy            Copy Selected Design (opens the editor)
+#   design edit            Edit Selected Design (disabled for a design that ships
+#                          or a starbase use; enabled for one only queued)
+#   design ships | design starbases
+#                          the Ships / Starbases radio (which designs are listed)
 #   design part ROW X Y    drag the component in visible row ROW (0-3) of
 #                          the editor's list onto the slot at X,Y
 #   design scroll N        scroll the component list down N rows
@@ -233,6 +237,9 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"design open") "$O/key" F4; pause 1.5 ;;
 	"design select") "$O/click" 848 212; pause 0.6; "$O/click" 700 $((229 + 14 * b)); pause 0.6 ;;
 	"design copy") "$O/click" 369 393; pause 1.5 ;;
+	"design edit") "$O/click" 369 457; pause 1.5 ;;
+	"design ships") "$O/click" 302 219; pause 1 ;;
+	"design starbases") "$O/click" 302 240; pause 1 ;;
 	"design part") read -r px py <<< "$rest"; "$O/drag" 320 $((260 + 66 * b)) "$px" "$py"; pause ;;
 	"design scroll") rclick 518 483 "$b" ;;
 	"design category") "$O/click" 518 212; pause 0.6; "$O/click" 330 $((229 + 13 * b)); pause 0.6 ;;
