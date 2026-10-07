@@ -37,7 +37,7 @@ def kv(s):
 def parse_dump(path, owner=0):
     """Read a `combatlab dump` of an .HST or .M file: the given player's
     race, designs, fleets (with waypoints), planets and queues."""
-    st = dict(player=None, designs={}, fleets=[], planets={}, queues={}, xy={})
+    st = dict(player=None, designs={}, fleets=[], planets={}, queues={}, xy={}, owner=str(owner))
     fleet = None
     nship = 0
     for line in open(path, encoding='latin-1'):
@@ -562,25 +562,110 @@ def leg(fleet, j):
     return math.hypot(b['x'] - a['x'], b['y'] - a['y']), b['warp']
 
 
-def travel_time(fleet, i):
-    """Years to reach waypoint i (sum over legs); None = "Never"."""
+GATE = re.compile(r'Stargate (\w+)/(\w+)')
+
+
+def gate_of(st, n):
+    """(mass limit, range) of the stargate on planet n's starbase, None
+    for "any"; None when it has no gate. Only the viewer's own starbase
+    designs are known (the client tests ownership first)."""
+    p = st['planets'].get(n, {})
+    if not p.get('starbase'):
+        return None
+    m = GATE.search(st.get('sbdesigns', {}).get(p.get('sbdesign'), ''))
+    if not m:
+        return None
+    return tuple(None if v == 'any' else int(v) for v in m.groups())
+
+
+def planet_at(st, x, y):
+    for n, (px, py) in st['xy'].items():
+        if (px, py) == (x, y):
+            return n
+    return None
+
+
+def gate_check(st, fleet, j):
+    """The client's stargate check for leg j (a warp-11 leg): 0 = refused,
+    -1 = not known, else 1 | 2 if some design takes losses | 4 if the
+    fleet carries cargo (unloaded before the jump unless IT)."""
+    a, b = fleet['wps'][j], fleet['wps'][j + 1]
+    dst = planet_at(st, b['x'], b['y'])
+    if dst is None:
+        return 0
+    dp = st['planets'].get(dst, {})
+    if dp.get('owner') != st['owner']:
+        # an unowned planet reported this year: refused; anyone else's: unknown
+        return 0 if dp.get('owner') == '-1' else -1
+    dgate = gate_of(st, dst)
+    if dgate is None:
+        return 0
+    src = planet_at(st, a['x'], a['y'])
+    sgate = gate_of(st, src) if src is not None and st['planets'].get(src, {}).get('owner') == st['owner'] else None
+    if sgate is None:
+        return 0
+    D, _ = leg(fleet, j)
+    d = int(D)
+    R = 8000 if sgate[1] is None else sgate[1]
+    danger = False
+    for dn in fleet['ships']:
+        mass = st['designs'][dn]['mass']
+        if d > 5 * R:
+            return 0
+        f = 10000
+        if d > R:
+            f = (5 * R - d) * 2500 // R
+        for M in (sgate[0], dgate[0]):
+            if M is not None and 0 < M < mass:
+                if 5 * M < mass:
+                    return 0
+                f = ((5 * M - mass) * 2500 // M) * f // 10000
+        pct = 100 if f <= 0 else (10000 - f) // 100
+        if pct >= 100 and f <= 0:
+            return 0
+        if pct > 0:
+            danger = True
+    cargo = any(fleet['cargo']) and int(st['player']['prt']) != 7
+    return 1 | (2 if danger else 0) | (4 if cargo else 0)
+
+
+GATE_TEXT = {0: 'Never', -1: 'Uncertain'}
+
+
+def travel_time(fleet, i, st=None):
+    """Years to reach waypoint i (sum over legs); None = "Never"; a string
+    for a stargate leg the client cannot price."""
     total = 0
     for j in range(i):
         D, w = leg(fleet, j)
         if w == 0:
             return None
         if w > 10:
-            raise ValueError('stargate legs not modelled')
+            if st is None:
+                raise ValueError('stargate legs need the game state')
+            g = gate_check(st, fleet, j)
+            if g == 0:
+                return None
+            if g == -1:
+                return 'Uncertain'
+            if g & 2:
+                return 'Danger'
+            if g != 1:
+                return 'Unload'
+            total += 1
+            continue
         v = w * w
         t = int(D)
         total += 1 if t <= v else (t + v - 1) // v
     return total
 
 
-def travel_text(fleet, i, short=False):
-    t = travel_time(fleet, i)
+def travel_text(fleet, i, short=False, st=None):
+    t = travel_time(fleet, i, st)
     if t is None:
         return 'Never'
+    if isinstance(t, str):
+        return t
     if short:
         return '%dy' % t
     return '%d year%s' % (t, '' if t == 1 else 's')
@@ -619,7 +704,7 @@ def refuels_at(st, wp):
     if (wp['type'] & 15) != 1:
         return False
     p = st['planets'].get(wp['obj'], {})
-    if p.get('owner') != '0' or not p.get('starbase'):
+    if p.get('owner') != st['owner'] or not p.get('starbase'):
         return False
     hull = st.get('sbdesigns', {}).get(p.get('sbdesign'), '').split(',')[0].strip()
     return hull in DOCK_HULLS
