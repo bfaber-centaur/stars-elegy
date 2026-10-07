@@ -132,3 +132,12 @@ FO-03 C (both stacks damaged) and E (32000 + 1000 ships) missed; see "Results". 
 | F | FO-03 follow-up | X 767 Freighters into Y 32000: 32767 ships | fleet 0/10: ships 11:32767 |
 | G | FO-03 follow-up | X 768 Freighters into Y 32000: over 32767: the slot empties | fleet 0/12: ships  |
 
+
+## Follow-up prediction (FO-07; written after FO-06 ran, before FO-07)
+
+### FO07: follow-up: rounding of merged damage units
+
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | FO-06 follow-up | X 2 at 101 units on 50% into Y 2 at 100 on 50%: units 201/4 = 50.25, rounded up 51 (nearest: 50), 50%; repair -> 41/50 | fleet 0/0: ships 11:4, dmg 11: 41/50% |
+

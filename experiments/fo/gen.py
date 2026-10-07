@@ -365,6 +365,17 @@ def runs():
         r.fleet(0, p, f'{F}:{add}', extra=f'target fleet 0 {y} task merge')
         r.expect('fleet', (0, y), dict(ships=want))
     out.append(r)
+
+    # FO-07 (after FO-06): FO-06 A gave 33 where 32 was predicted, i.e. 1700/40 = 42.5 went
+    # to 43. Rounded up (stars-decomp: "count-weighted, rounded up") or to nearest?
+    r = fo_run('fo07', 'follow-up: rounding of merged damage units')
+    r.case('A', 'FO-06 follow-up', 'X 2 at 101 units on 50% into Y 2 at 100 on 50%: units 201/4 = 50.25, rounded up 51 '
+           '(nearest: 50), 50%; repair -> 41/50')
+    p = r.spot()
+    y = r.fleet(0, p, f'{F}:2', dmg=f'{F}:100:50')
+    r.fleet(0, p, f'{F}:2', dmg=f'{F}:101:50', extra=f'target fleet 0 {y} task merge')
+    r.expect('fleet', (0, y), dict(ships=f'{F}:4', dmg={F: (41, 50)}))
+    out.append(r)
     return out
 
 
