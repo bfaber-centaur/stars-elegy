@@ -866,6 +866,207 @@ Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
 model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with the
 race keys of `scripts/oracle/hst-edit` (`ORACLE.md`).
 
+## Kernel Rule Sweep
+
+### KX-002 — untested BINARY-ONLY kernel rules
+
+Status: MEASURED (25 cases, 2026-10-07). Predictions were committed
+(`35e057e`) before any case ran; results follow them. 24 of 25 matched in
+every predicted field; G1 (overcrowding) did not, and the published rule
+was wrong by a factor of 2 (below).
+
+Question: which `KERNEL.md` rules still tagged BINARY-ONLY hold in the
+original, for the rules a playable game exercises every year? Chosen from a
+sweep of `KERNEL.md` on main (`96fd2e7`): habitability off the race
+centre, maximum population with HE, JOAT and OBRM, growth outside the one
+confirmed branch (`g < 1000`, overcrowding, within 10 of max, zero
+growth, hostile deaths), effective population above max, installation
+caps below 100% habitability, multi-turn mining with many mines and a
+homeworld concentration below 30, research cost settings, several
+level-ups in a year, next-field switching, Generalized Research, the
+level-26 cap, and terraforming (cost, Total Terraforming, range limits
+and axis choice). Remote mining and scrap belong to the takeover corpus;
+production rules PQ-001 confirmed are not repeated.
+
+Method: as KX-001. Each case edits PG001 2407 (`registered` snapshot;
+Endeavor, planet 7, the player's homeworld; race centre 50, range 15–85 on
+every axis, growth 10%, every stat 10 except mine cost 5) with
+`scripts/oracle/edit-turn` and generates one year (N2: three). Every case
+sets the growth carry to 0 unless stated. Population is in units of 100
+colonists. Predictions come from a script that implements the `KERNEL.md`
+rules as written (private evidence, `tools/kx2_model.py`); the terraform,
+cap and production rows are worked by hand from `KERNEL.md` "Production"
+and the terraforming rules in the binary reading (stated in each row).
+
+Races must stay inside the race wizard's point budget (`KERNEL.md`, "Item
+costs"). Cases that change the race (HE, JOAT, OBRM, TT, GR, research
+costs) are checked for message 0x117 and a changed race line; a case that
+trips it is void and reported as such.
+
+Nothing predicted below depends on a random draw: the N2 mineral outputs
+are exact multiples of 100 kT, so the `+1` draw never happens, and the
+other cases' mineral deltas are not predicted.
+
+#### Population and habitability (no production queue, so all resources go to research)
+
+| Case | Edits | hab | max | Predicted 2408 pop, carry | Discriminates |
+|---|---|---:|---:|---|---|
+| H1 | env 60/50/50, pop 1000 | 92 | 9,200 | 1092, 0 | hab vector 92 (each hab point is 10 units here) |
+| H2 | env 70/70/50, pop 1000 | 58 | 5,800 | 1058, 0 | two axes off centre |
+| H3 | env 80/80/80, pop 300 | 3 | 500 | 300, 24 | hab 3; max 500 below hab 5; crowded `g < 1000` branch (`g = 30 → 8`) |
+| H4 | env 85/50/50, pop 3000 | 41 | 4,100 | 3015, 60 | edge of range; crowded `g < 1000` (`g = 410 → 52`) |
+| H5 | env 90/50/50, pop 1000 | −5 | 500 | 995, 0 | hostile deaths |
+| H6 | env 10/95/50, pop 1234, carry 10 | −15 | 500 | 1215, 59 | hostile deaths with a carry borrow |
+| G1 | pop 12000 | 100 | 10,000 | 11949, 60 | overcrowded deaths |
+| G2 | pop 10005 | 100 | 10,000 | 10005, 0 | within 10 of max: frozen |
+| G3 | pop 9995 | 100 | 10,000 | 9995, 1 | zero growth adds 1 to the carry |
+| P1 | PRT HE, pop 3000 | 100 | 5,000 | 3168, 0 | HE: growth doubled (`g = 2000 → 560`) and max halved; with max 10,000 it would be 3522 |
+| P2 | PRT JOAT, pop 10005 | 100 | 12,000 | 10045, 2 | JOAT +20% (an ordinary race is frozen at 10005) |
+| P3 | LRT OBRM, pop 10005 | 100 | 11,000 | 10015, 0 | OBRM +10% |
+
+Research the same year (current field energy, levels 2/0/0/0/5/0, energy
+accumulated 65; resources `trunc(E/10) + 10` from 10 factories, with `E`
+the effective population):
+
+| Case | Research | Energy level, accumulated | Discriminates |
+|---|---:|---|---|
+| H1, H2 | 110 | 2, 175 | |
+| H3 | 40 | 2, 105 | |
+| H4, P1 | 310 | 3, 175 | |
+| H5 | 85 | 2, 150 | hostile planet above its max 500: `E = 500 + trunc(500/2) = 750` (not 1000) |
+| H6 | 96 | 2, 161 | same, `E = 500 + trunc(734/2) = 867` |
+| G1 | 1110 | 5, 255 | `E = 10000 + trunc(2000/2) = 11000` (1210 if `E = P`); three level-ups in one year |
+| G2, P2, P3 | 1010 | 5, 155 | |
+| G3 | 1009 | 5, 154 | |
+
+#### Mining over three years
+
+N2: pop 10000 (frozen at max, so the same every year), 1000 mines (all
+working: maximum and operable mines are both 1000), concentrations set to
+20/113/84 (ironium below the homeworld floor of 30), fractions as in PG001
+(242/86/157). Predicted:
+
+| Year | Surface gain Fe/Bo/Ge | Concentration | Fraction (stored, 0 = 256) | Energy level, accumulated |
+|---:|---|---|---|---|
+| 2408 | +300/+1130/+840 | 20/104/79 | 88/73/34 | 5, 155 |
+| 2409 | +300/+1040/+790 | 19/96/74 | 189/11/77 | 6, 515 |
+| 2410 | +300/+960/+740 | 19/88/70 | 35/241/11 | 7, 525 |
+
+What it tests: the floor (ironium output from 30, not 20: +300, not +200,
+while the stored value keeps falling, 20 → 19), depletion from the floored
+`prod` (2408 ironium fraction 88; 139 without the floor), the `cc = 25`
+clamp below 25 (118 with `cc = 20`), several concentration points in one
+year, and `cc` re-evaluated after each point (germanium 84 → 79 in one
+year; with `cc` fixed at 84 for the year the 2408 fraction would differ).
+Each later year starts from the files the earlier year wrote.
+
+#### Research settings (no production queue)
+
+| Case | Edits | Research | Predicted levels; accumulated; field byte | Discriminates |
+|---|---|---:|---|---|
+| R1 | energy "costs 75% more", biotech level 1, pop 2930 | 303 | energy 3; energy 0; current energy, next same | level 3 costs `2·210 − trunc(210/4) = 368`, exactly 65 + 303 (rounding the other way leaves 1) |
+| R2 | energy "costs 50% less", weapons "costs 75% more", pop 9900 | 1000 | energy 6; energy 280 | halved costs 100, 145, 215, 325; four level-ups |
+| R3 | next field "lowest", pop 3900 | 400 | 3/1/0/0/5/0; propulsion 135, others 0; current propulsion, next "lowest" | leftover chains energy → weapons (lowest, first of the tied zeros) → propulsion, and "lowest" stays set |
+| R4 | next field biotech, pop 2250 | 235 | energy 3; biotech 100, energy 0; current biotech, next "same" | leftover moves to the chosen field, and the choice resets |
+| R5 | LRT GR, pop 2010 | 211 | levels unchanged; 171/32/32/32/32/32 | GR split: current `trunc(212/2) = 106`, others `trunc((633+19)/20) = 32` |
+| R6 | energy level 26, pop 2010 | 211 | energy 26; energy still 65 | research into a level-26 field is lost |
+
+#### Installation caps below 100% habitability (production queue; PQ-001 common edits: mines 0, factories 0, defenses 10, research budget 0%, minerals 500/500/500)
+
+| Case | Edits | Caps | Predicted 2408 | Discriminates |
+|---|---|---|---|---|
+| C1 | env 70/70/50 (hab 58), pop 1000, Factory ×700 | max factories 580; operable 105 | order cut to 580 (message 0x12a); 10 factories; Ge 460; Factory ×570 @9%; research 0 | `max(10, trunc(5800·10/100))` (×690 if the cap were 1000) |
+| C2 | env 80/80/80 (hab 3), pop 500, defenses 0, Defenses ×50 | max defenses 12; operable 12 | cut to 12 (0x12a); 3 defenses; minerals 484 each; Defenses ×9 @39%; research 0 | `min(100, max(10, 4·hab))` (×47 if the cap were 100) |
+| C3 | env 85/50/50 (hab 41), pop 1000, Mine ×999 | max mines 410; operable 104 | cut to 410 (0x12a); 20 mines; Mine ×390 @19%; research 0 | `max(10, trunc(4100·10/100))` |
+
+#### Terraforming (production queue; same common edits)
+
+Rule being tested (binary reading, not yet in `KERNEL.md`): each
+Terraform Environment unit moves one axis one click toward the race
+centre. The reachable range on an axis is the planet's original value ±
+the best terraform the owner has for it (Total Terraforming counts for all
+three axes), clipped to 1–99 and stopping at the centre. Each unit picks
+the axis whose remaining range gives the largest average hab change per
+click (first axis on ties). An order larger than the clicks left is cut
+(message 0x12f). Cost 100 resources, 70 with TT.
+
+| Case | Edits | Range | Predicted 2408 | Discriminates |
+|---|---|---|---|---|
+| T1 | env and original 60/50/50, propulsion 1, biotech 1 (Gravity Terraform ±3), pop 2000 (200 resources), Terraform ×5 | gravity 60 → 57: 3 clicks | order cut to 3; 2 units: env 58/50/50; Terraform ×1 @0%; research 0 | cost 100; range ±3; cut to capacity |
+| T2 | LRT TT, env and original 60/45/50, pop 2000 (hab 87), Terraform ×5 | gravity 3, temperature 3: 6 clicks | not cut; 2 units, both temperature: env 60/47/50; Terraform ×3 @86%; research 0 | TT cost 70 (with 100: env 60/47/50, ×3 @0%); TT ±3 on all axes; axis choice (temperature scores 101 a click vs gravity 67) |
+| T3 | env 58/50/50, original 60/50/50, propulsion 1, biotech 1, pop 2000, Terraform ×5 | gravity down to 57 (60 − 3): 1 click | cut to 1; env 57/50/50; order done; research 100 | range measured from the original value, not the current one |
+
+#### Results
+
+Observed 2408 (2408–2410 for N2) in the generated `.HST`, with the `.M1`
+messages. No case got message 0x117, and every edited race was unchanged
+after the year, so all race edits were within the point budget.
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| H1 | pop 1092 carry 0; research 110; energy 2, 175 | match |
+| H2 | 1058, 0; 110; 2, 175 | match |
+| H3 | 300, 24; 40; 2, 105 | match |
+| H4 | 3015, 60; 310; 3, 175 | match |
+| H5 | 995, 0; 85; 2, 150 | match |
+| H6 | 1215, 59; 96; 2, 161 | match |
+| G1 | **11899, 20**; 1110; 5, 255 | population **differs** (predicted 11949, 60); research matches |
+| G2 | 10005, 0; 1010; 5, 155 | match |
+| G3 | 9995, 1; 1009; 5, 154 | match |
+| P1 (HE) | 3168, 0; 310; 3, 175 | match |
+| P2 (JOAT) | 10045, 2; 1010; 5, 155 | match |
+| P3 (OBRM) | 10015, 0; 1010; 5, 155 | match |
+| N2 | every surface gain, concentration and fraction in the table, all three years; research 1010 a year; energy 5/155, 6/515, 7/525 | match |
+| R1 | 303; levels 3/0/0/0/5/1; accumulated all 0 | match |
+| R2 | 1000; energy 6, 280; level-up messages for energy 3, 4, 5, 6 | match |
+| R3 | 400; levels 3/1/0/0/5/0; propulsion 135, others 0; current propulsion, next "lowest" | match |
+| R4 | 235; energy 3; biotech 100, energy 0; current biotech, next "same" | match |
+| R5 (GR) | 211; 171/32/32/32/32/32 | match |
+| R6 | 211; energy 26, still 65 | match |
+| C1 | message 0x12a; 10 factories; Ge 460; Factory ×570 @9%; research 0 | match |
+| C2 | 0x12a; 3 defenses; 484/484/484; Defenses ×9 @39%; research 0 | match |
+| C3 | 0x12a; 20 mines; Mine ×390 @19%; research 0 | match |
+| T1 | message 0x12f; two 0x7b; env 58/50/50; Terraform ×1 @0%; research 0 | match |
+| T2 (TT) | no cut; two 0x7b; env 60/47/50; Terraform ×3 @86%; research 0 | match |
+| T3 | 0x12f; env 57/50/50; queue empty; research 100 | match |
+
+G1: 12,000 units at max 10,000 lost 101 units and the carry went 0 → 20,
+which is `t = −10080`, i.e. `g = −84` = `4·(trunc(1200/−10) + 99)`. The
+published rule had `2·`. Re-reading the binary's population-change
+routine: the overcrowded branch doubles its value and then joins the
+quantized crowded branch at its final doubling, so the result is doubled
+twice. `KERNEL.md` now gives `4·max(−300, trunc(c/−10) + 99)` (deaths of
+at most 12% a year) as CONFIRMED at this one point. The `−300` floor
+itself is not reached by any case (it needs a population above 4 times
+the maximum).
+
+Interpretation:
+
+- Habitability, maximum population (including HE, JOAT, OBRM and the
+  floor of 500), every growth branch, hostile deaths and effective
+  population above max now have an oracle point each.
+- Mining: the homeworld floor applies to output and depletion while the
+  stored concentration keeps falling below 30, `cc` follows the stored
+  value within a year, and several points can go in one year.
+- Research: both cost settings (75% more rounds up), several level-ups a
+  year, switching to an explicit field or to the lowest field (with a
+  chain in one year), the GR split and the level-26 loss.
+- Installation caps below 100% habitability and the terraform rules
+  (cost, TT, range from the original value, capacity cut, axis score) are
+  as read.
+
+Still BINARY-ONLY after KX-002: the 15-click hostile cap, HE/JOAT/OBRM
+combined, the `2·max` limit on effective population, the `cc = 10`
+clamp, slower tech, the level-10 cap for capped players, Super Stealth
+research stealing, Claim Adjuster, auto terraform items, orbital
+adjusters, and ties in the terraform axis choice. Scores have no public
+rule yet, so there was nothing to test.
+
+Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
+`evidence/kx002/` (edited inputs, every resulting file, decoded dumps, the
+model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with
+the `hst-edit` keys `field=` and `conc=` added for this corpus.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the

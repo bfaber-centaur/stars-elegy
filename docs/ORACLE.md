@@ -536,6 +536,17 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   axis) and `starbase=0|1` on the planet. They edit player 1 only; `dump`
   prints the race line and the planet's starbase design slot. All of them
   took effect in KX-001 (2026-10-07).
+- Keys added for KX-002 (2026-10-07), all of which took effect:
+  `stat=8:V` … `stat=13:V` are the six research cost settings (energy …
+  biotech; 0 costs 75% more, 1 normal, 2 costs 50% less);
+  `field=CUR,NEXT` sets the research field byte (current field 0–5; next
+  field 0–5, 6 same field, 7 lowest field); `conc=I,B,G` sets the
+  planet's mineral concentrations and keeps its fraction bytes. `dump` now
+  prints `next=` on the research line and `frac=` (the stored length byte,
+  then one byte per mineral; a mineral with 2 length bits of 0 has no
+  byte) on the planet line. LRT bits used: 1 Total
+  Terraforming, 4 Generalized Research, 9 Only Basic Remote Mining.
+  `TURNS=3 edit-turn …` ran three years in a row without trouble.
 - An edited race must stay within the race wizard's point budget. KX-001
   M3 (cheaper factories and mines, nothing paid for them) was flagged in
   the generated year: message id 0x117 in the `.M1`, and the race's
