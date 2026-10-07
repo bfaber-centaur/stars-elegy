@@ -37,6 +37,8 @@ Checked against the existing message records before this batch was built:
 
 ## Predictions (stars-decomp reading)
 
+MG-003 was added after the MG-002 fuel cases missed, and committed before its own run.
+
 ### MG-001: PP packet terraforming and impact messages; a gate jump to an enemy gate
 
 | Case | Prediction | Setup | Predicted | Rules out |
@@ -62,4 +64,12 @@ Checked against the existing message records before this batch was built:
 | MG-002-G | M-5 | Laser DD, fuel 280 (full), load-optimal fuel at own planet 18, next leg 20 ly | the fuel above the need is unloaded: 0x02d (fuel), fleet keeps about the need | no message, fuel kept |
 | MG-002-H | M-5 | Laser DD, fuel 280, load-optimal fuel at own planet 19, no further waypoint | all fuel unloaded: 0x02d with 280, fuel 0 | fuel kept |
 | MG-002-I | M-5 | Laser DD, fuel 3, arrives at unowned planet 4 with load-optimal fuel, next leg about 350 ly | 0x126 (cannot load fuel there) after arrival | no message |
+
+### MG-003: load-optimal fuel with an own fleet as the target (follow-up to MG-002 E..I)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MG-003-A | M-5 | Laser DD X, fuel 50, load-optimal fuel targeting own empty Laser DD Y (deep space), next leg 340 ly at warp 6 | H1: 0x03c with the shortfall, X keeps 50, Y 0. H2: X gives all 50 to Y (0x02d 50) |  |
+| MG-003-B | M-5 | the same with X fuel 280 and a 20-ly next leg | H1: X keeps about the need for 20 ly and Y gets the rest (0x02d). H2: Y gets all 280 |  |
+| MG-003-C | M-5 | Scout X, fuel 2, next leg about 330 ly at warp 10, own empty Laser DD Y | H1: 0x03d (capacity 50 below the need) or 0x03c, X keeps 2. H2: Y gets 2 (0x02d) |  |
 

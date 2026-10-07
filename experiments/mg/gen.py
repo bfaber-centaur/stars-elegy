@@ -111,6 +111,25 @@ r.case('I', 'M-5', 'Laser DD, fuel 3, arrives at unowned planet 4 with load-opti
        '0x126 (cannot load fuel there) after arrival', 'no message')
 
 
+# ------------------------------------------------------------- MG-003 load-optimal fuel into a fleet (after MG-002 missed)
+# MG-002 E..I (planet targets) sent no fuel message at all and kept every fleet's fuel. Two readings remain:
+# H1 the need is the trip to the next waypoint and a planet simply takes no fuel; H2 the need is computed as 0,
+# so all fuel counts as surplus and is offered to the target. A fleet target takes fuel, which separates them.
+r = Run('MG-003', 'load-optimal fuel with an own fleet as the target (follow-up to MG-002 E..I)')
+for i, (x, y, ships, fuel, to, warp) in enumerate(((1040, 1230, '0:1', 50, (1380, 1230), 6),
+                                                  (1200, 1230, '0:1', 280, (1200, 1250), 6),
+                                                  (1100, 1230, '1:1', 2, (1390, 1390), 10))):
+    r.add('fleet 0 %d at %d %d ships 0:1 plan 0 fuel 0' % (2 * i + 1, x, y))
+    r.add('fleet 0 %d at %d %d ships %s plan 0 fuel %d target fleet 0 %d task transport -,-,-,-,7:0 to %d %d warp %d'
+          % (2 * i, x, y, ships, fuel, 2 * i + 1, to[0], to[1], warp))
+r.case('A', 'M-5', 'Laser DD X, fuel 50, load-optimal fuel targeting own empty Laser DD Y (deep space), next leg 340 ly '
+       'at warp 6', 'H1: 0x03c with the shortfall, X keeps 50, Y 0. H2: X gives all 50 to Y (0x02d 50)', '')
+r.case('B', 'M-5', 'the same with X fuel 280 and a 20-ly next leg',
+       'H1: X keeps about the need for 20 ly and Y gets the rest (0x02d). H2: Y gets all 280', '')
+r.case('C', 'M-5', 'Scout X, fuel 2, next leg about 330 ly at warp 10, own empty Laser DD Y',
+       'H1: 0x03d (capacity 50 below the need) or 0x03c, X keeps 2. H2: Y gets 2 (0x02d)', '')
+
+
 def main():
     if sys.argv[1:] == ['--list']:
         for r in RUNS:
