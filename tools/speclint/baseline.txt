@@ -2,6 +2,13 @@
 # Regenerate with: go run ./tools/speclint -write-baseline
 docs/COMPONENTS.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
+docs/COVERAGE.md	missing-file	LIMITS.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
