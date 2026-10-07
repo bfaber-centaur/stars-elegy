@@ -170,17 +170,15 @@ population-capacity purposes.
 
 ### Unknown / needs measurement
 
-- Exact growth formula above 25% capacity. Eleven consecutive turns are
-  measured (PG-002 and PG-003: 27.04% to 51.90%). They reject H0, H1 and H2
-  as stated, and identify nothing. Observed growth sits 0–4 units below
-  truncated 16/9 × (1 − x)².
-- `excessPop` across the crowded turns. It has not yet been extracted from
-  the preserved PG-002/PG-003 `.HST` files (apparatus `evidence/pg002/`,
-  `evidence/pg003/`). PG-001 showed this byte tracking the growth carry
-  exactly in the uncrowded case (same decoder: StarsAPI `PartialPlanetBlock`,
-  see "Binary confirmation from `.HST`"). Whether it means the same thing
-  under crowding is open, but it is an existing observable, not an
-  inaccessible quantity.
+- ~~Exact growth formula above 25% capacity.~~ Resolved: CONFIRMED in
+  `KERNEL.md` ("Population growth"). The white-box rule (16/9 × (1 − x)²
+  evaluated in integer permille of capacity, then the carry) reproduces
+  every population 2400–2436, including the eleven crowded turns of PG-002
+  and PG-003 that rejected H0, H1 and H2 as stated below.
+- ~~`excessPop` across the crowded turns.~~ Resolved: decoded from the
+  preserved PG-003 `.HST` files (apparatus `evidence/pg003/`) for
+  2408–2436; it matches the carry of the same rule every year (values in
+  `KERNEL.md`).
 - Exact handling of `excessPop` / growth carry when habitability or crowding
   introduces additional fractional modifiers.
 - Whether growth carry persists across ordinary gameplay changes to effective
