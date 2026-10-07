@@ -14,9 +14,9 @@ Notation: `y` = year index; `lvl` = AI level 0..3 (easy, standard,
 harder, expert); slot `k` = own ship design slot; `n(k)` = ships of
 design `k` alive; `age(k)` = `y` − creation year of design `k`. A slot
 deleted earlier in the same turn keeps its old creation year. An empty
-slot read at the start of a turn probably counts creation year 0 when
-Robotoid is the first computer player in the host's run (as in AIX, where
-the prediction matched every year), and otherwise carries the
+slot read at the start of a turn counts creation year 0 when Robotoid is
+the first computer player in the host's run (as in AIX), and otherwise
+carries the
 previous computer player's design in that slot (`../AI.md` §1, "State
 leaking between computer players", LEGACY BUG). Tech fields are
 energy, weapons, propulsion, construction, electronics and biotech.

@@ -92,8 +92,9 @@ as never used, and the armada parameters below are the personality's own.
   same run) left it. A rule that reads an empty slot's creation year
   without first checking that the slot holds a design therefore reads the
   previous player's design in that slot. For the first computer player in
-  the run the slot probably reads as never used (inferred, not yet read).
-  Known readers:
+  the run an empty slot reads as all zero, creation year 0: loading the
+  host file does not touch this table (BINARY-ONLY; that no other load
+  precedes the first computer player is inferred). Known readers:
   - Macinti's warship rule reads slot `s − 1`'s creation year this way.
     In AIX, Macinti's slot 4 followed Cybertron's slot-3 design (created
     2442), so Macinti did not create slot 4 in 2445–2460 although it
@@ -104,13 +105,15 @@ as never used, and the armada parameters below are the personality's own.
     presence check (docs/ai/robotoid.md §2). Robotoid is often the first
     computer player in a run, as in AIX, where this never mattered.
   - Cybertron checks presence first and is not affected.
-- **Armada parameters.** The armada potency and size (§11 "Armada
-  (invasion) fleets") are shared values that a personality sets during
-  its own turn. Robotoid and Macinti set them (Macinti's potency starts at
-  6, Robotoid's at 4). Cybertron's armada rules read them without setting
-  them, so Cybertron uses the values left by the last computer player
-  before it in the same run that set them. Which value it sees when no
-  earlier player set them is not yet read.
+- **Armada parameters.** The armada potency and size and the two values
+  derived from them (§11 "Armada (invasion) fleets") are shared values
+  that Robotoid, Turindrone, Automitron and Macinti set during their own
+  turns (Robotoid's potency starts at 4, Macinti's at 6). Cybertron's
+  armada targeting reads them but never sets them (its own copies are
+  never read). So Cybertron uses the values left by the last of those
+  computer players that ran before it in the same run, or all 0 when none
+  did. In AIX, Automitron runs just before Cybertron, so the values
+  happened to match Cybertron's own formulas.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
