@@ -48,6 +48,9 @@ docs/ORDERS.md	pr-ref	cites PR #57: context in stars-elegy #57, `PRODUCTION-LAUN
 docs/ORDERS.md	pr-ref	cites PR #59: battle-plan number against the owner's plans. See #59 for plan semantics (the
 docs/ORDERS.md	pr-ref	cites PR #59: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #65: not reproduce the whole-file abort. (See `LIMITS.md`, stars-elegy #65.)
+docs/ORDERS.md	pr-ref	cites PR #65: progress from a crafted percentage. (See `LIMITS.md`, stars-elegy #65.)
+docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
+docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (a two-waypoint repeat fleet came back with only the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three

@@ -184,7 +184,7 @@ BINARY-ONLY.
   Confirming the hull-keep and the engine back-fill needs the OX runs.
 - **Battle-plan fields.** BINARY-ONLY and LEGACY BUG (plan semantics from the
   combat decomp, stars-elegy #59 / stars-decomp #28; order validation
-  `COMBAT.md` "Order validation", stars-elegy #71). The original does **not**
+  `COMBAT.md` "Order validation", stars-elegy #72). The original does **not**
   range-check a battle-plan definition: a hand-built definition with a tactic
   of **6** or a primary or secondary **target of 8** — each exactly one past
   its legal set — is stored as given, and one can even **delete plan 0** (the
@@ -256,9 +256,14 @@ unmatched **old partial item of the same id and kind**. A submitted item that
 finds such a match keeps its **submitted (client) percent**; one that does not
 has its percent set to **0**. So the host trusts the percent the client sent
 rather than recomputing from the old item's accumulated progress — LEGACY BUG.
-**Elegy's chosen rule:** on a match, keep the **old** item's accumulated
-percent instead of the client's submitted value (`LIMITS.md` records this
-choice next to the host behaviour).
+
+**Elegy's chosen rule.** A submitted item with a nonzero percentage keeps it
+only if the old queue holds an as-yet unmatched item with the **same item id,
+the same kind, and exactly that percentage** (that old item is then used up);
+otherwise the percentage becomes **0**. Items are taken in **queue order**.
+This matches the original for every legal client queue — where the client's
+submitted percent is the old item's true percent — and never fabricates
+progress from a crafted percentage. (See `LIMITS.md`, stars-elegy #65.)
 
 **Production-queue client limits (setting orders).** BINARY-ONLY (`LIMITS.md`
 "Setting orders", stars-elegy #65). The limits the registered client enforces
@@ -279,9 +284,10 @@ them is reachable only by a crafted file (serial-gated).
 
 A *cargo transfer* order (the manual transfer, as opposed to a waypoint
 transfer task) is resolved **in place while orders are applied** (turn order
-step 1), not deferred to movement. The mechanics below are CONFIRMED; see
-`TAKEOVER.md` "Manual cargo transfers to other players" (stars-elegy #69,
-commit `9cef650`; colonist drop CONFIRMED by TK-501).
+step 1), not deferred to movement. See `TAKEOVER.md` "Manual cargo transfers
+to other players" (stars-elegy #69, commit `9cef650`). The colonist drop is
+CONFIRMED (TK-501); the in-place fleet gift credit is MEASURED (TK-406, TK-407,
+TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 
 A transfer whose source and destination have the **same** owner is applied in
 place at order time, subject to the destination's capacity. A cross-owner
