@@ -151,8 +151,8 @@ random stream and for the plan-0 legacy bug below.
    unarmed station, with an unarmed visitor, or with plan 0 "nobody".
 6. **During the battle**, a player's attack set is the one these steps
    produced. It does not change.
-7. **Token cap** (CONFIRMED, CB-039: exact token counts and left-out
-   fleets in both streams). At most 255 tokens.
+7. **Token cap** (CONFIRMED, CB-039 and CB-042..CB-044: exact token
+   counts and left-out fleets, two streams each). At most 255 tokens.
    - Count the stacks of every fleet of a player in `P`, plus 1 for a
      starbase token. If that is at most 255, everything fights.
    - Otherwise each involved player gets a quota of `255 / n` stacks
@@ -172,6 +172,15 @@ random stream and for the plan-0 legacy bug below.
      139..14 joined. That is 254 stacks; the second pass added player 1's
      fleet 12, for 255. Player 0's fleets 1..13 and player 1's fleets
      0..11 sat out.
+   - CB-042 (three players with 100 one-ship fleets each, quota 85): 85
+     each, for 255. Player 0's fleets 1..15 and players 1 and 2's fleets
+     0..14 sat out.
+   - CB-043 (at player 1's planet with an armed Orbital Fort; 140 and 131
+     fleets, one of them with three designs): 127 stacks each plus the
+     Fort. Player 0's fleets 1..13 and player 1's fleets 0..5 sat out.
+   - CB-044 (CB-039 with player 1's fleet 12 holding two designs): 255
+     tokens, 127 and 128. Player 1's fleet 12 sat out and fleet 11
+     fought.
    - Players with a left-out fleet are told that some fleets missed the
      battle.
 8. **Excluded fleets** (BINARY-ONLY): a fleet carrying a particular
@@ -367,7 +376,10 @@ armor, it does not trust a stored value):
     fleet gave 70, code 1). A design without cargo capacity adds nothing.
   - CONFIRMED by the designer (CB-000, 32/32) without the battle-only
     terms. War Monger `+2` and the cargo term are CONFIRMED in battle
-    (CB-038, six stacks, two streams). The dump term is CONFIRMED by
+    (CB-038, six stacks, two streams; CB-045, two streams: a Medium and a
+    Small Freighter sharing 140 kT weighed 174 and 69, and three Medium
+    Freighters weighed 139 each with 212 kT and 140 with 213 kT, so the
+    share is truncated per ship). The dump term is CONFIRMED by
     CB-025.
 
 ### Starbases in battle
@@ -709,7 +721,10 @@ reduction.
 5. If the target died and damage `L` is left over, the next target
    receives `R' = min(R − 1, R·L/dp)`, recomputed from step 1 (deflector
    and dropoff again). Otherwise the slot is done. CONFIRMED (CB-010):
-   59 of 59 hits; carrying `L` itself mismatched 8.
+   59 of 59 hits; carrying `L` itself mismatched 8. CB-042 (two
+   three-player streams, 255 one-ship tokens): every hit replayed,
+   including the carried hits. The carried amount belongs to that one
+   shot; a token's next shot starts again from `R`.
 
 **Gatling** (Gatling Gun, Mini Gun, Gatling Neutrino Cannon; CONFIRMED,
 CB-002, CB-003, CB-005; P-13):
@@ -827,8 +842,13 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
   - Shields took 90 + 100 + 100 + 100.
   - The fifth hit put its last 10 into shields and 90 into armor (90/500).
   - Then 190, 290, 390 and 490; the next hit (total 590) destroyed it.
-- Otherwise the starbase is destroyed. The planet no longer has one, and
-  ships and packets queued for building there are lost (BINARY-ONLY).
+- Otherwise the starbase is destroyed. The planet no longer has one.
+  Ship items in its production queue are removed; planetary items
+  stay (CONFIRMED, CB-047, two streams: a queue of 50 Destroyers
+  then 20 factories kept only the factories, while the control without
+  attackers kept both). Production comes before battles, so a ship built
+  that year still fights. Packets queued there are lost too
+  (BINARY-ONLY).
 - Either way, **no damage is left over** after a hit on a starbase. A
   beam stops there, even after destroying it (BINARY-ONLY).
 - Destroying an Alternate Reality race's starbase leaves the planet
@@ -963,13 +983,13 @@ A tech attempt, for one player:
 1. If the player has already gained from a battle this turn, nothing
    happens and no draws are made.
 2. `rand(100)`; below 50, nothing happens.
-3. Up to 13 tries. Each try draws `rand(13)` for a Mystery Trader item.
-   The item is given if:
-   - it appeared among the destroyed ships with some chance `c`;
-   - the player does not have it;
-   - `rand(100) < c`.
-
-   A success ends the attempt.
+3. Up to 13 tries. Each try draws `rand(13)` for a Mystery Trader item
+   index `k`. If item `k` has a chance `c > 0` in this battle and the
+   player does not have it, a second draw `rand(100)` is made, and
+   `rand(100) < c` gives the item. A success ends the attempt. Otherwise
+   (including `c = 0` or an item already owned, which make no second
+   draw) the next try follows. The chances are under "Mystery Trader
+   chances" below.
 4. Otherwise up to 6 tries of `rand(6)` for a field. The first field
    where the player's level is below the seen level gains research equal
    to the **cost of its next level**. Under slow tech that is half the
@@ -978,6 +998,44 @@ A tech attempt, for one player:
 
 With no trader items in play and exactly one field behind, the chance is
 `½ · (1 − (5/6)^6) ≈ 0.33` per attempt.
+
+**Mystery Trader chances** (BINARY-ONLY; consistent with CB-046 per
+stream, below). Every item's chance is 0 when the battle starts. Each
+time a hit destroys at least one ship of a token, every slot of that
+token's design that holds a Mystery Trader part adds the slot's part count
+to that item's chance, up to 25 (`c = min(25, c + count)`). So the chance
+counts kill events, not ships killed, and a design reaches 25 only after
+several kill events or with many parts. The hull never counts, so the
+Mystery Trader hulls never get a chance in battle. The item indices `k`:
+
+| `k` | item | `k` | item |
+|---|---|---|---|
+| 0 | Multi Cargo Pod | 7 | Multi Contained Munition |
+| 1 | Multi Function Pod | 8 | (a hull: never in battle) |
+| 2 | Langston Shell | 9 | Enigma Pulsar |
+| 3 | Mega Poly Shell | 10 | (a hull: never in battle) |
+| 4 | Alien Miner | 11 | Jump Gate |
+| 5 | Hush-a-Boom | 12 | (a hull: never in battle) |
+| 6 | Anti Matter Torpedo | | |
+
+With chances `c_k`, one attempt gains an item with probability about
+`½ · (1 − (1 − Σc_k/1300)^13)`; at most 25 per item keeps this small.
+
+CB-046 (36 streams): six Destroyers with two Anti Matter Torpedoes each
+died in four kill events (chance 8), and three armed Mini Morphs with
+five Mystery Trader part types died in two (chances 6, 2, 2, 2 and 4).
+No item was gained in any stream. Every move of these battles was
+replayed from its stream, and the draws after each battle predict no item
+in all 36: where the gate passed, every `rand(100)` for a chanced item
+was at or above its chance. The closest draws were 7 for the Enigma
+Pulsar (chance 4), 10 for the Multi Function Pod (2) and 11 for the Multi
+Cargo Pod (6). So chances of 8, 11 and 12 or more for those items are
+ruled out. Counting ships killed instead of kill events (chances 6, 3
+and 9) is not. The `cb046-bio` control (the same 12 battle streams with
+the attacker at biotechnology 3) gained biotechnology in exactly the two
+streams the replay predicts (12000 and 50000 cycles), which pins the
+attempt's place in the stream. So the observations agree with these
+rules but do not yet show a nonzero chance working.
 
 Research gained this way raises the level **in the same turn**. After
 battles, the post-movement waypoint phase checks research level-ups a
@@ -1043,21 +1101,24 @@ draws come in that order.
 
 ## Open experiments
 
-Rounds 3 to 5 (CB-020..CB-041) are done. Every rule they tested is
+Rounds 3 to 6 (CB-020..CB-047) are done. Every rule they tested is
 tagged with its result. The misses were the predictions, not the rules:
 CB-032 (explained under "Disengaging"), the CB-035 retaliation
-prediction, the CB-038 two-ship stack, the CB-039 total and split, and the
-CB-041 JOAT control (chance, per the replay).
+prediction, the CB-038 two-ship stack, the CB-039 total and split, the
+CB-041 JOAT control (chance, per the replay), and CB-046 (no Mystery
+Trader item; the chances were small and the replay predicts no gain in
+every stream). The one CB-042 hit per stream that did not replay was a
+checker defect (it reused an earlier shot's carried amount), not a rule.
 
 Not yet tested:
 
-- the token cap with more than two involved players, with a starbase,
-  and with multi-design fleets (a left-out fleet whose stacks no longer
-  fit is skipped by the second pass, which goes on to later fleets);
+- a nonzero Mystery Trader chance actually giving an item. A setup that
+  reaches 25 on several items (for example many one-ship fleets of a
+  Mini Morph carrying five Mystery Trader part types) gives about a
+  third per stream, and the replay can name the gaining streams from the
+  battle record;
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
-- Mystery Trader items from battle;
-- queued ships lost with a starbase;
 - salvage at more than one point.
 
 The firing live-token recheck has no observable effect (see "Firing").

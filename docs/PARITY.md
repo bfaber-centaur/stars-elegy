@@ -2350,7 +2350,10 @@ queues and Mystery Trader parts".
   - CB-039 with player 1's fleet 12 holding two designs: 255 tokens, 127 /
     128; fleet 12 sat out and fleet 11 fought.
   - The checker replayed every hit except one carried-damage hit in each
-    three-player stream (open for the decomp pass).
+    three-player stream. Resolved after the round: a checker defect (it
+    retried an earlier shot's carried amount, which also killed, and so
+    carried the wrong rest). Fixed in stars-decomp `tools/combat.py`, every
+    hit of both streams replays.
 - **Cargo in the speed code, CONFIRMED (CB-045, 2 streams).** Each ship's
   mass is its design mass plus `C · c / F`, truncated (fleet cargo `C`,
   the ship's cargo capacity `c`, fleet capacity `F`): a Medium and a Small
@@ -2367,7 +2370,13 @@ queues and Mystery Trader parts".
   Anti Matter Torpedo Destroyers (12 streams) or three Mini Morphs with
   five more Mystery Trader parts (12 streams) and never gained an item.
   With its biotechnology at 3 instead, the same 12 streams gave a
-  biotechnology level in 2 and still no item, so attempts happen. Open.
+  biotechnology level in 2 and still no item, so attempts happen.
+  Resolved after the round by the Combat decomp pass (COMBAT.md "Mystery
+  Trader chances"): a part's chance grows by its slot count per kill
+  event, up to 25, so these battles gave chances of 2 to 8. An exact
+  replay of every battle from its stream predicts no item in all 36
+  streams and the two biotechnology gains exactly. A nonzero chance
+  giving an item is still untested.
 
 ### Resolved reconciliation
 
