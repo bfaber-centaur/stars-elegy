@@ -1,7 +1,7 @@
 {
  "schema": "stars-elegy-vector/1",
- "id": "MF-11c",
- "title": "MF 11c",
+ "id": "MF-13c",
+ "title": "MF 13c",
  "years": 1,
  "random": "single_stream",
  "streams": 1,
@@ -1133,7 +1133,7 @@
   ],
   "fleets": [
    {
-    "owner": 0,
+    "owner": 1,
     "id": 0,
     "x": 1100,
     "y": 1300,
@@ -1166,47 +1166,23 @@
       }
      }
     ]
-   },
-   {
-    "owner": 0,
-    "id": 1,
-    "x": 1010,
-    "y": 1010,
-    "orbiting": null,
-    "ships": [
-     {
-      "design": 5,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 280,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1010,
-      "y": 1010,
-      "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "lay_mines",
-       "years": "indefinitely"
-      }
-     }
-    ]
    }
   ],
   "objects": [
    {
     "kind": "minefield",
     "owner": 0,
+    "id": 0,
+    "x": 1400,
+    "y": 1400,
+    "mines": 100,
+    "type": "standard",
+    "detonating": false,
+    "known_to": []
+   },
+   {
+    "kind": "minefield",
+    "owner": 1,
     "id": 0,
     "x": 1005,
     "y": 1005,
@@ -1217,7 +1193,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 1,
     "x": 1006,
     "y": 1005,
@@ -1228,7 +1204,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 2,
     "x": 1007,
     "y": 1005,
@@ -1239,7 +1215,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 3,
     "x": 1008,
     "y": 1005,
@@ -1250,7 +1226,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 4,
     "x": 1009,
     "y": 1005,
@@ -1261,7 +1237,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 5,
     "x": 1010,
     "y": 1005,
@@ -1272,7 +1248,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 6,
     "x": 1011,
     "y": 1005,
@@ -1283,7 +1259,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 7,
     "x": 1012,
     "y": 1005,
@@ -1294,7 +1270,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 8,
     "x": 1013,
     "y": 1005,
@@ -1305,7 +1281,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 9,
     "x": 1014,
     "y": 1005,
@@ -1316,7 +1292,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 10,
     "x": 1015,
     "y": 1005,
@@ -1327,7 +1303,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 11,
     "x": 1016,
     "y": 1005,
@@ -1338,7 +1314,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 12,
     "x": 1017,
     "y": 1005,
@@ -1349,7 +1325,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 13,
     "x": 1018,
     "y": 1005,
@@ -1360,7 +1336,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 14,
     "x": 1019,
     "y": 1005,
@@ -1371,7 +1347,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 15,
     "x": 1020,
     "y": 1005,
@@ -1382,7 +1358,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 16,
     "x": 1021,
     "y": 1005,
@@ -1393,7 +1369,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 17,
     "x": 1022,
     "y": 1005,
@@ -1404,7 +1380,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 18,
     "x": 1023,
     "y": 1005,
@@ -1415,7 +1391,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 19,
     "x": 1024,
     "y": 1005,
@@ -1426,7 +1402,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 20,
     "x": 1025,
     "y": 1005,
@@ -1437,7 +1413,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 21,
     "x": 1026,
     "y": 1005,
@@ -1448,7 +1424,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 22,
     "x": 1027,
     "y": 1005,
@@ -1459,7 +1435,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 23,
     "x": 1005,
     "y": 1006,
@@ -1470,7 +1446,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 24,
     "x": 1006,
     "y": 1006,
@@ -1481,7 +1457,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 25,
     "x": 1007,
     "y": 1006,
@@ -1492,7 +1468,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 26,
     "x": 1008,
     "y": 1006,
@@ -1503,7 +1479,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 27,
     "x": 1009,
     "y": 1006,
@@ -1514,7 +1490,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 28,
     "x": 1010,
     "y": 1006,
@@ -1525,7 +1501,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 29,
     "x": 1011,
     "y": 1006,
@@ -1536,7 +1512,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 30,
     "x": 1012,
     "y": 1006,
@@ -1547,7 +1523,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 31,
     "x": 1013,
     "y": 1006,
@@ -1558,7 +1534,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 32,
     "x": 1014,
     "y": 1006,
@@ -1569,7 +1545,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 33,
     "x": 1015,
     "y": 1006,
@@ -1580,7 +1556,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 34,
     "x": 1016,
     "y": 1006,
@@ -1591,7 +1567,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 35,
     "x": 1017,
     "y": 1006,
@@ -1602,7 +1578,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 36,
     "x": 1018,
     "y": 1006,
@@ -1613,7 +1589,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 37,
     "x": 1019,
     "y": 1006,
@@ -1624,7 +1600,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 38,
     "x": 1020,
     "y": 1006,
@@ -1635,7 +1611,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 39,
     "x": 1021,
     "y": 1006,
@@ -1646,7 +1622,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 40,
     "x": 1022,
     "y": 1006,
@@ -1657,7 +1633,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 41,
     "x": 1023,
     "y": 1006,
@@ -1668,7 +1644,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 42,
     "x": 1024,
     "y": 1006,
@@ -1679,7 +1655,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 43,
     "x": 1025,
     "y": 1006,
@@ -1690,7 +1666,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 44,
     "x": 1026,
     "y": 1006,
@@ -1701,7 +1677,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 45,
     "x": 1027,
     "y": 1006,
@@ -1712,7 +1688,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 46,
     "x": 1005,
     "y": 1007,
@@ -1723,7 +1699,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 47,
     "x": 1006,
     "y": 1007,
@@ -1734,7 +1710,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 48,
     "x": 1007,
     "y": 1007,
@@ -1745,7 +1721,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 49,
     "x": 1008,
     "y": 1007,
@@ -1756,7 +1732,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 50,
     "x": 1009,
     "y": 1007,
@@ -1767,7 +1743,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 51,
     "x": 1010,
     "y": 1007,
@@ -1778,7 +1754,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 52,
     "x": 1011,
     "y": 1007,
@@ -1789,7 +1765,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 53,
     "x": 1012,
     "y": 1007,
@@ -1800,7 +1776,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 54,
     "x": 1013,
     "y": 1007,
@@ -1811,7 +1787,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 55,
     "x": 1014,
     "y": 1007,
@@ -1822,7 +1798,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 56,
     "x": 1015,
     "y": 1007,
@@ -1833,7 +1809,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 57,
     "x": 1016,
     "y": 1007,
@@ -1844,7 +1820,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 58,
     "x": 1017,
     "y": 1007,
@@ -1855,7 +1831,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 59,
     "x": 1018,
     "y": 1007,
@@ -1866,7 +1842,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 60,
     "x": 1019,
     "y": 1007,
@@ -1877,7 +1853,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 61,
     "x": 1020,
     "y": 1007,
@@ -1888,7 +1864,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 62,
     "x": 1021,
     "y": 1007,
@@ -1899,7 +1875,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 63,
     "x": 1022,
     "y": 1007,
@@ -1910,7 +1886,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 64,
     "x": 1023,
     "y": 1007,
@@ -1921,7 +1897,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 65,
     "x": 1024,
     "y": 1007,
@@ -1932,7 +1908,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 66,
     "x": 1025,
     "y": 1007,
@@ -1943,7 +1919,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 67,
     "x": 1026,
     "y": 1007,
@@ -1954,7 +1930,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 68,
     "x": 1027,
     "y": 1007,
@@ -1965,7 +1941,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 69,
     "x": 1005,
     "y": 1008,
@@ -1976,7 +1952,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 70,
     "x": 1006,
     "y": 1008,
@@ -1987,7 +1963,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 71,
     "x": 1007,
     "y": 1008,
@@ -1998,7 +1974,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 72,
     "x": 1008,
     "y": 1008,
@@ -2009,7 +1985,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 73,
     "x": 1009,
     "y": 1008,
@@ -2020,7 +1996,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 74,
     "x": 1010,
     "y": 1008,
@@ -2031,7 +2007,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 75,
     "x": 1011,
     "y": 1008,
@@ -2042,7 +2018,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 76,
     "x": 1012,
     "y": 1008,
@@ -2053,7 +2029,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 77,
     "x": 1013,
     "y": 1008,
@@ -2064,7 +2040,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 78,
     "x": 1014,
     "y": 1008,
@@ -2075,7 +2051,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 79,
     "x": 1015,
     "y": 1008,
@@ -2086,7 +2062,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 80,
     "x": 1016,
     "y": 1008,
@@ -2097,7 +2073,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 81,
     "x": 1017,
     "y": 1008,
@@ -2108,7 +2084,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 82,
     "x": 1018,
     "y": 1008,
@@ -2119,7 +2095,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 83,
     "x": 1019,
     "y": 1008,
@@ -2130,7 +2106,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 84,
     "x": 1020,
     "y": 1008,
@@ -2141,7 +2117,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 85,
     "x": 1021,
     "y": 1008,
@@ -2152,7 +2128,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 86,
     "x": 1022,
     "y": 1008,
@@ -2163,7 +2139,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 87,
     "x": 1023,
     "y": 1008,
@@ -2174,7 +2150,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 88,
     "x": 1024,
     "y": 1008,
@@ -2185,7 +2161,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 89,
     "x": 1025,
     "y": 1008,
@@ -2196,7 +2172,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 90,
     "x": 1026,
     "y": 1008,
@@ -2207,7 +2183,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 91,
     "x": 1027,
     "y": 1008,
@@ -2218,7 +2194,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 92,
     "x": 1005,
     "y": 1009,
@@ -2229,7 +2205,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 93,
     "x": 1006,
     "y": 1009,
@@ -2240,7 +2216,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 94,
     "x": 1007,
     "y": 1009,
@@ -2251,7 +2227,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 95,
     "x": 1008,
     "y": 1009,
@@ -2262,7 +2238,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 96,
     "x": 1009,
     "y": 1009,
@@ -2273,7 +2249,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 97,
     "x": 1010,
     "y": 1009,
@@ -2284,7 +2260,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 98,
     "x": 1011,
     "y": 1009,
@@ -2295,7 +2271,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 99,
     "x": 1012,
     "y": 1009,
@@ -2306,7 +2282,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 100,
     "x": 1013,
     "y": 1009,
@@ -2317,7 +2293,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 101,
     "x": 1014,
     "y": 1009,
@@ -2328,7 +2304,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 102,
     "x": 1015,
     "y": 1009,
@@ -2339,7 +2315,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 103,
     "x": 1016,
     "y": 1009,
@@ -2350,7 +2326,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 104,
     "x": 1017,
     "y": 1009,
@@ -2361,7 +2337,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 105,
     "x": 1018,
     "y": 1009,
@@ -2372,7 +2348,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 106,
     "x": 1019,
     "y": 1009,
@@ -2383,7 +2359,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 107,
     "x": 1020,
     "y": 1009,
@@ -2394,7 +2370,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 108,
     "x": 1021,
     "y": 1009,
@@ -2405,7 +2381,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 109,
     "x": 1022,
     "y": 1009,
@@ -2416,7 +2392,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 110,
     "x": 1023,
     "y": 1009,
@@ -2427,7 +2403,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 111,
     "x": 1024,
     "y": 1009,
@@ -2438,7 +2414,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 112,
     "x": 1025,
     "y": 1009,
@@ -2449,7 +2425,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 113,
     "x": 1026,
     "y": 1009,
@@ -2460,7 +2436,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 114,
     "x": 1027,
     "y": 1009,
@@ -2471,7 +2447,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 115,
     "x": 1005,
     "y": 1010,
@@ -2482,7 +2458,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 116,
     "x": 1006,
     "y": 1010,
@@ -2493,7 +2469,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 117,
     "x": 1007,
     "y": 1010,
@@ -2504,7 +2480,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 118,
     "x": 1008,
     "y": 1010,
@@ -2515,7 +2491,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 119,
     "x": 1009,
     "y": 1010,
@@ -2526,7 +2502,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 120,
     "x": 1010,
     "y": 1010,
@@ -2537,7 +2513,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 121,
     "x": 1011,
     "y": 1010,
@@ -2548,7 +2524,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 122,
     "x": 1012,
     "y": 1010,
@@ -2559,7 +2535,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 123,
     "x": 1013,
     "y": 1010,
@@ -2570,7 +2546,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 124,
     "x": 1014,
     "y": 1010,
@@ -2581,7 +2557,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 125,
     "x": 1015,
     "y": 1010,
@@ -2592,7 +2568,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 126,
     "x": 1016,
     "y": 1010,
@@ -2603,7 +2579,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 127,
     "x": 1017,
     "y": 1010,
@@ -2614,7 +2590,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 128,
     "x": 1018,
     "y": 1010,
@@ -2625,7 +2601,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 129,
     "x": 1019,
     "y": 1010,
@@ -2636,7 +2612,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 130,
     "x": 1020,
     "y": 1010,
@@ -2647,7 +2623,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 131,
     "x": 1021,
     "y": 1010,
@@ -2658,7 +2634,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 132,
     "x": 1022,
     "y": 1010,
@@ -2669,7 +2645,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 133,
     "x": 1023,
     "y": 1010,
@@ -2680,7 +2656,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 134,
     "x": 1024,
     "y": 1010,
@@ -2691,7 +2667,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 135,
     "x": 1025,
     "y": 1010,
@@ -2702,7 +2678,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 136,
     "x": 1026,
     "y": 1010,
@@ -2713,7 +2689,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 137,
     "x": 1027,
     "y": 1010,
@@ -2724,7 +2700,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 138,
     "x": 1005,
     "y": 1011,
@@ -2735,7 +2711,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 139,
     "x": 1006,
     "y": 1011,
@@ -2746,7 +2722,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 140,
     "x": 1007,
     "y": 1011,
@@ -2757,7 +2733,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 141,
     "x": 1008,
     "y": 1011,
@@ -2768,7 +2744,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 142,
     "x": 1009,
     "y": 1011,
@@ -2779,7 +2755,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 143,
     "x": 1010,
     "y": 1011,
@@ -2790,7 +2766,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 144,
     "x": 1011,
     "y": 1011,
@@ -2801,7 +2777,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 145,
     "x": 1012,
     "y": 1011,
@@ -2812,7 +2788,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 146,
     "x": 1013,
     "y": 1011,
@@ -2823,7 +2799,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 147,
     "x": 1014,
     "y": 1011,
@@ -2834,7 +2810,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 148,
     "x": 1015,
     "y": 1011,
@@ -2845,7 +2821,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 149,
     "x": 1016,
     "y": 1011,
@@ -2856,7 +2832,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 150,
     "x": 1017,
     "y": 1011,
@@ -2867,7 +2843,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 151,
     "x": 1018,
     "y": 1011,
@@ -2878,7 +2854,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 152,
     "x": 1019,
     "y": 1011,
@@ -2889,7 +2865,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 153,
     "x": 1020,
     "y": 1011,
@@ -2900,7 +2876,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 154,
     "x": 1021,
     "y": 1011,
@@ -2911,7 +2887,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 155,
     "x": 1022,
     "y": 1011,
@@ -2922,7 +2898,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 156,
     "x": 1023,
     "y": 1011,
@@ -2933,7 +2909,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 157,
     "x": 1024,
     "y": 1011,
@@ -2944,7 +2920,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 158,
     "x": 1025,
     "y": 1011,
@@ -2955,7 +2931,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 159,
     "x": 1026,
     "y": 1011,
@@ -2966,7 +2942,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 160,
     "x": 1027,
     "y": 1011,
@@ -2977,7 +2953,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 161,
     "x": 1005,
     "y": 1012,
@@ -2988,7 +2964,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 162,
     "x": 1006,
     "y": 1012,
@@ -2999,7 +2975,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 163,
     "x": 1007,
     "y": 1012,
@@ -3010,7 +2986,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 164,
     "x": 1008,
     "y": 1012,
@@ -3021,7 +2997,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 165,
     "x": 1009,
     "y": 1012,
@@ -3032,7 +3008,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 166,
     "x": 1010,
     "y": 1012,
@@ -3043,7 +3019,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 167,
     "x": 1011,
     "y": 1012,
@@ -3054,7 +3030,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 168,
     "x": 1012,
     "y": 1012,
@@ -3065,7 +3041,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 169,
     "x": 1013,
     "y": 1012,
@@ -3076,7 +3052,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 170,
     "x": 1014,
     "y": 1012,
@@ -3087,7 +3063,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 171,
     "x": 1015,
     "y": 1012,
@@ -3098,7 +3074,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 172,
     "x": 1016,
     "y": 1012,
@@ -3109,7 +3085,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 173,
     "x": 1017,
     "y": 1012,
@@ -3120,7 +3096,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 174,
     "x": 1018,
     "y": 1012,
@@ -3131,7 +3107,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 175,
     "x": 1019,
     "y": 1012,
@@ -3142,7 +3118,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 176,
     "x": 1020,
     "y": 1012,
@@ -3153,7 +3129,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 177,
     "x": 1021,
     "y": 1012,
@@ -3164,7 +3140,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 178,
     "x": 1022,
     "y": 1012,
@@ -3175,7 +3151,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 179,
     "x": 1023,
     "y": 1012,
@@ -3186,7 +3162,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 180,
     "x": 1024,
     "y": 1012,
@@ -3197,7 +3173,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 181,
     "x": 1025,
     "y": 1012,
@@ -3208,7 +3184,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 182,
     "x": 1026,
     "y": 1012,
@@ -3219,7 +3195,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 183,
     "x": 1027,
     "y": 1012,
@@ -3230,7 +3206,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 184,
     "x": 1005,
     "y": 1013,
@@ -3241,7 +3217,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 185,
     "x": 1006,
     "y": 1013,
@@ -3252,7 +3228,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 186,
     "x": 1007,
     "y": 1013,
@@ -3263,7 +3239,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 187,
     "x": 1008,
     "y": 1013,
@@ -3274,7 +3250,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 188,
     "x": 1009,
     "y": 1013,
@@ -3285,7 +3261,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 189,
     "x": 1010,
     "y": 1013,
@@ -3296,7 +3272,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 190,
     "x": 1011,
     "y": 1013,
@@ -3307,7 +3283,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 191,
     "x": 1012,
     "y": 1013,
@@ -3318,7 +3294,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 192,
     "x": 1013,
     "y": 1013,
@@ -3329,7 +3305,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 193,
     "x": 1014,
     "y": 1013,
@@ -3340,7 +3316,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 194,
     "x": 1015,
     "y": 1013,
@@ -3351,7 +3327,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 195,
     "x": 1016,
     "y": 1013,
@@ -3362,7 +3338,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 196,
     "x": 1017,
     "y": 1013,
@@ -3373,7 +3349,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 197,
     "x": 1018,
     "y": 1013,
@@ -3384,7 +3360,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 198,
     "x": 1019,
     "y": 1013,
@@ -3395,7 +3371,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 199,
     "x": 1020,
     "y": 1013,
@@ -3406,7 +3382,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 200,
     "x": 1021,
     "y": 1013,
@@ -3417,7 +3393,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 201,
     "x": 1022,
     "y": 1013,
@@ -3428,7 +3404,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 202,
     "x": 1023,
     "y": 1013,
@@ -3439,7 +3415,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 203,
     "x": 1024,
     "y": 1013,
@@ -3450,7 +3426,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 204,
     "x": 1025,
     "y": 1013,
@@ -3461,7 +3437,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 205,
     "x": 1026,
     "y": 1013,
@@ -3472,7 +3448,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 206,
     "x": 1027,
     "y": 1013,
@@ -3483,7 +3459,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 207,
     "x": 1005,
     "y": 1014,
@@ -3494,7 +3470,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 208,
     "x": 1006,
     "y": 1014,
@@ -3505,7 +3481,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 209,
     "x": 1007,
     "y": 1014,
@@ -3516,7 +3492,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 210,
     "x": 1008,
     "y": 1014,
@@ -3527,7 +3503,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 211,
     "x": 1009,
     "y": 1014,
@@ -3538,7 +3514,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 212,
     "x": 1010,
     "y": 1014,
@@ -3549,7 +3525,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 213,
     "x": 1011,
     "y": 1014,
@@ -3560,7 +3536,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 214,
     "x": 1012,
     "y": 1014,
@@ -3571,7 +3547,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 215,
     "x": 1013,
     "y": 1014,
@@ -3582,7 +3558,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 216,
     "x": 1014,
     "y": 1014,
@@ -3593,7 +3569,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 217,
     "x": 1015,
     "y": 1014,
@@ -3604,7 +3580,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 218,
     "x": 1016,
     "y": 1014,
@@ -3615,7 +3591,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 219,
     "x": 1017,
     "y": 1014,
@@ -3626,7 +3602,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 220,
     "x": 1018,
     "y": 1014,
@@ -3637,7 +3613,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 221,
     "x": 1019,
     "y": 1014,
@@ -3648,7 +3624,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 222,
     "x": 1020,
     "y": 1014,
@@ -3659,7 +3635,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 223,
     "x": 1021,
     "y": 1014,
@@ -3670,7 +3646,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 224,
     "x": 1022,
     "y": 1014,
@@ -3681,7 +3657,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 225,
     "x": 1023,
     "y": 1014,
@@ -3692,7 +3668,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 226,
     "x": 1024,
     "y": 1014,
@@ -3703,7 +3679,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 227,
     "x": 1025,
     "y": 1014,
@@ -3714,7 +3690,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 228,
     "x": 1026,
     "y": 1014,
@@ -3725,7 +3701,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 229,
     "x": 1027,
     "y": 1014,
@@ -3736,7 +3712,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 230,
     "x": 1005,
     "y": 1015,
@@ -3747,7 +3723,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 231,
     "x": 1006,
     "y": 1015,
@@ -3758,7 +3734,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 232,
     "x": 1007,
     "y": 1015,
@@ -3769,7 +3745,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 233,
     "x": 1008,
     "y": 1015,
@@ -3780,7 +3756,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 234,
     "x": 1009,
     "y": 1015,
@@ -3791,7 +3767,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 235,
     "x": 1010,
     "y": 1015,
@@ -3802,7 +3778,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 236,
     "x": 1011,
     "y": 1015,
@@ -3813,7 +3789,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 237,
     "x": 1012,
     "y": 1015,
@@ -3824,7 +3800,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 238,
     "x": 1013,
     "y": 1015,
@@ -3835,7 +3811,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 239,
     "x": 1014,
     "y": 1015,
@@ -3846,7 +3822,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 240,
     "x": 1015,
     "y": 1015,
@@ -3857,7 +3833,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 241,
     "x": 1016,
     "y": 1015,
@@ -3868,7 +3844,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 242,
     "x": 1017,
     "y": 1015,
@@ -3879,7 +3855,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 243,
     "x": 1018,
     "y": 1015,
@@ -3890,7 +3866,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 244,
     "x": 1019,
     "y": 1015,
@@ -3901,7 +3877,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 245,
     "x": 1020,
     "y": 1015,
@@ -3912,7 +3888,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 246,
     "x": 1021,
     "y": 1015,
@@ -3923,7 +3899,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 247,
     "x": 1022,
     "y": 1015,
@@ -3934,7 +3910,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 248,
     "x": 1023,
     "y": 1015,
@@ -3945,7 +3921,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 249,
     "x": 1024,
     "y": 1015,
@@ -3956,7 +3932,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 250,
     "x": 1025,
     "y": 1015,
@@ -3967,7 +3943,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 251,
     "x": 1026,
     "y": 1015,
@@ -3978,7 +3954,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 252,
     "x": 1027,
     "y": 1015,
@@ -3989,7 +3965,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 253,
     "x": 1005,
     "y": 1016,
@@ -4000,7 +3976,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 254,
     "x": 1006,
     "y": 1016,
@@ -4011,7 +3987,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 255,
     "x": 1007,
     "y": 1016,
@@ -4022,7 +3998,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 256,
     "x": 1008,
     "y": 1016,
@@ -4033,7 +4009,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 257,
     "x": 1009,
     "y": 1016,
@@ -4044,7 +4020,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 258,
     "x": 1010,
     "y": 1016,
@@ -4055,7 +4031,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 259,
     "x": 1011,
     "y": 1016,
@@ -4066,7 +4042,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 260,
     "x": 1012,
     "y": 1016,
@@ -4077,7 +4053,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 261,
     "x": 1013,
     "y": 1016,
@@ -4088,7 +4064,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 262,
     "x": 1014,
     "y": 1016,
@@ -4099,7 +4075,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 263,
     "x": 1015,
     "y": 1016,
@@ -4110,7 +4086,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 264,
     "x": 1016,
     "y": 1016,
@@ -4121,7 +4097,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 265,
     "x": 1017,
     "y": 1016,
@@ -4132,7 +4108,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 266,
     "x": 1018,
     "y": 1016,
@@ -4143,7 +4119,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 267,
     "x": 1019,
     "y": 1016,
@@ -4154,7 +4130,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 268,
     "x": 1020,
     "y": 1016,
@@ -4165,7 +4141,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 269,
     "x": 1021,
     "y": 1016,
@@ -4176,7 +4152,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 270,
     "x": 1022,
     "y": 1016,
@@ -4187,7 +4163,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 271,
     "x": 1023,
     "y": 1016,
@@ -4198,7 +4174,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 272,
     "x": 1024,
     "y": 1016,
@@ -4209,7 +4185,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 273,
     "x": 1025,
     "y": 1016,
@@ -4220,7 +4196,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 274,
     "x": 1026,
     "y": 1016,
@@ -4231,7 +4207,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 275,
     "x": 1027,
     "y": 1016,
@@ -4242,7 +4218,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 276,
     "x": 1005,
     "y": 1017,
@@ -4253,7 +4229,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 277,
     "x": 1006,
     "y": 1017,
@@ -4264,7 +4240,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 278,
     "x": 1007,
     "y": 1017,
@@ -4275,7 +4251,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 279,
     "x": 1008,
     "y": 1017,
@@ -4286,7 +4262,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 280,
     "x": 1009,
     "y": 1017,
@@ -4297,7 +4273,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 281,
     "x": 1010,
     "y": 1017,
@@ -4308,7 +4284,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 282,
     "x": 1011,
     "y": 1017,
@@ -4319,7 +4295,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 283,
     "x": 1012,
     "y": 1017,
@@ -4330,7 +4306,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 284,
     "x": 1013,
     "y": 1017,
@@ -4341,7 +4317,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 285,
     "x": 1014,
     "y": 1017,
@@ -4352,7 +4328,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 286,
     "x": 1015,
     "y": 1017,
@@ -4363,7 +4339,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 287,
     "x": 1016,
     "y": 1017,
@@ -4374,7 +4350,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 288,
     "x": 1017,
     "y": 1017,
@@ -4385,7 +4361,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 289,
     "x": 1018,
     "y": 1017,
@@ -4396,7 +4372,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 290,
     "x": 1019,
     "y": 1017,
@@ -4407,7 +4383,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 291,
     "x": 1020,
     "y": 1017,
@@ -4418,7 +4394,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 292,
     "x": 1021,
     "y": 1017,
@@ -4429,7 +4405,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 293,
     "x": 1022,
     "y": 1017,
@@ -4440,7 +4416,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 294,
     "x": 1023,
     "y": 1017,
@@ -4451,7 +4427,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 295,
     "x": 1024,
     "y": 1017,
@@ -4462,7 +4438,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 296,
     "x": 1025,
     "y": 1017,
@@ -4473,7 +4449,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 297,
     "x": 1026,
     "y": 1017,
@@ -4484,7 +4460,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 298,
     "x": 1027,
     "y": 1017,
@@ -4495,7 +4471,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 299,
     "x": 1005,
     "y": 1018,
@@ -4506,7 +4482,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 300,
     "x": 1006,
     "y": 1018,
@@ -4517,7 +4493,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 301,
     "x": 1007,
     "y": 1018,
@@ -4528,7 +4504,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 302,
     "x": 1008,
     "y": 1018,
@@ -4539,7 +4515,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 303,
     "x": 1009,
     "y": 1018,
@@ -4550,7 +4526,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 304,
     "x": 1010,
     "y": 1018,
@@ -4561,7 +4537,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 305,
     "x": 1011,
     "y": 1018,
@@ -4572,7 +4548,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 306,
     "x": 1012,
     "y": 1018,
@@ -4583,7 +4559,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 307,
     "x": 1013,
     "y": 1018,
@@ -4594,7 +4570,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 308,
     "x": 1014,
     "y": 1018,
@@ -4605,7 +4581,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 309,
     "x": 1015,
     "y": 1018,
@@ -4616,7 +4592,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 310,
     "x": 1016,
     "y": 1018,
@@ -4627,7 +4603,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 311,
     "x": 1017,
     "y": 1018,
@@ -4638,7 +4614,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 312,
     "x": 1018,
     "y": 1018,
@@ -4649,7 +4625,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 313,
     "x": 1019,
     "y": 1018,
@@ -4660,7 +4636,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 314,
     "x": 1020,
     "y": 1018,
@@ -4671,7 +4647,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 315,
     "x": 1021,
     "y": 1018,
@@ -4682,7 +4658,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 316,
     "x": 1022,
     "y": 1018,
@@ -4693,7 +4669,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 317,
     "x": 1023,
     "y": 1018,
@@ -4704,7 +4680,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 318,
     "x": 1024,
     "y": 1018,
@@ -4715,7 +4691,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 319,
     "x": 1025,
     "y": 1018,
@@ -4726,7 +4702,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 320,
     "x": 1026,
     "y": 1018,
@@ -4737,7 +4713,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 321,
     "x": 1027,
     "y": 1018,
@@ -4748,7 +4724,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 322,
     "x": 1005,
     "y": 1019,
@@ -4759,7 +4735,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 323,
     "x": 1006,
     "y": 1019,
@@ -4770,7 +4746,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 324,
     "x": 1007,
     "y": 1019,
@@ -4781,7 +4757,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 325,
     "x": 1008,
     "y": 1019,
@@ -4792,7 +4768,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 326,
     "x": 1009,
     "y": 1019,
@@ -4803,7 +4779,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 327,
     "x": 1010,
     "y": 1019,
@@ -4814,7 +4790,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 328,
     "x": 1011,
     "y": 1019,
@@ -4825,7 +4801,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 329,
     "x": 1012,
     "y": 1019,
@@ -4836,7 +4812,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 330,
     "x": 1013,
     "y": 1019,
@@ -4847,7 +4823,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 331,
     "x": 1014,
     "y": 1019,
@@ -4858,7 +4834,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 332,
     "x": 1015,
     "y": 1019,
@@ -4869,7 +4845,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 333,
     "x": 1016,
     "y": 1019,
@@ -4880,7 +4856,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 334,
     "x": 1017,
     "y": 1019,
@@ -4891,7 +4867,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 335,
     "x": 1018,
     "y": 1019,
@@ -4902,7 +4878,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 336,
     "x": 1019,
     "y": 1019,
@@ -4913,7 +4889,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 337,
     "x": 1020,
     "y": 1019,
@@ -4924,7 +4900,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 338,
     "x": 1021,
     "y": 1019,
@@ -4935,7 +4911,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 339,
     "x": 1022,
     "y": 1019,
@@ -4946,7 +4922,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 340,
     "x": 1023,
     "y": 1019,
@@ -4957,7 +4933,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 341,
     "x": 1024,
     "y": 1019,
@@ -4968,7 +4944,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 342,
     "x": 1025,
     "y": 1019,
@@ -4979,7 +4955,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 343,
     "x": 1026,
     "y": 1019,
@@ -4990,7 +4966,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 344,
     "x": 1027,
     "y": 1019,
@@ -5001,7 +4977,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 345,
     "x": 1005,
     "y": 1020,
@@ -5012,7 +4988,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 346,
     "x": 1006,
     "y": 1020,
@@ -5023,7 +4999,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 347,
     "x": 1007,
     "y": 1020,
@@ -5034,7 +5010,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 348,
     "x": 1008,
     "y": 1020,
@@ -5045,7 +5021,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 349,
     "x": 1009,
     "y": 1020,
@@ -5056,7 +5032,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 350,
     "x": 1010,
     "y": 1020,
@@ -5067,7 +5043,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 351,
     "x": 1011,
     "y": 1020,
@@ -5078,7 +5054,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 352,
     "x": 1012,
     "y": 1020,
@@ -5089,7 +5065,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 353,
     "x": 1013,
     "y": 1020,
@@ -5100,7 +5076,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 354,
     "x": 1014,
     "y": 1020,
@@ -5111,7 +5087,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 355,
     "x": 1015,
     "y": 1020,
@@ -5122,7 +5098,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 356,
     "x": 1016,
     "y": 1020,
@@ -5133,7 +5109,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 357,
     "x": 1017,
     "y": 1020,
@@ -5144,7 +5120,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 358,
     "x": 1018,
     "y": 1020,
@@ -5155,7 +5131,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 359,
     "x": 1019,
     "y": 1020,
@@ -5166,7 +5142,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 360,
     "x": 1020,
     "y": 1020,
@@ -5177,7 +5153,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 361,
     "x": 1021,
     "y": 1020,
@@ -5188,7 +5164,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 362,
     "x": 1022,
     "y": 1020,
@@ -5199,7 +5175,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 363,
     "x": 1023,
     "y": 1020,
@@ -5210,7 +5186,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 364,
     "x": 1024,
     "y": 1020,
@@ -5221,7 +5197,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 365,
     "x": 1025,
     "y": 1020,
@@ -5232,7 +5208,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 366,
     "x": 1026,
     "y": 1020,
@@ -5243,7 +5219,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 367,
     "x": 1027,
     "y": 1020,
@@ -5254,7 +5230,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 368,
     "x": 1005,
     "y": 1021,
@@ -5265,7 +5241,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 369,
     "x": 1006,
     "y": 1021,
@@ -5276,7 +5252,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 370,
     "x": 1007,
     "y": 1021,
@@ -5287,7 +5263,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 371,
     "x": 1008,
     "y": 1021,
@@ -5298,7 +5274,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 372,
     "x": 1009,
     "y": 1021,
@@ -5309,7 +5285,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 373,
     "x": 1010,
     "y": 1021,
@@ -5320,7 +5296,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 374,
     "x": 1011,
     "y": 1021,
@@ -5331,7 +5307,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 375,
     "x": 1012,
     "y": 1021,
@@ -5342,7 +5318,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 376,
     "x": 1013,
     "y": 1021,
@@ -5353,7 +5329,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 377,
     "x": 1014,
     "y": 1021,
@@ -5364,7 +5340,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 378,
     "x": 1015,
     "y": 1021,
@@ -5375,7 +5351,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 379,
     "x": 1016,
     "y": 1021,
@@ -5386,7 +5362,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 380,
     "x": 1017,
     "y": 1021,
@@ -5397,7 +5373,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 381,
     "x": 1018,
     "y": 1021,
@@ -5408,7 +5384,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 382,
     "x": 1019,
     "y": 1021,
@@ -5419,7 +5395,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 383,
     "x": 1020,
     "y": 1021,
@@ -5430,7 +5406,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 384,
     "x": 1021,
     "y": 1021,
@@ -5441,7 +5417,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 385,
     "x": 1022,
     "y": 1021,
@@ -5452,7 +5428,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 386,
     "x": 1023,
     "y": 1021,
@@ -5463,7 +5439,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 387,
     "x": 1024,
     "y": 1021,
@@ -5474,7 +5450,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 388,
     "x": 1025,
     "y": 1021,
@@ -5485,7 +5461,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 389,
     "x": 1026,
     "y": 1021,
@@ -5496,7 +5472,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 390,
     "x": 1027,
     "y": 1021,
@@ -5507,7 +5483,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 391,
     "x": 1005,
     "y": 1022,
@@ -5518,7 +5494,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 392,
     "x": 1006,
     "y": 1022,
@@ -5529,7 +5505,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 393,
     "x": 1007,
     "y": 1022,
@@ -5540,7 +5516,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 394,
     "x": 1008,
     "y": 1022,
@@ -5551,7 +5527,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 395,
     "x": 1009,
     "y": 1022,
@@ -5562,7 +5538,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 396,
     "x": 1010,
     "y": 1022,
@@ -5573,7 +5549,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 397,
     "x": 1011,
     "y": 1022,
@@ -5584,7 +5560,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 398,
     "x": 1012,
     "y": 1022,
@@ -5595,7 +5571,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 399,
     "x": 1013,
     "y": 1022,
@@ -5606,7 +5582,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 400,
     "x": 1014,
     "y": 1022,
@@ -5617,7 +5593,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 401,
     "x": 1015,
     "y": 1022,
@@ -5628,7 +5604,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 402,
     "x": 1016,
     "y": 1022,
@@ -5639,7 +5615,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 403,
     "x": 1017,
     "y": 1022,
@@ -5650,7 +5626,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 404,
     "x": 1018,
     "y": 1022,
@@ -5661,7 +5637,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 405,
     "x": 1019,
     "y": 1022,
@@ -5672,7 +5648,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 406,
     "x": 1020,
     "y": 1022,
@@ -5683,7 +5659,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 407,
     "x": 1021,
     "y": 1022,
@@ -5694,7 +5670,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 408,
     "x": 1022,
     "y": 1022,
@@ -5705,7 +5681,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 409,
     "x": 1023,
     "y": 1022,
@@ -5716,7 +5692,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 410,
     "x": 1024,
     "y": 1022,
@@ -5727,7 +5703,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 411,
     "x": 1025,
     "y": 1022,
@@ -5738,7 +5714,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 412,
     "x": 1026,
     "y": 1022,
@@ -5749,7 +5725,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 413,
     "x": 1027,
     "y": 1022,
@@ -5760,7 +5736,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 414,
     "x": 1005,
     "y": 1023,
@@ -5771,7 +5747,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 415,
     "x": 1006,
     "y": 1023,
@@ -5782,7 +5758,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 416,
     "x": 1007,
     "y": 1023,
@@ -5793,7 +5769,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 417,
     "x": 1008,
     "y": 1023,
@@ -5804,7 +5780,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 418,
     "x": 1009,
     "y": 1023,
@@ -5815,7 +5791,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 419,
     "x": 1010,
     "y": 1023,
@@ -5826,7 +5802,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 420,
     "x": 1011,
     "y": 1023,
@@ -5837,7 +5813,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 421,
     "x": 1012,
     "y": 1023,
@@ -5848,7 +5824,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 422,
     "x": 1013,
     "y": 1023,
@@ -5859,7 +5835,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 423,
     "x": 1014,
     "y": 1023,
@@ -5870,7 +5846,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 424,
     "x": 1015,
     "y": 1023,
@@ -5881,7 +5857,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 425,
     "x": 1016,
     "y": 1023,
@@ -5892,7 +5868,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 426,
     "x": 1017,
     "y": 1023,
@@ -5903,7 +5879,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 427,
     "x": 1018,
     "y": 1023,
@@ -5914,7 +5890,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 428,
     "x": 1019,
     "y": 1023,
@@ -5925,7 +5901,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 429,
     "x": 1020,
     "y": 1023,
@@ -5936,7 +5912,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 430,
     "x": 1021,
     "y": 1023,
@@ -5947,7 +5923,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 431,
     "x": 1022,
     "y": 1023,
@@ -5958,7 +5934,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 432,
     "x": 1023,
     "y": 1023,
@@ -5969,7 +5945,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 433,
     "x": 1024,
     "y": 1023,
@@ -5980,7 +5956,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 434,
     "x": 1025,
     "y": 1023,
@@ -5991,7 +5967,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 435,
     "x": 1026,
     "y": 1023,
@@ -6002,7 +5978,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 436,
     "x": 1027,
     "y": 1023,
@@ -6013,7 +5989,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 437,
     "x": 1005,
     "y": 1024,
@@ -6024,7 +6000,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 438,
     "x": 1006,
     "y": 1024,
@@ -6035,7 +6011,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 439,
     "x": 1007,
     "y": 1024,
@@ -6046,7 +6022,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 440,
     "x": 1008,
     "y": 1024,
@@ -6057,7 +6033,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 441,
     "x": 1009,
     "y": 1024,
@@ -6068,7 +6044,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 442,
     "x": 1010,
     "y": 1024,
@@ -6079,7 +6055,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 443,
     "x": 1011,
     "y": 1024,
@@ -6090,7 +6066,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 444,
     "x": 1012,
     "y": 1024,
@@ -6101,7 +6077,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 445,
     "x": 1013,
     "y": 1024,
@@ -6112,7 +6088,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 446,
     "x": 1014,
     "y": 1024,
@@ -6123,7 +6099,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 447,
     "x": 1015,
     "y": 1024,
@@ -6134,7 +6110,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 448,
     "x": 1016,
     "y": 1024,
@@ -6145,7 +6121,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 449,
     "x": 1017,
     "y": 1024,
@@ -6156,7 +6132,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 450,
     "x": 1018,
     "y": 1024,
@@ -6167,7 +6143,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 451,
     "x": 1019,
     "y": 1024,
@@ -6178,7 +6154,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 452,
     "x": 1020,
     "y": 1024,
@@ -6189,7 +6165,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 453,
     "x": 1021,
     "y": 1024,
@@ -6200,7 +6176,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 454,
     "x": 1022,
     "y": 1024,
@@ -6211,7 +6187,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 455,
     "x": 1023,
     "y": 1024,
@@ -6222,7 +6198,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 456,
     "x": 1024,
     "y": 1024,
@@ -6233,7 +6209,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 457,
     "x": 1025,
     "y": 1024,
@@ -6244,7 +6220,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 458,
     "x": 1026,
     "y": 1024,
@@ -6255,7 +6231,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 459,
     "x": 1027,
     "y": 1024,
@@ -6266,7 +6242,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 460,
     "x": 1005,
     "y": 1025,
@@ -6277,7 +6253,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 461,
     "x": 1006,
     "y": 1025,
@@ -6288,7 +6264,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 462,
     "x": 1007,
     "y": 1025,
@@ -6299,7 +6275,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 463,
     "x": 1008,
     "y": 1025,
@@ -6310,7 +6286,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 464,
     "x": 1009,
     "y": 1025,
@@ -6321,7 +6297,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 465,
     "x": 1010,
     "y": 1025,
@@ -6332,7 +6308,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 466,
     "x": 1011,
     "y": 1025,
@@ -6343,7 +6319,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 467,
     "x": 1012,
     "y": 1025,
@@ -6354,7 +6330,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 468,
     "x": 1013,
     "y": 1025,
@@ -6365,7 +6341,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 469,
     "x": 1014,
     "y": 1025,
@@ -6376,7 +6352,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 470,
     "x": 1015,
     "y": 1025,
@@ -6387,7 +6363,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 471,
     "x": 1016,
     "y": 1025,
@@ -6398,7 +6374,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 472,
     "x": 1017,
     "y": 1025,
@@ -6409,7 +6385,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 473,
     "x": 1018,
     "y": 1025,
@@ -6420,7 +6396,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 474,
     "x": 1019,
     "y": 1025,
@@ -6431,7 +6407,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 475,
     "x": 1020,
     "y": 1025,
@@ -6442,7 +6418,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 476,
     "x": 1021,
     "y": 1025,
@@ -6453,7 +6429,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 477,
     "x": 1022,
     "y": 1025,
@@ -6464,7 +6440,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 478,
     "x": 1023,
     "y": 1025,
@@ -6475,7 +6451,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 479,
     "x": 1024,
     "y": 1025,
@@ -6486,7 +6462,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 480,
     "x": 1025,
     "y": 1025,
@@ -6497,7 +6473,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 481,
     "x": 1026,
     "y": 1025,
@@ -6508,7 +6484,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 482,
     "x": 1027,
     "y": 1025,
@@ -6519,7 +6495,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 483,
     "x": 1005,
     "y": 1026,
@@ -6530,7 +6506,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 484,
     "x": 1006,
     "y": 1026,
@@ -6541,7 +6517,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 485,
     "x": 1007,
     "y": 1026,
@@ -6552,7 +6528,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 486,
     "x": 1008,
     "y": 1026,
@@ -6563,7 +6539,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 487,
     "x": 1009,
     "y": 1026,
@@ -6574,7 +6550,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 488,
     "x": 1010,
     "y": 1026,
@@ -6585,7 +6561,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 489,
     "x": 1011,
     "y": 1026,
@@ -6596,7 +6572,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 490,
     "x": 1012,
     "y": 1026,
@@ -6607,7 +6583,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 491,
     "x": 1013,
     "y": 1026,
@@ -6618,7 +6594,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 492,
     "x": 1014,
     "y": 1026,
@@ -6629,7 +6605,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 493,
     "x": 1015,
     "y": 1026,
@@ -6640,7 +6616,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 494,
     "x": 1016,
     "y": 1026,
@@ -6651,7 +6627,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 495,
     "x": 1017,
     "y": 1026,
@@ -6662,7 +6638,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 496,
     "x": 1018,
     "y": 1026,
@@ -6673,7 +6649,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 497,
     "x": 1019,
     "y": 1026,
@@ -6684,7 +6660,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 498,
     "x": 1020,
     "y": 1026,
@@ -6695,7 +6671,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 499,
     "x": 1021,
     "y": 1026,
@@ -6706,7 +6682,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 500,
     "x": 1022,
     "y": 1026,
@@ -6717,7 +6693,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 501,
     "x": 1023,
     "y": 1026,
@@ -6728,7 +6704,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 502,
     "x": 1024,
     "y": 1026,
@@ -6739,7 +6715,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 503,
     "x": 1025,
     "y": 1026,
@@ -6750,7 +6726,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 504,
     "x": 1026,
     "y": 1026,
@@ -6761,7 +6737,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 505,
     "x": 1027,
     "y": 1026,
@@ -6772,7 +6748,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 506,
     "x": 1005,
     "y": 1027,
@@ -6783,7 +6759,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 507,
     "x": 1006,
     "y": 1027,
@@ -6794,7 +6770,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 508,
     "x": 1007,
     "y": 1027,
@@ -6805,7 +6781,7 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 509,
     "x": 1008,
     "y": 1027,
@@ -6816,20 +6792,9 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
+    "owner": 1,
     "id": 510,
     "x": 1009,
-    "y": 1027,
-    "mines": 100,
-    "type": "standard",
-    "detonating": false,
-    "known_to": []
-   },
-   {
-    "kind": "minefield",
-    "owner": 0,
-    "id": 511,
-    "x": 1010,
     "y": 1027,
     "mines": 100,
     "type": "standard",
@@ -6841,9 +6806,9 @@
  },
  "cases": [
   {
-   "id": "MF-11c",
-   "rule": "OBJECTS MF-11",
-   "setup": "MF 11c",
+   "id": "MF-13c",
+   "rule": "OBJECTS MF-13",
+   "setup": "MF 13c",
    "tag": "CONFIRMED",
    "prediction_held": true,
    "varies_by_stream": false,
@@ -6887,6 +6852,20 @@
      "owner": 0,
      "id": 0,
      "equals": {
+      "x": 1400,
+      "y": 1400,
+      "mines": 90,
+      "type": "standard",
+      "detonating": false,
+      "known_to": []
+     },
+     "year": 1
+    },
+    {
+     "kind": "minefield",
+     "owner": 1,
+     "id": 0,
+     "equals": {
       "x": 1005,
       "y": 1005,
       "mines": 90,
@@ -6901,7 +6880,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 1,
      "equals": {
       "x": 1006,
@@ -6918,7 +6897,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 2,
      "equals": {
       "x": 1007,
@@ -6935,7 +6914,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 3,
      "equals": {
       "x": 1008,
@@ -6952,7 +6931,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 4,
      "equals": {
       "x": 1009,
@@ -6969,7 +6948,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 5,
      "equals": {
       "x": 1010,
@@ -6986,7 +6965,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 6,
      "equals": {
       "x": 1011,
@@ -7003,7 +6982,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 7,
      "equals": {
       "x": 1012,
@@ -7020,7 +6999,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 8,
      "equals": {
       "x": 1013,
@@ -7037,7 +7016,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 9,
      "equals": {
       "x": 1014,
@@ -7054,7 +7033,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 10,
      "equals": {
       "x": 1015,
@@ -7071,7 +7050,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 11,
      "equals": {
       "x": 1016,
@@ -7088,7 +7067,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 12,
      "equals": {
       "x": 1017,
@@ -7105,7 +7084,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 13,
      "equals": {
       "x": 1018,
@@ -7122,7 +7101,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 14,
      "equals": {
       "x": 1019,
@@ -7139,7 +7118,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 15,
      "equals": {
       "x": 1020,
@@ -7156,7 +7135,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 16,
      "equals": {
       "x": 1021,
@@ -7173,7 +7152,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 17,
      "equals": {
       "x": 1022,
@@ -7190,7 +7169,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 18,
      "equals": {
       "x": 1023,
@@ -7207,7 +7186,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 19,
      "equals": {
       "x": 1024,
@@ -7224,7 +7203,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 20,
      "equals": {
       "x": 1025,
@@ -7241,7 +7220,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 21,
      "equals": {
       "x": 1026,
@@ -7258,7 +7237,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 22,
      "equals": {
       "x": 1027,
@@ -7275,7 +7254,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 23,
      "equals": {
       "x": 1005,
@@ -7292,7 +7271,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 24,
      "equals": {
       "x": 1006,
@@ -7309,7 +7288,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 25,
      "equals": {
       "x": 1007,
@@ -7326,7 +7305,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 26,
      "equals": {
       "x": 1008,
@@ -7343,7 +7322,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 27,
      "equals": {
       "x": 1009,
@@ -7360,7 +7339,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 28,
      "equals": {
       "x": 1010,
@@ -7377,7 +7356,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 29,
      "equals": {
       "x": 1011,
@@ -7394,7 +7373,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 30,
      "equals": {
       "x": 1012,
@@ -7411,7 +7390,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 31,
      "equals": {
       "x": 1013,
@@ -7428,7 +7407,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 32,
      "equals": {
       "x": 1014,
@@ -7445,7 +7424,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 33,
      "equals": {
       "x": 1015,
@@ -7462,7 +7441,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 34,
      "equals": {
       "x": 1016,
@@ -7479,7 +7458,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 35,
      "equals": {
       "x": 1017,
@@ -7496,7 +7475,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 36,
      "equals": {
       "x": 1018,
@@ -7513,7 +7492,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 37,
      "equals": {
       "x": 1019,
@@ -7530,7 +7509,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 38,
      "equals": {
       "x": 1020,
@@ -7547,7 +7526,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 39,
      "equals": {
       "x": 1021,
@@ -7564,7 +7543,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 40,
      "equals": {
       "x": 1022,
@@ -7581,7 +7560,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 41,
      "equals": {
       "x": 1023,
@@ -7598,7 +7577,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 42,
      "equals": {
       "x": 1024,
@@ -7615,7 +7594,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 43,
      "equals": {
       "x": 1025,
@@ -7632,7 +7611,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 44,
      "equals": {
       "x": 1026,
@@ -7649,7 +7628,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 45,
      "equals": {
       "x": 1027,
@@ -7666,7 +7645,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 46,
      "equals": {
       "x": 1005,
@@ -7683,7 +7662,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 47,
      "equals": {
       "x": 1006,
@@ -7700,7 +7679,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 48,
      "equals": {
       "x": 1007,
@@ -7717,7 +7696,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 49,
      "equals": {
       "x": 1008,
@@ -7734,7 +7713,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 50,
      "equals": {
       "x": 1009,
@@ -7751,7 +7730,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 51,
      "equals": {
       "x": 1010,
@@ -7768,7 +7747,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 52,
      "equals": {
       "x": 1011,
@@ -7785,7 +7764,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 53,
      "equals": {
       "x": 1012,
@@ -7802,7 +7781,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 54,
      "equals": {
       "x": 1013,
@@ -7819,7 +7798,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 55,
      "equals": {
       "x": 1014,
@@ -7836,7 +7815,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 56,
      "equals": {
       "x": 1015,
@@ -7853,7 +7832,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 57,
      "equals": {
       "x": 1016,
@@ -7870,7 +7849,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 58,
      "equals": {
       "x": 1017,
@@ -7887,7 +7866,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 59,
      "equals": {
       "x": 1018,
@@ -7904,7 +7883,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 60,
      "equals": {
       "x": 1019,
@@ -7921,7 +7900,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 61,
      "equals": {
       "x": 1020,
@@ -7938,7 +7917,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 62,
      "equals": {
       "x": 1021,
@@ -7955,7 +7934,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 63,
      "equals": {
       "x": 1022,
@@ -7972,7 +7951,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 64,
      "equals": {
       "x": 1023,
@@ -7989,7 +7968,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 65,
      "equals": {
       "x": 1024,
@@ -8006,7 +7985,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 66,
      "equals": {
       "x": 1025,
@@ -8023,7 +8002,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 67,
      "equals": {
       "x": 1026,
@@ -8040,7 +8019,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 68,
      "equals": {
       "x": 1027,
@@ -8057,7 +8036,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 69,
      "equals": {
       "x": 1005,
@@ -8074,7 +8053,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 70,
      "equals": {
       "x": 1006,
@@ -8091,7 +8070,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 71,
      "equals": {
       "x": 1007,
@@ -8108,7 +8087,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 72,
      "equals": {
       "x": 1008,
@@ -8125,7 +8104,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 73,
      "equals": {
       "x": 1009,
@@ -8142,7 +8121,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 74,
      "equals": {
       "x": 1010,
@@ -8159,7 +8138,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 75,
      "equals": {
       "x": 1011,
@@ -8176,7 +8155,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 76,
      "equals": {
       "x": 1012,
@@ -8193,7 +8172,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 77,
      "equals": {
       "x": 1013,
@@ -8210,7 +8189,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 78,
      "equals": {
       "x": 1014,
@@ -8227,7 +8206,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 79,
      "equals": {
       "x": 1015,
@@ -8244,7 +8223,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 80,
      "equals": {
       "x": 1016,
@@ -8261,7 +8240,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 81,
      "equals": {
       "x": 1017,
@@ -8278,7 +8257,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 82,
      "equals": {
       "x": 1018,
@@ -8295,7 +8274,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 83,
      "equals": {
       "x": 1019,
@@ -8312,7 +8291,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 84,
      "equals": {
       "x": 1020,
@@ -8329,7 +8308,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 85,
      "equals": {
       "x": 1021,
@@ -8346,7 +8325,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 86,
      "equals": {
       "x": 1022,
@@ -8363,7 +8342,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 87,
      "equals": {
       "x": 1023,
@@ -8380,7 +8359,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 88,
      "equals": {
       "x": 1024,
@@ -8397,7 +8376,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 89,
      "equals": {
       "x": 1025,
@@ -8414,7 +8393,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 90,
      "equals": {
       "x": 1026,
@@ -8431,7 +8410,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 91,
      "equals": {
       "x": 1027,
@@ -8448,7 +8427,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 92,
      "equals": {
       "x": 1005,
@@ -8465,7 +8444,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 93,
      "equals": {
       "x": 1006,
@@ -8482,7 +8461,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 94,
      "equals": {
       "x": 1007,
@@ -8499,7 +8478,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 95,
      "equals": {
       "x": 1008,
@@ -8516,7 +8495,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 96,
      "equals": {
       "x": 1009,
@@ -8533,7 +8512,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 97,
      "equals": {
       "x": 1010,
@@ -8550,7 +8529,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 98,
      "equals": {
       "x": 1011,
@@ -8567,7 +8546,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 99,
      "equals": {
       "x": 1012,
@@ -8584,7 +8563,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 100,
      "equals": {
       "x": 1013,
@@ -8601,7 +8580,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 101,
      "equals": {
       "x": 1014,
@@ -8618,7 +8597,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 102,
      "equals": {
       "x": 1015,
@@ -8635,7 +8614,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 103,
      "equals": {
       "x": 1016,
@@ -8652,7 +8631,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 104,
      "equals": {
       "x": 1017,
@@ -8669,7 +8648,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 105,
      "equals": {
       "x": 1018,
@@ -8686,7 +8665,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 106,
      "equals": {
       "x": 1019,
@@ -8703,7 +8682,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 107,
      "equals": {
       "x": 1020,
@@ -8720,7 +8699,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 108,
      "equals": {
       "x": 1021,
@@ -8737,7 +8716,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 109,
      "equals": {
       "x": 1022,
@@ -8754,7 +8733,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 110,
      "equals": {
       "x": 1023,
@@ -8771,7 +8750,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 111,
      "equals": {
       "x": 1024,
@@ -8788,7 +8767,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 112,
      "equals": {
       "x": 1025,
@@ -8805,7 +8784,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 113,
      "equals": {
       "x": 1026,
@@ -8822,7 +8801,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 114,
      "equals": {
       "x": 1027,
@@ -8839,7 +8818,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 115,
      "equals": {
       "x": 1005,
@@ -8856,7 +8835,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 116,
      "equals": {
       "x": 1006,
@@ -8873,7 +8852,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 117,
      "equals": {
       "x": 1007,
@@ -8890,7 +8869,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 118,
      "equals": {
       "x": 1008,
@@ -8907,7 +8886,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 119,
      "equals": {
       "x": 1009,
@@ -8924,12 +8903,12 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 120,
      "equals": {
       "x": 1010,
       "y": 1010,
-      "mines": 250,
+      "mines": 90,
       "type": "standard",
       "detonating": false,
       "known_to": [
@@ -8941,7 +8920,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 121,
      "equals": {
       "x": 1011,
@@ -8958,7 +8937,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 122,
      "equals": {
       "x": 1012,
@@ -8975,7 +8954,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 123,
      "equals": {
       "x": 1013,
@@ -8992,7 +8971,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 124,
      "equals": {
       "x": 1014,
@@ -9009,7 +8988,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 125,
      "equals": {
       "x": 1015,
@@ -9026,7 +9005,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 126,
      "equals": {
       "x": 1016,
@@ -9043,7 +9022,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 127,
      "equals": {
       "x": 1017,
@@ -9060,7 +9039,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 128,
      "equals": {
       "x": 1018,
@@ -9077,7 +9056,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 129,
      "equals": {
       "x": 1019,
@@ -9094,7 +9073,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 130,
      "equals": {
       "x": 1020,
@@ -9111,7 +9090,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 131,
      "equals": {
       "x": 1021,
@@ -9128,7 +9107,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 132,
      "equals": {
       "x": 1022,
@@ -9145,7 +9124,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 133,
      "equals": {
       "x": 1023,
@@ -9162,7 +9141,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 134,
      "equals": {
       "x": 1024,
@@ -9179,7 +9158,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 135,
      "equals": {
       "x": 1025,
@@ -9196,7 +9175,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 136,
      "equals": {
       "x": 1026,
@@ -9213,7 +9192,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 137,
      "equals": {
       "x": 1027,
@@ -9230,7 +9209,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 138,
      "equals": {
       "x": 1005,
@@ -9247,7 +9226,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 139,
      "equals": {
       "x": 1006,
@@ -9264,7 +9243,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 140,
      "equals": {
       "x": 1007,
@@ -9281,7 +9260,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 141,
      "equals": {
       "x": 1008,
@@ -9298,7 +9277,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 142,
      "equals": {
       "x": 1009,
@@ -9315,7 +9294,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 143,
      "equals": {
       "x": 1010,
@@ -9332,7 +9311,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 144,
      "equals": {
       "x": 1011,
@@ -9349,7 +9328,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 145,
      "equals": {
       "x": 1012,
@@ -9366,7 +9345,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 146,
      "equals": {
       "x": 1013,
@@ -9383,7 +9362,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 147,
      "equals": {
       "x": 1014,
@@ -9400,7 +9379,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 148,
      "equals": {
       "x": 1015,
@@ -9417,7 +9396,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 149,
      "equals": {
       "x": 1016,
@@ -9434,7 +9413,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 150,
      "equals": {
       "x": 1017,
@@ -9451,7 +9430,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 151,
      "equals": {
       "x": 1018,
@@ -9468,7 +9447,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 152,
      "equals": {
       "x": 1019,
@@ -9485,7 +9464,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 153,
      "equals": {
       "x": 1020,
@@ -9502,7 +9481,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 154,
      "equals": {
       "x": 1021,
@@ -9519,7 +9498,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 155,
      "equals": {
       "x": 1022,
@@ -9536,7 +9515,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 156,
      "equals": {
       "x": 1023,
@@ -9553,7 +9532,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 157,
      "equals": {
       "x": 1024,
@@ -9570,7 +9549,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 158,
      "equals": {
       "x": 1025,
@@ -9587,7 +9566,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 159,
      "equals": {
       "x": 1026,
@@ -9604,7 +9583,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 160,
      "equals": {
       "x": 1027,
@@ -9621,7 +9600,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 161,
      "equals": {
       "x": 1005,
@@ -9638,7 +9617,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 162,
      "equals": {
       "x": 1006,
@@ -9655,7 +9634,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 163,
      "equals": {
       "x": 1007,
@@ -9672,7 +9651,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 164,
      "equals": {
       "x": 1008,
@@ -9689,7 +9668,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 165,
      "equals": {
       "x": 1009,
@@ -9706,7 +9685,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 166,
      "equals": {
       "x": 1010,
@@ -9723,7 +9702,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 167,
      "equals": {
       "x": 1011,
@@ -9740,7 +9719,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 168,
      "equals": {
       "x": 1012,
@@ -9757,7 +9736,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 169,
      "equals": {
       "x": 1013,
@@ -9774,7 +9753,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 170,
      "equals": {
       "x": 1014,
@@ -9791,7 +9770,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 171,
      "equals": {
       "x": 1015,
@@ -9808,7 +9787,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 172,
      "equals": {
       "x": 1016,
@@ -9825,7 +9804,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 173,
      "equals": {
       "x": 1017,
@@ -9842,7 +9821,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 174,
      "equals": {
       "x": 1018,
@@ -9859,7 +9838,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 175,
      "equals": {
       "x": 1019,
@@ -9876,7 +9855,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 176,
      "equals": {
       "x": 1020,
@@ -9893,7 +9872,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 177,
      "equals": {
       "x": 1021,
@@ -9910,7 +9889,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 178,
      "equals": {
       "x": 1022,
@@ -9927,7 +9906,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 179,
      "equals": {
       "x": 1023,
@@ -9944,7 +9923,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 180,
      "equals": {
       "x": 1024,
@@ -9961,7 +9940,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 181,
      "equals": {
       "x": 1025,
@@ -9978,7 +9957,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 182,
      "equals": {
       "x": 1026,
@@ -9995,7 +9974,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 183,
      "equals": {
       "x": 1027,
@@ -10012,7 +9991,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 184,
      "equals": {
       "x": 1005,
@@ -10029,7 +10008,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 185,
      "equals": {
       "x": 1006,
@@ -10046,7 +10025,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 186,
      "equals": {
       "x": 1007,
@@ -10063,7 +10042,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 187,
      "equals": {
       "x": 1008,
@@ -10080,7 +10059,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 188,
      "equals": {
       "x": 1009,
@@ -10097,7 +10076,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 189,
      "equals": {
       "x": 1010,
@@ -10114,7 +10093,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 190,
      "equals": {
       "x": 1011,
@@ -10131,7 +10110,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 191,
      "equals": {
       "x": 1012,
@@ -10148,7 +10127,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 192,
      "equals": {
       "x": 1013,
@@ -10165,7 +10144,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 193,
      "equals": {
       "x": 1014,
@@ -10182,7 +10161,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 194,
      "equals": {
       "x": 1015,
@@ -10199,7 +10178,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 195,
      "equals": {
       "x": 1016,
@@ -10216,7 +10195,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 196,
      "equals": {
       "x": 1017,
@@ -10233,7 +10212,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 197,
      "equals": {
       "x": 1018,
@@ -10250,7 +10229,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 198,
      "equals": {
       "x": 1019,
@@ -10267,7 +10246,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 199,
      "equals": {
       "x": 1020,
@@ -10284,7 +10263,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 200,
      "equals": {
       "x": 1021,
@@ -10301,7 +10280,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 201,
      "equals": {
       "x": 1022,
@@ -10318,7 +10297,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 202,
      "equals": {
       "x": 1023,
@@ -10335,7 +10314,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 203,
      "equals": {
       "x": 1024,
@@ -10352,7 +10331,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 204,
      "equals": {
       "x": 1025,
@@ -10369,7 +10348,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 205,
      "equals": {
       "x": 1026,
@@ -10386,7 +10365,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 206,
      "equals": {
       "x": 1027,
@@ -10403,7 +10382,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 207,
      "equals": {
       "x": 1005,
@@ -10420,7 +10399,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 208,
      "equals": {
       "x": 1006,
@@ -10437,7 +10416,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 209,
      "equals": {
       "x": 1007,
@@ -10454,7 +10433,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 210,
      "equals": {
       "x": 1008,
@@ -10471,7 +10450,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 211,
      "equals": {
       "x": 1009,
@@ -10488,7 +10467,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 212,
      "equals": {
       "x": 1010,
@@ -10505,7 +10484,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 213,
      "equals": {
       "x": 1011,
@@ -10522,7 +10501,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 214,
      "equals": {
       "x": 1012,
@@ -10539,7 +10518,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 215,
      "equals": {
       "x": 1013,
@@ -10556,7 +10535,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 216,
      "equals": {
       "x": 1014,
@@ -10573,7 +10552,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 217,
      "equals": {
       "x": 1015,
@@ -10590,7 +10569,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 218,
      "equals": {
       "x": 1016,
@@ -10607,7 +10586,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 219,
      "equals": {
       "x": 1017,
@@ -10624,7 +10603,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 220,
      "equals": {
       "x": 1018,
@@ -10641,7 +10620,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 221,
      "equals": {
       "x": 1019,
@@ -10658,7 +10637,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 222,
      "equals": {
       "x": 1020,
@@ -10675,7 +10654,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 223,
      "equals": {
       "x": 1021,
@@ -10692,7 +10671,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 224,
      "equals": {
       "x": 1022,
@@ -10709,7 +10688,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 225,
      "equals": {
       "x": 1023,
@@ -10726,7 +10705,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 226,
      "equals": {
       "x": 1024,
@@ -10743,7 +10722,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 227,
      "equals": {
       "x": 1025,
@@ -10760,7 +10739,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 228,
      "equals": {
       "x": 1026,
@@ -10777,7 +10756,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 229,
      "equals": {
       "x": 1027,
@@ -10794,7 +10773,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 230,
      "equals": {
       "x": 1005,
@@ -10811,7 +10790,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 231,
      "equals": {
       "x": 1006,
@@ -10828,7 +10807,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 232,
      "equals": {
       "x": 1007,
@@ -10845,7 +10824,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 233,
      "equals": {
       "x": 1008,
@@ -10862,7 +10841,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 234,
      "equals": {
       "x": 1009,
@@ -10879,7 +10858,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 235,
      "equals": {
       "x": 1010,
@@ -10896,7 +10875,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 236,
      "equals": {
       "x": 1011,
@@ -10913,7 +10892,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 237,
      "equals": {
       "x": 1012,
@@ -10930,7 +10909,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 238,
      "equals": {
       "x": 1013,
@@ -10947,7 +10926,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 239,
      "equals": {
       "x": 1014,
@@ -10964,7 +10943,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 240,
      "equals": {
       "x": 1015,
@@ -10981,7 +10960,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 241,
      "equals": {
       "x": 1016,
@@ -10998,7 +10977,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 242,
      "equals": {
       "x": 1017,
@@ -11015,7 +10994,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 243,
      "equals": {
       "x": 1018,
@@ -11032,7 +11011,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 244,
      "equals": {
       "x": 1019,
@@ -11049,7 +11028,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 245,
      "equals": {
       "x": 1020,
@@ -11066,7 +11045,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 246,
      "equals": {
       "x": 1021,
@@ -11083,7 +11062,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 247,
      "equals": {
       "x": 1022,
@@ -11100,7 +11079,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 248,
      "equals": {
       "x": 1023,
@@ -11117,7 +11096,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 249,
      "equals": {
       "x": 1024,
@@ -11134,7 +11113,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 250,
      "equals": {
       "x": 1025,
@@ -11151,7 +11130,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 251,
      "equals": {
       "x": 1026,
@@ -11168,7 +11147,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 252,
      "equals": {
       "x": 1027,
@@ -11185,7 +11164,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 253,
      "equals": {
       "x": 1005,
@@ -11202,7 +11181,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 254,
      "equals": {
       "x": 1006,
@@ -11219,7 +11198,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 255,
      "equals": {
       "x": 1007,
@@ -11236,7 +11215,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 256,
      "equals": {
       "x": 1008,
@@ -11253,7 +11232,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 257,
      "equals": {
       "x": 1009,
@@ -11270,7 +11249,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 258,
      "equals": {
       "x": 1010,
@@ -11287,7 +11266,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 259,
      "equals": {
       "x": 1011,
@@ -11304,7 +11283,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 260,
      "equals": {
       "x": 1012,
@@ -11321,7 +11300,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 261,
      "equals": {
       "x": 1013,
@@ -11338,7 +11317,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 262,
      "equals": {
       "x": 1014,
@@ -11355,7 +11334,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 263,
      "equals": {
       "x": 1015,
@@ -11372,7 +11351,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 264,
      "equals": {
       "x": 1016,
@@ -11389,7 +11368,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 265,
      "equals": {
       "x": 1017,
@@ -11406,7 +11385,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 266,
      "equals": {
       "x": 1018,
@@ -11423,7 +11402,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 267,
      "equals": {
       "x": 1019,
@@ -11440,7 +11419,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 268,
      "equals": {
       "x": 1020,
@@ -11457,7 +11436,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 269,
      "equals": {
       "x": 1021,
@@ -11474,7 +11453,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 270,
      "equals": {
       "x": 1022,
@@ -11491,7 +11470,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 271,
      "equals": {
       "x": 1023,
@@ -11508,7 +11487,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 272,
      "equals": {
       "x": 1024,
@@ -11525,7 +11504,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 273,
      "equals": {
       "x": 1025,
@@ -11542,7 +11521,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 274,
      "equals": {
       "x": 1026,
@@ -11559,7 +11538,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 275,
      "equals": {
       "x": 1027,
@@ -11576,7 +11555,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 276,
      "equals": {
       "x": 1005,
@@ -11593,7 +11572,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 277,
      "equals": {
       "x": 1006,
@@ -11610,7 +11589,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 278,
      "equals": {
       "x": 1007,
@@ -11627,7 +11606,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 279,
      "equals": {
       "x": 1008,
@@ -11644,7 +11623,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 280,
      "equals": {
       "x": 1009,
@@ -11661,7 +11640,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 281,
      "equals": {
       "x": 1010,
@@ -11678,7 +11657,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 282,
      "equals": {
       "x": 1011,
@@ -11695,7 +11674,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 283,
      "equals": {
       "x": 1012,
@@ -11712,7 +11691,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 284,
      "equals": {
       "x": 1013,
@@ -11729,7 +11708,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 285,
      "equals": {
       "x": 1014,
@@ -11746,7 +11725,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 286,
      "equals": {
       "x": 1015,
@@ -11763,7 +11742,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 287,
      "equals": {
       "x": 1016,
@@ -11780,7 +11759,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 288,
      "equals": {
       "x": 1017,
@@ -11797,7 +11776,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 289,
      "equals": {
       "x": 1018,
@@ -11814,7 +11793,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 290,
      "equals": {
       "x": 1019,
@@ -11831,7 +11810,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 291,
      "equals": {
       "x": 1020,
@@ -11848,7 +11827,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 292,
      "equals": {
       "x": 1021,
@@ -11865,7 +11844,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 293,
      "equals": {
       "x": 1022,
@@ -11882,7 +11861,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 294,
      "equals": {
       "x": 1023,
@@ -11899,7 +11878,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 295,
      "equals": {
       "x": 1024,
@@ -11916,7 +11895,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 296,
      "equals": {
       "x": 1025,
@@ -11933,7 +11912,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 297,
      "equals": {
       "x": 1026,
@@ -11950,7 +11929,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 298,
      "equals": {
       "x": 1027,
@@ -11967,7 +11946,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 299,
      "equals": {
       "x": 1005,
@@ -11984,7 +11963,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 300,
      "equals": {
       "x": 1006,
@@ -12001,7 +11980,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 301,
      "equals": {
       "x": 1007,
@@ -12018,7 +11997,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 302,
      "equals": {
       "x": 1008,
@@ -12035,7 +12014,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 303,
      "equals": {
       "x": 1009,
@@ -12052,7 +12031,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 304,
      "equals": {
       "x": 1010,
@@ -12069,7 +12048,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 305,
      "equals": {
       "x": 1011,
@@ -12086,7 +12065,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 306,
      "equals": {
       "x": 1012,
@@ -12103,7 +12082,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 307,
      "equals": {
       "x": 1013,
@@ -12120,7 +12099,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 308,
      "equals": {
       "x": 1014,
@@ -12137,7 +12116,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 309,
      "equals": {
       "x": 1015,
@@ -12154,7 +12133,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 310,
      "equals": {
       "x": 1016,
@@ -12171,7 +12150,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 311,
      "equals": {
       "x": 1017,
@@ -12188,7 +12167,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 312,
      "equals": {
       "x": 1018,
@@ -12205,7 +12184,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 313,
      "equals": {
       "x": 1019,
@@ -12222,7 +12201,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 314,
      "equals": {
       "x": 1020,
@@ -12239,7 +12218,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 315,
      "equals": {
       "x": 1021,
@@ -12256,7 +12235,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 316,
      "equals": {
       "x": 1022,
@@ -12273,7 +12252,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 317,
      "equals": {
       "x": 1023,
@@ -12290,7 +12269,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 318,
      "equals": {
       "x": 1024,
@@ -12307,7 +12286,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 319,
      "equals": {
       "x": 1025,
@@ -12324,7 +12303,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 320,
      "equals": {
       "x": 1026,
@@ -12341,7 +12320,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 321,
      "equals": {
       "x": 1027,
@@ -12358,7 +12337,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 322,
      "equals": {
       "x": 1005,
@@ -12375,7 +12354,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 323,
      "equals": {
       "x": 1006,
@@ -12392,7 +12371,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 324,
      "equals": {
       "x": 1007,
@@ -12409,7 +12388,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 325,
      "equals": {
       "x": 1008,
@@ -12426,7 +12405,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 326,
      "equals": {
       "x": 1009,
@@ -12443,7 +12422,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 327,
      "equals": {
       "x": 1010,
@@ -12460,7 +12439,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 328,
      "equals": {
       "x": 1011,
@@ -12477,7 +12456,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 329,
      "equals": {
       "x": 1012,
@@ -12494,7 +12473,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 330,
      "equals": {
       "x": 1013,
@@ -12511,7 +12490,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 331,
      "equals": {
       "x": 1014,
@@ -12528,7 +12507,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 332,
      "equals": {
       "x": 1015,
@@ -12545,7 +12524,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 333,
      "equals": {
       "x": 1016,
@@ -12562,7 +12541,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 334,
      "equals": {
       "x": 1017,
@@ -12579,7 +12558,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 335,
      "equals": {
       "x": 1018,
@@ -12596,7 +12575,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 336,
      "equals": {
       "x": 1019,
@@ -12613,7 +12592,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 337,
      "equals": {
       "x": 1020,
@@ -12630,7 +12609,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 338,
      "equals": {
       "x": 1021,
@@ -12647,7 +12626,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 339,
      "equals": {
       "x": 1022,
@@ -12664,7 +12643,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 340,
      "equals": {
       "x": 1023,
@@ -12681,7 +12660,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 341,
      "equals": {
       "x": 1024,
@@ -12698,7 +12677,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 342,
      "equals": {
       "x": 1025,
@@ -12715,7 +12694,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 343,
      "equals": {
       "x": 1026,
@@ -12732,7 +12711,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 344,
      "equals": {
       "x": 1027,
@@ -12749,7 +12728,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 345,
      "equals": {
       "x": 1005,
@@ -12766,7 +12745,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 346,
      "equals": {
       "x": 1006,
@@ -12783,7 +12762,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 347,
      "equals": {
       "x": 1007,
@@ -12800,7 +12779,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 348,
      "equals": {
       "x": 1008,
@@ -12817,7 +12796,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 349,
      "equals": {
       "x": 1009,
@@ -12834,7 +12813,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 350,
      "equals": {
       "x": 1010,
@@ -12851,7 +12830,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 351,
      "equals": {
       "x": 1011,
@@ -12868,7 +12847,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 352,
      "equals": {
       "x": 1012,
@@ -12885,7 +12864,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 353,
      "equals": {
       "x": 1013,
@@ -12902,7 +12881,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 354,
      "equals": {
       "x": 1014,
@@ -12919,7 +12898,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 355,
      "equals": {
       "x": 1015,
@@ -12936,7 +12915,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 356,
      "equals": {
       "x": 1016,
@@ -12953,7 +12932,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 357,
      "equals": {
       "x": 1017,
@@ -12970,7 +12949,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 358,
      "equals": {
       "x": 1018,
@@ -12987,7 +12966,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 359,
      "equals": {
       "x": 1019,
@@ -13004,7 +12983,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 360,
      "equals": {
       "x": 1020,
@@ -13021,7 +13000,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 361,
      "equals": {
       "x": 1021,
@@ -13038,7 +13017,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 362,
      "equals": {
       "x": 1022,
@@ -13055,7 +13034,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 363,
      "equals": {
       "x": 1023,
@@ -13072,7 +13051,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 364,
      "equals": {
       "x": 1024,
@@ -13089,7 +13068,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 365,
      "equals": {
       "x": 1025,
@@ -13106,7 +13085,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 366,
      "equals": {
       "x": 1026,
@@ -13123,7 +13102,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 367,
      "equals": {
       "x": 1027,
@@ -13140,7 +13119,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 368,
      "equals": {
       "x": 1005,
@@ -13157,7 +13136,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 369,
      "equals": {
       "x": 1006,
@@ -13174,7 +13153,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 370,
      "equals": {
       "x": 1007,
@@ -13191,7 +13170,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 371,
      "equals": {
       "x": 1008,
@@ -13208,7 +13187,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 372,
      "equals": {
       "x": 1009,
@@ -13225,7 +13204,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 373,
      "equals": {
       "x": 1010,
@@ -13242,7 +13221,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 374,
      "equals": {
       "x": 1011,
@@ -13259,7 +13238,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 375,
      "equals": {
       "x": 1012,
@@ -13276,7 +13255,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 376,
      "equals": {
       "x": 1013,
@@ -13293,7 +13272,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 377,
      "equals": {
       "x": 1014,
@@ -13310,7 +13289,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 378,
      "equals": {
       "x": 1015,
@@ -13327,7 +13306,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 379,
      "equals": {
       "x": 1016,
@@ -13344,7 +13323,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 380,
      "equals": {
       "x": 1017,
@@ -13361,7 +13340,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 381,
      "equals": {
       "x": 1018,
@@ -13378,7 +13357,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 382,
      "equals": {
       "x": 1019,
@@ -13395,7 +13374,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 383,
      "equals": {
       "x": 1020,
@@ -13412,7 +13391,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 384,
      "equals": {
       "x": 1021,
@@ -13429,7 +13408,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 385,
      "equals": {
       "x": 1022,
@@ -13446,7 +13425,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 386,
      "equals": {
       "x": 1023,
@@ -13463,7 +13442,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 387,
      "equals": {
       "x": 1024,
@@ -13480,7 +13459,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 388,
      "equals": {
       "x": 1025,
@@ -13497,7 +13476,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 389,
      "equals": {
       "x": 1026,
@@ -13514,7 +13493,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 390,
      "equals": {
       "x": 1027,
@@ -13531,7 +13510,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 391,
      "equals": {
       "x": 1005,
@@ -13548,7 +13527,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 392,
      "equals": {
       "x": 1006,
@@ -13565,7 +13544,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 393,
      "equals": {
       "x": 1007,
@@ -13582,7 +13561,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 394,
      "equals": {
       "x": 1008,
@@ -13599,7 +13578,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 395,
      "equals": {
       "x": 1009,
@@ -13616,7 +13595,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 396,
      "equals": {
       "x": 1010,
@@ -13633,7 +13612,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 397,
      "equals": {
       "x": 1011,
@@ -13650,7 +13629,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 398,
      "equals": {
       "x": 1012,
@@ -13667,7 +13646,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 399,
      "equals": {
       "x": 1013,
@@ -13684,7 +13663,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 400,
      "equals": {
       "x": 1014,
@@ -13701,7 +13680,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 401,
      "equals": {
       "x": 1015,
@@ -13718,7 +13697,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 402,
      "equals": {
       "x": 1016,
@@ -13735,7 +13714,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 403,
      "equals": {
       "x": 1017,
@@ -13752,7 +13731,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 404,
      "equals": {
       "x": 1018,
@@ -13769,7 +13748,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 405,
      "equals": {
       "x": 1019,
@@ -13786,7 +13765,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 406,
      "equals": {
       "x": 1020,
@@ -13803,7 +13782,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 407,
      "equals": {
       "x": 1021,
@@ -13820,7 +13799,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 408,
      "equals": {
       "x": 1022,
@@ -13837,7 +13816,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 409,
      "equals": {
       "x": 1023,
@@ -13854,7 +13833,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 410,
      "equals": {
       "x": 1024,
@@ -13871,7 +13850,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 411,
      "equals": {
       "x": 1025,
@@ -13888,7 +13867,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 412,
      "equals": {
       "x": 1026,
@@ -13905,7 +13884,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 413,
      "equals": {
       "x": 1027,
@@ -13922,7 +13901,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 414,
      "equals": {
       "x": 1005,
@@ -13939,7 +13918,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 415,
      "equals": {
       "x": 1006,
@@ -13956,7 +13935,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 416,
      "equals": {
       "x": 1007,
@@ -13973,7 +13952,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 417,
      "equals": {
       "x": 1008,
@@ -13990,7 +13969,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 418,
      "equals": {
       "x": 1009,
@@ -14007,7 +13986,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 419,
      "equals": {
       "x": 1010,
@@ -14024,7 +14003,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 420,
      "equals": {
       "x": 1011,
@@ -14041,7 +14020,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 421,
      "equals": {
       "x": 1012,
@@ -14058,7 +14037,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 422,
      "equals": {
       "x": 1013,
@@ -14075,7 +14054,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 423,
      "equals": {
       "x": 1014,
@@ -14092,7 +14071,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 424,
      "equals": {
       "x": 1015,
@@ -14109,7 +14088,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 425,
      "equals": {
       "x": 1016,
@@ -14126,7 +14105,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 426,
      "equals": {
       "x": 1017,
@@ -14143,7 +14122,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 427,
      "equals": {
       "x": 1018,
@@ -14160,7 +14139,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 428,
      "equals": {
       "x": 1019,
@@ -14177,7 +14156,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 429,
      "equals": {
       "x": 1020,
@@ -14194,7 +14173,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 430,
      "equals": {
       "x": 1021,
@@ -14211,7 +14190,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 431,
      "equals": {
       "x": 1022,
@@ -14228,7 +14207,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 432,
      "equals": {
       "x": 1023,
@@ -14245,7 +14224,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 433,
      "equals": {
       "x": 1024,
@@ -14262,7 +14241,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 434,
      "equals": {
       "x": 1025,
@@ -14279,7 +14258,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 435,
      "equals": {
       "x": 1026,
@@ -14296,7 +14275,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 436,
      "equals": {
       "x": 1027,
@@ -14313,7 +14292,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 437,
      "equals": {
       "x": 1005,
@@ -14330,7 +14309,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 438,
      "equals": {
       "x": 1006,
@@ -14347,7 +14326,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 439,
      "equals": {
       "x": 1007,
@@ -14364,7 +14343,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 440,
      "equals": {
       "x": 1008,
@@ -14381,7 +14360,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 441,
      "equals": {
       "x": 1009,
@@ -14398,7 +14377,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 442,
      "equals": {
       "x": 1010,
@@ -14415,7 +14394,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 443,
      "equals": {
       "x": 1011,
@@ -14432,7 +14411,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 444,
      "equals": {
       "x": 1012,
@@ -14449,7 +14428,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 445,
      "equals": {
       "x": 1013,
@@ -14466,7 +14445,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 446,
      "equals": {
       "x": 1014,
@@ -14483,7 +14462,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 447,
      "equals": {
       "x": 1015,
@@ -14500,7 +14479,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 448,
      "equals": {
       "x": 1016,
@@ -14517,7 +14496,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 449,
      "equals": {
       "x": 1017,
@@ -14534,7 +14513,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 450,
      "equals": {
       "x": 1018,
@@ -14551,7 +14530,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 451,
      "equals": {
       "x": 1019,
@@ -14568,7 +14547,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 452,
      "equals": {
       "x": 1020,
@@ -14585,7 +14564,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 453,
      "equals": {
       "x": 1021,
@@ -14602,7 +14581,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 454,
      "equals": {
       "x": 1022,
@@ -14619,7 +14598,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 455,
      "equals": {
       "x": 1023,
@@ -14636,7 +14615,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 456,
      "equals": {
       "x": 1024,
@@ -14653,7 +14632,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 457,
      "equals": {
       "x": 1025,
@@ -14670,7 +14649,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 458,
      "equals": {
       "x": 1026,
@@ -14687,7 +14666,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 459,
      "equals": {
       "x": 1027,
@@ -14704,7 +14683,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 460,
      "equals": {
       "x": 1005,
@@ -14721,7 +14700,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 461,
      "equals": {
       "x": 1006,
@@ -14738,7 +14717,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 462,
      "equals": {
       "x": 1007,
@@ -14755,7 +14734,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 463,
      "equals": {
       "x": 1008,
@@ -14772,7 +14751,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 464,
      "equals": {
       "x": 1009,
@@ -14789,7 +14768,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 465,
      "equals": {
       "x": 1010,
@@ -14806,7 +14785,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 466,
      "equals": {
       "x": 1011,
@@ -14823,7 +14802,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 467,
      "equals": {
       "x": 1012,
@@ -14840,7 +14819,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 468,
      "equals": {
       "x": 1013,
@@ -14857,7 +14836,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 469,
      "equals": {
       "x": 1014,
@@ -14874,7 +14853,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 470,
      "equals": {
       "x": 1015,
@@ -14891,7 +14870,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 471,
      "equals": {
       "x": 1016,
@@ -14908,7 +14887,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 472,
      "equals": {
       "x": 1017,
@@ -14925,7 +14904,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 473,
      "equals": {
       "x": 1018,
@@ -14942,7 +14921,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 474,
      "equals": {
       "x": 1019,
@@ -14959,7 +14938,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 475,
      "equals": {
       "x": 1020,
@@ -14976,7 +14955,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 476,
      "equals": {
       "x": 1021,
@@ -14993,7 +14972,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 477,
      "equals": {
       "x": 1022,
@@ -15010,7 +14989,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 478,
      "equals": {
       "x": 1023,
@@ -15027,7 +15006,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 479,
      "equals": {
       "x": 1024,
@@ -15044,7 +15023,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 480,
      "equals": {
       "x": 1025,
@@ -15061,7 +15040,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 481,
      "equals": {
       "x": 1026,
@@ -15078,7 +15057,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 482,
      "equals": {
       "x": 1027,
@@ -15095,7 +15074,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 483,
      "equals": {
       "x": 1005,
@@ -15112,7 +15091,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 484,
      "equals": {
       "x": 1006,
@@ -15129,7 +15108,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 485,
      "equals": {
       "x": 1007,
@@ -15146,7 +15125,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 486,
      "equals": {
       "x": 1008,
@@ -15163,7 +15142,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 487,
      "equals": {
       "x": 1009,
@@ -15180,7 +15159,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 488,
      "equals": {
       "x": 1010,
@@ -15197,7 +15176,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 489,
      "equals": {
       "x": 1011,
@@ -15214,7 +15193,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 490,
      "equals": {
       "x": 1012,
@@ -15231,7 +15210,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 491,
      "equals": {
       "x": 1013,
@@ -15248,7 +15227,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 492,
      "equals": {
       "x": 1014,
@@ -15265,7 +15244,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 493,
      "equals": {
       "x": 1015,
@@ -15282,7 +15261,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 494,
      "equals": {
       "x": 1016,
@@ -15299,7 +15278,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 495,
      "equals": {
       "x": 1017,
@@ -15316,7 +15295,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 496,
      "equals": {
       "x": 1018,
@@ -15333,7 +15312,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 497,
      "equals": {
       "x": 1019,
@@ -15350,7 +15329,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 498,
      "equals": {
       "x": 1020,
@@ -15367,7 +15346,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 499,
      "equals": {
       "x": 1021,
@@ -15384,7 +15363,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 500,
      "equals": {
       "x": 1022,
@@ -15401,7 +15380,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 501,
      "equals": {
       "x": 1023,
@@ -15418,7 +15397,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 502,
      "equals": {
       "x": 1024,
@@ -15435,7 +15414,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 503,
      "equals": {
       "x": 1025,
@@ -15452,7 +15431,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 504,
      "equals": {
       "x": 1026,
@@ -15469,7 +15448,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 505,
      "equals": {
       "x": 1027,
@@ -15486,7 +15465,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 506,
      "equals": {
       "x": 1005,
@@ -15503,7 +15482,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 507,
      "equals": {
       "x": 1006,
@@ -15520,7 +15499,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 508,
      "equals": {
       "x": 1007,
@@ -15537,7 +15516,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 509,
      "equals": {
       "x": 1008,
@@ -15554,7 +15533,7 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 510,
      "equals": {
       "x": 1009,
@@ -15571,16 +15550,15 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
+     "owner": 1,
      "id": 511,
      "equals": {
-      "x": 1010,
-      "y": 1027,
-      "mines": 90,
+      "x": 1100,
+      "y": 1300,
+      "mines": 160,
       "type": "standard",
       "detonating": false,
       "known_to": [
-       0,
        1
       ]
      },
@@ -15594,20 +15572,6 @@
      "year": 1
     },
     {
-     "kind": "message",
-     "player": 0,
-     "message_id": 382,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 196,
-     "present": true,
-     "year": 1
-    },
-    {
      "kind": "player",
      "id": 0,
      "equals": {
@@ -15617,7 +15581,7 @@
        "resources": 38,
        "planets": 1,
        "starbases": 1,
-       "unarmed_ships": 2,
+       "unarmed_ships": 0,
        "escort_ships": 0,
        "capital_ships": 0,
        "tech_level_sum": 156,
@@ -15637,6 +15601,13 @@
      "year": 1
     },
     {
+     "kind": "message",
+     "player": 1,
+     "message_id": 195,
+     "present": true,
+     "year": 1
+    },
+    {
      "kind": "player",
      "id": 1,
      "equals": {
@@ -15646,7 +15617,7 @@
        "resources": 38,
        "planets": 1,
        "starbases": 1,
-       "unarmed_ships": 0,
+       "unarmed_ships": 1,
        "escort_ships": 0,
        "capital_ships": 0,
        "tech_level_sum": 156,
@@ -15659,13 +15630,13 @@
      "year": 1
     }
    ],
-   "verdict": "MF-11c-A HELD (MF-11): no new field; the layer's mines are lost (refusal message) | MF-11c-B HELD (MF-11): merges (a tiny field there gains 160)"
+   "verdict": "MF-13c-A HELD (MF-13): a new 160 field (number 511) at (1100,1300)"
   }
  ],
  "source": {
   "experiment": "experiments/mf",
   "spec_rules": "docs/OBJECTS.md \"Minefields\"",
   "parity": "docs/PARITY.md \"Minefield lane (MF-1..MF-13)\"",
-  "raw_evidence": "stars-oracle-apparatus evidence/mf/{mf11c} (private)"
+  "raw_evidence": "stars-oracle-apparatus evidence/mf/{mf13c} (private)"
  }
 }

@@ -1,7 +1,7 @@
 {
  "schema": "stars-elegy-vector/1",
- "id": "MF-11c",
- "title": "MF 11c",
+ "id": "MF-13a",
+ "title": "MF 13a",
  "years": 1,
  "random": "single_stream",
  "streams": 1,
@@ -1156,41 +1156,6 @@
      {
       "x": 1100,
       "y": 1300,
-      "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "lay_mines",
-       "years": "indefinitely"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 0,
-    "id": 1,
-    "x": 1010,
-    "y": 1010,
-    "orbiting": null,
-    "ships": [
-     {
-      "design": 5,
-      "count": 1
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 280,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1010,
-      "y": 1010,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -6827,10 +6792,10 @@
    },
    {
     "kind": "minefield",
-    "owner": 0,
-    "id": 511,
-    "x": 1010,
-    "y": 1027,
+    "owner": 1,
+    "id": 0,
+    "x": 1400,
+    "y": 1400,
     "mines": 100,
     "type": "standard",
     "detonating": false,
@@ -6841,9 +6806,9 @@
  },
  "cases": [
   {
-   "id": "MF-11c",
-   "rule": "OBJECTS MF-11",
-   "setup": "MF 11c",
+   "id": "MF-13a",
+   "rule": "OBJECTS MF-13",
+   "setup": "MF 13a",
    "tag": "CONFIRMED",
    "prediction_held": true,
    "varies_by_stream": false,
@@ -8929,7 +8894,7 @@
      "equals": {
       "x": 1010,
       "y": 1010,
-      "mines": 250,
+      "mines": 90,
       "type": "standard",
       "detonating": false,
       "known_to": [
@@ -15571,18 +15536,15 @@
     },
     {
      "kind": "minefield",
-     "owner": 0,
-     "id": 511,
+     "owner": 1,
+     "id": 0,
      "equals": {
-      "x": 1010,
-      "y": 1027,
+      "x": 1400,
+      "y": 1400,
       "mines": 90,
       "type": "standard",
       "detonating": false,
-      "known_to": [
-       0,
-       1
-      ]
+      "known_to": []
      },
      "year": 1
     },
@@ -15601,13 +15563,6 @@
      "year": 1
     },
     {
-     "kind": "message",
-     "player": 0,
-     "message_id": 196,
-     "present": true,
-     "year": 1
-    },
-    {
      "kind": "player",
      "id": 0,
      "equals": {
@@ -15617,7 +15572,7 @@
        "resources": 38,
        "planets": 1,
        "starbases": 1,
-       "unarmed_ships": 2,
+       "unarmed_ships": 1,
        "escort_ships": 0,
        "capital_ships": 0,
        "tech_level_sum": 156,
@@ -15659,13 +15614,13 @@
      "year": 1
     }
    ],
-   "verdict": "MF-11c-A HELD (MF-11): no new field; the layer's mines are lost (refusal message) | MF-11c-B HELD (MF-11): merges (a tiny field there gains 160)"
+   "verdict": "MF-13a-A HELD (MF-13): no new field; \"failed to lay\" message (0x17e) for that layer"
   }
  ],
  "source": {
   "experiment": "experiments/mf",
   "spec_rules": "docs/OBJECTS.md \"Minefields\"",
   "parity": "docs/PARITY.md \"Minefield lane (MF-1..MF-13)\"",
-  "raw_evidence": "stars-oracle-apparatus evidence/mf/{mf11c} (private)"
+  "raw_evidence": "stars-oracle-apparatus evidence/mf/{mf13a} (private)"
  }
 }
