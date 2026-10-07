@@ -4,7 +4,7 @@
  "title": "Interstellar Traveler player 1 (tech 26): stargates without losses or cargo dumps; packets into IT planets",
  "source": {
   "experiment": "experiments/ob",
-  "spec_rules": "docs/OBJECTS.md",
+  "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Stargates (CONFIRMED, OB-021, OB-022)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/ob/ob022 (private)"
  },

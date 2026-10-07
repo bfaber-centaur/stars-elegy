@@ -4,7 +4,7 @@
  "title": "packet impacts with population growth controlled (player 0 packets, mutual enemies)",
  "source": {
   "experiment": "experiments/ob",
-  "spec_rules": "docs/OBJECTS.md",
+  "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Packets (CONFIRMED except where marked)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/ob/ob009 (private)"
  },

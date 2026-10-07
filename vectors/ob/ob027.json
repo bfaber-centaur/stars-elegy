@@ -1,16 +1,16 @@
 {
  "schema": "stars-elegy-vector/1",
- "id": "OB-010",
- "title": "minefield hits while moving (player 1 fields, player 0 fleets of 5 Laser DDs, warp 9)",
+ "id": "OB-027",
+ "title": "scouts targeting wormholes known (seen bit) and unknown at the start of the year",
  "source": {
   "experiment": "experiments/ob",
   "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Universe objects\"",
-  "raw_evidence": "stars-oracle-apparatus evidence/ob/ob010, ob010-c15000, ob010-c25000, ob010-c30000, ob010-c40000, ob010-c60000 (private)"
+  "raw_evidence": "stars-oracle-apparatus evidence/ob/ob027 (private)"
  },
  "years": 1,
- "random": "several_streams",
- "streams": 6,
+ "random": "single_stream",
+ "streams": 1,
  "initial_state": {
   "year": 2400,
   "game": {
@@ -1214,13 +1214,13 @@
    {
     "owner": 0,
     "id": 0,
-    "x": 1035,
-    "y": 1030,
+    "x": 1040,
+    "y": 1070,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1229,12 +1229,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1035,
-      "y": 1030,
+      "x": 1040,
+      "y": 1070,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1244,11 +1244,12 @@
       }
      },
      {
-      "x": 1065,
-      "y": 1030,
-      "warp": 9,
+      "x": 1040,
+      "y": 1050,
+      "warp": 1,
       "target": {
-       "kind": "space"
+       "kind": "wormhole",
+       "id": 0
       },
       "task": {
        "kind": "none"
@@ -1259,13 +1260,13 @@
    {
     "owner": 0,
     "id": 1,
-    "x": 1035,
-    "y": 1180,
+    "x": 1120,
+    "y": 1070,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1274,12 +1275,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1035,
-      "y": 1180,
+      "x": 1120,
+      "y": 1070,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1289,11 +1290,12 @@
       }
      },
      {
-      "x": 1065,
-      "y": 1180,
-      "warp": 9,
+      "x": 1120,
+      "y": 1050,
+      "warp": 1,
       "target": {
-       "kind": "space"
+       "kind": "wormhole",
+       "id": 1
       },
       "task": {
        "kind": "none"
@@ -1304,13 +1306,13 @@
    {
     "owner": 0,
     "id": 2,
-    "x": 1065,
-    "y": 1360,
+    "x": 1200,
+    "y": 1060,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1319,12 +1321,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1065,
-      "y": 1360,
+      "x": 1200,
+      "y": 1060,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1334,11 +1336,12 @@
       }
      },
      {
-      "x": 1095,
-      "y": 1360,
-      "warp": 9,
+      "x": 1200,
+      "y": 1040,
+      "warp": 1,
       "target": {
-       "kind": "space"
+       "kind": "wormhole",
+       "id": 2
       },
       "task": {
        "kind": "none"
@@ -1349,13 +1352,13 @@
    {
     "owner": 0,
     "id": 3,
-    "x": 1345,
-    "y": 1040,
+    "x": 1280,
+    "y": 1170,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1364,12 +1367,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1345,
-      "y": 1040,
+      "x": 1280,
+      "y": 1170,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1379,11 +1382,12 @@
       }
      },
      {
-      "x": 1375,
-      "y": 1040,
-      "warp": 9,
+      "x": 1280,
+      "y": 1150,
+      "warp": 1,
       "target": {
-       "kind": "space"
+       "kind": "wormhole",
+       "id": 3
       },
       "task": {
        "kind": "none"
@@ -1394,13 +1398,13 @@
    {
     "owner": 0,
     "id": 4,
-    "x": 1355,
-    "y": 1220,
+    "x": 1040,
+    "y": 1190,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1409,12 +1413,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1355,
-      "y": 1220,
+      "x": 1040,
+      "y": 1190,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1424,11 +1428,12 @@
       }
      },
      {
-      "x": 1385,
-      "y": 1220,
-      "warp": 9,
+      "x": 1040,
+      "y": 1170,
+      "warp": 1,
       "target": {
-       "kind": "space"
+       "kind": "wormhole",
+       "id": 4
       },
       "task": {
        "kind": "none"
@@ -1439,13 +1444,13 @@
    {
     "owner": 0,
     "id": 5,
-    "x": 1160,
-    "y": 1230,
+    "x": 1100,
+    "y": 1240,
     "orbiting": null,
     "ships": [
      {
-      "design": 1,
-      "count": 5
+      "design": 10,
+      "count": 1
      }
     ],
     "cargo": {
@@ -1454,12 +1459,12 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 1,
     "waypoints": [
      {
-      "x": 1160,
-      "y": 1230,
+      "x": 1100,
+      "y": 1240,
       "warp": 0,
       "target": {
        "kind": "space"
@@ -1469,11 +1474,104 @@
       }
      },
      {
-      "x": 1241,
-      "y": 1230,
-      "warp": 9,
+      "x": 1100,
+      "y": 1220,
+      "warp": 1,
+      "target": {
+       "kind": "wormhole",
+       "id": 5
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 0,
+    "id": 6,
+    "x": 1180,
+    "y": 1260,
+    "orbiting": null,
+    "ships": [
+     {
+      "design": 10,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 50,
+    "battle_plan": 1,
+    "waypoints": [
+     {
+      "x": 1180,
+      "y": 1260,
+      "warp": 0,
       "target": {
        "kind": "space"
+      },
+      "task": {
+       "kind": "none"
+      }
+     },
+     {
+      "x": 1180,
+      "y": 1240,
+      "warp": 1,
+      "target": {
+       "kind": "wormhole",
+       "id": 6
+      },
+      "task": {
+       "kind": "none"
+      }
+     }
+    ]
+   },
+   {
+    "owner": 0,
+    "id": 7,
+    "x": 1260,
+    "y": 1250,
+    "orbiting": null,
+    "ships": [
+     {
+      "design": 10,
+      "count": 1
+     }
+    ],
+    "cargo": {
+     "ironium": 0,
+     "boranium": 0,
+     "germanium": 0,
+     "colonists": 0
+    },
+    "fuel": 50,
+    "battle_plan": 1,
+    "waypoints": [
+     {
+      "x": 1260,
+      "y": 1250,
+      "warp": 0,
+      "target": {
+       "kind": "space"
+      },
+      "task": {
+       "kind": "none"
+      }
+     },
+     {
+      "x": 1260,
+      "y": 1230,
+      "warp": 1,
+      "target": {
+       "kind": "wormhole",
+       "id": 7
       },
       "task": {
        "kind": "none"
@@ -1484,382 +1582,264 @@
   ],
   "objects": [
    {
-    "kind": "minefield",
-    "owner": 1,
+    "kind": "wormhole",
     "id": 0,
-    "x": 1050,
-    "y": 1030,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
+    "x": 1040,
+    "y": 1050,
+    "partner": 1,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [
+     0
+    ],
+    "destination_known_to": []
    },
    {
-    "kind": "minefield",
-    "owner": 1,
+    "kind": "wormhole",
     "id": 1,
-    "x": 1050,
-    "y": 1180,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
+    "x": 1120,
+    "y": 1050,
+    "partner": 0,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [
+     0
+    ],
+    "destination_known_to": []
    },
    {
-    "kind": "minefield",
-    "owner": 1,
+    "kind": "wormhole",
     "id": 2,
-    "x": 1080,
-    "y": 1360,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
-   },
-   {
-    "kind": "minefield",
-    "owner": 1,
-    "id": 3,
-    "x": 1360,
+    "x": 1200,
     "y": 1040,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
+    "partner": 3,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [
+     0
+    ],
+    "destination_known_to": []
    },
    {
-    "kind": "minefield",
-    "owner": 1,
+    "kind": "wormhole",
+    "id": 3,
+    "x": 1280,
+    "y": 1150,
+    "partner": 2,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [
+     0
+    ],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
     "id": 4,
-    "x": 1370,
-    "y": 1220,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
+    "x": 1040,
+    "y": 1170,
+    "partner": 5,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
    },
    {
-    "kind": "minefield",
-    "owner": 1,
+    "kind": "wormhole",
     "id": 5,
-    "x": 1220,
+    "x": 1100,
+    "y": 1220,
+    "partner": 4,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 6,
+    "x": 1180,
+    "y": 1240,
+    "partner": 7,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
+   },
+   {
+    "kind": "wormhole",
+    "id": 7,
+    "x": 1260,
     "y": 1230,
-    "mines": 3000,
-    "type": "standard",
-    "detonating": false
+    "partner": 6,
+    "stability_class": 1,
+    "years_since_jump": 0,
+    "known_to": [],
+    "destination_known_to": []
    }
   ],
   "production_queues": []
  },
  "cases": [
   {
-   "id": "OB-010-H0",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 0,
-     "equals": {
-      "x": 1065,
-      "y": 1030
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1065,1030), undamaged"
-  },
-  {
-   "id": "OB-010-H1",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 1,
-     "equals": {
-      "x": 1065,
-      "y": 1180
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1065,1180), undamaged"
-  },
-  {
-   "id": "OB-010-H2",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 2,
-     "equals": {
-      "x": 1095,
-      "y": 1360
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1095,1360), undamaged"
-  },
-  {
-   "id": "OB-010-H3",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 3,
-     "equals": {
-      "x": 1375,
-      "y": 1040
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1375,1040), undamaged"
-  },
-  {
-   "id": "OB-010-H4",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 4,
-     "equals": {
-      "x": 1385,
-      "y": 1220
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1385,1220), undamaged"
-  },
-  {
-   "id": "OB-010-S",
-   "rule": "O-14/O-15",
-   "setup": "warp-9 fleet crossing 76 ly of a standard 3000 field (15 per mille per ly)",
+   "id": "OB-027-A",
+   "rule": "O-31",
+   "setup": "scouts at warp 1 targeting class-1 wormholes 0-3, known to player 0 (seen bit set)",
    "tag": "MEASURED",
-   "prediction_held": false,
-   "varies_by_stream": true,
+   "prediction_held": true,
+   "varies_by_stream": false,
    "expect": [
     {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 15000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 15000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 20000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 20000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 25000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 25000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 30000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 30000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 40000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 40000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1229,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 60000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 60000"
+     "kind": "sample",
+     "check": "wormfollow",
+     "target": [],
+     "observed": [
+      {
+       "fleet": 0,
+       "wp1": [
+        16384,
+        "18",
+        [
+         1035,
+         1054
+        ]
+       ],
+       "worm_before": [
+        1040,
+        1050
+       ],
+       "worm_after": [
+        1035,
+        1054
+       ]
+      },
+      {
+       "fleet": 1,
+       "wp1": [
+        16385,
+        "18",
+        [
+         1115,
+         1039
+        ]
+       ],
+       "worm_before": [
+        1120,
+        1050
+       ],
+       "worm_after": [
+        1115,
+        1039
+       ]
+      },
+      {
+       "fleet": 2,
+       "wp1": [
+        16386,
+        "18",
+        [
+         1209,
+         1038
+        ]
+       ],
+       "worm_before": [
+        1200,
+        1040
+       ],
+       "worm_after": [
+        1209,
+        1038
+       ]
+      },
+      {
+       "fleet": 3,
+       "wp1": [
+        16387,
+        "18",
+        [
+         1274,
+         1148
+        ]
+       ],
+       "worm_before": [
+        1280,
+        1150
+       ],
+       "worm_after": [
+        1274,
+        1148
+       ]
+      }
+     ],
+     "constraint": "waypoint keeps the wormhole as target (obj id kept)",
+     "year": 1
     }
    ],
-   "prediction": "no hit (32%): at (1241,1230), field 2940; or a stop inside the field, 50% damage on each DD and field 2891 (hit -50, then 2% decay)"
+   "prediction": "waypoint keeps the wormhole as target (obj id kept)"
+  },
+  {
+   "id": "OB-027-B",
+   "rule": "O-31",
+   "setup": "scouts targeting wormholes 4-7, unknown at the start (as OB-025)",
+   "tag": "MEASURED",
+   "prediction_held": true,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "kind": "sample",
+     "check": "wormlost",
+     "target": [],
+     "observed": [
+      {
+       "fleet": 4,
+       "wp1": [
+        1,
+        "14",
+        [
+         1040,
+         1170
+        ]
+       ]
+      },
+      {
+       "fleet": 5,
+       "wp1": [
+        1,
+        "14",
+        [
+         1100,
+         1220
+        ]
+       ]
+      },
+      {
+       "fleet": 6,
+       "wp1": [
+        1,
+        "14",
+        [
+         1180,
+         1240
+        ]
+       ]
+      },
+      {
+       "fleet": 7,
+       "wp1": [
+        1,
+        "14",
+        [
+         1260,
+         1230
+        ]
+       ]
+      }
+     ],
+     "constraint": "deep-space waypoint at the old position (repeats OB-025-F1)",
+     "year": 1
+    }
+   ],
+   "prediction": "deep-space waypoint at the old position (repeats OB-025-F1)"
   }
  ]
 }

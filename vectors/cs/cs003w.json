@@ -5582,7 +5582,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "56 of 60 ships left"
   },
   {
    "id": "CS-003-W-E01",
@@ -5616,7 +5617,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "50 of 60 ships left"
   },
   {
    "id": "CS-003-W-E02",
@@ -5650,7 +5652,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "55 of 60 ships left"
   },
   {
    "id": "CS-003-W-E03",
@@ -5684,7 +5687,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "53 of 60 ships left"
   },
   {
    "id": "CS-003-W-E04",
@@ -5718,7 +5722,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "55 of 60 ships left"
   },
   {
    "id": "CS-003-W-E05",
@@ -5752,7 +5757,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "59 of 60 ships left"
   },
   {
    "id": "CS-003-W-E06",
@@ -5786,7 +5792,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "53 of 60 ships left"
   },
   {
    "id": "CS-003-W-E07",
@@ -6105,7 +6112,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "55 of 60 ships left"
   },
   {
    "id": "CS-003-W-E11",
@@ -6139,7 +6147,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "53 of 60 ships left"
   },
   {
    "id": "CS-003-W-E12",
@@ -6173,7 +6182,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "54 of 60 ships left"
   },
   {
    "id": "CS-003-W-E13",
@@ -6207,7 +6217,8 @@
      "year": 1
     }
    ],
-   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)"
+   "prediction": "some of 60 ships lost (1 in 10 each, KERNEL.md; P(no loss) = 0.0018)",
+   "verdict": "59 of 60 ships left"
   },
   {
    "id": "CS-003-W-E14",

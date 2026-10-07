@@ -4,7 +4,7 @@
  "title": "stargates: range, mass, refusal, cargo, gate ownership (JOAT player 0, gates 100/250 and 150/600)",
  "source": {
   "experiment": "experiments/ob",
-  "spec_rules": "docs/OBJECTS.md",
+  "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Stargates (CONFIRMED, OB-021, OB-022)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/ob/ob021, ob021-c15000, ob021-c25000, ob021-c30000, ob021-c40000, ob021-c60000 (private)"
  },

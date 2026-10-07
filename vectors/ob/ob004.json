@@ -4,7 +4,7 @@
  "title": "Mystery Trader encounters (player 1 at tech 3, sum 18)",
  "source": {
   "experiment": "experiments/ob",
-  "spec_rules": "docs/OBJECTS.md",
+  "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Mystery Trader (CONFIRMED, OB-004)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/ob/ob004 (private)"
  },

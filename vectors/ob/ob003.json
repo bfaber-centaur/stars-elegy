@@ -4,7 +4,7 @@
  "title": "mass-driver packets in flight and on impact (player 0 packets, mutual enemies)",
  "source": {
   "experiment": "experiments/ob",
-  "spec_rules": "docs/OBJECTS.md",
+  "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Packets (CONFIRMED except where marked)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/ob/ob003 (private)"
  },
@@ -1675,6 +1675,104 @@
     }
    ],
    "prediction": "damage 625 scaled by defenses to 418: pop 582, defenses 30"
+  },
+  {
+   "id": "OB-003-J",
+   "rule": "O-19/O-20",
+   "setup": "class-2 packet (25%/yr) in flight, 250 ly from planet 23, moved bit clear",
+   "tag": "CONFIRMED",
+   "prediction_held": true,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "kind": "object",
+     "equals": {
+      "kind": "packet",
+      "owner": 0,
+      "id": 9,
+      "x": 1228,
+      "y": 1261,
+      "destination_planet": 23,
+      "warp": 10,
+      "minerals": [
+       750,
+       0,
+       0
+      ],
+      "decay_class": 2
+     },
+     "year": 1
+    }
+   ],
+   "prediction": "moves 100 ly to (1228,1261) (within 1 ly); 750 kT left"
+  },
+  {
+   "id": "OB-003-K",
+   "rule": "O-19/O-20",
+   "setup": "class-3 packet (50%/yr), 250 ly+ from planet 23, moved bit set",
+   "tag": "MEASURED",
+   "prediction_held": false,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "kind": "object",
+     "equals": {
+      "kind": "packet",
+      "owner": 0,
+      "id": 4,
+      "x": 1268,
+      "y": 1318,
+      "destination_planet": 14,
+      "warp": 7,
+      "minerals": [
+       1000,
+       0,
+       0
+      ],
+      "decay_class": 0
+     },
+     "year": 1
+    },
+    {
+     "kind": "object",
+     "equals": {
+      "kind": "packet",
+      "owner": 0,
+      "id": 9,
+      "x": 1228,
+      "y": 1261,
+      "destination_planet": 23,
+      "warp": 10,
+      "minerals": [
+       750,
+       0,
+       0
+      ],
+      "decay_class": 2
+     },
+     "year": 1
+    },
+    {
+     "kind": "object",
+     "equals": {
+      "kind": "packet",
+      "owner": 0,
+      "id": 10,
+      "x": 1223,
+      "y": 1236,
+      "destination_planet": 23,
+      "warp": 10,
+      "minerals": [
+       500,
+       0,
+       0
+      ],
+      "decay_class": 3
+     },
+     "year": 1
+    }
+   ],
+   "prediction": "moves 100 ly; 500 kT left (bit meaning measured)"
   }
  ]
 }

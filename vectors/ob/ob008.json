@@ -1,16 +1,16 @@
 {
  "schema": "stars-elegy-vector/1",
- "id": "OB-010",
- "title": "minefield hits while moving (player 1 fields, player 0 fleets of 5 Laser DDs, warp 9)",
+ "id": "OB-008",
+ "title": "sweeping and relations: player 0 counts player 1 as a friend",
  "source": {
   "experiment": "experiments/ob",
   "spec_rules": "docs/OBJECTS.md, docs/SCANNING.md",
   "parity": "docs/PARITY.md \"Universe objects\"",
-  "raw_evidence": "stars-oracle-apparatus evidence/ob/ob010, ob010-c15000, ob010-c25000, ob010-c30000, ob010-c40000, ob010-c60000 (private)"
+  "raw_evidence": "stars-oracle-apparatus evidence/ob/ob008 (private)"
  },
  "years": 1,
- "random": "several_streams",
- "streams": 6,
+ "random": "single_stream",
+ "streams": 1,
  "initial_state": {
   "year": 2400,
   "game": {
@@ -89,7 +89,7 @@
     "research_percent": 0,
     "research_field": "energy",
     "relations": {
-     "1": "enemy"
+     "1": "friend"
     },
     "mystery_trader_items": [],
     "race": {
@@ -162,7 +162,7 @@
     "research_percent": 0,
     "research_field": "energy",
     "relations": {
-     "0": "enemy"
+     "0": "neutral"
     },
     "mystery_trader_items": [],
     "race": {
@@ -300,7 +300,7 @@
     "id": 5,
     "x": 1146,
     "y": 1180,
-    "owner": -1,
+    "owner": 0,
     "concentrations": [
      13,
      89,
@@ -310,7 +310,23 @@
      63,
      78,
      91
-    ]
+    ],
+    "surface_minerals": [
+     0,
+     0,
+     0
+    ],
+    "population": 1000,
+    "excess": 0,
+    "mines": 0,
+    "factories": 0,
+    "defenses": 0,
+    "planetary_scanner": 16,
+    "leftover_to_research": false,
+    "starbase": {
+     "design": 1,
+     "damage": 0
+    }
    },
    {
     "id": 6,
@@ -1214,13 +1230,13 @@
    {
     "owner": 0,
     "id": 0,
-    "x": 1035,
-    "y": 1030,
+    "x": 1050,
+    "y": 1180,
     "orbiting": null,
     "ships": [
      {
       "design": 1,
-      "count": 5
+      "count": 1
      }
     ],
     "cargo": {
@@ -1229,24 +1245,13 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 3,
     "waypoints": [
      {
-      "x": 1035,
-      "y": 1030,
+      "x": 1050,
+      "y": 1180,
       "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1065,
-      "y": 1030,
-      "warp": 9,
       "target": {
        "kind": "space"
       },
@@ -1259,13 +1264,13 @@
    {
     "owner": 0,
     "id": 1,
-    "x": 1035,
-    "y": 1180,
+    "x": 1050,
+    "y": 1250,
     "orbiting": null,
     "ships": [
      {
       "design": 1,
-      "count": 5
+      "count": 1
      }
     ],
     "cargo": {
@@ -1274,24 +1279,13 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 2,
     "waypoints": [
      {
-      "x": 1035,
-      "y": 1180,
+      "x": 1050,
+      "y": 1250,
       "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1065,
-      "y": 1180,
-      "warp": 9,
       "target": {
        "kind": "space"
       },
@@ -1304,103 +1298,13 @@
    {
     "owner": 0,
     "id": 2,
-    "x": 1065,
-    "y": 1360,
-    "orbiting": null,
-    "ships": [
-     {
-      "design": 1,
-      "count": 5
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 1400,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1065,
-      "y": 1360,
-      "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1095,
-      "y": 1360,
-      "warp": 9,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 0,
-    "id": 3,
-    "x": 1345,
-    "y": 1040,
-    "orbiting": null,
-    "ships": [
-     {
-      "design": 1,
-      "count": 5
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 1400,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1345,
-      "y": 1040,
-      "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1375,
-      "y": 1040,
-      "warp": 9,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 0,
-    "id": 4,
-    "x": 1355,
+    "x": 1210,
     "y": 1220,
     "orbiting": null,
     "ships": [
      {
       "design": 1,
-      "count": 5
+      "count": 1
      }
     ],
     "cargo": {
@@ -1409,69 +1313,13 @@
      "germanium": 0,
      "colonists": 0
     },
-    "fuel": 1400,
-    "battle_plan": 0,
+    "fuel": 50,
+    "battle_plan": 4,
     "waypoints": [
      {
-      "x": 1355,
+      "x": 1210,
       "y": 1220,
       "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1385,
-      "y": 1220,
-      "warp": 9,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     }
-    ]
-   },
-   {
-    "owner": 0,
-    "id": 5,
-    "x": 1160,
-    "y": 1230,
-    "orbiting": null,
-    "ships": [
-     {
-      "design": 1,
-      "count": 5
-     }
-    ],
-    "cargo": {
-     "ironium": 0,
-     "boranium": 0,
-     "germanium": 0,
-     "colonists": 0
-    },
-    "fuel": 1400,
-    "battle_plan": 0,
-    "waypoints": [
-     {
-      "x": 1160,
-      "y": 1230,
-      "warp": 0,
-      "target": {
-       "kind": "space"
-      },
-      "task": {
-       "kind": "none"
-      }
-     },
-     {
-      "x": 1241,
-      "y": 1230,
-      "warp": 9,
       "target": {
        "kind": "space"
       },
@@ -1487,10 +1335,10 @@
     "kind": "minefield",
     "owner": 1,
     "id": 0,
-    "x": 1050,
-    "y": 1030,
+    "x": 1130,
+    "y": 1200,
     "mines": 1000,
-    "type": "heavy",
+    "type": "standard",
     "detonating": false
    },
    {
@@ -1500,46 +1348,26 @@
     "x": 1050,
     "y": 1180,
     "mines": 1000,
-    "type": "heavy",
+    "type": "standard",
     "detonating": false
    },
    {
     "kind": "minefield",
     "owner": 1,
     "id": 2,
-    "x": 1080,
-    "y": 1360,
+    "x": 1050,
+    "y": 1250,
     "mines": 1000,
-    "type": "heavy",
+    "type": "standard",
     "detonating": false
    },
    {
     "kind": "minefield",
     "owner": 1,
     "id": 3,
-    "x": 1360,
-    "y": 1040,
-    "mines": 1000,
-    "type": "heavy",
-    "detonating": false
-   },
-   {
-    "kind": "minefield",
-    "owner": 1,
-    "id": 4,
-    "x": 1370,
+    "x": 1210,
     "y": 1220,
     "mines": 1000,
-    "type": "heavy",
-    "detonating": false
-   },
-   {
-    "kind": "minefield",
-    "owner": 1,
-    "id": 5,
-    "x": 1220,
-    "y": 1230,
-    "mines": 3000,
     "type": "standard",
     "detonating": false
    }
@@ -1548,318 +1376,100 @@
  },
  "cases": [
   {
-   "id": "OB-010-H0",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
+   "id": "OB-008-A",
+   "rule": "O-10",
+   "setup": "player 0 Laser Fort inside a friend's 1000 field (6% decay)",
    "tag": "CONFIRMED",
    "prediction_held": true,
    "varies_by_stream": false,
    "expect": [
     {
-     "kind": "fleet",
-     "owner": 0,
+     "kind": "minefield",
+     "owner": 1,
      "id": 0,
      "equals": {
-      "x": 1065,
-      "y": 1030
+      "x": 1130,
+      "y": 1200,
+      "mines": 940,
+      "type": "standard",
+      "detonating": false
      },
      "year": 1
     }
    ],
-   "prediction": "never hit: ends at (1065,1030), undamaged"
+   "prediction": "field 940 (no sweep)"
   },
   {
-   "id": "OB-010-H1",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 1,
-     "equals": {
-      "x": 1065,
-      "y": 1180
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1065,1180), undamaged"
-  },
-  {
-   "id": "OB-010-H2",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 2,
-     "equals": {
-      "x": 1095,
-      "y": 1360
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1095,1360), undamaged"
-  },
-  {
-   "id": "OB-010-H3",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 3,
-     "equals": {
-      "x": 1375,
-      "y": 1040
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1375,1040), undamaged"
-  },
-  {
-   "id": "OB-010-H4",
-   "rule": "O-14",
-   "setup": "warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)",
-   "tag": "CONFIRMED",
-   "prediction_held": true,
-   "varies_by_stream": false,
-   "expect": [
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 4,
-     "equals": {
-      "x": 1385,
-      "y": 1220
-     },
-     "year": 1
-    }
-   ],
-   "prediction": "never hit: ends at (1385,1220), undamaged"
-  },
-  {
-   "id": "OB-010-S",
-   "rule": "O-14/O-15",
-   "setup": "warp-9 fleet crossing 76 ly of a standard 3000 field (15 per mille per ly)",
+   "id": "OB-008-B",
+   "rule": "O-10",
+   "setup": "Laser DD with plan \"everyone\" in a friend's field",
    "tag": "MEASURED",
    "prediction_held": false,
-   "varies_by_stream": true,
+   "varies_by_stream": false,
    "expect": [
     {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 15000"
-    },
-    {
      "kind": "minefield",
      "owner": 1,
-     "id": 5,
+     "id": 1,
      "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
+      "x": 1050,
+      "y": 1180,
+      "mines": 960,
       "type": "standard",
       "detonating": false
      },
-     "year": 1,
-     "stream": "cycles 15000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 20000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 20000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1241,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 25000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2840,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 25000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 30000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 30000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 40000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 40000"
-    },
-    {
-     "kind": "fleet",
-     "owner": 0,
-     "id": 5,
-     "equals": {
-      "x": 1229,
-      "y": 1230,
-      "ships": [
-       {
-        "design": 1,
-        "count": 5,
-        "damage": {
-         "units": 250,
-         "percent_of_ships": 100
-        }
-       }
-      ]
-     },
-     "year": 1,
-     "stream": "cycles 60000"
-    },
-    {
-     "kind": "minefield",
-     "owner": 1,
-     "id": 5,
-     "equals": {
-      "x": 1220,
-      "y": 1230,
-      "mines": 2791,
-      "type": "standard",
-      "detonating": false
-     },
-     "year": 1,
-     "stream": "cycles 60000"
+     "year": 1
     }
    ],
-   "prediction": "no hit (32%): at (1241,1230), field 2940; or a stop inside the field, 50% damage on each DD and field 2891 (hit -50, then 2% decay)"
+   "prediction": "measured (does \"everyone\" include friends?)"
+  },
+  {
+   "id": "OB-008-C",
+   "rule": "O-10",
+   "setup": "Laser DD with plan \"neutral and enemies\" in a friend's field",
+   "tag": "CONFIRMED",
+   "prediction_held": true,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "kind": "minefield",
+     "owner": 1,
+     "id": 2,
+     "equals": {
+      "x": 1050,
+      "y": 1250,
+      "mines": 980,
+      "type": "standard",
+      "detonating": false
+     },
+     "year": 1
+    }
+   ],
+   "prediction": "field 980"
+  },
+  {
+   "id": "OB-008-D",
+   "rule": "O-10",
+   "setup": "Laser DD with plan \"player 1 only\" in a friend's field",
+   "tag": "MEASURED",
+   "prediction_held": false,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "kind": "minefield",
+     "owner": 1,
+     "id": 3,
+     "equals": {
+      "x": 1210,
+      "y": 1220,
+      "mines": 960,
+      "type": "standard",
+      "detonating": false
+     },
+     "year": 1
+    }
+   ],
+   "prediction": "measured"
   }
  ]
 }

@@ -24,9 +24,9 @@ vectors/<corpus>/<run>.json      one oracle run
 | `tk2` | TK-101..121 | 64 | planet takeover: bombing, invasion, what the new owner gets | `docs/TAKEOVER.md` |
 | `wt` | WT-001..005 | 31 | wormholes and the Mystery Trader | `docs/OBJECTS.md` |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
-| `cs` | CS-003 W, B | 36 | warp 10 losses per engine, fuel generation, bombs, Orbital Construction Module, Orbital Adjuster | `docs/COMPONENTS.md` |
+| `cs` | CS-003 W, B, S, C, C2, D | 80 | warp 10 losses, fuel generation, bombs, colonizing, Orbital Adjuster, minefield sweeping and laying, torpedo hits, designer readouts | `docs/COMPONENTS.md` |
 | `es` | ES-001, ES-002 | 153 | client estimates: waypoint distance, travel time and fuel, range, report ETA, production completion, research, population, value, mining rate | `docs/ESTIMATES.md` |
-| `ob` | OB-003..005, 009, 010, 021, 022 | 46 | packets caught by planets, the Mystery Trader meeting, wormhole and minefield travel, stargates (only the checks a vector kind covers) | `docs/OBJECTS.md` |
+| `ob` | OB-001..005, 007..027 | 146 | minefields, packets, the Mystery Trader, wormholes, scanning, stargates | `docs/OBJECTS.md`, `docs/SCANNING.md` |
 | `ug` | UG01..UG21 | 84 | new games: starting tech and designs, planet counts, homeworlds, wormholes (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
