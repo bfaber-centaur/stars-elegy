@@ -145,7 +145,7 @@ fields of each kind.
   that player's minefields (objects sort by kind, minefields first, then
   by owner and number), so a higher-numbered player's minefield or any
   packet, salvage, wormhole or Mystery Trader holds the player to 511
-  (MEASURED, MF-13: a player-1 field elsewhere, or a salvage object, gave
+  (MEASURED, MF-13 in stars-elegy #58: a player-1 field elsewhere, or a salvage object, gave
   no field and the message; player 1's 511 fields with a player-0 field
   sorting before them made field 511). LEGACY BUG. **Chosen rule for
   Elegy:** a plain limit of 512; the 511 case is reproduced only behind a
@@ -561,7 +561,7 @@ and nowhere beyond it).
 2. Wormhole jump odds over many streams; what a jump does to fleets heading
    for the wormhole.
 3. Mystery Trader spawn, path, part and ship rewards.
-4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the mechanism of the chaser that freezes its
+4. Minefields (MF-1..MF-12 done in #47, MF-13 in #58; see PARITY "Minefield lane"): the mechanism of the chaser that freezes its
    waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
    (needs crafted orders).
