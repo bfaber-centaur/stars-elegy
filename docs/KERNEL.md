@@ -69,7 +69,11 @@ order shown. "Fleet order" means by owner, then by fleet number
 2. **Player order.** The players are shuffled. For each position `i` from
    the first to the last, the host draws `Random(n − i)` (`n` players) and
    swaps position `i` with position `i +` the draw. That is one draw per
-   player, the last of them always 0.
+   player, the last of them always 0, and they are the first draws of the
+   year. CONFIRMED as two draws before mining for two players (KX-004,
+   KB-1C, KB-3A: every replay matched only with these two draws first).
+   The permutation itself is BINARY-ONLY, because no run has replayed
+   conflicting orders from two players.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`
