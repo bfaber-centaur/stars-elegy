@@ -71,6 +71,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
+//                                   driver=DEST[,WARP] (mass-driver packet destination
+//                                   planet and chosen packet warp; needs a starbase)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
@@ -905,6 +907,17 @@ public class CombatLab {
                     int w = (pl.starbaseBytes[0] & 0xff) | (pl.starbaseBytes[1] & 0xff) << 8;
                     w = (w & 0x000f) | (Integer.parseInt(v) & 0x0fff) << 4;
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
+                    break;
+                }
+                case "driver": {
+                    // driver=DEST[,WARP]: mass-driver packet destination (planet number, stored
+                    // +1 in bits 0-9 of starbase word 1) and the chosen packet warp (bits 10-13,
+                    // warp - 4; default 0, which launches at the driver's own warp)
+                    if (pl.starbaseBytes == null) throw new Exception("planetset " + pl.planetNumber + ": no starbase");
+                    String[] dw = v.split(",");
+                    int w = (Integer.parseInt(dw[0]) + 1) & 0x3ff;
+                    if (dw.length > 1) w |= ((Integer.parseInt(dw[1]) - 4) & 15) << 10;
+                    pl.starbaseBytes[2] = (byte) w; pl.starbaseBytes[3] = (byte) (w >> 8);
                     break;
                 }
                 case "route":
