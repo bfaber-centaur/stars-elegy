@@ -239,7 +239,7 @@ When a fleet unloads colonists on a planet it does not own:
   nothing lands, and the fleet keeps its colonists (message to the fleet
   owner);
 - the planet has a starbase: refused, and the fleet keeps its colonists;
-- the fleet owner is Alternate Reality: refused (BINARY-ONLY);
+- the fleet owner is Alternate Reality: refused (CONFIRMED, T-33);
 - otherwise the colonists leave the fleet and are queued as a drop. If the
   planet is owned, the drop is an invasion. If the planet was owned at the
   start of the phase but has been emptied since, for example by bombing
@@ -272,7 +272,7 @@ message. Fuel does not move, with no message and no debit (CONFIRMED,
 MG-006-E/F: an unload-all and a load-optimal fuel order both kept 300). Only scrapping a fleet in deep space leaves
 salvage (Other waypoint tasks).
 
-### Unload and load amounts (BINARY-ONLY)
+### Unload and load amounts (CONFIRMED, FO-01..05, TK-114; "load exactly" BINARY-ONLY)
 
 A transport order sets, per cargo type (ironium, boranium, germanium,
 colonists, fuel), one action and an amount `v` (kT; colonists in units of
@@ -324,10 +324,12 @@ All drops queued for one planet in one phase are resolved together.
    `s' = s + (1 − s)/4`: defenses are 75% as effective as against bombs.
 2. Each attacking player `p` has `troops[p]` (units), and its strength is
    `strength[p] = ⌊⌊troops[p]·k/100⌋·s'⌋`, with `k = 110`. For War Monger
-   `k = 165`, and for Alternate Reality `k = 0` (both BINARY-ONLY).
+   `k = 165` (CONFIRMED, T-24), and for Alternate Reality `k = 0`
+   (BINARY-ONLY; an AR drop lands only by colonizing an unowned planet,
+   where `Σ = 0` lands every colonist anyway, T-33).
    `Σ` is the sum of all strengths.
 3. If the planet is owned, the defender strength is `D = P` (×2 for Inner
-   Strength, BINARY-ONLY).
+   Strength, CONFIRMED, T-24).
    - `D > Σ`: every attacker dies, and the planet loses `⌊P·Σ/D⌋`. 200
      against 110 leaves 90.
    - `D ≤ Σ` (**a tie goes to the attackers**): the planet is emptied
@@ -393,7 +395,8 @@ On success:
   Reality skips the first three default items, and Claim Adjuster skips
   the fifth and sixth. The colony also gets the owner's default "only
   leftover to research" setting, and an Alternate Reality colony gets a
-  starbase of the owner's first starbase design (all BINARY-ONLY).
+  starbase of the owner's first starbase design (all CONFIRMED, T-26,
+  T-33).
 
 ## Capture: what a planet keeps (CONFIRMED, T-21, T-26, T-27)
 
@@ -418,10 +421,12 @@ starvation, a packet or an AR starbase loss) is emptied:
   terraforming rule itself is not yet in `KERNEL.md`).
 
 A captured planet then belongs to the winning player as a new colony
-(Colonization, above). Additionally (BINARY-ONLY):
+(Colonization, above). Additionally:
 
-- the old owner is told;
-- the new owner makes one **tech attempt** exactly as in `COMBAT.md`, Tech
+- the old owner is told (CONFIRMED: message 0x007, `MESSAGES.md`);
+- the new owner makes one **tech attempt** (MEASURED, TK-115: gains only in
+  a field where the old owner was ahead, never more than one level a year;
+  the draw order is BINARY-ONLY) exactly as in `COMBAT.md`, Tech
   from battle, steps 1–5. The "seen" levels are the **old owner's current
   levels** in each field, and no Mystery Trader item has a chance, so step 3
   always makes its 13 `rand(13)` draws and gives nothing. The attempt
@@ -432,10 +437,10 @@ A captured planet then belongs to the winning player as a new colony
   and before the artifact draws below;
 - a planet with an ancient artifact gives the new owner research points in
   a random field (`100 + rand(301)` points, scaled down below 1,000
-  colonists), when random events are on.
+  colonists), when random events are on (BINARY-ONLY).
 
-The production queue after capture was not testable in the corpus (no
-default queue in that game).
+The production queue and the leftover setting after a capture are the
+new owner's defaults, as for a colony (CONFIRMED, T-26).
 
 ### The homeworld mark after capture (CONFIRMED in one run, T-41)
 
@@ -485,9 +490,9 @@ For Elegy this matters only when designs come from outside the UI
 never have chosen. Whether Elegy accepts or rejects them is a project
 choice; parity is "keep and use".
 
-## Other waypoint tasks (BINARY-ONLY)
+## Other waypoint tasks (CONFIRMED, T-34, T-35, FO corpus)
 
-- **Scrap**: before movement only. A fleet that arrives with a scrap order
+- **Scrap** (T-34): before movement only. A fleet that arrives with a scrap order
   is scrapped at the start of the next year's waypoint phase. Per mineral,
   with `C` = the fleet's cost:
   - at a planet with a starbase: `4C/5` (`9C/10` if the planet's owner has
@@ -500,15 +505,16 @@ choice; parity is "keep and use".
   owner's** trait. Colonists join the planet only if the fleet owner owns
   it. Scrapping at a starbase may teach the planet owner a tech level, as
   in battle.
-- **Remote mining**: after movement only, by a fleet that did not move
+- **Remote mining** (T-35): after movement only, by a fleet that did not move
   this year, at an unowned planet; the order stays. An arriving miner
   therefore mines nothing the year it arrives.
-- **Merge with fleet**: in both load phases; the ordering fleet merges
-  into the target own fleet.
-- **Transfer fleet**: last task of the year. A fleet carrying colonists is
-  refused.
-- **Cargo to another player's fleet**: nothing moves to an enemy;
-  colonists are never given to another player's fleet.
+- **Merge with fleet** (FO-03): in both load phases; the ordering fleet
+  merges into the target own fleet.
+- **Transfer fleet** (FO-04, FO-05): last task of the year. A fleet
+  carrying colonists is refused.
+- **Cargo to another player's fleet** (`PARITY.md`, Another player's
+  fleet): nothing moves when the receiver's relation toward the giver is
+  enemy; colonists are never given to another player's fleet.
 
 ### Colonize is tried once (CONFIRMED, TK-113)
 

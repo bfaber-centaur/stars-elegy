@@ -232,7 +232,7 @@ public class CombatLab {
                     System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s env=%s popest=%d defest=%d surface=%s%n", f,
                         p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
                         p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
-                if (p.owner >= 0 || p.hasStarbase)
+                if (p.owner >= 0 || p.hasStarbase || (host && p.isHomeworld))
                     System.out.printf("%s planet %d owner=%d homeworld=%b starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
                         p.planetNumber, p.owner, p.isHomeworld, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
