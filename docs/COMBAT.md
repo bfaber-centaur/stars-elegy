@@ -411,15 +411,28 @@ Inside a phase, tokens go in **descending jittered weight**:
 - Every move the token is given counts, including one where it stays on
   its square (BINARY-ONLY). The counter is lowered before the square is
   chosen, so the result of the move does not matter.
-  - A lone tactic-0 token almost never stays put. Its own square scores
-    `+2` for itself and `−1` for being current, a net `+1`, and the
-    squares farthest from any single enemy always form a run of at least
-    two along the board edge. So with one enemy position it keeps moving
-    along the edge (round 4: in 6 records every disengage move changed
-    square). A stay
-    needs the neighbouring squares to score at least 1 worse than its
-    own, which takes enemies in two different directions (three or more
-    players) or neighbouring squares crowded by its own player's tokens.
+  - A lone tactic-0 token rarely stays put. Its own square scores `+2`
+    for itself and `−1` for being current, a net `+1` worse than a
+    neighbour with the same `TAKE`. A neighbour with the same score at
+    the same distance is picked at random. So it stays only if every
+    neighbour on the board has a `TAKE` at least 1 higher than its own
+    square (a tie goes to the closer square, its own).
+  - Out of an enemy's reach, `take` usually does not change with distance.
+    The out-of-reach estimate is floored at the slot's count (see
+    "Damage estimate"), and for most weapons the divided value is
+    already below that floor a few squares out. Then every square away
+    from the enemies scores the same, and the token walks to a random
+    neighbour on each move, sometimes towards the enemies (CB-032: a
+    Runner facing two stacks of 2 Laser Destroyers changed square on all
+    8 moves in 6 streams). A Laser (`v = 20`, `r = 1`) is at the floor of
+    2 for every `x ≥ 2`.
+  - A stay therefore needs both a real per-square gradient and a square
+    whose every neighbour is closer to some enemy: for example, the
+    corner farthest from enemies in two different directions, where
+    each enemy slot's divided estimate drops by at least 1 per square at
+    those distances. Large torpedo stacks do this (torpedo estimates have
+    no dropoff), as can neighbouring squares crowded by the token's own
+    player.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
@@ -530,7 +543,8 @@ subtracts 1 when `q` is its current square.
 1. `H` = the hits that the salvo rule gives for `N`.
 2. Estimate = `damage·H/200`.
 3. If `B` has shields, add `damage·(N − H)/1600`.
-4. Out of reach: the same division as for beams.
+4. Out of reach: the same division and floor as for beams,
+   `max(count, estimate/(x + 10 − r))`.
 5. The slot adds the estimate.
 
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
@@ -999,8 +1013,19 @@ Not yet tested:
   space;
 - the fuel share lost with destroyed ships;
 - step 5 removing a player whose tokens can still fire (needs a player
-  that joins through friends; at least 5 players), and a disengaging
-  token that stays on its square (needs 3 or more players or crowding);
+  that joins through friends; at least 5 players);
+- a disengaging token that stays on its square. CB-032 never stayed
+  because its Lasers' estimate was at the floor. A setup with a gradient:
+  CB-032's three players and squares (Runner at (8,8), enemy stacks at
+  (4,1) and (1,8)), but each enemy stack is at least 10 Destroyers with
+  2 Delta Torpedoes (12 for margin). Each slot's estimate is then 156 or
+  more, so `take` drops by at least 1 per square from 6 to 9 squares out.
+  Give the enemies primary and secondary target types the Runner does
+  not match (for example armed ships, then starbases): they keep it in
+  their attack set, so the battle starts and their `take` counts, but
+  they have no attackable enemy, so every square scores 0 for them and
+  they stay put and never fire. Expected: move 1 to (9,9), moves 2 to 7
+  stay on (9,9), and it leaves on its 8th move in round 7;
 - War Monger and cargo in the speed code.
 
 The dampener mass question (19 vs 23) is closed: 19 is the game's value
