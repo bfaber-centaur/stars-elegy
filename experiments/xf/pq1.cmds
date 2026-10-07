@@ -1,0 +1,13 @@
+# PQ-1: production queue edits and research settings at player 0's homeworld.
+queue open
+queue add 1 10
+queue add 2 101
+queue select 1
+queue remove 3
+queue add 0 2
+queue ok
+research open
+research field 4
+research budget 5
+research next 7
+research done

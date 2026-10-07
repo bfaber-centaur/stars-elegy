@@ -217,6 +217,7 @@ scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
 scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
+scripts/oracle/drag X1 Y1 X2 Y2       # left-button drag, same homing as click
 scripts/oracle/register [SERIAL_FILE] # type the serial ($STARS_SERIAL by default) into the first-run dialog
 scripts/oracle/bootstrap [DIR]        # fresh machine → registered snapshot (see Durable setup)
 scripts/oracle/turn GAME.M1           # open a game, press F9 once, exit Stars!
@@ -752,6 +753,144 @@ One turn on the Combat Lab base (`experiments/sltool`, cycles 30000):
   rest at 28%, which looks resource-limited.
 - No fleet-name blocks were written.
 
+### Client orders (observed 2026-10-07, BP)
+
+`tools/fleetlab/client-orders DIR OUTDIR CMDS [MFILE] [GAME]` opens a
+player's turn in the original client, runs a command file, saves with
+File > Save and keeps the order file (`GAME.Xn`, with `GAME.Hn`), a
+screenshot per command, and `orders.dump`. Then run the year with
+`pinned-turn START.HST BASE OUT`, where BASE holds DIR's files plus the
+order file: the registered host read the client's `.X1` (BP-1, BP-L).
+The command list is in the script's header. Order files carry the
+registration, so OUTDIR stays private. Getting a consistent `.M1` for a
+Combat Lab start: one `pinned-turn` year, then open `raw/after/cb.m1`.
+
+What the client did, at 1152x864:
+
+- Opening `cb.m1` shows "Note: N years of data read." (Return). The
+  homeworld is selected in the planet view.
+- File > Save is `alt+f s`. `ctrl+s` did nothing after an Escape had left
+  the menu bar active. The year shows `2401*` while there are unsaved
+  orders.
+- Battle Plans (F6) dialog at (362, 325). Mnemonics: `alt+p` Plan list,
+  `alt+c` Copy (opens "Rename Battle Plan" with "NAME (2)"; type and
+  Return), `alt+r` Rename, `alt+d` Delete, `alt+e` Secondary Target,
+  `alt+t` Tactic, `alt+w` Attack Who. Primary Target's mnemonic collides
+  with Rename: use `alt+e shift+Tab`. With a list focused and closed,
+  Home and Down change the selection directly. Close has no working
+  mnemonic: click (621, 513). Return in the dialog presses the focused
+  button, which closed the dialog during a refused copy. Dump Cargo is
+  the box at (686, 478).
+- Deleting a plan that fleets use shows an alert (OK = Return). Delete is
+  disabled for plan 0. At 15 plans Copy stays enabled but does nothing;
+  `client-orders` detects the missing Rename dialog by the pixel at
+  (600, 405).
+- Fleets: Goto (232, 169) in "Fleets in Orbit" selects the first fleet
+  there (`Armed Probe #1` = fleet 0). The fleet panel's Next (144, 132)
+  went `#1` → `#4` → `#3` → `#2` → `#1` with four fleets.
+- The fleet panel's Battle Plan list (combo at 380, 309) ignored keys;
+  use the mouse. Its first item is "Battle Plans..." (opens the dialog),
+  then the plans. Six rows of 14 px from y 320. A scroll bar (arrows at
+  (380, 327) and (380, 397)) only appears with more than six items, and
+  the open list starts scrolled to the current plan.
+
+- **Manual cargo transfer** (XF-1, 2026-10-07). In the fleet view, Xfer
+  (161, 213) in the "Orbiting X" panel opens Cargo Transfer with the
+  orbited planet, foreign and unowned ones included. Rows (y): fuel 340,
+  ironium 380, boranium 400, germanium 420, colonists 440. The arrow at
+  x 585 moves cargo from the fleet to the planet, and the arrow at x 567
+  moves it back. A click moves 1 kT, shift-click 10, ctrl-click 100,
+  each capped. OK is at (627, 555). A foreign or unknown planet shows
+  0 kT on its side. The client let colonists go down on a foreign
+  homeworld and on an unowned planet. Each fleet's transfers are one
+  order record (`combatlab dump`: `order cargo fleet= other= ir= …`;
+  positive means loaded into the fleet). The host applied them all: the
+  minerals were added to both planets; the colonists were lost, with
+  message 0x058 at the foreign homeworld (it has a starbase) and 0x002
+  at the unowned planet.
+  `client-orders` commands: `fleet xfer`, `xfer ITEM N`, `xfer ok`.
+
+- **Production queue** (PQ-1, 2026-10-07). With a planet shown, Change
+  (231, 332) on the Production tile opens "Production Queue for X". The
+  left list holds the buildable items, with this race's ship designs
+  first, then Factory, Mine, Defenses, Mineral Alchemy and the Auto Build
+  items. Its rows are 16 px apart from y 181, at x 300. The queue on the
+  right starts with a "Top of the Queue" row at y 181 (x 790), with items
+  every 16 px below it. Add (575, 244) inserts the selected left item
+  after the selected queue row: a click adds 1, shift-click 10 and
+  ctrl-click 100. Remove (575, 294) takes the same amounts off the
+  selected row. The client has no count field: a count is set with
+  Add and Remove. Item Up (575, 344), Item Down (575, 394), Clear
+  (575, 444), the "Contribute only leftover resources to research" box
+  (213, 700) and OK (824, 700). The order is one record per planet
+  holding its whole new queue. `combatlab dump` prints it as
+  `order queue planet= items=ID:COUNT:PCT:KIND`. The host replaced the
+  queue with it and built from it the same year (factory ×10 → 3 built).
+  Commands: `queue open`, `queue select R`, `queue add I N`,
+  `queue remove N`, `queue up`, `queue down`, `queue clear`,
+  `queue leftover`, `queue ok`.
+- **Research** (PQ-1). F5 opens Research. The field radio buttons are at
+  (313, 345 + 21k), k = 0 energy … 5 biotechnology. The budget spinner
+  has up (841, 474) and down (841, 485), 1 percent per click. The "Next
+  field to research" list (835, 379) has rows every 13 px from y 395:
+  <Same field>, the six fields, then <Lowest field>. Done is at
+  (742, 580). The order is a 2-byte record: the percent, then the field
+  (low nibble) and the next field (high nibble: 4 for electronics, 7 for
+  lowest). The host applied both and spent the year's research on the
+  new field. Commands: `research open`, `research field K`,
+  `research budget D`, `research next I`, `research done`.
+- **Waypoint tasks** (WP-1). In the fleet view, the Waypoint Task list
+  (181, 441) has rows every 14 px from y 459: none, Transport,
+  Colonize, Remote Mining, Merge with Fleet, Scrap Fleet, Lay Mine
+  Field, Patrol, Route, Transfer Fleet. Fleet waypoint rows start at
+  (60, 262). Transport adds an item list (160, 467: fuel, ironium,
+  boranium, germanium, colonists, rows every 16 px from y 486) and an
+  action list (123, 490: none, load all, unload all, load exactly,
+  unload exactly, fill up to %, wait for %, load dunnage, set amount
+  to, set waypoint to; rows every 14 px from y 508). Each item keeps its
+  own action, and the amount box is at (152, 490). Each fleet's
+  waypoint is one change record (type 5, printed raw). The host ran the
+  waypoint-0 tasks the same year:
+  - unload exactly 25 kT ironium and load exactly 30 kT germanium at
+    the own homeworld were exact;
+  - Colonize with no colony module failed with message 0x054;
+  - Scrap at a foreign homeworld removed the fleet, gave its cargo and
+    scrap minerals to that planet, and sent message 0x05a.
+  Commands: `wp select K`, `wp task T`, `wp transport ITEM ACTION [N]`.
+
+- **Designs** (DS-1, 2026-10-07). F4 opens the Ship & Starbase Designer
+  on "Existing Designs". The design list (848, 212) has rows every 14 px
+  from y 229: the newest design was listed first in one session, and
+  Hauler before MD40 Frigate in another. The buttons are Copy Selected
+  Design (369, 393), Delete Selected Design (369, 425) and Done
+  (765, 670). Edit is disabled for a design that ships use.
+  - Copy opens the editor with the copy named "NAME (2)". The name box
+    is at (736, 212).
+  - The component list on the left has 4 visible rows, 66 px apart from
+    y 260 (x 320). Its filter list (518, 212) has rows every 13 px from
+    y 229: All, Armor, Beam Weapons, Bombs, Electrical, Engines,
+    Mechanical, Mine Layers, Mining Robots, Scanners, Shields,
+    Torpedoes, Weapons. The list follows the player's tech, so pick a
+    filter first.
+  - A part is placed by dragging it onto a slot (`scripts/oracle/drag`).
+    The Medium Freighter's slots are at (583, 355) engine, (775, 355)
+    shield/armor and (838, 355) scanner/elect/mech.
+  - The editor has OK (688, 670) and Cancel (765, 670).
+  - Deleting a design that ships use asks "You currently have N Xs. If
+    you delete this design, these ships will be destroyed" (Yes is
+    `alt+y`).
+  - The client wrote two design records for one new design: the plain
+    copy, then the edited one. A delete is a 2-byte design record.
+  - The host stored the new design (Bat Scanner included) in ship slot 0.
+    Deleting the in-use Hauler destroyed all three Haulers that year.
+  Commands: `design open`, `design select I`, `design copy`,
+  `design category I`, `design part ROW X Y`, `design scroll N`,
+  `design name NAME`, `design ok`, `design done`, `design delete [yes]`.
+- **Lay mines** (ML-1). Waypoint task 6, Lay Mine Field, adds a duration
+  list ("indefinitely" by default) and the fleet's rate ("This fleet can
+  lay 80 mines per year."). The host laid an 80-mine field at the
+  fleet's deep-space position that year, with message 0x0c3.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh
@@ -844,8 +983,10 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
   settings gave 7 streams.
 - The `.M` event block (type 12) carries one record per message; ids 0x135
   (drop refused by a starbase) and 0x55 (unload at an unowned planet)
-  appeared with the fleet and planet numbers next to them. The rest of the
-  record layout is not decoded.
+  appeared with the fleet and planet numbers next to them. The full record
+  layout is in `MESSAGES.md` ("How messages work"), and
+  `tools/fleetlab/events.py DUMP...` decodes the block (every block in the
+  2026-10-07 corpora decoded cleanly).
 
 ### Takeover round 2 (observed 2026-10-07, TK-101..TK-117)
 
