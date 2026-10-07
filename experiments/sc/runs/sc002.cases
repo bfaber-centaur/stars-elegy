@@ -1,0 +1,13 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC002-blind-coloc98	0	fleet 1/0	3	S-15	nocoloc	d2=0
+SC002-blind-d1	0	fleet 1/1	0	S-4	-	d2=1
+SC002-p1-coloc-blind	1	fleet 0/0	3	S-15	nocoloc	blind Ghost sees the co-located viewer
+SC002-bat-coloc85	0	fleet 1/2	3	S-4,S-15	-	d2=0
+SC002-bat-d1	0	fleet 1/3	0	S-4	-	d2=1
+SC002-blind-orbit	0	planet 2	1	S-4	-	orbited by a blind fleet
+SC002-blind-orbit-coloc98	0	fleet 1/4	3	S-15	nocoloc	d2=0
+SC002-bat-orbit	0	planet 10	3	S-4	-	orbited by a Bat fleet
+SC002-bat-orbit-coloc	0	fleet 1/5	3	S-4,S-15	-	d2=0
+SC002-pp-coloc	0	fleet 1/6	4	S-20	-	d2=0
+SC002-pp-d30	0	fleet 1/7	3	S-20	-	d2=900
+SC002-rhino-coloc	0	fleet 1/8	3	S-20	-	d2=0

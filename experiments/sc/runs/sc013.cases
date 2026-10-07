@@ -1,0 +1,44 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC013-150	0	fleet 1/0	3	S-7,S-8	-	d2=22500 planet range 320/160
+SC013-150p	0	fleet 1/1	3	S-7,S-8	installed	d2=22501 planet range 320/160
+SC013-220	0	fleet 1/2	3	S-7,S-8	installed	d2=48400 planet range 320/160
+SC013-220p	0	fleet 1/3	3	S-7,S-8	installed	d2=48401 planet range 320/160
+SC013-280	0	fleet 1/4	3	S-7,S-8	installed	d2=78400 planet range 320/160
+SC013-280p	0	fleet 1/5	3	S-7,S-8	installed	d2=78401 planet range 320/160
+SC013-320	0	fleet 1/6	3	S-7,S-8	installed	d2=102400 planet range 320/160
+SC013-320p	0	fleet 1/7	0	S-7,S-8	intdist	d2=102401 planet range 320/160
+SC013-planet0	0	planet 0	0	S-8	-	
+SC013-planet1	0	planet 1	0	S-8	normplanets	
+SC013-orbit1	0	fleet 1/8	0	S-8	orbitR	
+SC013-planet2	0	planet 2	0	S-8	normplanets	
+SC013-planet3	0	planet 3	0	S-8	normplanets	
+SC013-planet4	0	planet 4	0	S-8	normplanets	
+SC013-orbit4	0	fleet 1/9	0	S-8	orbitR	
+SC013-planet5	0	planet 5	0	S-8	normplanets	
+SC013-orbit5	0	fleet 1/10	0	S-8	orbitR	
+SC013-planet6	0	planet 6	3	S-8	installed	
+SC013-orbit6	0	fleet 1/11	3	S-8	installed	
+SC013-planet7	0	planet 7	0	S-8	-	
+SC013-planet9	0	planet 9	0	S-8	normplanets	
+SC013-planet10	0	planet 10	0	S-8	normplanets	
+SC013-planet11	0	planet 11	3	S-8	installed	
+SC013-orbit11	0	fleet 1/12	3	S-8	installed	
+SC013-planet12	0	planet 12	3	S-8	installed	
+SC013-orbit12	0	fleet 1/13	3	S-8	installed	
+SC013-planet13	0	planet 13	0	S-8	normplanets	
+SC013-planet14	0	planet 14	0	S-8	normplanets	
+SC013-planet15	0	planet 15	3	S-8	installed	
+SC013-orbit15	0	fleet 1/14	3	S-8	installed	
+SC013-planet16	0	planet 16	0	S-8	-	
+SC013-planet18	0	planet 18	3	S-8	installed	
+SC013-orbit18	0	fleet 1/15	3	S-8	installed	
+SC013-planet19	0	planet 19	3	S-8	installed	
+SC013-orbit19	0	fleet 1/16	3	S-8	installed	
+SC013-planet20	0	planet 20	0	S-8	normplanets	
+SC013-orbit20	0	fleet 1/17	0	S-8	orbitR	
+SC013-planet21	0	planet 21	3	S-8	installed	
+SC013-orbit21	0	fleet 1/18	3	S-8	installed	
+SC013-planet22	0	planet 22	0	S-8	normplanets	
+SC013-orbit22	0	fleet 1/19	0	S-8	orbitR	
+SC013-planet23	0	planet 23	0	S-8	normplanets	
+SC013-orbit23	0	fleet 1/20	0	S-8	orbitR	

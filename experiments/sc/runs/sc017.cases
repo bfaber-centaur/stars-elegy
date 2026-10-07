@@ -1,0 +1,5 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC017-plain-in	0	fleet 1/0	3	S-9	-	d2=10000 bound=10000
+SC017-plain-out	0	fleet 1/1	0	S-9	intdist	d2=10001 bound=10000
+SC017-st35-in	0	fleet 1/2	3	S-9,S-13	-	d2=4225 bound=4225
+SC017-st35-out	0	fleet 1/3	0	S-9,S-13	fuel	d2=4226 bound=4225

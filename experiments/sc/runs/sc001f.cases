@@ -1,0 +1,29 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC001F-plain-in	0	fleet 1/0	3	S-23	-	d2=2500 bound=2500
+SC001F-plain-out	0	fleet 1/1	0	S-23	intdist	d2=2501 bound=2500
+SC001F-st35-in	0	fleet 1/2	3	S-23	A3	d2=1053 bound=1056
+SC001F-st35-out	0	fleet 1/3	0	S-23	fuel	d2=1058 bound=1056
+SC001F-st17-in	0	fleet 1/4	3	S-23	A3,maxcloak	d2=1721 bound=1722
+SC001F-st17-out	0	fleet 1/5	0	S-23	fuel	d2=1730 bound=1722
+SC001F-st10-in	0	fleet 1/6	3	S-23	maxcloak	d2=2025 bound=2025
+SC001F-st10-out	0	fleet 1/7	0	S-23	fuel	d2=2026 bound=2025
+SC001F-ss55-in	0	fleet 1/8	3	S-23	A3	d2=505 bound=506
+SC001F-ss55-out	0	fleet 1/9	0	S-23	fuel	d2=509 bound=506
+SC001F-tc75-in	0	fleet 1/10	3	S-23	A3	d2=153 bound=156
+SC001F-tc75-out	0	fleet 1/11	0	S-23	fuel	d2=157 bound=156
+SC001F-us85-in	0	fleet 1/12	3	S-23	A3	d2=53 bound=56
+SC001F-us85-out	0	fleet 1/13	0	S-23	fuel	d2=58 bound=56
+SC001F-mix18-in	0	fleet 1/14	3	S-23	maxcloak	d2=1681 bound=1681
+SC001F-mix18-out	0	fleet 1/15	0	S-23	fuel	d2=1682 bound=1681
+SC001F-fuel	0	fleet 1/16	0	S-23	fuel	Stealth, fuel 130, d2=1058
+SC001F-two-in	0	fleet 1/17	3	S-23	-	d2=3481 bound=3481
+SC001F-two-out	0	fleet 1/18	0	S-23	intdist,notrunc	d2=3482 bound=3481
+SC001F-two-st26-in	0	fleet 1/19	3	S-23	A3,maxcloak	d2=1901 bound=1905
+SC001F-two-st26-out	0	fleet 1/20	0	S-23	A2,notrunc,fuel	d2=1906 bound=1905
+SC001F-two-st31-in	0	fleet 1/21	3	S-23	A3,maxcloak	d2=1649 bound=1656
+SC001F-two-st31-out	0	fleet 1/22	0	S-23	A2,notrunc,fuel	d2=1657 bound=1656
+SC001F-two-ss45-in	0	fleet 1/23	3	S-23	A3,maxcloak	d2=1049 bound=1052
+SC001F-two-ss45-out	0	fleet 1/24	0	S-23	A2,notrunc,fuel	d2=1053 bound=1052
+SC001F-stacks-in	0	fleet 1/25	3	S-23	-	d2=2500
+SC001F-stacks-out	0	fleet 1/26	0	S-23	stackcomb	d2=3025
+SC001F-ships-out	0	fleet 1/27	0	S-23	stackcomb	d2=3025
