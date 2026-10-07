@@ -251,7 +251,12 @@ The player relation is not checked. Unloading colonists on a **friend's**
 planet invades it exactly as an enemy's (T-29, order set in the file; the
 UI may not offer it).
 
-Fuel is never unloaded to or loaded from a planet (BINARY-ONLY).
+Fuel is never unloaded to or loaded from a planet (CONFIRMED: MG-002,
+MG-004, MG-006). With a planet as the waypoint target, every fuel action is
+ignored: it moves no fuel, sends no message, and does not debit the fleet.
+That holds for own planets with or without a starbase and for unowned
+planets, and it includes "load optimal" below. Minerals in the same order
+still move (MG-006-A: 20 kT ironium unloaded; 100 fuel stayed aboard).
 
 **Minerals** unloaded on a planet the fleet's owner does not own (another
 player's, whatever the relation, or an unowned one) are added to that
@@ -263,7 +268,8 @@ fleet.
 salvage; BINARY-ONLY): minerals are **destroyed**. The fleet loses them,
 the owner gets the usual "unloaded" message, and no salvage object is made.
 Colonists are refused: the fleet keeps them and the owner gets a failure
-message. Fuel does not move. Only scrapping a fleet in deep space leaves
+message. Fuel does not move, with no message and no debit (CONFIRMED,
+MG-006-E/F: an unload-all and a load-optimal fuel order both kept 300). Only scrapping a fleet in deep space leaves
 salvage (Other waypoint tasks).
 
 ### Unload and load amounts (BINARY-ONLY)
@@ -286,6 +292,20 @@ holds (planet surface minerals, or the planet's population for colonists):
 
 Unload actions run in the first unload phase that reaches them and are then
 cleared, so they happen once; load actions persist until satisfied.
+
+**Load optimal** (fuel only; CONFIRMED in MG-003 and MG-006) acts only when
+waypoint 0 targets a fleet or deep space. Let *need* be the estimated fuel
+for the leg to the next waypoint.
+
+- **Fuel below the need, before movement.** No fuel is loaded. The owner
+  gets 0x03c with the shortfall, or 0x03d with capacity and need when the
+  tank is smaller than the need. The fleet **does not move** this year.
+- **Fuel above the need.** The surplus is unloaded to the target fleet
+  (0x02d). Deep space takes none, so nothing happens there.
+- **No further waypoint.** All fuel counts as surplus. A target fleet takes
+  all of it (FO-02 Q). Deep space takes none.
+- **Planet target.** Nothing happens (see above).
+- The order never loads fuel.
 
 On a planet the fleet's owner owns, unloaded colonists are added to the
 population at once, with no cap. Before movement that is **before** this
@@ -532,7 +552,6 @@ resolutions after movement. Random-stream pinning for experiments:
 - Several players bombing one planet.
 - Production queue and "only leftover to research" after capture.
 - Tech learned on capture; ancient artifacts.
-- Fuel unloaded at a planet: is the fleet debited?
 - Colonize tried once, other failure reasons (round 3): a colony ship in
   orbit with no colony module, or at a planet that is bombed empty later
   that year, keeps its colonists and its cleared task after movement.

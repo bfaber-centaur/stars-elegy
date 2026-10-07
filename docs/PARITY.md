@@ -3903,4 +3903,4 @@ earlier runs settled the binary reading's LEGACY BUG? candidates:
   - 0x0fa uses the CB-037 observer test.
 - **MEASURED:** load-optimal fuel never takes on fuel.
   - With a fleet target it reports 0x03c/0x03d or hands over the surplus (MG-003).
-  - With a planet target it did nothing in all 7 cases (MG-002, MG-004). That last rule is not yet explained by the binary reading.
+  - With a planet target, every fuel action is skipped (MG-002, MG-004, MG-006). The binary reading explains this: fuel is handled only for fleet and deep-space targets (`TAKEOVER.md`).

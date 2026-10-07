@@ -150,4 +150,11 @@ apart from the random terraform counts. MG-003 and MG-004 ran at 20000.
   homeworld, and player 1's record still named planet 8. Player 1 was left
   with nothing: 0x0bb (player 1 wiped out) and 0x0bc went to player 0, and
   0x0b8 went to player 1.
+- **MG-006 (M-5b) CONFIRMED, 7/7:**
+  - A: own planet, no starbase. 0x02d for the 20 kT of ironium, no fuel message, fuel still 300.
+  - B: own planet with an Orbital Fort, load all fuel. No fuel message, fuel still 100. The fort did not refuel the fleet either (observation only).
+  - C: unowned planet, load optimal. Nothing happened, fuel 300.
+  - D: deep space, fuel 20. 0x03c with slots (1040, 1230, fleet 3, shortfall 104). The fleet waited.
+  - E and F: deep space, load optimal and unload all. Nothing happened, fuel 300.
+  - G: Scout in deep space. 0x03d with capacity 50 and need 320. The fleet waited.
 - Not run: the 0x0b8/0x0bc tie case (M-10) and 0x126.

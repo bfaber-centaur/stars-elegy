@@ -164,7 +164,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x02c | Fleet took colonists aboard from a location | Load task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo01) |
 | 0x02d | Fleet unloaded this much cargo to a location | Unload task, amount accepted > 0 (unloads to an enemy player's fleet move nothing, silently); also fuel load-optimal dumping surplus fuel | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo04; fuel form mg/mg003) |
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
-| 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement: fuel below the estimated need, but tanks are big enough | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
+| 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
 | 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet or planet ordered by hand: destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
@@ -251,11 +251,11 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
     - fuel short of the next leg's need, tanks big enough: 0x03c with the shortfall, and the fleet stayed put;
     - tanks smaller than the need: 0x03d with capacity and need, and the fleet stayed put;
     - fuel above the need: the surplus went to the target fleet (0x02d), and the fleet kept the need for a 20-ly leg.
-  - With a planet as the target, the order did nothing in all 7 cases:
-    - own planets with and without a starbase, and an unowned planet on arrival;
-    - no message, fuel unchanged, and the fleet left on its next leg.
+  - Fuel is handled only when waypoint 0 targets a fleet or deep space (CONFIRMED: MG-002, MG-004, MG-006).
+    - With a planet or object target, every fuel action is skipped: no message, no fuel change, and the fleet leaves on its next leg.
     - That includes the stationary case, where a fleet target got all the fuel (FO-02 Q).
-  - The planet behavior is not explained by the binary reading yet (open).
+  - In deep space, load optimal still checks the next leg (MG-006): 0x03c gives the location as coordinates, and 0x03d appears when the tank is too small. Deep space takes no surplus.
+  - Rules: `TAKEOVER.md` "Unload and load amounts".
   - 0x126 and the fuel-gain form of 0x02b were not seen.
 - Open: a hand-ordered colonist transfer that cannot be carried out in full looks as if it fails the whole order file, which would stop turn generation. Needs an oracle check.
 - 0x0dd, 0x0db and 0x0dc go to the owner of the object the order names as the source, which need not be the player who wrote the order.
@@ -698,6 +698,5 @@ row above says what happens.
 - **Follow-up batch MG (done).** `experiments/mg` tested the private
   predictions M-1..M-10. Results are in the rows and notes above and in
   `PARITY.md` "Messages to players". Still open:
-  - load-optimal fuel with a planet target (did nothing; cause not read);
   - 0x126;
   - the tie case of the last-survivor messages (0x0b8/0x0bc).
