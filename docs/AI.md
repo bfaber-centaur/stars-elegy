@@ -13,7 +13,7 @@ war) gets its own file under docs/ai/:
 | 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
 | 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
 | 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
-| 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: scrap and merges measured (AI-3, AI-5), fleet pass not fully checked |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
 
 **Project policy (2026-10-07).** Elegy reproduces faithfully only the
 personalities whose behavior has been checked against the original
