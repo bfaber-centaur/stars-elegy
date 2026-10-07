@@ -459,11 +459,14 @@ knowledge, so after a jump it always becomes a plain position.
 
 ## Mystery Trader
 
-### Appearance (BINARY-ONLY; owned by KX-004)
+### Appearance (CONFIRMED, KX-004 S6–S10; marked details BINARY-ONLY)
 
-When and where a Trader appears, its warp and the item it carries are
-tested under KX-004 (`KERNEL.md` "Random events" and `PARITY.md` KX-004),
-which will settle these rules; they are kept here for reference until then.
+When and where a Trader appears, its warp, start, destination, item and
+announcement are specified in `KERNEL.md` "Mystery Trader appearance" and
+were CONFIRMED by KX-004 S6–S10 (`PARITY.md` KX-004 addendum: 24 one-year
+runs, 15 Traders and 9 empty years, each as replayed). The summary below is
+for reference; `KERNEL.md` is authoritative. The part reroll and the
+late-year conversion to research stay BINARY-ONLY: no run drew them.
 
 - From year index 40, with random events on, at the end of production:
   chance 1/2 when `year index mod 100 = 71`, 1/3 when `= 33`, 1/4 when
@@ -479,7 +482,7 @@ which will settle these rules; they are kept here for reference until then.
   for four of them, and three of those turn into research with 1/2 before
   year index 120, 150 or 180.
 
-### Movement (BINARY-ONLY except where noted)
+### Movement (BINARY-ONLY except where noted; not part of KX-004)
 
 - It moves before fleets, `warp²` ly per year like a packet. Below warp 13,
   each year with 1/25 its warp rises by 1, and then with 1/3 it picks a new
