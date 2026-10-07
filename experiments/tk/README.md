@@ -130,3 +130,89 @@ as in TK-004 planet 0 (48 with p 501/1000, else 49), two T-13 planets
 9 with p 2/3, else 4 / 10), one generation per cycles value. The draws
 should be independent across planets; the vector of outcomes identifies
 the random stream of each run.
+
+## Results
+
+Runs: TK-001..003 run1 (player 0 at tech 3, see above; only the parts
+that survived are used), TK-001..004 run2, TK-005/006 run1, TK-004 and
+TK-007 under 12 and 14 cycle settings. Values read from the 2401 host file
+with `combatlab dump` (`pdetail` lines) and `hst-edit dump`. Raw files:
+private `stars-oracle-apparatus`, `evidence/tk/`.
+
+Bombing (TK-001 run2 unless stated):
+
+| Planet | Case | Predicted | Observed | |
+|---|---|---|---|---|
+| 5 | growth control | 100, carry 42 | 100, carry 42 | matches |
+| 0 | T-12 10 Cherry | 690 | 690 | CONFIRMED |
+| 1 | T-10 Lady Finger | 7 | 7 (also run1) | CONFIRMED |
+| 2 | T-11 LBU-17 | 9 | 9 | CONFIRMED |
+| 3 | T-14 20 Peerless | 412 | 412 | CONFIRMED |
+| 4 | T-14 20 Peerless on 1 | 1 | 1 | CONFIRMED |
+| 6 | T-15 LBU-32 | 997, mines 16, factories 16 | 997, 16, 16 | CONFIRMED |
+| 7 | T-6 | 666 (SDI) | 777 | player 1 reached energy 5 during the year; 777 is the Missile Battery value. TK-005: **666** with SDI. CONFIRMED |
+| 9 | T-7 | 42 (SDI) | 45 | Missile Battery value (n = 4, s = 0.98⁴: A 461, minimum 55). TK-005: **42**. CONFIRMED |
+| 10 | T-9 | 812 (SDI), defenses 100 | 846, defenses 100 | Missile Battery value (smart coverage 0.99⁴⁰). TK-005: **812**. CONFIRMED |
+| 11 | T-17 OCM | 80 | 80 (also run1) | CONFIRMED |
+| 12 | T-18 MCM | 97, mines 5 | 97, mines 5 (also run1) | CONFIRMED |
+| 13 | T-16 3 Retro | env 52/50/50 | 52/50/50, original kept (also run1) | CONFIRMED |
+| 14, 15 | T-19 nobody / player 0 only | 920 | 920 | CONFIRMED |
+| 16, 22 | T-19 player 1 only / everyone | 690 | 690 | CONFIRMED |
+| 18 | T-20 first attacks, second nobody | 690 | 690 | CONFIRMED |
+| 19 | T-20 first nobody, second attacks | 828 | **690** | CONTRADICTED: the earlier non-attacking fleet's bombs were included |
+| 20 | T-20 both attack | 690 | 690 | CONFIRMED |
+| 23 | T-13 Smart + Cherry | 606 | 606 | CONFIRMED |
+| TK-005 19 | Laser Frigate (enemies) + bombers (nobody) | 690 | 690 | CONFIRMED |
+| TK-003 7 | T-8 Missile Batteries, friends, plan everyone | 777 | 777 | CONFIRMED |
+| TK-006 14 | neutral, plan enemies | 920 | 920 | CONFIRMED |
+| TK-006 16, 22 | neutral, player 1 only / everyone | 690 | 690 | CONFIRMED |
+
+Starbases, ground combat, colonization (TK-002 run2; run1 gave the same
+ground-combat and colonization results):
+
+| Planet | Case | Predicted | Observed | |
+|---|---|---|---|---|
+| 0 | T-21/T-26/T-27 | owner 0, 9; mines 20, factories 15, defenses 0, scanner none, carry 42 | owner 0, 9, 20, 15, 0, scanner id 31, carry 42 | CONFIRMED (queue: see below) |
+| 1 | T-22 tie | owner 0, 1 | owner 0, 1 | CONFIRMED |
+| 2 | T-23 | owner 1, 90 | owner 1, 90 | CONFIRMED |
+| 3 | T-25 SDI | owner 0, 72 | owner 0, 72 | CONFIRMED |
+| 5 | T-26 | owner 0, 106, defenses 0 | owner 0, 106, defenses 0, mines 20, factories 15, scanner 31 | CONFIRMED |
+| 4 | T-28 fort | refused, freighter keeps 100 | planet 100, freighter 100 | CONFIRMED |
+| 6 | T-5 in orbit | owner 0, 23 | owner 0, 23 | CONFIRMED |
+| 18 | T-4 bomb and drop | owner 0, 50; mines 20, factories 15 | owner 0, 50; mines **0**, factories **0** | pop CONFIRMED; the installation figures in the prediction table were an error of this corpus, not of the reading: 4 Cherry destroy 40 installations, i.e. all 35 (`takeover.py` gives 0/0) |
+| 16 | T-4 control | freighter keeps 50 | 50 | CONFIRMED |
+| 19 | T-3 fort, bombers only | 920, fort kept | 920, fort kept | CONFIRMED |
+| 20 | T-2 fort, bombers + frigates | 690, no starbase | battle at planet 20, fort gone, 690 | CONFIRMED |
+| 13 | T-1 in orbit | > 25 | 28 | CONFIRMED |
+| 21 | T-1 arrival | 25 | 25 | CONFIRMED |
+| 7 | T-31 red planet | owner 0, 25 | owner 0, 25 | CONFIRMED |
+| 9 | T-32 25 vs 12 | owner 0, 25 | owner 0, 25 | CONFIRMED |
+| 10 | T-32 12 vs 25 | owner 1, 12 | owner 1, 12 | CONFIRMED |
+| 14 | T-32 25 vs 25 | nobody | unowned, pop 0, both colony ships gone, surface 22/7/22 = both ships' contributions (4/1/5 + 18/6/17) | CONFIRMED |
+| TK-003 3 | T-25 Missile | owner 1, 5 | owner 1, 5 | CONFIRMED |
+| TK-003 0 | T-29 friend | owner 0, 9 | owner 0, 9 | CONFIRMED |
+
+- T-26 queue: no captured planet had a production-queue block afterwards,
+  and neither did player 0's homeworld; this game's default queue may be
+  empty, so the queue part is not tested.
+- T-30: an arriving colony ship of player 0 left 18/6/17 kT on the new
+  colony at tech 3 (run1) and 4/1/5 at tech 26 (run2); player 1's (tech 3)
+  18/6/17. Not compared with a cost table here.
+- Events: the attacker's `.M1` event block has a record with id 0x135
+  naming the refused freighter and planet 4, and one with id 0x55 naming
+  the TK-002 planet-16 freighter (read from the hex; the record layout is
+  otherwise not decoded).
+
+Random roundings (TK-004 under 12 cycle settings, TK-007 under 14):
+
+| Draw | Predicted | Observed |
+|---|---|---|
+| Hush-a-Boom on 50 | 48 p 0.501, 49 p 0.499; never 47 | TK-007: 42 × 48, 56 × 49 over 7 distinct streams × 14 planets; never 47 |
+| Smart + Cherry on 1000 | 658 p 0.749, 657 p 0.251 | TK-007: 9 × 658, 5 × 657 (7 streams × 2) |
+| LBU-17, mines 20, factories 10 | f 5 / m 9 p 2/3, f 4 / m 10 p 1/3; pop 998 | TK-007: 7 / 7 (7 streams × 2); pop always 998; never another split |
+
+TK-007's 14 cycle settings gave 7 distinct outcome vectors: 10000,
+12000, 15000, 17000 each their own; 20000 = 22000 = 25000; 30000 = …
+= 45000; 50000 = 60000 = 70000. The host files differed byte-wise
+between all settings, including settings with identical outcomes, while
+two runs at 20000 were byte-identical (TK-004).
