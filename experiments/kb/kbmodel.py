@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """KB predictions from the public KERNEL.md rules (no private material).
 
-  python3 experiments/kb/kbmodel.py kb1a|kb1b
+  python3 experiments/kb/kbmodel.py kb1a|kb1b|kb2a|kb2b|kb2c
 Prints the predicted end-of-year state for each case. Alternatives (the
 readings each case rules out) are printed with 'alt'."""
 import math, sys
@@ -189,5 +189,84 @@ def kb1b():
     print("  12: Auto Mines, Auto Factories, Auto Defenses ×10: none built (AR maximum mines, factories and defenses are 0); "
           "queue unchanged; mines, factories and defenses stay 0; surface minerals 1000 + mining only")
 
+FIELDS = ['energy', 'weapons', 'propulsion', 'construction', 'electronics', 'biotech']
+
+def owner_cost(c, tech, req, bet=False):
+    """COMPONENTS.md "Cost for an owner", steps 1 and 3 (no PRT step)."""
+    if any(req): m = min(tech[i] - req[i] for i in range(6) if req[i] > 0)
+    else: m = min(tech)
+    if m > 0:
+        d = min(5 * min(m, 19), 80) if bet else min(4 * min(m, 19), 75)
+        c = max(1, c - (c * d + 50) // 100) if c else 0
+    elif bet and any(req):
+        c *= 2
+    return c
+
+def research_switch(add, levels, accum, cur, mode):
+    """KERNEL.md Research allocation. mode: 'same', 'lowest', or
+    'same26' (a stored "same" that reaches 26: leftover to the lowest field,
+    then 'lowest' switching for the rest of the year). Returns levels,
+    accum, current field and the fields levelled in order."""
+    levels = list(levels); accum = list(accum); accum[cur] += add; trail = []
+    while True:
+        if levels[cur] < 26 and accum[cur] >= cost(levels[cur] + 1, levels):
+            accum[cur] -= cost(levels[cur] + 1, levels); levels[cur] += 1
+            trail.append(f"{FIELDS[cur]} {levels[cur]}")
+            switch = mode == 'lowest' or (mode == 'same26' and (levels[cur] == 26 or trail[:-1]))
+            if levels[cur] == 26 and mode in ('same', 'same26'): switch = True
+            if switch:
+                new = min(range(6), key=lambda f: (levels[f], f))
+                if new != cur: accum[new] += accum[cur]; accum[cur] = 0; cur = new
+            continue
+        return levels, accum, cur, trail
+
+def kb2a():
+    print("KB-2A")
+    tech0 = [3] * 6
+    hull = owner_cost(50, tech0, [0, 0, 0, 2, 0, 0], bet=True)
+    qj5 = owner_cost(3, tech0, [0] * 6, bet=True)
+    bat = owner_cost(1, tech0, [0] * 6, bet=True)
+    rmm = owner_cost(100, tech0, [0, 0, 0, 2, 1, 0], bet=True)
+    one = hull + qj5 + bat + 2 * rmm; x = 10 * one
+    print(f"  player 1 Scrap design owner cost: Mini-Miner {hull} + Quick Jump 5 {qj5} + Bat Scanner {bat} + 2 x Robo-Mini-Miner {rmm} = {one}; x = {x}")
+    r8 = resources(250, 12000, 10); r13 = resources(5000, 12000, 0); r9 = resources(3000, 12000, 0)
+    r12 = resources(2000, 12000, 0); r16 = resources(4000, 12000, 0)
+    bonus = x * r13 // (x + r13)
+    print(f"  13: resources {r13}, scrap bonus trunc({x}·{r13}/{x + r13}) = {bonus} (messages 0x5c/0x5d show {bonus}); "
+          f"minerals 9C/20 of the fleet's cost added to the surface")
+    print(f"  9: Planetary Scanner removed (message 0xb9), queue freed (0x3e); {r9} resources to research")
+    print(f"  12: packet removed (message 0x129), queue freed (0x3e); {r12} resources to research; surface 1000 each + mining")
+    print(f"  16: zero-item queue: no research from its {r16} resources, no message")
+    tot = r8 + r13 + bonus + r9 + r12
+    for name, t in (('predicted', tot), ('alt no bonus', tot - bonus), ('alt bonus = x', tot - bonus + x),
+                    ('alt zero-item queue sends all to research', tot + r16)):
+        lv, ac, cur, tr = research_switch(t, tech0, [0] * 6, 0, 'same')
+        print(f"  player 1 {name}: research {t} -> levels {lv}, stored {ac}, levelled {tr}")
+    lv1 = [25, 0, 0, 5, 5, 5]; acc1 = [85080, 0, 0, 0, 0, 0]
+    t1 = resources(250, 12000, 10) + resources(11000, 12000, 0)
+    for name, mode in (('predicted (lowest for the rest of the year)', 'same26'), ('alt "same" kept after the move', 'same')):
+        lv, ac, cur, tr = research_switch(t1, lv1, acc1, 0, mode)
+        print(f"  player 0 {name}: research {t1} -> levels {lv}, stored {ac}, current {FIELDS[cur]}, levelled {tr}; next field stays \"same\" (alt: the stored choice becomes \"lowest\")")
+
+def kb2b():
+    print("KB-2B (slower tech; research as in KX-003 S3L: player 0 weapons 355, player 1 Super Stealth energy 95; 2 players)")
+    lv = [3] * 6
+    def slow(stored, add, f):
+        L = 2 * stored + add; levels = list(lv)
+        while L >= 2 * cost(levels[f] + 1, levels): L -= 2 * cost(levels[f] + 1, levels); levels[f] += 1
+        return levels[f], (L + 1) // 2
+    w0 = slow(0, 355, 1); e1 = slow(0, 95, 0)
+    se = (95 // 2) // 2; sw = (355 // 2) // 2
+    print(f"  player 0: weapons level {w0[0]}, stored {w0[1]}")
+    print(f"  player 1: own energy level {e1[0]}, stored {e1[1]}; stolen s: energy {se}, weapons {sw} (messages 0x159 show {se} and {sw})")
+    print(f"  player 1 predicted stored: energy {e1[1] + (se + 1) // 2}, weapons {(sw + 1) // 2} (stolen halved rounding up)")
+    print(f"  alt full scale: energy {e1[1] + se}, weapons {sw}; alt halved truncating: energy {e1[1] + se // 2}, weapons {sw // 2}")
+
+def kb2c():
+    print("KB-2C (player 1 gravity immune, temperature and radiation 45..55, reach ±3)")
+    print("  10: 20/47/50, capacity gravity 0 (immune) + temperature 3 + radiation 0 = 3: Terraform x5 cut to x3 (message 0x12f), "
+          "3 built (300 resources) -> 20/50/50, item gone; alt gravity counted: capacity 6, x5 kept")
+    print("  11: 10/50/50, capacity 0: Terraform x2 removed (message 0x12f), nothing built, 10/50/50; alt gravity counted: units built on gravity")
+
 if __name__ == '__main__':
-    {'kb1a': kb1a, 'kb1b': kb1b}[sys.argv[1]]()
+    {'kb1a': kb1a, 'kb1b': kb1b, 'kb2a': kb2a, 'kb2b': kb2b, 'kb2c': kb2c}[sys.argv[1]]()

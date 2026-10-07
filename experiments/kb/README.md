@@ -108,3 +108,53 @@ and 3700; KB-1C in all 11 streams), with one refinement:
   (77 results, 17 draws per stream). Climate change hit unowned planet 20
   (temperature 44 → 38) at cycles 3700 and planet 22 (gravity 22 → 18) at
   2190, as replayed; the other nine streams had no event.
+
+## Batch 2: production and research leftovers
+
+Random events off. KB-2A and KB-2C run on the normal base and KB-2B on
+the slower-tech base (`0x82`), each at cycles 20000 and 3700. Research
+fields that the spec cannot set are applied with `hst-edit` after the build
+(it edits player 0's race only). `python3 kbmodel.py kb2a|kb2b|kb2c`
+prints every figure below.
+
+### KB-2A (`kb2a.spec`)
+
+Player 1 is JOAT with Ultimate Recycling, No Advanced Scanners, Low
+Starting Population and Bleeding Edge Technology (123 points). Every field
+is at 3, research goes to energy, and the next field is "same". Player 0
+is JOAT at levels 25/0/0/5/5/5, energy current, next field "same", with
+85,080 stored in energy.
+
+| Item | Setup | Predicted | Rules out |
+|---|---|---|---|
+| 13 (P1) | pop 5,000, no queue; 10 Mini-Miners scrapped there, no starbase. Owner cost 241 each: Mini-Miner 47, Quick Jump 5 3, Bat Scanner 1, Robo-Mini-Miner 95 ×2, under BET miniaturization at tech 3. So `x` = 2,410 | resources `500 + trunc(2410·500/2910) = 914`; the scrap message shows 414 | no bonus (500); the full `x` added (2,910) |
+| 9 (P1) | pop 3,000, scanner present, queue Planetary Scanner ×1 | item removed (message 0xb9), queue freed (0x3e), 300 resources to research | scanner built or kept in the queue |
+| 12 (P1) | pop 2,000, no starbase, queue Ironium packet ×1 | item removed (message 0x129), queue freed (0x3e), 200 resources to research | packet built |
+| 16 (P1) | pop 4,000, a queue block holding zero items | no research from it and no production message | its 400 resources go to research |
+| P1 research | homeworld 35 + 914 + 300 + 200 = 1,449 | energy 3 → 5, 529 stored | 1,035 (no bonus): energy 5, 115 stored; 3,445 (full `x`): energy 7, 675; 1,849 (zero-item queue counted): energy 6, 179 |
+| P0 research | homeworld 35 + planet 10 (pop 11,000) 1,100 = 1,135; `L` = 85,080 + 1,135 − 85,100 = 1,115 left after energy 26 | energy 26. The leftover goes to weapons (lowest, first in field order on ties): weapons 1 (cost 460). Then propulsion as if "lowest": propulsion 1 (470). Then weapons again (lowest tie): 185 stored. Levels 26/1/1/5/5/5, current weapons, next field still "same" | "same" kept after the move: weapons 1, then weapons 2 (500), 155 stored, propulsion 0; the stored choice turned to "lowest" |
+
+The research window that separates the two P0 readings is 980 to 1,459, so
+a small error in the resource figure does not blur it.
+
+### KB-2B (`kb2b.spec`)
+
+This is the KX-003 S3L start (PARITY.md, KX-003) on the slower-tech base.
+Player 0 is Claim Adjuster researching weapons (355 this year). Player 1 is
+Super Stealth (216 points) researching energy (95). Under the normal
+setting S3L ended with player 1 at energy 118 and weapons 88.
+
+| Player | Predicted | Rules out |
+|---|---|---|
+| 0 | weapons 3, stored `ceil(355/2)` = 178 | |
+| 1 | own energy `ceil(95/2)` = 48; stolen `s` = 23 (energy) and 88 (weapons), shown in two 0x159 messages; stored with `ceil(s/2)`: energy 60, weapons 44 | full scale: energy 71, weapons 88; halved truncating: energy 59 |
+
+### KB-2C (`kb2c.spec`)
+
+Player 1 is JOAT, immune to gravity, with temperature and radiation 45–55
+(700 points). Every field is at 3, so its reach is ±3 on every axis.
+
+| Planet | Setup | Predicted | Rules out |
+|---|---|---|---|
+| 10 (P1) | 20/47/50, pop 5,000, Terraform ×5 | capacity 3 (gravity immune, temperature 47 → 50, radiation at the centre). The order is cut to ×3 (message 0x12f) and built: 20/50/50, item gone | gravity counted: capacity 6, ×5 kept, gravity moved |
+| 11 (P1) | 10/50/50, pop 5,000, Terraform ×2 | capacity 0: the order is removed (0x12f), nothing built, 10/50/50 | units built on gravity |

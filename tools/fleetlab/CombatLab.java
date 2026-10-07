@@ -32,8 +32,9 @@ import org.starsautohost.starsapi.items.Items;
 //   mt P HEX                        set the Mystery Trader items P owns (16-bit mask, one bit
 //                                   per item; 0 = none). Designs may use Mystery Trader parts
 //                                   by name whatever the mask (see docs/ORACLE.md)
-//   queue N ID:COUNT[:PCT]:KIND[,...]|none
-//                                   replace planet N's production queue (owned planets).
+//   queue N ID:COUNT[:PCT]:KIND[,...]|none|empty
+//                                   replace planet N's production queue (owned planets;
+//                                   "empty" writes a queue block holding zero items).
 //                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
 //                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
 //                                   = percent of the first unit already done (default 0)
@@ -879,7 +880,7 @@ public class CombatLab {
                 byte[] q = queues.get(lastPlanet);
                 if (q != null) {
                     if (pl.owner < 0) throw new Exception("queue: planet " + lastPlanet + " has no owner");
-                    if (q.length > 0) {
+                    if (q.length > 0 || q == EMPTY_QUEUE) {
                         ProductionQueueBlock pq = new ProductionQueueBlock();
                         pq.setDecryptedData(Arrays.copyOf(q, q.length), q.length);
                         pq.setData(q.clone(), q.length);
@@ -899,8 +900,11 @@ public class CombatLab {
     // Production queue items: two little-endian words per item, as the game stores
     // them (and scripts/oracle/hst-edit writes them): w0 = (id & 63) << 10 | count,
     // w1 = pct << 4 | kind << 1 | id >> 6.
+    static final byte[] EMPTY_QUEUE = new byte[0];
+
     static byte[] parseQueue(String spec) throws Exception {
         if (spec.equals("none")) return new byte[0];
+        if (spec.equals("empty")) return EMPTY_QUEUE;
         String[] items = spec.split(",");
         byte[] d = new byte[items.length * 4];
         for (int j = 0; j < items.length; j++) {
