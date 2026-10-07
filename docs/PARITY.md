@@ -1551,7 +1551,7 @@ SC-001: allies do not share scanner coverage.
 
 ### Universe objects (S-17, S-18, S-19, IT gates, SD detection: CONFIRMED)
 
-Universe-objects corpus OB-011..OB-014, OB-017 and OB-018 (section
+Universe-objects corpus OB-011..OB-014, OB-017, OB-018 and OB-020 (section
 "Universe objects" below for method). Viewer player 1; homeworld scanner
 removed; positions are those after the year's wormhole moves and packet
 moves.
@@ -1566,10 +1566,11 @@ moves.
 - **A minefield the viewer already knows** (its "known" mask holds the
   viewer) is seen within the full normal range: 40 and 50 ly seen, 51 not
   (OB-018 E–G; OB-011 at 40 and 51 with R 66).
-- **A wormhole already known is not seen out of range.** A wormhole whose
-  "seen" mask held the viewer, far from every viewer scanner, was not in
-  the viewer's file (OB-011-H). Known or not, a wormhole within range was
-  written (OB-017 A, B). The "known" rule above is for minefields only.
+- **A wormhole the viewer already knows** (its "seen" mask holds the
+  viewer) is seen within the full normal range, like a known minefield. A
+  known wormhole 34 ly from a Rhino freighter was seen; an unknown one 37
+  ly from the other freighter was not (OB-020 A, B). A known wormhole far
+  from every viewer scanner was not in the file (OB-011-H, OB-020-C).
 - Packets are seen within the normal range: about 48 ly seen and 53 not
   (OB-018 J, K). A packet's mark from the host file or from an earlier
   player's pass does not make it visible (OB-017 D–F).
@@ -1779,12 +1780,12 @@ loss when a colonize retry happens in the load phase.
 
 ## Universe objects
 
-Status: MEASURED (OB-001 to OB-018, 2026-10-07; cloud oracle). Predictions
+Status: MEASURED (OB-001 to OB-020, 2026-10-07; cloud oracle). Predictions
 O-1..O-40 from the private binary reading (stars-decomp `docs/objects.md`,
 `docs/objects-predictions.md`, PR #10) were restated per case and
 committed before the runs (`experiments/ob/README.md`; commits c3d94fe,
-172ef28, 1c7ae56, 6a78bee). CONFIRMED below means every case that tested the rule
-agreed; the case ids say which. This section states behavior only.
+172ef28, 1c7ae56, 6a78bee, 335c5b9). CONFIRMED below means every case that
+tested the rule agreed; the case ids say which. This section states behavior only.
 
 ### Method
 
@@ -1839,10 +1840,13 @@ speed-bump fields have no minimum of 10. A detonating field adds 25 to p.
 - A Space Demolition fleet travelling toward a lay-mines waypoint lays half
   the amount at its end-of-year position: 80 from a Mini Mine Layer with
   two Mine Dispenser 40 (OB-014-C).
-- **MEASURED, one case (OB-014-D):** a non-SD fleet whose waypoint 0 had the
-  lay-mines task and whose waypoint 1 was 25 ly away did not move. It laid
-  the full 160 in place, and waypoint 1 was removed. The binary reading
-  predicted a move and no field.
+- **A lay-mines task on waypoint 0 holds a non-SD fleet in place.** A
+  Mini Mine Layer set to lay indefinitely, with waypoint 1 25 ly away,
+  stayed put for three years. It laid the full 160 each year, so its field
+  went 160 → 310 → 460 (2% decay with the minimum of 10 in between), and
+  both waypoints were kept (OB-019-A, OB-014-D).
+- Years word 1 lays twice and then clears the task: 160, 310, then 300
+  from decay alone (OB-019-B).
 
 ### Sweeping (CONFIRMED)
 

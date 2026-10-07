@@ -325,15 +325,17 @@ Contradicted, with the cause:
   move inside the field and swept it (5 Laser DDs, 100). Agrees with the
   model; the prediction left the sweep out.
 - **OB-011-H**: a wormhole whose "seen" mask already held player 1, far from
-  every player 1 scanner, was not in player 1's file. OB-017 A–C confirmed
-  the rule that fits: a wormhole is written only when it is within R/4 or P
-  of a scanner this year, whatever the mask says. (The decomp states the
-  "earlier turn" rule for minefields only; this prediction extended it to
-  wormholes.)
+  every player 1 scanner, was not in player 1's file. My case table had
+  assumed a known wormhole is always written. The decomp's reconciled rule
+  (O-42: a known wormhole is seen within the full R, like a known field)
+  held in OB-020.
 - **OB-014-D**: the non-SD layer whose waypoint 0 carried the lay task and
-  whose waypoint 1 was 25 ly away did not move. It laid 160 at its start
-  and waypoint 1 was removed. O-2 says it "lays nothing" while moving; in
-  the game a lay-mines task on waypoint 0 keeps the fleet in place.
+  whose waypoint 1 was 25 ly away did not move. It laid 160 at its start.
+  O-2 says it "lays nothing" while moving; in the game a lay-mines task on
+  waypoint 0 keeps the fleet in place. The first report said waypoint 1
+  was removed. That was a misread of the dump: the host and player files
+  still list it. OB-019 tested the decomp's reconciled O-41 over three
+  years, and it held.
 
 ### Decomp `tools/scan.py`
 
@@ -368,4 +370,23 @@ file differed byte-wise, so streams are counted by outcome.
     field was 2791. That is 3000 − 50 (hit) = 2950, then 2% decay (59) to
     2891, as predicted, then the stopped fleet's sweep of 100. The
     prediction left the sweep out. Decay before the hit would give 2790.
+
+## Round 4 predictions and results
+
+Committed in 335c5b9 before OB-019 and OB-020 ran. They test the decomp's
+reconciliation of OB-011-H and OB-014-D (stars-decomp PR #10 at 5e5eb63:
+O-41, O-42). `python3 experiments/ob/gen.py --list` prints the tables.
+
+- OB-019 (three years, 2400 → 2403, each year started from the previous
+  host file):
+  - A1–A3 held (O-41). The layer stayed at (1050,1180) with both waypoints
+    and the lay task, and the field was 160, 310, 460.
+  - B1–B3 held (O-4, years word 1). The field was 160, 310, 300; the task
+    was still lay after year 1 and cleared after year 2.
+- OB-020 A–D held (O-42). The known wormhole ended 34 ly from a Rhino
+  freighter and was seen. The unknown one ended 37 ly from the other
+  freighter and was not. The known one far from every scanner was not
+  seen. The whole player 1 view matched.
+- `scan.py` at 5e5eb63 reports 0 mismatches on OB-011, OB-018 and OB-020
+  (both players), and 0 on OB-020 player 0.
 

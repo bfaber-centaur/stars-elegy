@@ -749,8 +749,15 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   0 it laid once and cleared the task. `to X Y thing ID warp W` targets an
   object (waypoint type 0x18), which is how a fleet enters a wormhole.
 - **A lay-mines task on waypoint 0 holds the fleet.** A non-SD layer with
-  lay on waypoint 0 and a waypoint 1 25 ly away laid in place, did not
-  move, and lost waypoint 1 (OB-014-D).
+  lay on waypoint 0 and a waypoint 1 25 ly away laid in place and did not
+  move. Its waypoints were kept (OB-014-D, OB-019).
+- **Several years in a row.** `pinned-turn OUT1/raw/after/CB.HST
+  OUT1/raw/after OUT2` generates the next year from a run's output
+  (OB-019, 2400 → 2403). `check.py` takes `OB_YEAR=N` to check the cases of
+  year N only.
+- In `combatlab dump`, a fleet's `wp` lines follow its `fleet` line and
+  end at the next `fleet` line. Read them per fleet: the first OB-014-D
+  report counted waypoint 1 as removed because the dump was read wrongly.
 - **Minefield cases must count planets.** Decay depends on the number of
   planets inside the field (`docs/PARITY.md` "Universe objects"). `gen.py`
   asserts the planet set inside every field. OB-001-J forgot this. A fleet
