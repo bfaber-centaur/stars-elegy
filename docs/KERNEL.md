@@ -397,7 +397,8 @@ the warp ordered for that leg (1–10). Engine fuel table `f(w)` per engine
    greater than the start, `−0.5` otherwise (round half away from zero; an
    exact half cannot occur between integer points at integer distance).
 4. A fleet is in orbit of a planet exactly when its coordinates equal the
-   planet's.
+   planet's, including a deep-space waypoint that lies exactly on a planet
+   (FM-004 OR).
 5. Reaching waypoint 1 ends the fleet's movement for the year; leftover
    movement is not carried to the next waypoint. A first waypoint at the
    fleet's own position also uses up the year.
@@ -421,7 +422,7 @@ Worked (FM-001 23): `A = 25`, `25/97.308 = 0.2569`;
 The full per-fleet tables are `experiments/fm00N/{predictions,results}.tsv`
 in the movement corpus.
 
-### Fuel cost (CONFIRMED, FM-001..003)
+### Fuel cost (CONFIRMED, FM-001..004)
 
 For a move of `L` light-years at warp `w`:
 
@@ -450,10 +451,21 @@ Vectors (CONFIRMED):
   74 mg (FM-002 32).
 - A QJ5 freighter carrying 70 kT with an AD8 scout: the cargo is charged
   at the freighter's engine (FM-002 34).
+- Per-design truncation (FM-004 MS): a QJ5 scout and an LH6 scout (23 kT),
+  4 ly at warp 2: `trunc(25·4·18/2000) + trunc(20·4·23/2000) = 0 + 0` →
+  0 mg (one truncation of the sum would give 1). A QJ5 scout and a Fuel
+  Mizer scout (20 kT), 25 ly at warp 5: `22 + trunc(35·25·20/2000) = 22 +
+  8 = 30` tenths → 3 mg (not 4).
+- Cargo on the cheapest engine first (FM-004 CA): a QJ5 freighter (31 kT)
+  and an LH6 freighter (36 kT, 70 kT hold), 36 ly at warp 6 (factors 180
+  and 105). With 70 kT: all on the LH6 freighter,
+  `trunc(105·36·106/2000) + trunc(180·36·31/2000) = 200 + 100` → 30 mg.
+  With 100 kT: 70 on the LH6, 30 on the QJ5,
+  `200 + trunc(180·36·61/2000) = 200 + 197` → 40 mg.
 - A warp-9 scout chasing a fleet that ends 55 ly away:
   `trunc(900·55·18/2000) = 445` tenths → 45 mg (FM-001 67).
 
-### Not enough fuel (CONFIRMED for Quick Jump 5)
+### Not enough fuel (CONFIRMED, FM-001..004)
 
 - Range on the current fuel: `R = trunc(fuel·1000 / C1000)` where `C1000 =
   trunc(Σ_designs trunc(f(w)·1000·(n·m + cargo)/2000) / 10)` (the cost of
@@ -464,22 +476,44 @@ Vectors (CONFIRMED):
   by rule 3 above), its fuel becomes 0, and the warp of its leg is lowered
   to the fastest warp at which the whole leg would cost no fuel (the
   lowest warp with a non-zero cost, minus one). CONFIRMED for QJ5, where
-  this is warp 1. BINARY-ONLY: Fuel Mizer → warp 4, Settler's Delight →
-  warp 6; no free warp at all → the warp is left unchanged (different
-  message).
+  this is warp 1; Fuel Mizer → 4, Settler's Delight → 6, Radiating
+  Hydro-Ram Scoop → 6 (FM-004 WD). "Cost" is the rounded fleet cost of
+  the whole remaining leg, so a short leg can give a higher warp: a Fuel
+  Mizer scout with 0 mg and a 2 ly leg gets warp 5, because 2 ly at warp 5
+  costs `trunc((trunc(35·2·20/2000) + 9)/10) = 0` mg. BINARY-ONLY: no
+  free warp at all → the warp is left unchanged (a different message);
+  every J-RC3 engine is free at warp 1, so this should not arise.
 - A fleet with `R = 0` does not move.
 - With exactly enough fuel it moves the full distance.
-- Top-up (BINARY-ONLY): a fleet that had enough fuel for the whole leg at
-  the start of the year ends the year with at least the fuel the rest of the
-  leg needs (capped at its tank), so per-year rounding never strands it.
+- Top-up (CONFIRMED, FM-004 TU): a fleet that had enough fuel for the whole
+  leg at the start of the year ends the year with at least the fuel the
+  rest of the leg needs (capped at its tank; the cap was not exercised), so
+  per-year rounding never strands it.
 
 Vectors (CONFIRMED, FM-001, QJ5 scout at warp 6 heading +160 x; fuel →
 distance moved, end fuel 0, warp set to 1): fuel 1 → 6 ly, 3 → 18, 5 → 30,
 fuel 0 → no move. At warp 9, fuel 10 → 12 ly.
 
-`R` and the corpus formula `trunc(fuel·20000/M)` (with `M` = Σ mass ×
-factor) agree when `M/20` is an integer, as in every FM case; the rule
-above is the binary's and differs otherwise (BINARY-ONLY there).
+Vectors (CONFIRMED, FM-004 LR, each heading +100 x, ends with 0 mg; these
+are the cases where `R` and `trunc(fuel·20000/M)` differ by 1 ly):
+
+| Fleet | Warp | Fuel | `C1000` | Moves | Warp after |
+|---|---:|---:|---:|---:|---:|
+| LH6 scout (23 kT) | 6 | 3 | 120 | 25 | 1 |
+| DLL7 scout (27 kT) | 7 | 4 | 148 | 27 | 1 |
+| LH6 scout | 8 | 25 | 862 | 29 | 1 |
+| 3 AD8 scouts (93 kT) | 8 | 31 | 534 | 58 | 1 |
+| LH6 freighter (36 kT) + 10 kT | 6 | 7 | 241 | 29 | 1 |
+| Settler's Delight scout (16 kT) | 10 | 23 | 460 | 50 | 6 |
+
+Worked (first row): `C1000 = trunc(trunc(105·1000·23/2000)/10) =
+trunc(1207/10) = 120`; `R = trunc(3·1000/120) = 25` (the corpus formula
+gives `trunc(3·20000/2415) = 24`).
+
+Top-up vectors (CONFIRMED, FM-004 TU, QJ5 scout, warp 9, leg 126 ly):
+fuel 102 → moves 81, pays 66, has 36, topped up to 37 (the remaining 45 ly
+cost 37); fuel 101 → cannot afford the whole leg (103), no top-up, ends
+with 35.
 
 ### Ram scoops and free warps
 
@@ -489,8 +523,27 @@ gains fuel when its engines are free at the ordered warp:
 for a design whose engine (first slot) has `f(w) = 0`, `k` = engines per
 ship `e` × (1, or 3 if also free at `w+1`, 6 if free at `w+1` and `w+2`, 10
 if free through `w+3`); capped at the tank's free space.
-CONFIRMED for warp 1 (1 mg per ship, capped, FM-002/003). Other warps and
-ram-scoop engines: BINARY-ONLY.
+CONFIRMED (FM-002..004): warp 1 on every engine, Fuel Mizer at warps 1–4,
+Settler's Delight at 1–6, Radiating Hydro-Ram Scoop at 4 and 6, several
+ships of one design, a mixed fleet (only the free design gains), the tank
+cap, and arrival years. Not exercised: designs with more than one engine
+(`e > 1`), an engine outside the first slot, minefield stops.
+
+Note that `L'` is `trunc(D − 0.99999)`, not `D`, on arrival: a Settler's
+Delight scout arriving 10 ly away at warp 4 gains `6·9 = 54`; at
+(+7, +7) (`D = 9.90`) it gains `6·8 = 48`.
+
+Vectors (CONFIRMED, FM-004 RS, one scout, 100 mg, heading +100 x, gain):
+
+| Engine | w1 | w2 | w3 | w4 | w5 | w6 | w7 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Fuel Mizer (free to 4) | 10 | 24 | 27 | 16 | 0 | | |
+| Settler's Delight (free to 6) | 10 | 40 | 90 | 96 | 75 | 36 | 0 |
+| Radiating Hydro-Ram (free to 6) | | | | 96 | | 36 | |
+
+Three Fuel Mizer scouts at warp 2 gain 72; a QJ5 scout with a Fuel Mizer
+scout at warp 2 gains 24. A Settler's Delight scout with 250 mg of 300 at
+warp 3 gains 50 (raw 90, capped).
 
 ### Chasing another fleet (CONFIRMED, FM-001..003)
 
@@ -515,6 +568,15 @@ B chasing Z at 1225 (warp 9), Z moving +60 at warp 5: with ids in order
 A < B < Z, A reaches 1215 and B does not move; with B < A < Z, all three
 end at 1250.
 
+### Refuelling at a starbase (CONFIRMED, FM-004 DK)
+
+After production, a fleet orbiting a planet with its own starbase (one
+with a dock) is set to its tank capacity, including a fleet that arrived
+there this year. Fuel above capacity is reduced to capacity there, but not
+in deep space (a scout holding 400 mg of 300 keeps 400 away from a
+starbase). A fleet that leaves the planet this year is not refuelled, nor
+is one at a planet without a starbase.
+
 ### Other movement rules (BINARY-ONLY)
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
@@ -531,9 +593,9 @@ end at 1250.
   colonists (at most all of them) per year moved, where `mid` =
   `trunc((radiation low + radiation high)/2)`; not for radiation-immune
   races or when low + high ≥ 170.
-- Refuelling after production: a fleet at a planet with its own or a
-  friend's starbase that has a dock is filled to capacity; otherwise fuel
-  generators add 50 mg each, capped.
+- Fuel generators (anti-matter) add 50 mg each and fuel transports 200 mg
+  each per year, capped at the tank.
+- Refuelling at a friend's starbase, and at a starbase without a dock.
 - Fuel unloaded onto a planet is lost.
 
 ## Sources
