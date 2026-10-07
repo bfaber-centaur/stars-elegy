@@ -10,16 +10,18 @@ rev=194732ce0d018b8ca818e5d732d0b14c01739768
 cache=${FLEETLAB_CACHE:-$HOME/.cache/fleetlab}
 src=$cache/starsapi
 out=$cache/build
-if [ ! -f "$out/FleetLab.class" ] || [ "$here/FleetLab.java" -nt "$out/FleetLab.class" ]; then
+main=${FLEETLAB_MAIN:-FleetLab}
+if [ ! -f "$out/FleetLab.class" ] || [ ! -f "$out/CombatLab.class" ] || \
+   [ "$here/FleetLab.java" -nt "$out/FleetLab.class" ] || [ "$here/CombatLab.java" -nt "$out/CombatLab.class" ]; then
   mkdir -p "$cache"
   [ -d "$src" ] || git clone -q https://github.com/stars-4x/starsapi.git "$src"
   git -C "$src" checkout -q "$rev"
   rm -rf "$out"; mkdir -p "$out/org/starsautohost/starsapi/items"
   javac -nowarn -encoding ISO-8859-1 -d "$out" \
     $(find "$src/src/main/java/org/starsautohost/starsapi" -name '*.java' -not -path '*/tools/*') \
-    "$here/FleetLab.java" 2>&1 | grep -v '^Note:\|^Picked up' >&2 || true
+    "$here/FleetLab.java" "$here/CombatLab.java" 2>&1 | grep -v '^Note:\|^Picked up' >&2 || true
   cp "$src"/src/main/java/org/starsautohost/starsapi/items/*.MOD \
      "$src"/src/main/java/org/starsautohost/starsapi/items/*.properties \
      "$out/org/starsautohost/starsapi/items/"
 fi
-java -cp "$out" FleetLab "$@" 2>&1 | grep -v '^Picked up'
+java -cp "$out" "$main" "$@" 2>&1 | grep -v '^Picked up'

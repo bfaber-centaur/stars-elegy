@@ -56,3 +56,17 @@ From stars-decomp `docs/combat-predictions.md` / `tools/combat.py`
   enemies" (CB-004) should both start a battle with the lone visitor.
   CB-002 already contradicts this for "enemies" at planet 8.
 - Every recorded hit replays through `combat.py check`.
+
+## Result
+
+4 battles in each turn; 23 and 24 hit records replay, 0 mismatches.
+
+- T: moves diverge from round 2 between the turns; CB-001 shows reruns
+  diverge too, so P-11 is inconclusive.
+- G: the two target stacks were never both in range; gatling multi-target
+  not exercised here (see CB-005).
+- D: the stack switched to disengage after its first armor damage and
+  kept firing.
+- S1: battle; the Gatling Station appears as a token (initiative 14,
+  Gatling initiative 26) and never fired (no target in range).
+- S2: no battle in either turn.

@@ -1,0 +1,6 @@
+#!/bin/sh
+# CombatLab (see CombatLab.java): multi-player battle starts and battle-record
+# dumps, built and run like fleetlab.
+#   tools/fleetlab/combatlab dump FILE...
+#   tools/fleetlab/combatlab build BASE.HST SPEC OUT.HST
+FLEETLAB_MAIN=CombatLab exec "$(dirname "$0")/fleetlab" "$@"

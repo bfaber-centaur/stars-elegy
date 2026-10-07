@@ -36,3 +36,14 @@ From the stars-decomp reading (8cad60f) unless marked:
   only possible starter is the station (decomp: it does; CB-002..004:
   no battle).
 - Control: battle.
+
+## Result
+
+- CB-005 planet 8: battle; one Gatling shot hit both attacking stacks with
+  the full 62 at range 3. 13 hit records replay; 2 hits on the station are
+  outside the check. CONFIRMED.
+- CB-005 planet 17: battle; the **unarmed** station appears as a token.
+  Contradicts P-4.
+- CB-006: no battle at planet 17 or planet 8; the control fought.
+  Contradicts the binary reading: across CB-002..006 a starbase alone never
+  started a battle.

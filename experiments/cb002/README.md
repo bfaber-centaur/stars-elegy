@@ -60,3 +60,13 @@ From stars-decomp `tools/combat.py` / `docs/combat-predictions.md`
   inconsistently). C10 (plan 0 "attack enemies") should fight.
 - Every recorded hit replays through the decomp damage model
   (`combat.py check`).
+
+## Result
+
+7 battles (C1–C8 except C7); 48 hit records replay, 0 mismatches.
+Gatling, phaser dropoff with deflector, capacitor, sapper (shields only,
+never aimed at the freighters), Jihad doubling (40 hits × 170) and
+retaliation as predicted; no battle at C7; dampener sets speed codes to 0.
+C5: one Hulk was destroyed (my hand calculation above forgot that 6800
+≥ 3650 kills one ship first; the model's replay matched).
+**No battle at C9 or C10**: the C10 case contradicts the binary reading.

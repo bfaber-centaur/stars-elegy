@@ -33,3 +33,11 @@ closes and takes fire for several rounds: Q1 vs 4 Laser Destroyers
 (2 Tritanium), Q2 vs 10 Laser Frigates. Same predictions: shields 70 per
 ship, +35 per round for the stack while above 0, none once at 0; every
 hit replays through `combat.py check`.
+
+## Results
+
+- CB-007: shields 70 per ship and Armor Destroyer armor 250, as predicted;
+  9 hit records replay. R1 had one hit (the RS stack fled).
+- CB-008: 39 hit records replay, 0 mismatches, including +35 per round
+  for the stack while its shields were above 0 and none after they reached
+  0. CONFIRMED.

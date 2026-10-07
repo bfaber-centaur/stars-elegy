@@ -549,6 +549,42 @@ python3 tools/fleetlab/summarize.py OUTDIR            # per-fleet start/end/fuel
 - `OUTDIR` holds registered-copy output: preserve it in the apparatus
   repository, never here.
 
+## Combat Lab: multi-player turns in Host Mode (observed 2026-10-07)
+
+Battles need at least two players, and the preserved PG001 game has one.
+"Combat Lab" (`CB`, game id 82222) was made once with the Advanced New
+Game wizard: two Humanoid players (JOAT), tiny universe, sparse, no random
+events, 24 planets. Player 0's homeworld is planet 17 at (1306,1060),
+player 1's planet 8 at (1169,1145); y = 1230 between x = 1020 and 1300 has
+no planet nearby, which leaves room for eight deep-space battles 40 ly
+apart. The 2400 files (`CB.HST`, `CB.M1`, `CB.M2`, `CB.XY`) are kept in
+the apparatus repository (`evidence/cb/base2400/`).
+
+```sh
+tools/fleetlab/combatlab dump FILE...               # players, designs, plans, fleets, objects, battles
+tools/fleetlab/combatlab build CB.HST SPEC OUT.HST  # spec format: header of CombatLab.java
+tools/fleetlab/host-turn OUT.HST BASEDIR OUTDIR     # reset registered, generate one year in Host Mode
+```
+
+- Opening a `.HST` from the title screen (File → Open, `cb.hst`) shows
+  the "Stars! Host Mode" dialog. "Generate Now" is at (737,361) and asks
+  for confirmation (alt+y). `host-turn` waits for the host file's turn
+  number to change (the header flags change as soon as the file is
+  opened), closes the dialog (alt+c) and exits (alt+x).
+- Players need not submit turns. A player's `.M` file then carries every
+  year since its last submission (the client reports "2 years of data
+  read"; `combatlab dump` shows both years). Both players' `.M` files
+  carry the same battle records.
+- `combatlab build` replaced ship and starbase designs (the game
+  recomputed armor for Regenerating Shields), battle plans, relations,
+  tech levels, LRTs and every fleet; all loaded without complaint.
+- **Movement inside battles was not reproducible.** CB-001, generated
+  twice from the same file after a reset, gave different token moves.
+  This qualifies "restarted runs reuse nearly the same random draws"
+  (fleet movement corpus): do not count on a rerun to reproduce a battle.
+- `OUTDIR` holds registered-copy output (and a screenshot of the Host
+  Mode dialog): preserve it in the apparatus repository, never here.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take

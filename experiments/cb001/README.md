@@ -59,3 +59,17 @@ From the stars-decomp reading (`tools/combat.py`, branch
    model (`combat.py check`).
 
 Random parts not predicted: token order, movement choices and ties.
+
+## Result
+
+Run twice (run1, run2, each after a reset). 6 battles; all 16 hit records
+in each run replay through the model, 0 mismatches.
+
+- Start squares, token values and first-salvo hits/damage words
+  (90/125/103/72 hits; 148/206/170/119) as predicted, identical in both
+  runs. Token movement differed between the runs.
+- No miss records against the unshielded Hulks. Laser 90% at distance 1;
+  damaged ships died first.
+- Unarmed stacks fled and left on their 8th move.
+- B1 salvage: 10 Ironium, 13 Germanium (per kill event: cost/3, then a
+  quarter lost).

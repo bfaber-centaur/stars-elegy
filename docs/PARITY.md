@@ -834,3 +834,153 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
   cycles and in the next year.
 - Minefields, stargates, wormholes, and movement
   that interacts with other players were deliberately not tested.
+
+## Combat
+
+Status: MEASURED (first corpus, CB-000 to CB-008, 2026-10-07; cloud
+oracle). Predictions from the private binary reading (stars-decomp,
+`docs/combat-predictions.md` P-1..P-29 at 8cad60f) were committed before
+every run (`experiments/cb00N/README.md`, commits `36f3aaa` to `da39149`).
+Rules marked CONFIRMED agree with both that reading and the oracle;
+CONTRADICTED means the oracle disagrees with the prediction as stated.
+This section states behavior only.
+
+### Method
+
+- Universe "Combat Lab" (CB, see `docs/ORACLE.md`): new 2-player game, two
+  Humanoid (JOAT) players, tiny, sparse, no random events. Every start is
+  the 2400 host file rewritten by `tools/fleetlab/combatlab build`
+  (designs, starbase designs, battle plans, relations, tech, LRTs, fleets);
+  one Host Mode generation 2400 → 2401 per experiment
+  (`tools/fleetlab/host-turn`).
+- Both players at tech 26 in every field (so nothing can be learned from
+  battle) and mutual enemies. Test fleets sit in deep space on y = 1230,
+  40 ly apart, so one turn holds up to 8 separate battles.
+- Battle records were read from both players' `.M` files (identical
+  records) with `combatlab dump`, and every hit was replayed through the
+  binary-derived damage model: 189 hit records matched, 0 mismatched,
+  2 not checkable (hits on a starbase), over 32 battles in 9 runs.
+- Not reproducible: CB-001 run twice from the same file gave different
+  token movement (see `docs/ORACLE.md`). Hit counts of the torpedo salvos,
+  which the rule makes independent of random draws, were identical.
+- Raw files, dumps, check outputs and designer screenshots: private
+  `stars-oracle-apparatus`, `evidence/cb/`.
+
+### Designer (CB-000, CONFIRMED 32/32)
+
+The ship designer's "Initiative / Moves" and mass agreed with the
+prediction for all 32 designs (16 engines, computers, jets, overthrusters,
+1–4 engines, masses 10–602). Rule (also the battle speed rule, without
+battle-only terms):
+
+- initiative = hull initiative + 1 per Battle Computer, 2 per Battle Super
+  Computer, 3 per Battle Nexus (capped at 63);
+- speed code = w − 4 + maneuvering jets + 2·overthrusters
+  + (Enigma Pulsars + 1)/2 − (mass/70)/engines, clamped 0..8 (integer
+  divisions), where w = 10 for Interspace-10, Enigma Pulsar, Trans-Star 10,
+  Trans-Galactic Mizer Scoop and Galaxy Scoop, otherwise the highest warp
+  ≤ 9 whose fuel-table entry is at most 120;
+- moves per round = (code + 2)/4 squares, shown as ½ … 2½.
+
+Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
+
+### Board and tokens (CONFIRMED)
+
+- With two players, player 0's tokens start on square (1,4) and player 1's
+  on (8,5) of the 10×10 board (P-2; 32 battles).
+- One token per (fleet, design). Token values in the record matched the
+  prediction: initiative, weapon initiative, computer % (BSC 30), jammer %
+  (20, 50), capacitor (2 × Flux + Energy Capacitor → 132%), deflector
+  (90%), shield and armor per ship, mass and speed code (P-3).
+- Regenerating Shields: shield per ship is 7/5 of the design value
+  (2 Mole-skin → 70), and armor from armor parts is halved (2 Tritanium on
+  a Destroyer → 250, although the edited design record said 300: the game
+  recomputes armor) (P-24).
+- An Energy Dampener in the battle sets every ship token's speed code 4
+  lower (2 → 0) (P-8).
+- Starbase tokens: kind starbase, initiative 14, mass shown as 65535;
+  Gatling initiative 26 on a station.
+
+### Movement (MEASURED, partly)
+
+- Tokens move ½ … 2½ squares per round from the speed code, as an
+  alternating pattern: speed code 1 moved 1,1,0,1…; code 5 moved 2,2,1,2
+  (P-7).
+- A disengaging (or unarmed, fleeing) token leaves the board on its 8th
+  move; the remaining-move counter is visible in the move record (P-10).
+  A stack on "disengage if challenged" switched to disengaging after it
+  first took armor damage and kept firing (CB-003/004 D).
+- Tactics "maximize net damage" vs "maximize damage ratio" (P-11):
+  INCONCLUSIVE. The two runs' moves diverge from round 2, but identical
+  reruns also diverge (CB-001), so this does not separate them.
+
+### Weapons and damage (CONFIRMED by replay)
+
+- **Torpedo salvos.** A salvo of N torpedoes at hit chance p% hits exactly
+  floor(N·p/100) times: 202 Beta torpedoes hit 90 / 125 / 103 / 72 times
+  for p = 45 (no computer), 62 (BSC), 51 (BSC vs Jammer 20), 36 (BSC vs
+  Jammer 50) — the same numbers in both CB-001 runs (P-17, P-18). Hit
+  chance: with c = max(0, computer − jammer) and j = max(0, jammer −
+  computer), p = 100 − (100 − c)(100 − accuracy)/100 if c > 0, else
+  accuracy·(100 − j)/100 (integers).
+- **Missiles** (Jihad) do double damage to a stack with no shields:
+  202 Jihads at 20% hit 40 times for 6800 damage on two 3650-armor Hulks
+  (one killed, the survivor shown 432/500 damaged) (P-20).
+- Torpedoes and missiles against a target with 0 shields leave no miss
+  records (P-19, partial; misses against shields not observed).
+- **Beams** do full damage at distance 0 and drop off linearly to 90% at
+  the weapon's range (Laser 90% at distance 1; Phaser Bazooka and
+  Colloidal Phaser at distances 0–3). Deflector applies before range
+  dropoff; capacitors multiply (P-12, P-14).
+- **Gatling**: one shot hits every enemy stack in range with full damage
+  and no dropoff; a station's Gatling hit two attacking stacks at range 3
+  in one shot (starbase range +1) (P-13).
+- **Sappers** hit only shields: no hit record on unshielded freighters
+  while a shielded stack was present, and hits on the shielded stack
+  removed shields only (P-15).
+- Armor damage first destroys whole ships, already-damaged ships first
+  (each costing its remaining armor); the rest, plus the stack's existing
+  damage, is spread evenly over the survivors (rounded up), and the record
+  shows per-ship damage in 1/500ths of armor, rounded up (P-22, P-23).
+  Beams hit shields before armor; a torpedo hit splits half to shields,
+  half to armor.
+- Regenerating Shields: at the start of each later round a stack whose
+  shields are above 0 regains 10% of its maximum (+7 per ship); none once
+  shields reach 0 (CB-008, 39 hits) (P-24).
+- Range dropoff was exercised: beam hits at distances 0–3, torpedo hits at
+  2–5.
+
+### Who fights (MEASURED)
+
+- No battle when both sides' plans attack nobody (P-5), or when the only
+  side whose plan attacks enemies is unarmed (CB-006).
+- A stack whose plan attacks nobody fires back once a battle has started
+  (P-6).
+- **Starbases — CONTRADICTS the binary reading.** In five configurations
+  (owner plan 0 attack-who enemies / neutrals and enemies / everyone; Laser
+  or Gatling stations; armed and unarmed enemy visitors attacking nobody or
+  enemies) an armed starbase alone never started a battle with an enemy
+  fleet in orbit (CB-002 C9/C10, CB-003/004 S2, CB-006). The binary reading
+  predicted that plan-0 "enemies" makes the station attack. P-29 (plan 0
+  "everyone" may fail) therefore cannot be tested as stated.
+- When a battle happens at a planet, the starbase joins as a token: it did
+  when its owner's fleet started the battle (CB-003/004 S1), and an
+  **unarmed** station also appeared as a token (CB-005). The latter
+  CONTRADICTS P-4 ("unarmed starbase is not a token"). An armed station in
+  the battle fired (CB-005).
+
+### Salvage (CONFIRMED, one case)
+
+Destroyed ships leave one salvage object per battle location. In CB-001
+B1, three kill events (3, 4 and 3 Small Freighters; 4 Ironium,
+5 Germanium each at tech 26) left 10 Ironium and 13 Germanium:
+per kill event, a third of the destroyed ships' mineral cost, then a
+quarter of that lost (integer at each step) (P-26).
+
+### Not tested
+
+Weight/attractiveness order between targets (P-9), damage carried to the
+next stack (P-16), P-21, P-25, battle tech gain (P-27; tech 26 suppresses
+it), repair after battle (P-28), more than one salvage point (E-8), E-10,
+misses against shielded targets, three or more players, minefields,
+bombing and invasion.

@@ -25,5 +25,11 @@ moves per design, from the stars-decomp rule (`tools/combat.py`, branch
   + (Enigma Pulsars + 1)/2 − (mass/70)/(engines), clamped 0..8, where
   w = 10 for Interspace-10, Enigma Pulsar, Trans-Star 10,
   Trans-Galactic Mizer Scoop and Galaxy Scoop, otherwise the highest warp
-  ≤ 9 at which the engine's fuel use is at most 120% (integer divisions);
+  ≤ 9 whose fuel-table entry is at most 120 (integer divisions);
 - moves per round = (code + 2)/4.
+
+## Result
+
+All 32 designs showed the predicted mass, initiative and moves in the
+designer (`results.tsv`; screenshots in the apparatus repository,
+`evidence/cb/cb000/`). CONFIRMED.
