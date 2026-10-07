@@ -1,0 +1,150 @@
+case	item	observed	where
+F00-w1	fleet 0 wp 1 distance	28.28 Light Years	Fleet Waypoints tile, each waypoint selected
+F00-w1	fleet 0 wp 1 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F00-w1	fleet 0 wp 1 est fuel usage	72mg	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 distance	50.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 travel time	4 years	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 est fuel usage	294mg	Fleet Waypoints tile, each waypoint selected
+F00-w3	fleet 0 wp 3 distance	42.43 Light Years	Fleet Waypoints tile, each waypoint selected
+F00-w3	fleet 0 wp 3 travel time	7 years	Fleet Waypoints tile, each waypoint selected
+F00-w3	fleet 0 wp 3 est fuel usage	401mg (red)	Fleet Waypoints tile, each waypoint selected
+F00	fleet 0 est. range (fuel 400, ideal warp 5)	162 l.y.	Fleet Composition tile, Est. Range
+F01-w1	fleet 1 wp 1 distance	30.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F01-w1	fleet 1 wp 1 travel time	Never	Fleet Waypoints tile, each waypoint selected
+F01-w1	fleet 1 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F01-w2	fleet 1 wp 2 distance	20.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F01-w2	fleet 1 wp 2 travel time	Never	Fleet Waypoints tile, each waypoint selected
+F01-w2	fleet 1 wp 2 est fuel usage	2mg	Fleet Waypoints tile, each waypoint selected
+F01	fleet 1 est. range (fuel 50, ideal warp 6)	561 l.y.	Fleet Composition tile, Est. Range
+F02-w1	fleet 2 wp 1 distance	3.61 Light Years	Fleet Waypoints tile, each waypoint selected
+F02-w1	fleet 2 wp 1 travel time	3 years	Fleet Waypoints tile, each waypoint selected
+F02-w1	fleet 2 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F02-w2	fleet 2 wp 2 distance	0.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F02-w2	fleet 2 wp 2 travel time	4 years	Fleet Waypoints tile, each waypoint selected
+F02-w2	fleet 2 wp 2 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F02-w3	fleet 2 wp 3 distance	57.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F02-w3	fleet 2 wp 3 travel time	6 years	Fleet Waypoints tile, each waypoint selected
+F02-w3	fleet 2 wp 3 est fuel usage	18mg	Fleet Waypoints tile, each waypoint selected
+F02	fleet 2 est. range (fuel 50, ideal warp 5)	833 l.y.	Fleet Composition tile, Est. Range
+F03-w1	fleet 3 wp 1 distance	100.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F03-w1	fleet 3 wp 1 travel time	4 years	Fleet Waypoints tile, each waypoint selected
+F03-w1	fleet 3 wp 1 est fuel usage	45mg	Fleet Waypoints tile, each waypoint selected
+F03-w2	fleet 3 wp 2 distance	100.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F03-w2	fleet 3 wp 2 travel time	7 years	Fleet Waypoints tile, each waypoint selected
+F03-w2	fleet 3 wp 2 est fuel usage	265mg	Fleet Waypoints tile, each waypoint selected
+F03	fleet 3 est. range (fuel 300, ideal warp 5)	263 l.y.	Fleet Composition tile, Est. Range
+F04-w1	fleet 4 wp 1 distance	150.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F04-w1	fleet 4 wp 1 travel time	5 years	Fleet Waypoints tile, each waypoint selected
+F04-w1	fleet 4 wp 1 est fuel usage	25mg	Fleet Waypoints tile, each waypoint selected
+F04-w2	fleet 4 wp 2 distance	100.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F04-w2	fleet 4 wp 2 travel time	8 years	Fleet Waypoints tile, each waypoint selected
+F04-w2	fleet 4 wp 2 est fuel usage	127mg	Fleet Waypoints tile, each waypoint selected
+F04	fleet 4 est. range (fuel 500, ideal warp 5)	1176 l.y.	Fleet Composition tile, Est. Range
+F05-w1	fleet 5 wp 1 distance	68.82 Light Years	Fleet Waypoints tile, each waypoint selected
+F05-w1	fleet 5 wp 1 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F05-w1	fleet 5 wp 1 est fuel usage	111mg	Fleet Waypoints tile, each waypoint selected
+F05-w2	fleet 5 wp 2 distance	97.75 Light Years	Fleet Waypoints tile, each waypoint selected
+F05-w2	fleet 5 wp 2 travel time	4 years	Fleet Waypoints tile, each waypoint selected
+F05-w2	fleet 5 wp 2 est fuel usage	251mg (red)	Fleet Waypoints tile, each waypoint selected
+F05-w3	fleet 5 wp 3 distance	200.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F05-w3	fleet 5 wp 3 travel time	7 years	Fleet Waypoints tile, each waypoint selected
+F05-w3	fleet 5 wp 3 est fuel usage	829mg (red)	Fleet Waypoints tile, each waypoint selected
+F05	fleet 5 est. range (fuel 200, ideal warp 5)	625 l.y.	Fleet Composition tile, Est. Range
+F06-w1	fleet 6 wp 1 distance	190.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F06-w1	fleet 6 wp 1 travel time	3 years	Fleet Waypoints tile, each waypoint selected
+F06-w1	fleet 6 wp 1 est fuel usage	167mg (red)	Fleet Waypoints tile, each waypoint selected
+F06-w2	fleet 6 wp 2 distance	190.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F06-w2	fleet 6 wp 2 travel time	6 years	Fleet Waypoints tile, each waypoint selected
+F06-w2	fleet 6 wp 2 est fuel usage	196mg (red)	Fleet Waypoints tile, each waypoint selected
+F06	fleet 6 est. range (fuel 30, ideal warp 8)	209 l.y.	Fleet Composition tile, Est. Range
+F07-w1	fleet 7 wp 1 distance	25.50 Light Years	Fleet Waypoints tile, each waypoint selected
+F07-w1	fleet 7 wp 1 travel time	1 year	Fleet Waypoints tile, each waypoint selected
+F07-w1	fleet 7 wp 1 est fuel usage	3mg	Fleet Waypoints tile, each waypoint selected
+F07-w2	fleet 7 wp 2 distance	25.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F07-w2	fleet 7 wp 2 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F07-w2	fleet 7 wp 2 est fuel usage	6mg	Fleet Waypoints tile, each waypoint selected
+F07	fleet 7 est. range (fuel 50, ideal warp 6)	561 l.y.	Fleet Composition tile, Est. Range
+F08-w1	fleet 8 wp 1 distance	50.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F08-w1	fleet 8 wp 1 travel time	6 years	Fleet Waypoints tile, each waypoint selected
+F08-w1	fleet 8 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F08-w2	fleet 8 wp 2 distance	90.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F08-w2	fleet 8 wp 2 travel time	9 years	Fleet Waypoints tile, each waypoint selected
+F08-w2	fleet 8 wp 2 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F08	fleet 8 est. range (fuel 20, ideal warp 6)	Infinite	Fleet Composition tile, Est. Range
+F09	fleet 9 est. range (fuel 23, ideal warp 5)	383 l.y.	Fleet Composition tile, Est. Range
+F10	fleet 10 est. range (fuel 24, ideal warp 4)	Infinite	Fleet Composition tile, Est. Range
+F11	fleet 11 est. range (fuel 25, ideal warp 6)	280 l.y.	Fleet Composition tile, Est. Range
+F12	fleet 12 est. range (fuel 26, ideal warp 7)	226 l.y.	Fleet Composition tile, Est. Range
+F13	fleet 13 est. range (fuel 27, ideal warp 8)	188 l.y.	Fleet Composition tile, Est. Range
+F14	fleet 14 est. range (fuel 28, ideal warp 9)	169 l.y.	Fleet Composition tile, Est. Range
+F15	fleet 15 est. range (fuel 29, ideal warp 10)	175 l.y.	Fleet Composition tile, Est. Range
+F16	fleet 16 est. range (fuel 30, ideal warp 10)	204 l.y.	Fleet Composition tile, Est. Range
+F17	fleet 17 est. range (fuel 31, ideal warp 10)	968 l.y.	Fleet Composition tile, Est. Range
+F18	fleet 18 est. range (fuel 32, ideal warp 6)	Infinite	Fleet Composition tile, Est. Range
+F19	fleet 19 est. range (fuel 33, ideal warp 5)	Infinite	Fleet Composition tile, Est. Range
+F20	fleet 20 est. range (fuel 34, ideal warp 10)	430 l.y.	Fleet Composition tile, Est. Range
+F21	fleet 21 est. range (fuel 35, ideal warp 10)	729 l.y.	Fleet Composition tile, Est. Range
+F22	fleet 22 est. range (fuel 333, ideal warp 5)	239 l.y.	Fleet Composition tile, Est. Range
+P04-0	planet 4 item 0 (id 1 x20, 0%)	Unknown	Production tile, Completion: of the selected item
+V04	planet 4 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G04	planet 4 population 17200 of 1200000	grow by 2600 to 19800 next year	Status tile, population popup
+M04	planet 4 mining rate	1/1/0	Planet Summary Report, Value / Mining Rate columns
+P05-0	planet 5 item 0 (id 7 x9, 79%)	1 year	Production tile, Completion: of the selected item
+P05-1	planet 5 item 1 (id 8 x30, 0%)	1 - 2 years	Production tile, Completion: of the selected item
+P05-2	planet 5 item 2 (id 9 x10, 0%)	2 - 4 years	Production tile, Completion: of the selected item
+V05	planet 5 value / optimal	1% / 16%	Planet Summary Report, Value / Mining Rate columns
+G05	planet 5 population 181200 of 60000	(no growth line)	Status tile, population popup
+M05	planet 5 mining rate	3/3/3	Planet Summary Report, Value / Mining Rate columns
+V06	planet 6 value / optimal	-10% / 53%	Planet Summary Report, Value / Mining Rate columns
+G06	planet 6 population 4900 of 60000	planet 6 will kill off approximately 1.0% of your colonists each turn.	Status tile, population popup
+M06	planet 6 mining rate	0/0/0	Planet Summary Report, Value / Mining Rate columns
+P11-0	planet 11 item 0 (id 8 x1, 59%)	1 year	Production tile, Completion: of the selected item
+P11-1	planet 11 item 1 (id 0 x50, 0%)	1 - 8 years	Production tile, Completion: of the selected item
+P11-2	planet 11 item 2 (id 2 x50, 0%)	8 - 40 years	Production tile, Completion: of the selected item
+P11-3	planet 11 item 3 (id 8 x5, 0%)	40 - 41 years	Production tile, Completion: of the selected item
+V11	planet 11 value / optimal	88% / 100%	Planet Summary Report, Value / Mining Rate columns
+G11	planet 11 population 79200 of 1056000	grow by 10400 to 89600 next year	Status tile, population popup
+M11	planet 11 mining rate	7/7/7	Planet Summary Report, Value / Mining Rate columns
+P12-0	planet 12 item 0 (id 11 x1, 25%)	2 years	Production tile, Completion: of the selected item
+P12-1	planet 12 item 1 (id 3 x1, 0%)	As Needed	Production tile, Completion: of the selected item
+P12-2	planet 12 item 2 (id 7 x8, 99%)	2 - 5 years	Production tile, Completion: of the selected item
+P12-3	planet 12 item 3 (id 8 x5, 0%)	5 - 6 years	Production tile, Completion: of the selected item
+V12	planet 12 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G12	planet 12 population 34500 of 1200000	grow by 5100 to 39600 next year	Status tile, population popup
+M12	planet 12 mining rate	6/6/6	Planet Summary Report, Value / Mining Rate columns
+P15-0	planet 15 item 0 (id 7 x197, 69%)	1 - 25 years	Production tile, Completion: of the selected item
+V15	planet 15 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G15	planet 15 population 23000 of 1200000	grow by 3400 to 26400 next year	Status tile, population popup
+M15	planet 15 mining rate	12/12/12	Planet Summary Report, Value / Mining Rate columns
+V17	planet 17 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G17	planet 17 population 28700 of 1200000	grow by 4300 to 33000 next year	Status tile, population popup
+M17	planet 17 mining rate	3/3/8	Planet Summary Report, Value / Mining Rate columns
+P18-0	planet 18 item 0 (id 7 x1, 9%)	1 year	Production tile, Completion: of the selected item
+P18-1	planet 18 item 1 (id 3 x1, 0%)	14 - ??? years	Production tile, Completion: of the selected item
+V18	planet 18 value / optimal	68% / 88%	Planet Summary Report, Value / Mining Rate columns
+G18	planet 18 population 33000 of 816000	grow by 3400 to 36400 next year	Status tile, population popup
+M18	planet 18 mining rate	10/10/10	Planet Summary Report, Value / Mining Rate columns
+P19-0	planet 19 item 0 (id 8 x6, 59%)	1 year	Production tile, Completion: of the selected item
+P19-1	planet 19 item 1 (id 7 x100, 0%)	1 - ??? years	Production tile, Completion: of the selected item
+V19	planet 19 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G19	planet 19 population 46000 of 1200000	grow by 6900 to 52900 next year	Status tile, population popup
+M19	planet 19 mining rate	12/12/0	Planet Summary Report, Value / Mining Rate columns
+P21-0	planet 21 item 0 (id 7 x5, 24%)	Never	Production tile, Completion: of the selected item
+P21-1	planet 21 item 1 (id 8 x3, 0%)	Never	Production tile, Completion: of the selected item
+V21	planet 21 value / optimal	100% / 100%	Planet Summary Report, Value / Mining Rate columns
+G21	planet 21 population 11500 of 1200000	grow by 1700 to 13200 next year	Status tile, population popup
+M21	planet 21 mining rate	0/0/0	Planet Summary Report, Value / Mining Rate columns
+R1	resources needed to complete	803	Research dialog
+R2	next year's projected research budget	163	Research dialog
+R3	estimated time to completion	5 years	Research dialog
+R4	annual resources from all planets	578	Research dialog
+R5	total resources spent on research last year	107	Research dialog
+T00	fleet 0 report ETA	2y	Fleet Summary Report, ETA column
+T01	fleet 1 report ETA	Never (red)	Fleet Summary Report, ETA column
+T02	fleet 2 report ETA	3y	Fleet Summary Report, ETA column
+T03	fleet 3 report ETA	4y	Fleet Summary Report, ETA column
+T04	fleet 4 report ETA	5y	Fleet Summary Report, ETA column
+T05	fleet 5 report ETA	2y	Fleet Summary Report, ETA column
+T06	fleet 6 report ETA	3y (red)	Fleet Summary Report, ETA column
+T07	fleet 7 report ETA	1y	Fleet Summary Report, ETA column
+T08	fleet 8 report ETA	6y	Fleet Summary Report, ETA column
