@@ -71,9 +71,11 @@ Every scanner has a **normal** range `R` and a **penetrating** range `P`
   `⌊⁴√Σ rᵢ⁴⌋` over every scanner on the design, counting each part in a
   stack. Normal and penetrating ranges are combined separately. Vector: two
   Rhino Scanners (50 each) give 59.
-- **Built-in scanners (BINARY-ONLY).** Three non-scanner parts also scan,
-  combining like scanner parts: Mega Poly Shell, Multi Contained Munition
-  and Langston Shell (components table).
+- **Built-in scanners.** Three non-scanner parts also scan, combining like
+  scanner parts: Mega Poly Shell, Multi Contained Munition and Langston
+  Shell (components table). CONFIRMED for Mega Poly Shell (80 / 40) and
+  Multi Contained Munition (150 / 75) by designer readouts (CS-003-D);
+  BINARY-ONLY for Langston Shell.
 - **JOAT hulls (CONFIRMED, SC-020, SC-022, SC-023).** A JOAT player's
   Scout, Frigate and Destroyer have a built-in scanner of `20·E` normal and
   `10·E` penetrating, where `E` is the owner's electronics level. It
@@ -174,13 +176,13 @@ co-location rule above.
 
 1. Each ship design has **cloak points**: the sum over its parts of
    each part's cloak points times the stack count (components table).
-   Cloaking devices carry points, and so do some other parts
-   (BINARY-ONLY for the non-device parts: Depleted Neutronium, Mega Poly
-   Shell, Enigma Pulsar, Chameleon Scanner, Shadow Shield, Langston Shell,
-   Multi Contained Munition, Alien Miner, Orbital Adjuster, Multi Cargo
-   Pod). Super Stealth (SS) players add 300 points to every design
-   (CONFIRMED, SC-030: a plain SS freighter is 75%, seen at d² 5625 and
-   not at 5626 by a 100 ly scanner).
+   Cloaking devices carry points, and so do some other parts. CONFIRMED by
+   designer readouts (CS-003-D) for Enigma Pulsar (20), Alien Miner (60),
+   Mega Poly Shell (40) and Multi Contained Munition (20); BINARY-ONLY for
+   Depleted Neutronium, Chameleon Scanner, Shadow Shield, Langston Shell,
+   Orbital Adjuster and Multi Cargo Pod. Super Stealth (SS) players add 300
+   points to every design (CONFIRMED, SC-030: a plain SS freighter is 75%,
+   seen at d² 5625 and not at 5626 by a 100 ly scanner).
 2. The fleet's points are mass-weighted:
    `u = trunc(Σ (points × stack mass) / (Σ stack mass + cargo))`, where a
    stack's mass is ship mass times ship count and cargo is the fleet's
@@ -475,9 +477,10 @@ picks the nearest visible enemy fleet it can attack within
 6. Planet reports from the bombing check with a fleet that carries bombs,
    or with a battle plan that attacks nobody; after a detonating minefield
    hit or a battle's size limit; and after a planet is lost.
-7. Built-in scanners in Mega Poly Shell, Multi Contained Munition and
-   Langston Shell; cloak points of non-device parts; Improved Starbases
-   (ISB) starbase cloak bonus.
+7. The Langston Shell built-in scanner; cloak points of the non-device
+   parts not yet confirmed (Depleted Neutronium, Chameleon Scanner, Shadow
+   Shield, Langston Shell, Orbital Adjuster, Multi Cargo Pod); Improved
+   Starbases (ISB) starbase cloak bonus.
 8. Four or more tachyon detectors on one design.
 9. Design disclosure after SD mine hits and PP packet catches.
 10. Three or more players, and scanners on moving fleets mid-year.
