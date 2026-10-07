@@ -10,7 +10,7 @@ queue order) and stops where the new fleet starts its first waypoint.
 
 Tags as in `KERNEL.md`. The rules were read from the original program and
 predicted as SL-01..SL-12 before the oracle ran them. The SL batch
-(`experiments/sl`, stars-elegy #61; two streams, cycles 20000 and 30000,
+(`experiments/sl`; two streams, cycles 20000 and 30000,
 identical results) held for every prediction it could test, so the rules
 it covers are **CONFIRMED**, citing the SL item. Rules it did not reach
 stay **BINARY-ONLY** and are marked so.
@@ -28,7 +28,7 @@ stay **BINARY-ONLY** and are marked so.
   `pct` percent of the ships are damaged, each by `units` five-hundredths
   of the design's armor.
 
-## When it happens
+## When it happens (BINARY-ONLY)
 
 During production (`KERNEL.md` "Turn order", step 4), in queue order, as
 each item completes. Each queue item that completes one or more ships in a
@@ -109,7 +109,7 @@ One new fleet per build event (CONFIRMED, SL-01: a queue of 2 Scouts,
   Effects inside that year: it does not remote-mine (`KERNEL.md` "Remote
   mining" requires a fleet that did not move), it gets the moved-this-turn
   repair rate (`COMBAT.md` "Repair"), and it is not a stationary remote
-  miner for `SCANNING.md` "Remote miners".
+  miner for the remote-miner rule of `SCANNING.md` "Seeing planets".
 - Two fleets lack the flag after a year at the planet (MEASURED, SL-03 and
   SL-11, two streams; explanation BINARY-ONLY):
   - A fleet routed to its own planet has a second waypoint there at warp
@@ -122,7 +122,7 @@ One new fleet per build event (CONFIRMED, SL-01: a queue of 2 Scouts,
 - If the planet has a route destination: see Routing.
 - The owner is told the planet built the ships, and where they are routed.
 
-### Fleet names (client)
+### Fleet names (client; BINARY-ONLY)
 
 A fleet has no stored name unless the player renames it. The client shows
 the name of the design with the most ships (the first in design order on
@@ -139,7 +139,7 @@ each new fleet gets a second waypoint at that planet with the task
 "route", at a warp chosen as below. The route setting itself is unchanged.
 CONFIRMED (SL-04..SL-07: 28 of 28 warps, every route word unchanged).
 
-### Ideal warp of the fleet
+### Ideal warp of the fleet (CONFIRMED for Long Hump 6 and Quick Jump 5 via SL-04..SL-07; other engines BINARY-ONLY)
 
 Start from warp 10 and take, for each design in the fleet in design
 order (carrying the result from one design to the next; a new fleet has
@@ -209,8 +209,8 @@ are Stargate 100/250.
 
 Without the dock rule the three own-Station rows would give 5/5, 6/5 and
 6/5, and with it the Fort and other-player rows would give 7/9. Two more
-from the SL tooling check (MEASURED once): one Scout to an unowned planet
-at 41 ly, warp 5; two Scouts with a Fuel Tank instead of the laser (25 kT,
+were seen in the SL tooling check before the batch (ORACLE.md, route
+destinations): one Scout to an unowned planet at 41 ly, warp 5; two Scouts with a Fuel Tank instead of the laser (25 kT,
 600 mg) to an unowned planet at 133 ly, warp 6.
 
 How a routed fleet behaves when it arrives (it is routed on again from

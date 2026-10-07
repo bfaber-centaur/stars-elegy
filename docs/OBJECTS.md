@@ -145,7 +145,7 @@ fields of each kind.
   that player's minefields (objects sort by kind, minefields first, then
   by owner and number), so a higher-numbered player's minefield or any
   packet, salvage, wormhole or Mystery Trader holds the player to 511
-  (MEASURED, MF-13 in stars-elegy #58: a player-1 field elsewhere, or a salvage object, gave
+  (MEASURED, MF-13: a player-1 field elsewhere, or a salvage object, gave
   no field and the message; player 1's 511 fields with a player-0 field
   sorting before them made field 511). LEGACY BUG. **Chosen rule for
   Elegy:** a plain limit of 512; the 511 case is reproduced only behind a
@@ -206,10 +206,10 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   - The same chain numbered A < B < C: A moved first and reached B's start
     in its first 17-ly step. **B then never moved at all**: a chaser that
     lands on a target that has not moved yet ends that target's movement
-    for the year (MEASURED, 6 of 6; LEGACY BUG). It is a movement rule
-    rather than a minefield rule and belongs with `KERNEL.md` "Chasing
-    another fleet"; the binary mechanism is not yet read. Elegy reproduces
-    it behind a switch.
+    for the year (MEASURED, MF-02, 6 of 6; LEGACY BUG). It is a movement
+    rule rather than a minefield rule: `KERNEL.md` "Chain freeze" gives the
+    mechanism (one "finished moving" mark shared by "has moved" and "a
+    chaser landed on it") and Elegy's switch.
 - **Cloak** plays no part in hits (CONFIRMED, MF-1: cloaked fleets were
   stopped at 29.1 per mille, uncloaked ones at 36.1) or in detonation,
   laying or sweeping (BINARY-ONLY). It matters for minefields only through what a Space
@@ -295,7 +295,9 @@ enemy's five Medium Freighters 100 each, the layer nothing; the field went
   orders that are not re-checked under `ORDERS.md` "Ownership". **Chosen
   rule for an independent implementation:** accept the setting only from
   the field's owner, only when that owner is SD, and only for a standard
-  field. That is exactly what an unmodified client can produce.
+  field. That is exactly what an unmodified client can produce. The rule
+  follows the client's offer, not what can detonate: every kind detonates
+  once set (MF-7, MF-8, above).
 
 ### Sweeping (CONFIRMED, OB-001, OB-007, OB-008, OB-010-S)
 
@@ -561,8 +563,8 @@ and nowhere beyond it).
 2. Wormhole jump odds over many streams; what a jump does to fleets heading
    for the wormhole.
 3. Mystery Trader spawn, path, part and ship rewards.
-4. Minefields (MF-1..MF-12 done in #47, MF-13 in #58; see PARITY "Minefield lane"): the mechanism of the chaser that freezes its
-   waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
+4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the
+   4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
    (needs crafted orders).
 5. Stargates: every rule above.
