@@ -84,36 +84,61 @@ random stream and for the plan-0 legacy bug below.
    plan says. CONFIRMED: six lone-starbase configurations (CB-002 C9/C10,
    CB-003 S2, CB-004 S2, CB-006 both planets) and the Q-1 controls
    (CB-011..014 S2/S3).
-3. **Attack sets.** Each aggressor's owner attacks every other player
-   present at the location whom attack-who selects:
-   - "enemies": players it considers enemies;
-   - "neutrals and enemies": players it considers neutral or enemy;
-   - "everyone": every other player;
-   - a named player: that player.
-4. **Starbases join.** A starbase at the location's planet puts its owner
-   in the present set, armed or not. If the starbase is armed and the
-   owner's battle plan 0 (the default plan) has an attack-who other than
-   "nobody", plan 0 supplies the owner's attack set, by the same rule
-   as a fleet.
-   - CONFIRMED (CB-011, Q-1): player 1's armed fleet attacked "enemies"
-     while player 1 considered player 0 neutral. Player 0's Laser Station
-     had plan 0 "enemies", and a battle happened in which the station
-     fired. There was no battle with an unarmed station, with an unarmed
-     visitor, or with plan 0 "nobody".
-5. **Retaliation and friends** (BINARY-ONLY in general), repeated until
-   nothing changes:
-   - A player attacked by someone attacks back.
-   - A present player who is a friend of an involved player joins and
-     takes on the attack sets of its involved friends.
-   - CONFIRMED: a stack whose plan attacks nobody fires back once a
-     battle has started (CB-002, CB-009; P-6).
-6. **Involvement.** Players with a non-empty attack set, or who are
-   attacked, are involved. The battle happens when two or more players
-   are involved.
-   - Every involved player's fleets at the location take part.
-   - So does the starbase of an involved owner, armed or not. CONFIRMED
-     for the unarmed case: CB-005, CB-011..013 S4/S5.
-   - Uninvolved players present only observe.
+3. **The procedure** (BINARY-ONLY in its details; CONFIRMED where
+   marked). For one location:
+   1. **Present set `P`**: the owner of a starbase at the location's
+      planet, armed or not, plus the owner of every fleet at the location.
+   2. **Attack sets** start empty. Each player has one.
+   3. **Starbase plan 0.** If the starbase is armed and its owner's battle
+      plan 0 (the default plan) has attack-who "enemies" or "neutrals and
+      enemies", the owner's set gets every player the owner considers an
+      enemy (or neutral or enemy). Plan 0 "everyone" or "a named player":
+      see the LEGACY BUG below.
+   4. **Aggressor fleets**, in location order, add to their owner's set:
+      - "enemies": every player the owner considers an enemy;
+      - "neutrals and enemies": every player it considers neutral or enemy;
+      - a named player: that player;
+      - "everyone": the set is **replaced** by all players except the
+        owner.
+
+      These sets may name players who are not present; only present
+      players matter below.
+   5. If there is no aggressor fleet, there is no battle (rule 2).
+   6. **Attacked set `Q`** = every present player named in some player's
+      attack set. If `Q` is empty, there is no battle.
+   7. **Retaliation**: one pass over the players in player-number order.
+      For player `i`: if `i`'s set names someone in `Q`, add `i` to `Q`.
+      Then, if `i` is in `Q`, add to `i`'s set every player whose set names
+      `i`. CONFIRMED: a stack whose plan attacks nobody fires back once a
+      battle has started (CB-002, CB-009; P-6).
+   8. **Friends**: passes over the location's fleets, in order, until a
+      pass changes nothing. For a fleet whose owner `p` is in `P` but not
+      in `Q`, rebuild `p`'s set as the union of the sets of `p`'s friends
+      that are in `Q`, taken in player order. If a friend is already named
+      in the set being built (two of `p`'s friends fight each other), the
+      set becomes empty and the rebuild stops. Then:
+      - if the set is empty, `p` leaves `P` and only observes;
+      - otherwise `p` joins `Q`.
+4. **Who is in the battle.** The battle happens when `Q` is non-empty
+   after these steps.
+   - The battle's **player list is `P`**: every fleet of a player in `P`
+     and the starbase of a starbase owner in `P` become tokens.
+   - The **number of involved players `n` is the size of `Q`**.
+   - Normally `Q` and `P` coincide and `n ≥ 2`. But a starbase owner with
+     no fleet at the location is never visited by step 8. So it stays in
+     `P` (its starbase is a token) even when it attacks nobody and nobody
+     attacks it. Then `P` is larger than `Q`.
+   - The plan-0 LEGACY BUG can make `n = 1`, and a battle still happens
+     (CB-022).
+   - CONFIRMED for an unarmed starbase whose owner is involved: it is a
+     token (CB-005, CB-011..013 S4/S5).
+5. **Starbases join, never start.** CONFIRMED (CB-011, Q-1): player 1's
+   armed fleet attacked "enemies" while player 1 considered player 0
+   neutral. Player 0's Laser Station had plan 0 "enemies", and a battle
+   happened in which the station fired. There was no battle with an
+   unarmed station, with an unarmed visitor, or with plan 0 "nobody".
+6. **During the battle**, a player's attack set is the one these steps
+   produced. It does not change.
 7. **Token cap.** At most 256 tokens (BINARY-ONLY).
    - If the involved fleets need more, each player gets a quota of
      `255 / players` stacks, and fleets beyond their quota are left out.
@@ -124,45 +149,68 @@ random stream and for the plan-0 legacy bug below.
    status flag is not grouped with the others. What sets that flag is not
    known.
 
-### LEGACY BUG: plan 0 "everyone" or "a named player" at a starbase
+### LEGACY BUG: plan 0 "everyone" or "a named player" at a starbase (CONFIRMED, CB-011..013, CB-022)
 
-When the starbase's owner has plan 0 attack-who **"everyone" or a named
-player**, the attack set is not given to the starbase's owner. It is
-given to another player, X. Plan 0 "enemies" and "neutrals and enemies"
-work as intended. X is (BINARY-ONLY, consistent with CB-011..013):
+When the starbase's owner (A) has plan 0 attack-who **"everyone" or a
+named player**, step 3 writes the attack set into the set of another
+player, X, instead of A's. Plan 0 "enemies" and "neutrals and enemies"
+work as intended.
 
-- player 0, if the location examined just before this one had a battle;
-- the owner of the last fleet in the previous location's fleet order, if
-  that location had no battle (for a lone fleet, its owner);
-- undetermined for the first location examined in a turn. The value is
-  left over from earlier processing.
+What is written into X's set:
 
-The attack set given to X is the one plan 0 describes for the starbase's
-owner. "Everyone" means every present player other than the owner;
-"player B" means B.
+- "everyone": X's set is **replaced** by all players except A. If
+  X ≠ A, this includes X itself and does not include A.
+- "player i": player i is **added** to X's set.
 
-Observable consequences with two players: A owns the starbase, and B
-visits with an aggressor fleet that does not itself attack A.
+X depends on what the game examined just before this location in the same
+turn:
 
-- "Everyone" always produces the same battle as "enemies". Whether
-  X = A or X = B, both A and B are involved.
-- "Player B" with X = A is the intended battle.
-- "Player B" with X = B makes B its own attacker. The prediction is a
-  battle record with one involved player and no shots (`combat-predictions`
-  R-10, Open experiments).
-- CONFIRMED in the X = A case: the plan-0 "everyone" (three random
-  streams) and "player 1" (one stream) battles were identical to the
-  "enemies" battle, in a turn where an earlier location had a battle
-  (CB-012, CB-013).
+- **Player 0**, if the previous location examined had a battle.
+- **The owner of the last fleet in that location's fleet order**, if it had
+  no battle. For a lone fleet, X is that fleet's owner.
+- **Not determined** for the first location examined in a turn. The value
+  is left over from earlier processing. In CB-022 "no lone fleet" (two
+  random streams) it was neither 0 nor 1. An X that is not a player in the
+  game has no effect: plan 0 then contributes nothing.
+
+Step 4 for X's own aggressor fleets runs after this. An "everyone" fleet of
+X replaces X's set.
+
+Observable consequences with two players: A owns the starbase, and B visits
+with an aggressor fleet that attacks "enemies" while B considers A neutral.
+
+| X | plan 0 "everyone" or "player B" | Status |
+|---|---|---|
+| A | A attacks B: an ordinary battle, the same as "enemies" | CONFIRMED (CB-012 three streams, CB-013; the previous location had a battle) |
+| B | B's set names only B among the present players. `Q = {B}`, `n = 1`, `P = {A, B}`: a **one-player battle** | CONFIRMED for "player 1" and for "everyone", byte-identical records (CB-022, two streams each) |
+| neither | no battle (B's own set is empty) | MEASURED (CB-022 "no lone fleet", "player 1") |
+
+The one-player battle runs as an ordinary battle with `n = 1`:
+
+- **Squares.** Start squares come from the flattened table (see Start
+  squares). A (rank 0) gets (4,4) and B (rank 1) gets (1,4).
+- **Round 0.** B's armed stack has no attackable enemy (its only target is
+  itself), so it stays where it is. A's set is empty, so A is out after
+  the movement phase, and the battle ends.
+- **Result.** The record has no movement or fire actions (CB-022).
+
+Like any battle, it uses the setup draws and one round's jitter draws, and
+the fleets count as having fought for repair (BINARY-ONLY for these
+side effects).
 
 ## Board setup
 
 ### Start squares (CONFIRMED for two players, CB-001..CB-019)
 
-The board is 10×10. Each involved player has one start square, chosen by
-its rank among the involved players (lowest player number first). All of
-that player's tokens, starbase included, start on it. With `n` involved
-players (BINARY-ONLY for `n ≠ 2`):
+The board is 10×10. Each player in the battle's player list `P` has one
+start square, and all of that player's tokens, starbase included, start on
+it. The square is chosen by the player's rank in `P` (lowest player number
+first, from 0) and by `n`, the number of involved players (the size of
+`Q`). Read the table below row after row as one flat list; the square is
+entry `n(n−1)/2 + rank`. When `P` has more players than `Q`, the rank runs
+past row `n` into the next row. CONFIRMED for `n = 2` (CB-001..CB-021) and
+for `n = 1` with two players in `P`: (4,4) and (1,4) (CB-022). BINARY-ONLY
+for other `n`.
 
 | n | squares (x,y) by rank |
 |---|---|
@@ -289,8 +337,11 @@ consistent with every replayed record):
 2. The battle ends if at most one player still has live tokens.
 3. Movement (below).
 4. Each live token draws a fresh jitter `rand(15)`.
-5. A player with no live token it is allowed to attack is out of the
-   battle. The battle ends if at most one player is left.
+5. Players are checked in player-number order. A player is out of the
+   battle when its attack set names no player that is still in. Only the
+   attack set counts, not target types. A player removed earlier in the
+   same check no longer counts for later players. The battle ends if at
+   most one player is left.
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
@@ -323,7 +374,7 @@ Inside a phase, tokens go in **descending jittered weight**:
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
 
-### Choosing a square (BINARY-ONLY in general; CONFIRMED for one mover vs a station, CB-012 and CB-019)
+### Choosing a square (BINARY-ONLY in general; CONFIRMED for one mover vs a station, CB-012, CB-019, CB-020, CB-021)
 
 For each single-square move, the token computes a **radius** and possibly
 a **goal**:
@@ -335,7 +386,7 @@ a **goal**:
    round.
    - Tactic 3 or 5 uses the **shortest** weapon range instead when that
      is shorter than the longest. This is why tactics 3 and 4 end on
-     different squares (CB-019).
+     different squares (CB-019, CB-020).
 3. For each attackable enemy, let `d` be its distance, plus 1 if that
    enemy has at least as many moves left as this token.
    - If some enemy has `d ≤ reach`, the radius is the token's moves left
@@ -375,8 +426,9 @@ A step that would leave the board leaves the token where it is.
 
 The score of square `q` for token `T` is computed as follows:
 
-1. For each live enemy `E` in `T`'s attack set, at distance `d` from `q`,
-   consider the distances `E` could choose:
+1. For each live token `E` of a player in `T`'s attack set, at distance
+   `d` from `q`, consider the distances `E` could choose. `E`'s own attack
+   set is not consulted: `E` counts even if it would not attack `T`.
    - just `d` if `E` has fewer moves left than `T`;
    - otherwise `max(0, d − 1)` up to the farthest square of `E`'s
      3×3 neighbourhood from `q` (clipped to the board).
@@ -456,12 +508,10 @@ initiative present:
 The firer picks the eligible target with the highest attractiveness. The
 first in token order wins ties, and a score of 0 is never chosen.
 
-**Cost.** Take the target design's current cost (resources + boranium)
-× ships.
+**Cost.** Take the target design's current cost (resources + boranium,
+see "Design cost") × ships.
 
 - Multiply by 100 if that is below 100000. Otherwise use 10^7.
-- The cost reflects the owner's discounts and miniaturization
-  (BINARY-ONLY).
 
 **Toughness.**
 
@@ -495,6 +545,34 @@ CONFIRMED consequences (CB-009):
 - The more expensive design is chosen at equal armor.
 - An already damaged stack is chosen before a fresh one.
 - The lower token index is chosen between identical stacks.
+
+### Design cost (BINARY-ONLY)
+
+A design's cost is computed for its owner, in four components (resources,
+ironium, boranium, germanium). It is the hull's cost plus, for each slot,
+`count ×` that part's cost. For the hull and each part:
+
+1. Start from the part's base cost.
+2. **Miniaturization.**
+   - Let `m` be the smallest of `level − requirement` over the six fields
+     in which the part has a requirement above 0.
+   - If the part has no requirement, `m` is the owner's lowest level in
+     any field.
+   - If `m > 0`, let `d = 4·min(m, 19)`, at most 75. With Bleeding Edge
+     Technology, `d = 5·min(m, 19)`, at most 80.
+   - Each nonzero component `c` becomes `c − round(c·d/100)`, rounding
+     halves up, and at least 1.
+3. **Race.** The first case that matches applies, and no other:
+   - Interstellar Traveler, stargates: `c − c/4`.
+   - War Monger, beams, torpedoes and bombs: `c − c/4`.
+   - Inner Strength, beams, torpedoes and bombs: `c + c/4`.
+   - Cheap Engines, engines: `c − c/2`.
+4. **Bleeding Edge Technology.** If `m ≤ 0` and the part has a
+   requirement, every component is doubled. One game-wide flag, not
+   identified, suppresses this.
+
+Divisions truncate. The only oracle evidence is indirect: target choice
+among designs of different cost in CB-009 (Humanoid JOAT at tech 26).
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
@@ -585,8 +663,11 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
 2. If nothing is left for armor, stop.
 3. **Armor.** `dp += extra`.
    - A tactic-1 stack becomes tactic 0 with counter 7.
-   - Let `damaged = max(1, ships·pct/100)` and
+   - If the stack has no damage (`units = 0`): `damaged = 0`, `per = 0`.
+   - Otherwise `damaged = max(1, ships·pct/100)` and
      `per = max(1, units·armor/500)`.
+   - CONFIRMED by CB-001 B3: 90 Beta hits on one undamaged 3650-armor
+     Hulk record 148/500. Counting a phantom damaged ship would give 149.
 4. **Kills.** Already-damaged ships die first, at `armor − per` each.
    Then the others die at `armor` each, while `dp` suffices (and the kill
    limit allows).
@@ -630,11 +711,13 @@ What a battle draws, in order. All draws are uniform.
      square");
    - a `rand(15)` jitter per live token;
    - one `rand(100)` per torpedo in each salvo of ≤ 200 torpedoes.
-4. **Square scores:** in the original these can also draw, because the
-   torpedo estimate simulates `ships × count × 200` torpedoes. That is
-   exactly 200 for a single ship with one torpedo in the slot, which
-   goes down the random path (BINARY-ONLY quirk; Elegy can compute the
-   expected value instead).
+4. **Square scores:** in the original these can also draw. The torpedo
+   estimate simulates `ships × count × 200` torpedoes, which is exactly
+   200 for one ship with one torpedo in the slot. Then the estimate makes
+   200 `rand(100)` draws, so it is random, and it shifts later draws
+   (BINARY-ONLY quirk). The expected value `200·p/100` is the natural
+   deterministic replacement. It differs from the original only in that
+   one case.
 5. **After the battle:** tech-learning attempts (below); salvage with no
    minerals (below).
 
@@ -644,15 +727,26 @@ torpedoes draw nothing.
 `MEASURED` in the original: with the stream pinned, reruns of the same
 file give byte-identical battle records (`PARITY.md`, round 2 method),
 and one-mover battles replay square by square from these rules
-(CB-012, CB-019).
+(CB-012, CB-019, CB-020, CB-021).
 
 ## After the battle
 
 ### Salvage (CONFIRMED, CB-001 B1; CB-011..013 S6/S7, Q-13)
 
 Per kill event, per mineral: a third of the destroyed ships' design
-mineral cost (× ships), plus their share of the fleet's cargo, or all of
-it if the fleet died. Then:
+mineral cost (× ships), plus the destroyed ships' share of the fleet's
+cargo. The share is computed as follows (BINARY-ONLY):
+
+- If the whole fleet died, the share is all of the fleet's cargo.
+- Otherwise the cargo moved is `C · Σ lost ships·cargo capacity /
+  Σ ships before·cargo capacity`, with `C` the fleet's total cargo.
+- That amount is split per mineral as `cargo_i · moved / C` (truncated).
+  Any remainder goes 1 kT at a time over ironium, boranium, germanium
+  and colonists, one pass, only to types still holding cargo.
+- Only minerals become salvage. The lost ships' share of fuel and
+  colonists is destroyed.
+
+Then:
 
 - **At a planet:** the planet's surface gains `× 8/10` if it has a
   starbase, else `× 5/10`. No salvage object is created.
@@ -682,7 +776,7 @@ smaller), and `pct` is kept:
 - A starbase that did not fight this turn repairs 50 units (IS 75)
   (BINARY-ONLY).
 
-### Tech from battle (CONFIRMED in part, CB-018, Q-11)
+### Tech from battle (CONFIRMED in part, CB-018, CB-021, Q-11)
 
 Destroyed designs raise the battle's "seen" tech in each field to their
 tech requirements.
@@ -708,18 +802,28 @@ A tech attempt, for one player:
 With no trader items in play and exactly one field behind, the chance is
 `½ · (1 − (5/6)^6) ≈ 0.33` per attempt.
 
-Research gained this way raises the level **in the same turn**: research
-level-ups are processed after battles. CONFIRMED (CB-018): with weapons 3
-and 0% research, 4 of 6 distinct random streams ended the turn at
-weapons 4, and 2 stayed at 3. The accumulators read 0, and the control
-without a battle stayed at 3.
+Research gained this way raises the level **in the same turn**. After
+battles, the post-movement waypoint phase checks research level-ups a
+second time (`KERNEL.md`, "Turn order", step 6).
+
+CONFIRMED (CB-018): with weapons 3 and 0% research, 4 of 6 distinct
+random streams ended the turn at weapons 4, and 2 stayed at 3. The
+accumulators read 0, and the control without a battle stayed at 3.
+
+CONFIRMED per stream (CB-021, R-9): a station defending its owner's
+homeworld against three frigates. The gain came in exactly the three
+streams predicted from this draw order, and the frigates' squares
+matched in all six.
 
 Who makes an attempt (BINARY-ONLY in detail):
 
 - In a two-player battle with two tokens, each participant makes an
   attempt when the battle was in deep space, at an unowned planet, or at
   its own planet. This includes a participant that lost nothing and
-  destroyed nothing. Not at another player's planet.
+  destroyed nothing. There is no attempt at another player's planet.
+  CONFIRMED by the exact replays: CB-021 (the attacker at the defender's
+  planet makes no attempt) and the round-2 CB-012 chain (a player that
+  lost nothing at its own planet does attempt).
 - In larger battles, participants make an attempt under the same
   location rule, and probably only when ships other than their own were
   destroyed; this condition is not fully settled.
@@ -728,22 +832,18 @@ Who makes an attempt (BINARY-ONLY in detail):
 
 ## Open experiments
 
-Round 3 (stars-decomp `docs/combat-predictions.md` R-8..R-10) is being
-run; results will update the statuses above.
-
-- **R-8**: CB-019 repeated at six pinned streams for tactics 3, 4 and 5.
-  It tests the reach rule, the square tie rules and tactic 5 closing to
-  short range, square by square.
-- **R-9**: tech from battle at the defender's own planet (station vs
-  frigates), exact per stream. It tests the attempt condition at a planet
-  and the draw order after a battle.
-- **R-10**: plan 0 "player B" after a lone B fleet earlier in the turn.
-  It tests the LEGACY BUG's predicted one-player battle.
+Round 3 (R-8 to R-10, CB-020..CB-022) is done. Every prediction held
+except the R-10 "everyone" control, which the LEGACY BUG section now
+explains.
 
 Not yet tested:
 
 - the movement order by jittered weight, and any battle with several
   moving tokens on both sides (e.g. a CB-018 replay);
+- the plan-0 value X on the first location of a turn (not 0 or 1 in
+  CB-022; unexplained), and a starbase owner in the player list but not
+  involved (start-square rank past row `n` with `n ≥ 2`);
+- design-cost race adjustments and Bleeding Edge doubling;
 - three or more players, start squares for `n ≠ 2`, and friends joining;
 - the token cap;
 - the tech-attempt condition in larger battles, and for players outside
@@ -759,9 +859,8 @@ The dampener mass question (19 vs 23) is closed: 19 is the game's value
 
 ## Sources
 
-- Oracle: CB-000..CB-019 (`PARITY.md` "Combat", `experiments/cbNNN/`),
-  with raw records in private `stars-oracle-apparatus` (`evidence/cb/`,
-  `evidence/cb2/`).
+- Oracle: CB-000..CB-022 (`PARITY.md` "Combat", `experiments/cbNNN/`),
+  with raw records in private `stars-oracle-apparatus`.
 - White-box readings: private `stars-decomp` (combat notes, prediction
   rounds P, Q and R, the hit replay checker and the one-mover replay that
   reproduce the CB observations listed above).
