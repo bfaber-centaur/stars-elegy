@@ -2951,3 +2951,12 @@ setup reading the first planet's record instead of the homeworld's. It
 is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
+
+## Messages to players
+
+Status: catalogue in `MESSAGES.md` (2026-10-07). All 387 message kinds are
+listed with trigger, recipient, slots, focus and phase. 154 rows are
+CONFIRMED against message records decoded from the existing oracle turn
+files (148 kinds seen), and the rest are BINARY-ONLY. Several LEGACY BUG?
+candidates (wrong recipient or slots) and four never-sent bombing variants
+are listed there. Decoder: `tools/fleetlab/events.py`.
