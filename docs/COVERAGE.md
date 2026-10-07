@@ -18,7 +18,7 @@ Levels:
 
 | Behavior | Spec | Level | What is missing |
 |---|---|---|---|
-| Accepting and replaying orders, random player order, serial checks | `ORDERS.md` | Partial | Validation and fleet operations are covered. Nothing states the effects of the plain setting orders (research settings, relations, planet flags, renames), or that replacing a production queue keeps the progress of matching items. |
+| Accepting and replaying orders, random player order, serial checks | `ORDERS.md` | Partial | Validation and fleet operations are covered. Production-queue replace and the setting orders are in `LIMITS.md` (queue replace CONFIRMED LQ-1..LQ-6; setting orders BINARY-ONLY), to be folded into `ORDERS.md`. |
 | Race checks at the start of the year | `KERNEL.md`, RACES.md (#49) | In progress | |
 | Tasks before movement: unload, scrap, colonize, drops, load, merge, cargo to other players | `TAKEOVER.md`, `ORDERS.md` | Confirmed | Scrap and transfer details are Read. |
 | Packets, wormholes, Mystery Trader | `OBJECTS.md` | In progress | Wormholes and the Trader are owned by the objects and races lane. Packet launch is Read. |
@@ -43,7 +43,7 @@ Levels:
 | Messages to players | none | Missing | About 400 kinds of message. Which event sends which message, to which players, with which values. Battle reports are covered (`COMBAT.md`, battle record); the messages around them are not. Player-to-player mail is not covered either. |
 | Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research, starbase designs CONFIRMED; planet automation BINARY-ONLY). Missing: each personality's own turn (docs/ai/). The original's computer players act only through ordinary orders, written by the host before it generates the year. Special rules for computer players inside the year are scattered and mostly missing: no fleet gifts to them, and automatic trading with the Mystery Trader. |
 | What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings; ES-002 confirmed stargate legs, "Skipped", Generalized Research, "Maxed Out" and the distance display. |
-| Limits: fleets, space objects, minefields, designs, queue length | `OBJECTS.md` (minefields and objects) | Partial | Each player has at most 512 fleets. Design-slot and queue limits are not collected anywhere. |
+| Limits: fleets, space objects, minefields, designs, queue length | `LIMITS.md` | Partial | Collected in `LIMITS.md`. Client queue limits CONFIRMED (LQ). Open: the 4050-object limit (not run), waypoints per fleet, the host's 16th battle plan and other crafted-order cases (serial-gated). |
 
 ## Largest gaps for a playable game
 

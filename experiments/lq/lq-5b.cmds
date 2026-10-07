@@ -1,0 +1,9 @@
+# LQ-5b: Armed Probe x1100 after Mine; Auto Alchemy x5 at the top; Mine x3 onto the selected Mine.
+queue open
+queue select 2
+queue add 0 1100
+queue select 0
+queue add 13 5
+queue select 3
+queue add 7 3
+queue ok

@@ -1,0 +1,4 @@
+# LQ-4 (Q-5): clear the queue.
+queue open
+queue clear
+queue ok
