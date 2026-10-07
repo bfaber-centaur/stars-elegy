@@ -129,6 +129,30 @@ BINARY-ONLY.
   reflect the components that survived the strip. (This is the same
   "strip parts the owner lacks" behavior noted for existing designs in
   `PARITY.md`/`ORACLE.md`.)
+- **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
+  stars-elegy #45 / apparatus #21). The strip above removes only parts the
+  player's **research tech** cannot reach. A part the player could only have
+  obtained from the Mystery Trader is **not** stripped when the player owns
+  no Mystery Trader items: the design is accepted and stored with the part
+  intact, and the part functions. In the pinned oracle turn a design
+  carrying Anti Matter Torpedoes was kept for a player whose Mystery-Trader
+  mask was empty, and those torpedoes fired, with every hit reproduced.
+  LEGACY BUG — the host recognises the unearned part while reading the
+  design (it is the same part the user interface hides from that player),
+  but the strip acts only on *insufficient research tech*; a part flagged
+  merely "not available to this owner" passes through as long as the hull
+  slot accepts its category and count. The same path keeps any component a
+  design names that the owner's race or Mystery-Trader status does not
+  entitle it to, not only Mystery Trader parts.
+
+  **Chosen rule for an independent implementation.** On reading a design,
+  validate every named component against what the owner has actually
+  acquired — research tech, racial entitlement, and Mystery-Trader items —
+  and drop (or reject) any component the owner is not entitled to, not only
+  components above researched tech. Treat the original's keep-behavior as an
+  isolated LEGACY BUG, reproduced (if ever wanted) behind a single named
+  switch rather than in the normal design-read path. This follows the same
+  "choose and state a rule" approach used for the Ownership gap above.
 - **Battle-plan fields.** A battle-plan definition with a tactic or primary
   target outside its legal set is rejected; a legal one is stored.
 
@@ -207,7 +231,7 @@ side and the clamps, and does not duplicate them.
 
 ### Cargo amounts and clamps
 
-BINARY-ONLY.
+CONFIRMED (FO-01..07).
 
 A fleet holds four cargo kinds — three minerals and colonists — in one cargo
 hold, and fuel in a separate tank. Every load, unload or transfer clamps the
@@ -230,26 +254,55 @@ the fleet rather than assume every fleet qualifies.
 
 ### Transfer between the player's own fleets
 
-BINARY-ONLY.
-
 A direct cargo transfer between two of the submitting player's fleets at the
 same location applies at order time and is **owner-checked**: both fleets
-must belong to the submitter, or the order is rejected. (Giving cargo to
-another player's fleet is the deferred cross-owner path above, not this
-operation.) When it applies, the two fleets' cargo of each kind and their
-fuel are pooled and shared out **in proportion to each fleet's capacity**, so
-nothing is lost while the combined capacity holds; accumulated ship damage is
-likewise shared across the combined ships.
+must belong to the submitter, or the transfer is refused (CONFIRMED,
+FO-01..07, which exercised the transfer-fleet task and its refusals). When
+it applies, the two fleets' cargo of each kind and their fuel are pooled and
+shared out **in proportion to each fleet's capacity**, so nothing is lost
+while the combined capacity holds; accumulated ship damage is likewise shared
+across the combined ships (BINARY-ONLY — the balancing split itself is read
+from the program, not separately measured). Giving cargo to another player's
+fleet is the deferred cross-owner path above, not this operation.
 
 ### Merge
 
-BINARY-ONLY.
+A merge combines fleets at one location that all belong to the submitter;
+the surviving fleet keeps its id. Ships **add together per design**, and the
+emptied fleets are removed. There are two ways to order a merge, and they do
+**not** behave the same at the limits.
 
-Merging fleets requires every named fleet to belong to the submitter and to
-be at one location. The ships of the merged fleets **add together per design**
-(a per-design stack is capped at 32766 ships), their cargo and fuel are pooled
-and redistributed by capacity as above, and their damage is combined weighted
-by ship count. The fleets emptied by the merge are removed.
+**Merge order** (a direct "merge these fleets now" order). Each per-design
+stack is held to at most 32766 ships. BINARY-ONLY — this path is read from
+the program but not yet oracle-tested.
+
+**Merge-with-Fleet waypoint task** (CONFIRMED, FO-01..07). The ordering fleet
+joins a target fleet on arrival; ship counts add per design and cargo and
+fuel add into the survivor. Two edges differ from the merge order and are
+LEGACY BUGs an implementation should isolate so it can switch them off:
+
+- **No ship-count cap.** This path does not apply the 32766 limit. A
+  per-design stack reaching 32767 is kept, but a stack pushed to 32768 or
+  beyond **overflows and leaves the merged fleet with no ships at all**,
+  while its cargo and fuel stay behind (so the minerals/fuel survive in a
+  ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
+  32000+1000 → no ships). LEGACY BUG (a signed 16-bit ship count with no
+  clamp on this path).
+- **Damage dilution.** Per design slot, with `D = max(1, pct·count/100)`
+  damaged ships in each damaged stack and `n` ships in the slot after the
+  merge, the merged percentage is `ceil(100·ΣD/n)`. If only one of the two
+  stacks was damaged, its damage **units are kept**; if both were, the units
+  become `ceil(Σ(D·units)/n)` — divided by **all** ships of the slot, not by
+  the damaged ones, which dilutes the damage. CONFIRMED over seven cases
+  (FO; e.g. 10 ships at 100 units/50% merged with 10 at 200 units/20% gave
+  45 units at 35%). LEGACY BUG (merging a damaged stack into healthy ships of
+  the same design reduces the recorded damage).
+
+A Merge-with-Fleet task acts only on a **co-located** target: a task whose
+waypoint-0 target fleet is elsewhere is refused and the task is cleared, with
+both fleets unchanged (CONFIRMED, FO — a target 195 ly away did nothing). The
+normal game only ever creates this task against a fleet the ordering fleet is
+travelling to meet, so in normal play the merge happens on arrival.
 
 ### Split
 
@@ -264,15 +317,17 @@ is the same operation taken to the limit: one new single-ship fleet per ship.
 
 ### Turn placement
 
-BINARY-ONLY.
+CONFIRMED (FO-01..07) for the direct order-time operations; BINARY-ONLY for
+the merge order's placement.
 
-All of the above — loads and unloads ordered directly, transfers, merges and
-splits — apply while each player's orders are replayed, before any movement
-(`KERNEL.md`, turn order step 1). The load and unload **tasks attached to
+Loads and unloads ordered directly, transfers, merges and splits apply while
+each player's orders are replayed, before any movement (`KERNEL.md`, turn
+order step 1). The Merge-with-Fleet, load and unload **tasks attached to
 waypoints** are distinct: they run at the pre-movement and post-movement
-waypoint phases (`KERNEL.md`, steps 2 and 6), and their planet-side amounts
-are in `TAKEOVER.md`. Cross-owner cargo given at order time is deferred to
-those later phases as described under Cross-owner cargo.
+waypoint phases (`KERNEL.md`, steps 2 and 6), on arrival at the waypoint, and
+the load/unload planet-side amounts are in `TAKEOVER.md`. Cross-owner cargo
+given at order time is deferred to those later phases as described under
+Cross-owner cargo.
 
 ## Open experiments
 
@@ -281,20 +336,19 @@ original game. Each is a numbered prediction with the discriminating
 observation that would confirm it; the proposed oracle corpus prefix is
 **OX** (orders).
 
-- **OX load-clamp.** Load more of a mineral than a near-full fleet's free
-  hold; confirm it gains only its remaining capacity, with the rest left at
-  the source, and that a fuel transfer into the same fleet is unaffected by
-  the full cargo hold. Confirms "Cargo amounts and clamps".
-- **OX merge.** Merge two partly loaded co-located fleets; confirm ship
-  counts sum per design and cargo and fuel are pooled with nothing lost while
-  capacity holds. Confirms "Merge".
+The fleet-operation clamps, turn placement, the transfer-fleet owner check
+and the Merge-with-Fleet task (including its damage dilution and the missing
+ship-count cap) have since been measured — see the Fleet operations section
+and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
+
+- **OX merge-order cap.** The direct merge order's 32766 per-design cap is
+  read but untested (only the waypoint task was measured, and it has no cap);
+  confirm whether the order path clamps.
 - **OX split.** Split some ships off a loaded fleet; confirm the new fleet
   has exactly the ordered ships, a capacity-proportional share of the cargo,
   and the source's battle plan and waypoints. Confirms "Split".
-- **OX transfer-owner.** Attempt a direct fleet-to-fleet transfer between two
-  players' co-located fleets; confirm it does not apply in place but takes
-  the deferred cross-owner path. Confirms "Transfer between the player's own
-  fleets".
+
+The order-ingestion predictions remain open:
 
 - **OX file-acceptance.** Build order files one year below and one year above
   the host year, and with a mismatched game stamp; confirm the orders are

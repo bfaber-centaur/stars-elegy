@@ -1,0 +1,81 @@
+case	result	observed
+CS-003-D-A	match	mass 302, moves 2 1/4, cloak/jam 40/0
+CS-003-D-B	match	mass 19, moves 1, cloak/jam 0/0
+CS-003-D-C	match	mass 39, moves 1 1/4, cloak/jam 30/30
+CS-003-D-D	match	mass 59, moves 1 1/4, cloak/jam 52/51
+CS-003-D-E	match	mass 50, moves 2 1/4, cloak/jam 40/30
+CS-003-D-F	match	mass 89, moves 3/4, cloak/jam 20/20, scanner 80 / 40
+CS-003-D-G	match	mass 116, moves 1, cloak/jam 10/0, scanner 150 / 75
+CS-003-W-E00	match	56 of 60 ships left
+CS-003-W-E01	match	50 of 60 ships left
+CS-003-W-E02	match	55 of 60 ships left
+CS-003-W-E03	match	53 of 60 ships left
+CS-003-W-E04	match	55 of 60 ships left
+CS-003-W-E05	match	59 of 60 ships left
+CS-003-W-E06	match	53 of 60 ships left
+CS-003-W-E07	match	60 of 60 ships left
+CS-003-W-E08	match	60 of 60 ships left
+CS-003-W-E09	match	60 of 60 ships left
+CS-003-W-E10	match	55 of 60 ships left
+CS-003-W-E11	match	53 of 60 ships left
+CS-003-W-E12	match	54 of 60 ships left
+CS-003-W-E13	match	59 of 60 ships left
+CS-003-W-E14	match	60 of 60 ships left
+CS-003-W-E15	match	60 of 60 ships left
+CS-003-W-T1	match	fuel 200
+CS-003-W-T2	match	fuel 600
+CS-003-W-T3	match	fuel 200
+CS-003-W-T4	match	fuel 0
+CS-003-S-B23	match	field 586
+CS-003-S-B20	match	field 538
+CS-003-S-B18	match	field 480
+CS-003-S-B17	match	field 349
+CS-003-S-B13	match	field 330
+CS-003-S-B22	match	field 294
+CS-003-S-B11	match	field 256
+CS-003-S-B07	match	field 248
+CS-003-S-B15	match	field 232
+CS-003-S-B05	match	field 286
+CS-003-S-B09	match	field 324
+CS-003-S-B03	match	field 364
+CS-003-S-B01	match	field 374
+CS-003-S-B00	match	field 380
+CS-003-S-B04	match	field 390
+CS-003-S-B10	match	field 390
+CS-003-S-B16	match	field 390
+CS-003-S-L1	match	new field [160]
+CS-003-S-L2	match	new field [160]
+CS-003-B-N-LBU-17	match	pop 9
+CS-003-B-N-LBU-32	match	pop 9
+CS-003-B-N-LBU-74	match	pop 9
+CS-003-B-N-Hush-a-Boom	match	pop 9
+CS-003-B-R	match	pop 10, mines 10, factories 10
+CS-003-B-S-Smart	match	pop 1, mines 20, factories 20
+CS-003-B-S-Neutron	match	pop 1, mines 20, factories 20
+CS-003-B-S-Enriched	match	pop 1, mines 20, factories 20
+CS-003-B-S-Peerless	match	pop 1, mines 20, factories 20
+CS-003-B-S-Annihilator	match	pop 1, mines 20, factories 20
+CS-003-B-M	match	pop 980, mines 5, factories 0
+CS-003-B-O1	match	owner 0, pop 24
+CS-003-B-O2	match	owner 0, pop 28
+CS-003-B-O3	match	owner none, pop -
+CS-003-B-X1	match	surface 0/0/0
+CS-003-B-X2	match	surface 10/10/10
+CS-003-C-T00	not discriminated	20 hit records: predicted fits, alternative fits; record flags 04
+CS-003-C-T01	match	16 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T02	match	19 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T03	match	23 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T04	match	23 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T05	match	23 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T06	match	22 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T07	match	25 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C-T08	match	9 hit records: predicted fits, alternative fails; record flags 0c
+CS-003-C-T09	not discriminated	4 hit records: predicted fits, alternative fits; record flags 0c
+CS-003-C-T10	not discriminated	8 hit records: predicted fits, alternative fits; record flags 0c
+CS-003-C-T11	match	10 hit records: predicted fits, alternative fails; record flags 0c
+CS-003-C-Z-Blackjack	match	first hit on the fort: kills=0 units=450
+CS-003-C-Z-Bludgeon	match	first hit on the fort: kills=1 units=500
+CS-003-C-Z-Blunderbuss	match	first hit on the fort: kills=1 units=500
+CS-003-C2-T00	match	8 hit records: predicted fits, alternative fails; record flags 04
+CS-003-C2-T09	match	4 hit records: predicted fits, alternative fails; record flags 0c
+CS-003-C2-T10	match	4 hit records: predicted fits, alternative fails; record flags 0c

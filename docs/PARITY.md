@@ -2691,7 +2691,7 @@ path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
 and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
 stargates.
 
-## Components (CS-001, CS-002)
+## Components (CS-001, CS-002, CS-003)
 
 Question: does the part, hull and planetary-item table read from the binary
 (private `stars-decomp` `tools/components.py`), with its cost and race
@@ -2740,6 +2740,80 @@ rules, match the original game? Result: `data/components.json` and
 - Engines the race may not build (Settler's Delight, Fuel Mizer,
   Interspace-10, Galaxy Scoop for an SS race without LRTs) were kept in
   the designs at tech 26 and used as given.
+
+### The remaining BINARY-ONLY columns (CS-003, CONFIRMED 2026-10-07)
+
+CS-003 aimed at the 63 rows CS-001/CS-002 left with a BINARY-ONLY column.
+80 cases in 6 Combat Lab runs (`experiments/cs003`, predictions committed
+first): 77 matched, 3 could not tell the two readings apart and were
+re-run as CS-003-C2, which matched. No case contradicted the table.
+Every row of `data/components.json` is now CONFIRMED.
+
+- **Warp-10 rating** (CS-003-W): 6 fleets of 10 Small Freighters per
+  engine at warp 10. The 5 rated engines lost 0 of 300 ships; each of the
+  11 others lost ships, 58 of 660 in all (8.8%; per engine 1 to 10 of 60).
+  Losses per 10-ship fleet: 0 in 28 fleets, 1 in 21, 2 in 15, 3 in 1,
+  4 in 1, close to independent 1-in-10 draws per ship (KERNEL.md).
+- **Battle warp**: already shown by CB-000. Each engine's scout (mass
+  under 70) showed moves `(battle_warp − 4 + 2)/4` (plus one step for the
+  Enigma Pulsar), which identifies the warp for all 16 engines.
+- **Fuel transports** (CS-003-W): stationary fleets with no fuel ended
+  the year with 200 mg (one Fuel Transport), 600 (three), 200 (one
+  Super-Fuel Xport, not more for the bigger hull) and 0 (a Medium
+  Freighter control).
+- **Sweeping** (CS-003-S): one Scout per plain beam at the centre of an
+  enemy field with no planets swept exactly `damage × range²` after the
+  2% decay, for all 16 plain beams and the Multi Contained Munition (1260).
+  Blackjack, Bludgeon and Blunderbuss (range 0) swept nothing, which rules
+  out the gatling reading (range 4).
+- **Range-0 beams are beams** (CS-003-C): each hit an unarmed, unshielded
+  Orbital Fort (armor 100) for armor damage (Blackjack: 450/500 = 90 on
+  the first hit; Bludgeon and Blunderbuss destroyed it with one hit). A
+  sapper would have done nothing.
+- **Mine laying** (CS-003-S): a Super Mine Layer with two Mine Dispenser
+  40 laid 160 ("this year only"), as the Mini Mine Layer control did.
+- **Torpedoes and missiles** (CS-003-C, C2): each hit record on an
+  unshielded target replayed with the COMBAT.md damage rule. The 8
+  torpedoes did `d`, the 4 capital missiles `2d`. One Alpha Torpedo hit
+  did 4, not 5: the two halves `d/2` are each truncated (CS-003-C2,
+  700-armor target: 3 units per hit). Missile hit records carry flag
+  0x08 in addition to the torpedo flag 0x04 (0x0c); torpedo records
+  carry 0x04 only.
+- **Open for the combat lane (record format, not behavior):** every
+  torpedo shot that missed an **unshielded** target still left a record
+  with flag 0x80 and no change (CS-003-C2: 7 for the Alpha Torpedo, 12
+  and 11 for the missiles, one per missed shot). COMBAT.md "Torpedoes and
+  missiles" step 3 says misses are recorded only against a target with
+  shields. Both may hold if a salvo with no hit is recorded differently
+  from the misses of a salvo that hits; not tested.
+- **Designer** (CS-003-D): four Enigma Pulsars on a Battleship showed
+  cloak 40% (20 points each; 21 would show 42%) and moves 2¼; Midget
+  Miners with 0, 1 and 2 Alien Miners moved 1, 1¼, 1¼, and with an
+  Enigma Pulsar and an Alien Miner 2¼, so the two parts share one
+  `(n + 1)/2` term. Mega Poly Shell on a Medium Freighter showed scanner
+  80/40, Multi Contained Munition on a Cruiser 150/75. Cloak and jam
+  percentages matched SCANNING.md and COMBAT.md (2 Alien Miners: 52%/51%).
+  For one design with no cargo these readouts also show the cloak points
+  of Enigma Pulsar (20), Alien Miner (60), Mega Poly Shell (40) and Multi
+  Contained Munition (20), which SCANNING.md "Fleet cloak" lists as
+  BINARY-ONLY, and the Alien Miner term of COMBAT.md's speed code.
+- **Bombs** (CS-003-B, environment 50/50/50, no defenses):
+  - one LBU-17, LBU-32, LBU-74 or Hush-a-Boom on P' = 10 killed exactly 1
+    (no minimum of 2 or more; a minimum of 1 unit would act the same,
+    since a bomb with a kill rate always kills at least 1);
+  - one Smart, Neutron, Enriched Neutron, Peerless or Annihilator bomb on
+    P' = 1 with 20 mines and 20 factories left all three unchanged (no
+    minimum, no installation kills);
+  - one Retro Bomb on P' = 10 killed nobody and destroyed nothing;
+  - one Multi Contained Munition on P' = 1000 killed 20 (2%) and took
+    mines 10 → 5. T-18 had shown its minimum of 3 units.
+- **Colonizing** (CS-003-B): a Colony Ship with an Orbital Construction
+  Module colonized an unowned planet (JOAT race), as one with a
+  Colonization Module did; an empty Colony Ship did not.
+- **Remote mining** (CS-003-B): two Orbital Adjusters on a Midget Miner
+  mined nothing; two Robo-Midget Miners (rate 5 each) at concentrations
+  100 added 10 kT of each mineral (KERNEL.md "Remote mining", MEASURED
+  for this one case).
 
 ### StarsAPI comparison (private)
 
