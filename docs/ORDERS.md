@@ -159,10 +159,13 @@ BINARY-ONLY.
   design built on a hull the owner has not earned is accepted and stored. Nor
   is a design rejected for ending up short of parts: after the per-slot strip,
   if the hull's primary slot (its engine slot) is left empty it is
-  **back-filled with the basic engine at that slot's capacity**, and any other
-  stripped slot simply stays empty — the stored design is never rejected for
-  want of parts, and the mass/cost reflect whatever survived plus any
-  back-fill.
+  **back-filled with Quick Jump 5** (the first unrestricted engine), one per
+  ship to that slot's full capacity, and any other stripped slot simply stays
+  empty — the stored design is never rejected for want of parts, and the
+  mass/cost reflect whatever survived plus the back-fill. The back-fill uses
+  Quick Jump 5 specifically, not the engine listed before it (Settler's
+  Delight), because that first engine is HE-only while Quick Jump 5 is
+  available to every race.
   **Chosen rule.** Validate the hull against the owner's entitlement on design
   read and **reject** a design on an un-entitled hull, consistent with the
   component rule above (Elegy does not carry the hull gap forward). But
@@ -298,13 +301,22 @@ the surviving fleet keeps its id. Ships **add together per design**, and the
 emptied fleets are removed. There are two ways to order a merge, and they do
 **not** behave the same at the limits.
 
-**Merge order** (a direct "merge these fleets now" order). Each per-design
-stack is held to at most 32766 ships; ships beyond that are **lost** — the
-merge caps the stack at 32766, the emptied source fleets are removed, and the
-excess neither spills back into a source fleet nor refuses the order. Elegy's
-chosen clamp matches this (cap at 32766, drop the remainder). The cap bites
-only when the running signed-16-bit total would pass 32767; a total of exactly
-32767 is kept, as on the task path.
+**Merge order** (a direct "merge these fleets now" order). A per-design stack
+is summed into a signed 16-bit count, one source fleet at a time, with the
+emptied source fleets removed. The boundary, stated exactly:
+
+- a resulting stack of **32766** is kept as 32766;
+- a resulting stack of **32767** is kept as 32767 — this is the largest count
+  the order can store, not 32766;
+- a stack that would reach **32768 or more** is slammed to **32766**, and the
+  excess ships are **lost** (not spilled back into a source fleet, and the
+  order is not refused). The clamp is applied after each addition, so once a
+  running total passes 32767 it becomes 32766 and any further source fleets
+  merged into the same slot re-trigger it.
+
+Elegy's chosen clamp reproduces this exactly: keep counts up to 32767, and a
+stack that would exceed 32767 becomes 32766 with the remainder dropped. This
+path is otherwise BINARY-ONLY — read from the program, not yet oracle-tested.
 
 This path also combines damage by its **own** routine, not the one the
 Merge-with-Fleet task uses, and the two do not agree on magnitude. The
