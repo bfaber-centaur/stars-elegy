@@ -98,6 +98,7 @@ public class ProdTool {
         if (kv.containsKey("field")) { String[] f=kv.get("field").split(","); d[0x39-8]=(byte)((Integer.parseInt(f[1])<<4)|Integer.parseInt(f[0])); ch=true; }
         if (kv.containsKey("mt")) { int v=Integer.parseInt(kv.get("mt"),16); d[0x4a]=(byte)v; d[0x4b]=(byte)(v>>8); ch=true; }
         if (kv.containsKey("hab")) { String[] h=kv.get("hab").split(","); for (int k=0;k<9;k++) d[8+k]=(byte)Integer.parseInt(h[k]); ch=true; }
+        if (kv.containsKey("growth")) { d[0x11]=(byte)Integer.parseInt(kv.get("growth")); ch=true; }
         if (ch) p.encode();
       }
       out.add(b);

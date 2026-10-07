@@ -780,6 +780,22 @@ experiments/sc/check.py RUN CB.XY OUT/after.dump
   and Bleeding Edge Tech (`lrt 0 0x1b80`) made it legal (SC-015L).
 - Visibility did not depend on the random stream: SC-001 generated with
   cycles 20000 and 30000 gave different bytes and identical views.
+- Round 4 (SC-024..SC-033, `experiments/sc/round2.py specs|list|check`):
+  - `combatlab dump` prints another player's fleet with `dx dy warp wbits
+    mass`. Each heading byte holds the component + 127; the dump subtracts
+    127, so a fleet that did not move (bytes 0/0) prints `dx=-127
+    dy=-127 warp=0`. Planet reports print `env popest defest surface`;
+    `popest` is in units of 400 colonists, `defest` 0..15.
+  - Design lines in a `.M` dump do not carry the design's owner: a
+    partial design prints `owner=?`, and a full foreign design (War
+    Monger, after a battle) prints the file's own player. Designs come in
+    player order, as many per player as that player's `shipdesigns=`
+    count; `round2.py` assigns owners that way.
+  - Fleets placed outside the universe are moved to its edge: SC-028 put
+    a fleet at y 920 in the tiny Combat Lab universe (1000..1400) and the
+    generated year had it at y 1000. Keep every position in range.
+  - The homeworld starbases carry Lasers; an enemy fleet in orbit starts a
+    battle. Round 4 replaces `sbdesign P 0` with an empty Space Station.
 
 ### Takeover experiments (observed 2026-10-07, TK-001..TK-007)
 
@@ -963,6 +979,22 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   population P (units of 100) is ⌊1.15·P⌋ after the year (OB-009 A/B).
   Packets 49 ly from a warp-7 target arrive the next year: allow a whole
   year's travel.
+- **Round 5 notes (OB-021..OB-027).**
+  - Gate jumps: `to X Y planet N warp 11`. Waypoint warp 11 means "use the
+    stargate".
+  - `combatlab dump` prints `mt=` per player: bytes 0x4a and 0x4b of the
+    player block, high byte first. The game's part word is little-endian,
+    so item bit 0 shows as `mt=0100`.
+  - Do not send Long Hump 6 fleets at warp 10 into minefield cases. Each
+    ship has a 1-in-10 chance to be lost before moving (message 0xe1 for a
+    whole fleet), which hides the field result. Use warp 9, or a
+    warp-10-rated engine.
+  - Consecutive `pinned-turn` years start from the same random stream.
+    Repeated draws in a multi-year run are not independent (the OB-025
+    jiggles repeated their offsets).
+  - A thing-target waypoint survives an object's move only if the owner
+    knew the object at the start of the year. Set `seen` on the wormhole
+    when a case needs the target kept.
 - **JOAT built-in scanner.** JOAT Scout, Frigate and Destroyer hulls scan
   20·electronics / 10·electronics on top of their parts (S-10). Player 1
   at electronics 3 with a Rhino: R = ⌊⁴√(50⁴ + 60⁴)⌋ = 66, P = 30.
@@ -1004,6 +1036,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   oracle reset, while the fleetlab tools were being rebuilt. Rerunning the
   same definition worked. Check that `OUT/raw` has the `.HST` before
   trusting a run.
+- **Race design corpus (RD, observed 2026-10-07).** A race file with a bad
+  checksum stops game creation with "The game file X.r1 appears to be
+  corrupt, unable to load file" and an OK box; `new-game` then times out
+  with `fail.png`. `racelab dump` prints `checksum=BAD` for such a file, and
+  `racelab edit IN OUT` with no keys rewrites the checksum. Definition files
+  may have CRLF line ends: strip `\r` before reading race file names from
+  them in shell.
+- In a running game (RD-P), `hst-edit` race edits to PRT, colonists per
+  resource or race stat 15 are clamped silently by the next generation,
+  while negative points or a malformed habitat are punished (message
+  0x117). Check the event list before treating a race edit as unpunished.
 - **Race files** (`tools/fleetlab/racelab`, observed 2026-10-07, UG):
   `racelab dump FILE.R1…` prints name, PRT, LRTs, growth, habitability,
   the economy stats, the leftover-points spend, whether the checksum is
@@ -1049,6 +1092,38 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   carry flag 0x04, missile hits also 0x08. Records with 0x80 added left
   the target unchanged; against the unshielded targets of CS-003-C2 there
   was one for each shot that missed. The CS-003 checker skips them.
+
+### Turn messages and minefield runs (observed 2026-10-07, MF)
+
+- `combatlab dump` decodes each `.M` file's message block (block type
+  12), after the `events raw=` line: `msg id=0xNN name=... obj=0xOOOO
+  p=P1,P2,...`. A record is a word `w` (message id `w & 0x1ff`, size flags
+  `w >> 9`), a word `obj`, then the message's parameters: parameter k is 2
+  bytes if flag bit k is set, else 1 byte. How many parameters each id
+  takes is read at run time from the local original game (`STARS_EXE`,
+  default the oracle run copy; checked by hash); without it only the raw
+  line prints. All 728 message blocks in the apparatus evidence parse
+  exactly. Names are given for the minefield ids (0xbe..0xcc, 0xf4,
+  0x15f..0x164, 0x17e); others print `name=-`.
+- Minefield message parameters seen: hit messages (0xc5..0xc8, victim)
+  are fleet, field owner, field kind (0 standard, 1 heavy, 2 speed bump),
+  x, y of the stop and damage (before shields); the field owner's
+  versions (0xc9..0xcc) drop the owner. Detonation messages are 0x160..0x164.
+  Sweep messages give the swept count and the field's kind and centre.
+  Fleet parameters are object ids, `0x8000 | owner << 9 | number`.
+- Follow orders (`to X Y fleet OWNER ID warp W`) store the target's object
+  id, `owner << 9 | number`. A bare number aims at player 0's fleet: FleetLab's
+  `wpf` (FM corpus, player 0 only) is fine, but a player-1 follower aimed
+  that way flies to the waypoint coordinates (first MF-02 run). The MF
+  specs in the apparatus were built with an interim `fleet N` (same owner)
+  form that wrote the same ids.
+- Pinned streams for the MF starts: cycles 20000 and 25000 gave the same
+  stream, as did 30000, 35000 and 40000; 15000 was a third. Runs at the
+  same cycles reuse the same draws even with different fleets, so
+  MF-01, MF-05b, MF-02's leaders and MF-09h's first fleets stopped at the
+  same offsets. Pool rate samples across distinct streams only.
+- Minefield counts are 32-bit in the object record; fields of 2,100,000
+  load and decay normally.
 
 ## Known fragility
 
