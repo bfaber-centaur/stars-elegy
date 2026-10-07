@@ -25,3 +25,25 @@ destroyed. Pinned at the twelve cycle counts 5000 … 50000.
   in some streams.
 - `cb037-deep`: player 3 does not qualify (3 AND 8 = 0) and stays at 3 in
   every stream.
+
+## Results
+
+Weapons level after the turn, twelve cycle counts (5000 … 50000), which
+gave **8 distinct random streams** per setup (by battle record; 20000 =
+25000 and 30000 = 35000 = 40000 = 45000). Player 6's Frigates were
+destroyed in every run; all hits replayed (0 mismatches). Counts below
+are per distinct stream.
+
+| setup | p1 | p2 | p3 | p4 |
+|---|---|---|---|---|
+| `cb037` (observers 1, 2, 3) | 3 in 8 of 8 | **4 in 2 of 8** | **4 in 3 of 8** | 3 in 8 of 8 |
+| `cb037-owner` (observers {1, 3}) | (fighter, 26) | — | **4 in 3 of 8** | — |
+| `cb037-deep` (observer {3}) | (fighter, 26) | — | 3 in 8 of 8 | — |
+
+- **CONFIRMED:** player 1, an observer, never gained (1 AND 0b1110 = 0;
+  at a 1/3 chance per attempt, 0 of 8 has probability about 4%); players
+  2 and 3 gained in some streams; player 4 with no fleet never gained.
+  Player 3 gained at a planet whose owner has no starbase (the owner's
+  bit makes 3 AND 0b1010 ≠ 0) and never in the same streams in deep space
+  (3 AND 0b1000 = 0; the `-owner` and `-deep` runs share their streams
+  and player 3 gained in three of them only at the planet).

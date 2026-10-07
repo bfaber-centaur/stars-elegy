@@ -24,3 +24,24 @@ Speed codes in the battle record (`cb038` / `cb038-wm`):
 
 Fleet 3 reads "the stack's share" as added once to the design mass; if it
 were shared per ship (0 each), its code would be 2 (WM 4).
+
+## Results
+
+Both streams gave the same codes (record `wt` is the per-ship mass used).
+
+| fleet | stack | record `wt` | code | WM code |
+|---|---|---|---|---|
+| 0: empty | Medium Freighter | 69 | 2 | 4 |
+| 1: 1 kT | Medium Freighter | 70 | 1 | 3 |
+| 2: 71 kT | Medium Freighter | 140 | 0 | 2 |
+| 3: two freighters, 1 kT | Medium Freighter ×2 | **69** | **2** | **4** |
+| 4: freighter + frigate, 1 kT | Medium Freighter | 70 | 1 | 3 |
+| 4 | Frigate | 17 | 2 | 4 |
+
+- **War Monger +2: CONFIRMED** on all six stacks, both streams.
+- **Cargo in the mass: CONFIRMED** for one-ship stacks (fleets 1, 2, 4).
+- **Fleet 3: MISSED.** The two-ship stack's mass stayed 69: the stack's
+  1 kT share is divided over its ships (truncated, 0 per ship), not added
+  once to the design mass. This is the alternative stated with the
+  prediction. The per-ship mass is `design mass + share / ships`
+  (truncation inferred from 1/2 → 0; one observation).
