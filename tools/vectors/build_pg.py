@@ -25,10 +25,11 @@ CROWDED = 2426  # first year whose start population is above 25% of capacity
 
 def build(ev, out):
     os.makedirs(out, exist_ok=True)
-    xy = B.dump(os.path.join(ev, 'pq001', 'raw', 'P0', 'before', 'PG001.XY'))
+    xy_path = os.path.join(ev, 'pq001', 'raw', 'P0', 'before', 'PG001.XY')
+    xy = B.dump(xy_path)
     for rid, d, title, parity in RUNS:
         files = sorted(glob.glob(os.path.join(ev, d, 'raw', '24??-PG001-*.HST')))
-        st = B.state(B.dump(files[0]), xy, 'PG001')
+        st = B.state(B.dump(files[0]), xy, 'PG001', xy_path)
         start = st['year']
         uncrowded, crowded = [], []
         for f in files[1:]:

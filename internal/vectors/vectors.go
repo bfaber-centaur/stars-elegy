@@ -19,15 +19,24 @@ import (
 const Schema = "stars-elegy-vector/1"
 
 type Vector struct {
-	Schema       string `json:"schema"`
-	ID           string `json:"id"`
-	Title        string `json:"title"`
-	Source       Source `json:"source"`
-	Years        int    `json:"years"`
-	Random       string `json:"random"`
-	Streams      int    `json:"streams"`
-	InitialState State  `json:"initial_state"`
-	Cases        []Case `json:"cases"`
+	Schema       string   `json:"schema"`
+	ID           string   `json:"id"`
+	Title        string   `json:"title"`
+	Source       Source   `json:"source"`
+	Years        int      `json:"years"`
+	Random       string   `json:"random"`
+	Streams      int      `json:"streams"`
+	InitialState *State   `json:"initial_state,omitempty"`
+	NewGame      *NewGame `json:"new_game,omitempty"`
+	Cases        []Case   `json:"cases"`
+}
+
+// NewGame replaces InitialState in a universe-generation vector (years 0):
+// the new-game settings and the players' races; the cases describe the
+// generated turn-0 game.
+type NewGame struct {
+	Settings json.RawMessage `json:"settings"`
+	Races    json.RawMessage `json:"races"`
 }
 
 type Source struct {
@@ -51,12 +60,20 @@ type State struct {
 }
 
 type Game struct {
-	Name         string `json:"name"`
-	Size         string `json:"size"`
-	Bounds       [4]int `json:"bounds"`
-	Density      string `json:"density,omitempty"`
-	RandomEvents bool   `json:"random_events"`
-	Players      int    `json:"players"`
+	Name              string                      `json:"name"`
+	Size              string                      `json:"size"`
+	Bounds            []int                       `json:"bounds,omitempty"`
+	Density           string                      `json:"density,omitempty"`
+	Players           int                         `json:"players"`
+	RandomEvents      *bool                       `json:"random_events,omitempty"`
+	SlowerTech        *bool                       `json:"slower_tech,omitempty"`
+	PublicScores      *bool                       `json:"public_scores,omitempty"`
+	VictoryConditions map[string]VictoryCondition `json:"victory_conditions,omitempty"`
+}
+
+type VictoryCondition struct {
+	Value   int   `json:"value"`
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 type Player struct {
@@ -224,9 +241,10 @@ type Object struct {
 type ProductionQueue struct {
 	Planet int `json:"planet"`
 	Items  []struct {
-		ID    int  `json:"id"`
-		Count int  `json:"count"`
-		Kind  *int `json:"kind"`
+		ID      int  `json:"id"`
+		Count   int  `json:"count"`
+		Percent int  `json:"percent,omitempty"`
+		Kind    *int `json:"kind"`
 	} `json:"items"`
 }
 
@@ -238,6 +256,7 @@ type Case struct {
 	PredictionHeld bool          `json:"prediction_held"`
 	VariesByStream bool          `json:"varies_by_stream"`
 	Prediction     string        `json:"prediction,omitempty"`
+	Verdict        string        `json:"verdict,omitempty"`
 	VoidStreams    *VoidStreams  `json:"void_streams,omitempty"`
 	Expect         []Expectation `json:"expect"`
 }
@@ -270,6 +289,17 @@ type Expectation struct {
 	Target      json.RawMessage `json:"target,omitempty"`
 	Observed    json.RawMessage `json:"observed,omitempty"`
 	Constraint  json.RawMessage `json:"constraint,omitempty"`
+
+	// battle, battle_actions
+	Players []int           `json:"players,omitempty"`
+	Tokens  json.RawMessage `json:"tokens,omitempty"`
+	Actions json.RawMessage `json:"actions,omitempty"`
+	// view: what player Viewer knows of Subject; client_estimate: a value
+	// the original client displays on Screen for Subject
+	Viewer  *int            `json:"viewer,omitempty"`
+	Subject json.RawMessage `json:"subject,omitempty"`
+	Screen  string          `json:"screen,omitempty"`
+	Field   string          `json:"field,omitempty"`
 }
 
 var (
@@ -277,7 +307,8 @@ var (
 	Kinds = map[string]bool{"fleet": true, "fleet_gone": true, "fleet_at": true, "no_fleet_at": true,
 		"no_new_fleets": true, "planet": true, "production_queue": true, "design": true, "player": true,
 		"wormhole": true, "trader": true, "packet": true, "packet_gone": true, "salvage_at": true,
-		"message": true, "sample": true}
+		"message": true, "sample": true, "battle": true, "battle_actions": true, "no_battle": true,
+		"object": true, "minefield": true, "view": true, "client_estimate": true}
 )
 
 // Load decodes one vector strictly.
@@ -322,20 +353,29 @@ func (v *Vector) Check() []error {
 	if v.Schema != Schema {
 		bad("schema %q", v.Schema)
 	}
-	if v.Years < 1 || v.Streams < 1 || len(v.Cases) == 0 {
-		bad("years %d, streams %d, %d cases", v.Years, v.Streams, len(v.Cases))
+	if (v.InitialState == nil) == (v.NewGame == nil) {
+		bad("needs exactly one of initial_state and new_game")
+		return errs
 	}
-	players := map[int]bool{}
-	for _, p := range v.InitialState.Players {
-		players[p.ID] = true
+	if v.NewGame != nil && v.Years != 0 || v.InitialState != nil && v.Years < 1 {
+		bad("years %d (0 only for a new_game vector)", v.Years)
 	}
-	if len(players) != v.InitialState.Game.Players {
-		bad("%d players, game says %d", len(players), v.InitialState.Game.Players)
+	if v.Streams < 1 || len(v.Cases) == 0 {
+		bad("streams %d, %d cases", v.Streams, len(v.Cases))
 	}
-	planets := map[int]bool{}
-	for _, p := range v.InitialState.Planets {
-		planets[p.ID] = true
+	players, planets := map[int]bool{}, map[int]bool{}
+	if st := v.InitialState; st != nil {
+		for _, p := range st.Players {
+			players[p.ID] = true
+		}
+		if len(players) != st.Game.Players {
+			bad("%d players, game says %d", len(players), st.Game.Players)
+		}
+		for _, p := range st.Planets {
+			planets[p.ID] = true
+		}
 	}
+	known := func(m map[int]bool, id int) bool { return v.NewGame != nil || m[id] }
 	seen := map[string]bool{}
 	for _, c := range v.Cases {
 		if seen[c.ID] {
@@ -345,8 +385,8 @@ func (v *Vector) Check() []error {
 		if !Tags[c.Tag] {
 			bad("%s: tag %q", c.ID, c.Tag)
 		}
-		if c.Tag == "CONFIRMED" && (!c.PredictionHeld || c.VariesByStream) {
-			bad("%s: CONFIRMED but prediction_held=%v varies_by_stream=%v", c.ID, c.PredictionHeld, c.VariesByStream)
+		if c.Tag == "CONFIRMED" && !c.PredictionHeld {
+			bad("%s: CONFIRMED but the prediction did not hold", c.ID)
 		}
 		if len(c.Expect) == 0 {
 			bad("%s: no expectations", c.ID)
@@ -356,7 +396,7 @@ func (v *Vector) Check() []error {
 				bad("%s: kind %q", c.ID, e.Kind)
 				continue
 			}
-			if e.Year < 1 || e.Year > v.Years {
+			if e.Year < 1 && v.NewGame == nil || e.Year > v.Years {
 				bad("%s: year %d outside 1..%d", c.ID, e.Year, v.Years)
 			}
 			if e.Kind == "sample" && (e.Check == "" || e.Observed == nil) {
@@ -365,20 +405,26 @@ func (v *Vector) Check() []error {
 			if e.Kind == "sample" && c.Tag == "CONFIRMED" {
 				bad("%s: CONFIRMED case with a sampled expectation", c.ID)
 			}
+			if (e.Kind == "battle" && e.Tokens == nil) || (e.Kind == "battle_actions" && e.Actions == nil) ||
+				(e.Kind == "view" && (e.Viewer == nil || e.Subject == nil)) ||
+				(e.Kind == "client_estimate" && (e.Screen == "" || e.Subject == nil || e.Field == "")) {
+				bad("%s: %s expectation missing its fields", c.ID, e.Kind)
+			}
 			for _, o := range []*int{e.Owner, e.Player} {
-				if o != nil && !players[*o] {
+				if o != nil && *o >= 0 && !known(players, *o) {
 					bad("%s: player %d not in the initial state", c.ID, *o)
 				}
 			}
-			if e.Kind == "player" && (e.ID == nil || !players[*e.ID]) {
+			if e.Kind == "player" && (e.ID == nil || !known(players, *e.ID)) {
 				bad("%s: player expectation without a known player id", c.ID)
 			}
-			if (e.Kind == "planet" && (e.ID == nil || !planets[*e.ID])) ||
-				(e.Kind == "production_queue" && (e.Planet == nil || !planets[*e.Planet])) {
+			if (e.Kind == "planet" && (e.ID == nil || !known(planets, *e.ID))) ||
+				(e.Kind == "production_queue" && (e.Planet == nil || !known(planets, *e.Planet))) {
 				bad("%s: planet not in the initial state", c.ID)
 			}
 			if e.Equals == nil && (e.Kind == "fleet" || e.Kind == "planet" || e.Kind == "player" ||
-				e.Kind == "design" || e.Kind == "wormhole" || e.Kind == "trader" || e.Kind == "production_queue") {
+				e.Kind == "design" || e.Kind == "wormhole" || e.Kind == "trader" || e.Kind == "production_queue" ||
+				e.Kind == "minefield" || e.Kind == "view" || e.Kind == "client_estimate" || e.Kind == "object") {
 				bad("%s: %s expectation without equals", c.ID, e.Kind)
 			}
 		}

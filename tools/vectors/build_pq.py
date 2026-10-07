@@ -4,7 +4,7 @@ PQ-001 has no generator or check.out: each case is a hand-edited PG001 2407
 state (planet 7 and player 0) run for one year, or two for C01 and C14.
 This adapter reads each case's before/ files for the initial state and the
 after/ files for the observed outcome: planet 7's minerals and
-installations, its production queue, player 0's tech and research
+installations, its production queue (with partial percentages), player 0's tech and research
 accumulation (where the year's research went), and the year's message ids.
 PARITY.md "PQ-001" records every case as matching its prediction.
 """
@@ -83,7 +83,7 @@ def observe(year, adir, mined):
     out = [
         {'year': year, 'kind': 'planet', 'id': PLANET, 'equals': eq},
         {'year': year, 'kind': 'production_queue', 'planet': PLANET,
-         'equals': [{'id': int(i[0]), 'count': int(i[1])} for i in queue]},
+         'equals': [{k: v for k, v in B.queue_item(i).items() if k != 'kind'} for i in queue]},
         {'year': year, 'kind': 'player', 'id': PLAYER, 'equals': {
             'tech': {B.TECH[i]: int(player[B.DUMP_TECH[i]]) for i in range(6)},
             'research_accumulated': dict(zip(B.TECH, (int(x) for x in player['accum'].split(','))))}},
@@ -114,7 +114,8 @@ def build(ev, out):
         rule, setup = spec[0], spec[1]
         dirs = spec[2] if len(spec) > 2 else [name]
         before = os.path.join(raw, dirs[0], 'before')
-        st = B.state(B.dump(os.path.join(before, 'PG001.HST')), B.dump(os.path.join(before, 'PG001.XY')), 'PG001')
+        st = B.state(B.dump(os.path.join(before, 'PG001.HST')), B.dump(os.path.join(before, 'PG001.XY')), 'PG001',
+                     os.path.join(before, 'PG001.XY'))
         mines0 = next(p['mines'] for p in st['planets'] if p['id'] == PLANET)
         per, sampled = {}, {}
         for d in dirs:

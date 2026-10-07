@@ -69,7 +69,8 @@ def build(ev, out):
     for run, title in RUNS.items():
         rdir = os.path.join(ev, 'run-' + run.lower())
         before = os.path.join(rdir, 'raw', 'before')
-        st = B.state(B.dump(os.path.join(before, 'CB.HST')), B.dump(os.path.join(before, 'CB.XY')), 'CB')
+        st = B.state(B.dump(os.path.join(before, 'CB.HST')), B.dump(os.path.join(before, 'CB.XY')), 'CB',
+                     os.path.join(before, 'CB.XY'))
         fleets, planets = after(rdir)
         rid = 'CS-003-' + run
         vec = {'schema': B.SCHEMA, 'id': rid, 'title': title,

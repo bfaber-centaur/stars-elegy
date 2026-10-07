@@ -108,7 +108,8 @@ def build(ev, out):
         if not cases or not dirs:
             continue
         base = os.path.join(ev, dirs[0], 'raw', 'before')
-        st = B.state(B.dump(os.path.join(base, 'CB.HST')), B.dump(os.path.join(base, 'CB.XY')), 'CB')
+        st = B.state(B.dump(os.path.join(base, 'CB.HST')), B.dump(os.path.join(base, 'CB.XY')), 'CB',
+                     os.path.join(base, 'CB.XY'))
         per_case = {c['id']: ({}, True) for c in cases}
         for d in dirs:
             stream = 'cycles ' + (d.split('-c')[1] if '-c' in d else '20000')

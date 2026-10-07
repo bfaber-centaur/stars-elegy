@@ -23,8 +23,49 @@
     1400
    ],
    "density": "normal",
+   "players": 1,
+   "slower_tech": false,
    "random_events": false,
-   "players": 1
+   "public_scores": false,
+   "victory_conditions": {
+    "planets_owned_percent": {
+     "value": 60,
+     "enabled": true
+    },
+    "tech_level": {
+     "value": 22,
+     "enabled": true
+    },
+    "tech_fields": {
+     "value": 4
+    },
+    "score": {
+     "value": 11000,
+     "enabled": false
+    },
+    "lead_over_second_percent": {
+     "value": 100,
+     "enabled": true
+    },
+    "resources_thousands": {
+     "value": 100,
+     "enabled": false
+    },
+    "capital_ships": {
+     "value": 100,
+     "enabled": false
+    },
+    "highest_score_after_years": {
+     "value": 100,
+     "enabled": false
+    },
+    "conditions_needed": {
+     "value": 1
+    },
+    "minimum_years": {
+     "value": 100
+    }
+   }
   },
   "players": [
    {
@@ -937,7 +978,8 @@
      "equals": [
       {
        "id": 8,
-       "count": 1
+       "count": 1,
+       "percent": 79
       },
       {
        "id": 0,
@@ -999,7 +1041,8 @@
      "equals": [
       {
        "id": 8,
-       "count": 1
+       "count": 1,
+       "percent": 79
       },
       {
        "id": 0,
