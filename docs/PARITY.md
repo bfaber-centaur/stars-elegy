@@ -820,6 +820,29 @@ Factories ×2 (prefix kept); research 70; alchemy (8), factories, mines and
 "completed its orders" messages. If the prefix were removed with the auto
 item's year, the queue would be Auto Factories ×2 alone.
 
+A6, A7 (predicted and committed before they ran). Re-reading the
+binary for the tie question showed that "limited by a mineral" is not
+decided by the minimum alone. While the percentages are compared
+(minerals first, then resources; a component replaces the current minimum
+only when strictly lower), two flags are kept: "some mineral is short"
+and "resources were strictly lowest". An **auto** item is treated as
+mineral-limited (skipped without a prefix, alchemy with one) whenever
+some mineral is short, even if resources are strictly lower; with a prefix
+the alchemy then uses the shortfall of the component that was lowest,
+which can be the resource shortfall. A **non-auto** item with a prefix
+buys minerals unless resources were strictly lowest, so a resource/mineral
+tie goes to the mineral. Ties between minerals keep the first in Fe, Bo,
+Ge order. The PQ-001 and KX-001 cases never had resources strictly below
+a short mineral on an auto item, so they did not test this.
+
+| Case | Start | Queue | Predicted (binary) | If only the minimum decided |
+|---|---|---|---|---|
+| A6 | pop 10 (R 1), minerals 100/100/0 | Auto Alchemy, Auto Factories ×2 | queue Mineral Alchemy ×1 @1%, Auto Alchemy ×1, Auto Factories ×2; minerals 100/100/0; research 0 | Factory ×1 @19% at the front |
+| A7 | pop 10 (R 1), minerals 100/100/0 | Auto Factories ×2, Mine ×1 | Auto Factories skipped; queue Auto Factories ×2, Mine ×1 @39%; research 0; no "completed" message | Factory ×1 @19% at the front, Mine untouched |
+
+(At pop 10 the auto cap is one factory. Germanium 0 gives 24% for the
+factory's germanium; 1 resource gives 19% for its 10 resources.)
+
 Not covered: terraforming costs (Total Terraforming, Claim Adjuster),
 packets, scanners, starbase and ship costs, the tamper check's points
 formula.
