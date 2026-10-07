@@ -58,6 +58,10 @@ lesser racial traits are BINARY-ONLY unless a case says otherwise.
 ## Battle plans
 
 A player has between 1 and 16 battle plans, numbered 0..15 without gaps.
+The client stops at 15: its copy button does nothing once a player has
+15 plans (MEASURED twice as BP-L in the BP-1..BP-2 client runs; the host
+kept 15). A 16th plan reaches
+the host only through crafted orders (BINARY-ONLY).
 Each plan has a name and the fields listed under "Conventions". Every
 fleet names one of its owner's plans. A starbase always fights with its
 owner's plan 0.
@@ -80,20 +84,16 @@ the round-7 ship-launch runs, `PARITY.md` "Round 7"; BINARY-ONLY in
 general).
 Ships split off keep their source fleet's plan (`ORDERS.md`).
 
-**LEGACY BUG (BINARY-ONLY): a stale "Default" attack-who.** Plan 0 is
-meant to attack "everyone" in a single-human game, but the generator
-creates the plans before it records whether the new game is single-human.
-It reads that setting left over from whatever game the program generated
-or opened before. So "Default" attacks everyone only when the previous
-game in the same program run was single-human, and the new game's own
-setting does not matter. The UG games were each generated in a fresh run
-and all got "neutrals and enemies", single-human ones included.
+**"Default" always attacks "neutrals and enemies"** (MEASURED: UG01..UG21
+in fresh runs, and BP-2, three single-player games created one after
+another in one client session). The original's plan setup also has a
+rule that sets "Default" to "everyone" in a single-human game, but it
+reads a game setting that every way of creating a game clears first, so
+it never takes effect (BINARY-ONLY reading). Elegy has no such rule.
 
-- **Elegy's chosen rule:** "Default" starts with "neutrals and enemies"
-  in every game.
-
-**Adding, replacing and deleting** (BINARY-ONLY). Validation of the
-fields is in `ORDERS.md` ("Battle-plan fields").
+**Adding, replacing and deleting** (CONFIRMED for deletion, BP-1;
+BINARY-ONLY otherwise). Validation of the fields is in `ORDERS.md`
+("Battle-plan fields").
 
 - A definition for an existing plan number replaces that plan.
 - A new plan takes the next number (the current count). The 17th plan is
@@ -101,7 +101,10 @@ fields is in `ORDERS.md` ("Battle-plan fields").
 - Deleting plan `k` moves every later plan down by one number. Every
   fleet of that player whose plan number is `k` or higher has it lowered
   by one. So a fleet on a later plan keeps the same plan, and a fleet on
-  the deleted plan moves to the plan just before it, `k − 1`. The client
+  the deleted plan moves to the plan just before it, `k − 1` (BP-1: with
+  plans 0..6 and fleets on 3, 5, 2 and 6, deleting plan 3 left six plans
+  and the fleets on 2, 4, 2 and 5, the later plans keeping their fields).
+  The client
   asks for confirmation first when some fleet uses plan `k`. It never
   offers to delete plan 0.
 
@@ -247,7 +250,7 @@ random stream and for the plan-0 legacy bug below.
      (LEGACY BUG, CONFIRMED: CB-039 left 25 fleets out with no message;
      in the three-player CB-042 each player with left-out fleets was
      told). Elegy reproduces this behind its legacy-bug switch; the
-     message itself belongs to the player-messages specification.
+     message is 0x180 in `MESSAGES.md`.
 8. **Excluded fleets** (BINARY-ONLY): a fleet carrying a particular
    status flag is not grouped with the others. What sets that flag is not
    known.
@@ -574,7 +577,7 @@ jitter separates them.
   every later move replays as tactic 0. Without the switch,
   5 of the 6 replays fail. A starbase never switches (BINARY-ONLY).
 
-### Choosing a square (CONFIRMED by exact replay, CB-041, CB-042, CB-044, CB-046, CB-049; one mover CB-012, CB-019, CB-020, CB-021)
+### Choosing a square (CONFIRMED by exact replay, CB-041, CB-042, CB-044, CB-046, CB-049..CB-051; one mover CB-012, CB-019, CB-020, CB-021)
 
 For each single-square move, the token computes a **radius** and possibly
 a **goal**:
@@ -660,12 +663,22 @@ replay. These broke at least one stream, so each is CONFIRMED by it:
 | the range-3 exception counting sapper ranges | 5 |
 | no range-3 / shielded-enemy exception at all | 5 |
 
-Not exercised by any replay: the fallback from the primary to the
-secondary target type (every secondary in CB-049 was "none", so falling
-back changed nothing) and the torpedo shield term below (the replays
-pass without it). Those two stay BINARY-ONLY.
+CB-049 did not exercise two rules, so round 8 tested each with a setup
+built for it, and every move replays (6 streams each):
 
-### Square score (CONFIRMED by replay, CB-041..CB-049; see "Choosing a square")
+- CB-050: the torpedo estimate's shield term. A shielded tactic-0 stack
+  facing a Jihad Missile stack and an Upsilon Torpedo stack that cannot
+  target it went to (9,9) and stayed for 7 moves. Without the term it
+  would alternate between (9,9) and (8,9), which is what the unshielded
+  control (CB-050-ctl) did.
+- CB-051: the fallback from the primary to the secondary target type. A
+  stack with primary "starbase" (none on the board) and secondary
+  "armed ships" moved toward the enemy's armed stack from its first
+  move; without the fallback it would never move. A "freighters, else
+  any" stack switched to "any" once the freighter left, so the test is
+  made again on every move.
+
+### Square score (CONFIRMED by replay, CB-041..CB-051; see "Choosing a square")
 
 The score of square `q` for token `T` is computed as follows:
 
@@ -730,14 +743,13 @@ subtracts 1 when `q` is its current square.
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
 `(armor + shields)·ships`, less its existing damage (at least 1).
 
-The replays exercised every step above except one: the beam estimate
+The replays exercised every step above: the beam estimate
 with capacitor, dropoff, deflector, sapper cap and the out-of-reach
 division and floor; the torpedo estimate, including its random hits
 (see "Random draws in a battle"); the cap with shields; the sum and
 maximum over many enemies of two other players; the target-type test on
-`give`; every row of the tactic table; and the tactic-0 own-token and
-current-square terms. The torpedo shield term (torpedo step 3) is
-BINARY-ONLY: no replay depends on it.
+`give`; every row of the tactic table; the tactic-0 own-token and
+current-square terms; and the torpedo shield term (CB-050).
 
 ## Firing (CONFIRMED by replay: CB-001..CB-021, every hit record)
 
@@ -1261,17 +1273,17 @@ tactics 1 to 4 with mixed designs (every move in 6 streams). The one
 CB-049 hit that did not replay was again a checker defect (record
 pairing; see "Torpedoes and missiles").
 
+Round 8 (CB-050, CB-051) confirmed the torpedo estimate's shield term
+and the fallback to the secondary target type. The battle-plan runs
+confirmed deletion (BP-1), measured the client's 15-plan limit (BP-L),
+and found "Default" never set to "everyone" (BP-2; see "Battle plans").
+
 Not yet tested:
 
-- the fallback from the primary to a secondary target type that is not
-  "none", in movement;
-- the torpedo estimate's shield term;
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
 - salvage at more than one point;
-- deleting a battle plan (fleets on later plans keep their plan, fleets
-  on the deleted plan move to the plan before it) and the stale "Default"
-  attack-who after a single-human game (see "Battle plans").
+- the host's 16-plan limit, which needs crafted orders.
 
 The firing live-token recheck has no observable effect (see "Firing").
 
