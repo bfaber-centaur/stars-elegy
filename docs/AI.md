@@ -492,6 +492,166 @@ and a count is clamped to what that list allows. A queue with more than
 200 items gets nothing more. Items go to the front, the back, or replace
 the queue, as each rule says.
 
+## 11. Shared fleet rules (BINARY-ONLY)
+
+The personality files call these by name. Distances are between
+positions in light-years; "nearest" compares squared distances with a
+strict `<`, so on ties the first in scan order wins (planets in id order,
+fleets in fleet order). A *move order* replaces the fleet's route: it
+keeps waypoint 0 and sets waypoint 1 to the target with the given task
+and warp, dropping any later waypoints; if the fleet is already at the
+target, the task goes on waypoint 0 and the route is cut to that one
+waypoint. Warp 4 below means the waypoint's warp is written as 4 and later
+reset by the warp rule at the end of the turn.
+
+**Fleet classes.** Hull roles: freighters (Small to Super Freighter),
+privateers (Privateer, Rogue, Galleon), warships (Destroyer to
+Dreadnought), Frigate, Nubian, Meta Morph. A fleet's *power* per design
+is the combat power estimate of `ORDERS.md`/`COMBAT.md` (BINARY-ONLY
+formula, to be published with the personality stage that needs it).
+- *Attack fleet*: walking its designs in slot order (slots with ships
+  only): a warship → yes; a Frigate → yes if its power > 0, else **no,
+  stop looking** (LEGACY BUG candidate: an unarmed frigate slot hides a
+  later warship slot); a Nubian or Meta Morph with cargo capacity below
+  500 and power > 0 → yes; otherwise continue. None → no.
+- *Transport fleet*: any freighter or privateer design → yes; a Meta
+  Morph with cargo capacity ≥ 500 and power > 0 → yes; otherwise no. (An
+  unarmed Meta Morph freighter is neither.)
+- *War-fleet strength* (Robotoid's armada rule): `strength = ships in
+  slots 2–5 + 2 × ships in slots 6–7`. It is "too weak" when `strength <
+  P` (the personality's armada potency). Turindrone calls the same rule
+  for its bomber check, where slots 2–7 are not its warships (see
+  `docs/ai/turindrone.md`): LEGACY BUG, reproduced as written.
+
+**Nearest colonizable planet.** Candidates are unowned planets that no
+other own fleet is already heading to (its waypoint 1 is that planet:
+for Robotoid and Macinti only when that waypoint's task is colonize; for
+the others any task). Robotoid and Macinti take any unowned planet; the
+others skip planets whose habitability value for the race is negative.
+The nearest candidate to the fleet wins. Robotoid and Macinti recompute
+the marks for every fleet; the others compute them once per turn, so a
+planet chosen earlier in the same turn is not excluded for them. Then, if
+the fleet orbits an own planet and the year index is below 120, a
+wormhole may be preferred: wormholes within twice the candidate's
+distance (any distance when there is no candidate) score
+`(7 − its movement class)·10` when known to the player, else 90 when
+nearer than the candidate or 50 otherwise; the best (ties: nearer) is
+taken if `Random(100)` is below its score. (LEGACY BUG: the distance test
+overflows for wormholes about 182 ly or more away, which then count as
+near.)
+
+**Colonize order.** Move order to the planet, task colonize, warp = the
+fleet's ideal warp. **Wormhole order**: move order to the wormhole, no
+task.
+
+**Nearest own starbase.** From the fleet's waypoint-0 position, the
+nearest own planet with a starbase (optionally only with more than 25,000
+colonists): move order there, no task, warp 4. None: no order.
+
+**Random nearby planet** (scout moves). A uniform pick among planets
+within radius `r` (inclusive; reservoir draw `Random(k)` for the k-th
+candidate, the first included). With the avoid-starbase option, a pick
+that has a starbase is redrawn up to twice (fresh passes); the last pick
+stands.
+
+**Join a buddy.** Among own fleets earlier in fleet order (LEGACY BUG
+candidate: later fleets are never considered) holding ships of the given
+slots, the nearest: within `r1` → join; within `r2` → join if
+`Random(2) != 0`. Joining clears the fleet's waypoint-0 task and gives a
+move order to that fleet, no task, warp 6.
+
+**Attack target.** For an attack fleet with a list of own fleets and a
+list of other players' fleets (and, when "computer players form
+alliances" is on, skipping fleets owned by computer players):
+1. For each enemy fleet in list order: let `n` = ships of own fleets
+   (other than this one) already targeting it. If `n > 0`, skip it with
+   `Random(3) == 0`; then if `5n` exceeds this fleet's ship count, skip it
+   with `Random(15) == 0`. Keep the nearest (within 1,000 ly).
+2. Nearest within 180 ly: target that fleet.
+3. Farther: if the fleet has less than half its fuel and can reach an
+   own starbase (rule above), go there instead. Else the planet nearest
+   that enemy fleet that no other own fleet targets; if it is not the
+   current orbit, target it.
+4. No enemy fleet: with the alliance option, retry without skipping
+   computer players' fleets. Then the nearest other player's planet; else
+   the nearest planet the AI has not marked as visited; else a random
+   planet (`Random(planet count)`).
+5. If the fleet already heads to a planet and the new target is a
+   planet, keep the current route. Otherwise move order, no task, warp 4.
+
+**Armada (invasion) fleets.** Slots 9 and 10 carry troops (colonists);
+`strength` as above; personality parameters `P` (potency), `P/2`, `A`
+(armada size) and `min(3, A/2 − 1)`.
+- An armada already chasing a fleet within 250 ly, or heading to a
+  foreign planet, or to an own planet with a starbase, or to a planet not
+  seen this year, keeps its route.
+- Not orbiting a planet: move to the nearest planet of another player
+  within 150 ly, else the nearest object of interest.
+- At an own planet with a starbase: if too weak (strength < `P` or
+  troop ships < `A`): easy and standard wait; otherwise launch anyway by
+  chance (`Random(10) < 5` when strength > `P`·2 or ≥ 60; else `Random(10)
+  < 7` when > `3P`; else when > 120 and `Random(10) < 7`; draws only as the
+  tests are reached). If strong enough: load colonists (a tenth, fifteenth
+  or twentieth of the planet's population above 300,000, 200,000 or
+  100,000) and launch.
+- Elsewhere and too weak (strength < `P/2` or troops < `min(3, A/2 −
+  1)`): clear the waypoint-0 task; harder and expert may still launch by
+  chance (as above, thresholds `2P`, `4P`, 120); otherwise retreat to the
+  own starbase planet nearest to here.
+- Elsewhere and strong: unowned planet → launch; own planet without
+  starbase → load a fifth of its population if it has more than 100,000,
+  then launch; another player's planet → invade if the troops suffice
+  (needed = estimated population × 400 / (100 − defense %) against the
+  colonists carried: need < carried/5, or need < 200 with > 350 carried,
+  or need < 10 with > 150), dropping `min(max(carried/2, 5·need/4),
+  carried, 30000)`; no move that turn.
+- *Launch target*: the best-scoring planet other than here among those
+  with an AI threat mark (§ personality files), score = threat + 7, 5, 4,
+  3, 2 or 1 for within 50, 100, 150, 200, 300 or 500 ly; a planet already
+  chosen this turn is considered only with `Random(4) == 0` and then
+  outranks all others (LEGACY BUG candidate). With "computer players form
+  alliances", planets of human players are tried first. Ties: nearer.
+  None: the nearest other player's fleet. Move order, no task, warp 4.
+
+**Hub freighters.** A transport fleet works for one *source* planet (its
+hub, or the player's first planet with a starbase):
+1. The source's scarce mineral: the lowest of Ir/Bo/Ge; mode 0 normal, 1
+   when it is under half of a reference value, 2 under a quarter (the
+   reference is the minimum before the last update of the running
+   minimum, which is not always the second-lowest: LEGACY BUG).
+2. Every planet gets a score (0 = not a target), using travel time
+   `t = max(1, (distance + 24)/25)` years; planets other fleets of this
+   fleet's first design already target are skipped:
+   - the source itself (when not there): 25,000 if the fleet is full,
+     else `20 × percent full / t`, skipped under 35 %;
+   - own planets without starbase and not building a starbase: the
+     minerals there (mode 2: the scarce mineral only; mode 1: the scarce
+     one in full plus half the others; mode 0: all), as a percent of
+     capacity capped by the room left, `× 100 / t`; under 10 kT skipped;
+   - unowned planets the AI marked for pickup, and (Robotoid) small
+     foreign colonies when the source is crowded: fixed values over `t`.
+   - salvage within 200 ly (LEGACY BUG: the box test misses the absolute
+     value, so far salvage up or right qualifies); salvage exactly here
+     is loaded at once.
+3. Move order to the best: task transport; at the source unload all
+   minerals, elsewhere load all; mode 1 or 2 limits the load to the
+   scarce mineral (or, at owned targets, fills 66 % scarce, 33 % others).
+   Personality colonist rules: Turindrone carries 100,000 colonists from
+   a crowded source to smaller own planets; Robotoid moves part of the
+   source's population to small own colonies and carries 10,000–30,000
+   to foreign targets. Salvage targets get no task (LEGACY BUG: their
+   load orders do nothing).
+
+**Warp choice.** At the end of each personality's fleet work, every own
+fleet with a waypoint 1 gets its waypoint-1 warp reset:
+- Standing in another player's minefield: heavy field → 6; standard
+  field → 4 or 5 (`Random(10) < 4` → 4); SS races +1.
+- Otherwise the fastest warp up to 9 that the fleet's current fuel
+  covers (never below its ideal warp); capped at the engine's efficient
+  warp unless heading to an own planet whose starbase is not an Orbital
+  Fort; then lowered to the slowest warp with the same whole-year travel
+  time (not below 2); warp 11 when a stargate route applies.
+
 ## Open experiments
 
 - AI-3, AI-5 on a second game; AI-4 needs a colonizer with no target.
