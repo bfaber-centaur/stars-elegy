@@ -166,9 +166,17 @@ population-capacity purposes.
 
 ### Unknown / needs measurement
 
-- Exact growth formula above 25% capacity. One point is measured
-  (PG-002: 2704 → 2958 units at 27.04%); it rejects H0, H1 and H2 as
-  stated, and identifies nothing.
+- Exact growth formula above 25% capacity. Eleven consecutive turns are
+  measured (PG-002 and PG-003: 27.04% to 51.90%). They reject H0, H1 and H2
+  as stated, and identify nothing. Observed growth sits 0–4 units below
+  truncated 16/9 × (1 − x)².
+- `excessPop` across the crowded turns. It has not yet been extracted from
+  the preserved PG-002/PG-003 `.HST` files (apparatus `evidence/pg002/`,
+  `evidence/pg003/`). PG-001 showed this byte tracking the growth carry
+  exactly in the uncrowded case (same decoder: StarsAPI `PartialPlanetBlock`,
+  see "Binary confirmation from `.HST`"). Whether it means the same thing
+  under crowding is open, but it is an existing observable, not an
+  inaccessible quantity.
 - Exact handling of `excessPop` / growth carry when habitability or crowding
   introduces additional fractional modifiers.
 - Whether growth carry persists across ordinary gameplay changes to effective
@@ -194,8 +202,10 @@ Starting state, observed: PG001 at 2425, Endeavor population 270,400
 (27.04% of 1,000,000), read in the Stars! UI after advancing the registered
 base from 2407 by 18 empty-order turns (`turn PG001.M1`, oracle restarted
 between turns). The 2408 reading on this base was 53,500, matching PG-001.
-The carry at 2425 is *inferred* to be 0 from the PG-001 carry model; it is
-not binary-confirmed (Elegy does not decode `.HST` bodies).
+The carry at 2425 is *inferred* to be 0 from the PG-001 carry model.
+`excessPop` has not been extracted from the preserved 2425 `.HST` to check
+it. Elegy has no native body decoder, but the StarsAPI decoder used for the
+PG-001 binary confirmation exposes this byte.
 
 Predictions, written before the run (10% growth, 100% habitability, carry 0,
 factor applied to the uncrowded growth before truncation):
@@ -249,6 +259,124 @@ Limits: one turn, one planet, one run. The UI shows population in units of
 100 and does not show the carry. The experiment assumes nothing besides
 growth changed population.
 
+### Measured behavior — PG-003, crowded turns 2427–2436
+
+Status: MEASURED (ten consecutive turns, one planet, one run, read from the
+UI). Run on 2026-10-06 with the cloud oracle (`docs/ORACLE.md`).
+
+Question: how does growth proceed over ten more empty-order turns of PG001
+past 2426, and does PG-002's 2426 value (295,800) repeat on a fresh run?
+
+Procedure: from the `registered` snapshot (PG001 2407), 19 × `turn PG001.M1`
+to 2426 (oracle restarted between turns) while `stars-record` archived every
+`.HST`. Then, for each year 2426–2436, Stars! was restarted, PG001 opened and
+Endeavor's population read from the Status panel and the Summary (they agreed
+every year), and the next turn was run with `turn PG001.M1`. No orders were
+given.
+
+Predictions, written and committed before the run (commit `5472daa`):
+multi-step trajectories from the PG-002 observation (2958 units at 2426),
+10% growth, 100% habitability, growth truncated to whole units each year,
+carry ignored (`excessPop` at 2426 had not been extracted). H1 and H2 are the PG-002
+hypotheses; both were already rejected by the single PG-002 point and were
+listed only as reference curves.
+
+| Year | H1 16/9 × (1 − x)² | H2 (1 − x) / 0.75 |
+|---:|---:|---:|
+| 2427 | 3218 | 3235 |
+| 2428 | 3481 | 3526 |
+| 2429 | 3743 | 3830 |
+| 2430 | 4003 | 4145 |
+| 2431 | 4258 | 4468 |
+| 2432 | 4507 | 4797 |
+| 2433 | 4748 | 5129 |
+| 2434 | 4980 | 5462 |
+| 2435 | 5203 | 5792 |
+| 2436 | 5415 | 6116 |
+
+Observation (UI, Endeavor; units of 100 colonists). "x" is the start-of-year
+population over capacity (10,000 units). The H1 and H2 columns are
+*one-step* values computed afterwards from the observed previous year
+(10% × factor × previous population, before truncation), not predictions.
+
+| Year | Population | Units | Growth | x at start | Growth / uncrowded | H1 one-step | H2 one-step |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2426 | 295,800 | 2958 | 254 | 27.04% | 0.9393 | 255.89 | 263.05 |
+| 2427 | 321,800 | 3218 | 260 | 29.58% | 0.8790 | 260.78 | 277.74 |
+| 2428 | 347,900 | 3479 | 261 | 32.18% | 0.8111 | 263.14 | 290.99 |
+| 2429 | 374,000 | 3740 | 261 | 34.79% | 0.7502 | 263.00 | 302.49 |
+| 2430 | 399,800 | 3998 | 258 | 37.40% | 0.6898 | 260.55 | 312.17 |
+| 2431 | 425,300 | 4253 | 255 | 39.98% | 0.6378 | 256.04 | 319.95 |
+| 2432 | 450,000 | 4500 | 247 | 42.53% | 0.5808 | 249.72 | 325.89 |
+| 2433 | 473,900 | 4739 | 239 | 45.00% | 0.5311 | 242.00 | 330.00 |
+| 2434 | 497,100 | 4971 | 232 | 47.39% | 0.4896 | 233.19 | 332.43 |
+| 2435 | 519,000 | 5190 | 219 | 49.71% | 0.4406 | 223.50 | 333.32 |
+| 2436 | 540,200 | 5402 | 212 | 51.90% | 0.4085 | 213.47 | 332.85 |
+
+The 2426 row repeats PG-002. This run did not read 2425; its growth and
+x use PG-002's 2425 reading (2704 units).
+
+Result:
+
+- PG-002 repeated: 2426 read 295,800 on a second, independent run from the
+  registered base.
+- H2 as stated is rejected at every point; it overshoots by 9 to 121 units
+  per year.
+- H1 as stated (truncating the one-step value) is rejected at 10 of 11
+  points. It matches only 2427 (260). At every point the observed growth is
+  at or below the truncated H1 value, by 0 to 4 units (2435: 223 vs 219).
+  The shortfall does not grow steadily with x.
+- The multi-step H1 trajectory matched 2427 and then fell behind the
+  prediction, ending 13 units below at 2436 (5402 vs 5415).
+- Interpretation, not established: growth tracks a quadratic-like slowdown
+  closely but not exactly. Carry, rounding of the factor, or the order of
+  operations could each account for a shortfall of a few units; none of
+  these has been tested, and no formula is inferred here.
+- Next observable, before any further oracle turns: `excessPop` for
+  2407–2436 from the preserved PG-003 `.HST` files, decoded with the same
+  StarsAPI decoder used for PG-001. PG-001 established a persistent sub-unit
+  growth accumulator, and the shortfall here is a few units, so the carry
+  is the first column to add. It may not explain the shortfall.
+
+Context of the run, observed:
+
+- Messages shown: 2427–2430 and 2432–2435 had one message each (the empty
+  production queue). 2431 had two and 2436 had three; only 2436's were read:
+  the empty production queue, Energy tech level 9, and a Mass Driver 7
+  benefit. No population-related message was seen in 2436. 2431's second
+  message was not read.
+- Mines and factories stayed at 10 operable every year.
+- `.HST` header flags after each turn varied (`0x20`, `0xa0`, `0x60`,
+  `0x80`, `0x00`); not investigated.
+
+Evidence: the `.HST` for every year 2407–2436 of this run, the recorder's
+`observations.jsonl`, the UI screenshots for 2426–2436, the 2436 messages
+and a SHA-256 manifest are in the private `bfaber-centaur/stars-oracle-apparatus`
+repository, under `evidence/pg003/`. SHA-256 of `PG001.HST`:
+
+| Year | `PG001.HST` SHA-256 |
+|---:|---|
+| 2425 | `77708e98779956b1987f7e4ab50b985adf30b26a1d775e4047d4b6b9d41512b4` |
+| 2426 | `3b06aa39a905fadb6f6f1a22de89342434a4fb367b4319dd1554b319f3d4ef98` |
+| 2427 | `616adbed4cc0adb928245224b0ce5e5d110b46c16179dc8d9e529a2c65dd2932` |
+| 2428 | `f17036e80aa74d83302d12ad77d98162fac1db7a2988897620da3eeb3870797a` |
+| 2429 | `87b93f79b6979d31dbe96947b411dd3b565cbf332cf41728fbe22819706b2881` |
+| 2430 | `7590d3f3f2b4b3ad58bd8e3ccef8ebd15701a8fb856999f6758ae42ff2681e9b` |
+| 2431 | `f19299224102cd65eacf31211e3f94e455e84a8c16aafa1e7abfbde2d694339a` |
+| 2432 | `18b9e8785d73c2bf4168e3f3cab6ffe07e8676878cd0ac24f088c9d612940f27` |
+| 2433 | `4b8caa728f6fad66175784568ac8795984eaa11c0f7ca0bb6ec8dc6ce29f787b` |
+| 2434 | `03daf0e3c11c946045e5e4ecbb959e5a41600aae1b53d88b5f3e876ef490e3c5` |
+| 2435 | `eec07f3a3dc3ec5af0a196363dcaec822c4ad7400b241659748d3d27c23b54d0` |
+| 2436 | `aaf616d1ea0cb14a5fe848ed289ecb73bddf28dfce0366f8fcf4ff8fa667d97d` |
+
+These differ from PG-002's files for the same years; output bytes differ
+between runs (`docs/ORACLE.md`, "One PG001 turn").
+
+Limits: one planet, one run past 2426, one race and habitability. The UI
+shows population in units of 100 and does not show the carry; `excessPop`
+in the preserved files has not been extracted yet. The
+experiment assumes nothing besides growth changed population.
+
 ### Sources
 
 - Stars! User Manual, Population / Growth Rate / Maximum Population /
@@ -257,6 +385,8 @@ growth changed population.
 - Eight consecutive PG-001 `.HST` snapshots, years 2400-2407.
 - PG-002, 2026-10-06: PG001 2425 → 2426 from a freshly registered base
   (see "Measured behavior — PG-002" above).
+- PG-003, 2026-10-06: PG001 2426 → 2436, second run (see "Measured
+  behavior — PG-003" above).
 - Cloud oracle re-measurement, 2026-10-06 (`docs/ORACLE.md`): PG001 2407 →
   2408 was generated twice (once by hand, once scripted), both times from
   the same snapshot taken after the serial was accepted. Endeavor's
