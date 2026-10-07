@@ -408,9 +408,13 @@ half scale. Each year `L = 2S + research`; levels are taken while
 field at 3, energy): research 435 → level 3, stored 218 (a normal game
 levels with 45 left); next year 485 → `436 + 485 − 780` → level 4, stored
 71. Research 937 → level 4, stored 79; next year 954 → `158 + 954 − 1060`
-→ level 5, stored 26. Under Generalized Research the other fields get
-half their 15% share, and stolen research (Super Stealth) is halved
-rounding up (BINARY-ONLY).
+→ level 5, stored 26. Under Generalized Research the current field's
+half is treated like normal research (stored as half, rounded up), and
+each other field's 15% share `o` is added to its stored value as
+`trunc(o/2)` (CONFIRMED, KX-005 R2: research 1,995, energy current →
+stored 499, every other field 150 (`o` = 300); weapons at level 0 did not
+level). Stolen research (Super Stealth) is halved rounding up
+(BINARY-ONLY).
 
 ### Allocation
 
@@ -431,12 +435,33 @@ rounding up (BINARY-ONLY).
   to "same field"; "lowest field" stays set. CONFIRMED (KX-002 R3: energy
   → weapons → propulsion in one year, "lowest" kept; R4: leftover 100 to
   biotech, choice reset). Only a level-up in the current field switches
-  fields, also with Generalized Research (BINARY-ONLY).
+  fields: under Generalized Research a field fed by its 15% share levels
+  up in place and research stays in the current field (CONFIRMED, KX-005
+  R1: weapons 0 → 1 from a 300 share, carry 30; energy stayed current with
+  next "lowest" set).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
+- When the current field reaches 26 and the next-field choice is "same
+  field", research moves that year, with the leftover, to the lowest
+  field (first in field order on ties), and the stored choice stays "same
+  field" (CONFIRMED, KX-005 R3: energy 25 → 26 with 15 left over; weapons
+  became current with 15 stored, choice still "same"). For the rest of
+  that year the switch logic acts as if "lowest field" were chosen
+  (BINARY-ONLY).
+- **Messages.** Each level gained sends the player one message naming the
+  field, the new level and the field research continues in (Generalized
+  Research players get a variant). It is followed by one message per part
+  that the level makes available: a part the race may use (race-restricted
+  parts and Mystery Trader parts the player does not own are skipped)
+  whose requirement in that field equals the new level **and** whose other
+  five requirements are already met. CONFIRMED (KX-005 R1: energy 9 → 10
+  announced Bear Neutrino Barrier, Laser Battery and Temp Terraform ±11,
+  not Battle Nexus, which also needs electronics 19; a GR weapons 0 → 1
+  announced Radiation Terraform ±3). So a part is normally announced
+  when its last missing requirement is reached (follows from the rule).
 - Super Stealth: after every player's research, an SS player gains, per
   field, `s = trunc(trunc(spent/players)/2)` when `s > 1`, where `spent` is
   every player's research in that field this year, its own included, and
@@ -505,7 +530,7 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Mine (and Auto Mines) | race mine cost | CONFIRMED (PQ-001 cost 5; KX-001 M3b cost 8) |
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
-| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED for 100 and 70 (KX-002 T1, T2); Claim Adjuster BINARY-ONLY |
+| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -610,15 +635,44 @@ BINARY-ONLY where marked):
   the next click. The highest score wins, the first axis (gravity,
   temperature, radiation) on ties. CONFIRMED at one point (T2: from
   60/45/50 with ±3, temperature 101 against gravity 67, and both units went
-  to temperature); ties BINARY-ONLY.
+  to temperature). Ties go to the first axis (CONFIRMED, KX-005: 50/60/60
+  with gravity at the centre, temperature and radiation tied, one unit →
+  50/59/60).
 - **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
-  for Claim Adjuster (BINARY-ONLY); no minerals.
-- Auto Max Terraform builds Terraform Environment units up to the
-  capacity; Auto Min Terraform does so only while the planet's population
-  would shrink this year or its habitability is 0 or less. Orbital
-  Adjuster fleets move a planet one click per part each year with the
-  fleet owner's tech and the planet owner's habitat, away from the centre
-  for an enemy. All BINARY-ONLY.
+  for Claim Adjuster (CONFIRMED, KX-005: a CA planet with 120 resources
+  and Terraform ×3 built two and left ×1 at 41%); no minerals.
+- **Tech used.** Production uses the owner's tech before this year's
+  research; the Claim Adjuster year-end step and Orbital Adjusters run
+  after research and use the levels just reached (CONFIRMED, KX-005: both
+  players went from energy 3 to 5 during the year; production still
+  reached ±3 in temperature, the CA planets and the adjusters ±7).
+- **Auto Max Terraform** builds units up to the capacity, whatever the
+  population (CONFIRMED, KX-005: ×9 with capacity 6 built 6; 50/60/58 →
+  50/57/55). **Auto Min Terraform** builds up to the capacity only when
+  the planet's population change this year is negative or its
+  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED,
+  KX-005: a growing planet built none; a planet at −1% habitability built
+  its one unit; an overcrowded planet at 83% built 6). The count of an
+  auto item is a per-year limit and the item stays in the queue.
+- **Orbital Adjusters** (CONFIRMED, KX-005 T0–T2). After movement, every
+  fleet orbiting an owned planet with Orbital Adjusters makes one click
+  per adjuster (whatever the part's value) on that planet, with the
+  **fleet owner's** reach (its terraform parts, at its levels after this
+  year's research) and the **planet owner's** habitat. A fleet that
+  arrived this year counts.
+  - Fleet owner = planet owner, or the fleet owner treats the planet owner
+    as a friend: each click improves the planet as a production unit
+    would, from `orig ± reach`, starbase or not (planet 60/60/60, reach
+    gravity 11, temperature 7, radiation 3: two clicks → 60/58/60, also on
+    a planet with a starbase).
+  - Otherwise (neutral or enemy): nothing if the planet has a starbase.
+    Else each click worsens the planet: per axis the target is whichever
+    of `orig − reach` and `orig + reach` (clipped to 1–99) is farther from
+    the owner's centre, provided it is farther than the current value
+    (the lower end on a tie), and the axis is chosen by the same score
+    (60/60/60 → 62/60/60: gravity toward 71 scores 137 against 67).
+  - The fleet owner gets a message per planet changed, the planet owner
+    one too when its habitability changed.
 - **Claim Adjuster.** At the end of the year (after production and growth)
   every axis of each CA planet moves in one step to the full reachable
   value, as far as the reach rule above allows, with no items built and no
@@ -627,10 +681,15 @@ BINARY-ONLY where marked):
   year used the old environment; TK-118..121 at reach 15 and 30 after a
   capture). The CA owner's terraform parts follow the normal tech and LRT
   rules (Total Terraform still needs TT). The original value of an axis
-  can also drift one click toward the centre: per planet and year, a
-  random axis, then a 1-in-10 roll, then a roll passed when the population
-  is 1000 units or more or `random(1000) <` the population (BINARY-ONLY;
-  no drift in the one KX-003 planet-year that could show it).
+  can also drift one click toward the centre, before the year-end step
+  (so the reach is measured from the new original): for each CA planet in
+  planet order, `rand(3)` picks an axis; if that axis's original value
+  differs from the centre (and the axis is not immune), `rand(10)` must
+  be 0, then the drift happens if the population (after growth) is 1000
+  units or more, else if `rand(1000) <` the population. Message to the
+  owner. CONFIRMED (KX-005: 17 runs from 15 random streams, 13 drifts on
+  8 CA planets, every one reproduced by replaying these draws, and none
+  where the replay gave none).
 
 ## Fleet movement
 
@@ -835,9 +894,12 @@ warp 3 gains 50 (raw 90, capped).
    `min(rem, trunc((rem + moved + 4)/5))` (a fifth of `w²`, rounded up). It
    heads for the target's current position, using the distance, arrival
    and rounding rules above with `A = min(trunc(D + 0.9999), step)`.
-3. A chaser that arrives on its target has finished. If that target is
-   itself a chaser that has not finished, the target stops for the year
-   (its waypoint is then settled by rule 8 below).
+3. A chaser that arrives on its target has finished, and the target is
+   marked as having finished moving. If that target is itself a chaser
+   that has not finished, it therefore stops for the year (its waypoint is
+   then settled by rule 8 below), and any other chaser of it now takes
+   its whole remainder in one step (rule 2). LEGACY BUG (CONFIRMED; see
+   "Chain freeze" below).
 4. Otherwise `moved += step`, `rem −= step`, and it stays deferred while
    `rem > 0`.
 5. Fuel is charged on the year's total distance (`moved + step`), refunding
@@ -880,6 +942,43 @@ after the year):
 | FM-003 21/22, mutual chase, warp 1, gap 6 | 1150 → 1151 | 1156 → 1155 | neither; waypoints now 1155 and 1151 |
 | FM-003 0–2, A chases B, B chases Z, Z +60 | A 1200 → 1215 | B stays 1215 | A completes; B keeps chasing Z, waypoint 1250 |
 | FM-002 41/42, C3 chases T3 head-on | T3 1080 → 1055 | C3 1040 → 1055 | C3 completes; T3 keeps its own waypoint |
+
+#### Chain freeze (LEGACY BUG, CONFIRMED)
+
+The original uses one "finished moving" mark both for "this fleet has used
+its movement" and for "a chaser landed on this fleet". So whether a
+chaser in a chain moves at all depends on fleet numbers, not on geometry:
+
+- With A chasing B and B chasing C, numbered **A < B < C**: C (ordinary
+  or chasing) and B are both deferred. A moves first in each round; if
+  its first step reaches B's start, B is marked finished and never
+  moves that year. A ends on B's start.
+- Numbered **C < B < A** (or any order where B's turn comes before A
+  reaches it): B moves toward C in its rounds (the whole remainder in one
+  step once C has finished), then A follows B; each covers the full
+  distance its speed allows.
+
+Measured: FM-003 (A 1200 chasing B 1215, B chasing Z, Z moving +60; ids
+A < B < Z: B did not move; B < A < Z: all ended at 1250). MF-02 (stars-elegy
+#47, PARITY "Minefield lane", "Followers"): C flies 81 ly, B 10 ly behind
+follows C, A 10 ly behind B follows B; numbered A < B < C, A reached B's
+start in its first 17-ly step and B never moved, 6 of 6 chains. Numbered
+C < B < A, B and A each moved their whole remainder in one step after
+their target finished. In a minefield the numbering also changes the stop
+odds, since the check uses each step's length: a frozen fleet does not
+move, and a fleet moving its whole remainder in one step crosses at a
+higher effective warp (A was stopped in 2 of 6 C < B < A chains;
+`OBJECTS.md`, minefields).
+
+Binary (stars-decomp `fleet-movement.md`, "Following a fleet"): landing
+on the target sets the target's processed bit, which is the bit a
+deferred chaser checks to know it is done.
+
+**Implementing:** Elegy reproduces the freeze behind a named switch
+(project default for deterministic LEGACY BUGs), with the processed mark
+shared exactly as above. With the switch off, a chaser landing on a
+waiting chaser would leave the target to move in its own rounds; that
+alternative is Elegy's choice, not the original's.
 
 ### Refuelling at a starbase (CONFIRMED, FM-004 DK)
 
@@ -1203,7 +1302,7 @@ reach are listed at the end of its section in `PARITY.md`.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001, KX-001..004 and TK-117 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001..005 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that

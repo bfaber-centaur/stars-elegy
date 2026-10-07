@@ -1503,7 +1503,11 @@ branch at an index where `mod 100` also matches.
 
 ### KX-005 — research, tech progression and terraforming
 
-Status: PREDICTIONS (committed before any case ran).
+Status: CONFIRMED (research GR under slow tech, GR-fed level-ups, part
+announcements, level 26; terraform ties, Auto Min/Max, Claim Adjuster cost
+and drift, Orbital Adjusters), with two prediction misses explained below.
+Predictions were committed before any case ran (stars-elegy `0b610f8`).
+Rules: `KERNEL.md` "Research" and "Terraforming".
 
 Question: which research and terraforming rules in `KERNEL.md` are still
 BINARY-ONLY, and do they hold? Already settled elsewhere: level cost,
@@ -1628,6 +1632,57 @@ from this state and is fitted if 4 misses), planets in order 4, 5, 6, 7,
 
 Runs: T0 (neutral) at all 15 cycles values; T1 (friend) at 3700; T2
 (enemy) at 1165.
+
+#### Results
+
+Research (R1–R3, one run each; no randomness involved):
+
+- R1: as predicted for both players, every stored value and level. Player
+  0's GR message for weapons 1 named energy as the field continuing, and
+  one part message (Radiation Terraform ±3). Player 1 got its level-up
+  message and exactly three part messages (Bear Neutrino Barrier, Laser
+  Battery, Temp Terraform ±11); Battle Nexus was not announced.
+- R2: as predicted (499/150×5; 2018), no messages.
+- R3: energy 26, weapons current with 15 stored, energy 0, level-up
+  message naming weapons, as predicted. **Miss:** the stored next-field
+  choice stayed "same field", not "lowest". Re-reading the binary: the
+  promotion to "lowest" is held in a local variable; the switch writes
+  only the new current field and keeps the stored choice. `KERNEL.md`
+  states the observed rule.
+- The non-GR level-up message is event id 0x50 in the `.M` file (the
+  private note had 0x150; the id arithmetic wraps).
+
+Terraforming (T0 at 15 cycles values, T1, T2):
+
+- Production on player 0's planets was identical in all 17 runs and as
+  predicted: planet 0 → 50/59/60 (tie to temperature); planet 1: six
+  units, 50/57/55, Auto Max ×9 kept; planet 2: nothing; planet 3: one
+  unit, 50/85/50; planet 9 (overcrowded, population 16000 → 15667): six
+  units, 50/57/57. Claim Adjuster planet 5: queue left Terraform ×1 at
+  41% (cost 50).
+- **Miss (prediction setup, not a rule):** both players researched
+  during the year (planets without a queue send everything to research)
+  and went from energy 3 to 5, which gives Temp Terraform ±7. Production
+  had already run, so it used ±3; the Claim Adjuster year-end step and
+  the Orbital Adjusters ran after research and used ±7. Year-end CA
+  environment was 50/53/57, not the predicted 50/57/57; recomputed with
+  reach 11/7/3 every CA planet matches (and 50/52/57 or 50/53/56 after a
+  temperature or radiation drift).
+- Orbital Adjusters: neutral (T0, all 15 runs) and enemy (T2): planets 15
+  and 21 → 62/60/60 as predicted (gravity, unchanged by the energy
+  change); planet 19 (starbase) unchanged. Friend (T1): 60/58/60 on all
+  three, including the starbase planet; predicted 58/60/60 with the
+  start-of-year reach, 60/58/60 with the reach after research (temperature
+  toward 53 scores higher than gravity). The fleet arriving that year
+  terraformed in every run. Messages: friendly 0x12c, hostile 0x15a, to
+  both players, with (fleet, planet, old habitability, new habitability).
+- Claim Adjuster drift: 17 of 17 runs exactly as replayed at offset 4,
+  13 drifts in all (the predicted table above, plus T1 at 1098 and T2 at
+  3460 as for those ticks). A gravity drift on planet 6 changed only the
+  original value (its target stays at the centre). Each drift sent the
+  owner message 0x15c.
+
+Raw evidence: stars-oracle-apparatus `evidence/kx005/`.
 
 ## Fleet Movement
 
