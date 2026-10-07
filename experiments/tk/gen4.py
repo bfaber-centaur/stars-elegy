@@ -116,9 +116,40 @@ def artifact_run(name, slow):
     return r
 
 
+def owned_artifact_run():
+    # TK-303/304 set only the file flag on owned planets, which the host ignores when the record carries an
+    # installations block; Combat Lab now also sets the block's artifact bit. Predictions follow the binary
+    # reading: the artifact step runs after every resolution with an owner, so a defender that holds gets it.
+    r = cb_run('tk306', 'ancient artifacts on owned planets, random events on', p0=(10,) * 6,
+               cycles=SIX_CYCLES[:3])
+    r.base = 'opt00'
+    r.h(NOBODY)
+    r.case('C1', 'artifact', 'Freighter (100) captures player 1 planet 14 (P 10, artifact) before movement')
+    r.orbit(14, f'{D_FREIGHTER}:1', plan=1, cargo=(0, 0, 0, 100), task='unload')
+    r.target(14, 10, mines=0, factories=0, defenses=0, artifact=1)
+    r.expect('planet', (14,), dict(owner=0, artifact=False))
+    r.expect('art', (14,), '0x05e to player 0 (the new owner): planet 14, a field 0-5, points 100-400')
+    r.case('C2', 'artifact', 'Freighter (10) unloads on player 1 planet 3 (P 100, artifact): the defender holds')
+    r.orbit(3, f'{D_FREIGHTER}:1', plan=1, cargo=(0, 0, 0, 10), task='unload')
+    r.target(3, 100, mines=0, factories=0, defenses=0, artifact=1)
+    r.expect('planet', (3,), dict(owner=1, artifact=False))
+    r.expect('art', (3,), '0x05e to player 1 (the defender): planet 3, points 100-400; nothing to player 0')
+    r.case('C3', 'artifact', 'player 1 planet 9 (P 87, artifact), no fleet')
+    r.target(9, 87, mines=0, factories=0, defenses=0, artifact=1)
+    r.expect('planet', (9,), dict(owner=1, artifact=True))
+    r.expect('art', (9,), 'no 0x05e; flag kept')
+    r.case('C4', 'artifact', 'player 0 planet 11 (P 100, artifact): a player 0 Freighter unloads 10 colonists '
+           'onto it')
+    r.orbit(11, f'{D_FREIGHTER}:1', plan=1, cargo=(0, 0, 0, 10), task='unload')
+    r.target(11, 100, owner=0, mines=0, factories=0, defenses=0, artifact=1)
+    r.expect('planet', (11,), dict(owner=0, artifact=True))
+    r.expect('art', (11,), 'no 0x05e; flag kept (inferred: unloading on one\'s own planet is not a landing)')
+    return r
+
+
 def runs():
     out = [defense_run('tk301', 10), defense_run('tk302', 16),
-           artifact_run('tk303', False), artifact_run('tk304', True)]
+           artifact_run('tk303', False), artifact_run('tk304', True), owned_artifact_run()]
 
     # ------------------------------------------------------------------ TK-305
     # Twelve designs with 2 Hush-a-Boom each: rgTechTrader for Hush-a-Boom reaches 24 (cap 25).
