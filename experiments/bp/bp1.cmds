@@ -1,0 +1,20 @@
+# BP-1: plans 0..6, fleets on plans 3/6/2/5, delete plan 3.
+plans
+plan select 0
+plan copy P5
+plan tactic 1
+plan copy P6
+plan who 3
+plans close
+fleet first
+fleet plan 3
+fleet next
+fleet plan 5
+fleet next
+fleet plan 2
+fleet next
+fleet plan 6
+plans
+plan select 3
+plan delete confirm
+plans close

@@ -1,0 +1,17 @@
+# XF-1: manual cargo transfers at the own homeworld (load and unload), an unowned planet and a foreign homeworld.
+fleet first
+fleet xfer
+xfer ir -15
+xfer ge 5
+xfer ok
+fleet next
+fleet xfer
+xfer col 3
+xfer ir 12
+xfer ok
+fleet next
+fleet xfer
+xfer ir 25
+xfer col 2
+xfer bo 7
+xfer ok
