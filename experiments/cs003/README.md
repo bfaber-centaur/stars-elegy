@@ -29,3 +29,30 @@ Run: `python3 experiments/cs003/gen.py OUT`, then per run
 `tools/fleetlab/combatlab build CB.HST OUT/cs003X.spec start.HST` and
 `tools/fleetlab/pinned-turn start.HST BASEDIR RUN`. Raw files: private
 apparatus repository, `evidence/cs/cs-003/`.
+
+`experiments/cs003/check.py RUN_W RUN_S RUN_B RUN_C RUN_C2 designer.tsv`
+compares every case (`results.tsv`); `designer.tsv` is typed from the
+CS-003-D screenshots. `apply.py` then clears the observed columns from
+`data/components.json`.
+
+CS-003-C2 was added after CS-003-C (its predictions committed before it
+ran): with two torpedoes per salvo, 1 hit of `2d` looks like 2 hits of
+`d`, and the Alpha Torpedo's 5 dp was below the Hulk stack's damage
+resolution. C2 fires one torpedo per round at a single armed target.
+
+## Result (run 2026-10-07, pinned generation, cycles 20000)
+
+80 of 80 cases as predicted (77 directly; Alpha Torpedo, Juggernaut and
+Doomsday Missile not told apart by CS-003-C and confirmed by CS-003-C2).
+All 63 rows are now CONFIRMED; `data/components.json` has no BINARY-ONLY
+row. Details and limits: `docs/PARITY.md`, "The remaining BINARY-ONLY
+columns (CS-003)".
+
+| Run | Cases | Result |
+|---|---:|---|
+| CS-003-D designer | 7 | 7 match |
+| CS-003-W warp 10, fuel transports | 20 | 20 match (non-rated engines lost 58 of 660 ships, rated 0 of 300) |
+| CS-003-S sweeping, laying | 19 | 19 match |
+| CS-003-B bombing, colonizing, mining | 16 | 16 match |
+| CS-003-C torpedoes, range-0 beams | 15 | 12 match, 3 not discriminated |
+| CS-003-C2 single torpedoes | 3 | 3 match |

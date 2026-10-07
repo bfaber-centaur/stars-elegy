@@ -26,30 +26,33 @@ Each row of `data/components.json` has a `status`:
   read from the original program only. All other columns of the row were
   observed.
 
-| Category | Rows | CONFIRMED | Rows with a BINARY-ONLY column |
-|---|---:|---:|---:|
-| hull | 32 | 28 | 4 (`fuel_transport`, `mine_layer_multiplier`) |
-| starbase_hull | 5 | 5 | 0 |
-| engine | 16 | 0 | 16 (`warp10_rated`, `battle_warp`; Enigma Pulsar also `cloak_points`, `battle_speed_half_steps`) |
-| scanner | 16 | 16 | 0 |
-| shield | 10 | 10 | 0 |
-| armor | 12 | 11 | 1 (Mega Poly Shell scanner) |
-| beam | 24 | 7 | 17 (`kind`, `mines_swept` of plain beams; Multi Contained Munition scanner and bomb values) |
-| torpedo | 12 | 0 | 12 (`kind`: torpedo or capital missile) |
-| bomb | 15 | 5 | 10 (zero `min_kill` / `installations`, Retro Bomb values) |
-| mining_robot | 8 | 6 | 2 |
-| mine_layer | 10 | 10 | 0 |
-| orbital | 16 | 16 | 0 |
-| electrical | 17 | 17 | 0 |
-| mechanical | 11 | 10 | 1 (OCM `colonizes`) |
-| planetary | 15 | 15 | 0 |
-| terraform | 20 | 20 | 0 |
-| **total** | **239** | **176** | **63** |
+All 239 rows are CONFIRMED. The `binary_only` lists are empty; the field
+stays so that a future table can mark columns the same way.
+
+CS-001 and CS-002 observed 176 rows completely. CS-003 observed the
+columns they could not reach, in 63 rows:
+
+| Category | Rows | Columns | Observed by |
+|---|---:|---|---|
+| hull | 4 | `fuel_transport`, `mine_layer_multiplier` | fuel gained by stationary fleets; fields laid (CS-003-W, -S; OB-002) |
+| engine | 16 | `warp10_rated`, `battle_warp`; Enigma Pulsar `cloak_points`, `battle_speed_half_steps` | ships lost at warp 10 (CS-003-W); designer moves and cloak (CB-000, CS-003-D) |
+| armor | 1 | Mega Poly Shell scanner | designer scanner range (CS-003-D) |
+| beam | 17 | `kind`, `mines_swept`; Multi Contained Munition scanner and bomb values | mines swept (CS-003-S); hits on a starbase (CS-003-C); designer (CS-003-D); bombing (CS-003-B, TK T-18) |
+| torpedo | 12 | `kind` | damage per hit on an unshielded target (CS-003-C, -C2) |
+| bomb | 10 | zero `min_kill` / `installations`, Retro Bomb values | bombing (CS-003-B) |
+| mining_robot | 2 | Alien Miner `battle_speed_half_steps`, Orbital Adjuster `mining_rate` | designer moves (CS-003-D); remote mining (CS-003-B) |
+| mechanical | 1 | Orbital Construction Module `colonizes` | colonizing (CS-003-B) |
+
+One limit of the bomb rows: `min_kill` 0 of LBU-17, LBU-32, LBU-74 and
+Hush-a-Boom was observed as "less than 2 units". A minimum of 1 unit (100
+colonists) would act identically, because a bomb with a kill rate always
+kills at least 1 unit (TAKEOVER.md).
 
 Name, tech requirement, mass, base cost, race restriction and Mystery
 Trader flag were observed for all 239 rows.
 
-What was observed (details in `PARITY.md`, "Components (CS-001, CS-002)"):
+What was observed (details in `PARITY.md`, "Components (CS-001, CS-002,
+CS-003)"):
 
 - **Technology Browser**, 13 race setups (PRT, LRT, tech 0 or 26, Mystery
   Trader items owned or not): every item's name, displayed mineral and
@@ -61,6 +64,10 @@ What was observed (details in `PARITY.md`, "Components (CS-001, CS-002)"):
 - **Planet status panel**: defense coverage of all five defense types.
 - **Movement** (CS-002): the fuel factor of all 16 engines at warps 2–10
   and their free warps, 144 fleets.
+- **Turns built for each remaining column** (CS-003, 80 cases): warp-10
+  losses per engine, fuel transports, mine sweeping by every plain beam,
+  mine laying, bombing, colonizing, remote mining, torpedo and missile
+  damage, and designer readouts (moves, cloak, jam, scanner range).
 
 ## Columns
 
@@ -222,20 +229,30 @@ Warp-10 losses (MEASURED, CS-002): of 22 ships moving at warp 10 with
 engines not rated for it, 3 were destroyed (each from a different 2-ship
 fleet); none of 10 ships with rated engines. A destroyed ship's fleet paid
 the full year's fuel first, then kept only the survivors' share of fuel
-and cargo (`trunc(x·survivors/ships)`). The 1-in-10 chance per ship
-(KERNEL.md) is BINARY-ONLY.
+and cargo (`trunc(x·survivors/ships)`).
 
-## Mine sweeping, laying and remote mining (BINARY-ONLY)
+Warp-10 rating (CONFIRMED, CS-003-W): 60 ships per engine at warp 10.
+Every engine with `warp10_rated` false lost ships (1 to 10 of 60 each, 58
+of 660 in all, 8.8%); the five rated engines lost none of 300. The loss
+pattern per 10-ship fleet fits KERNEL.md's 1-in-10 chance per ship
+(MEASURED; the chance itself is read from the program).
 
-- **Sweeping**: per beam stack, `count × damage × r²` mines a year, where
-  `r` = the weapon's range, 4 for a gatling, range + 1 on a starbase;
-  sappers sweep nothing. `mines_swept` in the table is this for one weapon
-  on a ship (`damage × r²`).
-- **Laying**: `Σ count × mines_per_year` per field type a year; each Multi
-  Contained Munition adds 40 standard mines; ×2 on Mini and Super Mine
-  Layer hulls.
+## Mine sweeping, laying and remote mining
+
+- **Sweeping** (CONFIRMED, OBJECTS.md; per beam CS-003-S): per beam stack,
+  `count × damage × r²` mines a year, where `r` = the weapon's range, 4
+  for a gatling, range + 1 on a starbase; sappers sweep nothing.
+  `mines_swept` in the table is this for one weapon on a ship
+  (`damage × r²`). Each plain beam and the Multi Contained Munition swept
+  exactly its `mines_swept`; the three range-0 beams swept nothing.
+- **Laying** (CONFIRMED, OBJECTS.md; Super Mine Layer CS-003-S):
+  `Σ count × mines_per_year` per field type a year; each Multi Contained
+  Munition adds 40 standard mines; ×2 on Mini and Super Mine Layer hulls.
 - **Remote mining**: `Σ count × mining_rate` kT a year over a fleet's
-  robots, at most 4000.
+  robots, at most 4000 (KERNEL.md "Remote mining"). MEASURED for one
+  case (CS-003-B): two Robo-Midget Miners at concentrations 100 added 10
+  kT of each mineral; two Orbital Adjusters (`mining_rate` 0) added
+  nothing. The 4000 cap is read from the program.
 
 ## Minefields (CONFIRMED in the Technology Browser, CS-001)
 
@@ -261,7 +278,8 @@ allows. What coverage does in bombing is not specified here.
 `cloak_points` convert to a percentage as in SCANNING.md "Fleet cloak".
 The browser states that percentage for each cloaking part (CONFIRMED for
 every part with cloak points except Enigma Pulsar, whose description does
-not give one).
+not give one). The Enigma Pulsar's 20 points were confirmed in the ship
+designer: 10% for one (CB-000) and 40% for four (CS-003-D).
 
 ## Oddities
 

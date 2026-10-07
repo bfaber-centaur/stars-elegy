@@ -827,6 +827,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   homeworld's 10 defenses' coverage for the best defense the tech allows.
 - CS-002: designs using engines the race may not build (HE-only, IFE,
   NRSE) were kept at tech 26; parts above the owner's tech are not.
+- CS-003: a Combat Lab player's designs are read in the designer after
+  one generation: copy the run's `raw/after/CB.*` into the games
+  directory, open `cb.m1`, dismiss "Note: 2 years of data read" with
+  Return, then F4. The designer opens on "Existing Designs"; click the
+  combo (730, 212) twice and step with Down as for hulls. The panel shows
+  mass, max fuel, armor, shields, cloak/jam, initiative/moves and, when
+  the design has any scanning part, "Scanner Range" normal / penetrating.
+- Battle records (`combatlab dump` hit lines): torpedo and missile hits
+  carry flag 0x04, missile hits also 0x08. Records with 0x80 added left
+  the target unchanged; against the unshielded targets of CS-003-C2 there
+  was one for each shot that missed. The CS-003 checker skips them.
 
 ## Known fragility
 
