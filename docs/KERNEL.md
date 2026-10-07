@@ -49,9 +49,10 @@ One year, in order:
    load).
 3. Mineral packets, wormholes and other space objects move; then fleets
    move (see Movement).
-4. Production, per planet, in this order inside the phase: mining,
-   resources, research tax, production queue, then population growth for
-   every planet, then research level-ups, then random events.
+4. Production, in this order inside the phase: mining for every planet,
+   then per planet resources, research tax and production queue, then
+   population growth for every planet, then research level-ups, then
+   random events.
    CONFIRMED (PG-001..003, PQ-001): mining and resources use the population
    **before** this year's growth; installation caps for auto items use
    population **after** growth (see Production); research uses this year's
@@ -189,7 +190,8 @@ Vectors, BINARY-ONLY (start `(P, k)`, max, G, hab → result):
 `t = max(1, trunc(|hab|·P / 10))` hundredths of a unit die:
 `q = trunc(t/100)`, `r = t − 100q`; `k −= r`, and if `k < 0`, `k += 100`
 and `q += 1`; `P −= q`. (Matches the documented `|hab|/10` percent per
-year.) Vectors: `P 1000, k 0, hab −5` → `995, 0`;
+year.) Growth and deaths are computed only for owned planets with a
+non-zero population, so the `max(1, …)` never acts on an empty planet. Vectors: `P 1000, k 0, hab −5` → `995, 0`;
 `P 1234, k 10, hab −15` → `1215, 59`.
 
 ### Duplicate-serial penalty (BINARY-ONLY)
@@ -235,9 +237,27 @@ every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
 | mines working this year | `min(installed, operable with P' = P)`; AR: `trunc(sqrt(P))` | CONFIRMED non-AR (PG mining) |
 
 `P'` is `P` for the year's mining and resources, and `P` plus this year's
-growth when production caps are computed. Production caps:
-`cap = max(maximum, operable) − installed` for both auto items and plain
-installation orders (CONFIRMED, PQ C09, C10, C13).
+growth when production caps are computed. Production caps differ by order
+kind:
+
+- **Auto Mines, Auto Factories, Auto Defenses** build at most
+  `operable − installed` this year (and at most their count). CONFIRMED
+  (PQ C04, C09, C13, C14). Auto Alchemy is not an installation; its count
+  is ignored (PQ C05).
+- **Plain Mine, Factory and Defenses orders** larger than
+  `max(maximum, operable) − installed` are cut to it when the queue
+  reaches them, with a message; the order is edited permanently, and
+  removed if that is 0 or less. CONFIRMED (PQ C10).
+
+Vectors (PG race, `Mo = Fo = 10`, 100% planet, so maximum mines and
+factories are 1000 and maximum defenses 100):
+
+- C09: 48 mines, population 550 after growth → operable 55; Auto Mines ×100
+  builds 7 (`max(maximum, operable) − installed` would allow 952).
+- C13: 40 defenses, population 1111 after growth → operable
+  `ceil(1111/25) = 45`; Auto Defenses ×100 builds 5 (not 60).
+- C10: 995 factories, Factory ×10 → cut to `max(1000, operable) − 995 = 5`;
+  factories end at 1000.
 
 ## Mining
 
@@ -255,11 +275,16 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    `(amt mod 100)/100` (one `rand(100) < amt mod 100` draw per mineral with a
    non-zero remainder). The `+1` mechanism is BINARY-ONLY; the oracle's +0/+1
    pattern is consistent with it but its draws are correlated (see
-   Conventions).
+   Conventions). Draw order (BINARY-ONLY): every planet is mined before any
+   planet's production, planets in id order, and within a planet ironium,
+   boranium, germanium.
 4. Depletion uses `p = trunc(prod/100)` (before `eff` and before the random
    +1) and the stored `conc` clamped for this purpose to
    `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
    repeat while `p > 0` and stored `conc > 1`:
+   - `cc` from the current stored `conc` (re-evaluated on every repetition,
+     so it changes when `conc` drops below 25 or 5 within the year;
+     BINARY-ONLY);
    - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
    - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
    - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
@@ -329,7 +354,11 @@ settings and slower tech: BINARY-ONLY.
 - When a level is gained in the current field and the "next field" choice
   is not "same field", the leftover moves to the new field and the current
   field's accumulation becomes 0; "lowest field" picks the lowest level,
-  first in field order on ties (BINARY-ONLY).
+  first in field order on ties (BINARY-ONLY). The new field is checked for
+  level-ups the same year with that leftover. An explicit next-field
+  choice is used once and then resets to "same field"; "lowest field"
+  stays set. Only a level-up in the current field switches fields, also
+  with Generalized Research (BINARY-ONLY).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (BINARY-ONLY).
@@ -370,7 +399,9 @@ research. Its predictions table doubles as the test vectors.
 Additional rules, BINARY-ONLY:
 
 - A planet with a production queue of zero items contributes nothing to
-  research that year.
+  research that year, not even the research tax. (A queue emptied during
+  the year is removed, so the next year takes the no-queue path and sends
+  everything to research.)
 - Resources from ships scrapped at a planet this year with Ultimate
   Recycling (`x`) raise that planet's production resources `r` to
   `r + trunc(x·r/(x + r))`.
@@ -433,7 +464,8 @@ For a move of `L` light-years at warp `w`:
    `f(w)`.
 2. Assign the fleet's cargo (minerals and colonists in kT; fuel has no
    mass) to designs in order of increasing `f(w)`, each up to `n ×` its cargo
-   capacity.
+   capacity. Designs with equal `f(w)` keep the fleet's own design order
+   (BINARY-ONLY).
 3. Cost in tenths of a mg per design: `trunc(f(w)·L·(n·m + cargo assigned)
    / 2000)`; designs with `f(w) = 0` cost nothing.
 4. Fleet cost in mg: `trunc((Σ tenths + 9) / 10)` (rounded up once per
@@ -475,7 +507,15 @@ Vectors (CONFIRMED):
   `trunc(fuel / trunc(C1000/1000))`; `C1000 = 0` means unlimited). A fleet with enough fuel for
   the whole leg uses `max(R, w²)` instead.
 - If the allowed distance exceeds `R`, the fleet moves exactly `R` (placed
-  by rule 3 above), its fuel becomes 0, and the warp of its leg is lowered
+  by rule 3 above) and its fuel becomes 0. Otherwise it pays the cost of
+  the distance it moves, never going below 0.
+- **Running dry.** After paying, the fleet has run dry when all of these
+  hold: its fuel is 0; it was limited by `R` or paid a non-zero cost; it
+  could not afford the whole leg at the start of the year; and it does not
+  reach its destination this year (`A + 0.99999 ≤ D`), or `R = 0`. Paying
+  the full cost of this year's move does not prevent it (FM-002 24 below).
+  A fleet that has run dry gets the out-of-fuel message, gains no ram-scoop
+  fuel this year, and the warp of its leg is lowered
   to the fastest warp at which the whole leg would cost no fuel (the
   lowest warp with a non-zero cost, minus one). CONFIRMED for QJ5, where
   this is warp 1; Fuel Mizer → 4, Settler's Delight → 6, Radiating
@@ -486,7 +526,12 @@ Vectors (CONFIRMED):
   free warp at all → the warp is left unchanged (a different message);
   every J-RC3 engine is free at warp 1, so this should not arise.
 - A fleet with `R = 0` does not move.
-- With exactly enough fuel it moves the full distance.
+- With exactly enough fuel for this year's move it moves the full
+  distance, and it has still run dry if that leaves 0 and the destination
+  is further away. A fleet that arrives with exactly enough fuel has not.
+- A fleet that cannot afford the whole leg but keeps some fuel after this
+  year's move has not run dry: it keeps its warp (BINARY-ONLY; no corpus
+  case).
 - Top-up (CONFIRMED, FM-004 TU): a fleet that had enough fuel for the whole
   leg at the start of the year ends the year with at least the fuel the
   rest of the leg needs (capped at its tank; the cap was not exercised), so
@@ -495,6 +540,18 @@ Vectors (CONFIRMED):
 Vectors (CONFIRMED, FM-001, QJ5 scout at warp 6 heading +160 x; fuel →
 distance moved, end fuel 0, warp set to 1): fuel 1 → 6 ly, 3 → 18, 5 → 30,
 fuel 0 → no move. At warp 9, fuel 10 → 12 ly.
+
+Running dry while paying in full (CONFIRMED, FM-002, QJ5 scout, 18 kT,
+warp 6, `C1000 = 162`):
+
+| Fleet | Leg | Fuel | `R` | Moves | Pays | End fuel | Warp after | Event |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| 24 | +100 x | 6 | 37 | 36 | 6 | 0 | 1 | out of fuel |
+| 29 | +5 x | 1 | 6 | 5 (arrives) | 1 | 0 | 6 | completed orders only |
+
+Fleet 24 is not limited by `R` (37 ≥ 36) and pays exactly its fuel
+(`trunc(180·36·18/2000) = 58` tenths → 6 mg), but it needed 17 mg for the
+100 ly leg and stops 64 ly short, so it has run dry.
 
 Vectors (CONFIRMED, FM-004 LR, each heading +100 x, ends with 0 mg; these
 are the cases where `R` and `trunc(fuel·20000/M)` differ by 1 ly):
@@ -558,17 +615,50 @@ warp 3 gains 50 (raw 90, capped).
    heads for the target's current position, using the distance, arrival
    and rounding rules above with `A = min(trunc(D + 0.9999), step)`.
 3. A chaser that arrives on its target has finished. If that target is
-   itself a chaser that has not finished, the target stops for the year.
+   itself a chaser that has not finished, the target stops for the year
+   (its waypoint is then settled by rule 8 below).
 4. Otherwise `moved += step`, `rem −= step`, and it stays deferred while
    `rem > 0`.
 5. Fuel is charged on the year's total distance (`moved + step`), refunding
    the previous round's charge, so rounds add no extra rounding.
+6. BINARY-ONLY (FM-001..003 chasers all had full tanks): each round applies
+   the ordinary fuel rules to the step, with `R` reduced by `moved` and
+   "the whole leg" meaning the distance to the target's current position.
+   A chaser limited by `R` moves only that far and ends with 0; a chaser
+   that runs dry has its warp lowered as above and stops for the year; a
+   chaser that could afford the whole leg is topped up after each round;
+   ram-scoop fuel is gained per round on that round's step.
+
+After every fleet has moved, waypoints are settled (CONFIRMED, FM-001..003):
+
+7. Every waypoint whose destination is a fleet takes that fleet's position
+   at the end of movement.
+8. Every fleet whose position equals its next waypoint exactly completes
+   that waypoint ("completed orders" when it was the last one). This
+   applies to a fleet that has used its movement or never moved.
+
+So when a chaser lands on a fleet that is chasing it, both complete their
+waypoints. A fleet that is caught while heading somewhere else keeps its
+orders, and a chaser that did not reach its target keeps chasing, its
+waypoint now at the target's end-of-year position.
 
 Vectors (CONFIRMED): two fleets 20 ly apart chasing each other at warp 4:
 the lower id moves 12, the higher 8. A at 1200 chasing B at 1215 (warp 9),
 B chasing Z at 1225 (warp 9), Z moving +60 at warp 5: with ids in order
 A < B < Z, A reaches 1215 and B does not move; with B < A < Z, all three
 end at 1250.
+
+Waypoint vectors (CONFIRMED; ids in order, start → end, waypoints left
+after the year):
+
+| Case | Lower id | Higher id | Result |
+|---|---|---|---|
+| FM-001 71/72, mutual chase, warp 4 | 1200 → 1212 | 1220 → 1212 | both complete |
+| FM-002 39/40, mutual chase, warps 4 and 3 | 1150 → 1164 | 1170 → 1164 | both complete |
+| FM-003 29/30, mutual chase, warps 4 and 1 | 1150 → 1159 | 1160 → 1159 | both complete |
+| FM-003 21/22, mutual chase, warp 1, gap 6 | 1150 → 1151 | 1156 → 1155 | neither; waypoints now 1155 and 1151 |
+| FM-003 0–2, A chases B, B chases Z, Z +60 | A 1200 → 1215 | B stays 1215 | A completes; B keeps chasing Z, waypoint 1250 |
+| FM-002 41/42, C3 chases T3 head-on | T3 1080 → 1055 | C3 1040 → 1055 | C3 completes; T3 keeps its own waypoint |
 
 ### Refuelling at a starbase (CONFIRMED, FM-004 DK)
 
