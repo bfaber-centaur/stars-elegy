@@ -4966,8 +4966,9 @@ written to explain an apparent miss and was ruled out.
   pinned runs no player submitted orders, and each year's `.M` message
   block began with the whole previous block, new messages after it
   (RD-P19: 3, 6, 9 messages in years 1 to 3; RD-P21: the 8 messages written
-  at creation, then 2 new ones). Count only the messages after the carried
-  prefix when a multi-year run has no orders.
+  at creation, then 2 new ones: 0x03f for an owned planet's empty queue and
+  0x159 for Super Stealth spying, neither from the penalty). Count only the
+  messages after the carried prefix when a multi-year run has no orders.
 
 ## Messages to players
 

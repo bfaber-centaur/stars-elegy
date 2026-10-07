@@ -218,7 +218,8 @@ design", Round 3.
   turn file carries the previous year's messages over when no orders were
   submitted: years 1, 2 and 3 held 3, 6 and 9 messages, each block
   starting with the previous one. RD-P21 showed the same (RW08's eight
-  creation messages, then two new ones). So the original prediction held
+  creation messages, then two new ones: 0x03f, an owned planet's empty
+  queue, and 0x159, Super Stealth spying). So the original prediction held
   (no new 0x117, race unchanged in years 2 and 3), and the RD-P21
   candidate (a new 0x117 every year while flagged) is ruled out: no new
   0x117, races unchanged.
