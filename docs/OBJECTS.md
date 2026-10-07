@@ -389,6 +389,15 @@ Each end separately, in list order:
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
   is rejected. The class never changes.
 
+### Stability (BINARY-ONLY)
+
+The stability a player sees in the wormhole report is the end's current
+yearly jump chance `pct` (above), by name: 0 Rock Solid, 1 Stable, 2 Mostly
+Stable, 3 Average, 4 Slightly Volatile, 5 Volatile, 6 Extremely Volatile.
+So it is not fixed: an end grows more volatile as its years rise, and a
+jump (years back to 0) makes it stable again. A class-2 end at 0 years
+reads Rock Solid, like class 0.
+
 ### Placement badness (CONFIRMED at creation, UG01–UG21)
 
 A try is rejected outright when outside the galaxy or exactly on another
@@ -422,6 +431,25 @@ players' fleets that were following it lose it. Fuel, mass and stability
 play no part and there is no damage. A fleet that falls short stays in
 normal space.
 
+**What transits (BINARY-ONLY).** Only fleets, and only when the waypoint
+they reach targets the wormhole itself. A waypoint that is a plain position
+on the same coordinates does not transit, and a fleet that passes over a
+wormhole in mid-move does not. A stargate jump that lands on a wormhole
+target transits (Stargates). Packets and the Mystery Trader never transit
+or interact with wormholes. Arrival and the exit position both use the
+positions from the start of the year: wormholes move after fleets.
+
+**Destination knowledge (BINARY-ONLY).** Besides knowing where an end is
+(scanning, `SCANNING.md`), each end records which players know where it
+leads. That record is set only by transit, for the fleet's owner, on both
+the entry and the exit end; the exit end also becomes known. Seeing both
+ends, however long, never reveals that they are a pair. The record is
+never cleared, even by a jump: after its partner jumps, a player who once
+transited still sees the destination, at the partner's new position, but
+only while the partner end itself is seen that year. The wormhole report
+shows the destination's coordinates when both hold, and "Unknown"
+otherwise; the map draws the link line under the same condition.
+
 **Waypoints on a wormhole (CONFIRMED, OB-025-F, OB-027).** A waypoint aimed
 at a wormhole follows it only while the owner knows the wormhole at the
 start of the year. Otherwise, after the wormhole's first move, the
@@ -431,7 +459,11 @@ knowledge, so after a jump it always becomes a plain position.
 
 ## Mystery Trader
 
-### Spawn and movement (BINARY-ONLY except where noted)
+### Appearance (BINARY-ONLY; owned by KX-004)
+
+When and where a Trader appears, its warp and the item it carries are
+tested under KX-004 (`KERNEL.md` "Random events" and `PARITY.md` KX-004),
+which will settle these rules; they are kept here for reference until then.
 
 - From year index 40, with random events on, at the end of production:
   chance 1/2 when `year index mod 100 = 71`, 1/3 when `= 33`, 1/4 when
@@ -446,6 +478,9 @@ knowledge, so after a jump it always becomes a plain position.
   ship with 1/6, else research. Otherwise one of 13 parts, rerolled once
   for four of them, and three of those turn into research with 1/2 before
   year index 120, 150 or 180.
+
+### Movement (BINARY-ONLY except where noted)
+
 - It moves before fleets, `warp²` ly per year like a packet. Below warp 13,
   each year with 1/25 its warp rises by 1, and then with 1/3 it picks a new
   destination. On arrival it leaves the galaxy if another Trader exists or
@@ -454,6 +489,18 @@ knowledge, so after a jump it always becomes a plain position.
   CONFIRMED (OB-023, OB-026): a warp-9 Trader moved 81 ly; one arriving
   while another existed was removed; the only Trader stayed, warp 8 → 7,
   with a new destination on an edge.
+
+### Targeting the Trader (BINARY-ONLY)
+
+A waypoint on the Trader follows it, but only at the start and the end of
+the year; the Trader moves before fleets do. So a fleet aimed at the
+Trader flies to where the Trader was at the start of the year, and meets
+it only if the Trader ends the year there (it reached an edge and stayed).
+To meet a moving Trader, aim at the point it will reach this year. A
+Trader that appears this year (end of production, before meetings) meets
+fleets already sitting on its entry point the same year. When a Trader is
+gone, waypoints on it become plain positions at its last known position,
+and the owner is told.
 
 ### Encounters (CONFIRMED, OB-004, OB-023, OB-026; marked details BINARY-ONLY)
 
@@ -467,22 +514,97 @@ with random events off (an inserted Trader traded).
 - Each player gets one reward per Trader: a second fleet of the same
   player at the same Trader in the same year was kept.
 - Trading **removes the whole fleet**, ships and cargo.
+- Order of checks for each fleet (BINARY-ONLY): cargo below 5,000 kT →
+  refused; else owner already served by this Trader → refused ("still
+  recovering from the last transaction"), fleet kept; else the owner is
+  marked served, the fleet is consumed, and the reward follows. A fleet
+  consumed by one Trader is not offered to another in the same year.
 - Reward:
   - a part the player lacks: that part (CONFIRMED, OB-026: the player's
-    Trader part word gained the part's bit; tech unchanged);
-  - research (or an offered part already owned): if every tech field is at
-    26 (10 for computer players, inferred), with 4/5 a random part not yet
-    owned (else a ship) and with 1/5 nothing; otherwise (BINARY-ONLY)
-    `L = min(10, 6 + ⌊(cargo − 5000)/1200⌋)` levels, reduced by the sum of
-    tech levels `T`: `T ≥ 108` → 1, 96–107 → 2, 84–95 → `L − 3`, 72–83 →
-    `L − 2`, 60–71 → `L − 1`. Each level goes with 3/4 to a random field
-    (the lowest if that one is at 26) and with 1/4 to the lowest field.
-    CONFIRMED: a tech-3 player trading 5,000 kT gained 6 levels;
-  - a ship: computer players get nothing. One of three Trader designs, 1
-    ship (2/3) or 2 (1/3), more after year index 100, at most 5; the new
-    fleet has full fuel and the design joins the player's designs (if a
-    design slot and a fleet number are free). CONFIRMED (OB-026): one
-    Nubian at the trade point, added as a new design.
+    Trader part word gained the part's bit; tech unchanged). The part
+    word's bits (BINARY-ONLY except bit 2, OB-026):
+
+    | Bit | Item | Message |
+    |---|---|---|
+    | 0 | Multi Cargo Pod | unique part |
+    | 1 | Multi Function Pod | unique part |
+    | 2 | Langston Shell | unique part |
+    | 3 | Mega Poly Shell | unique part |
+    | 4 | Alien Miner | unique part |
+    | 5 | Hush-a-Boom | unique part |
+    | 6 | Anti Matter Torpedo | unique part |
+    | 7 | Multi Contained Munition | unique part |
+    | 8 | Mini Morph hull | new ship hull |
+    | 9 | Enigma Pulsar | unique part |
+    | 10 | Genesis Device | powerful planetary device |
+    | 11 | Jump Gate | unique part |
+    | 12 | (a ship gift, below) | |
+
+  - research (or an offered part already owned):
+    - If every tech field is at 26: with 1/5 nothing ("unable to teach you
+      anything new"); with 4/5 a random part. The part is drawn as `bit =
+      rand(13)`, redrawn while the player already owns it, up to 25
+      redraws. Bit 12 means a ship. If the 25 redraws run out, the player
+      gets a ship, and so does a player whose 25th redraw found an unowned
+      part (LEGACY BUG, BINARY-ONLY). A player who owns all twelve parts
+      therefore always gets a ship on the 4/5 branch. (A player whose
+      research is capped at 10 uses 10 here; Elegy has no such players.)
+    - Otherwise (BINARY-ONLY): `L = min(10, 6 + ⌊(cargo − 5000)/1200⌋)`
+      levels, adjusted by the sum of tech levels `T`: `T ≥ 108` → 1,
+      96–107 → 2, 84–95 → `L − 3`, 72–83 → `L − 2`, 60–71 → `L − 1`. The
+      message gives `L`. Each level, in turn: with 3/4 a uniformly random
+      field (the lowest field instead if that one is at 26), with 1/4 the
+      lowest field (first in field order on ties); the loop stops early
+      once the lowest field is at 26. Each step raises that field by
+      exactly one level and leaves its accumulated research unchanged.
+      CONFIRMED: a tech-3 player trading 5,000 kT gained 6 levels.
+  - a ship (BINARY-ONLY except where noted):
+    - Computer players get nothing, and their fleet is still consumed.
+    - Design: with 1/4 (1/3 after year index 100) "M.T. Lifeboat", a
+      Nubian; otherwise "M.T. Scout" or "M.T. Probe" with equal odds, both
+      Mini Morphs. Loadouts:
+      - Lifeboat: Enigma Pulsar ×3; Mega Poly Shell ×3 in two slots; Anti
+        Matter Torpedo ×3 in two slots; Langston Shell ×3 in two slots;
+        Multi Function Pod ×3 in two slots; Multi Cargo Pod ×3; Multi
+        Contained Munition ×3 in three slots.
+      - Scout: Enigma Pulsar ×2, Langston Shell ×3, Multi Function Pod,
+        Multi Cargo Pod, Jump Gate, Anti Matter Torpedo ×2 in two slots.
+      - Probe: as the Scout, with Mega Poly Shell ×3 in place of the
+        Langston Shells.
+    - Count: 2 with 1/3, else 1. After year index 100, unless the game has
+      a single human player, add `rand(⌊year index/100⌋ + 1)`. Cap at 5.
+      For the Scout and the Probe, then add `rand(count + 1)`. So 1–10
+      ships.
+    - A design the player already has that matches is reused; otherwise
+      the design goes into the player's first empty design slot. It keeps
+      its Trader parts although the player's part word does not gain them.
+      The new fleet appears at the trade point with full fuel.
+    - With no free design slot, or 512 fleets already, there is no ship
+      (the player is told the design records could not be stored) and the
+      fleet is still consumed.
+    - CONFIRMED (OB-026): one Nubian at the trade point, added as a new
+      design.
+
+### Computer players' planets (BINARY-ONLY)
+
+After the fleets, each Trader also trades with computer players' planets.
+Only Harder and Expert computer players take part, and only a planet with
+a starbase, within 100 ly of the Trader, whose owner this Trader has not
+served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
+(3,500 for Harder).
+
+- **Part item.** If the owner lacks the part, it gains it. If it owns it,
+  a random part it lacks is drawn, with up to 50 redraws; bit 12 counts as
+  a part here and gives nothing but the bit. The price is all the
+  planet's surface minerals.
+- **Research item, or no part found.** If the owner's tech levels sum to
+  150 or more, nothing happens and the Trader stays available to it.
+  Otherwise the lowest field gains a level, six times, at no research
+  cost. The price is 5,000 kT (3,500 for Harder).
+- The price is taken from germanium first, then boranium, then ironium.
+  The owner is marked served. No message is sent.
+
+Human players' planets never trade.
 
 ## Visibility
 
@@ -498,10 +620,13 @@ and nowhere beyond it).
 1. Packet launch: warp, class, amounts, same-year merge, the launch-year
    half move; PP terraforming; AR targets.
 2. Wormhole jump odds as a measured rate (one stream so far).
-3. Mystery Trader spawning; its leaving with 1/2 at an edge; research
-   rewards.
+3. Mystery Trader: leaving with 1/2 at an edge; research steps; ship
+   gift designs and counts; the part bits other than 2; targeting at the
+   start-of-year position; computer planets' trades. (Appearance: KX-004.)
 4. Minefield hit odds per ly as a rate; heavy and speed-bump detonation.
 5. Stargates: Jump Gates, friend-owned gates, refusal for range.
+6. Wormholes: destination knowledge only from transit and kept through a
+   jump; stability names; plain-position waypoints not transiting.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.
