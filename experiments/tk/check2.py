@@ -27,8 +27,8 @@ def parse(path):
             last = None
         if s.startswith('pdetail '):
             n = int(s.split()[1])
-            d = dict(kv.split('=', 1) for kv in s.split()[2:])
-            p = dict(owner=int(d['owner']))
+            d = dict(kv.split('=', 1) if '=' in kv else (kv, 'true') for kv in s.split()[2:])
+            p = dict(owner=int(d['owner']), artifact='artifact' in d)
             if 'surface' in d:
                 p['surface'] = [int(x) for x in d['surface'].split('/')]
                 p['pop'] = int(d['pop'])
