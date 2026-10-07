@@ -9,22 +9,22 @@ war) gets its own file under docs/ai/:
 | Type (definition file) | Personality | PRT | File | Elegy |
 |---|---|---|---|---|
 | 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
-| 2 | Turindrone | SS | `docs/ai/turindrone.md` | faithful candidate: fleet pass matched over AIX (AI-22) |
-| 3 | Automitron | IS | `docs/ai/automitron.md` | faithful candidate: fleet pass matched over AIX (AI-23) |
+| 2 | Turindrone | SS | `docs/ai/turindrone.md` | legacy reference: fleet pass checked over AIX (AI-22), not an implementation commitment |
+| 3 | Automitron | IS | `docs/ai/automitron.md` | legacy reference: fleet pass checked over AIX (AI-23), not an implementation commitment |
 | 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
 | 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
 | 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
 
 **Project policy (2026-10-07).** Elegy reproduces faithfully only the
 personalities whose behavior has been checked against the original
-with oracle captures: Robotoid, Turindrone, Automitron, Rototill and
-Cybertron, each matched over every captured player-year of its corpus
-(`../PARITY.md` cases; AI-22 and AI-23 for Turindrone's and Automitron's
-fleet passes). These are candidates for faithful implementation. Their
-rules that no capture exercised, such as Turindrone's and Automitron's
-bomber paths, stay BINARY-ONLY. Macinti is documented as legacy-reference
-behavior: read from the original, only partly checked, and optional
-future work. Reproducing all
+with oracle captures: Robotoid, Rototill and Cybertron, each matched over
+every captured player-year of its corpus (`../PARITY.md` cases). These
+are candidates for faithful implementation. Turindrone, Automitron and
+Macinti are documented as legacy-reference behavior: read from the
+original and optional future work. Turindrone's and Automitron's fleet
+passes are checked over AIX (AI-22, AI-23), which preserves the result
+but is not a commitment to implement them; their bomber paths stay
+BINARY-ONLY. Reproducing all
 six personalities is not an objective. Further computer-player
 experiments need a concrete reason: an Elegy implementation blocker, a
 contradiction in an existing spec, or a cheap experiment that closes a
