@@ -25,3 +25,10 @@ Pinned at the twelve cycle counts 5000 … 50000 plus 6000, 7000, 9000 and
 - Any bit gained is one of the parts on the destroyed ships: in `cb046`
   always the same bit (the Anti Matter Torpedo's).
 - Player 1 has nothing left and gains nothing.
+
+## `cb046-morph` setup change (committed before its rerun)
+
+In the first `cb046-morph` runs the unarmed Mini Morphs (battle speed 7)
+left the board in round 3 without being hit, so nothing was destroyed.
+The Morphs now carry two Lasers in their last free slot (armed, so they
+close in) and player 0 has 80 Phaser Destroyers. Predictions unchanged.

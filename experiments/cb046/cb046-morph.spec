@@ -19,6 +19,6 @@ research 1 0
 design 0 0 Destroyer, 1 Long Hump 6, 1 Colloidal Phaser, 1 Colloidal Phaser, empty, 2 Tritanium, empty, empty = Phaser DD
 plan 0 1 5 1 0 1 = Enemies
 plan 1 1 5 1 0 1 = Enemies
-design 1 0 Mini Morph, 2 Enigma Pulsar, 3 Multi Cargo Pod, 1 Multi Function Pod, 1 Mega Poly Shell, 1 Langston Shell, empty, empty = Morph
-fleet 0 0 at 1020 1230 ships 0:40 plan 1 fuel 280
+design 1 0 Mini Morph, 2 Enigma Pulsar, 3 Multi Cargo Pod, 1 Multi Function Pod, 1 Mega Poly Shell, 1 Langston Shell, 2 Laser, empty = Morph
+fleet 0 0 at 1020 1230 ships 0:80 plan 1 fuel 280
 fleet 1 0 at 1020 1230 ships 0:3 plan 1 fuel 400

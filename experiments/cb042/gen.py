@@ -17,7 +17,7 @@ MED = "Medium Freighter, 1 Long Hump 6, empty, empty"
 SMALL = "Small Freighter, 1 Long Hump 6, empty, empty"
 AMT_DD = "Destroyer, 1 Long Hump 6, 1 Anti Matter Torpedo, 1 Anti Matter Torpedo, empty, 2 Tritanium, empty, empty"
 MORPH = ("Mini Morph, 2 Enigma Pulsar, 3 Multi Cargo Pod, 1 Multi Function Pod, 1 Mega Poly Shell, "
-         "1 Langston Shell, empty, empty")
+         "1 Langston Shell, 2 Laser, empty")
 DEEP = (1020, 1230)
 P1HW = (8, 1169, 1145)
 
@@ -93,7 +93,7 @@ specs["cb046"] = base46 + [
     f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:6 plan 1 fuel 280"]
 specs["cb046-morph"] = base46 + [
     f"design 1 0 {MORPH} = Morph",
-    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:40 plan 1 fuel 280",
+    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:80 plan 1 fuel 280",
     f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:3 plan 1 fuel 400"]
 
 # CB-047: queued ships lost with a starbase. Player 1's homeworld queues 50

@@ -18,3 +18,12 @@ Pinned at cycles 20000 and 30000.
 - 255 tokens: 85 per player.
 - Left out: player 0's fleets 1..15, player 1's 0..14, player 2's 0..14.
   No second pass (the first fills 255).
+
+## Results
+
+Both streams: **255 tokens, 85 / 85 / 85**. Left out (fleets that
+survived without taking part): player 0's 1..15, player 1's 0..14, player
+2's 0..14. **CONFIRMED.** The checker replayed 645 + 700 hits with one
+mismatch in each stream, both a beam's carried damage onto a second
+token of the same player after a kill (reported to the Combat decomp
+pass; the cap is not affected).
