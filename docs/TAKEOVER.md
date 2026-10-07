@@ -452,8 +452,9 @@ starvation, a packet or an AR starbase loss) is emptied:
   also a Claim Adjuster, its end-of-year automatic terraforming (`KERNEL.md`
   Turn order, step 7) runs later the same year and can move the environment
   straight back toward the new owner's ideal. In TK-108 a CA attacker's
-  capture ended the year at 50/50/50 (MEASURED in that one case; the CA
-  terraforming rule itself is not yet in `KERNEL.md`).
+  capture ended the year at 50/50/50 (MEASURED in that one case; the rule
+  and worked capture examples are in `KERNEL.md` "Terraforming", Claim
+  Adjuster).
 
 A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally:
