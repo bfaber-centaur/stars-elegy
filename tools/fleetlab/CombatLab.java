@@ -171,6 +171,14 @@ public class CombatLab {
                     }
                     if (nq == 0) sb.append("none");
                     sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
+                    // race economy (RaceLab layout): growth %, colonists per resource /100, factory
+                    // output, cost, count per 10k; mine output, cost, count per 10k; leftover spend;
+                    // research cost per field (0 expensive, 1 normal, 2 cheap); trait word 0x48
+                    byte[] d = p.fullDataBytes;
+                    sb.append(String.format(" growth=%d econ=%d,%d,%d,%d,%d,%d,%d spend=%d rcost=%d,%d,%d,%d,%d,%d traits=%04x",
+                        d[0x11], d[0x36] & 0xff, d[0x37] & 0xff, d[0x38] & 0xff, d[0x39] & 0xff, d[0x3a] & 0xff,
+                        d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
+                        Util.read16(d, 0x48)));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                 }
