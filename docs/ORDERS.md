@@ -389,7 +389,8 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   BINARY-ONLY (the post-movement credit routine looks the destination up and
   does nothing with no return-to-source path; its `0x042`–`0x048` messages are
   themselves BINARY-ONLY in `MESSAGES.md`). This is **not** the manual gift of
-  the rules above, which is credited in place at step 1 (MEASURED, #84).
+  the rules above, which is credited in place at step 1 (MEASURED, TK-406,
+  TK-407, TK-409).
 
 An independent implementation that adopts the "validate ownership on every
 order" chosen rule above still needs the legitimate cross-owner paths —
