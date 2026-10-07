@@ -94,6 +94,25 @@ Specific predictions worth naming (from the case tables):
 - SC010: one detector extends the 75% bound from 25 to 29 ly (841 seen,
   842 unseen); two detectors to 31 (961 seen, 962 unseen).
 
+## Round 2: race traits (predictions committed before the runs)
+
+New CombatLab keys `prt P N` and `hab P C,C,C,L,L,L,H,H,H`. Player 0 is the
+viewer with the trait under test; the combat-lab race is otherwise
+unchanged. A race edit that leaves the race over its advantage-point budget
+shows up as message 0x117 and degraded race stats in the generated year
+(`docs/ORACLE.md`); each run is checked for that.
+
+| Run | Tests | Content |
+|---|---|---|
+| SC-015 | S-20 (WM) | Player 0 War Monger, Rhino viewer seeing a plain and a Stealth freighter at 30 ly, an Ultra-Stealth one unseen at 45 ly: the two seen designs arrive as full designs. |
+| SC-016 | S-20 (CA) | Player 0 Claim Adjuster, same fleets; player 1's habitability narrowed to grav 25–55, temp 35–85, rad 20–70. Player 1's block in player 0's `.M` carries that habitability and zero tech levels; designs stay partial. |
+| SC-016N | S-20 (CA) | As SC-016, but player 1's only fleet is out of range: no block for player 1 (unknown players are not written). |
+| SC-017 | S-9 | Player 0 NAS: Rhino reaches 100 ly (d² 10000 seen, 10001 not); Stealth 35% bound d² 4225. |
+| SC-018 | S-9 | NAS Ferret (370/50): the planet at d² 2500 is still reported and its orbiting freighter seen (ship penetration not zeroed by NAS). |
+| SC-019 | S-9 | NAS player, homeworld scanner kept, electronics 10 / energy 3 / bio 3: the best non-penetrating planetary scanner (Scoper 280) doubled to 560, no penetration: every deep-space freighter seen, every orbiting one unseen, no planet reports. |
+| SC-020 | S-10 | JOAT, electronics 10: a Scout with no scanner part scans 200/100 (planet at d² 10000 reported, 10001 not; deep space 200 seen, √40001 not). |
+| SC-021 | S-10, S-2 | JOAT, electronics 10: Scout + Elephant combines 200/100 with 300/200 to 313/203 (planet at d² 41209 reported, 41210 not; deep space 313 seen, where the larger part alone would give 300). |
+
 ## Results
 
 (after the runs)

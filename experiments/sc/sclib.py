@@ -55,6 +55,10 @@ ALTS = {
     'sbnohide': 'a cloaked starbase is never hidden from a planet report',
     'sbR': 'starbase hiding uses the normal range instead of the penetrating range',
     'installed': 'planet scanner is the installed one, not the best at current tech',
+    'naszero': 'NAS also zeroes ship penetrating ranges',
+    'nasplanetpen': 'NAS keeps penetrating planet scanners (normal range doubled)',
+    'nomax': 'a JOAT hull built-in scanner and a scanner part are not combined (the larger one counts)',
+    'wmpartial': 'War Monger viewers get partial designs like everyone else',
 }
 
 
@@ -88,10 +92,18 @@ class Design:
     def cloak_pts(self):
         return sum(c * CLOAK_PTS.get(it, 0) for c, it in self.slots)
 
-    def scanner(self, alt=()):
-        """(normal, pen, tachyon count, pickpocket, robberbaron); normal -1 = blind."""
+    def scanner(self, alt=(), race=None):
+        """(normal, pen, tachyon count, pickpocket, robberbaron); normal -1 = blind.
+
+        race: the owner's {'prt', 'lrt', 'elec'}. JOAT Scouts, Frigates and
+        Destroyers carry a built-in 20*elec / 10*elec scanner (S-10); NAS
+        doubles the normal range only (S-9)."""
         r4 = p4 = 0
         has = False
+        if race and race['prt'] == 9 and self.hull in ('Scout', 'Frigate', 'Destroyer'):
+            has = True
+            r4 += (20 * race['elec']) ** 4
+            p4 += (10 * race['elec']) ** 4
         tach = 0
         pp = rb = False
         for c, it in self.slots:
@@ -106,9 +118,18 @@ class Design:
                 tach += c
         if not has:
             return -1, 0, tach, pp, rb
+        nas = race and race['lrt'] >> 10 & 1
         if 'notrunc' in alt:
-            return r4 ** 0.25, p4 ** 0.25, tach, pp, rb
-        return int(r4 ** 0.25 + 1e-9), int(p4 ** 0.25 + 1e-9), tach, pp, rb
+            return r4 ** 0.25 * (2 if nas else 1), p4 ** 0.25, tach, pp, rb
+        r, p = int(r4 ** 0.25 + 1e-9), int(p4 ** 0.25 + 1e-9)
+        if nas:
+            r *= 2
+            if 'naszero' in alt:
+                p = 0
+        if 'nomax' in alt and race and race['prt'] == 9 and self.hull in ('Scout', 'Frigate', 'Destroyer'):
+            parts = [SCAN[it] for c, it in self.slots if it in SCAN] + [(20 * race['elec'], 10 * race['elec'])]
+            r, p = max(x[0] for x in parts) * (2 if nas else 1), max(x[1] for x in parts)
+        return r, p, tach, pp, rb
 
 
 class Fleet:
@@ -140,8 +161,8 @@ class Fleet:
         den += sum(self.cargo) + (self.fuel if 'fuel' in alt else 0)
         return pct_from_pts(num // den)
 
-    def scanner(self, alt=()):
-        sc = [d.scanner(alt) for d, n in self.stacks]
+    def scanner(self, alt=(), race=None):
+        sc = [d.scanner(alt, race) for d, n in self.stacks]
         if 'stackcomb' in alt:
             r4 = sum(n * max(s[0], 0) ** 4 for (d, n), s in zip(self.stacks, sc))
             p4 = sum(n * s[1] ** 4 for (d, n), s in zip(self.stacks, sc))
@@ -178,9 +199,12 @@ class Game:
         self.planet_lines = []          # spec lines for planets
         self.owned = {17: 0, 8: 1}      # planet -> owner
         self.pscanner = {17: False, 8: False}
-        self.sb = {}                    # planet -> starbase Design (owner's)
+        # planet -> starbase Design; both homeworlds start with an uncloaked station
+        self.sb = {17: Design(0, 0, 'Space Station', [], 'base', True),
+                   8: Design(1, 0, 'Space Station', [], 'base', True)}
         self.tech = {0: [26] * 6, 1: [26] * 6}
         self.relations = []
+        self.prt, self.lrt, self.hab = {0: 9, 1: 9}, {0: 0, 1: 0}, {}
         self.cases = []                 # (id, viewer, kind, key, expected, claims, note)
         self.groups = {}                # fleet key -> group name
         self.extra = []
@@ -198,17 +222,23 @@ class Game:
         return f
 
     # ------------------------------------------------------------ the model
+    def race(self, p):
+        return {'prt': self.prt[p], 'lrt': self.lrt[p], 'elec': self.tech[p][4]}
+
     def planet_scan(self, pid, owner, alt):
         if not self.pscanner.get(pid):
             return 0, 0
         en, _, _, _, el, bio = self.tech[owner]
+        nas = self.lrt[owner] >> 10 & 1
         best = PSCAN[0]
         for req, r, p in PSCAN:
+            if nas and p and 'nasplanetpen' not in alt:
+                continue
             if en >= req[0] and el >= req[1] and bio >= req[2]:
                 best = (req, r, p)
         if 'installed' in alt:
             best = PSCAN[2]
-        return best[1], best[2]
+        return best[1] * (2 if nas else 1), best[2]
 
     def predict(self, v, alt=(), only=None):
         """Player v's view: {('fleet', owner, id): level, ('planet', pid): level}."""
@@ -223,11 +253,11 @@ class Game:
         # orbiting viewers report their planet
         for f in mine:
             if f.planet >= 0:
-                nr, pen, tach, pp, rb = f.scanner(alt)
+                nr, pen, tach, pp, rb = f.scanner(alt, self.race(v))
                 mark(('planet', f.planet), 4 if rb else (1 if nr < 0 else 3))
         scanners = []
         for f in mine:
-            nr, pen, tach, pp, rb = f.scanner(alt)
+            nr, pen, tach, pp, rb = f.scanner(alt, self.race(v))
             scanners.append(((f.x, f.y), max(nr, 0), pen, tach, pp, rb, f, nr < 0))
         if only is None:
             for pid, o in self.owned.items():
@@ -274,6 +304,21 @@ class Game:
                             if dd > k2 * ref // 10000:
                                 lvl = 2
                         mark(('planet', pid), lvl)
+        # designs of what was seen: partial, or full for a War Monger viewer (S-20)
+        dl = 3 if self.prt[v] != 2 or 'wmpartial' in alt else 7
+        for f in others:
+            if view.get(('fleet', f.owner, f.id)):
+                for d, n in f.stacks:
+                    mark(('design', f.owner, d.num), dl)
+        for pid, o in self.owned.items():
+            if o != v and view.get(('planet', pid), 0) not in (0, 2) and pid in self.sb:
+                mark(('sbdesign', o, self.sb[pid].num), dl)
+        # other players' blocks: known players only; a Claim Adjuster viewer gets
+        # them with habitability (and nothing else) filled in (S-20)
+        known = {k[1] for k, l in view.items() if k[0] in ('fleet', 'design', 'sbdesign') and l}
+        known |= {self.owned[k[1]] for k, l in view.items() if k[0] == 'planet' and l and k[1] in self.owned}
+        for o in known - {v}:
+            view[('player', o)] = 'hab' if self.prt[v] == 3 else 'partial'
         for pid, o in self.owned.items():
             if o == v:
                 view[('planet', pid)] = 7
@@ -298,6 +343,13 @@ class Game:
             for i, n in enumerate(('energy', 'weapons', 'prop', 'con', 'elec', 'bio')):
                 out.append('tech %d %s %d' % (p, n, self.tech[p][i]))
             out.append('research %d 0' % p)
+        for p in (0, 1):
+            if self.prt[p] != 9:
+                out.append('prt %d %d' % (p, self.prt[p]))
+            if self.lrt[p]:
+                out.append('lrt %d %#x' % (p, self.lrt[p]))
+            if p in self.hab:
+                out.append('hab %d %s' % (p, ','.join(map(str, self.hab[p]))))
         out += self.relations
         out += self.planet_lines
         for d in sorted(self.designs, key=lambda d: (d.sb, d.owner, d.num)):
@@ -354,13 +406,19 @@ class Placer:
         self.g = game
         self.used = set(map(tuple, game.pxy))
 
-    def at(self, center, d2):
+    def at(self, center, d2, avoid=()):
+        """A free point at d2 from center; with avoid, the one farthest from those points."""
+        cands = []
         for dx, dy in reps(d2):
             p = (center[0] + dx, center[1] + dy)
             if p not in self.used and 1000 < p[0] < 1400 and 1000 < p[1] < 1400:
-                self.used.add(p)
-                return p
-        raise ValueError('no free point at d2=%d around %s' % (d2, center))
+                cands.append(p)
+        if not cands:
+            raise ValueError('no free point at d2=%d around %s' % (d2, center))
+        if avoid:
+            cands.sort(key=lambda p: -min((p[0] - a[0]) ** 2 + (p[1] - a[1]) ** 2 for a in avoid))
+        self.used.add(cands[0])
+        return cands[0]
 
     def take(self, p):
         self.used.add(tuple(p))
@@ -402,7 +460,13 @@ def observed(dump_text, turn):
             cur[('planet', int(m.group(1)))] = int(m.group(3))
             cur[('sbbit', int(m.group(1)))] = m.group(4) == 'true'
             continue
-        m = re.search(r' design owner=(\S+) n=(\d+) mass=(\d+) armor=(-?\d+) full=(\w+)', line)
+        m = re.search(r' (sb)?design owner=(\S+) n=(\d+) mass=(\d+) armor=(-?\d+) full=(\w+)', line)
         if m:
-            cur.setdefault('designs', []).append((m.group(1), int(m.group(2)), m.group(5) == 'true'))
+            cur.setdefault('sbdesigns' if m.group(1) else 'designs', []).append(m.group(6) == 'true')
+            continue
+        m = re.search(r' player (\d+) shipdesigns.*?(?: energy=(\d+) weapons=(\d+) prop=(\d+) con=(\d+) elec=(\d+) bio=(\d+).*hab=([\d,]+))?$', line)
+        if m:
+            n = int(m.group(1))
+            cur[('player', n)] = ('full', [int(x) for x in m.group(8).split(',')],
+                                  [int(m.group(i)) for i in range(2, 8)]) if m.group(8) else ('partial',)
     return views

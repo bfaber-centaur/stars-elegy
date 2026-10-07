@@ -1,0 +1,44 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC019-150	0	fleet 1/0	3	S-7,S-8	-	d2=22500 planet range 560/0
+SC019-150p	0	fleet 1/1	3	S-7,S-8	-	d2=22501 planet range 560/0
+SC019-220	0	fleet 1/2	3	S-7,S-8	-	d2=48400 planet range 560/0
+SC019-220p	0	fleet 1/3	3	S-7,S-8	-	d2=48401 planet range 560/0
+SC019-280	0	fleet 1/4	3	S-7,S-8	-	d2=78400 planet range 560/0
+SC019-280p	0	fleet 1/5	3	S-7,S-8	-	d2=78401 planet range 560/0
+SC019-320	0	fleet 1/6	3	S-7,S-8	installed	d2=102400 planet range 560/0
+SC019-320p	0	fleet 1/7	3	S-7,S-8	installed	d2=102401 planet range 560/0
+SC019-planet0	0	planet 0	0	S-8	normplanets	
+SC019-planet1	0	planet 1	0	S-8	normplanets	
+SC019-orbit1	0	fleet 1/8	0	S-8	orbitR	
+SC019-planet2	0	planet 2	0	S-8	normplanets	
+SC019-planet3	0	planet 3	0	S-8	normplanets	
+SC019-planet4	0	planet 4	0	S-8	normplanets	
+SC019-orbit4	0	fleet 1/9	0	S-8	orbitR	
+SC019-planet5	0	planet 5	0	S-8	normplanets	
+SC019-orbit5	0	fleet 1/10	0	S-8	orbitR	
+SC019-planet6	0	planet 6	0	S-8	normplanets,nasplanetpen	
+SC019-orbit6	0	fleet 1/11	0	S-8	orbitR,nasplanetpen	
+SC019-planet7	0	planet 7	0	S-8	normplanets	
+SC019-planet9	0	planet 9	0	S-8	normplanets	
+SC019-planet10	0	planet 10	0	S-8	normplanets	
+SC019-planet11	0	planet 11	0	S-8	normplanets,nasplanetpen	
+SC019-orbit11	0	fleet 1/12	0	S-8	orbitR,nasplanetpen	
+SC019-planet12	0	planet 12	0	S-8	normplanets,nasplanetpen	
+SC019-orbit12	0	fleet 1/13	0	S-8	orbitR,nasplanetpen	
+SC019-planet13	0	planet 13	0	S-8	normplanets	
+SC019-planet14	0	planet 14	0	S-8	normplanets	
+SC019-planet15	0	planet 15	0	S-8	normplanets,nasplanetpen	
+SC019-orbit15	0	fleet 1/14	0	S-8	orbitR,nasplanetpen	
+SC019-planet16	0	planet 16	0	S-8	normplanets	
+SC019-planet18	0	planet 18	0	S-8	normplanets,nasplanetpen	
+SC019-orbit18	0	fleet 1/15	0	S-8	orbitR,nasplanetpen	
+SC019-planet19	0	planet 19	0	S-8	normplanets,nasplanetpen	
+SC019-orbit19	0	fleet 1/16	0	S-8	orbitR,nasplanetpen	
+SC019-planet20	0	planet 20	0	S-8	normplanets	
+SC019-orbit20	0	fleet 1/17	0	S-8	orbitR	
+SC019-planet21	0	planet 21	0	S-8	normplanets,nasplanetpen	
+SC019-orbit21	0	fleet 1/18	0	S-8	orbitR,nasplanetpen	
+SC019-planet22	0	planet 22	0	S-8	normplanets	
+SC019-orbit22	0	fleet 1/19	0	S-8	orbitR	
+SC019-planet23	0	planet 23	0	S-8	normplanets	
+SC019-orbit23	0	fleet 1/20	0	S-8	orbitR	

@@ -77,6 +77,33 @@ def main():
                 f = [f for f in g.fleets if (f.owner, f.id) == k[1:]]
                 print('VIEW-DIFF player %d fleet %d/%d model %d observed %d %s' % (
                     v, k[1], k[2], model.get(k, 0), view.get(k, 0), f[0].tag if f else ''))
+        # designs: foreign blocks counted by detail (own designs are all full)
+        for kind, sb in (('design', False), ('sbdesign', True)):
+            own = sum(1 for d in g.designs if d.owner == v and d.sb == sb) or (1 if sb else 6)
+            pred = [l for k, l in model.items() if k[0] == kind and k[1] != v]
+            obs = view.get(kind + 's', [])
+            got = (obs.count(False), obs.count(True) - own)
+            want = (pred.count(3), pred.count(7))
+            ok = got == want
+            extra += not ok
+            print('%-8s player %d foreign %ss partial/full: model %s observed %s' % (
+                'OK' if ok else 'VIEW-DIFF', v, kind, want, got))
+        # other players' blocks
+        for o in (0, 1):
+            if o == v:
+                continue
+            want = model.get(('player', o))
+            got = view.get(('player', o))
+            if want == 'hab':
+                hab = g.hab.get(o, [50, 50, 50, 15, 15, 15, 85, 85, 85])
+                ok = got is not None and got[0] == 'full' and got[1] == hab and not any(got[2])
+            elif want == 'partial':
+                ok = got == ('partial',)
+            else:
+                ok = got is None
+            extra += not ok
+            print('%-8s player %d block of player %d: model %s observed %s' % (
+                'OK' if ok else 'VIEW-DIFF', v, o, want, got))
     print('%s: %d cases, %d mismatches, %d other view differences' % (run, len(g.cases), bad, extra))
     return 1 if bad or extra else 0
 

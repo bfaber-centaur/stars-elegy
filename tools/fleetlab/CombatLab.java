@@ -16,6 +16,10 @@ import org.starsautohost.starsapi.items.Items;
 // SPEC is line based ('#' starts a comment). Players are numbered from 0.
 //   tech P FIELD LEVEL              set a tech level (energy weapons prop con elec bio)
 //   lrt P MASK                      set the lesser racial traits bit mask (StarsAPI order)
+//   prt P N                         set the primary racial trait (0 HE 1 SS 2 WM 3 CA 4 IS
+//                                   5 SD 6 PP 7 IT 8 AR 9 JOAT)
+//   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
+//                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
@@ -108,6 +112,8 @@ public class CombatLab {
                     for (int i = 0; i < 6; i++)
                         sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
                     sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
+                    sb.append(" hab=");
+                    for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
@@ -283,7 +289,8 @@ public class CombatLab {
         Decryptor dec = new Decryptor();
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
-        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>();
+        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
+        Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
         Map<Integer, Map<Integer, Integer>> relations = new HashMap<>();
@@ -299,6 +306,15 @@ public class CombatLab {
                 switch (t[0]) {
                     case "tech": tech.put(t[1] + " " + t[2], Integer.parseInt(t[3])); break;
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
+                    case "prt": prts.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "hab": {
+                        String[] h = t[2].split(",");
+                        if (h.length != 9) throw new Exception("hab needs 9 values");
+                        byte[] hb = new byte[9];
+                        for (int i = 0; i < 9; i++) hb[i] = (byte) Integer.parseInt(h[i]);
+                        habs.put(Integer.parseInt(t[1]), hb);
+                        break;
+                    }
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "relation":
                         relations.computeIfAbsent(Integer.parseInt(t[1]), k -> new TreeMap<>())
@@ -456,6 +472,8 @@ public class CombatLab {
                 p.fullDataBytes[0x46] = (byte) (lrts.get(k) & 0xff);
                 p.fullDataBytes[0x47] = (byte) (lrts.get(k) >> 8);
             }
+            if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
+            if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();

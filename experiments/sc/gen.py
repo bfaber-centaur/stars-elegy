@@ -138,13 +138,14 @@ def sc002(pxy):
     return g
 
 
-def pen_run(pxy, part, cid, extra_mole=False):
+def pen_run(pxy, part, cid, setup=None, design=None, deep=False):
     """X-2: a planet at the penetrating edge, one just past it, orbiting targets at both."""
-    from sclib import SCAN
-    R, Pn = SCAN[part]
     g = base(pxy)
+    if setup:
+        setup(g)
     T = targets(g)
-    v = sf(g, 0, 0, part, part.split()[0])
+    v = design(g) if design else sf(g, 0, 0, part, part.split()[0])
+    R, Pn = v.scanner((), g.race(0))[:2]
     P = Placer(g)
     best = None
     dout = rep_above(Pn * Pn)
@@ -183,6 +184,13 @@ def pen_run(pxy, part, cid, extra_mole=False):
     x, y = P.at(V, Pn * Pn)
     f = g.fleet(1, [(T['st'], 1)], x, y, 'GV', tag='Stealth deep space')
     g.expect('%s-deep-st35' % cid, 0, ('fleet', 1, f.id), ['S-6', 'S-13'], 'd2=%d' % (Pn * Pn))
+    for name, d2 in (('R', R * R), ('Rp', R * R + 1)) if deep else ():
+        try:
+            x, y = P.at(V, d2, avoid=[W])
+        except ValueError:
+            continue
+        f = g.fleet(1, [(T['plain'], 1)], x, y, 'GV', tag='plain deep space')
+        g.expect('%s-deep-%s' % (cid, name), 0, ('fleet', 1, f.id), ['S-1'], 'd2=%d R=%d' % (d2, R))
     # every other planet: reported iff within pen of a viewer
     for i in range(len(pxy)):
         if i not in (a, b, 8, 17):
@@ -265,9 +273,10 @@ def tach_run(pxy):
     return g
 
 
-def ptech_run(pxy, elec, cid, energy=26, bio=26):
+def ptech_run(pxy, elec, cid, energy=26, bio=26, lrt=0, extra=(), orbits=False):
     """X-7: planet scanner from tech; player 0's homeworld keeps its scanner."""
     g = base(pxy)
+    g.lrt[0] = lrt
     T = targets(g)
     g.planet_lines = ['planet 8 scanner none']
     g.pscanner[17] = True
@@ -285,7 +294,7 @@ def ptech_run(pxy, elec, cid, energy=26, bio=26):
             continue
         f = g.fleet(1, [(T['plain'], 1)], x, y, 'GP', tag='%s-%s' % (cid, name))
         g.expect('%s-%s' % (cid, name), 0, ('fleet', 1, f.id), ['S-7', 'S-8'], 'd2=%d planet range %d/%d' % (d2, r, p))
-    if p:
+    if p or orbits:
         for i in range(len(pxy)):
             if i not in (8, 17):
                 g.expect('%s-planet%d' % (cid, i), 0, ('planet', i), ['S-8'])
@@ -313,6 +322,47 @@ def rb_run(pxy):
     return g
 
 
+def wm_ca_run(pxy, prt, cid, contact=True):
+    """S-20: War Monger (full designs) or Claim Adjuster (hab ranges) viewer."""
+    g = base(pxy)
+    g.prt[0] = prt
+    g.hab[1] = [40, 60, 45, 25, 35, 20, 55, 85, 70]   # narrower than the default (legal)
+    T = targets(g)
+    v = sf(g, 0, 0, 'Rhino Scanner', 'Rhino')
+    P = Placer(g)
+    C = P.take((1100, 1230))
+    g.fleet(0, [(v, 1)], *C, 'G', tag='Rhino viewer')
+    if contact:
+        single(g, P, C, 'G', '%s-plain' % cid, [(T['plain'], 1)], 900, ['S-20'])
+        single(g, P, C, 'G', '%s-st35' % cid, [(T['st'], 1)], 900, ['S-20'])
+        single(g, P, C, 'G', '%s-us85-out' % cid, [(T['us'], 1)], 2025, ['S-20'])
+    else:
+        x, y = 1380, 1020
+        g.fleet(1, [(T['plain'], 1)], x, y, 'G', tag='far away, unseen')
+    return g
+
+
+def nas_planet_run(pxy, cid):
+    """S-9: NAS player planet scanner at electronics 10 (Snooper 320X without NAS)."""
+    g = ptech_run(pxy, 10, cid, energy=3, bio=3, lrt=0x400, extra=(('560', 313600), ('560p', 313601)), orbits=True)
+    return g
+
+
+def nas_ship_run(pxy, cid):
+    """S-9: NAS Rhino (100) against plain and Stealth targets."""
+    g = base(pxy)
+    g.lrt[0] = 0x400
+    T = targets(g)
+    v = sf(g, 0, 0, 'Rhino Scanner', 'Rhino')
+    P = Placer(g)
+    C = P.take((1200, 1230))
+    g.fleet(0, [(v, 1)], *C, 'G', tag='NAS Rhino viewer')
+    one = lambda d: (lambda: [(T[d], 1)])
+    pair(g, P, C, 'G', '%s-plain' % cid, T, one('plain'), 10000, ['S-9'])
+    pair(g, P, C, 'G', '%s-st35' % cid, T, one('st'), 4225, ['S-9', 'S-13'])
+    return g
+
+
 RUNS = {
     'sc001': sc001,
     'sc001f': sc001f,
@@ -329,7 +379,21 @@ RUNS = {
     'sc012': lambda p: ptech_run(p, 6, 'SC012'),
     'sc013': lambda p: ptech_run(p, 10, 'SC013', energy=3, bio=3),
     'sc014': rb_run,
+    'sc015': lambda p: wm_ca_run(p, 2, 'SC015'),
+    'sc016': lambda p: wm_ca_run(p, 3, 'SC016'),
+    'sc016n': lambda p: wm_ca_run(p, 3, 'SC016N', contact=False),
+    'sc017': lambda p: nas_ship_run(p, 'SC017'),
+    'sc018': lambda p: pen_run(p, 'Ferret Scanner', 'SC018', setup=lambda g: g.lrt.update({0: 0x400})),
+    'sc019': lambda p: nas_planet_run(p, 'SC019'),
+    'sc020': lambda p: pen_run(p, None, 'SC020', setup=joat10, deep=True,
+                               design=lambda g: g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (0, ''), (0, '')], 'Bare Scout')),
+    'sc021': lambda p: pen_run(p, None, 'SC021', setup=joat10, deep=True,
+                               design=lambda g: g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (1, 'Elephant Scanner'), (0, '')], 'Elephant Scout')),
 }
+
+
+def joat10(g):
+    g.tech[0][4] = 10
 
 
 def main():
