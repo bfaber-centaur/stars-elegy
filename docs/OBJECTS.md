@@ -431,15 +431,17 @@ players' fleets that were following it lose it. Fuel, mass and stability
 play no part and there is no damage. A fleet that falls short stays in
 normal space.
 
-**What transits (BINARY-ONLY).** Only fleets, and only when the waypoint
+**What transits (CONFIRMED, WT-001 B–E; stargate landings BINARY-ONLY).** Only fleets, and only when the waypoint
 they reach targets the wormhole itself. A waypoint that is a plain position
 on the same coordinates does not transit, and a fleet that passes over a
 wormhole in mid-move does not. A stargate jump that lands on a wormhole
 target transits (Stargates). Packets and the Mystery Trader never transit
-or interact with wormholes. Arrival and the exit position both use the
+or interact with wormholes (a packet and a Trader that ended their moves
+exactly on an end stayed there). Arrival and the exit position both use the
 positions from the start of the year: wormholes move after fleets.
 
-**Destination knowledge (BINARY-ONLY).** Besides knowing where an end is
+**Destination knowledge (CONFIRMED, WT-001 A, G; WT-004: 18 jumps; the
+report and map display BINARY-ONLY).** Besides knowing where an end is
 (scanning, `SCANNING.md`), each end records which players know where it
 leads. That record is set only by transit, for the fleet's owner, on both
 the entry and the exit end; the exit end also becomes known. Seeing both
@@ -491,16 +493,22 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   1` and a new destination, and does not move further that year.
   CONFIRMED (OB-023, OB-026): a warp-9 Trader moved 81 ly; one arriving
   while another existed was removed; the only Trader stayed, warp 8 → 7,
-  with a new destination on an edge.
+  with a new destination on an edge. MEASURED (WT): 4 warp rises 8 → 9 in
+  about 80 Trader-years, each before that year's move and announced to
+  every player, one with a new destination on an edge.
 
-### Targeting the Trader (BINARY-ONLY)
+### Targeting the Trader (CONFIRMED, WT-001 F1, WT-005)
 
-A waypoint on the Trader follows it, but only at the start and the end of
-the year; the Trader moves before fleets do. So a fleet aimed at the
-Trader flies to where the Trader was at the start of the year, and meets
-it only if the Trader ends the year there (it reached an edge and stayed).
-To meet a moving Trader, aim at the point it will reach this year. A
-Trader that appears this year (end of production, before meetings) meets
+The Trader moves before fleets, and waypoints on it are then moved to its
+new position before any fleet moves. So a fleet aimed at the Trader flies
+toward where the Trader is after this year's move: a fleet that reaches
+that point meets it, and a slower one ends the year on the line toward
+it. (WT-005: a fleet 50 ly east of the Trader's start reached its end
+point 31 ly away and traded; a warp-6 fleet 30 ly west flew its full 36 ly
+east, past the start point.) The same refresh runs whenever a Trader or a
+packet moved that year; it is the waypoint check described under "Waypoints
+on a wormhole", so wormhole targets are checked again at that point too
+(wormholes themselves move only after fleets). A Trader that appears this year (end of production, before meetings) meets
 fleets already sitting on its entry point the same year. When a Trader is
 gone, waypoints on it become plain positions at its last known position,
 and the owner is told.
@@ -517,7 +525,7 @@ with random events off (an inserted Trader traded).
 - Each player gets one reward per Trader: a second fleet of the same
   player at the same Trader in the same year was kept.
 - Trading **removes the whole fleet**, ships and cargo.
-- Order of checks for each fleet (BINARY-ONLY): cargo below 5,000 kT →
+- Order of checks for each fleet (BINARY-ONLY in detail): cargo below 5,000 kT →
   refused; else owner already served by this Trader → refused ("still
   recovering from the last transaction"), fleet kept; else the owner is
   marked served, the fleet is consumed, and the reward follows. A fleet
@@ -525,7 +533,7 @@ with random events off (an inserted Trader traded).
 - Reward:
   - a part the player lacks: that part (CONFIRMED, OB-026: the player's
     Trader part word gained the part's bit; tech unchanged). The part
-    word's bits (BINARY-ONLY except bit 2, OB-026):
+    word's bits and messages (CONFIRMED, WT-003 A, all twelve):
 
     | Bit | Item | Message |
     |---|---|---|
@@ -549,10 +557,12 @@ with random events off (an inserted Trader traded).
       rand(13)`, redrawn while the player already owns it, up to 25
       redraws. Bit 12 means a ship. If the 25 redraws run out, the player
       gets a ship, and so does a player whose 25th redraw found an unowned
-      part (LEGACY BUG, BINARY-ONLY). A player who owns all twelve parts
-      therefore always gets a ship on the 4/5 branch. (A player whose
+      part (LEGACY BUG, BINARY-ONLY: too rare to sample). A player who owns
+      all twelve parts therefore always gets a ship on the 4/5 branch
+      (CONFIRMED, WT-004 C: nothing in 3 of 15 meetings, a ship in 12). (A player whose
       research is capped at 10 uses 10 here; Elegy has no such players.)
-    - Otherwise (BINARY-ONLY): `L = min(10, 6 + ⌊(cargo − 5000)/1200⌋)`
+    - Otherwise (CONFIRMED, WT-002 A, B; the field odds MEASURED in two
+      streams only): `L = min(10, 6 + ⌊(cargo − 5000)/1200⌋)`
       levels, adjusted by the sum of tech levels `T`: `T ≥ 108` → 1,
       96–107 → 2, 84–95 → `L − 3`, 72–83 → `L − 2`, 60–71 → `L − 1`. The
       message gives `L`. Each level, in turn: with 3/4 a uniformly random
@@ -561,7 +571,9 @@ with random events off (an inserted Trader traded).
       once the lowest field is at 26. Each step raises that field by
       exactly one level and leaves its accumulated research unchanged.
       CONFIRMED: a tech-3 player trading 5,000 kT gained 6 levels.
-  - a ship (BINARY-ONLY except where noted):
+  - a ship (CONFIRMED, WT-003 B, WT-004 B, C: 27 gifts, Lifeboat 5,
+    Scout 11, Probe 11, at most 4 ships; the count rules after year index
+    100 and for computer players BINARY-ONLY):
     - Computer players get nothing, and their fleet is still consumed.
     - Design: with 1/4 (1/3 after year index 100) "M.T. Lifeboat", a
       Nubian; otherwise "M.T. Scout" or "M.T. Probe" with equal odds, both
@@ -623,13 +635,12 @@ and nowhere beyond it).
 1. Packet launch: warp, class, amounts, same-year merge, the launch-year
    half move; PP terraforming; AR targets.
 2. Wormhole jump odds as a measured rate (one stream so far).
-3. Mystery Trader: leaving with 1/2 at an edge; research steps; ship
-   gift designs and counts; the part bits other than 2; targeting at the
-   start-of-year position; computer planets' trades. (Appearance: KX-004.)
+3. Mystery Trader: leaving with 1/2 at an edge; ship counts after year
+   index 100; the 25th-redraw LEGACY BUG; computer players' fleets and
+   planets (O-53, for the computer-players oracle).
 4. Minefield hit odds per ly as a rate; heavy and speed-bump detonation.
 5. Stargates: Jump Gates, friend-owned gates, refusal for range.
-6. Wormholes: destination knowledge only from transit and kept through a
-   jump; stability names; plain-position waypoints not transiting.
+6. Wormholes: stability names in the report (O-45, UI).
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.
