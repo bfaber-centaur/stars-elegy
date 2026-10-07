@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+# Drive the original client to give one player's orders, and keep the order
+# file it writes.
+#
+#   tools/fleetlab/client-orders DIR OUTDIR CMDS [MFILE] [GAME]
+#
+# Resets the oracle to the `registered` snapshot, copies DIR/GAME.* (default
+# CB) to D:, starts Stars! at normal speed, opens MFILE (default cb.m1),
+# dismisses the "years of data read" note, runs the commands in the file
+# CMDS (one per line, # comments), saves (File > Save), copies the order
+# file GAME.Xn and GAME.Hn into OUTDIR, exits Stars! and stops the oracle.
+# A screenshot follows every command (OUTDIR/screens/NN-verb.png).
+# Run the year afterwards with pinned-turn, using a base directory holding
+# DIR's files plus the order file. OUTDIR holds registered-copy output
+# (order files carry the serial) and screenshots: keep it out of this
+# repository. Check what the client wrote with `combatlab dump GAME.Xn`.
+#
+# Commands (positions measured on the 1152x864 guest screen, docs/ORACLE.md
+# "Client orders"; indexes are 0-based positions in the client's lists):
+#   plans                  open Commands > Battle Plans (F6)
+#   plan select K          select plan K in the Plan list
+#   plan copy NAME         Copy the selected plan, name the copy NAME
+#   plan rename NAME       rename the selected plan
+#   plan primary I | secondary I | tactic I | who I
+#                          set that field to item I of its list
+#   plan dump              toggle Dump Cargo
+#   plan delete [confirm]  Delete the selected plan; "confirm" answers OK to
+#                          the alert shown when fleets use the plan
+#   plans close            close the Battle Plans dialog
+#   fleet first            Goto the first fleet in the homeworld's
+#                          "Fleets in Orbit" list (planet view, at start)
+#   fleet next | fleet prev
+#                          the fleet panel's Next / Prev buttons
+#   fleet plan K           set the selected fleet's battle plan to item K
+#   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
+#   shot NAME              extra screenshot
+set -euo pipefail
+[[ $# -ge 3 ]] || { echo "usage: client-orders DIR OUTDIR CMDS [MFILE] [GAME]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+O="$here/../../scripts/oracle"
+dir="$1" out="$2" cmds="$3" mfile="${4:-cb.m1}" game="${5:-CB}"
+home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+games="$home/run/games/stars_games"
+n="${mfile##*.m}"; n="${n##*.M}"
+mkdir -p "$out/screens"
+cp "$cmds" "$out/commands.txt"
+step=0
+shot() { step=$((step + 1)); "$O/screenshot" "$out/screens/$(printf %02d "$step")-$1.png" >/dev/null; }
+pause() { sleep "${1:-0.8}"; }
+pixel() { "$O/screenshot" "$out/.probe.png" >/dev/null; convert "$out/.probe.png" -format "%[pixel:p{$1,$2}]" info:; rm -f "$out/.probe.png"; }
+downs() { local i; for ((i = 0; i < $1; i++)); do "$O/key" Down; done; }
+# fleet panel Battle Plan list: 6 rows of 14 px from y 327, scroll arrows at x 380
+fleetplan() {
+	local k="$1"
+	"$O/click" 380 309; pause 0.6           # open the list
+	"$O/click" 380 327; xdotool click --repeat 16 --delay 120 1; pause 0.3   # scroll to the top
+	if ((k < 6)); then
+		"$O/click" 300 $((327 + 14 * k))
+	else
+		"$O/click" 380 397; ((k > 6)) && xdotool click --repeat $((k - 6)) --delay 120 1
+		pause 0.3; "$O/click" 300 397
+	fi
+	pause
+}
+
+"$O/stop" >/dev/null 2>&1 || true
+"$O/reset" registered >/dev/null
+cp "$dir/$game".* "$games/"
+rm -f "$games/$game.X$n"
+"$O/start" >/dev/null
+"$O/wait-for" "$home/refs/main-menu-open.png" 367 802 90 >/dev/null
+"$O/key" alt+o; pause 1; "$O/type" "d:\\$mfile"; "$O/key" Return
+"$O/wait-stable" 30 2 >/dev/null; shot open
+"$O/key" Return    # "Note: N years of data read."
+"$O/wait-stable" 30 2 >/dev/null; shot main
+
+while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
+	[[ -z "$verb" || "$verb" == \#* ]] && continue
+	echo "client-orders: $verb $a $b $rest"
+	case "$verb $a" in
+	"plans ") "$O/key" F6; pause 1.2 ;;
+	"plans close") "$O/click" 621 513; pause ;;
+	"plan select") "$O/key" alt+p Home; downs "$b"; pause 0.4 ;;
+	"plan copy")
+		"$O/key" alt+c; pause 1
+		# the Rename Battle Plan dialog's title bar covers (600,405) when the copy was made
+		if [[ "$(pixel 600 405)" == "srgb(166,203,243)" ]]; then
+			"$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause
+		else
+			echo "client-orders: copy refused (no Rename dialog)" | tee -a "$out/refused.txt"
+		fi ;;
+	"plan rename") "$O/key" alt+r; pause 1; "$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause ;;
+	"plan primary") "$O/key" alt+e shift+Tab Home; downs "$b"; pause 0.4 ;;
+	"plan secondary") "$O/key" alt+e Home; downs "$b"; pause 0.4 ;;
+	"plan tactic") "$O/key" alt+t Home; downs "$b"; pause 0.4 ;;
+	"plan who") "$O/key" alt+w Home; downs "$b"; pause 0.4 ;;
+	"plan dump") "$O/click" 686 478; pause 0.4 ;;
+	"plan delete")
+		"$O/key" alt+d; pause 1
+		if [[ "$b" == confirm ]]; then shot alert; "$O/key" Return; pause; fi ;;
+	"fleet first") "$O/click" 232 169; pause 1 ;;
+	"fleet next") "$O/click" 144 132; pause ;;
+	"fleet prev") "$O/click" 144 108; pause ;;
+	"fleet plan") fleetplan "$b" ;;
+	key\ *) "$O/key" $a $b $rest; pause ;;
+	click\ *) "$O/click" "$a" "$b"; pause ;;
+	wait\ *) sleep "$a" ;;
+	shot\ *) ;;
+	*) echo "client-orders: unknown command: $verb $a" >&2; exit 2 ;;
+	esac
+	shot "$verb${a:+-$a}"
+done 3< "$cmds"
+
+"$O/key" alt+f; pause 0.6; "$O/key" s    # File > Save
+t0=$SECONDS
+until [[ -f "$games/$game.X$n" ]]; do
+	((SECONDS - t0 < 30)) || { echo "client-orders: no $game.X$n written" >&2; exit 1; }
+	sleep 0.5
+done
+sleep 2; shot saved
+cp "$games/$game.X$n" "$out/"
+[[ -f "$games/$game.H$n" ]] && cp "$games/$game.H$n" "$out/"
+"$O/key" alt+f x; "$O/wait-stable" 30 2 >/dev/null || true
+"$O/stop" >/dev/null
+"$here/combatlab" dump "$out/$game.X$n" > "$out/orders.dump"
+cat "$out/orders.dump"

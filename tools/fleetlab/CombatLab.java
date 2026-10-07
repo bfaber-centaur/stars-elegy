@@ -220,6 +220,16 @@ public class CombatLab {
                 for (int i = 8; i + 1 < w.size; i += 2) ex.append(i == 8 ? " orders=" : ",").append(String.format("%04x", u16(d, i)));
                 System.out.printf("%s   wp x=%d y=%d obj=%d type=%02x warp=%d task=%d%s%n", f,
                     u16(d, 0), u16(d, 2), u16(d, 4), d[7] & 0xff, (d[6] & 0xff) >> 4, d[6] & 15, ex);
+            } else if (b instanceof BattlePlanBlock && b.size == 2) {
+                // order file: battle plan delete (byte 1 bit 6); plan = high nibble, player = low
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order plan-delete owner=%d k=%d raw=%s%n", f, d[0] & 15, (d[0] & 0xff) >> 4,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (b.typeId == 42) {
+                // order file: set a fleet's battle plan (fleet id word, plan byte)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order fleet-plan fleet=%d plan=%d raw=%s%n", f, u16(d, 0) & 0x1ff, d[2] & 0xff,
+                    Util.bytesToString(d, 0, b.size));
             } else if (b instanceof BattlePlanBlock) {
                 BattlePlanBlock p = (BattlePlanBlock) b;
                 p.decode();
