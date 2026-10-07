@@ -92,9 +92,18 @@ def check(kind, args, want, st, before):
         res = 'kept' if got == was else 'part removed'
         return ('OK' if res == want else 'MISS'), got
     if kind == 'salvage':
-        return 'NODATA', [t for t in st['things']]
+        # salvage is written as a packet-type object with no destination (dest=1023)
+        for t in st['things']:
+            d = dict(kv.split('=', 1) for kv in t.split() if '=' in kv)
+            if d.get('x') == str(args[0]) and d.get('y') == str(args[1]):
+                got = [int(x) for x in d['cargo'].split('/')]
+                return ('OK' if got == list(want) and d.get('dest') == '1023' else 'MISS'), t
+        return 'MISS', None
     if kind == 'tech':
-        return 'NODATA', st['player'].get(args[0])
+        pl = st['player'].get(args[0])
+        lv = {f: int(pl[f]) for f in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio')}
+        ok = lv['weapons'] in (3, 4) and all(v == 3 for f, v in lv.items() if f != 'weapons')
+        return ('OK' if ok else 'MISS'), lv
     return 'NODATA', None
 
 

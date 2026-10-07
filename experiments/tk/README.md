@@ -434,3 +434,47 @@ Game CB, 1 year(s).
 | D | AR loss | AR freighter with 200 moving through deep space: loses trunc((C + 11)·3/100) if C > 10 | fleet 0/3: col 194 |
 | E | AR loss | AR freighter with 200 stationary in deep space: no loss | fleet 0/4: col 200 |
 
+
+## Round 2 results
+
+Checked with `python3 experiments/tk/check2.py RUNDIR` (pinned-turn output
+per run; raw files in private `stars-oracle-apparatus` `evidence/tk2/`).
+Every run at cycles 20000; TK-115 also at seven other settings; TK-111 ran
+2401 and then 2402 from its own output.
+
+| Run | Checks | Result |
+|---|---|---|
+| TK-101..103 | T-36 colony minerals at tech 5/10/15 | all OK: 17/6/15, 12/4/12, 9/3/8 |
+| TK-104, 105 | T-37 design check, field energy / electronics | all 28 OK: LBU-17 and LBU-32 removed in both |
+| TK-106 | WM invasions, queue, leftover, BET colony | all 8 OK |
+| TK-107 | AR colonize, queue, starbase, refused unload | 4 OK, 2 MISS: colonists lost in flight (25 → 24 landed, 100 → 97 kept) |
+| TK-108 | CA capture, queue, colony | 5 OK, 1 MISS: env 50/50/50, not 55/47/52 |
+| TK-109, 110 | IS defender, WM vs IS | all 5 OK |
+| TK-111 | scrap S1–S10, remote mining M1–M4, two years | all 18 OK (salvage: a packet-type object, dest 1023, 60/20/70) |
+| TK-113 | several bombers B1–B3, colonize retries R1, R2 | B1–B3 OK; R1, R2 MISS (no retry) |
+| TK-114 | phase-start ownership, own-planet unload amounts | all 14 OK |
+| TK-115 | tech on capture, 8 cycle settings | all OK; weapons 3 → 4 in 5 of 8, never more, no other field |
+| TK-116 | CA defender, JOAT attacker | env back to 55/47/52 (OK); `orig` no longer stored, see below |
+| TK-117 | AR colonists in flight | all 5 OK: 10 → 10, 11 → 11, 40 → 39, 200 → 194 moving; 200 stationary kept |
+
+Misses and what they show:
+
+- **TK-107 A and B (prediction error).** AR colonists in a moving fleet
+  lose `trunc((C + 11)·3/100)` for C > 10 (a movement rule the prediction
+  left out; TK-117 then confirmed it): 25 → 24 before colonizing, 100 →
+  97 in the refused freighter. The rules under test held: the colony got a
+  starbase of design 0 and the queue minus items 0–2; the unload was
+  refused and the colonists stayed in the fleet.
+- **TK-108 A (prediction error).** Both players were Claim Adjuster, so the
+  new owner's end-of-year CA terraforming put the captured planet back at
+  its ideal 50/50/50. TK-116, with a JOAT attacker, showed the revert:
+  55/47/52 after capture. The file then no longer marks the planet as
+  terraformed (no separate original values), which fits env = original;
+  the `orig` part of that check was over-specified.
+- **TK-113 R1 and R2 (reading contradicted).** After players 0 and 2 tied
+  (150 each on 100: planet emptied, nobody landed), player 0's colony ship
+  whose colonize had failed in that phase did not retry, before movement
+  or after. It ended in orbit with its 25 colonists and its waypoint task
+  cleared (event 0x4e to player 0 for each ship); the planet stayed
+  unowned with no minerals. stars-elegy #34's load-phase retry and its
+  after-movement LEGACY BUG did not occur here.

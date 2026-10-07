@@ -1775,12 +1775,123 @@ race-restricted parts (Retro) and Mystery Trader parts (Hush-a-Boom, Multi
 Contained Munition): `TAKEOVER.md`, "Design parts dropped when the year is
 generated" (CONFIRMED in one setting there).
 
+### Round 2 (TK-101 to TK-117)
+
+Status: MEASURED, 2026-10-07. Predictions from `TAKEOVER.md` (and the
+rules of stars-elegy #34) committed before each run; specs, predictions
+and the checker are `experiments/tk/gen2.py` and `check2.py`; every case
+and value is in `experiments/tk/README.md` "Round 2". Combat Lab as above,
+except TK-113: TK3, a tiny three-player game (`tools/fleetlab/new-game`,
+three players of the PG000 race, Super Stealth, growth 10%). Race changes
+were legal (no message 0x117): WM, AR and CA with NRSE, CE, OBRM, LSP and
+BET; IS alone; JOAT with UR plus the same five (UR alone was penalized).
+CombatLab gained `defqueue`, `defleftover` and `field`, and its dump prints
+production queues.
+
+**Ground combat by race (CONFIRMED, T-24).** War Monger troops count 165
+per 100 and an Inner Strength defender counts double:
+
+| Attacker | Defender (after growth) | Observed |
+|---|---|---|
+| WM 100 | JOAT 150 | attacker lands 9 |
+| WM 600 | JOAT 500, 20 SDI | attacker lands 248 |
+| JOAT 150 | IS 100 | defender keeps 18 |
+| JOAT 300 | IS 100 | attacker lands 118 |
+| WM 150 | IS 100 | attacker lands 28 |
+
+**Alternate Reality (CONFIRMED, T-33).** An AR transport's unload on an
+enemy planet was refused and the fleet kept its colonists. An AR colony
+ship (Orbital Construction Module) colonized an unowned planet, which got
+a starbase of the owner's starbase design 0. AR colonists in a fleet
+**moving** this year lose `trunc((C + 11)·3/100)` when the cargo C is over
+10 (TK-107: 100 → 97, 25 → 24 before colonizing; TK-117: 10 and 11 kept,
+40 → 39, 200 → 194, and 200 kept by a stationary fleet).
+
+**Default queue and leftover setting (CONFIRMED, T-26).** A planet captured
+by invasion and a new colony both got the new owner's default production
+queue and its "only leftover to research" setting, in queue order. Alternate
+Reality skipped items 0–2 (auto mines, factories, defenses) and Claim
+Adjuster items 4–5 (auto minimum/maximum terraform); WM kept all five.
+
+**Claim Adjuster capture.** TK-108 (CA attacker, CA defender) ended with
+the captured planet at 50/50/50, its race's ideal: the new CA owner's
+end-of-year terraforming covers any revert, so this case could not show it
+(a corpus error in the prediction). TK-116, JOAT attacker against a CA
+defender: the captured planet went back to its original 55/47/52 (the file
+then no longer stores separate original values).
+
+**Scrap (CONFIRMED, T-34).** 30 ships costing 180/60/210 kT in total:
+
+| Where | Minerals |
+|---|---|
+| own planet with starbase | 144/48/168 (4C/5) |
+| own planet, no starbase | 60/20/70 (C/3) |
+| UR player's planet with starbase (fleet owner not UR) | 162/54/189 (9C/10) |
+| UR player's planet, no starbase | 81/27/94 (9C/20) |
+| unowned planet | 60/20/70 on its surface |
+| deep space | a salvage object with 60/20/70 (written as a packet-type object with no destination) |
+
+Mineral cargo was added on top. Colonists in a scrapped fleet joined the
+fleet owner's own planet before growth (87 + 50 → 157 after growth) and
+were lost at another player's planet. A fleet with a second waypoint was
+scrapped where it started. A fleet that **arrived** with a scrap order was
+intact at the end of that year and scrapped the next year.
+
+**Remote mining (CONFIRMED, T-35).** A fleet with 24 robot points at an
+unowned planet with concentrations 100/50/25 mined 24/12/6 kT a year when
+it started the year there; one that arrived that year mined nothing until
+the next year. Miners at an owned planet (own or enemy) mined nothing.
+
+**Several players bombing one planet (CONFIRMED in one setting).** With players 0 and 2
+over player 1's planets, each player's pass was applied in turn, player 0
+first: 10 + 10 Cherry on 800 left 450 (one merged pass would leave 400);
+player 0 Smart, player 2 Cherry on 40 left 6; player 0 Cherry, player 2
+Smart left 9 (the reverse order gives 9 and 6; a merged pass 10).
+
+**Phase-start ownership (CONFIRMED).** An unowned planet colonized before
+movement and then bombed empty in the same year still took an arriving
+freighter's unload as a colonization (50 landed): the after-movement phase
+records owners before bombing. With no colonization, the same unload was
+refused and the freighter kept its 50.
+
+**Unload amounts on an own planet (CONFIRMED).** Before movement, unloaded
+colonists joined before growth (87 + 50 → 157); after movement they did
+not (100 + 50). "Unload exactly" moved `min(v, cargo)`, "set amount to"
+moved `cargo − v`, "set waypoint to" moved `v − planet` colonists (capped
+by cargo), and unloaded minerals went onto the surface.
+
+**Colonize retries (CONTRADICTED: MISS).** After a tie emptied a planet
+(players 0 and 2 dropping 150 each on 100), a player 0 colony ship whose
+colonize failed in the same phase did **not** retry: before movement and
+after movement alike, the ship kept its colonists, its waypoint task was
+cleared (message 0x4e), and the planet stayed unowned with no minerals.
+The reading in stars-elegy #34 (a load-phase retry, and the after-movement
+LEGACY BUG) is not supported by this case.
+
+**Tech on capture (MEASURED).** Player 0 at tech 3 captured two planets of a
+player at weapons 10 (other fields 3). Over 8 cycle settings, weapons went
+3 → 4 in 5 and stayed 3 in 3; never above 4 and no other field, consistent
+with one attempt per capture sharing a once-a-year gain (predicted chance of
+a gain 0.56).
+
+**Colony minerals at intermediate tech (CONFIRMED, T-36).** The Colony Ship
++ Long Hump 6 + Colonization Module left 17/6/15, 12/4/12 and 9/3/8 kT at
+tech 5, 10 and 15 in every field: ¾ of the COMPONENTS.md owner cost. With
+BET (WM, CA races at tech 26) it left 3/1/4 (JOAT 4/1/5), and an AR Orbital
+Construction Module ship 5/2/5: BET miniaturization (80%) applies.
+
+**Design check (CONFIRMED, T-37).** With electronics 7 and everything else
+26, LBU-17 (electronics 8) and LBU-32 (electronics 10) were removed whether
+the research field was energy or electronics; Hush-a-Boom (Mystery
+Trader), Retro (CA only) and every other part stayed.
+
 ### Not tested
 
-WM / IS / AR races (T-24, T-33), the production queue after capture,
-scrap (T-34), remote mining (T-35), several bombing players at one
-planet, the tech learned on capture, ancient artifacts, and colonist
-loss when a colonize retry happens in the load phase.
+Ancient artifacts; tech learned from scrapping at a starbase; fuel
+unloaded at a planet; loading every colonist from one's own planet; a
+colonize retry in a setting other than a tie (the tie case did not retry);
+planetary defenses other than SDI and Missile Battery; the bombing order
+across planets as seen through random draws.
 
 ## Universe objects
 

@@ -718,6 +718,41 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
   appeared with the fleet and planet numbers next to them. The rest of the
   record layout is not decoded.
 
+### Takeover round 2 (observed 2026-10-07, TK-101..TK-117)
+
+```sh
+python3 experiments/tk/gen2.py                # writes tk1NN.spec
+python3 experiments/tk/gen2.py --table        # prediction table
+python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs predictions
+```
+
+- New CombatLab keys: `defqueue P ID:COUNT,...` (the player's default
+  production queue for new colonies: count byte at PlayerBlock data offset
+  0x4f in StarsAPI's `fullDataBytes`, then words `id | count << 6`),
+  `defleftover P 0|1` (bit 0 of 0x4e) and `field P FIELD` (research
+  field). The dump prints `defqueue=` and `defleftover=` on player lines
+  and a `queue planet=N items=id:count:pct:kind,...` line after a planet
+  that has a production queue. Combat Lab's players have no default queue.
+  The game kept and used the edited queue.
+- Legal race edits (no message 0x117): JOAT → WM, AR or CA with
+  `lrt P 0x1b80`; JOAT → IS alone; JOAT + Ultimate Recycling with
+  `lrt P 0x1ba0`. UR alone (`0x20`) gave 0x117, and the generated year
+  showed the race's first stat byte (as `hst-edit` prints it) raised from
+  10 to 24; the trait stayed. BET in 0x1b80
+  changes miniaturization, so ship costs differ from JOAT's.
+- A second year: run `pinned-turn` again with the first run's
+  `raw/after/CB.HST` as START and `raw/after` as BASEDIR (TK-111).
+- Three players: `tools/fleetlab/new-game` with three `pg000.r1` lines in
+  the definition made TK3, three human players (no AI turns); CombatLab
+  built on it unchanged (`pinned-turn … TK3`).
+- Scrap in deep space wrote one object: type packet, destination 1023,
+  the minerals as its cargo.
+- AR colonists in a moving fleet shrink during movement (PARITY.md); give
+  AR transports and colony ships enough margin, or start them in orbit.
+- Claim Adjuster owners terraform their planets to the best their tech
+  allows at the end of the year, so a CA new owner hides the capture-time
+  revert of the environment.
+
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
 ```sh
