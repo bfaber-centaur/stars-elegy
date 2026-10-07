@@ -1549,11 +1549,54 @@ at 2026.
 Setting both players to friends (SC-001F) left both views identical to
 SC-001: allies do not share scanner coverage.
 
+### Universe objects (S-17, S-18, S-19, IT gates, SD detection: CONFIRMED)
+
+Universe-objects corpus OB-011..OB-014, OB-017, OB-018 and OB-020 (section
+"Universe objects" below for method). Viewer player 1; homeworld scanner
+removed; positions are those after the year's wormhole moves and packet
+moves.
+
+- **Minefields and wormholes the viewer does not know** are seen within
+  R/4 of a normal scanner or within a penetrating range. Rhino on a Small
+  Freighter (R 50, P 0): fields at 12 ly seen and at 13 and 40 ly not; a
+  wormhole 34 ly away after its move not seen, one 10 ly away seen
+  (OB-018 A, B, D, H, I).
+- A fleet inside a minefield sees it, whatever the distance to the centre
+  (OB-018-C, 30 ly; OB-011).
+- **A minefield the viewer already knows** (its "known" mask holds the
+  viewer) is seen within the full normal range: 40 and 50 ly seen, 51 not
+  (OB-018 E–G; OB-011 at 40 and 51 with R 66).
+- **A wormhole the viewer already knows** (its "seen" mask holds the
+  viewer) is seen within the full normal range, like a known minefield. A
+  known wormhole 34 ly from a Rhino freighter was seen; an unknown one 37
+  ly from the other freighter was not (OB-020 A, B). A known wormhole far
+  from every viewer scanner was not in the file (OB-011-H, OB-020-C).
+- Packets are seen within the normal range: about 48 ly seen and 53 not
+  (OB-018 J, K). A packet's mark from the host file or from an earlier
+  player's pass does not make it visible (OB-017 D–F).
+- The Mystery Trader is in every player's file, 69 ly or more from any
+  scanner (OB-011-J).
+- Seeing another player's minefield or packet, and none of that player's
+  fleets or planets, still put that player's block in the viewer's file
+  (OB-011, OB-018). In OB-017 the viewer saw only wormholes and got no
+  block for the other player.
+- **Packet Physics:** every packet appears in a PP player's file, and a
+  moving PP packet scans as a penetrating scanner of range warp²: a warp-5
+  packet saw a fleet and a minefield at 20 ly and missed both at 30 ly
+  (OB-012).
+- **Interstellar Traveler:** an IT player sees an enemy planet with a
+  stargate within its own gate's range at level 3: 75 ly from a range-250
+  gate it was level 3, at 259 ly level 0, and a starbase without a gate
+  at 138 ly level 0 (OB-013).
+- **Space Demolition:** an SD player's minefield shows it enemy fleets
+  inside the field that are not orbiting a planet. Of three scouts, the
+  one in deep space inside the field was in the SD player's file; the one
+  orbiting a planet inside the field and the one far away were not
+  (OB-014-B, one stream).
+
 ### Not tested
 
-Wormholes, minefields, packets and the Mystery Trader (S-17, S-18, S-19;
-the Combat Lab universe has none), PP packet scanners and the IT gate
-scan, SD minefield detection and the population estimate (S-21, S-22,
+SD detection of cloaked fleets and the population estimate (S-21, S-22,
 random), AR planet scanners (S-11), chase retargeting (S-24), and
 scanners on more than two players.
 
@@ -1738,3 +1781,221 @@ WM / IS / AR races (T-24, T-33), the production queue after capture,
 scrap (T-34), remote mining (T-35), several bombing players at one
 planet, the tech learned on capture, ancient artifacts, and colonist
 loss when a colonize retry happens in the load phase.
+
+## Universe objects
+
+Status: MEASURED (OB-001 to OB-020, 2026-10-07; cloud oracle). Predictions
+O-1..O-40 from the private binary reading (stars-decomp `docs/objects.md`,
+`docs/objects-predictions.md`, PR #10) were restated per case and
+committed before the runs (`experiments/ob/README.md`; commits c3d94fe,
+172ef28, 1c7ae56, 6a78bee, 335c5b9). CONFIRMED below means every case that
+tested the rule agreed; the case ids say which. This section states behavior only.
+
+### Method
+
+- Universe "Combat Lab" (`docs/ORACLE.md`), two JOAT players, one pinned
+  generation 2400 → 2401 per run (`tools/fleetlab/pinned-turn`, cycles
+  20000; the random cases also at five other settings). Combat Lab has
+  no objects, so minefields, packets, wormholes and the Mystery Trader
+  were written into the start file (`thing` lines, `docs/ORACLE.md`
+  "Universe objects experiments").
+- Player 0 at tech 26 (no design part stripped), player 1 at tech 3,
+  research 0%, mutual enemies unless stated. Each minefield case sits
+  alone, with the planets inside it checked by `gen.py`.
+- Wormhole creation (O-27) used new games built from definition files
+  (`tools/fleetlab/new-game`).
+- Raw files, dumps and checks: private `stars-oracle-apparatus`,
+  `evidence/ob/`.
+
+### Minefield decay (CONFIRMED)
+
+Each year a field loses p% of its mines, where
+p = min(50, 4·N + 2) for a non-SD owner and min(50, N + 2) for a Space
+Demolition owner, and N is the number of planets inside the field
+(d² ≤ mines). Planet owners do not matter. The loss is
+max(p, ⌊mines·p/100⌋), and at least 10 for standard and heavy fields;
+speed-bump fields have no minimum of 10. A detonating field adds 25 to p.
+
+- No planets: 1000 → 980; 100 → 90; speed bump 100 → 98 (OB-002 A–C).
+- 2 planets: 1000 → 900; 3 planets including the owner's own homeworld:
+  2000 → 1720 (OB-002 D, E). SD owner, 2 planets: 1000 → 960 (OB-014-A).
+- 22 planets: 40000 → 20000 (the 50 cap, OB-015); SD owner: 40000 → 30400
+  (OB-016).
+- Decay comes before laying: a field laid this year is first decayed next
+  year (OB-002-F).
+
+### Laying (CONFIRMED except where marked)
+
+- A stationary fleet with the lay-mines task lays, per ship, the sum of its
+  dispensers' ratings, doubled on Mini Mine Layer (and, per the binary
+  reading, Super Mine Layer) hulls: one Mini Mine Layer with two Mine
+  Dispenser 40 lays 160; three such ships lay 480; a Frigate with two
+  Mine Dispenser 40 lays 80; a Frigate with one Multi Contained Munition
+  lays 40; a Frigate with three Speed Trap 20 lays a 60-mine speed-bump
+  field (OB-002 F, H, J, K, L).
+- Each kind lays its own field: a ship with two Mine Dispenser 40 and two
+  Heavy Dispenser 50 laid a standard 160 and a heavy 200 (OB-002-I).
+- New mines merge into the layer's own field of the same kind that
+  contains the fleet. The count adds, and the centre moves to the
+  count-weighted mean, truncated: a layer 10 ly east of its 400 field's
+  centre (390 after decay) laying 160 made one field of 550 centred 2 ly
+  east (OB-002-G).
+- The years word: 0 lays once and clears the task (OB-002-N).
+- A Space Demolition fleet travelling toward a lay-mines waypoint lays half
+  the amount at its end-of-year position: 80 from a Mini Mine Layer with
+  two Mine Dispenser 40 (OB-014-C).
+- **A lay-mines task on waypoint 0 holds a non-SD fleet in place.** A
+  Mini Mine Layer set to lay indefinitely, with waypoint 1 25 ly away,
+  stayed put for three years. It laid the full 160 each year, so its field
+  went 160 → 310 → 460 (2% decay with the minimum of 10 in between), and
+  both waypoints were kept (OB-019-A, OB-014-D).
+- Years word 1 lays twice and then clears the task: 160, 310, then 300
+  from decay alone (OB-019-B).
+
+### Sweeping (CONFIRMED)
+
+- A fleet's sweep rating is Σ over its beam weapons of count × damage ×
+  range², with range 4 for gatling-type beams (Mini Gun, Gatling Gun) and
+  range + 1 on a starbase. Sappers sweep nothing. The rating multiplies by
+  the number of ships, and speed-bump fields lose a third of it.
+  - Destroyer with 2 Lasers: 1000 → 980 (decay) → 960.
+  - Mini Gun DD: 980 → 772 (13·16 = 208, not range 2).
+  - Gatling DD in a 2000 field: 1960 → 968 (992).
+  - Pulsed Sapper DD: no change.
+  - Three Laser DDs in one fleet: 920. Two separate fleets: 940; each
+    fleet sweeps in full.
+  - Speed bump: 980 → 974.
+  - A Laser Fort (2 lasers) starbase inside a field with that planet:
+    1000 → 940 (6% decay) → 860 (2·10·4 = 80).
+  (OB-001 B–J, OB-007-C.)
+- A sweeper never sweeps past itself: a fleet rated 992 sitting 20 ly
+  (d² 400) from a 1000 field's centre left 399 mines, so it is still just
+  outside the field (OB-001-A).
+- A fleet sweeps only fields whose owner its battle plan would attack:
+  - plan "attack nobody": no sweep (OB-001-E);
+  - plan "enemies" against a neutral: no sweep;
+  - plans "neutrals and enemies" and "everyone" against a neutral: sweep
+    (OB-007 A, B, E).
+- Against a friend's field (OB-008):
+  - plan "neutrals and enemies": no sweep;
+  - plans "everyone" and "player 1 only": both swept, 1000 → 960
+    (MEASURED, one case each);
+  - a starbase did not sweep a friend's field but did sweep a neutral's
+    (OB-008-A, OB-007-C).
+- Sweeping comes after laying in the same year. A 160-mine field laid at
+  an enemy homeworld whose Space Station has 32 Lasers was gone at the end
+  of the year (OB-007-D).
+- A fleet that ends its move inside an enemy field sweeps it the same year
+  (OB-010-S: 2940 → 2840 after five Laser DDs crossed and stopped inside).
+
+### Detonation (MEASURED, one case: OB-002-M)
+
+A detonating standard field damaged everything inside it except its owner's
+Mini Mine Layer. Every one of the owner's five Laser DDs took 50% of its
+armor, every one of the enemy's five Medium Freighters 80%, and the layer
+nothing. The field lost 27% (2% + 25%) and nothing more for the hits:
+1000 → 730.
+
+### Hits while moving (MEASURED)
+
+- Five warp-9 fleets, each moving only 30 ly inside a heavy field (safe
+  speed 6), were never hit in six cycles settings, 30 fleet-years
+  (OB-010 H0–H4). The binary reading takes the warp from the distance
+  actually travelled (30 ly → warp 6). Warp 9 would give each fleet
+  about a 60% hit chance.
+- A warp-9 fleet of five Laser DDs crossing 76 ly of a 3000-mine
+  standard field gave 3 distinct outcomes in six settings (OB-010-S):
+  - no hit, in three settings;
+  - a stop at the field's centre (55 ly inside it) in two settings, and
+    64 ly inside it in one.
+- On a hit:
+  - the fleet stopped where it was hit;
+  - every ship took 50% of its armor;
+  - the field lost 50 before its 2% decay: 3000 → 2950 → 2891. Decay
+    first would give 2890.
+  - The stopped fleet then swept 100, so the field ended at 2791.
+- Hit odds per ly and shrink amounts for other field sizes (O-14, O-15)
+  are not yet measured.
+
+### Packets (CONFIRMED except where marked)
+
+- **An uncaught packet delivers one ninth of its cargo** to the planet's
+  surface, truncated:
+  - 1000 kT ironium at warp 10 into an unowned planet: +111 (OB-003-A);
+  - 300/200/100 kT: +33/+22/+11 (OB-003-B).
+  This contradicts the common player belief that all minerals arrive.
+- A planet whose mass driver catches part of the packet receives the caught
+  part in full and a ninth of the rest. A Mass Driver 7 starbase against a
+  warp-10 packet catches 49%: 1000 kT gave +546 (OB-009-C). A packet no
+  faster than the driver is caught whole: +1000, no damage (OB-009-D).
+- Decay on arrival keeps at least 10 kT per non-empty mineral: a class-1
+  (10%/yr) 100 kT packet arriving with a 5% share of a year lost 10, and
+  the planet got ⌊90/9⌋ = 9 (OB-003-C).
+- Damage to a populated planet, in units of 100 colonists, with population
+  growth controlled (OB-009):
+  - 1000 kT at warp 10, no driver, no defenses, 1000 units: 625 killed
+    (100·1000/160), leaving 375 (OB-009-F).
+  - Against a Mass Driver 7 catcher (49%): 318 killed (OB-009-C).
+  - With 50 SDI defenses (tech 3): 418 killed, and the defenses fell to 30
+    (OB-009-H).
+  - Own packets hurt their owner's planets the same way (OB-009-E).
+  - Damage at or above the population leaves the planet uninhabited
+    (500 units, OB-009-G, OB-003-G).
+- Packets in flight move warp² ly per year whether or not their "moved"
+  flag is set. Class 2 keeps 75% of its cargo per year, class 3 keeps 50%
+  (OB-003 J, K).
+- Packet impacts come before population growth in the year.
+
+### Wormholes (CONFIRMED except where marked)
+
+- An end that does not jump moves by at most 12 ly on each axis, and its
+  years counter goes up by 1 (OB-005-A, OB-017).
+- A fleet with a wormhole as its next waypoint that reaches it ends the
+  year on the partner's position from before that year's wormhole moves
+  (OB-005-C: the partner had moved −5,−11 in the same files). A fleet that
+  falls short stays in normal space (OB-005-D).
+- **MEASURED (OB-005-B, 4 distinct streams):** a class-2 pair inserted
+  at 30 years jumped once in eight end-years. In that stream one end
+  jumped (moved −59,−25, years reset to 0) and its partner jiggled (years
+  31), so the ends roll separately.
+
+### Wormhole creation (MEASURED, OB-006)
+
+New games built from definition files, three seeds per size. Every count
+fell inside the binary reading's range; three games per size do not test
+the range ends.
+
+| Size | Pairs (seeds 11, 22, 33) | Binary-reading range |
+|---|---|---|
+| Tiny | 0, 0, 0 | 0–2 |
+| Small | 1, 2, 3 | 1–3 |
+| Medium | 2, 2, 1 | 1–5 |
+| Large | 5, 3, 3 | 3–6 |
+| Huge | 6, 6, 7 | 4–8 |
+
+- With random events off there were no wormholes (tiny and huge, three
+  seeds each).
+- Every end started with years 0 and stability class 0, 1 or 2. Class 3
+  never appeared. The two ends of a pair often had different classes.
+
+### Mystery Trader (CONFIRMED, OB-004)
+
+The Mystery Trader works with random events off.
+
+- A fleet at its position with 4999 kT of minerals was kept, whether it was
+  stationary or had just moved there. With exactly 5000 kT (colonists not
+  counted) the fleet was removed.
+- Player 1 (tech 3 everywhere) gave 5000 kT for a research gift and gained
+  6 tech levels in total.
+- A second player 1 fleet with 5000 kT at the same trader in the same year
+  was kept: each player gets one reward per trader.
+
+### Not tested
+
+Packet launch (warp, class, amounts, same-year merge, the launch-year half
+move: O-16..O-19), PP terraforming and PP decay rates, AR and IT packet
+targets (O-25, O-26), wormhole jump odds over many streams and what a jump
+does to fleets aimed at the wormhole (O-28, O-30), Mystery Trader spawning,
+path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
+and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
+stargates.
