@@ -948,6 +948,39 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   not used. Keep crafted races at 0 or above; with more than 50 points
   left the homeworld gets the full 50-point spend.
 
+### Wormholes and Mystery Trader over several years (observed 2026-10-07, WT-000)
+
+```sh
+python3 experiments/wt/smoke.py OUT                    # or a batch generator built on experiments/wt/wt.py
+tools/fleetlab/combatlab build BASE/CB.HST OUT/wt000.spec OUT/start.HST
+tools/fleetlab/years OUT/start.HST BASE OUT/run N [CYCLES|C1,C2,...] [STEP]
+python3 experiments/wt/trace.py OUT/run                # per-year wormholes, Traders, fleets, tech
+```
+
+- `years` chains `pinned-turn`: year k starts from year k−1's
+  `raw/after`. It runs with CYCLES + (k−1)·STEP (STEP defaults to 1000),
+  or with the k-th entry of a comma list.
+- **Each pinned year reseeds.** Every year starts a fresh DOSBox. With the
+  same cycles every year, the same draws repeat. In WT-000 at 20000 three
+  years running, every wormhole end moved by the same vector each year.
+  Cycles values also fall into few streams: 21 values from 20000 to 45000
+  gave 3 on the WT-000 start. This matches the KX-004 cycles-to-tick map
+  (stars-elegy #44), so a sweep for random outcomes such as jump odds has
+  to reach low cycles values. `trace.py` flags a year whose wormhole moves repeat the year
+  before as `SAME STREAM?`. Year-1 stream classes for the WT-000 start are
+  in `experiments/wt/README.md`.
+- Wormhole and Trader `thing` lines take raw-word tokens: `w14 HEX` and
+  `w16 HEX` for wormholes, `w10 HEX` and `w16 HEX` for Traders. A Trader's
+  `w10` replaces the whole word, warp included.
+- **Trader raw words after a move.** The game sets bit 4 of a Trader's
+  `w10` (0x0008 → 0x0018) on its first move. Its `w16` read 0, 1, 2 in the
+  files after years 1–3.
+- **Staging a meeting.** OB-004 showed that a stationary fleet at the
+  Trader does not trade. `wt.py meet` places the fleet `back` ly west of
+  the Trader's expected end point and flies it there. The end point comes
+  from `axis_move` (warp² ly along an axis, OB-004), so stage meetings on
+  axis-aligned headings only.
+
 ### Component displays (observed 2026-10-07, CS-001)
 
 - `hst-edit edit` also takes `tech=E,W,P,C,EL,B` (current levels) and

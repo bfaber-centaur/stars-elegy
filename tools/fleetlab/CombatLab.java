@@ -73,8 +73,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
-//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
-//   thing trader NUM X Y DX DY WARP [met MASK] [item I]
+//   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
+//   thing trader NUM X Y DX DY WARP [met MASK] [item I] [w10 HEX] [w16 HEX]
 //   thing raw HEX                   (18 bytes)
 //                                   universe objects (objects corpus), written as the
 //                                   host file's object blocks: a count block, then one
@@ -966,6 +966,8 @@ public class CombatLab {
                         case "years": years = Integer.parseInt(t[++i]); break;
                         case "seen": Util.write16(r, 8, Integer.decode(t[++i])); break;
                         case "seen2": Util.write16(r, 10, Integer.decode(t[++i])); break;
+                        case "w14": Util.write16(r, 14, Integer.parseInt(t[++i], 16)); break;
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("wormhole: unknown token " + t[i]);
                     }
                 }
@@ -981,6 +983,8 @@ public class CombatLab {
                     switch (t[i]) {
                         case "met": Util.write16(r, 12, Integer.decode(t[++i])); break;
                         case "item": Util.write16(r, 14, Integer.decode(t[++i])); break;
+                        case "w10": Util.write16(r, 10, Integer.parseInt(t[++i], 16)); break;   // whole word, warp included
+                        case "w16": Util.write16(r, 16, Integer.parseInt(t[++i], 16)); break;
                         default: throw new Exception("trader: unknown token " + t[i]);
                     }
                 }
