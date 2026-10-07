@@ -52,8 +52,14 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - If an order file for that player already exists when the host runs, the
   computer player does not act that year; the existing file is used.
 - **What it sees.** Exactly that player's own view of the game (what its
-  player file holds: its planets, fleets, designs, scanned reports). It
-  never reads other players' hidden state, except through the two leaks
+  player file holds: its planets, fleets, designs, scanned reports), not
+  the true game state. A planet it has never scanned has no owner in its
+  view, so for example it counts as colonizable even when another player
+  owns it (MEASURED, AI-4: editing owners in the host file, or adding owner
+  records to the computer player's history file, left its orders
+  byte-identical; the computer player flew colonizers to planets it had
+  never scanned). Elegy must run each computer player on that player's
+  own view. It never reads other players' hidden state, except through the two leaks
   below. It keeps no memory between
   years: the original writes a private memory block into the player's
   history file each year but never reads it back on this path, so every
@@ -464,11 +470,15 @@ scraps at least one starting fleet at its homeworld.
   fleet that holds a ship of design slot 0 (the starting Scout) is
   scrapped, whatever its orders. AIX 2400: the Scout fleet, gone the next
   year.
-- **Robotoid (BINARY-ONLY, AI-4).** An idle fleet with ships of slot 1 (the
+- **Robotoid (MEASURED, AI-4).** An idle fleet with ships of slot 1 (the
   colonizer) and no slot-0 ships, from year index 5 (from the start when
   player positions are "close"), that finds no planet
   to colonize and no wormhole to explore, and orbits a planet, is
-  scrapped.
+  scrapped. AI oracle: with every planet owned in Robotoid's own view,
+  all three idle colonizers at its homeworld were scrapped; with one
+  planet left free, one colonizer took it and the other two were
+  scrapped, because a planet claimed by one colonizer is not offered to
+  the next in the same turn (§11 "Nearest colonizable planet").
 - **Robotoid (BINARY-ONLY).** A fleet whose every design is obsolete (a
   ship design in slots 2–15 older than 50 years before year index 120, 70
   before 200, 100 after) orbiting an own planet is scrapped when that
@@ -593,7 +603,8 @@ formula, to be published with the personality stage that needs it).
   for its bomber check, where slots 2–7 are not its warships (see
   docs/ai/turindrone.md, planned): LEGACY BUG, reproduced as written.
 
-**Nearest colonizable planet.** Candidates are unowned planets that no
+**Nearest colonizable planet.** Candidates are planets unowned in the
+player's own view (§1: a planet never scanned counts as unowned) that no
 other own fleet is already heading to (its waypoint 1 is that planet:
 for Robotoid and Macinti only when that waypoint's task is colonize; for
 the others any task). Robotoid and Macinti take any unowned planet; the
