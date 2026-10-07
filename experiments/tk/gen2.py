@@ -505,6 +505,42 @@ def runs():
     r.lines[-1] = r.lines[-1] + ' cargo 0 0 0 200'
     r.expect('fleet', (0, i), dict(col=200))
     out.append(r)
+    # Round 2b (after stars-decomp #16 / stars-elegy #37; predictions committed before these runs)
+    # T-40: Claim Adjuster captures Claim Adjuster. Planets: env 60/40/60, original 80/20/80;
+    # player 0's end-of-year CA terraforming moves env to its target from the original, by
+    # c per axis (the best terraform part it may use), stopping at its centre 50.
+    for name, tech, lrt, c, title in (
+            ('tk118', T26, NEG, 15, 'tech 26, no Total Terraform (axis parts: c = 15)'),
+            ('tk119', T26, '0x1b82', 30, 'tech 26 with Total Terraform (TT; c = 30)'),
+            ('tk120', (0, 0, 3, 3, 0, 0), NEG, 0, 'no terraform tech (biotech 0: c = 0)')):
+        r = cb_run(name, f'T-40 CA attacker, {title}, captures a CA planet', p0=tech,
+                   prt0=3, lrt0=lrt, prt1=3, lrt1=NEG)
+        env = [max(o - c, 50) if o > 50 else min(o + c, 50) for o in (80, 20, 80)]
+        r.case('A', 'T-40', f'CA 100 arriving vs CA P=87, env 60/40/60 orig 80/20/80, attacker c = {c}')
+        r.target(0, 87, env='60,40,60', orig='80,20,80')
+        r.arrive(0, f'{D_FREIGHTER}:1', cargo=(0, 0, 0, 100), task='unload')
+        r.expect('planet', (0,), dict(owner=0, pop=9, env=tuple(env),
+                                      orig=None if env == [80, 20, 80] else (80, 20, 80)))
+        r.case('B', 'control', 'CA P=87 (player 1, tech 3: c = 3), env 60/40/60 orig 80/20/80, nothing arrives: '
+               'no target inside orig ± 3 improves it, env stays')
+        r.target(5, 87, env='60,40,60', orig='80,20,80')
+        r.expect('planet', (5,), dict(owner=1, pop=100, env=(60, 40, 60), orig=(80, 20, 80)))
+        out.append(r)
+    # T-39: colonize is tried once
+    r = cb_run('tk121', 'T-39 colonize failures end the order')
+    r.case('A', 'T-39a', 'Colonizer (25) in orbit at player 1 planet P=9 (10), 10 Cherry bomb it empty: '
+           'the colony ship keeps 25, task 0; planet unowned')
+    r.target(0, 9)
+    c = r.orbit(0, f'{D_COLONIZER}:1', cargo=(0, 0, 0, 25), task='colonize')
+    r.orbit(0, f'{D_CHERRY2}:5')
+    r.expect('planet', (0,), dict(owner=-1))
+    r.expect('fleet', (0, c), dict(col=25, task=0))
+    r.case('B', 'T-39b', 'Freighter (25, no colony module) in orbit at unowned planet 21 with colonize: '
+           'keeps 25, task 0, planet unowned with no minerals')
+    f = r.orbit(21, f'{D_FREIGHTER}:1', cargo=(0, 0, 0, 25), task='colonize')
+    r.expect('planet', (21,), dict(owner=-1, surface=[0, 0, 0]))
+    r.expect('fleet', (0, f), dict(col=25, task=0))
+    out.append(r)
     return out
 
 

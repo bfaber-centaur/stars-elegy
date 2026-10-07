@@ -17,11 +17,14 @@ from gen2 import runs  # noqa: E402
 def parse(path):
     """The host file's state from a combatlab dump (lines of the .HST only)."""
     st = dict(planet={}, sb={}, queue={}, fleet={}, design={}, player={}, things=[])
+    last = None
     for line in open(path):
         m = re.match(r'\S+\.HST (.*)', line)
         if not m:
             continue
         s = m.group(1)
+        if not s.startswith('  wp ') and not s.startswith('fleet '):
+            last = None
         if s.startswith('pdetail '):
             n = int(s.split()[1])
             d = dict(kv.split('=', 1) for kv in s.split()[2:])
@@ -51,6 +54,9 @@ def parse(path):
             c = [int(x) for x in d['cargo'].split('/')]
             st['fleet'][(int(d['owner']), int(d['id']))] = dict(
                 fe=c[0], bo=c[1], ge=c[2], col=c[3], ships=d['ships'], x=int(d['x']), y=int(d['y']))
+            last = st['fleet'][(int(d['owner']), int(d['id']))]
+        elif s.startswith('  wp ') and last is not None and 'task' not in last:
+            last['task'] = int(dict(kv.split('=', 1) for kv in s.split() if '=' in kv)['task'])
         elif s.startswith('design '):
             m2 = re.match(r'design owner=(\d+) n=(\d+) .*:: (.*)', s)
             st['design'][(int(m2.group(1)), int(m2.group(2)))] = m2.group(3)

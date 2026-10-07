@@ -478,3 +478,52 @@ Misses and what they show:
   cleared (event 0x4e to player 0 for each ship); the planet stayed
   unowned with no minerals. stars-elegy #34's load-phase retry and its
   after-movement LEGACY BUG did not occur here.
+
+## Round 2b predictions (T-39, T-40; written before these runs)
+
+stars-decomp #16 reconciled TK-113: every colonize failure ends the order
+(no retry). It adds T-39 (other colonize failures end the order too) and
+T-40 (a CA capturing a CA planet: the revert to the original environment,
+then the new owner's end-of-year CA terraforming from it, by `c` per axis,
+the best terraform part it may use, never past its centre 50). T-39c (the
+order given again by `.X` the next year) needs crafted orders and is not
+run. Whether a CA without TT may use Total Terraform parts is the open
+point between TK-118 (axis parts, c = 15) and TK-119 (TT, c = 30); TK-119's
+race (`lrt 0x1b82`) is checked for 0x117 in its own run.
+
+### TK-118: T-40 CA attacker, tech 26, no Total Terraform (axis parts: c = 15), captures a CA planet
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-40 | CA 100 arriving vs CA P=87, env 60/40/60 orig 80/20/80, attacker c = 15 | planet 0: owner 0, pop 9, env 65/35/65, orig 80/20/80 |
+| B | control | CA P=87 (player 1, tech 3: c = 3), env 60/40/60 orig 80/20/80, nothing arrives: no target inside orig ± 3 improves it, env stays | planet 5: owner 1, pop 100, env 60/40/60, orig 80/20/80 |
+
+### TK-119: T-40 CA attacker, tech 26 with Total Terraform (TT; c = 30), captures a CA planet
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-40 | CA 100 arriving vs CA P=87, env 60/40/60 orig 80/20/80, attacker c = 30 | planet 0: owner 0, pop 9, env 50/50/50, orig 80/20/80 |
+| B | control | CA P=87 (player 1, tech 3: c = 3), env 60/40/60 orig 80/20/80, nothing arrives: no target inside orig ± 3 improves it, env stays | planet 5: owner 1, pop 100, env 60/40/60, orig 80/20/80 |
+
+### TK-120: T-40 CA attacker, no terraform tech (biotech 0: c = 0), captures a CA planet
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-40 | CA 100 arriving vs CA P=87, env 60/40/60 orig 80/20/80, attacker c = 0 | planet 0: owner 0, pop 9, env 80/20/80, orig None |
+| B | control | CA P=87 (player 1, tech 3: c = 3), env 60/40/60 orig 80/20/80, nothing arrives: no target inside orig ± 3 improves it, env stays | planet 5: owner 1, pop 100, env 60/40/60, orig 80/20/80 |
+
+### TK-121: T-39 colonize failures end the order
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-39a | Colonizer (25) in orbit at player 1 planet P=9 (10), 10 Cherry bomb it empty: the colony ship keeps 25, task 0; planet unowned | planet 0: owner -1; fleet 0/0: col 25, task 0 |
+| B | T-39b | Freighter (25, no colony module) in orbit at unowned planet 21 with colonize: keeps 25, task 0, planet unowned with no minerals | planet 21: owner -1, surface 0/0/0; fleet 0/2: col 25, task 0 |
+
