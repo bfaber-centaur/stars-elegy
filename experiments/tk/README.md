@@ -1693,3 +1693,17 @@ Controls: C0 = fleet 1/0, C200 = fleet 1/1, C100 = fleet 1/2.
 |---|---|---|
 | TK-415 | giver gives 200 mg of fuel to an empty player 1 Freighter with 0 mg that moves 49 ly east this year | fleet 0/1: fuel 100; fleet 1/3 matches C200: credited when the order is replayed, before movement: the receiver moves and burns fuel exactly like C200 (same x, y and fuel), not like C0. A credit after movement would leave it where C0 is, with C0's fuel + 200; no gift message to either player |
 | TK-416 | giver gives 100 kT ironium to an empty player 1 Freighter with 200 mg that moves 49 ly east this year | fleet 0/2: fe 0; fleet 1/4 matches C100: the 100 kT travels in the hold: same x, y, cargo and fuel as C100 (fuel differs from C200 only if 100 kT changes the burn). A credit after movement would burn like C200 and add the ironium at the destination; no gift message to either player |
+
+
+## Round 8 results
+
+Run 2026-10-07 (cycles 20000, `check8.py`); raw files, order files and
+screenshots in apparatus `evidence/tk8/`.
+
+- TK-415: the receiver moved 49 ly with 124 mg left, exactly as C200;
+  C0 did not move. The giver ended with 100 mg. As predicted: the fuel
+  was aboard before movement.
+- TK-416: the receiver moved 49 ly with 100 kT aboard and 13 mg left,
+  exactly as C100 (C200 kept 124 mg). As predicted: the ironium was
+  aboard for the move.
+- No 0x042–0x04d to either player.

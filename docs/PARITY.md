@@ -3703,6 +3703,29 @@ concrete in `experiments/tk/gen7.py`; raw files are in private
 0x042–0x04d did not appear. The shortfall notice 0x0dd (CONFIRMED) is
 sent by the order replay, which places the credit at order time.
 
+### Round 8: a gift to a fleet that moves away (TK-415, TK-416)
+
+Status: MEASURED, 2026-10-07, one run (cycles 20000), given through the
+client's fleet panel. Predictions (`experiments/tk/gen8.py`,
+`experiments/tk/README.md` "Round 8 predictions") were committed before
+the run; raw files are in private `stars-oracle-apparatus`
+`evidence/tk8/`. Each receiver moved 49 ly east at warp 7 in the year
+the gift was ordered; three player 1 Freighters on the same legs with no
+gift are the controls (C0: empty, 0 mg; C200: empty, 200 mg; C100:
+100 kT ironium, 200 mg).
+
+| Case | Gift | Receiver after the year | Controls |
+|---|---|---|---|
+| TK-415 | 200 mg fuel to an empty Freighter with 0 mg | moved 49 ly, 124 mg left | C200: moved 49 ly, 124 mg; C0: did not move, 0 mg |
+| TK-416 | 100 kT ironium to an empty Freighter with 200 mg | moved 49 ly, 100 kT aboard, 13 mg left | C100: moved 49 ly, 13 mg; C200: 124 mg |
+
+Both receivers match the control that started with the gift, so the
+gift was aboard before movement: it is credited when the order is
+replayed. A credit after movement would have left TK-415's receiver
+where C0 stayed and TK-416's with C200's 124 mg. No 0x042–0x04d were
+sent. (Incidental, one observation: the Long Hump 6 Freighter with 0 mg
+did not move at all at warp 7.)
+
 ### Round 6: bombing message variants (TK-601 to TK-606)
 
 Status: CONFIRMED, 2026-10-07, one run (cycles 20000). Predictions

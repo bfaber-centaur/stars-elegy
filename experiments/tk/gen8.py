@@ -28,6 +28,8 @@ LEG = 49
 
 def mover(r, at, cargo, fuel):
     i = r._fleet(1)
+    r.start = getattr(r, 'start', {})
+    r.start[i] = at
     r.lines.append(f"fleet 1 {i} at {at[0]} {at[1]} ships {P1_FREIGHTER}:1 plan 0 fuel {fuel} "
                    f"cargo {' '.join(str(c) for c in cargo)} to {at[0]} {at[1]} warp 7 "
                    f"to {at[0] + LEG} {at[1]} warp 7")
