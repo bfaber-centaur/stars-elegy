@@ -45,8 +45,9 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
-//         [task TASK] [to X Y [planet N|thing ID|fleet N] warp W [task TASK]]...
-//                                   ("fleet N": follow the owner's fleet N; X Y its position)
+//         [task TASK] [to X Y [planet N|thing ID|fleet [P:]N] warp W [task TASK]]...
+//                                   ("fleet [P:]N": follow fleet N of player P, default the
+//                                   same owner; X Y its position)
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
@@ -1049,8 +1050,14 @@ public class CombatLab {
                     int obj = 0, type = 0x14;
                     if (t[i].equals("planet")) { obj = Integer.parseInt(t[i + 1]); type = 0x11; i += 2; }
                     else if (t[i].equals("thing")) { obj = Integer.decode(t[i + 1]); type = 0x18; i += 2; }
-                    else if (t[i].equals("fleet")) { obj = Integer.parseInt(t[i + 1]); type = 0x12; i += 2; }
-                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet N] warp W");
+                    else if (t[i].equals("fleet")) {
+                        // the target's object id: owner << 9 | fleet number ("P:N", or N for the same owner)
+                        String[] pn = t[i + 1].split(":");
+                        obj = pn.length == 2 ? Integer.parseInt(pn[0]) << 9 | Integer.parseInt(pn[1])
+                            : fs.owner << 9 | Integer.parseInt(pn[0]);
+                        type = 0x12; i += 2;
+                    }
+                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet [P:]N] warp W");
                     fs.wps.add(new int[]{x, y, obj, type, Integer.parseInt(t[i + 1])});
                     i += 2;
                     break;

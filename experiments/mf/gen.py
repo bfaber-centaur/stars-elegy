@@ -354,7 +354,7 @@ for rid, count in (('MF-10a', 2100000), ('MF-10b', 1999000)):
                'merge: no field at the layer; the big field gains 160', 'a new field', ('nonewfield', 0, 1100, 1300))
 
 # ------------------------------------------------------------------ MF-11: per-player field limit
-for rid, n in (('MF-11a', 511), ('MF-11b', 510)):
+for rid, n in (('MF-11a', 511), ('MF-11b', 510), ('MF-11c', 512)):
     r = run(rid, 'per-player minefield limit: %d tiny own fields already exist' % n)
     for i in range(n):
         r.field(0, 1005 + i % 23, 1005 + i // 23, 100, tag='tiny')
@@ -366,6 +366,10 @@ for rid, n in (('MF-11a', 511), ('MF-11b', 510)):
         r.case('A', 'MF-11', '511 own standard fields of 100 (numbers 0..510) and a layer in open space',
                'no new field; "failed to lay" message (0x17e) for that layer', 'a new field (no limit)',
                ('limit', True))
+    elif n == 512:
+        # follow-up after MF-11a (a 512th field, number 511, was created): numbers 0..511 all taken
+        r.case('A', 'MF-11', '512 own standard fields of 100 (numbers 0..511) and a layer in open space',
+               'no new field; the layer\'s mines are lost (refusal message)', 'a new field', ('limit', True))
     else:
         r.case('A', 'MF-11', '510 own standard fields of 100 and a layer in open space',
                'a new 160 field at (1100,1300)', '', ('limit', False))

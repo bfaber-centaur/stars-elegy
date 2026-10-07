@@ -149,3 +149,25 @@ table below; `check.py` compares a run with them.
 |---|---|---|---|---|
 | MF-11b-A | MF-11 | 510 own standard fields of 100 and a layer in open space | a new 160 field at (1100,1300) |  |
 | MF-11b-B | MF-11 | a layer at (1010,1010) inside the tiny fields | merges (a tiny field there gains 160) |  |
+
+## Follow-up runs (committed before they ran)
+
+- Runs at the same cycles share one random stream: MF-01, MF-05b, the
+  C fleets of MF-02 and the first fleets of MF-09h drew the same numbers and
+  stopped at the same offsets. They are not independent rate samples. MF-01
+  is repeated at cycles 15000, 25000, 30000, 35000 and 40000 and MF-09s at
+  25000 and 30000; the MF-1 prediction is unchanged (pooled 95% interval
+  contains 30 per mille for heavy, 15 for standard at e 9).
+- MF-02 again: the first run's follow orders named fleet numbers without
+  the owner (player 1's followers aimed at player 0 fleets that did not
+  exist, and flew to the waypoint coordinates). `combatlab build` now writes
+  `owner << 9 | number`. Same prediction, run at cycles 20000 and 25000.
+- MF-11c: MF-11a created a 512th field (number 511). With 512 fields
+  (numbers 0..511) the layer in open space is predicted to make no field.
+
+### MF-11c: per-player minefield limit: 512 tiny own fields already exist
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-11c-A | MF-11 | 512 own standard fields of 100 (numbers 0..511) and a layer in open space | no new field; the layer's mines are lost (refusal message) | a new field |
+| MF-11c-B | MF-11 | a layer at (1010,1010) inside the tiny fields | merges (a tiny field there gains 160) |  |
