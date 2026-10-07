@@ -140,12 +140,14 @@ Hyper-Expansion, BINARY-ONLY).
 
 Status: CONFIRMED for an ordinary race (growth 10%, hab 100,
 max 10,000) over 36 consecutive years 2400–2436, 11 of them crowded
-(27% to 54% of capacity), population **and** carry every year. Crowding
-other than this race, `g ≥ 1000` races, overcrowding, and the "within 10
-units of max" rule are BINARY-ONLY. The 16/9·(1−x)² curve in
-`PARITY.md` (H1) is this rule; its 0–4 unit misses are the permille
-truncation, the `g ≥ 1000` quantization does not apply at 10% growth, and
-the carry.
+(27% to 54% of capacity), population **and** carry every year. That race
+has `g = G·hab = 1000` exactly, so its crowded years exercise the
+quantized branch, and the boundary is inclusive: the unquantized formula
+would give 2425 → 2426 growth of 256 units, not the observed 254. The
+`g < 1000` branch, other `g` values, overcrowding and the "within 10 units
+of max" rule are BINARY-ONLY. The 16/9·(1−x)² curve in `PARITY.md` (H1) is
+this rule; its 0–4 unit misses come from the permille truncation, the
+quantization of `g` to a multiple of 10, and the carry.
 
 Vectors, CONFIRMED (PG-001..003, `G = 10`, hab 100, max 10,000, start
 P 250, k 0 in 2400):
@@ -166,8 +168,8 @@ P 250, k 0 in 2400):
 | 2411 | 712 | 40 | | 2424 | 2458 | 20 | | | | |
 | 2412 | 783 | 60 | | 2425 | 2704 | 0 | | | | |
 
-Worked crowded step (2425 → 2426): `g = G·hab = 10·100 = 1000`, so the
-quantized branch applies. `c = trunc(1000·2704/10000) = 270`,
+Worked crowded step (2425 → 2426): `g = G·hab = 10·100 = 1000`, which is
+not below 1000, so the quantized branch applies. `c = trunc(1000·2704/10000) = 270`,
 `(1000 − c)² = 532900`, `g = 10·trunc(100·532900/562500) = 940`;
 `t = trunc(940·2704/100) = 25417`; `q = 254`, `r = 17`; P 2958, k 17.
 
