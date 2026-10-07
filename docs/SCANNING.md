@@ -525,7 +525,7 @@ picks the nearest visible enemy fleet it can attack within
 10. Three or more players, and scanners on moving fleets mid-year.
 11. Headings of chasers and of fleets travelling by stargate.
 12. Done: SC-035 (bombing check at the bombing step) and SC-036 (allies
-   in a battle) are CONFIRMED (PARITY "SC-035 and SC-036").
+   in a battle) are CONFIRMED (PARITY "Round 7 (CB-048, CB-049) and scanning SC-035/SC-036").
 
 ## Notes for comparing with original-game files
 
