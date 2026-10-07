@@ -936,7 +936,8 @@ Per salvo, while torpedoes remain:
 3. **Misses** do `misses·d/8` to shields only, if that is above 0.
    CONFIRMED (CB-009 K8, Q-14): 14 Beta misses did 21. A target without
    shields left takes nothing from misses, and no miss record is written
-   for it (BINARY-ONLY).
+   for it (CONFIRMED, CB-009, 2 runs: salvos with 163 and 172 misses on
+   an unshielded stack wrote no miss record, and every hit replays).
 4. **Hits.** Let `h = hits·d/2`, truncated once for the whole group of
    hits. `h` goes to shields first, and a further `h` goes to armor
    directly; shield damage that gets past the shields is added to it. The
@@ -944,7 +945,8 @@ Per salvo, while torpedoes remain:
    `hits·d` is odd. CONFIRMED (CS-003-C2): one Alpha Torpedo hit
    (`d = 5`) did 4.
    - A hit record is written for every target the salvo reaches, even
-     with 0 hits. A 0-hit record changes nothing (BINARY-ONLY). This
+     with 0 hits. A 0-hit record changes nothing (CONFIRMED once, CB-049:
+     the 0-hit record after a miss record left the target as it was). This
      accounts for the no-change records with flag 0x80 that CS-003-C2
      saw on an unshielded target, one per missed shot (7 for the Alpha
      Torpedo, 12 and 11 for the missiles). They are hit records, not
