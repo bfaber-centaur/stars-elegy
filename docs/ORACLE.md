@@ -844,8 +844,10 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
   settings gave 7 streams.
 - The `.M` event block (type 12) carries one record per message; ids 0x135
   (drop refused by a starbase) and 0x55 (unload at an unowned planet)
-  appeared with the fleet and planet numbers next to them. The rest of the
-  record layout is not decoded.
+  appeared with the fleet and planet numbers next to them. The full record
+  layout is in `MESSAGES.md` ("How messages work"), and
+  `tools/fleetlab/events.py DUMP...` decodes the block (every block in the
+  2026-10-07 corpora decoded cleanly).
 
 ### Takeover round 2 (observed 2026-10-07, TK-101..TK-117)
 
