@@ -1,4 +1,4 @@
-# OB-002: minefield decay, laying and detonation (mutual enemies) (experiments/ob/gen.py)
+# OB-012: Packet Physics viewer: every packet, and its own packet as a scanner (S-19) (experiments/ob/gen.py)
 relation 0 1 2
 relation 1 0 2
 tech 0 energy 26
@@ -31,21 +31,12 @@ plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
 plan 0 3 4 1 0 3 = Everyone
 plan 0 4 4 1 0 5 = Player 1 only
-thing minefield 1 0 1050 1030 1000 kind std
-thing minefield 1 1 1050 1180 100 kind std
-thing minefield 1 2 1050 1250 100 kind bump
-thing minefield 1 3 1244 1140 1000 kind std
-thing minefield 1 4 1156 1140 2000 kind std
-fleet 0 0 at 1210 1220 ships 0:1 plan 0 fuel 50 task lay
-thing minefield 0 0 1280 1240 400 kind std
-fleet 0 1 at 1290 1240 ships 0:1 plan 0 fuel 50 task lay
-fleet 0 2 at 1370 1220 ships 0:3 plan 0 fuel 50 task lay
-fleet 0 3 at 1080 1360 ships 5:1 plan 0 fuel 50 task lay
-fleet 0 4 at 1220 1060 ships 6:1 plan 0 fuel 50 task lay
-fleet 0 5 at 1360 1040 ships 7:1 plan 0 fuel 50 task lay
-fleet 0 6 at 1130 1220 ships 8:1 plan 0 fuel 50 task lay
-thing minefield 0 1 1060 1120 1000 kind std det
-fleet 0 7 at 1060 1120 ships 1:5 plan 0 fuel 50 
-fleet 0 8 at 1066 1120 ships 0:1 plan 0 fuel 50 
-fleet 1 0 at 1060 1135 ships 3:5 plan 0 fuel 50 
-fleet 0 9 at 1300 1310 ships 0:1 plan 0 fuel 50 task lay 0
+prt 1 6
+lrt 1 0x1b80
+planet 8 scanner none
+thing packet 1 0 1100 1240 18 5 100 0 0
+fleet 0 0 at 1124 1215 ships 10:1 plan 0 fuel 50 
+fleet 0 1 at 1124 1265 ships 10:1 plan 0 fuel 50 
+thing minefield 0 0 1104 1235 100 kind std
+thing minefield 0 1 1154 1235 100 kind std
+thing packet 0 0 1380 1040 15 5 100 0 0

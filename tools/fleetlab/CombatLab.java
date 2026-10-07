@@ -194,6 +194,12 @@ public class CombatLab {
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.ironium, p.boranium, p.germanium, p.population);
                 if (host || p.owner >= 0) printPlanetDetail(f, p);
+            } else if (b.typeId == 12) {
+                // events: one record per message, layout not decoded; printed raw
+                byte[] d = b.getDecryptedData();
+                StringBuilder h = new StringBuilder();
+                for (int i = 0; i < b.size; i++) h.append(String.format("%02x", d[i]));
+                System.out.printf("%s events raw=%s%n", f, h);
             } else if (b.typeId == BlockType.OBJECT) {
                 System.out.printf("%s %s%n", f, thingString(b.getDecryptedData(), b.size));
             } else if (b.typeId == BlockType.PLANETS) {

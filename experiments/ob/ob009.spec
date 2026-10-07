@@ -1,4 +1,4 @@
-# OB-002: minefield decay, laying and detonation (mutual enemies) (experiments/ob/gen.py)
+# OB-009: packet impacts with population growth controlled (player 0 packets, mutual enemies) (experiments/ob/gen.py)
 relation 0 1 2
 relation 1 0 2
 tech 0 energy 26
@@ -31,21 +31,25 @@ plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
 plan 0 3 4 1 0 3 = Everyone
 plan 0 4 4 1 0 5 = Player 1 only
-thing minefield 1 0 1050 1030 1000 kind std
-thing minefield 1 1 1050 1180 100 kind std
-thing minefield 1 2 1050 1250 100 kind bump
-thing minefield 1 3 1244 1140 1000 kind std
-thing minefield 1 4 1156 1140 2000 kind std
-fleet 0 0 at 1210 1220 ships 0:1 plan 0 fuel 50 task lay
-thing minefield 0 0 1280 1240 400 kind std
-fleet 0 1 at 1290 1240 ships 0:1 plan 0 fuel 50 task lay
-fleet 0 2 at 1370 1220 ships 0:3 plan 0 fuel 50 task lay
-fleet 0 3 at 1080 1360 ships 5:1 plan 0 fuel 50 task lay
-fleet 0 4 at 1220 1060 ships 6:1 plan 0 fuel 50 task lay
-fleet 0 5 at 1360 1040 ships 7:1 plan 0 fuel 50 task lay
-fleet 0 6 at 1130 1220 ships 8:1 plan 0 fuel 50 task lay
-thing minefield 0 1 1060 1120 1000 kind std det
-fleet 0 7 at 1060 1120 ships 1:5 plan 0 fuel 50 
-fleet 0 8 at 1066 1120 ships 0:1 plan 0 fuel 50 
-fleet 1 0 at 1060 1135 ships 3:5 plan 0 fuel 50 
-fleet 0 9 at 1300 1310 ships 0:1 plan 0 fuel 50 task lay 0
+planet 9 owner 0 pop 1000 starbase 2
+planetset 9 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 14 owner 0 pop 1000 starbase 2
+planetset 14 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 10 owner 0 pop 1000 starbase none
+planetset 10 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 16 owner 0 pop 1000 starbase none
+planetset 16 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 20 owner 1 pop 1000 starbase none
+planetset 20 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 22 owner 1 pop 500 starbase none
+planetset 22 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+planet 18 owner 1 pop 1000 starbase none
+planetset 18 mines=0 factories=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0 defenses=50
+planet 21 owner 1 pop 1000 starbase none
+planetset 21 mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0
+thing packet 0 0 1208 1347 9 10 1000 0 0
+thing packet 0 1 1268 1347 14 7 1000 0 0
+thing packet 0 2 1224 1309 10 10 1000 0 0
+thing packet 0 3 1348 1340 20 10 1000 0 0
+thing packet 0 4 1368 1342 22 10 1000 0 0
+thing packet 0 5 1324 1242 18 10 1000 0 0

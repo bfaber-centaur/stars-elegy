@@ -29,10 +29,12 @@ sbdesign 0 2 Orbital Fort, 1 Mass Driver 7, empty, empty, empty, empty = Catcher
 plan 0 0 4 1 0 1 = Enemies
 plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
+plan 0 3 4 1 0 3 = Everyone
+plan 0 4 4 1 0 5 = Player 1 only
 design 1 0 Medium Freighter, 1 Long Hump 6, empty, empty = Freighter
 thing trader 0 1020 1210 1380 1210 8
-fleet 0 0 at 1084 1210 ships 9:2 plan 0 fuel 50 cargo 4999 0 0 100
-fleet 0 1 at 1064 1210 ships 9:2 plan 0 fuel 50 cargo 2000 1999 1000 0 to 1084 1210 warp 5
-fleet 0 2 at 1084 1210 ships 9:2 plan 0 fuel 50 cargo 2000 2000 1000 0
+fleet 0 0 at 1084 1210 ships 9:2 plan 0 fuel 2000 cargo 4999 0 0 100
+fleet 0 1 at 1064 1210 ships 9:2 plan 0 fuel 2000 cargo 2000 1999 1000 0 to 1084 1210 warp 5
+fleet 0 2 at 1084 1210 ships 9:2 plan 0 fuel 2000 cargo 2000 2000 1000 0
 fleet 1 0 at 1084 1210 ships 0:24 plan 0 fuel 50 cargo 5000 0 0 0
 fleet 1 1 at 1084 1210 ships 0:24 plan 0 fuel 50 cargo 5000 0 0 0

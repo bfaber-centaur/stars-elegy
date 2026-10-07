@@ -50,6 +50,8 @@ sbdesign 0 2 Orbital Fort, 1 Mass Driver 7, empty, empty, empty, empty = Catcher
 plan 0 0 4 1 0 1 = Enemies
 plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
+plan 0 3 4 1 0 3 = Everyone
+plan 0 4 4 1 0 5 = Player 1 only
 """
 
 
@@ -60,6 +62,7 @@ class Run:
         self.lines, self.cases, self.fields, self.fleetpos = [], [], [], []
         self.nfleet = {0: 0, 1: 0}
         self.nthing = {}
+        self.scan = None
 
     def fleet(self, owner, x, y, ships, plan=0, extra='', planet=None, fuel=50):
         fid = self.nfleet[owner]
@@ -247,13 +250,13 @@ r = run('OB-004', 'Mystery Trader encounters (player 1 at tech 3, sum 18)')
 r.extra += 'design 1 0 Medium Freighter, 1 Long Hump 6, empty, empty = Freighter\n'
 r.thing('trader', 0, '1020 1210 1380 1210 8')
 # MT moves 64 ly to (1084,1210) before fleets move; every fleet below ends the turn there
-r.fleet(0, 1084, 1210, '9:2', extra='cargo 4999 0 0 100')
+r.fleet(0, 1084, 1210, '9:2', extra='cargo 4999 0 0 100', fuel=2000)
 r.case('A', 'O-34', 'stationary player 0 fleet with 4999 kT minerals and 100 colonists at the MT',
        'fleet kept, no message (stationary)', '', ('fleet', 0, 0, 'kept'))
-r.fleet(0, 1064, 1210, '9:2', extra='cargo 2000 1999 1000 0 to 1084 1210 warp 5')
+r.fleet(0, 1064, 1210, '9:2', extra='cargo 2000 1999 1000 0 to 1084 1210 warp 5', fuel=2000)
 r.case('B', 'O-34', 'player 0 fleet with 4999 kT that moves 20 ly onto the MT', 'fleet kept, message 0x108',
        '', ('fleet', 0, 1, 'kept'))
-r.fleet(0, 1084, 1210, '9:2', extra='cargo 2000 2000 1000 0')
+r.fleet(0, 1084, 1210, '9:2', extra='cargo 2000 2000 1000 0', fuel=2000)
 r.case('C', 'O-34', 'stationary player 0 fleet with exactly 5000 kT (tech 26: reward is a part or nothing)',
        'fleet removed', 'fleet kept', ('fleet', 0, 2, 'gone'))
 r.fleet(1, 1084, 1210, '0:24', extra='cargo 5000 0 0 0')
@@ -282,8 +285,240 @@ r.case('D', 'O-31', 'scout 30 ly from wormhole 2 at warp 4 (16 ly)', 'moves 16 l
        ('fleetat', 0, 1, 1080, 1346))
 
 
+# ---------------------------------------------------------------- OB-006 new games (O-27)
+# Games made by `stars.exe -a DEF` (tools/fleetlab/new-game); not Combat Lab.
+# size 0 tiny .. 4 huge; flags line: the fourth flag is "no random events".
+NEWGAMES = []
+for size in range(5):
+    for seed in (11, 22, 33):
+        NEWGAMES.append(dict(id='OB-006-%s%d' % ('TSMLH'[size], seed), size=size, seed=seed, events=True,
+                             name='o6%s%d' % ('tsmlh'[size], seed),
+                             expect='%d..%d wormhole pairs, each end class 0, 1 or 2 with years 0'
+                             % ([0, 1, 1, 3, 4][size], [2, 3, 5, 6, 8][size])))
+for size in (0, 4):
+    for seed in (11, 22, 33):
+        NEWGAMES.append(dict(id='OB-006-%s%dN' % ('TSMLH'[size], seed), size=size, seed=seed, events=False,
+                             name='o6%s%dn' % ('tsmlh'[size], seed),
+                             expect='no wormholes (random events off)'))
+PAIRS = [(0, 2), (1, 3), (1, 5), (3, 6), (4, 8)]
+
+
+def newgame_def(g):
+    name = g['name']                             # DOS 8.3: e.g. o6h11n
+    return '\r\n'.join([
+        name.upper(), '%d 1 1 %d' % (g['size'], g['seed']),
+        '0 0 0 %d 0 0 0' % (0 if g['events'] else 1),
+        '2', 'pg000.r1', '# 1 0',
+        '1 60', '0 26 4', '0 5000', '0 100', '0 100', '0 100', '0 100', '1 50',
+        '%s.xy' % name]) + '\r\n'
+
+
+# ---------------------------------------------------------------- OB-007 neutral relations
+r = run('OB-007', 'sweeping and relations: both players neutral; player 1 plan 0 attacks enemies only',
+        rel01=0, rel10=0, extra='plan 1 0 4 1 0 1 = Enemies only\n')
+r.field(1, 1050, 1180, 1000); r.fleet(0, 1050, 1180, '1:1', plan=0)
+r.case('A', 'O-10', 'Laser DD with plan "enemies" in a neutral player\'s field', 'field 980 (no sweep)', '960',
+       ('field', 1, 1050, 1180, 980))
+r.field(1, 1050, 1250, 1000); r.fleet(0, 1050, 1250, '1:1', plan=2)
+r.case('B', 'O-10', 'Laser DD with plan "neutral and enemies" in a neutral player\'s field', 'field 960', '980',
+       ('field', 1, 1050, 1250, 960))
+r.extra += 'planet 5 owner 0 pop 1000 starbase 1\nplanetset 5 mines=0 factories=0 defenses=0\n'
+r.field(1, 1130, 1200, 1000, planets=[5])
+r.case('C', 'O-10', 'player 0 Laser Fort (planet 5) inside a neutral player\'s 1000 field (1 planet: 6% decay)',
+       'field 860 (940 - 80: starbases sweep any non-friend field)', '940', ('field', 1, 1130, 1200, 860))
+r.fleet(0, 1169, 1145, '0:1', planet=8, extra='task lay')
+r.case('D', 'O-12', 'player 0 layer lays 160 at player 1\'s homeworld (Space Station, 32 lasers: rating 1280)',
+       'no player 0 field left (laid, then swept the same turn)', 'field 160', ('field', 0, 1169, 1145, 0))
+r.field(1, 1210, 1220, 1000); r.fleet(0, 1210, 1220, '1:1', plan=3)
+r.case('E', 'O-10', 'Laser DD with plan "everyone" in a neutral player\'s field', 'field 960', '980',
+       ('field', 1, 1210, 1220, 960))
+
+# ---------------------------------------------------------------- OB-008 friend relations
+r = run('OB-008', 'sweeping and relations: player 0 counts player 1 as a friend', rel01=1, rel10=0)
+r.extra += 'planet 5 owner 0 pop 1000 starbase 1\nplanetset 5 mines=0 factories=0 defenses=0\n'
+r.field(1, 1130, 1200, 1000, planets=[5])
+r.case('A', 'O-10', 'player 0 Laser Fort inside a friend\'s 1000 field (6% decay)', 'field 940 (no sweep)', '860',
+       ('field', 1, 1130, 1200, 940))
+r.field(1, 1050, 1180, 1000); r.fleet(0, 1050, 1180, '1:1', plan=3)
+r.case('B', 'O-10', 'Laser DD with plan "everyone" in a friend\'s field', 'measured (does "everyone" include friends?)',
+       '', ('fieldobs', 1, 1050, 1180))
+r.field(1, 1050, 1250, 1000); r.fleet(0, 1050, 1250, '1:1', plan=2)
+r.case('C', 'O-10', 'Laser DD with plan "neutral and enemies" in a friend\'s field', 'field 980', '960',
+       ('field', 1, 1050, 1250, 980))
+r.field(1, 1210, 1220, 1000); r.fleet(0, 1210, 1220, '1:1', plan=4)
+r.case('D', 'O-10', 'Laser DD with plan "player 1 only" in a friend\'s field', 'measured', '',
+       ('fieldobs', 1, 1210, 1220))
+
+# ---------------------------------------------------------------- OB-009 packet damage with growth controlled
+# Every target planet gets environment 50/50/50 (100% for both identical races) and carry 0, so a planet
+# that keeps population P after the impact ends the year at P + floor(15 P / 100) (TK corpus). Impacts
+# happen before growth.
+PLAIN = 'mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 env=50,50,50 excess=0'
+
+
+def grown(p):
+    return p + 15 * p // 100
+
+
+r = run('OB-009', 'packet impacts with population growth controlled (player 0 packets, mutual enemies)')
+for n, owner, pop, sb, extra in ((9, 0, 1000, 2, ''), (14, 0, 1000, 2, ''), (10, 0, 1000, None, ''),
+                                 (16, 0, 1000, None, ''), (20, 1, 1000, None, ''), (22, 1, 500, None, ''),
+                                 (18, 1, 1000, None, ' defenses=50'), (21, 1, 1000, None, '')):
+    r.extra += 'planet %d owner %d pop %d starbase %s\nplanetset %d %s%s\n' % (
+        n, owner, pop, sb if sb is not None else 'none', n, PLAIN.replace(' defenses=0', '') if extra else PLAIN, extra)
+r.case('A', 'control', 'player 0 planet 16, pop 1000, no packet', 'pop %d' % grown(1000), '',
+       ('planet', 16, dict(pop=grown(1000))))
+r.case('B', 'control', 'player 1 planet 21, pop 1000, no packet', 'pop %d' % grown(1000), '',
+       ('planet', 21, dict(pop=grown(1000))))
+r.thing('packet', 0, '1208 1347 9 10 1000 0 0')
+r.case('C', 'O-21/O-22', 'warp 10, 1000 kT into own planet 9 with a Mass Driver 7 fort (catch 49%)',
+       'surface +546; 318 units killed: pop 682 -> %d' % grown(682), 'no damage: %d' % grown(1000),
+       ('planet', 9, dict(surface=(546, 0, 0), pop=grown(682))))
+r.thing('packet', 0, '1268 1347 14 7 1000 0 0')
+r.case('D', 'O-21', 'warp 7 packet 30 ly from own planet 14 with a Mass Driver 7 fort (fully caught)',
+       'surface +1000, pop %d (no damage)' % grown(1000), '', ('planet', 14, dict(surface=(1000, 0, 0), pop=grown(1000))))
+r.thing('packet', 0, '1224 1309 10 10 1000 0 0')
+r.case('E', 'O-24', 'own packet into own planet 10 (no starbase, pop 1000)', 'pop 375 -> %d' % grown(375),
+       'no damage', ('planet', 10, dict(pop=grown(375))))
+r.thing('packet', 0, '1348 1340 20 10 1000 0 0')
+r.case('F', 'O-22', 'warp 10, 1000 kT into enemy planet 20 (no defenses, pop 1000)', 'pop 375 -> %d' % grown(375),
+       '', ('planet', 20, dict(pop=grown(375))))
+r.thing('packet', 0, '1368 1342 22 10 1000 0 0')
+r.case('G', 'O-23', 'the same into enemy planet 22, pop 500', 'uninhabited', '', ('planet', 22, dict(owner=-1)))
+r.thing('packet', 0, '1324 1242 18 10 1000 0 0')
+r.case('H', 'O-22', 'warp 10, 1000 kT into enemy planet 18 with 50 SDI (tech 3)',
+       'damage 418: pop 582 -> %d, defenses 30' % grown(582), 'defenses ignored: %d' % grown(375),
+       ('planet', 18, dict(pop=grown(582), defenses=30)))
+
+# ---------------------------------------------------------------- OB-010 minefield hits (random)
+r = run('OB-010', 'minefield hits while moving (player 1 fields, player 0 fleets of 5 Laser DDs, warp 9)')
+for i, (x, y) in enumerate(((1050, 1030), (1050, 1180), (1080, 1360), (1360, 1040), (1370, 1220))):
+    r.field(1, x, y, 1000, kind='heavy')
+    r.fleet(0, x - 15, y, '1:5', extra='to %d %d warp 9' % (x + 15, y), fuel=1400)
+    r.case('H%d' % i, 'O-14', 'warp-9 fleet moving only 30 ly inside a heavy field (checked at warp 6 = safe)',
+           'never hit: ends at (%d,%d), undamaged' % (x + 15, y), '1-0.97^30 = 60%% hit chance if warp 9 counted',
+           ('fleetat', 0, i, x + 15, y))
+r.field(1, 1220, 1230, 3000)
+r.fleet(0, 1160, 1230, '1:5', extra='to 1241 1230 warp 9', fuel=1400)
+r.case('S', 'O-14/O-15', 'warp-9 fleet crossing 76 ly of a standard 3000 field (15 per mille per ly)',
+       'no hit (32%): at (1241,1230), field 2940; or a stop inside the field, 50% damage on each DD and '
+       'field 2891 (hit -50, then 2% decay)', '2890 if decay came first', ('minehit', 0, 5, 1220, 1230))
+
+# ---------------------------------------------------------------- OB-015/016 decay cap and SD decay
+r = run('OB-015', 'decay cap: a 40000 field over 22 planets')
+r.field(1, 1200, 1200, 40000, planets=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22])
+r.case('A', 'O-6', 'player 1 field 40000 containing 22 planets', 'field 20000 (50% cap)', '',
+       ('field', 1, 1200, 1200, 20000))
+r = run('OB-016', 'SD owner decay: the same 40000 field owned by a Space Demolition player 1', extra='prt 1 5\n')
+r.field(1, 1200, 1200, 40000, planets=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22])
+r.case('A', 'O-5/O-6', 'SD player 1 field 40000 with 22 planets', 'field 30400 (1 per planet + 2 = 24%)', '20000',
+       ('field', 1, 1200, 1200, 30400))
+
+
+# ---------------------------------------------------------------- OB-011..014 scanning of objects (S-17..S-19)
+# Viewer: player 1 (tech 3). Its homeworld scanner is removed (`planet 8 scanner none`) and it keeps
+# only the fleets listed, so every detection comes from a known scanner. check.py applies the S-17..S-19
+# rules to the generated host file's object positions (wormholes jiggle and packets move before the
+# files are written) and compares the result with the objects in player 1's .M file.
+SCOUT1 = 'design 1 1 Scout, 1 Long Hump 6, 1 Rhino Scanner, empty = Rhino Scout\n'
+
+
+def pkt_after(x, y, dest, warp):
+    """Position of a packet after one full-speed year toward planet dest (or arrival)."""
+    tx, ty = XY[dest]
+    dx, dy = tx - x, ty - y
+    d = math.hypot(dx, dy)
+    sp = warp * warp
+    if int(d) <= sp:
+        return None
+    rnd = lambda v: int(v + 0.5) if v >= 0 else -int(-v + 0.5)
+    return x + rnd(sp * dx / d), y + rnd(sp * dy / d)
+
+
+r = run('OB-011', 'scanning of objects by a JOAT viewer with Rhino scouts (R 50, no penetrating range)',
+        extra='planet 8 scanner none\n' + SCOUT1)
+r.scan = dict(viewer=1, mask=2)
+for (sx, sy) in ((1050, 1040), (1050, 1180), (1050, 1260), (1110, 1360), (1360, 1040), (1370, 1230),
+                 (1220, 1060), (1300, 1150)):
+    r.fleet(1, sx, sy, '1:1')
+r.field(0, 1062, 1040, 100);  r.case('A', 'S-17', 'field 100 at d=12 from a scout (not inside)', 'seen (d <= R/4)', '', ('scan',))
+r.field(0, 1063, 1180, 100);  r.case('B', 'S-17', 'field 100 at d=13', 'not seen', '', ('scan',))
+r.field(0, 1080, 1260, 1000); r.case('C', 'S-17', 'field 1000 at d=30 (scout inside)', 'seen', '', ('scan',))
+r.field(0, 1140, 1360, 800);  r.case('D', 'S-17', 'field 800 at d=30 (scout outside after decay to 784)', 'not seen', '', ('scan',))
+r.thing('minefield', 0, '1360 1080 100 known 2'); r.fields.append((0, 1360, 1080, 100, set()))
+r.case('E', 'S-17', 'field 100 already known to player 1, d=40', 'seen (full R)', '', ('scan',))
+r.thing('minefield', 0, '1370 1281 100 known 2'); r.fields.append((0, 1370, 1281, 100, set()))
+r.case('F', 'S-17', 'field 100 already known, d=51', 'not seen', '', ('scan',))
+r.thing('wormhole', 0, '1220 1066 1 0'); r.thing('wormhole', 0, '1110 1110 0 0')
+r.case('G', 'S-17', 'wormhole 6 ly from a scout before its jiggle; partner far from every scanner',
+       'each end seen iff d <= R/4 after the jiggle', '', ('scan',))
+r.thing('wormhole', 0, '1210 1230 3 0 seen 2'); r.thing('wormhole', 0, '1300 1310 2 0')
+r.case('H', 'S-17', 'wormhole already known to player 1, far from scanners; its partner unknown and far',
+       'known end seen, partner not', '', ('scan',))
+r.thing('packet', 0, '1300 1105 6 5 100 0 0')   # moves 25 ly toward planet 6
+r.case('I', 'S-17', 'packet near the (1300,1150) scout after its move', 'seen iff d <= R', '', ('scan',))
+r.thing('trader', 0, '1020 1100 1380 1100 8')
+r.case('J', 'S-18', 'Mystery Trader ending the move at (1084,1100), 69+ ly from every scanner', 'seen anyway', '',
+       ('scan',))
+
+r = run('OB-012', 'Packet Physics viewer: every packet, and its own packet as a scanner (S-19)',
+        extra='prt 1 6\nlrt 1 0x1b80\nplanet 8 scanner none\n')
+r.scan = dict(viewer=1, mask=2, ppacket=True)
+# player 1 packet, warp 5, moving from (1100,1240) toward planet 18: about 25 ly
+r.thing('packet', 1, '1100 1240 18 5 100 0 0')
+q = pkt_after(1100, 1240, 18, 5)
+r.fleet(0, q[0], q[1] - 20, '10:1'); r.fleet(0, q[0], q[1] + 30, '10:1')
+r.case('A', 'S-19', 'player 0 scouts 20 and 30 ly from player 1\'s moving warp-5 packet',
+       'the first seen (penetrating range 25), the second not', '', ('scanfleets', [(0, 0, True), (0, 1, False)]))
+r.field(0, q[0] - 20, q[1], 100); r.field(0, q[0] + 30, q[1], 100)
+r.case('B', 'S-19', 'player 0 fields 20 and 30 ly from the packet', 'first seen, second not', '', ('scan',))
+r.thing('packet', 0, '1380 1040 15 5 100 0 0')
+r.case('C', 'S-19', 'player 0 packet far from every player 1 scanner', 'seen (PP sees every packet)', '', ('scan',))
+
+r = run('OB-013', 'Interstellar Traveler viewer: planets with stargates within its gate range',
+        extra='prt 1 7\nlrt 1 0x1b80\ntech 1 prop 5\ntech 1 con 5\nplanet 8 scanner none\n'
+              'sbdesign 1 0 Space Station, 1 Stargate 100/250, 8 Laser, 8 Mole-skin Shield, 8 Laser, '
+              '8 Mole-skin Shield, 8 Mole-skin Shield, empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield = Gate\n'
+              'sbdesign 0 3 Orbital Fort, 1 Stargate 100/250, empty, empty, empty, empty = Gate Fort\n'
+              'planet 23 owner 0 pop 1000 starbase 3\nplanetset 23 mines=0 factories=0 defenses=0 scanner=31\n'
+              'planet 15 owner 0 pop 1000 starbase 1\nplanetset 15 mines=0 factories=0 defenses=0 scanner=31\n'
+              'planet 11 owner 0 pop 1000 starbase 3\nplanetset 11 mines=0 factories=0 defenses=0 scanner=31\n')
+r.case('A', 'IT gate', 'player 0 planet 11 with a gate fort, 75 ly from player 1\'s gate (range 250)',
+       'player 1 sees planet 11 at level 3 or more', '', ('planetlevel', 1, 11, 3))
+r.case('B', 'IT gate', 'player 0 planet 23 with a gate fort, 259 ly away', 'below level 3', '', ('planetlevel', 1, 23, -3))
+r.case('C', 'IT gate', 'player 0 planet 15 with a starbase but no gate, 138 ly away', 'below level 3', '',
+       ('planetlevel', 1, 15, -3))
+
+r = run('OB-014', 'Space Demolition player 1: minefield detection, decay and laying while moving',
+        extra='prt 1 5\nplanet 8 scanner none\n'
+              'design 1 0 Mini Mine Layer, 1 Long Hump 6, 2 Mine Dispenser 40, empty, empty = SD Layer\n')
+r.field(1, 1244, 1140, 1000, planets=[11, 12])
+r.case('A', 'O-5', 'SD player 1 field 1000 containing planets 11 and 12', 'field 960 (1 per planet + 2 = 4%)', '900',
+       ('field', 1, 1244, 1140, 960))
+r.fleet(0, 1244, 1140, '10:1'); r.fleet(0, 1243, 1123, '10:1', planet=11); r.fleet(0, 1110, 1360, '10:1')
+r.case('B', 'S-17/SD', 'player 0 scouts: deep space inside the SD field, orbiting planet 11 inside it, '
+       'and far away', 'only the deep-space one appears in player 1\'s file', '',
+       ('scanfleets', [(0, 0, True), (0, 1, False), (0, 2, False)]))
+r.fleet(1, 1050, 1180, '0:1', extra='to 1050 1250 warp 5 task lay', fuel=400)
+r.case('C', 'O-2', 'SD layer moving 25 ly (warp 5) toward a lay-mines waypoint', 'new field 80 at (1050,1205)',
+       'nothing while moving', ('field', 1, 1050, 1205, 80))
+r.fleet(0, 1360, 1040, '0:1', extra='task lay to 1360 1100 warp 5', fuel=400)
+r.case('D', 'O-2', 'non-SD (player 0) layer with lay on waypoint 0 that moves 25 ly', 'no field', '160 or 80',
+       ('nofield', 0, 1360, 1040, 1360, 1065))
+
+
 def main():
+    if sys.argv[1:2] == ['--defs']:
+        out = sys.argv[2]
+        os.makedirs(out, exist_ok=True)
+        for g in NEWGAMES:
+            open(os.path.join(out, g['name'] + '.def'), 'w', newline='').write(newgame_def(g))
+        return
     if sys.argv[1:] == ['--list']:
+        print('## OB-006: new games from a definition file (O-27)')
+        for g in NEWGAMES:
+            print('| %s | O-27 | size %d, seed %d, random events %s | %s |  |' % (
+                g['id'], g['size'], g['seed'], 'on' if g['events'] else 'off', g['expect']))
         for r in RUNS:
             print('## %s: %s' % (r.rid, r.title))
             for c in r.cases:

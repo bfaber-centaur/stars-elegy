@@ -16,13 +16,25 @@ def kv(line):
     return dict(re.findall(r'(\w+)=(\S+)', line))
 
 
-def load(path, which='after'):
+def load(path, which='after', fname='CB.HST'):
+    """Objects of one file in a dump; for .M files only the last year's section."""
     things, planets, fleets, players, wps = [], {}, {}, {}, {}
+    seen = {}
     last = None
-    for line in open(path):
-        if '/raw/%s/CB.HST ' % which not in line:
+    lines = [l for l in open(path) if '/raw/%s/%s ' % (which, fname) in l]
+    turns = [int(re.search(r'file turn=(\d+)', l).group(1)) for l in lines if ' file turn=' in l]
+    cur = None
+    for line in lines:
+        body = line.split(fname + ' ', 1)[1]
+        m = re.match(r'file turn=(\d+)', body)
+        if m:
+            cur = int(m.group(1))
             continue
-        body = line.split('CB.HST ', 1)[1]
+        if turns and cur != max(turns):
+            continue
+        if body.startswith('seen planet'):
+            d = kv(body)
+            seen[int(body.split()[2])] = int(d['level'])
         if body.startswith('thing id='):
             d = kv(body)
             things.append(d)
@@ -38,6 +50,8 @@ def load(path, which='after'):
             wps[last].append(kv(body))
         elif body.startswith('player '):
             players[int(body.split()[1])] = kv(body)
+    if fname != 'CB.HST':
+        return things, planets, fleets, players, wps, seen
     return things, planets, fleets, players, wps
 
 
@@ -50,10 +64,81 @@ def techsum(p):
     return sum(int(p[f]) for f in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio'))
 
 
-def evaluate(c, A, B):
+def scan_expect(run, A, B):
+    """S-17..S-19 rules: the viewer's expected set of other players' object ids."""
+    v = run.scan['viewer']
+    bit = 1 << v
+    things, planets, fleets = A[0], A[1], A[2]
+    before = {int(t['id']): t for t in B[0]}
+    scanners = []          # (x, y, R, P, is_fleet)
+    for (o, i), f in fleets.items():
+        if o == v and 'ppacket' not in run.scan:
+            scanners.append((int(f['x']), int(f['y']), 50, 0, True))
+    if run.scan.get('ppacket'):
+        for t in things:
+            if t['type'] == 'packet' and int(t['owner']) == v:
+                w = int(t['warp'])
+                scanners.append((int(t['x']), int(t['y']), 0, w * w, False))
+    exp = set()
+    for t in things:
+        tid, owner, kind = int(t['id']), int(t['owner']), t['type']
+        if kind in ('minefield', 'packet') and owner == v:
+            continue
+        x, y = int(t['x']), int(t['y'])
+        b = before.get(tid, {})
+        ok = False
+        for sx, sy, R, P, isf in scanners:
+            d2 = (sx - x) ** 2 + (sy - y) ** 2
+            if kind == 'trader':
+                ok = True
+            elif kind == 'packet':
+                ok |= d2 <= R * R or bool(run.scan.get('ppacket'))
+            elif kind == 'wormhole':
+                ok |= bool(int(b.get('seen', '0'), 16) & bit) or d2 <= R * R // 16 or d2 <= P * P
+            else:
+                known = bool(int(b.get('known', '0'), 16) & bit)
+                ok |= (known and d2 <= R * R) or d2 <= P * P or d2 <= R * R // 16 or \
+                    (isf and d2 <= int(t['count']))
+        if kind == 'trader' or (kind == 'packet' and run.scan.get('ppacket')):
+            ok = True
+        if ok:
+            exp.add(tid)
+    return exp
+
+
+def evaluate(c, A, B, run=None, M=None):
     things, planets, fleets, players, wps = A
     k = c['check']
     kind = k[0]
+    if kind == 'scan':
+        exp = scan_expect(run, A, B)
+        v = run.scan['viewer']
+        got = {int(t['id']) for t in M[0] if not (t['type'] in ('minefield', 'packet') and int(t['owner']) == v)}
+        diff = dict(missing=sorted(exp - got), extra=sorted(got - exp))
+        return exp == got, dict(seen=sorted(got), **diff)
+    if kind == 'scanfleets':
+        got = [(o, i, (o, i) in M[2]) for o, i, _ in k[1]]
+        return got == [tuple(e) for e in k[1]], got
+    if kind == 'planetlevel':
+        _, viewer, n, lv = k
+        g = M[5].get(n, 0)
+        return (g >= lv) if lv >= 0 else (g < -lv), dict(level=g)
+    if kind == 'fieldobs':
+        _, owner, x, y = k
+        return None, [int(f['count']) for f in fields_near(things, owner, x, y)]
+    if kind == 'nofield':
+        _, owner, x0, y0, x1, y1 = k
+        fs = fields_near(things, owner, x0, y0, 30) + fields_near(things, owner, x1, y1, 30)
+        return not fs, [(f['x'], f['y'], f['count']) for f in fs]
+    if kind == 'minehit':
+        _, owner, fid, x, y = k
+        f = fleets.get((owner, fid))
+        cnt = [int(t['count']) for t in fields_near(things, 1, x, y)]
+        got = dict(fleet=(f['x'], f['y'], f['ships'], ' '.join(v for kk, v in f.items() if kk.startswith('dmg'))) if f else None,
+                   field=cnt)
+        if f and (int(f['x']), int(f['y'])) == (1241, 1230):
+            return cnt == [2940] and not any(kk.startswith('dmg') for kk in f), got
+        return bool(f) and cnt == [2891] and f.get('dmg1') == '250/100%', got
     if kind in ('field', 'fieldat'):
         _, owner, x, y, want = k
         fs = fields_near(things, owner, x, y, 0 if kind == 'fieldat' else 6)
@@ -141,8 +226,9 @@ def main():
     before = sys.argv[3] if len(sys.argv) > 3 else after.replace('after.dump', 'before.dump')
     run = [r for r in gen.RUNS if r.rid == rid][0]
     A, B = load(after), load(before, 'before')
+    M = load(after, 'after', 'CB.M%d' % (run.scan['viewer'] + 1)) if run.scan else load(after, 'after', 'CB.M2')
     for c in run.cases:
-        ok, got = evaluate(c, A, B)
+        ok, got = evaluate(c, A, B, run, M)
         print('%-9s %-12s %-12s %s' % (c['id'], c['pred'], {True: 'HELD', False: 'CONTRADICTED', None: 'OBSERVED'}[ok], got))
 
 

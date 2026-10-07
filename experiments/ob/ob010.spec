@@ -1,4 +1,4 @@
-# OB-002: minefield decay, laying and detonation (mutual enemies) (experiments/ob/gen.py)
+# OB-010: minefield hits while moving (player 1 fields, player 0 fleets of 5 Laser DDs, warp 9) (experiments/ob/gen.py)
 relation 0 1 2
 relation 1 0 2
 tech 0 energy 26
@@ -31,21 +31,15 @@ plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
 plan 0 3 4 1 0 3 = Everyone
 plan 0 4 4 1 0 5 = Player 1 only
-thing minefield 1 0 1050 1030 1000 kind std
-thing minefield 1 1 1050 1180 100 kind std
-thing minefield 1 2 1050 1250 100 kind bump
-thing minefield 1 3 1244 1140 1000 kind std
-thing minefield 1 4 1156 1140 2000 kind std
-fleet 0 0 at 1210 1220 ships 0:1 plan 0 fuel 50 task lay
-thing minefield 0 0 1280 1240 400 kind std
-fleet 0 1 at 1290 1240 ships 0:1 plan 0 fuel 50 task lay
-fleet 0 2 at 1370 1220 ships 0:3 plan 0 fuel 50 task lay
-fleet 0 3 at 1080 1360 ships 5:1 plan 0 fuel 50 task lay
-fleet 0 4 at 1220 1060 ships 6:1 plan 0 fuel 50 task lay
-fleet 0 5 at 1360 1040 ships 7:1 plan 0 fuel 50 task lay
-fleet 0 6 at 1130 1220 ships 8:1 plan 0 fuel 50 task lay
-thing minefield 0 1 1060 1120 1000 kind std det
-fleet 0 7 at 1060 1120 ships 1:5 plan 0 fuel 50 
-fleet 0 8 at 1066 1120 ships 0:1 plan 0 fuel 50 
-fleet 1 0 at 1060 1135 ships 3:5 plan 0 fuel 50 
-fleet 0 9 at 1300 1310 ships 0:1 plan 0 fuel 50 task lay 0
+thing minefield 1 0 1050 1030 1000 kind heavy
+fleet 0 0 at 1035 1030 ships 1:5 plan 0 fuel 1400 to 1065 1030 warp 9
+thing minefield 1 1 1050 1180 1000 kind heavy
+fleet 0 1 at 1035 1180 ships 1:5 plan 0 fuel 1400 to 1065 1180 warp 9
+thing minefield 1 2 1080 1360 1000 kind heavy
+fleet 0 2 at 1065 1360 ships 1:5 plan 0 fuel 1400 to 1095 1360 warp 9
+thing minefield 1 3 1360 1040 1000 kind heavy
+fleet 0 3 at 1345 1040 ships 1:5 plan 0 fuel 1400 to 1375 1040 warp 9
+thing minefield 1 4 1370 1220 1000 kind heavy
+fleet 0 4 at 1355 1220 ships 1:5 plan 0 fuel 1400 to 1385 1220 warp 9
+thing minefield 1 5 1220 1230 3000 kind std
+fleet 0 5 at 1160 1230 ships 1:5 plan 0 fuel 1400 to 1241 1230 warp 9

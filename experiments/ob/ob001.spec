@@ -29,6 +29,8 @@ sbdesign 0 2 Orbital Fort, 1 Mass Driver 7, empty, empty, empty, empty = Catcher
 plan 0 0 4 1 0 1 = Enemies
 plan 0 1 4 1 0 0 = Nobody
 plan 0 2 4 1 0 2 = Neutral and enemies
+plan 0 3 4 1 0 3 = Everyone
+plan 0 4 4 1 0 5 = Player 1 only
 planet 5 owner 0 pop 1000 starbase 1
 planetset 5 mines=0 factories=0 defenses=0
 thing minefield 1 0 1050 1030 1000 kind std
