@@ -688,7 +688,10 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   and 45000 → 109; 11500 → 329; 10500, 9800 → 384; 6000 → 659; 5200 → 768;
   3700 → 1098; 2260, 2190 → 1812; 1985–1955 → 2032; 1750, 1710 → 2306;
   1490 → 2691; 1210 → 3295; 1190, 1170, 1160 → 3405; 1165, 1155 → 3460;
-  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. Below
+  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. From
+  the scrap-tech replays (TK-307): 30000 and 50000 → 109; 20000 → 164;
+  17000 → 219; 15000 → 274; 12000 → 329; 10000 → 384; 8800 → 439;
+  7100 and 6500 → 604; 5500 → 714; 4300 → 933. Below
   about 1200 the mapping is not monotonic. Runs down to cycles 880 still
   took well under a minute each.
 - A range like `15000 + 37·year` reaches only two or three ticks, so a
@@ -1028,6 +1031,15 @@ python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs 
   showed the race's first stat byte (as `hst-edit` prints it) raised from
   10 to 24; the trait stayed. BET in 0x1b80
   changes miniaturization, so ship costs differ from JOAT's.
+- Check `points=` in `combatlab dump` before running: it must be 0 or
+  more. Legal starts used in KB: JOAT + UR + NAS + LSP + BET (`lrt P 7200`,
+  123 points); AR with `lrt P 7296` (198). An immune axis needs centre, low
+  and high all at −1: `hab P 255,50,50,255,45,45,255,55,55` is gravity
+  immune (700 points with `lrt P 7552`). Only the centre at 255 is
+  repaired by the host before production: message 0x117, and the centre
+  is forced to the midpoint of low and high (KB-2C's void first run).
+- Queue `N empty` (CombatLab) writes a production queue block holding
+  zero items. The game keeps it, and the planet sends nothing to research.
 - A second year: run `pinned-turn` again with the first run's
   `raw/after/CB.HST` as START and `raw/after` as BASEDIR (TK-111).
 - Three players: `tools/fleetlab/new-game` with three `pg000.r1` lines in

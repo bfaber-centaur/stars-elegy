@@ -631,13 +631,13 @@ choice; parity is "keep and use".
   propulsion, construction, biotechnology twice; 0x13d) and nothing in 2;
   the second and third starbases never gave anything (0x141), because a
   gain blocks further attempts that year and, in the two settings without
-  a gain, the later attempts failed too. Energy never came up. The model
+  a gain, the later attempts failed too. Energy never came up. The rule
   (`COMBAT.md`, Tech from battle, step 3: the part's chance is the
-  number seen, here 24%, on each of 13 `rand(13)` picks) predicts the part
-  in about 21% of passing attempts and an attempt passing half the time;
-  10 of 12 first attempts passed and 5 of 10 gains were the part. Both are
-  above the model (about 2% and 4% likely by chance); see Open
-  experiments.
+  number seen, here 24%, on each of 13 `rand(13)` picks) reproduces every
+  run exactly when the random stream is replayed; the rate looked high
+  because the 12 settings reached only 9 streams (CONFIRMED, TK-307). A
+  failed attempt leaves the next starbase free to try: in TK-307 three of
+  five settings gained at the second or third starbase, as predicted.
 - **Remote mining** (T-35): after movement only, by a fleet that did not move
   this year, at an unowned planet; the order stays. An arriving miner
   therefore mines nothing the year it arrives.
@@ -689,9 +689,6 @@ other rule here. What is left:
 - Where a gift is credited relative to the receiver's own waypoint-0
   tasks in the same year (TK-413 was void; the 0x0dd notices place the
   credit in the order replay).
-- Why Mystery Trader parts came from scrapping more often than the model
-  predicts (TK-305). A larger sample, or replaying the random stream with
-  the known draw counts, would tell a wrong model from an unlucky one.
 - The draw order of a whole year (drops, battles, bombing, capture tech)
   as seen through the random stream; only the bombing part is measured.
 - Alternate Reality `k = 0` in a contested drop (an AR invasion is refused

@@ -6,15 +6,20 @@ rules it calls (research, starbase designs, hubs, planet automation,
 scrap orders, the design builder, ageing, splitting, merging and the
 fleet rules) are in `../AI.md` and are named here by section.
 
-Status: ship designs are CONFIRMED (case AI-8 in `../PARITY.md`). Their
+Status: ship designs are CONFIRMED (case AI-8 in `../PARITY.md`): the
 predicted design orders matched the AIX corpus in every year, 2400–2460.
+The fleet passes are MEASURED (AI-12).
 Everything else is BINARY-ONLY unless marked.
 
 Notation: `y` = year index; `lvl` = AI level 0..3 (easy, standard,
 harder, expert); slot `k` = own ship design slot; `n(k)` = ships of
-design `k` alive; `age(k)` = `y` − creation year of design `k`, where a
-slot that never held a design counts creation year 0. A slot that held a
-design and was deleted keeps its old creation year. Tech fields are
+design `k` alive; `age(k)` = `y` − creation year of design `k`. A slot
+deleted earlier in the same turn keeps its old creation year. An empty
+slot read at the start of a turn counts creation year 0 when Robotoid is
+the first computer player in the host's run (as in AIX), and otherwise
+carries the
+previous computer player's design in that slot (`../AI.md` §1, "State
+leaking between computer players", LEGACY BUG). Tech fields are
 energy, weapons, propulsion, construction, electronics and biotech.
 
 ## 1. Turn order
@@ -44,8 +49,8 @@ energy, weapons, propulsion, construction, electronics and biotech.
 
 Before production it also counts the own fleets holding slot 14 or 15
 ships, and sets the AI threat mark on every planet owned by another
-player: `min(6, defense estimate/250 + 1)`, plus 1 if the planet has a
-starbase. The armada launch target of `../AI.md` §11 uses this mark.
+player: `min(6, population estimate/250 + 1)`, plus 1 if the planet has a
+starbase (the population estimate as the player's report holds it). The armada launch target of `../AI.md` §11 uses this mark.
 
 ## 2. Ship designs (CONFIRMED, AI-8)
 
@@ -183,60 +188,87 @@ queueing rule (`../AI.md` §10).
    to 5 times, while available minus queue minus the accumulated cost
    stays non-negative, queue 1 of `D1415`.
 
-## 4. Fleets (BINARY-ONLY)
+## 4. Fleets (MEASURED, AI-12)
+
+In AIX every own Robotoid fleet's resulting orders matched these rules in
+all 61 years (warps aside, which `../AI.md` §11 "Warp choice" sets).
+Rules with draws were checked as sets of allowed outcomes. Branches marked
+*not exercised* never fired in AIX and stay BINARY-ONLY.
 
 **Pass A**, every fleet in fleet order:
-- Any fleet whose waypoint 1 is a route order more than 200 ly away
-  loses that waypoint.
-- Own fleets are handled as follows, except a scout fleet (slot-0 ships)
-  with `y ≥ 41` and only one waypoint, which is covered below:
-  - A *transport fleet* (`../AI.md` §11) bound for a planet, idle there
-    or with waypoint 1 at it, drops waypoint 1 and its AI task when the
-    planet is not its own and it carries nothing.
-  - An *attack fleet* joins the attack list. If it holds ships of slots
-    2–7 and heads to or orbits a planet, that planet is marked as
-    targeted.
-  - When `y > 20` or the fleet has no slot-0 ships: an idle fleet with
-    colonizers (slot 1), once `y > 4` or with player positions "close",
-    goes to the nearest colonizable planet (`../AI.md` §11, with the
-    wormhole preference and the colonize order). If there is none, it is
-    scrapped where it orbits (`../AI.md` §8). Before a fleet orbiting a
-    planet leaves, it loads up to 10 kT of colonists from that planet.
+- Any fleet whose waypoint 1 targets an object in space (a wormhole,
+  salvage or a packet) more than 200 ly from the fleet loses that
+  waypoint (*not exercised*).
+- Other players' fleets go on the enemy list; own attack fleets go on
+  the attack list. Both lists are built by adding at the front, so they
+  run in reverse fleet order, and attack-target distance ties go to the
+  later fleet.
+- Own fleets, except a scout fleet (slot-0 ships) with `y ≥ 41` and only
+  one waypoint, which is covered below:
+  - A *transport fleet* (`../AI.md` §11) checks one planet: the planet it
+    orbits if it is idle or has a waypoint-0 task, else its waypoint-1
+    planet. If that planet is not its own and the fleet carries no
+    colonists (minerals do not count), it drops waypoint 1 and its
+    waypoint-0 task.
+  - An *attack fleet* with a waypoint-0 marker task (below) has it
+    cleared. If it holds ships of slots 2–7, the planet it heads to (or
+    orbits) is marked as targeted when that planet belongs to another
+    player.
+  - When `y > 20` or the fleet has no slot-0 ships, an idle fleet with
+    colonizers (slot 1), once `y > 4` or with player positions "close":
+    - at harder or expert level, orbiting another player's planet while
+      carrying colonists, and that player is not AR: it unloads all its
+      colonists there (a transport task on waypoint 0, which is
+      overwritten in place) and moves (no task) to the own planet with a
+      starbase nearest to that planet, if any;
+    - otherwise it goes to the nearest colonizable planet (`../AI.md` §11,
+      with the wormhole preference and the colonize order). If there is
+      none, it is scrapped where it orbits (`../AI.md` §8, case AI-4).
+      Before a fleet orbiting a planet leaves, it loads up to 10 kT of
+      colonists from that planet.
   - While `y ≤ 20`, a fleet with slot-0 ships is scrapped (`../AI.md`
     §8, case AI-3).
-  - Scouts with `y ≥ 41` and one waypoint: with more than 6 scouts, 1 in
-    5 (`Random(5)`) moves to a random nearby planet (`../AI.md` §11,
-    radius 105) other than its current one.
-- Other players' fleets join the enemy list.
+  - Scouts with `y ≥ 41` and one waypoint (never on the attack list):
+    when the fleet holds more than 6 scouts, 1 in 5 (`Random(5) == 0`)
+    moves to a random nearby planet (`../AI.md` §11, radius 105) other
+    than its current one. Otherwise, if waypoint 0 has no task, it gets
+    the task *lay mines* (with parameters 5 and 5, meaning not yet read).
+    After a move, or when waypoint 0 already had a task, the fleet goes
+    on to the colonizer rule above.
 
 **Pass B, freighters** (if the player owns any planet with a starbase):
-every idle own transport fleet works for its hub (`../AI.md` §6), or for
-the first own planet with a starbase when it has no hub, by the hub
-freighter rule (`../AI.md` §11).
+every own transport fleet still idle after pass A is set to battle plan
+4 (an order only when it was not already), then works for its hub
+(`../AI.md` §6), or for the first own planet with a starbase in the
+shuffled order of `../AI.md` §2 when it has no hub, by the hub freighter
+rule (`../AI.md` §11). Hubs are rebuilt at the start of the turn, with
+the starbase planets taken in that shuffled order, so which hub a
+freighter serves can depend on the shuffle. A salvage pile exactly at the
+fleet's position is loaded, and targeting then continues with scores
+computed from the hold as it was before loading. Only a fleet left full
+targets its source planet.
 
 **Pass C**, every own fleet:
 - *Obsolete fleets* (every design in the fleet marked obsolete by
-  ageing): orbiting an own planet with a starbase, it is scrapped;
-  orbiting an own planet without one, it is scrapped when `Random(5) ==
-  0`. Otherwise, unless it already heads to a planet, it moves to the
-  nearest own starbase (`../AI.md` §11). If none is reachable, it is
-  targeted as below.
+  ageing; *not exercised*): orbiting an own planet with a starbase, it is
+  scrapped; orbiting an own planet without one, it is scrapped when
+  `Random(5) == 0`. Otherwise, unless it already heads to a planet, it
+  moves to the nearest own starbase (`../AI.md` §11). If none is
+  reachable, it is targeted as below.
 - *Targeting*: a fleet with ships of slots 2–10 is an armada (`../AI.md`
   §11). Any other attack fleet not already chasing a fleet first tries
-  to join up. Let `c` = own fleets holding slot 14/15 ships. It joins
-  when `c > 70` (50 from `y ≥ 121`), or when `c > 60` (40) and
-  `Random(3) == 0`. A fleet with ≥ 20 ships of `D1415` skips the join
-  unless `Random(20) == 0`. The join uses the buddy rule (`../AI.md` §11)
-  over slots 14–15 with radii 36 and 72 ly. If it does not join, it takes an attack
-  target (`../AI.md` §11).
+  to join up (*not exercised*). Let `c` = own fleets holding slot 14/15
+  ships. It joins when `c > 70` (50 from `y ≥ 121`), or when `c > 60`
+  (40) and `Random(3) == 0`. A fleet with ≥ 20 ships of `D1415` skips the
+  join unless `Random(20) == 0`. The join uses the buddy rule (`../AI.md`
+  §11) over slots 14–15 with radii 36 and 72 ly. If it does not join, it
+  takes an attack target (`../AI.md` §11).
 
 ## Open experiments
 
-- A level-harder-or-above colonizer idle at another player's planet,
-  carrying cargo, gets a transport-style order there and then a move. Its
-  exact target is not yet read.
-- Idle scouts at `y ≥ 41` get a waypoint-0 marker task with two
-  parameters (5, 5). Its effect is not yet observed.
+- What the parameters 5 and 5 of the scouts' lay-mines task mean.
+- Branches not exercised in AIX: the far-object waypoint drop, an idle
+  colonizer with no target, obsolete fleets, the wormhole preference and
+  the join-up path.
 - Production (§3) needs an exact check: colonizer extras, the `rich` test
-  and the warship cost tests. The fleet passes (§4) need a check against
-  AIX's move orders.
+  and the warship cost tests.

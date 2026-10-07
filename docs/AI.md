@@ -6,16 +6,28 @@ can see, which orders it writes. It covers what all six personalities
 share. Each personality's own turn (fleets, ship designs, colonizing,
 war) gets its own file under docs/ai/:
 
-| Type (definition file) | Personality | PRT | File |
-|---|---|---|---|
-| 1 | Robotoid | HE | `docs/ai/robotoid.md` |
-| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
-| 3 | Automitron | IS | docs/ai/automitron.md (planned) |
-| 4 | Rototill | CA | docs/ai/rototill.md (planned) |
-| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
-| 6 | Macinti | AR | docs/ai/macinti.md (planned) |
+| Type (definition file) | Personality | PRT | File | Elegy |
+|---|---|---|---|---|
+| 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
+| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference: shared rules checked (AI-1, AI-2), own turn not checked |
+| 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
+| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference: early scraps measured (AI-5), fleet pass not fully checked |
 
-Elegy reproduces these personalities (project decision). Related specs:
+**Project policy (2026-10-07).** Elegy reproduces faithfully only the
+personalities whose behavior has been checked against the original
+with oracle captures: Robotoid, Rototill and Cybertron, each matched over
+every captured player-year of its corpus (`../PARITY.md` cases). These
+are candidates for faithful implementation. Turindrone, Automitron and
+Macinti are documented as legacy-reference behavior: read from the
+original, only partly checked, and optional future work. Reproducing all
+six personalities is not an objective. Further computer-player
+experiments need a concrete reason: an Elegy implementation blocker, a
+contradiction in an existing spec, or a cheap experiment that closes a
+bounded question. The shared rules in this file apply to all six.
+
+Related specs:
 game creation and the starting setup of computer players are in
 `UNIVERSE.md`; the research, tech and terraforming mechanics the AI's
 choices feed are in `KERNEL.md` ("Research", "Terraforming"); part and
@@ -52,9 +64,32 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - If an order file for that player already exists when the host runs, the
   computer player does not act that year; the existing file is used.
 - **What it sees.** Exactly that player's own view of the game (what its
-  player file holds: its planets, fleets, designs, scanned reports) plus a
-  private memory it keeps between years (§6). It never reads other
-  players' hidden state.
+  player file holds: its planets, fleets, designs, scanned reports) plus
+  the planet history its history file keeps, not the true game state
+  (CONFIRMED, AI-12: predicted from the AIX fleet check, then held in two
+  edited AI oracle runs, where other players' owners recorded in the
+  history file led to scrapping and the same planets recorded as its own
+  led to colonizing them):
+  - A planet the player file does not report keeps the owner the history
+    last recorded, so a foreign planet seen earlier still counts as
+    foreign.
+  - A planet the history records as the player's own that the player
+    file no longer lists (a colony it lost) counts as unowned.
+  - A planet it has never seen counts as unowned, so it is colonizable
+    even when another player owns it. Robotoid flew colonizers to
+    planets it had never scanned.
+  - Editing owners in the host file changes nothing until the player's
+    own files carry it.
+
+  Elegy must run each computer player on that player's
+  own view. It never reads other players' hidden state, except through
+  the two leaks below. Beyond the planet history every player's history
+  file keeps, it has no memory between years: the original writes a
+  private computer-player memory block into the history file each year
+  but never reads it back on this path, so every turn starts from an
+  empty one (CONFIRMED, AI-10: replacing or editing that block before a
+  year left the computer player's orders and memory output unchanged). Elegy keeps no private computer-player state across
+  years.
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
   tech level edited in the host file) shows in its orders only one year
@@ -69,6 +104,93 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   order: research (§4, which also maintains the starbase designs of §5 and
   the hub memory of §6 for HE, SS, IS, CA and PP), then the personality's
   own work, then the planet automation of §7.
+
+### State leaking between computer players (LEGACY BUG)
+
+The host runs all computer players of a year one after another in one
+program, in player order (lowest player number first; human players are
+skipped). Two pieces of state survive from one computer player to the
+next within that run. Each makes a computer player's orders depend on
+which computer players ran before it that year.
+
+Elegy keeps each computer player's state separate by default: this
+**clean per-player state** is Elegy's normal behavior, and it is
+INTENTIONALLY DIFFERENT from the original. The original's whole-program
+behavior is reproduced only behind a named legacy-compatibility switch,
+for example `legacy_ai_state_leak`, off by default (project decision,
+2026-10-07). Clean state means every computer player reads shared state
+as the first computer player of a run does in the original:
+
+- an empty ship design slot reads as all zero, creation year 0;
+- the armada parameters read as 0 unless that computer player set them
+  earlier in its own turn.
+
+What this changes for the checked personalities:
+
+- **Robotoid**: nothing measured. It ran first in every captured game,
+  so its checks (AI-8, AI-9, AI-12) were taken under clean state.
+- **Rototill**: nothing in normal play. It reads design slots 0 and 1
+  without a presence check, but it never deletes its starting designs
+  (`docs/ai/rototill.md` §4).
+- **Cybertron**: its armadas see armada parameters of 0, so every
+  Cybertron armada idle at an own planet leaves home instead of waiting.
+  This is measured (AI-18: 11 of 11 armada-years with the values at 0).
+  In the AIX corpus, where Automitron ran just before Cybertron, the
+  original kept these armadas home in 16 armada-years (2452–2460).
+  Cybertron's captured orders are matched only with the switch on and the
+  original's player order.
+
+Both leaks are documented below as the switch reproduces them.
+
+- **Empty design slots keep the previous player's bytes.** Loading a
+  computer player's file marks its unused ship design slots empty but
+  leaves the rest of each slot as the previous computer player (in the
+  same run) left it. A rule that reads an empty slot's creation year
+  without first checking that the slot holds a design therefore reads the
+  previous player's design in that slot. For the first computer player in
+  the run an empty slot reads as all zero, creation year 0: loading the
+  host file does not touch this table (BINARY-ONLY; that no other load
+  precedes the first computer player is inferred). Known readers:
+  - Macinti's warship rule reads slot `s − 1`'s creation year this way.
+    In AIX, Macinti's slot 4 followed Cybertron's slot-3 design (created
+    2442), so Macinti did not create slot 4 in 2445–2460 although it
+    could build the design every year (Scanning lane's Macinti reading;
+    the Macinti check matches AIX in 61 of 61 years only when this is
+    modelled). MEASURED by an edit test (AI-13): with only Cybertron's
+    slot-3 creation year moved from 2442 to 2428, Macinti created slot 4
+    (a Cruiser) in 2449 in both random streams tried, while Cybertron's
+    own orders were unchanged. In AIX the leaked year decides Macinti's
+    slot-4 rule in 16 of 61 Macinti player-years (2445–2460). Because all
+    players share one random stream, the change then spread to other
+    computer players' orders in later years. Details in docs/ai/macinti.md
+    (planned).
+  - Robotoid's slots 12 and 13 test the previous slot's age without a
+    presence check (docs/ai/robotoid.md §2). Robotoid is often the first
+    computer player in a run, as in AIX, where this never mattered.
+  - Cybertron checks presence first and is not affected.
+- **Armada parameters.** The armada potency and size and the two values
+  derived from them (§11 "Armada (invasion) fleets") are shared values
+  that Robotoid, Turindrone, Automitron and Macinti set during their own
+  turns (Robotoid's potency starts at 4, Macinti's at 6). Cybertron's
+  armada targeting reads them but never sets them (its own copies are
+  never read). So Cybertron uses the values left by the last of those
+  computer players that ran before it in the same run, or all 0 when none
+  did. In AIX, Automitron runs just before Cybertron, so the values
+  happened to match Cybertron's own formulas. MEASURED by an edit test
+  (AI-18): when Robotoid, Turindrone and Automitron submitted their
+  captured orders without their computer-player turns running, the
+  values stayed 0. Every Cybertron armada idle at an own planet then left
+  home (11 of 11 armada-years in AIX 2453–2460), where with Automitron's
+  values all stayed. In AIX the values decide this in 9 of 61 Cybertron
+  player-years (2452–2460, 16 armada-years).
+
+All computer players in one host run also draw from one shared random
+stream, in player order. So any change to an earlier computer player's
+turn shifts the draws of every later one (MEASURED, AI-18: skipping
+Robotoid's turn alone changed 17 to 19 of Cybertron's random-dependent
+order lines). The switch does not change this: Elegy runs the computer
+players on one shared stream in player order either way, and only the
+two leaks above depend on the switch.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
@@ -226,7 +348,8 @@ same hull; after 20 failures, the last name tried with a number from
 ### AI part classes
 
 Each class is a list tried in order; the AI takes the first entry the
-race can build. Parts are named as in `COMPONENTS.md`. Classes 34–38, 0,
+race can build. There are 45 classes, 0–44. Parts are named as in
+`COMPONENTS.md`. Classes 34–38, 0,
 9, 10, 11, 17 and 19 are used by starbases; the rest by ship designs
 (personality files).
 
@@ -272,14 +395,21 @@ race can build. Parts are named as in `COMPONENTS.md`. Classes 34–38, 0,
 | 37 | Langston Shell, Complete Phase Shield, Elephant Hide Fortress, Gorilla Delagator, Langston Shell, Bear Neutrino Barrier, Shadow Shield, Croby Sharmor, Wolverine Diffuse Shield, Cow-hide Shield, Mole-skin Shield |
 | 38 | Mega Disruptor, Heavy Blaster, Colloidal Phaser, Phaser Bazooka, Laser |
 | 39 | Jammer 50, Jammer 30, Jammer 20, Jammer 10, Multi Function Pod, Ultra-Stealth Cloak, Super-Stealth Cloak, Stealth Cloak |
+| 40 | Orbital Construction Module |
+| 41 | Mega Poly Shell, Jammer 50, Jammer 30, Jammer 20, Jammer 10, Overthruster, Maneuvering Jet, Beam Deflector, Super Fuel Tank, Fuel Tank |
+| 42 | Alien Miner, Robo-Ultra-Miner, Robo-Super-Miner, Robo-Maxi-Miner |
+| 43 | Alien Miner, Robo-Ultra-Miner, Robo-Midget Miner |
+| 44 | Galaxy Scoop, Trans-Galactic Mizer Scoop, Trans-Galactic Super Scoop, Trans-Galactic Fuel Scoop, Sub-Galactic Fuel Scoop, Fuel Mizer |
 
 ## 6. Hubs: the AI's private memory (BINARY-ONLY)
 
-A computer player keeps a list of up to 64 *hubs* between years: each a
-planet with up to 8 freighter fleets assigned. Robotoid, Turindrone,
-Automitron and Rototill update it every year from year index 20:
+A computer player builds a list of up to 64 *hubs* during its turn: each
+a planet with up to 8 freighter fleets assigned. The list starts empty
+every year (§1), so it is rebuilt from the player's own state each time.
+Robotoid, Turindrone, Automitron and Rototill build it from year index 20:
 
-1. Drop hubs whose planet the player no longer owns.
+1. Drop hubs whose planet the player no longer owns (with the list
+   starting empty, this never matters).
 2. Every own planet with a starbase becomes a hub. A starbase-less own
    planet becomes a hub when it has population ≥ 8,000, ≥ 20 mines, ≥ 20
    factories and `Σ over minerals (surface + 4·concentration²) ≥ 7000`;
@@ -411,17 +541,28 @@ scraps at least one starting fleet at its homeworld.
   fleet that holds a ship of design slot 0 (the starting Scout) is
   scrapped, whatever its orders. AIX 2400: the Scout fleet, gone the next
   year.
-- **Robotoid (BINARY-ONLY, AI-4).** An idle fleet with ships of slot 1 (the
+- **Robotoid (MEASURED, AI-4).** An idle fleet with ships of slot 1 (the
   colonizer) and no slot-0 ships, from year index 5 (from the start when
   player positions are "close"), that finds no planet
   to colonize and no wormhole to explore, and orbits a planet, is
-  scrapped.
+  scrapped. AI oracle: with every planet owned in Robotoid's own view,
+  all three idle colonizers at its homeworld were scrapped; with one
+  planet left free, one colonizer took it and the other two were
+  scrapped, because a planet claimed by one colonizer is not offered to
+  the next in the same turn (§11 "Nearest colonizable planet").
 - **Robotoid (BINARY-ONLY).** A fleet whose every design is obsolete (a
   ship design in slots 2–15 older than 50 years before year index 120, 70
   before 200, 100 after) orbiting an own planet is scrapped when that
   planet has a starbase, else with chance 1/5 per year.
 - **Macinti (MEASURED, AI-5)** scraps its early fleets and repeatedly
-  builds and scraps its first colonizer; docs/ai/macinti.md (planned).
+  builds and scraps its first colonizer until the year it creates design
+  slot 7; docs/ai/macinti.md (planned). The colonizer it scraps in 2401 in
+  AIX is the one built in 2400, not a starting ship. Macinti merges its
+  fleets every year before its fleet pass (§10 "Merging"), so the scrap
+  rules see that turn's merged fleets.
+- **Rototill** scraps only an idle empty colony ship it cannot send home
+  and a nearly unfuelled Quick Jump 5 scout (`docs/ai/rototill.md` §3;
+  neither seen in 166 player-years).
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -488,7 +629,9 @@ fleet with ships of those slots (except fleets already at the maximum
 mining rate) is merged into the first such fleet at the same place
 (same orbited planet, or same position in space). Up to 32 places are
 tracked per pass; further places get another pass. Other designs in the
-fleets merge along.
+fleets merge along. A merge removes the merged fleet from the fleet list and closes the gap,
+so the walk then skips the fleet that followed it (LEGACY BUG,
+BINARY-ONLY: not exercised in AIX).
 
 **Queueing items.** A personality adds production items through the same
 production list a human sees: an item the planet cannot build (for
@@ -506,7 +649,15 @@ fleets in fleet order). A *move order* replaces the fleet's route: it
 keeps waypoint 0 and sets waypoint 1 to the target with the given task
 and warp, dropping any later waypoints; if the fleet is already at the
 target, the task goes on waypoint 0 and the route is cut to that one
-waypoint. Warp 4 below means the waypoint's warp is written as 4 and later
+waypoint. When the existing waypoint 0 lies at the fleet's position, the move
+order overwrites it in place (BINARY-ONLY; details with Cybertron,
+docs/ai/cybertron.md, planned).
+
+**Supplies.** When a rule loads colonists or minerals between a planet
+and a fleet, the planet and fleet change at once in the computer player's
+own picture of the game, so later steps of the same turn (for example
+starbase queueing in §7) see the moved cargo. A load is limited to what
+the source holds and the target can take. Warp 4 below means the waypoint's warp is written as 4 and later
 reset by the warp rule at the end of the turn.
 
 **Fleet classes.** Hull roles: freighters (Small to Super Freighter),
@@ -528,11 +679,17 @@ formula, to be published with the personality stage that needs it).
   for its bomber check, where slots 2–7 are not its warships (see
   docs/ai/turindrone.md, planned): LEGACY BUG, reproduced as written.
 
-**Nearest colonizable planet.** Candidates are unowned planets that no
+**Nearest colonizable planet.** Candidates are planets unowned in the
+player's own view (§1: a planet never scanned counts as unowned) that no
 other own fleet is already heading to (its waypoint 1 is that planet:
 for Robotoid and Macinti only when that waypoint's task is colonize; for
-the others any task). Robotoid and Macinti take any unowned planet; the
-others skip planets whose habitability value for the race is negative.
+the others any task). Robotoid and Macinti take any unowned planet,
+including planets they have never seen. The others take only planets in
+their view (their turn file or history file, §1) and skip planets whose
+habitability for the race, after the terraforming the player could
+currently do, is negative (MEASURED for Rototill, AI-16: ignoring the
+test, using present habitability, or dropping history-only planets each
+breaks the Rototill replay).
 The nearest candidate to the fleet wins. Robotoid and Macinti recompute
 the marks for every fleet; the others compute them once per turn, so a
 planet chosen earlier in the same turn is not excluded for them. Then, if
@@ -647,15 +804,34 @@ hub, or the player's first planet with a starbase):
    to foreign targets. Salvage targets get no task (LEGACY BUG: their
    load orders do nothing).
 
-**Warp choice.** At the end of each personality's fleet work (§7 step
-1), every own fleet with a waypoint 1 gets its waypoint-1 warp reset:
-- Standing in another player's minefield: heavy field → 6; standard
-  field → 4 or 5 (`Random(10) < 4` → 4); SS races +1.
-- Otherwise the fastest warp up to 9 that the fleet's current fuel
-  covers (never below its ideal warp); capped at the engine's efficient
-  warp unless heading to an own planet whose starbase is not an Orbital
-  Fort; then lowered to the slowest warp with the same whole-year travel
-  time (not below 2); warp 11 when a stargate route applies.
+**Warp choice** (CONFIRMED, AI-11). At the end of each personality's
+fleet work (§7 step 1), every own fleet with at least two waypoints, in
+fleet order, gets its waypoint-1 warp re-picked. Target and task are kept,
+and an order is written only when the warp changes.
+- **Minefields.** For this test, and for the whole turn, the computer
+  player sees every minefield as larger than it is: a field of `n` mines
+  counts as `⌊√n + 10.5⌋²` (about 10 ly more radius). A fleet inside
+  another player's enlarged field (squared distance below that count;
+  the first such field in object order) gets: heavy field 6; standard
+  field 4 when `Random(10) < 4`, else 5; plus 1 for an SS race. Speed
+  bump fields are not considered.
+- **Otherwise**, with `ideal` the fleet's ideal warp (`ESTIMATES.md`
+  "Fleets") and `raw` the same without the free-warp step-down:
+  1. Start from 9 and step down while the warp is above `ideal` and the
+     fuel needed to reach waypoint 1 at that warp (the waypoint fuel
+     estimate of `ESTIMATES.md` "Fleets") exceeds the fleet's fuel. If `ideal` is 9
+     or more, start at `ideal`.
+  2. Cap at `raw`, unless waypoint 1's task is colonize or scrap, a ship
+     carries a colonization or orbital construction module, or a planet
+     lies exactly at waypoint 1's position that the player owns and whose
+     starbase slot holds a design other than an Orbital Fort (the slot is
+     read even when the planet has no starbase).
+  3. Unless waypoint 1 targets a fleet: with `d` = the whole light-years
+     from waypoint 0 to waypoint 1, lower the warp while one less (not
+     below 2) still gives the same `⌈d / warp²⌉` years.
+  4. A stargate route gives 11 (not yet observed).
+- Example (AI oracle round 2): a lone Scout with Long Hump 6, 18 ly from
+  its target at warp 6, is rewritten to warp 5, which also takes one year.
 
 ## Open experiments
 

@@ -1,0 +1,5 @@
+# LQ-3 (Q-6 by host edit): the client sees F49 M30 D F20 AP50; the host file holds F9x0 M0 D F9x20 AP0. Take 1 off Defenses.
+queue open
+queue select 3
+queue remove 1
+queue ok
