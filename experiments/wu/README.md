@@ -61,7 +61,15 @@ Patrol target choice (CONFIRMED):
 - Intercept **warp = min(10, range / 5)** (range 20 → warp 4, 40 → 8, 90 and
   250 → 10).
 
-Still open (see `docs/ORDERS.md` Open experiments, WU prefix): the repeat
-fall-backs, patrol no-repeat, captured-target tracking, the route stargate
-case, the computer-player transfer refusal (needs an AI-player base), and the
-follower chain/cycle linkage.
+The repeat fall-backs (`wuFALLBACK`) and the follower chain/cycle linkage
+(`wuFOLLOW`) have since been run and are CONFIRMED (folded into `docs/ORDERS.md`;
+raw evidence in private `stars-oracle-apparatus` `evidence/wu/`).
+
+Still open (see `docs/ORDERS.md` Open experiments, WU prefix): patrol
+no-repeat, captured-target tracking, and the route stargate case. The
+computer-player transfer refusal was attempted on the new AI-player base
+(`stars-oracle-apparatus` `evidence/ai/ai01`) but is blocked: `combatlab build`
+rewrites that 7-player registered base into a file the host loads but will not
+advance (a single-player / two-player base advances fine), so the HST editor
+needs multi-player support before the computer refusal can be measured. It
+stays BINARY-ONLY meanwhile.

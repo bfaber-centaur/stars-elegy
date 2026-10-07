@@ -564,8 +564,11 @@ reproduces the original:
 
 - **Recipient is not a real, active player** — an empty or eliminated slot,
   or a **computer player**. A computer player never receives a gifted fleet.
-  Refused, with a message to the giver. BINARY-ONLY (the oracle base has no
-  computer player).
+  Refused, with a message to the giver. BINARY-ONLY — not yet measured: an
+  AI-player base now exists, but the fleetlab HST editor cannot yet rewrite a
+  multi-player registered base into a turn the host will generate (the edited
+  file loads but the year does not advance), so the computer refusal has no
+  oracle run.
 - **Recipient treats the giver as an enemy.** If the recipient's relation
   toward the giver is "enemy" (or the recipient otherwise declines gifts),
   the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
@@ -652,7 +655,10 @@ Still open (fleetlab HST editing, no serial):
 - **WU route stargate.** Route between two gated planets with an empty fleet;
   confirm it is sent through the stargate rather than at warp.
 - **WU computer-player transfer.** Gift a fleet to a computer player; confirm
-  it is refused (needs a base with an AI player).
+  it is refused. Attempted on the new AI-player base but blocked: the fleetlab
+  HST editor does not yet rewrite a multi-player registered base into a turn
+  the host will generate (needs the HST editor to handle a multi-player base, a
+  tooling item, not the serial).
 
 The order-ingestion predictions remain open:
 
