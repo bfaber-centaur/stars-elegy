@@ -67,8 +67,8 @@ raw evidence in private `stars-oracle-apparatus` `evidence/wu/`).
 
 The **computer-player transfer refusal** is now CONFIRMED. It runs on the
 AI-player base (`stars-oracle-apparatus` `evidence/ai/ai01`) built with the
-new `keepfleets` CombatLab directive, which preserves the base's own fleets
-(all seven players') and adds the gift fleet in owner/id order. A non-colonist
+`keepfleets-ordered` CombatLab directive, which preserves the base's own
+fleets (all seven players') and adds the gift fleet in owner/id order. A non-colonist
 fleet gifted by the human to an expert computer is refused and keeps its owner,
 even with the computer's stored relation to the giver forced neutral both ways
 (the computer is hostile when the gift is evaluated, so the gift fails the
@@ -79,8 +79,10 @@ computer-only path; a live computer is not the vacant-slot case). See
 Earlier diagnosis (recorded for the tooling): a plain full-replacement rewrite
 of this 7-player registered base left the host unable to advance, because the
 added fleet was appended out of owner/id order and desynced a player's fleet
-group from its fleet count; `keepfleets` merges base and added fleets and emits
-them in owner/id order, which the host accepts.
+group from its fleet count; `keepfleets-ordered` merges base and added fleets
+and emits them in owner/id order, which the host accepts. (It is distinct from
+the Objects lane's `keepfleets`, which keeps base fleets but forbids adding
+new ones.)
 
 Still open (see `docs/ORDERS.md` Open experiments, WU prefix): patrol
 no-repeat, captured-target tracking, and the route stargate case.

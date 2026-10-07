@@ -106,9 +106,18 @@ for that player from their standing orders.
 ## Per-order validation
 
 When a file is accepted, its orders are applied one at a time. Each order is
-validated on its own; a rejected order is dropped and the rest of the file
-still applies. The original's validation is **uneven** across kinds, which
-matters most in multiplayer (see "Ownership" below).
+validated on its own. The original's validation is **uneven** across kinds,
+which matters most in multiplayer (see "Ownership" below).
+
+**Chosen rule (Elegy):** a rejected order is dropped and the rest of the file
+still applies.
+
+**Host behaviour.** BINARY-ONLY and LEGACY BUG. The original does *not* stop at
+a bad record: it keeps applying the remaining records in the file and then
+fails the file as a whole, aborting turn generation for it. Reaching this needs
+a malformed or crafted order file, so it is serial-gated and cannot be produced
+by the registered client; Elegy keeps the drop-and-continue rule above and does
+not reproduce the whole-file abort. (See `LIMITS.md`, stars-elegy #65.)
 
 ### Range and legality clamps
 
@@ -173,14 +182,16 @@ BINARY-ONLY.
   engine was stripped: the basic engine is available to every race, so the
   back-fill is legitimate repair to a buildable ship, not a trust gap.
   Confirming the hull-keep and the engine back-fill needs the OX runs.
-- **Battle-plan fields.** BINARY-ONLY (plan semantics from the combat decomp,
-  stars-elegy #59 / stars-decomp #28). The original does **not** range-check a
-  battle-plan definition: a hand-built definition with an out-of-range tactic
-  (6) or target (8) is stored as given, and one can even **delete plan 0** (the
+- **Battle-plan fields.** BINARY-ONLY and LEGACY BUG (plan semantics from the
+  combat decomp, stars-elegy #59 / stars-decomp #28; order validation
+  `COMBAT.md` "Order validation", stars-elegy #71). The original does **not**
+  range-check a battle-plan definition: a hand-built definition with a tactic
+  of **6** or a primary or secondary **target of 8** — each exactly one past
+  its legal set — is stored as given, and one can even **delete plan 0** (the
   default plan). Nor does anything validate the plan number a
   *fleet battle-plan assignment* names. These are multiplayer trust gaps of the
-  same shape as the ownership asymmetry below. Elegy's chosen rule: reject an
-  out-of-range tactic or target, never delete plan 0, and validate a fleet's
+  same shape as the ownership asymmetry below. Elegy's chosen rule: **reject**
+  an out-of-range tactic or target, never delete plan 0, and validate a fleet's
   battle-plan number against the owner's plans. See #59 for plan semantics (the
   16-plan limit and the renumbering of later plans when one is deleted).
   Confirming the original's acceptance needs the OX runs.
@@ -232,23 +243,67 @@ hand-built queue can build a ship at a starbase whose dock could never queue it
 through the normal client. Elegy's chosen rule rejects such a queue order when
 it is given. Confirming the original's open acceptance needs the OX runs.
 
+**Production-queue replace.** CONFIRMED (`LIMITS.md` "Production-queue
+replace", stars-elegy #65, LQ-1..LQ-6). A production-queue change replaces the
+planet's whole queue with the submitted list, **in the submitted order**, after
+the owner is checked (the order is rejected if the submitter does not own the
+planet). An **empty** submitted list **removes** the queue entirely
+(message `0x3f`).
+
+A partial-build percent is carried across the replace this way: each submitted
+item is matched, **in queue order and ignoring count**, against an as-yet
+unmatched **old partial item of the same id and kind**. A submitted item that
+finds such a match keeps its **submitted (client) percent**; one that does not
+has its percent set to **0**. So the host trusts the percent the client sent
+rather than recomputing from the old item's accumulated progress — LEGACY BUG.
+**Elegy's chosen rule:** on a match, keep the **old** item's accumulated
+percent instead of the client's submitted value (`LIMITS.md` records this
+choice next to the host behaviour).
+
+**Production-queue client limits (setting orders).** BINARY-ONLY (`LIMITS.md`
+"Setting orders", stars-elegy #65). The limits the registered client enforces
+while composing a queue order, which a crafted file can exceed:
+
+- at most **40** items in a queue;
+- item counts capped at **1020**;
+- **Auto Alchemy** held at a count of **1**;
+- **mines** and **factories** capped, across the whole queue, at
+  `min(1020, max − installed)`;
+- **Add** merges into the selected row, or the row just after it, when that
+  row is already the same item (LQ-7).
+
+Elegy enforces these as the client-legal bounds; a queue order that exceeds
+them is reachable only by a crafted file (serial-gated).
+
 ### Cross-owner cargo
 
-BINARY-ONLY.
+A *cargo transfer* order (the manual transfer, as opposed to a waypoint
+transfer task) is resolved **in place while orders are applied** (turn order
+step 1), not deferred to movement. The mechanics below are CONFIRMED; see
+`TAKEOVER.md` "Manual cargo transfers to other players" (stars-elegy #69,
+commit `9cef650`; colonist drop CONFIRMED by TK-501).
 
-A cargo transfer whose source and destination have the **same** owner is
-applied in place at order time, subject to the destination's capacity.
-A transfer across **different** owners is not applied in place; it is
-deferred:
+A transfer whose source and destination have the **same** owner is applied in
+place at order time, subject to the destination's capacity. A cross-owner
+transfer is also resolved at step 1 (not deferred), under these rules:
 
-- **Colonists** unloaded onto a planet the giver does not own become a
-  colonist-drop, resolved during the post-movement waypoint phase as
-  colonisation or invasion under the rules in the takeover/objects specs,
-  not credited silently to the planet.
-- **Non-colonist cargo** (minerals, fuel) given to an object of a different
-  owner is debited from the source when the order is applied and credited to
-  the destination only after movement, with the usual "cargo given to you"
-  messages (and loss when the destination is short of capacity).
+- **Owner check only.** The manual path compares **owners**; it makes **no**
+  relation (enemy) check, so a gift to an enemy's fleet or planet is allowed
+  here. (The *waypoint* task that transfers a fleet to another player's fleet
+  is the path that refuses an enemy — see "Transfer fleet".)
+- **Two passes, in place.** Within step 1 the host runs all **debits first**
+  and then all **credits**, so same-step transfers draw from pre-transfer
+  stocks. A manual gift is credited to the destination at this time, **not**
+  after movement, and there is **no** queued-gift step for manual orders.
+- **Colonists** onto a planet the giver does not own are a **drop**, resolved
+  in the first drop step **before** movement (CONFIRMED, TK-501) —
+  colonisation or invasion under the takeover/objects rules — not in the
+  post-movement waypoint phase and not credited silently to the planet.
+- **Missing endpoint.** A transfer record whose source or destination object
+  is missing is **skipped whole**; neither side changes.
+- **Receiver short of room.** A receiver without capacity takes **what fits**;
+  the giver is sent message `0x0dd` and the remainder is **lost** (it is not
+  returned to the giver).
 
 An independent implementation that adopts the "validate ownership on every
 order" chosen rule above still needs the legitimate cross-owner paths —
@@ -656,7 +711,7 @@ the two repeat fall-backs (a two-waypoint circuit and a coincident reached/last
 waypoint), the follower-linkage upkeep (a three-fleet chain and a two-fleet
 cycle), and the computer-player transfer refusal (a fleet gifted to an expert
 computer, measured on a computer-opponents base built with the fleetlab
-`keepfleets` directive).
+`keepfleets-ordered` directive).
 
 Still open (fleetlab HST editing, no serial):
 
