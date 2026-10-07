@@ -30,3 +30,4 @@ oracle.conf
 # Stars! registration may be stored in these; never commit them
 STARS.INI
 serial*.txt
+__pycache__/
