@@ -84,3 +84,20 @@ Not ranked, because a lane already owns them or they are covered:
 research and terraforming, random events, scores and victory, race
 design, wormholes and the Mystery Trader, stargates, ships leaving
 production, battle plans and client estimates.
+
+## Targeted experiments outside the main gaps
+
+Behaviors that are specified but that legal orders or new games cannot
+easily reach, or that show only in the client. Each row says how it
+could be reached.
+
+| Behavior | Spec | Reach |
+| --- | --- | --- |
+| Wormhole stability names in the report | `OBJECTS.md` | Client only: read the report through client automation. |
+| Computer-player counts in unseeded wizard games; the wizard's own rules | `RACES.md` "Wizard" | Client only: drive the new-game wizard. |
+| The penalty's research-field step | `RACES.md` | Needs growth 1 while staying under 500 points; looks unreachable. |
+| A second punishment for an already-tampered race that goes negative again | `RACES.md` | Runnable, but low value. |
+| Mystery Trader appearance: the part reroll, late-year conversion, ship counts after year index 100, the 25th-redraw LEGACY BUG, leaving with 1 in 2 at an edge | `OBJECTS.md` | A sampling job over many seeds and years; 0 of 4 lone arrivals have left so far. |
+| Harder computer players' Trader threshold (3,500 kT) and the 100 ly edge | `OBJECTS.md` | A game with a Harder computer player; a candidate for the computer-player oracle. |
+| Packet limits (32,760 and 16,300 kT), PP terraforming rates, and whether a PP packet reveals the catcher's starbase design | `OBJECTS.md` | Legal packet orders; the last one needs a control. |
+| Seed-dependent planet-count distributions | `UNIVERSE.md` | A sampling job over seeds against the model's sampled ranges. |
