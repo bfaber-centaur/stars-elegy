@@ -372,6 +372,22 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   and the **giver keeps the cargo** — nothing is debited. BINARY-ONLY for the
   same-turn-removal case (read from the order-time object lookup; the in-place
   step-1 timing is MEASURED, TK-406/407/409).
+- **Receiver removed *after* the credit, same turn.** This is the reverse of
+  the missing-endpoint case: the receiving fleet still exists when the gift is
+  credited, and a **later** order in the same replay removes it (its owner
+  merges it away, or deletes the design its ships are built from). The in-place
+  credit is a plain cargo write with **no record that the cargo was a gift**, so
+  after it lands the gifted cargo is **indistinguishable from the fleet's own
+  cargo**. Its fate is therefore whatever the fleet-removal order does to that
+  fleet's cargo generally: a **merge** pools it into the surviving fleet, and a
+  **design delete** shares it out to any surviving ships exactly as a ship move
+  does (`floor(amount × capacity ÷ fleet capacity)`), with the remainder **lost**
+  only when no capacity survives — the same outcome as for native cargo (see
+  "Design delete effect", MEASURED CO-07/CO-07c, and "Merge"). There is **no**
+  gift-specific refund to the giver and **no** gift-specific loss. The
+  no-provenance property of the in-place credit is BINARY-ONLY (read from the
+  credit branch, which writes cargo and nothing else); the disposition on
+  removal is the MEASURED fleet-removal behaviour it inherits.
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
