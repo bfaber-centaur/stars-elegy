@@ -7,10 +7,6 @@ docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items
 docs/COVERAGE.md	missing-file	AI.md does not exist
 docs/COVERAGE.md	missing-file	AI.md does not exist
 docs/COVERAGE.md	missing-file	AI.md does not exist
-docs/COVERAGE.md	missing-file	MESSAGES.md does not exist
-docs/COVERAGE.md	missing-file	MESSAGES.md does not exist
-docs/COVERAGE.md	missing-file	MESSAGES.md does not exist
-docs/COVERAGE.md	missing-file	MESSAGES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
@@ -62,7 +58,6 @@ docs/PARITY.md	pr-ref	cites PR #42: re-applied as c0476b2 and 2cf004d after #42 
 docs/PARITY.md	pr-ref	cites PR #6: `docs/scanning-predictions.md`, PR #6 at 3b5de74) were restated as a
 docs/PARITY.md	pr-ref	cites PR #8: T-1..T-35, PR #8) were committed before every run
 docs/PRODUCTION-LAUNCH.md	missing-path	`experiments/sl` does not exist
-docs/SCANNING.md	missing-file	MESSAGES.md does not exist
 docs/SCANNING.md	missing-section	docs/PARITY.md has no section "Round 7 (CB-048, CB-049) and scanning SC-035/SC-036"
 docs/SCANNING.md	uncited	CONFIRMED without a case ID: - Another known player is identified by name only (CONFIRMED, SC corpus).
 docs/SCANNING.md	unknown-case	CB-48 is not in PARITY.md or vectors/
