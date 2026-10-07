@@ -1,0 +1,545 @@
+# Kernel specification: peaceful economy and fleet movement
+
+Behavioral specification of the J-RC3 rules an independent implementation
+needs for a peaceful single-player turn and for ordinary fleet movement:
+habitability, population, resources, installation caps, mining, research,
+production, movement and fuel. It is written for an implementer working
+only from this public repository.
+
+`PARITY.md` holds the experiment records these rules come from. This file
+restates them as rules with test vectors and adds rules that so far come
+only from white-box analysis of the original program (private
+`stars-decomp`, promoted here as behavior only).
+
+## Status of each rule
+
+Every rule carries one status:
+
+- **CONFIRMED**: a white-box reading agrees with original-game oracle
+  observations. The test vectors given for it are ground truth.
+- **ORACLE**: measured in the original game but not yet matched to a
+  white-box reading.
+- **BINARY-ONLY**: read from the original program's arithmetic, with no
+  oracle observation yet. Vectors are worked from the rule, not observed.
+  Expect most of these to hold, but treat them as predictions: they are
+  listed for oracle testing.
+
+"Confirmed" covers the measured scope only (race, habitability, cases).
+Each rule says what that scope was.
+
+## Conventions
+
+- Integers. Every division truncates toward zero (`trunc`). Where the
+  operands can be negative this is said explicitly; it differs from floor.
+- Population is held in **units of 100 colonists** ("units"). 1,000,000
+  colonists = 10,000 units.
+- Percentages are integers (hab 100 = 100%).
+- `rand(n)` is a uniform draw in `0..n−1` from the game's random generator.
+  The oracle restarts the game for each generated year, which makes random
+  draws nearly identical from year to year (`ORACLE.md`). Random outcomes in
+  the oracle corpus are therefore correlated, not independent samples.
+  Tests of random rules should inject the generator.
+
+## Turn order (BINARY-ONLY except where noted)
+
+One year, in order:
+
+1. Players' orders are applied, one player at a time in a random order.
+2. Waypoint tasks that act before movement (unload, scrap, colonist drops,
+   load).
+3. Mineral packets, wormholes and other space objects move; then fleets
+   move (see Movement).
+4. Production, per planet, in this order inside the phase: mining,
+   resources, research tax, production queue, then population growth for
+   every planet, then research level-ups, then random events.
+   CONFIRMED (PG-001..003, PQ-001): mining and resources use the population
+   **before** this year's growth; installation caps for auto items use
+   population **after** growth (see Production); research uses this year's
+   resources.
+5. Space objects move again; fleets refuel.
+6. Battles; then waypoint tasks that act after movement (unload, remote
+   mining, drops, load).
+7. Mine sweeping, ship repair, automatic and remote terraforming.
+8. The year advances; scores are computed; files are written.
+
+## Habitability
+
+Race: for each axis (gravity, temperature, radiation) a center `c`, a low
+`lo` and a high `hi` on the 0–100 internal scale, or "immune" on that axis.
+Planet: current environment `v` per axis on the same scale.
+
+Rule (BINARY-ONLY; CONFIRMED only for a planet at the race's center on all
+three axes, which gives 100):
+
+1. If any axis is outside `lo..hi`, the planet is hostile:
+   `hab = −Σ min(15, distance beyond the nearer edge)` over the axes outside
+   their range (−1 to −45).
+2. Otherwise, start with `S = 0`, `M = 10000`. Per axis:
+   - immune: `S += 10000`;
+   - else `d = |v − c|`, `w = c − lo` if `v < c` else `hi − c`,
+     `e = 100 − trunc(100·d / w)`, `S += e²`; and if `2d − w > 0`
+     (more than halfway to the edge), `M = trunc(M·(2w − (2d − w)) / (2w))`.
+3. `x = trunc(sqrt(S/3) + 0.9)` (floating point), `hab = trunc(x·M / 10000)`.
+
+Vectors (race center 50, low 15, high 85 on every axis; BINARY-ONLY except
+the first):
+
+| Planet (g, t, r) | hab | Status |
+|---|---:|---|
+| 50, 50, 50 | 100 | CONFIRMED (PG001) |
+| 60, 50, 50 | 92 | BINARY-ONLY |
+| 70, 50, 50 | 79 | BINARY-ONLY |
+| 85, 50, 50 | 41 | BINARY-ONLY |
+| 70, 70, 50 | 58 | BINARY-ONLY |
+| 80, 80, 80 | 3 | BINARY-ONLY |
+| 90, 50, 50 | −5 | BINARY-ONLY |
+| 10, 95, 50 | −15 | BINARY-ONLY |
+
+## Maximum population
+
+In units. Rule:
+
+- ordinary race: `max = 100·hab` for `hab ≥ 5`; `max = 500` for `hab < 5`
+  (hostile included). CONFIRMED for hab 100 (10,000 units).
+- Hyper-Expansion: `max −= trunc(max/2)`. Jack of all Trades:
+  `max += trunc(max/5)`. Then Only Basic Remote Mining:
+  `max += trunc(max/10)`. BINARY-ONLY (agrees with the documented
+  500,000 / 1,200,000 / +10%).
+- Alternate Reality: 0 unless the planet has the owner's starbase; then by
+  starbase hull, in hull order: 2,500, 5,000, 10,000, 20,000, 30,000 units,
+  regardless of habitability (OBRM +10% still applies). BINARY-ONLY.
+
+Vectors (BINARY-ONLY): HE at hab 100 → 5,000; JOAT at hab 100 → 12,000;
+OBRM at hab 100 → 11,000; hab 3 → 500; JOAT+OBRM at hab 79 → 10,428.
+
+## Population growth
+
+State per planet: population `P` (units) and a growth **carry** `k`
+(hundredths of a unit, 0–99). The carry is persistent: it is the byte
+StarsAPI calls `excessPop`. Race growth rate `G` (percent; doubled for
+Hyper-Expansion, BINARY-ONLY).
+
+### Positive habitability (`hab ≥ 0`)
+
+1. `g = G·hab` (growth in hundredths of a percent).
+2. Crowding, with `max` from above:
+   - `P < trunc(max/4)`: no change to `g`;
+   - otherwise, if `P < max`: `c = trunc(1000·P / max)` (permille), and
+     `g = trunc(g·(1000 − c)² / 562500)` if `g < 1000`, else
+     `g = 10·trunc(trunc(g/10)·(1000 − c)² / 562500)`;
+   - if `max ≤ P ≤ max + 10`: no change at all this year (P and k kept);
+   - if `P > max + 10` (overcrowded): `g = 2·max(−300, trunc(c/−10) + 99)`
+     with `c` as above (negative: deaths).
+3. `t = trunc(g·P / 100)` (hundredths of a unit). (For very large products
+   the game computes `trunc(g/100)·P`; it uses that value whenever it is at
+   least 10,000,000.)
+4. `q = trunc(t/100)`, `r = t − 100q` (both truncate toward zero, so negative
+   when `t` is). If `q = 0` and `r = 0`, set `r = 1`.
+5. `k += r`; if `k ≥ 100`: `q += 1`, `k −= 100`; if `k < 0`: `q −= 1`,
+   `k += 100`. `P += q`.
+
+Status: CONFIRMED for an ordinary race (growth 10%, hab 100,
+max 10,000) over 36 consecutive years 2400–2436, 11 of them crowded
+(27% to 54% of capacity), population **and** carry every year. Crowding
+other than this race, `g ≥ 1000` races, overcrowding, and the "within 10
+units of max" rule are BINARY-ONLY. The 16/9·(1−x)² curve in
+`PARITY.md` (H1) is this rule; its 0–4 unit misses are the permille
+truncation, the `g ≥ 1000` quantization does not apply at 10% growth, and
+the carry.
+
+Vectors, CONFIRMED (PG-001..003, `G = 10`, hab 100, max 10,000, start
+P 250, k 0 in 2400):
+
+| Year | P | k | | Year | P | k | | Year | P | k |
+|---:|---:|---:|---|---:|---:|---:|---|---:|---:|---:|
+| 2400 | 250 | 0 | | 2413 | 861 | 90 | | 2426 | 2958 | 17 |
+| 2401 | 275 | 0 | | 2414 | 948 | 0 | | 2427 | 3218 | 47 |
+| 2402 | 302 | 50 | | 2415 | 1042 | 80 | | 2428 | 3479 | 12 |
+| 2403 | 332 | 70 | | 2416 | 1147 | 0 | | 2429 | 3740 | 4 |
+| 2404 | 365 | 90 | | 2417 | 1261 | 70 | | 2430 | 3998 | 10 |
+| 2405 | 402 | 40 | | 2418 | 1387 | 80 | | 2431 | 4253 | 97 |
+| 2406 | 442 | 60 | | 2419 | 1526 | 50 | | 2432 | 4500 | 64 |
+| 2407 | 486 | 80 | | 2420 | 1679 | 10 | | 2433 | 4739 | 14 |
+| 2408 | 535 | 40 | | 2421 | 1847 | 0 | | 2434 | 4971 | 35 |
+| 2409 | 588 | 90 | | 2422 | 2031 | 70 | | 2435 | 5190 | 7 |
+| 2410 | 647 | 70 | | 2423 | 2234 | 80 | | 2436 | 5402 | 86 |
+| 2411 | 712 | 40 | | 2424 | 2458 | 20 | | | | |
+| 2412 | 783 | 60 | | 2425 | 2704 | 0 | | | | |
+
+Worked crowded step (2425 → 2426): `g = G·hab = 10·100 = 1000`, so the
+quantized branch applies. `c = trunc(1000·2704/10000) = 270`,
+`(1000 − c)² = 532900`, `g = 10·trunc(100·532900/562500) = 940`;
+`t = trunc(940·2704/100) = 25417`; `q = 254`, `r = 17`; P 2958, k 17.
+
+Vectors, BINARY-ONLY (start `(P, k)`, max, G, hab → result):
+
+| Start | max | G | hab | Result | Case |
+|---|---:|---:|---:|---|---|
+| 1000, 0 | 7900 | 15 | 79 | 1118, 50 | uncrowded |
+| 5000, 30 | 10000 | 15 | 100 | 5330, 30 | crowded, `g ≥ 1000` quantization |
+| 3000, 0 | 8600 | 10 | 86 | 3194, 70 | crowded, `g < 1000` |
+| 9995, 0 | 10000 | 10 | 100 | 9995, 1 | zero growth adds 1 to the carry |
+| 10005, 0 | 10000 | 10 | 100 | 10005, 0 | within 10 units of max: frozen |
+| 12000, 0 | 10000 | 10 | 100 | 11949, 60 | overcrowded deaths |
+
+### Hostile planets (`hab < 0`) (BINARY-ONLY)
+
+`t = max(1, trunc(|hab|·P / 10))` hundredths of a unit die:
+`q = trunc(t/100)`, `r = t − 100q`; `k −= r`, and if `k < 0`, `k += 100`
+and `q += 1`; `P −= q`. (Matches the documented `|hab|/10` percent per
+year.) Vectors: `P 1000, k 0, hab −5` → `995, 0`;
+`P 1234, k 10, hab −15` → `1215, 59`.
+
+### Duplicate-serial penalty (BINARY-ONLY)
+
+A player flagged for a duplicate or invalid serial has `g` halved
+(`trunc(g/2)`, applied before crowding) during turn generation, and its
+planets' production resources (with a queue) multiplied by 4/5 (truncating).
+Not part of normal play; listed because `PARITY.md` records the earlier
+halved-growth observation.
+
+## Resources and installation caps
+
+Race settings used: colonists per resource `R0` (in units: the race
+wizard's value / 100), factory output `F` (resources per 10 factories),
+factories operated `Fo` and mines operated `Mo` (per 10,000 colonists, i.e.
+per 100 units).
+
+### Resources per planet
+
+1. Effective population `E = P` if `P ≤ max`, else
+   `min(2·max, max + trunc((P − max)/2))` (BINARY-ONLY above max).
+2. Non-AR: `resources = trunc(E / R0) + trunc((F·n + 9) / 10)`, where
+   `n = min(installed factories, operable factories)`.
+3. Alternate Reality: `trunc(sqrt(trunc(E / R0)·max(1, energy tech))·
+   max(25, hab)·0.1 + 0.999)` (floating point). BINARY-ONLY.
+4. A result of 0 becomes 1 (unless `P = 0`, which gives 0).
+
+CONFIRMED (PG-001..003, `R0 = 10`, `F = 10`, 10 factories): this year's
+research resources are `trunc(P/10) + 10` from last year's population, for
+every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
+5190 → 529. PQ-001 confirms `resources = trunc(P/10)` with no factories.
+
+### Caps (units for `P`, `max`)
+
+| Quantity | Rule | Status |
+|---|---|---|
+| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | BINARY-ONLY |
+| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | BINARY-ONLY |
+| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | BINARY-ONLY |
+| operable mines | `max(1, min(max mines, trunc(P'·Mo/100)))` | CONFIRMED for auto mines (PQ C04, C09, C14) |
+| operable factories | `max(1, min(max factories, trunc(P'·Fo/100)))` | CONFIRMED for auto factories (PQ C09) |
+| operable defenses | `min(max defenses, 1000, ceil(P'/25))` | CONFIRMED (PQ C13) |
+| mines working this year | `min(installed, operable with P' = P)`; AR: `trunc(sqrt(P))` | CONFIRMED non-AR (PG mining) |
+
+`P'` is `P` for the year's mining and resources, and `P` plus this year's
+growth when production caps are computed. Production caps:
+`cap = max(maximum, operable) − installed` for both auto items and plain
+installation orders (CONFIRMED, PQ C09, C10, C13).
+
+## Mining
+
+Per planet with an owner and population, per mineral (ironium, boranium,
+germanium), with concentration `conc` (stored byte), a per-mineral
+depletion fraction `f` (stored byte, 1/256ths of the current concentration
+point remaining, 0 meaning a full 256) and `m` working mines:
+
+1. Homeworld floor: on a homeworld, `conc` below 30 counts as 30 for output
+   (the stored value is not raised). BINARY-ONLY (PG's ironium sits exactly
+   at 30).
+2. `prod = conc_used·m`; output `amt = trunc(prod·eff/10)` with
+   `eff` = race mine output (AR: 10).
+3. Surface minerals gain `trunc(amt/100)`, plus 1 with probability
+   `(amt mod 100)/100` (one `rand(100) < amt mod 100` draw per mineral with a
+   non-zero remainder). The `+1` mechanism is BINARY-ONLY; the oracle's +0/+1
+   pattern is consistent with it but its draws are correlated (see
+   Conventions).
+4. Depletion uses `p = trunc(prod/100)` (before `eff` and before the random
+   +1) and the stored `conc` clamped for this purpose to
+   `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
+   repeat while `p > 0` and stored `conc > 1`:
+   - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
+   - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
+   - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
+     smaller and lowered to `s − 1` if not below `s`; set `f = f'` (and if
+     that is 0, `conc −= 1`) and stop.
+
+   So one concentration point costs about `12500/cc` units of `p`.
+   CONFIRMED: concentration and fraction bytes after every one of 48 PG
+   years (homeworld, 10 mines, race mine output 10, concentrations 30, 113,
+   84 at 2407).
+
+Vectors (CONFIRMED, PG002 run, 10 working mines, `eff = 10`; fraction shown
+as stored, 0 = 256):
+
+| Year | conc I/B/G | frac I/B/G | surface I/B/G | Next year surface delta |
+|---:|---|---|---|---|
+| 2407 | 30/113/84 | 242/86/157 | 550/713/545 | +3/+11/+8 |
+| 2408 | 30/113/84 | 240/61/143 | 553/724/553 | +3/+11/+9 |
+| 2409 | 30/113/84 | 238/36/129 | 556/735/562 | +3/+12/+8 |
+| 2410 | 30/113/84 | 236/12/114 | 559/747/570 | +3/+11/+9 |
+| 2411 | 30/112/84 | 234/243/100 | 562/758/579 | |
+
+Worked: boranium 2407 → 2408: `prod = 1130`, `amt = 1130`, gain 11 (+1 with
+probability 30%; this year 0). `p = 11`, `cc = 100`, `s = 86`:
+`need = trunc(4199/100) = 41 > 11`, so `f = trunc(30·256/125) = 61`.
+Boranium 2410 → 2411: `s = 12`, `need = trunc(585/100) = 5 ≤ 11`: conc
+113 → 112, `p = 6`; then `s = 256`, `need = 125 > 6`,
+`f = trunc(119·256/125) = 243`.
+
+Remote mining (BINARY-ONLY): a fleet with a remote-mining task, at an
+unowned planet, that did not move this year, mines after production with
+its mining-robot rate as `m` and `eff` ignored (`amt = prod`), same random
++1 and depletion; no homeworld floor. Robot rates per robot: Robo-Midget 5,
+Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27, Robo-Ultra 25, Alien 10;
+a fleet's total is capped at 4,000.
+
+## Research
+
+Six fields (energy, weapons, propulsion, construction, electronics,
+biotech), each with a level (0–26) and accumulated research toward the next
+level.
+
+### Level cost
+
+`cost(level L) = base[L] + 10·(sum of the player's six current levels)`,
+then by the field's research-cost setting: "costs 75% more" →
+`2c − trunc(c/4)`; "normal" → `c`; "costs 50% less" → `trunc(c/2)`; then
+doubled when the game's slower-tech option is set.
+
+`base[L]` for L = 1..26: 50, 80, 130, 210, 340, 550, 890, 1440, 2330, 3770,
+6100, 9870, 13850, 18040, 22440, 27050, 31870, 36900, 42140, 47590, 53250,
+59120, 65200, 71490, 77990, 84700.
+
+CONFIRMED for the normal setting, levels 3–9 of one field (PG). Other
+settings and slower tech: BINARY-ONLY.
+
+### Allocation
+
+- Planets without a production queue send all their resources to research
+  (CONFIRMED, PG). Planets with a queue send the research tax first
+  (`trunc(resources·budget%/100)`, skipped with the leftover-only option)
+  and whatever is left after the queue (CONFIRMED, PQ-001).
+- All research goes to the current field. Level-ups: while
+  `accumulated ≥ cost(level+1)`, subtract the cost and raise the level;
+  the excess carries over (CONFIRMED, PG). Several levels per year are
+  possible (BINARY-ONLY).
+- When a level is gained in the current field and the "next field" choice
+  is not "same field", the leftover moves to the new field and the current
+  field's accumulation becomes 0; "lowest field" picks the lowest level,
+  first in field order on ties (BINARY-ONLY).
+- Generalized Research: the current field gets `trunc((res+1)/2)`; each
+  other field gets `trunc((3·res + 19)/20)` (15% rounded up)
+  (BINARY-ONLY).
+- Research into a field at level 26 (or level 10 for a capped player) is
+  lost (BINARY-ONLY).
+- Super Stealth gains, per field, `trunc(trunc(spent_by_all/players)/2)`
+  when it exceeds 1 (BINARY-ONLY).
+
+Vectors, CONFIRMED (PG003: one player, energy current, next "same field",
+other levels 0, 0, 0, 5 (electronics), 0; research = all resources):
+
+| Year | Research added | Energy level | Energy accumulated |
+|---:|---:|---:|---:|
+| 2407 | | 2 | 65 |
+| 2408 | 58 | 2 | 123 |
+| 2409 | 63 | 2 | 186 |
+| 2410 | 68 | 3 | 54 |
+| 2413 | 88 | 4 | 7 |
+| 2417 | 124 | 5 | 15 |
+| 2421 | 177 | 5 | 638 |
+| 2422 | 194 | 6 | 182 |
+| 2426 | 280 | 7 | 163 |
+| 2431 | 409 | 8 | 389 |
+| 2435 | 507 | 8 | 2274 |
+| 2436 | 529 | 9 | 343 |
+
+Worked 2435 → 2436: `2274 + 529 = 2803 ≥ cost(9) = 2330 + 10·(8+5) = 2460`;
+level 9, carry 343.
+
+## Production
+
+The PQ-001 model in `PARITY.md` ("Production Queues") is CONFIRMED in all
+15 cases and is the production specification: research tax first, partial
+percentage per component, stopping vs skipping, auto items and their hidden
+partial items, Auto Alchemy, installation-order clipping, leftover to
+research. Its predictions table doubles as the test vectors.
+
+Additional rules, BINARY-ONLY:
+
+- A planet with a production queue of zero items contributes nothing to
+  research that year.
+- Resources from ships scrapped at a planet this year with Ultimate
+  Recycling (`x`) raise that planet's production resources `r` to
+  `r + trunc(x·r/(x + r))`.
+- A planetary scanner order on a planet that already has one is removed
+  with a message; a mass-driver packet order without a driver or
+  destination is removed with a message; a terraform order above the
+  remaining terraform capacity is clipped (or removed at 0).
+- A planet with 0 resources builds nothing and sends no messages.
+
+## Fleet movement
+
+Coordinates are integers (light-years). `D` = straight-line distance from
+the fleet to its current destination (waypoint 1), floating point. `w` =
+the warp ordered for that leg (1–10). Engine fuel table `f(w)` per engine
+(J-RC3 values in StarsAPI / the game's part data; e.g. Quick Jump 5:
+0, 25, 100, 100, 100, 180, 500, 800, 900, 1080 for warps 1–10).
+
+### Distance and arrival (CONFIRMED, FM-001..003)
+
+1. Allowed distance `A = min(trunc(D + 0.9999), w²)`.
+2. The fleet arrives exactly on the destination if
+   `trunc(D − 0.99999) < A` (equivalently `D < w² + 0.99999` when not fuel
+   limited), or if `trunc(D − 0.99999) ≤ 0`.
+3. Otherwise it moves `A` along the line: each coordinate becomes
+   `x0 + trunc(dx·A/D ± 0.5)`, `+0.5` when the destination coordinate is
+   greater than the start, `−0.5` otherwise (round half away from zero; an
+   exact half cannot occur between integer points at integer distance).
+4. A fleet is in orbit of a planet exactly when its coordinates equal the
+   planet's.
+5. Reaching waypoint 1 ends the fleet's movement for the year; leftover
+   movement is not carried to the next waypoint. A first waypoint at the
+   fleet's own position also uses up the year.
+
+Vectors (FM-001/002, one Quick Jump 5 scout at warp 5, w² = 25, fuel 300;
+every one ends with 297 mg):
+
+| Corpus fleet | Start | Destination | D | End | Arrived |
+|---|---|---|---:|---|---|
+| FM-001 12 | (1250, 1020) | (1275, 1020) | 25.000 | (1275, 1020) | yes |
+| FM-001 13 | (1310, 1020) | (1336, 1020) | 26.000 | (1335, 1020) | no |
+| FM-001 17 | (1310, 1065) | (1334, 1073) | 25.298 | (1334, 1073) | yes |
+| FM-002 18 | (1270, 1015) | (1295, 1020) | 25.495 | (1295, 1020) | yes |
+| FM-002 19 | (1305, 1010) | (1331, 1011) | 26.019 | (1330, 1011) | no |
+| FM-002 20 | (1200, 1050) | (1207, 1075) | 25.962 | (1207, 1075) | yes |
+| FM-001 23 | (1110, 1190) | (1200, 1227) | 97.308 | (1133, 1200) | no |
+
+Worked (FM-001 23): `A = 25`, `25/97.308 = 0.2569`;
+`x = 1110 + trunc(90·0.2569 + 0.5) = 1133`,
+`y = 1190 + trunc(37·0.2569 + 0.5) = 1200`.
+The full per-fleet tables are `experiments/fm00N/{predictions,results}.tsv`
+in the movement corpus.
+
+### Fuel cost (CONFIRMED, FM-001..003)
+
+For a move of `L` light-years at warp `w`:
+
+1. Group the fleet's ships by design. Each design has a mass per ship `m`,
+   a ship count `n`, a cargo capacity per ship and an engine factor
+   `f(w)`.
+2. Assign the fleet's cargo (minerals and colonists in kT; fuel has no
+   mass) to designs in order of increasing `f(w)`, each up to `n ×` its cargo
+   capacity.
+3. Cost in tenths of a mg per design: `trunc(f(w)·L·(n·m + cargo assigned)
+   / 2000)`; designs with `f(w) = 0` cost nothing.
+4. Fleet cost in mg: `trunc((Σ tenths + 9) / 10)` (rounded up once per
+   fleet).
+
+`L` is `A` from the distance rule: `w²` for a partial move,
+`min(trunc(D + 0.9999), w²)` on arrival.
+
+Vectors (CONFIRMED):
+
+- One QJ5 scout (18 kT), 25 ly at warp 5: `trunc(100·25·18/2000) = 22`
+  tenths → 3 mg (FM-001 0).
+- Seven QJ5 scouts, 36 ly at warp 6: `trunc(180·36·126/2000) = 408` tenths
+  → 41 mg, not 7 × 6 (FM-001 42).
+- Three QJ5 scouts and one AD8 scout (31 kT), 49 ly at warp 7:
+  `trunc(500·49·54/2000) + trunc(100·49·31/2000) = 661 + 75` tenths →
+  74 mg (FM-002 32).
+- A QJ5 freighter carrying 70 kT with an AD8 scout: the cargo is charged
+  at the freighter's engine (FM-002 34).
+- A warp-9 scout chasing a fleet that ends 55 ly away:
+  `trunc(900·55·18/2000) = 445` tenths → 45 mg (FM-001 67).
+
+### Not enough fuel (CONFIRMED for Quick Jump 5)
+
+- Range on the current fuel: `R = trunc(fuel·1000 / C1000)` where `C1000 =
+  trunc(Σ_designs trunc(f(w)·1000·(n·m + cargo)/2000) / 10)` (the cost of
+  1000 ly in mg, truncated, not rounded up; above 100,000 the game uses
+  `trunc(fuel / trunc(C1000/1000))`; `C1000 = 0` means unlimited). A fleet with enough fuel for
+  the whole leg uses `max(R, w²)` instead.
+- If the allowed distance exceeds `R`, the fleet moves exactly `R` (placed
+  by rule 3 above), its fuel becomes 0, and the warp of its leg is lowered
+  to the fastest warp at which the whole leg would cost no fuel (the
+  lowest warp with a non-zero cost, minus one). CONFIRMED for QJ5, where
+  this is warp 1. BINARY-ONLY: Fuel Mizer → warp 4, Settler's Delight →
+  warp 6; no free warp at all → the warp is left unchanged (different
+  message).
+- A fleet with `R = 0` does not move.
+- With exactly enough fuel it moves the full distance.
+- Top-up (BINARY-ONLY): a fleet that had enough fuel for the whole leg at
+  the start of the year ends the year with at least the fuel the rest of the
+  leg needs (capped at its tank), so per-year rounding never strands it.
+
+Vectors (CONFIRMED, FM-001, QJ5 scout at warp 6 heading +160 x; fuel →
+distance moved, end fuel 0, warp set to 1): fuel 1 → 6 ly, 3 → 18, 5 → 30,
+fuel 0 → no move. At warp 9, fuel 10 → 12 ly.
+
+`R` and the corpus formula `trunc(fuel·20000/M)` (with `M` = Σ mass ×
+factor) agree when `M/20` is an integer, as in every FM case; the rule
+above is the binary's and differs otherwise (BINARY-ONLY there).
+
+### Ram scoops and free warps
+
+A moving fleet that did not run dry and was not stopped by a minefield
+gains fuel when its engines are free at the ordered warp:
+`gain = Σ_designs n·k·L'`, where `L'` = `min(trunc(D − 0.99999), A)` and,
+for a design whose engine (first slot) has `f(w) = 0`, `k` = engines per
+ship `e` × (1, or 3 if also free at `w+1`, 6 if free at `w+1` and `w+2`, 10
+if free through `w+3`); capped at the tank's free space.
+CONFIRMED for warp 1 (1 mg per ship, capped, FM-002/003). Other warps and
+ram-scoop engines: BINARY-ONLY.
+
+### Chasing another fleet (CONFIRMED, FM-001..003)
+
+1. Fleets move in id order. Fleets whose destination is another fleet are
+   deferred until every ordinary fleet has moved.
+2. Deferred fleets then move in rounds (at most 10), in id order. A chaser
+   has `rem = w²` and `moved = 0` at the start of the year. In a round, its
+   step is `rem` if its target has already finished moving, else
+   `min(rem, trunc((rem + moved + 4)/5))` (a fifth of `w²`, rounded up). It
+   heads for the target's current position, using the distance, arrival
+   and rounding rules above with `A = min(trunc(D + 0.9999), step)`.
+3. A chaser that arrives on its target has finished. If that target is
+   itself a chaser that has not finished, the target stops for the year.
+4. Otherwise `moved += step`, `rem −= step`, and it stays deferred while
+   `rem > 0`.
+5. Fuel is charged on the year's total distance (`moved + step`), refunding
+   the previous round's charge, so rounds add no extra rounding.
+
+Vectors (CONFIRMED): two fleets 20 ly apart chasing each other at warp 4:
+the lower id moves 12, the higher 8. A at 1200 chasing B at 1215 (warp 9),
+B chasing Z at 1225 (warp 9), Z moving +60 at warp 5: with ids in order
+A < B < Z, A reaches 1215 and B does not move; with B < A < Z, all three
+end at 1250.
+
+### Other movement rules (BINARY-ONLY)
+
+- A fleet whose current task is "transport" or "lay mines" does not move.
+- Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
+  Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
+  each ship is destroyed with probability 1/10 each year it moves.
+- Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
+  fleet does not move.
+- Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`.
+- Alternate Reality fleets carrying more than 10 kT of colonists lose
+  `trunc((colonists + 11)·3/100)` kT each year they move.
+- Radiating Hydro-Ram Scoop engines kill
+  `max(1, trunc(colonists·trunc((86 − mid)/2)/100))` kT of carried
+  colonists (at most all of them) per year moved, where `mid` =
+  `trunc((radiation low + radiation high)/2)`; not for radiation-immune
+  races or when low + high ≥ 170.
+- Refuelling after production: a fleet at a planet with its own or a
+  friend's starbase that has a dock is filled to capacity; otherwise fuel
+  generators add 50 mg each, capped.
+- Fuel unloaded onto a planet is lost.
+
+## Sources
+
+- Oracle: PG-001..003 and PQ-001 (`PARITY.md`); FM-001..003 movement
+  corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
+- White-box readings: private `stars-decomp` (population, economy,
+  research, mining, production, movement and fuel notes; model checks that
+  reproduce the PG, PQ and FM observations listed above).

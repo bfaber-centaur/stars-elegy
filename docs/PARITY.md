@@ -1,5 +1,9 @@
 # Stars! J-RC3 Parity Notes
 
+The rules established here are restated as an implementer's specification,
+with test vectors and a CONFIRMED / BINARY-ONLY status per rule, in
+`KERNEL.md`.
+
 ## Population Growth
 
 Status: DOCUMENTED / PARTIALLY MEASURED
