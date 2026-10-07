@@ -2486,6 +2486,27 @@ negative race score unless `COMBATLAB_ALLOW_ILLEGAL_RACE=1` is set.
   - A Space Dock built a 574 kT Mini-Miner (LEGACY BUG: no dock-size
     check).
 
+### Round 8 (CB-050, CB-051)
+
+Predictions from the decomp combat pass, restated in the experiment
+READMEs and committed before the runs (2a7107c). Each setup ran on 6
+distinct streams, and the decomp's battle replay matched every move in
+all 18 runs and every hit in CB-051.
+
+- **Torpedo estimate shield term, CONFIRMED (CB-050, 6 of 6).** A
+  shielded runner (tactic 0) facing an Upsilon Torpedo stack and a Jihad
+  Missile stack that never fire moved to (9,9) and stayed there for
+  7 moves before leaving. The unshielded control alternated between
+  (9,9) and (8,9) in all 6 streams, starting on (9,9) in 4 of them and
+  on (8,9) in 2. The shield term in the estimate decides between the
+  two squares.
+- **Secondary target fallback, CONFIRMED (CB-051, 6 of 6).** A stack
+  whose primary target type (starbase) has no match on the board moves
+  on its secondary (armed ships) from its first move. A "freighters,
+  else any" stack falls back to "any" after the freighter leaves; the
+  full replay through fire shows the fallback is rechecked on every
+  move.
+
 ### Battle plans through the client (BP)
 
 The original client gave the orders (`tools/fleetlab/client-orders`), and

@@ -27,4 +27,16 @@ streams counted by record hash.
 
 ## Results
 
-Pending.
+Six runs each, 6 distinct streams (ticks 823, 549, 384, 274, 164, 109).
+The decomp's battlesim replay (stars-decomp 55483ce) matched every move
+in all 12 runs. Players 0 and 2 never moved or fired.
+
+- **CB-050: CONFIRMED, 6 of 6.** The shielded runner moved to (9,9) on
+  its first move and stayed there for 7 move records with counter
+  7 … 1, then left the board on the 8th.
+- **CB-050-ctl: CONFIRMED, 6 of 6.** The unshielded runner alternated
+  between (9,9) and (8,9) for 7 moves and left on the 8th. It started
+  on (9,9) in 4 streams and on (8,9) in 2.
+
+The shield term in the torpedo estimate is what keeps the shielded runner
+on (9,9).

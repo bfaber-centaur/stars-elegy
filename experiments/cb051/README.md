@@ -28,4 +28,15 @@ streams counted by record hash.
 
 ## Results
 
-Pending.
+Six runs, 6 distinct streams (ticks 823, 549, 384, 274, 164, 109). Fire
+started in every run (24 to 60 hit records). The decomp's battlesim
+replay (stars-decomp 55483ce) matched every move and every hit in all
+6 runs.
+
+- **Fallback to the secondary target: CONFIRMED, 6 of 6.** Both of
+  player 0's stacks left (1,4) on their first move in every stream,
+  including the "Starbase else armed" stack.
+- The freighter (tactic 0) left the board on its 8th move in every
+  stream. After that, the "Freighters else any" stack kept moving
+  toward player 1's destroyers, and the replay matched it through the
+  last round. So the fallback is rechecked on every move.
