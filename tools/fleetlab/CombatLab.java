@@ -24,7 +24,6 @@ import org.starsautohost.starsapi.items.Items;
 //   accum P FIELD N                 set P's accumulated research in FIELD (resources toward
 //                                   the next level; dumped as accum=)
 //   field P FIELD                   set the current research field
-//   accum P FIELD N                 set the resources already spent towards P's next level in FIELD
 //   defqueue P ID:COUNT[,...]|none  set P's default production queue for new colonies (at
 //                                   most 12 items; ID = planetary item id, 0 auto mines,
 //                                   1 auto factories, 2 auto defenses, 3 auto alchemy,
@@ -484,7 +483,6 @@ public class CombatLab {
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
-        Map<String, Long> accums = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
@@ -516,7 +514,6 @@ public class CombatLab {
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "accum": accums.put(t[1] + " " + t[2], Long.parseLong(t[3])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
-                    case "accum": accums.put(t[1] + " " + t[2], Long.parseLong(t[3])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "mt": {
                         int v = Integer.parseInt(t[2].replaceFirst("^0x", ""), 16);
@@ -749,13 +746,6 @@ public class CombatLab {
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
             }
             if (mts.containsKey(k)) Util.write16(p.fullDataBytes, 0x4a, mts.get(k));
-            for (Map.Entry<String, Long> e : accums.entrySet()) {
-                String[] pf = e.getKey().split(" ");
-                if (Integer.parseInt(pf[0]) != k) continue;
-                int i = Arrays.asList(TECH).indexOf(pf[1]);
-                if (i < 0) throw new Exception("accum: unknown tech field " + pf[1]);
-                Util.write32(p.fullDataBytes, 0x18 + 4 * i, e.getValue());
-            }
             if (defLeftover.containsKey(k))
                 p.fullDataBytes[0x4e] = (byte) ((p.fullDataBytes[0x4e] & ~1) | (defLeftover.get(k) & 1));
             if (defQueues.containsKey(k)) {
