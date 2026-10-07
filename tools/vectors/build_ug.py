@@ -105,7 +105,8 @@ def build(ev, out):
                                  'constraint': 'a disabled condition\'s value is stored as 0, which decodes as that condition\'s '
                                  'lowest value (tech level 8, score 1000, ...); enabled conditions keep the .def value'}]
             per['D'][stream] = [{'year': 0, 'kind': 'sample', 'check': 'wormholes', 'target': [],
-                                 'observed': worms, 'constraint': 'none with no random events'}]
+                                 'observed': worms, 'constraint': 'pairs by size (tiny 0-2, small 1-3, medium 1-5, '
+                                 'large 3-6, huge 4-8) when random events are on, none when off (OBJECTS.md "Creation")'}]
         vec = {'schema': B.SCHEMA, 'id': rid, 'title': '%s %s, %d players' % (settings['size'], settings['density'],
                                                                              len(players)),
                'source': {'experiment': 'experiments/ug', 'spec_rules': 'docs/UNIVERSE.md',
@@ -116,7 +117,7 @@ def build(ev, out):
         for k, rule, setup in [('A', 'UNIVERSE Starting tech by PRT; starting designs', 'starting tech and design count per player'),
                                ('B', 'UNIVERSE Planet counts', 'number of planets'),
                                ('C', 'UNIVERSE Starting planets; shared homeworld minerals', 'homeworlds and other starting planets per player'),
-                               ('D', 'UNIVERSE Options: no random events', 'wormholes in the new game'),
+                               ('D', 'OBJECTS Wormholes: Creation', 'wormholes in the new game'),
                                ('E', 'KERNEL Victory conditions', 'victory conditions as stored in the new game')]:
             vec['cases'].append(B.case('%s-%s' % (rid, k), rule, setup, per[k], held, set()))
         with open(os.path.join(out, g + '.json'), 'w') as f:

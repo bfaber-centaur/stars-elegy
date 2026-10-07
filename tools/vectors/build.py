@@ -31,6 +31,8 @@ ACTIONS = {0: 'none', 1: 'load_all', 2: 'unload_all', 3: 'load_exactly', 4: 'unl
            5: 'fill_to_percent', 6: 'wait_for_percent', 7: 'load_optimal', 8: 'set_amount_to',
            9: 'set_waypoint_to'}
 CARGO = ['ironium', 'boranium', 'germanium', 'colonists', 'fuel']
+# stored next-field choice: a field, 6 same field, 7 lowest field (KERNEL Research; KB-2A)
+NEXT_FIELD = TECH + ['same', 'lowest']
 MT_ITEMS = ['Multi Cargo Pod', 'Multi Function Pod', 'Langston Shell', 'Mega Poly Shell', 'Alien Miner',
             'Hush-a-Boom', 'Anti Matter Torpedo', 'Multi Contained Munition', 'Mini Morph', 'Enigma Pulsar',
             'Genesis Device', 'Jump Gate', 'ship']
@@ -51,6 +53,13 @@ GAMES = {
 def dump(path):
     out = subprocess.run([COMBATLAB, 'dump', path], capture_output=True, text=True, check=True).stdout
     return [line.split(' ', 1)[1] for line in out.splitlines() if ' ' in line]
+
+
+def last_section(lines):
+    """A player's .M holds one section per year since the player last
+    submitted; the generated year is the last one."""
+    starts = [i for i, s in enumerate(lines) if s.startswith('file ')]
+    return lines[starts[-1]:] if starts else lines
 
 
 def kv(s):
@@ -98,6 +107,10 @@ def waypoint(d, owner, nplayers):
         tk['years'] = 'indefinitely' if words[0] == 5 else words[0]
     elif task == 9 and words:
         tk['to_player'] = [p for p in range(nplayers) if p != owner][words[0]]
+    elif task == 7 and words:
+        if words[0] >> 15:
+            raise ValueError('patrol order word with bit 15 set: not decoded')
+        tk['range'] = words[0]
     wp['task'] = tk
     return wp
 
@@ -162,6 +175,7 @@ def state(hst, xy, game, xy_path=None):
                 'tech': {TECH[i]: int(d[DUMP_TECH[i]]) for i in range(6)},
                 'research_accumulated': dict(zip(TECH, (int(x) for x in d['accum'].split(',')))),
                 'research_percent': int(d['researchPct']), 'research_field': TECH[int(d['field'])],
+                'research_next_field': NEXT_FIELD[int(d['next'])],
                 'relations': {str(q): RELATION[r] for q, r in enumerate(rel) if q != p},
                 'mystery_trader_items': [MT_ITEMS[b] for b in mask_players(int(d['mt'], 16), 13)],
                 'race': {
@@ -181,6 +195,8 @@ def state(hst, xy, game, xy_path=None):
                 },
                 'counts': {'ship_designs': int(d['shipdesigns']), 'starbase_designs': int(d['sbdesigns'])},
             })
+            if d.get('computer') == '1':
+                st['players'][-1]['computer'] = True
             owners.append(p)
         elif s.startswith('design ') or s.startswith('sbdesign '):
             m = re.match(r'(sb)?design owner=(\d+) n=(\d+) mass=(\d+) armor=(-?\d+) full=\w+ :: (.*)', s)
@@ -193,7 +209,7 @@ def state(hst, xy, game, xy_path=None):
                                        'primary': int(d['primary']), 'secondary': int(d['secondary']),
                                        'attack_who': int(d['who']), 'dump_cargo': d['dump'] == 'true',
                                        'name': s.split('name=', 1)[1]})
-        elif s.startswith('planet '):
+        elif s.startswith('planet ') and d.get('owner') != '-1':  # an unowned planet has no starbase
             n = int(s.split()[1])
             sb[n] = dict(design=int(d['design']) if d.get('starbase') == 'true' else None,
                          damage=int(d.get('sbdmg', 0)))
@@ -214,6 +230,8 @@ def state(hst, xy, game, xy_path=None):
                     p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
                 if 'leftover' in d:
                     p['leftover_to_research'] = d['leftover'] == 'true'
+                if 'route' in d and int(d['route'], 16) & 0x3ff:
+                    p['route_to'] = (int(d['route'], 16) & 0x3ff) - 1
             planets[n] = p
         elif s.startswith('queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
@@ -231,12 +249,16 @@ def state(hst, xy, game, xy_path=None):
                      'orbiting': None if int(d['obj']) == 65535 else int(d['obj']), 'ships': ships,
                      'cargo': dict(zip(CARGO[:4], c)), 'fuel': int(d['fuel']), 'battle_plan': int(d['plan']),
                      'waypoints': []}
+            if int(d['b5'], 16) & 2:
+                fleet['repeat_orders'] = True
             st['fleets'].append(fleet)
         elif s.startswith('  wp ') and fleet is not None:
             fleet['waypoints'].append(waypoint(d, fleet['owner'], len(owners)))
+        elif s.startswith('  fleetname ') and fleet is not None:
+            fleet['name'] = re.search(r'fleetname "(.*)" raw=', s).group(1)
         elif s.startswith('thing ') and 'type' in d:
             st['objects'].append(thing(d))
-        if not s.startswith('  wp ') and not s.startswith('fleet '):
+        if not s.startswith(('  wp ', 'fleet ', '  fleetname ')):
             fleet = None
     for n, p in planets.items():
         if n in sb:
@@ -495,5 +517,8 @@ if __name__ == '__main__':
     elif corpus in ('cb', 'sc', 'mf', 'rp', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
+    elif corpus in ('xf', 'bp', 'tk5', 'wu', 'fc', 'co'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        __import__('build_orders').build(corpus, ev, out)
     else:
         build(corpus, ev, out)

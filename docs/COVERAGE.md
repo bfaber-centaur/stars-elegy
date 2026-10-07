@@ -5,9 +5,8 @@ client shows) to the spec files here. Its job is to show what is still
 missing. It lists behaviors, not code. The mapping comes from a white-box
 walk of the original program's turn generation, order replay and
 computer-player code (private `stars-decomp`), checked against these files
-on `main` and the open spec changes as of 2026-10-07 (late evening). A
-spec file named here that is not on `main` yet arrives with its open
-change: `RACES.md`. Rows that depend on it say so.
+on `main` as of 2026-10-07 (night). Every spec file named here is on
+`main`.
 
 Levels:
 - **Confirmed**: specified, mostly CONFIRMED.
@@ -22,7 +21,7 @@ Levels:
 |---|---|---|---|
 | Accepting and replaying orders, random player order, serial checks | `ORDERS.md`, `KERNEL.md`, `LIMITS.md` | Partial | Validation, ownership, fleet operations and design legality are covered. Production-queue replace (CONFIRMED, LQ-1..LQ-6) and the setting orders (Read) are in `LIMITS.md`, to be folded into `ORDERS.md`. |
 | Race checks at the start of the year | `RACES.md`, `KERNEL.md` "Item costs" | Confirmed | Advantage points and the degrading of an over-budget race. |
-| Tasks before movement: unload, scrap, colonize, drops, load, merge, cargo to other players | `TAKEOVER.md`, `ORDERS.md` | Confirmed | Split, merge and own-fleet transfer orders by client orders (CO-01..CO-08). Scrap details are Read. |
+| Tasks before movement: unload, scrap, colonize, drops, load, merge, cargo to other players | `TAKEOVER.md`, `ORDERS.md` | Confirmed | Split, merge and own-fleet transfer orders by client orders (CO-01..CO-08). Cargo to other players: drops before movement CONFIRMED (TK-501), the in-place fleet gift MEASURED (TK-406, TK-407, TK-409); a deferred cross-owner credit path is an unresolved hypothesis (`ORDERS.md` "Cross-owner cargo"). Scrap details are Read. |
 | Packets, wormholes, Mystery Trader | `OBJECTS.md`, `KERNEL.md` "Random events" | Confirmed / Read | Wormholes (WT), the Trader's appearance, movement, meeting and rewards. Packet launch is Read. |
 | Fleet movement, fuel, chasing, stargates | `KERNEL.md`, `OBJECTS.md` | Confirmed | Stargates (GT corpus) and the chain-freeze LEGACY BUG included. |
 | Minefields | `OBJECTS.md` | Confirmed | MF-1..MF-13. Open: the 4050-object limit, SS and SD safe-warp bonuses. |
@@ -34,8 +33,8 @@ Levels:
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` "Random events", `OBJECTS.md` | Confirmed | KX-004. |
 | Battles, battle plans | `COMBAT.md` | Confirmed | Battle movement confirmed by exact replays. |
 | Bombing, invasion, colonization, capture | `TAKEOVER.md` | Confirmed | |
-| Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `ORDERS.md`, `SCANNING.md`, `TAKEOVER.md` | Confirmed | The WU batch confirmed the patrol target rule, the route task (ideal-warp case) and the transfer-fleet refusals (enemy, colonists aboard, computer player). Open: routing through a stargate (being resolved in an open change). |
-| Waypoint upkeep | `ORDERS.md` "Waypoint upkeep and the remaining tasks", `SCANNING.md` | Confirmed | The WU batch confirmed repeat versus drop, the idle message, live and gone fleet targets, both repeat fall-backs and follower linkage. Open: a fleet target captured mid-turn (being resolved in an open change). |
+| Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `ORDERS.md`, `SCANNING.md`, `TAKEOVER.md` | Confirmed | The WU batch confirmed the patrol target rule, the route task (ideal-warp case) and the transfer-fleet refusals (enemy, colonists aboard, computer player). Routing through a stargate is MEASURED (wuRSG2). |
+| Waypoint upkeep | `ORDERS.md` "Waypoint upkeep and the remaining tasks", `SCANNING.md` | Confirmed | The WU batch confirmed repeat versus drop, the idle message, live and gone fleet targets, both repeat fall-backs and follower linkage. A planet target captured mid-turn keeps the waypoint (MEASURED, wuCAP); a fleet target changing owner in place stays BINARY-ONLY (not reachable by client orders). |
 | Sweeping, repair | `OBJECTS.md`, `COMBAT.md` | Confirmed | |
 | Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` "Terraforming" | Confirmed | KX-005 (drift, year-end step, half-price terraform), OT-4, TK-108 and TK-118..120 (after a capture). |
 | Duplicate-serial penalties | `KERNEL.md`, `MESSAGES.md` | Read | |
@@ -43,7 +42,7 @@ Levels:
 | Scores and victory | `KERNEL.md` "Scores and victory conditions" | Confirmed / Read | Score KX-003; the victory conditions are Read. |
 | New games | `UNIVERSE.md`, `RACES.md` | Confirmed | |
 | Messages to players | `MESSAGES.md` | Confirmed / Read | All 387 kinds are catalogued (sender, recipients, values, phase); 198 rows are CONFIRMED. The rest are listed under "Kinds not yet observed, and how to reach them" and as gap 3 below. Player-to-player mail is not covered. |
-| Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Robotoid, Rototill and Cybertron are checked against oracle captures and are the faithful candidates (`AI.md` project policy; AI-8, AI-9, AI-12, AI-14..AI-17, AI-19..AI-21). Turindrone, Automitron and Macinti are legacy reference only. The cross-player leaks are AI-13 and AI-18. Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
+| Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Robotoid, Rototill and Cybertron are checked against oracle captures and are the faithful candidates (`AI.md` project policy; AI-8, AI-9, AI-12, AI-14..AI-17, AI-19..AI-21). Turindrone, Automitron and Macinti are legacy reference only; Turindrone's and Automitron's fleet passes are checked (AI-22, AI-23) without an implementation commitment. The cross-player leaks are AI-13 and AI-18. Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
 | What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings; ES-002 confirmed stargate legs, "Skipped", Generalized Research, "Maxed Out" and the distance display. |
 | Limits: fleets, space objects, minefields, designs, queue length | `LIMITS.md`, `PRODUCTION-LAUNCH.md` (fleets), `OBJECTS.md` (minefields and objects) | Partial | Collected in `LIMITS.md`. Fleets (512), minefields (512, or 511) and the client's queue limits (LQ) are CONFIRMED or MEASURED. Open: the 4050-object limit (not run), waypoints per fleet, the host's 16th battle plan and other crafted-order cases (serial-gated). |
 
@@ -52,8 +51,10 @@ Levels:
 1. **Computer players' own turns.** Elegy reproduces faithfully only the
    checked personalities (`AI.md` project policy). The shared core is in
    `AI.md`; Robotoid, Rototill and Cybertron are specified and checked
-   (`docs/ai/`). Turindrone, Automitron and Macinti stay legacy reference;
-   further work on them needs a concrete reason.
+   (`docs/ai/`). Turindrone, Automitron and Macinti stay legacy reference
+   (Turindrone's and Automitron's fleet passes are checked, AI-22 and
+   AI-23); further work on them needs a concrete reason. Cross-player state
+   leaks (AI-13, AI-18) are a legacy-compatibility switch, off by default.
 2. **The plain setting orders** (research settings, relations, planet
    flags, renames): written only in `LIMITS.md` "Setting orders" (Read);
    they still need folding into

@@ -74,6 +74,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -154,6 +155,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -234,6 +236,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -314,6 +317,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -394,6 +398,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -474,6 +479,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -531,7 +537,8 @@
     "counts": {
      "ship_designs": 2,
      "starbase_designs": 1
-    }
+    },
+    "computer": true
    }
   ],
   "planets": [
@@ -4683,43 +4690,9 @@
        "construction": 2,
        "electronics": 0,
        "biotechnology": 0
-      }
+      },
+      "research_field": "construction"
      },
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 0,
-     "message_id": 169,
-     "present": true,
      "year": 1
     },
     {
@@ -4759,41 +4732,6 @@
     {
      "kind": "message",
      "player": 1,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
-     "message_id": 169,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 1,
      "message_id": 386,
      "present": true,
      "year": 1
@@ -4823,41 +4761,6 @@
       }
      },
      "seen_by": 1,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 2,
-     "message_id": 169,
-     "present": true,
      "year": 1
     },
     {
@@ -4897,41 +4800,6 @@
     {
      "kind": "message",
      "player": 3,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
-     "message_id": 169,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 3,
      "message_id": 386,
      "present": true,
      "year": 1
@@ -4961,41 +4829,6 @@
       }
      },
      "seen_by": 3,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 127,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 128,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 129,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 130,
-     "present": true,
-     "year": 1
-    },
-    {
-     "kind": "message",
-     "player": 4,
-     "message_id": 169,
-     "present": true,
      "year": 1
     },
     {

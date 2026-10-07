@@ -526,3 +526,58 @@ other streams as `obNNN-cNNNNN`).
   fuel check missed when a ship was lost.
 - Pinned consecutive years start from the same random stream: the OB-025
   class-1 pair jiggled by the same offsets in all three years.
+
+## Round 6 predictions (BINARY-ONLY sweep: packet launch, PP and AR impacts, Traders)
+
+Written before the runs, from `OBJECTS.md` (stars-decomp `docs/objects.md` 3.1-3.3, 6). Player 1 is
+Interstellar Traveler (OB-028), Packet Physics (OB-029) or Alternate Reality (OB-030), each with
+LRTs 0x1b80 and tech 26, so every race stays legal (188, 208 and 218 points). Launchers have 100,000
+colonists, no factories or mines, 5,000 kT of each mineral and a packet destination and speed set with
+the new `planetset N packet=DEST,WARP` key (WARP 4 = unset). The `c` cases record the minerals a
+launch spent (stars-decomp production reading; a side check). OB-031 runs at cycles 20000, 30000 and
+60000. Positions are integer coordinates after the launch-year move of floor(W^2/2) ly.
+
+### OB-028: packet launch: driver warp, two drivers, speed setting, class, amounts, merge, no destination, launch-year flight (JOAT player 0); IT launcher class (player 1, tech 26)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-028-A | launch | Mass Driver 7 fort, speed set to 9, one ironium item | one packet to planet 23: warp 9, class 2, 88/0/0 kT after the half-year decay, at (1085, 1291) | warp 7 class 0; or no launch-year decay |
+| OB-028-Ac | launch cost | launcher planet 0 surface minerals | down 110/0/0 (side check of the production reading) |  |
+| OB-028-B | launch | Mass Driver 7 fort, speed set to 11 (above 7 + 3), ironium item x2 | one packet to planet 19: warp 7, class 0, 200/0/0 kT after the half-year decay, at (1095, 1090) | warp 10 (capped); two packets |
+| OB-028-Bc | launch cost | launcher planet 1 surface minerals | down 220/0/0 (side check of the production reading) |  |
+| OB-028-C | launch | Space Station with Mass Driver 7 in both orbital slots, speed unset, one mixed item | one packet to planet 21: warp 8, class 0, 40/40/40 kT after the half-year decay, at (1117, 1278) | warp 7 |
+| OB-028-Cc | launch cost | launcher planet 2 surface minerals | down 44/44/44 (side check of the production reading) |  |
+| OB-028-D | launch | Space Station with Mass Driver 7 and Mass Driver 5 in the two orbital slots, speed unset, one mixed item | one packet to planet 22: warp 7, class 0, 40/40/40 kT after the half-year decay, at (1153, 1268) | warp 8 (any two drivers) |
+| OB-028-Dc | launch cost | launcher planet 3 surface minerals | down 44/44/44 (side check of the production reading) |  |
+| OB-028-E | launch | Mass Driver 7 fort, speed 7, two separate ironium items in one queue | one packet to planet 20: warp 7, class 0, 200/0/0 kT after the half-year decay, at (1161, 1119) | two packets of 100 kT |
+| OB-028-Ec | launch cost | launcher planet 4 surface minerals | down 220/0/0 (side check of the production reading) |  |
+| OB-028-F | launch | Mass Driver 7 fort with no packet destination, one ironium item | no packet from planet 5; surface unchanged; a message to player 0 | packet launched |
+| OB-028-G | launch | Mass Driver 7 fort, speed 10 (class 3), ironium x5 to planet 12, 35 ly away (within 50 = 10^2/2) | arrives the launch year: decay for half its 70% share (35%) leaves 413 kT; unowned planet 12 surface +45 | still in flight; or arrives with full-year decay |
+| OB-028-H | launch | IT player 1: Mass Driver 7 fort, speed 7 | one packet to planet 7: warp 7, class 1, 90/0/0 kT after the half-year decay, at (1248, 1330) | class 0 (no IT +1) |
+| OB-028-Hc | launch cost | launcher planet 14 surface minerals | down 120/0/0 (side check of the production reading) |  |
+| OB-028-I | launch | IT player 1: Mass Driver 7 fort, speed 10 (class 3) | one packet to planet 9: warp 10, class 3, 75/0/0 kT after the half-year decay, at (1251, 1346) | class 4; or 3 + 1 wrapping |
+| OB-028-Ic | launch cost | launcher planet 16 surface minerals | down 120/0/0 (side check of the production reading) |  |
+### OB-029: Packet Physics player 1 (tech 26): launch amounts, terraforming by uncaught packets, damage and the catcher's design
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-029-A | launch | PP: Mass Driver 7 fort, speed 7, one ironium item | one packet to planet 7: warp 7, class 0, 70/0/0 kT after the half-year decay, at (1248, 1330) | 100 kT |
+| OB-029-Ac | launch cost | launcher planet 14 surface minerals | down 70/0/0 (side check of the production reading) |  |
+| OB-029-B | launch | PP: Mass Driver 7 fort, speed 7, one mixed item | one packet to planet 9: warp 7, class 0, 25/25/25 kT after the half-year decay, at (1268, 1365) | 40 kT each |
+| OB-029-Bc | launch cost | launcher planet 16 surface minerals | down 25/25/25 (side check of the production reading) |  |
+| OB-029-T1 | PP terraform | PP packet, 1000 kT ironium only, warp 10, into unowned planet 0 (environment 20/20/20, player 1 ideal 50) | only gravity moves, up by the success count (10 chunks at 1/2: 1-10, mean 5); the other two stay 20; surface +111 of that mineral | another axis moves; or no terraforming |
+| OB-029-T2 | PP terraform | PP packet, 1000 kT boranium only, warp 10, into unowned planet 3 (environment 20/20/20, player 1 ideal 50) | only temperature moves, up by the success count (10 chunks at 1/2: 1-10, mean 5); the other two stay 20; surface +111 of that mineral | another axis moves; or no terraforming |
+| OB-029-T3 | PP terraform | PP packet, 1000 kT germanium only, warp 10, into unowned planet 6 (environment 20/20/20, player 1 ideal 50) | only radiation moves, up by the success count (10 chunks at 1/2: 1-10, mean 5); the other two stay 20; surface +111 of that mineral | another axis moves; or no terraforming |
+| OB-029-D | PP impact | PP packet 500 kT warp 10 into player 0 planet 9 (pop 1000, Laser Fort, no driver, at player 1's ideal) | damage 312: pop 688 -> 791; surface +55; environment unchanged (already at the ideal) |  |
+| OB-029-D2 | PP impact | player 1's file after D | player 0's Laser Fort design is known to player 1 |  |
+### OB-030: Alternate Reality target (player 1, tech 26); two Mystery Traders reaching the same point
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-030-A | AR impact | player 0 warp-10 1000 kT packet into AR planet 20 (pop 1000, starbase without driver) | surface +111; no damage: pop equal to the control planet 22 | 625 killed |
+| OB-030-T | trader | Traders 0 and 1 (warp 8) both end at (1084,1230), where player 0 has fleets 0 and 1 and player 1 fleet 0, each with 5000 kT | all three fleets consumed: Trader 0 takes player 0 fleet 0 and player 1 fleet 0 (player 0 fleet 1 refused, "still recovering"), Trader 1 takes player 0 fleet 1 | player 0 fleet 1 kept (one reward per player per year) |
+### OB-031: the only Mystery Trader, warp 6, arrives (cycles 20000, 30000, 60000)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| OB-031-A | trader | warp-6 Trader 20 ly from its destination (1380,1100), no other Trader | gone (1/2), or at (1380,1100) with warp max(6, 6 - 2) + 1 = 7 and a new destination on an edge | warp 5 (warp - 1) or 6 |

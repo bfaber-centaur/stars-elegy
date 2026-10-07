@@ -1,13 +1,8 @@
 # speclint baseline: accepted findings (file, check, message), one per line.
 # Regenerate with: go run ./tools/speclint -write-baseline
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/COVERAGE.md	missing-file	RACES.md does not exist
-docs/KERNEL.md	missing-file	RACES.md does not exist
+docs/KERNEL.md	missing-section	docs/OBJECTS.md has no section "Spawn and movement"
+docs/KERNEL.md	missing-section	docs/OBJECTS.md has no section "Spawn and movement"
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED met and unmet, S1).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
@@ -21,24 +16,35 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: `15 + rand(15)`; capped at 2
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: message, and removed if it is 0 (CONFIRMED, T1: ×5 → ×3; T3: ×5 → ×1;
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
-docs/OBJECTS.md	untagged	section "Visibility" has no status tag
-docs/ORACLE.md	pr-ref	cites PR #44: (stars-elegy #44), so a sweep for random outcomes such as jump odds has
 docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
+docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+docs/ORDERS.md	pr-ref	cites PR #46: MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
+docs/ORDERS.md	pr-ref	cites PR #46: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
+docs/ORDERS.md	pr-ref	cites PR #46: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
+docs/ORDERS.md	pr-ref	cites PR #46: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
+docs/ORDERS.md	pr-ref	cites PR #47: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
+docs/ORDERS.md	pr-ref	cites PR #49: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
 docs/ORDERS.md	pr-ref	cites PR #49: elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
 docs/ORDERS.md	pr-ref	cites PR #50: stars-elegy #50, `OBJECTS.md`). A detonate-setting order names a minefield,
 docs/ORDERS.md	pr-ref	cites PR #53: `KERNEL.md` (stars-elegy #53). A fleet whose waypoint targets another fleet is
-docs/ORDERS.md	pr-ref	cites PR #57: (stars-elegy #57), which this section defers to rather than restating.
 docs/ORDERS.md	pr-ref	cites PR #57: context in stars-elegy #57, `PRODUCTION-LAUNCH.md`). The host does **not**
-docs/ORDERS.md	pr-ref	cites PR #59: (see #59 for the plan analogue). Client-reachable (the original client deletes
+docs/ORDERS.md	pr-ref	cites PR #57: shared statement lives in `PRODUCTION-LAUNCH.md` (stars-elegy #57), which this
 docs/ORDERS.md	pr-ref	cites PR #59: battle-plan number against the owner's plans. See #59 for plan semantics (the
 docs/ORDERS.md	pr-ref	cites PR #59: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #65: not reproduce the whole-file abort. (See `LIMITS.md`, stars-elegy #65.)
 docs/ORDERS.md	pr-ref	cites PR #65: progress from a crafted percentage. (See `LIMITS.md`, stars-elegy #65.)
 docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
+docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
+docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+docs/ORDERS.md	pr-ref	cites PR #77: MEASURED (CO-06, stars-elegy #77 / apparatus #46) **for the ship-move /
+docs/ORDERS.md	pr-ref	cites PR #77: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
+docs/ORDERS.md	pr-ref	cites PR #77: is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
+docs/ORDERS.md	pr-ref	cites PR #77: that builds it. MEASURED (CO-08, stars-elegy #77 / apparatus #46): the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (a two-waypoint repeat fleet came back with only the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three
@@ -60,6 +66,7 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED 
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
 docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
+docs/ORDERS.md	uncited	MEASURED without a case ID: if it has changed hands (been captured). MEASURED for a **planet target**
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
 docs/PARITY.md	pr-ref	cites PR #17: stars-decomp #17); predictions committed before the runs. Each ran at six
@@ -76,14 +83,3 @@ docs/PARITY.md	pr-ref	cites PR #6: `docs/scanning-predictions.md`, PR #6 at 3b5d
 docs/PARITY.md	pr-ref	cites PR #8: T-1..T-35, PR #8) were committed before every run
 docs/SCANNING.md	uncited	CONFIRMED without a case ID: - Another known player is identified by name only (CONFIRMED, SC corpus).
 docs/TAKEOVER.md	pr-ref	cites PR #34: unowned with no minerals. stars-elegy #34 described a retry in the load
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Computer players (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Leftover advantage points (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Names (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Second planet: PP and IT (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starbases (CONFIRMED except where noted)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting ships (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting tech (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **AR** (CONFIRMED): no mines, factories or defenses and no planetary
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **Part upgrades** (CONFIRMED for the cases run): in every starting design,
-docs/UNIVERSE.md	uncited	MEASURED without a case ID: Research starts at 15% of resources for human players (MEASURED in every
-docs/UNIVERSE.md	untagged	section "Space objects at the start" has no status tag
