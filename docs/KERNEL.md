@@ -1138,6 +1138,32 @@ naming radiation, queue cut to Auto Factories ×5.
 Vectors (CONFIRMED): +13 ironium, +8 germanium, +16, +10, +19, +5, +14 on
 owned and unowned planets; unowned planets get no message.
 
+### Mystery Trader appearance
+
+Runs right after new minerals. `OBJECTS.md` gives the rule; its draw
+order is:
+
+1. Nothing below year index 40. Chance draw: `rand(2)` when the year index
+   mod 100 is 71, else `rand(3)` when it is 33, else `rand(4)` when the
+   index mod 128 is 49, else no Trader in odd years and `rand(7)` in even
+   ones. A Trader appears when the draw is 0.
+2. Warp `8 + rand(5)`.
+3. Two free coordinates, start then destination, each
+   `1020 + rand(361 + 400·size)`.
+4. `rand(2)`: 0 puts the start on the low edge (1020) and the destination
+   on the high edge (`1380 + 400·size`); 1 the reverse.
+5. `rand(2)`: 0 makes the free coordinate x, 1 makes it y.
+6. Item: `rand(10) < r` (r as in `OBJECTS.md`) gives a ship when
+   `rand(6) = 0`, else research; otherwise a part bit `1 << rand(13)`, with
+   the reroll and late-year conversion of `OBJECTS.md`.
+7. Every player gets the appearance message.
+
+CONFIRMED by KX-004 S6–S10 (`PARITY.md`): 24 runs at year indexes 49, 71,
+72, 73 and 133 gave 15 Traders and 9 empty years, each exactly as
+replayed (warp, start, destination, item, messages). Index 133 shows the
+mod-100 tests come before the odd-year rule. The part reroll and its
+conversion to research were not exercised (BINARY-ONLY).
+
 ### Implementing
 
 Elegy draws from its own generator, so only the rules matter, not the

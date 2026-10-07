@@ -1442,7 +1442,7 @@ Interpretation:
 
 Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
 
-#### Mystery Trader appearance (addendum; predictions)
+#### Mystery Trader appearance (addendum)
 
 Committed before runs S6–S10 were examined. `OBJECTS.md` gives the
 Trader's appearance rule as BINARY-ONLY ("From year index 40 …"); its
@@ -1486,6 +1486,20 @@ values a part bit):
 The comets, climate changes and new minerals of each tick are as at 2430
 (the planet states differ only in population, and no planet is
 protected after index 20).
+
+**Results.** All 24 runs matched: the 15 predicted Traders appeared with
+exactly the predicted warp, start, destination and item, every player got
+the appearance message (0x12b, parameter: the Trader's object id), and
+none appeared in the 9 runs predicted empty, including all three at the
+odd index 73 whose ticks give Traders at 49, 71 and 72. The comets,
+climate changes and new minerals in the same runs also matched. Items
+seen: research (0), a ship (0x1000) twice, and parts 0x10, 0x20 (×3),
+0x100 and 0x200 (×2). The index-133 runs show `mod 100 = 33` is tested
+before the odd-year rule (133 is odd). Status of the appearance rule:
+CONFIRMED (draw order, chance per index class, warp, edges and
+coordinates, item draw for the outcomes seen). Not exercised: the part
+reroll and its late-year research conversion, and the `mod 128 = 49`
+branch at an index where `mod 100` also matches.
 
 ## Fleet Movement
 
