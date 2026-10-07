@@ -111,6 +111,15 @@ random stream and for the plan-0 legacy bug below.
       Then, if `i` is in `Q`, add to `i`'s set every player whose set names
       `i`. CONFIRMED: a stack whose plan attacks nobody fires back once a
       battle has started (CB-002, CB-009; P-6).
+
+      The pass covers **every player in the game, present or not**, and
+      so do the sets read in step 6 (BINARY-ONLY).
+      - Steps 3 and 4 only fill the sets of present players. So an absent
+        player's set can be non-empty only through the plan-0 LEGACY BUG,
+        when X is a player of the game who is not at this location.
+      - Then X joins `Q` and counts toward `n`, which shifts the start
+        squares. X has no tokens, though, so it takes no part in the
+        fighting.
    8. **Friends**: passes over the location's fleets, in order, until a
       pass changes nothing. For a fleet whose owner `p` is in `P` but not
       in `Q`, rebuild `p`'s set as the union of the sets of `p`'s friends
@@ -183,7 +192,8 @@ with an aggressor fleet that attacks "enemies" while B considers A neutral.
 |---|---|---|
 | A | A attacks B: an ordinary battle, the same as "enemies" | CONFIRMED (CB-012 three streams, CB-013; the previous location had a battle) |
 | B | B's set names only B among the present players. `Q = {B}`, `n = 1`, `P = {A, B}`: a **one-player battle** | CONFIRMED for "player 1" and for "everyone", byte-identical records (CB-022, two streams each) |
-| neither | no battle (B's own set is empty) | MEASURED (CB-022 "no lone fleet", "player 1") |
+| not a player of the game | no battle: nobody's set names a present player | MEASURED (CB-022 "no lone fleet", "player 1"; two-player game) |
+| C, a player of the game who is not present | C's set names B (or, for "everyone", every player but A). So `Q = {B, C}` and `n = 2`. B attacks C back, but C has no tokens. Squares come from `n = 2` (A rank 0 at (1,4), B rank 1 at (8,5)), and the battle ends after round 0's movement with no shots | BINARY-ONLY |
 
 The one-player battle runs as an ordinary battle with `n = 1`:
 
@@ -345,6 +355,14 @@ consistent with every replayed record):
    attack set counts, not target types. A player removed earlier in the
    same check no longer counts for later players. The battle ends if at
    most one player is left.
+   - A player's set can name itself, which only happens through the
+     plan-0 LEGACY BUG. That self-entry counts in this check, and only
+     here.
+   - Targeting, movement scores and firing always skip the token's own
+     player's tokens, whatever its set says.
+   - In the one-player battle the self-entry keeps B in while A drops
+     out. The battle then ends either way, so the outcome matches CB-022
+     (BINARY-ONLY).
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
