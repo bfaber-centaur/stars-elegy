@@ -2388,7 +2388,8 @@ The Mystery Trader works with random events off.
 ### Round 5: rules OBJECTS.md marked BINARY-ONLY (OB-021..OB-027)
 
 Status: MEASURED, 2026-10-07. Predictions were committed before the runs
-(`experiments/ob/README.md` "Round 5"; commits e1873db and 4c63088), one
+(`experiments/ob/README.md` "Round 5"; pushed as e1873db and 4c63088,
+re-applied as c0476b2 and 2cf004d after #42 was squash-merged), one
 pinned year each (cycles 20000) unless stated. OB-021 and OB-024 were also
 generated at cycles 15000, 25000, 30000, 40000 and 60000. In the base
 stream, 44 of 49 predicted cases held. The misses were the two IT packet
