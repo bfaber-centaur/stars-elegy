@@ -1309,7 +1309,7 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, round 4 CB-023 to CB-033, 2026-10-07; cloud
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, 2026-10-07; cloud
 oracle). Predictions from the private binary reading (stars-decomp
 `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
 at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
@@ -1653,7 +1653,7 @@ Planet-side starbase damage was set with the new `planetset sbdmg` key.
   has no attacker left. A discriminating setup needs four or more players
   with one-sided attack sets, or a plan-0 setup like CB-022.
 
-### Round 4b (CB-032, CB-033)
+### Round 4b (CB-032 to CB-034)
 
 Setups from the Combat decomp pass after round 4 (stars-elegy #38,
 stars-decomp #17); predictions committed before the runs. Each ran at six
@@ -1683,7 +1683,16 @@ replayed with the checker. CB-033 used a new five-player game
   In all six streams the Freighter changed square on every one of its 8
   moves (it reached (9,9) only once, in one stream), often moving towards
   the Destroyers, and left in round 7. No move kept it on its square, so
-  whether such a move counts is still open. No shots were fired.
+  whether such a move counts is still open. No shots were fired. The
+  Combat decomp pass traced this to the out-of-reach damage estimate,
+  which is flat at distance 2 or more for these Laser stacks (#38).
+- **Stay-put disengage (CB-034, CONFIRMED 6/6).** CB-032's geometry, with
+  12 Delta Torpedo Destroyers per enemy stack whose target types (armed
+  ships, then starbases) the Runner does not match. The enemies never
+  moved or fired. In every stream the Runner moved to (9,9), stayed there
+  on moves 2 to 7 (each a move record to (9,9), counter 6 … 1) and left
+  on its 8th move, in round 7. A move that keeps a disengaging token on
+  its square counts.
 
 ### Resolved reconciliation
 
@@ -1696,7 +1705,7 @@ replayed with the checker. CB-033 used a new five-player game
 ### Not tested
 
 Queued ships lost with a starbase (P-25), salvage at more than one point
-(E-8), four players and six or more, stay-put disengage moves, the firing
+(E-8), four players and six or more, the firing
 live-token recheck (no observable effect), minefields. Bombing and invasion: see
 "Planet Takeover".
 

@@ -28,3 +28,16 @@ Pinned at cycles 8000, 12000, 16000, 20000, 30000 and 50000.
   ends then.
 - If a move that keeps the token on its square did not count, the Runner
   would still be on the board after round 7.
+
+## Result
+
+Six cycle counts gave six distinct records (they differ only in token
+order); every prediction held in every stream. CONFIRMED.
+
+- Three players (mask 0x7); start squares as predicted.
+- The Delta DD stacks made no move and no fire action.
+- The Runner's move records, rounds 0 to 7: (9,9) with counter 7, then
+  (9,9) six more times with counter 6 … 1, then off the board with
+  counter 0. The battle had 8 actions and ended in round 7.
+- So a move that keeps a disengaging token on its square writes a move
+  record and counts toward its 8 moves.
