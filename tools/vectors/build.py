@@ -2,7 +2,7 @@
 """Build public parity vectors (vectors/<corpus>/<run>.json) from an oracle corpus.
 
   python3 tools/vectors/build.py CORPUS EVIDENCE_DIR [OUT_DIR]
-      CORPUS: fm2 | fo | tk2 | wt      (vectors/README.md lists the format)
+      CORPUS: fm2 | fo | tk2 | wt | pq     (vectors/README.md lists the format)
       EVIDENCE_DIR: the corpus's raw-evidence directory (private apparatus
       repository, e.g. stars-oracle-apparatus/evidence/fm2)
 
@@ -38,6 +38,8 @@ GAMES = {
     'CB': dict(name='Combat Lab', size='tiny', bounds=[1000, 1000, 1400, 1400], density='sparse',
                random_events=False, players=2),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400], random_events=False, players=3),
+    'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal',
+                  random_events=False, players=1),
 }
 
 
@@ -427,9 +429,8 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus == 'wt':
+    if corpus in ('wt', 'pq'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        import build_wt
-        build_wt.build(ev, out)
+        __import__('build_' + corpus).build(ev, out)
     else:
         build(corpus, ev, out)
