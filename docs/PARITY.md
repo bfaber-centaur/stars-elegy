@@ -1724,6 +1724,44 @@ the fuel limit and chase deferral, and only losses of at least 1 kT send a
 message. The score's power uses the design's own speed code with no race
 bonus.
 
+### KB batch 1 — population, resources, mining, AR, remote mining
+
+Status: CONFIRMED, with one refinement (AR planets' own miners). Every case
+ran at two cycles values (KB-1C at 11). Predictions were committed before
+the runs (stars-elegy `e936175`); `experiments/kb/` has the specs, the
+model (`kbmodel.py`, public rules only) and the tables. Raw evidence:
+private apparatus `evidence/kb/`. Rules: `KERNEL.md` "Habitability",
+"Maximum population", "Resources and installation caps", "Mining" and
+"Remote mining".
+
+Question: which of KERNEL.md's population, resource and mining rules that
+were still BINARY-ONLY hold?
+
+| Case | Rule | Observation | Result |
+|---|---|---|---|
+| KB-1A 13 | JOAT + OBRM maximum; hab 79 at 70/50/50 | Population 10,430 frozen: maximum 10,428 | CONFIRMED |
+| KB-1A 9 | Effective population at most `2·max` | 45,000 units at maximum 13,200 gave 2,650 resources (not 2,920); the player's research total was 4,652 as predicted | CONFIRMED |
+| KB-1A 12 | Depletion clamp 10 below concentration 5 | Concentration 4, fraction 251 (clamp 25 gives 245) | CONFIRMED |
+| KB-1A 16, 10 | Maximum defenses `min(100, max(10, 4·hab))` | 95 + 5 at hab 100; 5 + 5 at hab −15 | CONFIRMED |
+| KB-1A 10, 11 | Hostile cap of 15 per axis | 1,000 → 985 (one axis 30 outside), → 970 (two axes) | CONFIRMED |
+| KB-1A 14 | Remote mining capped at 4,000 per fleet | 4,320 robot points mined 2,720/3,120/3,040 kT, depletion exact | CONFIRMED |
+| KB-1B | AR maximum population by starbase hull | Fort, Dock, Station, Ultra Station and Death Star planets frozen at 2,500, 5,000, 10,000, 20,000 and 30,000 plus 5, one of them at hab 3 | CONFIRMED |
+| KB-1B 12 | AR maximum mines, factories and defenses 0 | Auto Mines, Factories and Defenses built nothing | CONFIRMED |
+| KB-1B | AR resources `max(25, hab)` | Yearly resources 8,054 (7,803 without the floor) | CONFIRMED |
+| KB-1B 12 | The owner's miner at an AR planet | It mined, as a separate step from the planet's own mines: boranium fraction 106 (one combined step gives 107) | Refined |
+| KB-1C | Mining's random +1 and its draw order | 77 planet results in 11 streams as replayed; climate change on planets 20 and 22 as replayed | CONFIRMED |
+
+Interpretation: all the readings tested hold. The remote-mining reading
+that an AR owner's miners add their robot points to the planet's mines is
+replaced by "a separate mining step".
+
+Also found: an earlier ship-launch discrepancy (SL-12, a Station upgrade
+at 88% with about 120 resources where 170 were expected) came from that
+batch's illegal test races. The host degraded colonists per resource
+from 1,000 to 2,400 before production, and with that value the resource
+rule gives exactly 120 left after the research tax. CombatLab's dump now
+prints each player's advantage points so a start can be checked first.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the

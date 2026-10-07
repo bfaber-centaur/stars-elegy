@@ -1,4 +1,4 @@
-# KB1-A: economy and population rules still BINARY-ONLY in KERNEL.md.
+# KB-1A: economy and population rules still BINARY-ONLY in KERNEL.md.
 # Random events off (CB base). Player 0 is JOAT with Only Basic Remote
 # Mining; player 1 is JOAT with a narrow habitat (40..60 on every axis).
 # Research tax 0 for both. Test planets have no mines (no mining draws)

@@ -115,7 +115,7 @@ def defenses_max(h, cap=True, floor=True):
 def kb1a():
     G = 15
     p0 = ([50] * 3, [15] * 3, [85] * 3); p1 = ([50] * 3, [40] * 3, [60] * 3)
-    print("KB1-A (player 0 JOAT+OBRM, player 1 JOAT 40..60)")
+    print("KB-1A (player 0 JOAT+OBRM, player 1 JOAT 40..60)")
     # planet 13
     h = hab([70, 50, 50], *p0); mx = maxpop(h, True, True); mxa = maxpop(h, True, True, additive=True)
     print(f"  13: hab {h}, max {mx}; pop 10430 -> {grow(10430, 0, h, mx, G)}; alt additive max {mxa} -> {grow(10430, 0, h, mxa, G)}")
@@ -168,7 +168,7 @@ def ar_resources(P, mx, energy, h, R0=10):
 
 def kb1b():
     G = 15
-    print("KB1-B (player 1 AR, tech 26)")
+    print("KB-1B (player 1 AR, tech 26)")
     hulls = {13: ('Orbital Fort', 2500, 2505, (114, 97, 14), 100, 0), 9: ('Space Dock', 5000, 5005, (100, 86, 95), 3, 0),
              12: ('Space Station', 10000, 10005, (15, 82, 45), 100, 8), 10: ('Ultra Station', 20000, 20005, (94, 104, 24), 100, 0),
              11: ('Death Star', 30000, 30005, (79, 49, 13), 100, 0)}

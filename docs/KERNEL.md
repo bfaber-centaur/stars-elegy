@@ -86,15 +86,19 @@ order shown. "Fleet order" means by owner, then by fleet number
    step does nothing in Elegy.
 2. Ship-design housekeeping: starbase designs are marked as starbases.
    Uncovered. No observable effect is known.
-3. **Following fleets.** A fleet whose only order is to follow another
-   fleet takes over the leader's next waypoint. Chains are resolved over
-   up to 8 passes, and a follower whose leader has no orders gets message
-   0x138 (`MESSAGES.md`, CONFIRMED fo/fo04). Then the **waypoint check**
+3. **Following fleets.** A fleet whose only waypoint (waypoint 0) is
+   aimed at another fleet follows it. If the leader has a next waypoint,
+   or is itself a follower, the follower gets a copy of the leader's
+   waypoint 1, carrying its own waypoint-0 task onto it. Up to 8 passes
+   resolve chains of followers. A follower whose leader no longer exists
+   gets message 0x138 (`MESSAGES.md`, CONFIRMED fo/fo04) and stops
+   following. The copying rule is BINARY-ONLY. This is separate from
+   chasing, where waypoint 1 is aimed at a fleet (this file's "Chasing
+   another fleet"). Then the **waypoint check**
    runs: coordinates are clamped to the galaxy and waypoints aimed at a
    fleet or object are moved to its current position (`ORDERS.md`
    "Waypoint upkeep"). Every fleet's "fought this year, no repair" mark is
-   cleared before this (`COMBAT.md` "Repair"). The leader-linking rule
-   beyond the message row is uncovered.
+   cleared before this (`COMBAT.md` "Repair").
 
 ### 2. Waypoint tasks before movement
 
@@ -120,8 +124,11 @@ orbit colonizes, before the year's growth (T-5, T-1).
 **2a. Race check.** Each player's race is clamped and checked for
 legality, with the penalty for a human race. Owner: `RACES.md` "In a
 running game". Order BINARY-ONLY: in the program this runs **after** step
-2 and before any movement. `MESSAGES.md` currently groups messages
-0x117/0x182 under P1a; their place in the year is here, after step 2.
+2 and before any movement, so the degraded race already applies to
+that year's production. MEASURED (SL-12 and OT-6, whose test races were
+not legal): colonists per resource had been raised before the year's
+resources were computed. `MESSAGES.md` labels messages 0x117/0x182 for
+this step.
 
 ### 3. Movement
 
@@ -145,9 +152,9 @@ running game". Order BINARY-ONLY: in the program this runs **after** step
 5. Reached waypoints are consumed or rotated (`ORDERS.md` "Reaching a
    waypoint").
 6. Every planet's homeworld mark is cleared, then set on each player's
-   homeworld. This mark feeds the homeworld floor in Mining. Uncovered:
-   which planet keeps the mark after its owner changes is not in any
-   specification.
+   homeworld. This mark feeds the homeworld floor in Mining. Which
+   planet keeps the mark after its owner changes is covered in
+   `TAKEOVER.md`.
 
 Order CONFIRMED (MF-4): a minefield stop's mine loss is taken during this
 step from the field's count at that moment, before step 3a's decay.
@@ -211,7 +218,7 @@ the after-growth population) and in this internal order.
 ### 6. Battles, bombing and tasks after movement
 
 1. Every planet records whether it is owned, before anything else in the
-   phase (`TAKEOVER.md`, "At the start of this phase").
+   phase (`TAKEOVER.md`, "Order inside a phase").
 2. Battles at every location (`COMBAT.md`).
 
 **6a. Bombing**, after every battle at every location (`TAKEOVER.md`
@@ -271,6 +278,9 @@ is BINARY-ONLY.
 
 ### 8. Year end, scores and files
 
+Order BINARY-ONLY: no state that play can observe depends on the order of
+these items. Their rules carry their own tags.
+
 1. The previous host file is backed up, and the year advances.
 2. Scores, the yearly score record and the victory conditions (this file's
    "Scores and victory conditions").
@@ -295,11 +305,13 @@ rewards (6b), Claim Adjuster drift (7), the estimates (7a) and the option
 bits (8). MEASURED (KX-004, KX-005): in quiet states with no fleets in
 motion, battles or drops, the random events (KX-004) and the Claim
 Adjuster drift with events off (KX-005) both began at draw 4 of the
-year's stream.
+year's stream. Those four draws are the two-player shuffle (2) and the
+two homeworlds' germanium mining (2). CONFIRMED (KB-1C): with 17 mining
+draws, the events began at draw 19.
 
 ### Orders still unpinned
 
-The OT runs (`PARITY.md` "OT: turn order") measured the five orders an
+The OT runs (`PARITY.md`, "OT — turn order, breeding in transit, AR loss gate, score speed code") measured the five orders an
 implementation could get visibly wrong: 3b before 4, 5 before 6a, 6 before
 6b, 6b before 6c and 7.3 before 7.4. All matched the program.
 
@@ -340,15 +352,16 @@ Vectors (race center 50, low 15, high 85 on every axis):
 |---|---:|---|
 | 50, 50, 50 | 100 | CONFIRMED (PG001) |
 | 60, 50, 50 | 92 | CONFIRMED (KX-002 H1) |
-| 70, 50, 50 | 79 | BINARY-ONLY |
+| 70, 50, 50 | 79 | CONFIRMED (KB-1A, through the maximum population) |
 | 85, 50, 50 | 41 | CONFIRMED (KX-002 H4) |
 | 70, 70, 50 | 58 | CONFIRMED (KX-002 H2) |
 | 80, 80, 80 | 3 | CONFIRMED (KX-002 H3) |
 | 90, 50, 50 | −5 | CONFIRMED (KX-002 H5) |
 | 10, 95, 50 | −15 | CONFIRMED (KX-002 H6) |
 
-The cap of 15 per hostile axis is BINARY-ONLY: with this race no value
-can be more than 14 outside 15–85.
+The cap of 15 per hostile axis is CONFIRMED (KB-1A: a race with range
+40–60 on a planet at 90/50/50 lost 15 of 1,000 units, hab −15, not −30;
+at 90/90/50 it lost 30, hab −30, not −60).
 
 ## Maximum population
 
@@ -361,11 +374,16 @@ In units. Rule:
 - Hyper-Expansion: `max −= trunc(max/2)`. Jack of all Trades:
   `max += trunc(max/5)`. Then Only Basic Remote Mining:
   `max += trunc(max/10)`. CONFIRMED one at a time at hab 100 (KX-002 P1:
-  HE 5,000; P2: JOAT 12,000; P3: OBRM 11,000). Combining them, and the
-  order of the truncations, is BINARY-ONLY.
+  HE 5,000; P2: JOAT 12,000; P3: OBRM 11,000), and JOAT with OBRM
+  combined (KB-1A: hab 79 gives 10,428, not the 10,270 of adding both
+  bonuses to the base). That case does not tell the order of the
+  truncations apart, and HE with OBRM is BINARY-ONLY.
 - Alternate Reality: 0 unless the planet has the owner's starbase; then by
   starbase hull, in hull order: 2,500, 5,000, 10,000, 20,000, 30,000 units,
-  regardless of habitability (OBRM +10% still applies). BINARY-ONLY.
+  regardless of habitability. CONFIRMED for all five hulls (KB-1B:
+  Orbital Fort, Space Dock, Space Station, Ultra Station and Death Star
+  planets each held at the maximum plus 5, and the Space Dock at hab 3).
+  OBRM's +10% on top is BINARY-ONLY.
 - Alternate Reality with maximum 0 (population on a planet without the
   owner's starbase): the original cannot generate the year. If the planet's
   habitability is ≥ 0, population growth divides by the maximum and the
@@ -381,7 +399,7 @@ In units. Rule:
 
 Vectors: HE at hab 100 → 5,000; JOAT at hab 100 → 12,000; OBRM at hab
 100 → 11,000; hab 3 → 500 (all CONFIRMED, KX-002); JOAT+OBRM at hab 79 →
-10,428 (BINARY-ONLY).
+10,428 (CONFIRMED, KB-1A).
 
 ## Population growth
 
@@ -496,11 +514,14 @@ per 100 units).
 1. Effective population `E = P` if `P ≤ max`, else
    `min(2·max, max + trunc((P − max)/2))`. Above max: CONFIRMED (KX-002 G1,
 `P` 12,000 at max 10,000 → `E` 11,000; H5, H6, hostile planets above
-their 500); the `2·max` limit is BINARY-ONLY.
+their 500); the `2·max` limit is CONFIRMED (KB-1A: 45,000 units at
+maximum 13,200 gave 2,650 resources, from `E = 26,400`, not 2,920).
 2. Non-AR: `resources = trunc(E / R0) + trunc((F·n + 9) / 10)`, where
    `n = min(installed factories, operable factories)`.
 3. Alternate Reality: `trunc(sqrt((E / R0)·max(1, energy tech))·
    max(25, hab)·0.1 + 0.999)`, all in floating point, including `E / R0`.
+   The `max(25, hab)` floor is CONFIRMED (KB-1B: with an AR planet at hab
+   3, the player's yearly resources were 8,054, not 7,803).
    CONFIRMED at one point (KX-001 Z2: `E = 486`, `R0 = 10`, energy 2,
    hab 100 → `trunc(9.859·100·0.1 + 0.999) = 99`; truncating `E / R0`
    first would give 98).
@@ -517,9 +538,9 @@ every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
 
 | Quantity | Rule | Status |
 |---|---|---|
-| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | CONFIRMED at hab 41: 410 (KX-002 C3); the floor of 10 and AR: BINARY-ONLY |
-| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | CONFIRMED at hab 58: 580 (KX-002 C1); the floor of 10 and AR: BINARY-ONLY |
-| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | CONFIRMED at hab 3: 12 (KX-002 C2); the other branches and AR: BINARY-ONLY |
+| maximum mines | `max(10, trunc(max·Mo/100))` (AR: 0) | CONFIRMED at hab 41: 410 (KX-002 C3); AR 0 (KB-1B); the floor of 10 cannot be reached (below) |
+| maximum factories | `max(10, trunc(max·Fo/100))` (AR: 0) | CONFIRMED at hab 58: 580 (KX-002 C1); AR 0 (KB-1B); the floor of 10 cannot be reached |
+| maximum defenses | `min(100, max(10, 4·hab))` (AR: 0) | CONFIRMED at hab 3: 12 (KX-002 C2); the cap of 100 (KB-1A: 95 + 5 built at hab 100), the floor of 10 (KB-1A: hab −15, 5 + 5) and AR 0 (KB-1B) |
 | operable mines | `max(1, min(max mines, trunc(P'·Mo/100)))` | CONFIRMED for auto mines (PQ C04, C09, C14) |
 | operable factories | `max(1, min(max factories, trunc(P'·Fo/100)))` | CONFIRMED for auto factories (PQ C09) |
 | operable defenses | `min(max defenses, 1000, ceil(P'/25))` | CONFIRMED (PQ C13) |
@@ -537,6 +558,11 @@ kind:
   `max(maximum, operable) − installed` are cut to it when the queue
   reaches them, with a message; the order is edited permanently, and
   removed if that is 0 or less. CONFIRMED (PQ C10).
+
+The floor of 10 on maximum mines and factories never acts in a legal
+game: the smallest maximum population is 250 units (Hyper-Expansion below
+hab 5), and the race wizard's lowest mines and factories operated is 5
+per 10,000 colonists, which gives 12.
 
 Vectors (PG race, `Mo = Fo = 10`, 100% planet, so maximum mines and
 factories are 1000 and maximum defenses 100):
@@ -563,11 +589,13 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    `eff` = race mine output (AR: 10).
 3. Surface minerals gain `trunc(amt/100)`, plus 1 with probability
    `(amt mod 100)/100` (one `rand(100) < amt mod 100` draw per mineral with a
-   non-zero remainder). The `+1` mechanism is BINARY-ONLY; the oracle's +0/+1
-   pattern is consistent with it but its draws are correlated (see
-   Conventions). Draw order (BINARY-ONLY): every planet is mined before any
+   non-zero remainder). Draw order: every planet is mined before any
    planet's production, planets in id order, and within a planet ironium,
-   boranium, germanium.
+   boranium, germanium. CONFIRMED (KB-1C): 17 mining draws on 7 planets in
+   11 random streams, 77 planet results, all as replaying each stream with
+   this rule gives (mining starting at draw 2, right after the shuffle;
+   starting at draw 4 would have changed 68 of them), and the year's
+   random events then followed at draw 19.
 4. Depletion uses `p = trunc(prod/100)` (before `eff` and before the random
    +1) and the stored `conc` clamped for this purpose to
    `cc = 100` if above 100, `25` if below 25 (`10` if below 5):
@@ -575,7 +603,8 @@ point remaining, 0 meaning a full 256) and `m` working mines:
    - `cc` from the current stored `conc`, re-evaluated on every repetition
      (CONFIRMED, KX-002 N2: germanium 84 → 79 in one year, fraction 34;
      the `cc = 25` clamp, ironium at 20 and 19; the `cc = 10` clamp below
-     5 is BINARY-ONLY);
+     5 is CONFIRMED by KB-1A: concentration 4 with 500 mines ended with
+     fraction 251, where the clamp 25 gives 245);
    - `s = f` (or 256 if `f = 0`); `need = trunc(trunc(s·12500/256) / cc)`;
    - if `need ≤ p`: `p −= need`, `conc −= 1`, `f = 0`, and continue;
    - else `f' = trunc((need − p)·256 / trunc(12500/cc))`, raised to 1 if
@@ -617,12 +646,33 @@ population frozen at max; 2407 as PG with ironium concentration set to
 | 2409 | 19/96/74 | 189/11/77 | +300/+1040/+790 |
 | 2410 | 19/88/70 | 35/241/11 | +300/+960/+740 |
 
-Remote mining (BINARY-ONLY): a fleet with a remote-mining task, at an
-unowned planet, that did not move this year, mines after production with
-its mining-robot rate as `m` and `eff` ignored (`amt = prod`), same random
-+1 and depletion; no homeworld floor. Robot rates per robot: Robo-Midget 5,
-Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27, Robo-Ultra 25, Alien 10;
-a fleet's total is capped at 4,000.
+### Remote mining
+
+A fleet with a remote-mining task that did not move this year mines the
+planet it orbits after production (turn order step 6c), with `m` = the
+sum over its ships of each mining robot's rate, capped at 4,000 per
+fleet: Robo-Midget 5, Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27,
+Robo-Ultra 25, Alien 10. Output `amt = prod = conc·m` (the race's mine
+output is ignored), with the same random +1 and depletion as planetary
+mining, and no homeworld floor.
+
+- **Unowned planets** (CONFIRMED, T-35: 24 robot points at 100/50/25 mined
+  24/12/6 kT a year; CS-003-B: 10 robot points at 100 mined 10 kT; KB-1A:
+  4,320 robot points at 68/78/76 mined 2,720/3,120/3,040 kT, the 4,000
+  cap, with concentrations and fractions exactly as the depletion rule
+  gives). A fleet that arrived this year mines nothing until the next
+  year (T-35).
+- **Owned planets.** Miners at a planet owned by a race other than
+  Alternate Reality mine nothing, whether the planet is their owner's or
+  another player's (CONFIRMED, T-35). At an Alternate Reality planet, the
+  planet owner's own miners do mine it (CONFIRMED, KB-1B). Their output
+  is a separate mining step, not extra mines added to the planet's own:
+  each step truncates and depletes on its own. KB-1B: an AR Space Station
+  planet at 15/82/45 with 100 own mines and an 8-point miner ended with
+  boranium fraction 106, which two separate steps give; one step with 108
+  mines gives 107. The order of the two steps is BINARY-ONLY (both give
+  the same result here). Another player's miners at an AR planet are
+  BINARY-ONLY.
 
 ## Research
 
@@ -1158,7 +1208,10 @@ warp 3 gains 50 (raw 90, capped).
 After every fleet has moved, waypoints are settled (CONFIRMED, FM-001..003):
 
 7. Every waypoint whose destination is a fleet takes that fleet's position
-   at the end of movement.
+   at the end of movement. Exception: when the target went through a
+   stargate or a wormhole this year, other players' waypoints aimed at it
+   stop at its departure point and lose it, while its owner's own follow
+   it (`OBJECTS.md` "Stargates" and "Travel").
 8. Every fleet whose position equals its next waypoint exactly completes
    that waypoint ("completed orders" when it was the last one). This
    applies to a fleet that has used its movement or never moved.
@@ -1251,11 +1304,11 @@ even when:
 - the fleet is chasing another fleet (100 → 97, once a year, not once per
   pass).
 
-A fleet loses nothing (the same CONFIRMED runs and TK-117) when it has no
-waypoint 1, when waypoint 1's warp is 0 (100 → 100), or when the
-waypoint-0 task is a transport or mine-laying task that holds it. From the
-program (BINARY-ONLY), the fleets the other movement gates stop also lose
-nothing: the registration penalty, engine failure, and a stargate jump.
+A fleet loses nothing when it has no waypoint 1 or when waypoint 1's
+warp is 0 (CONFIRMED, OT-6 and TK-117: 100 → 100). From the program
+(BINARY-ONLY), the fleets that the other movement gates stop also lose
+nothing: a waypoint-0 transport or mine-laying task, the registration
+penalty, engine failure, and a stargate jump.
 
 The message (`MESSAGES.md` 0x0c1) is sent only when the loss is at least
 1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED,
@@ -1315,14 +1368,17 @@ in one isolated function (32-bit wrap of the integer-form product) so it
 can be switched off. FM-105 used an edited design; whether the original's
 ship designer lets a player save one is not established.
 
-### Other movement rules (BINARY-ONLY)
+### Other movement rules (BINARY-ONLY except where marked)
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
+  For mine laying this is CONFIRMED (OB-014-D, OB-019: `OBJECTS.md`
+  "Laying"); for transport it is BINARY-ONLY.
 - Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
   Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
   each ship is destroyed with probability 1/10 each year it moves
   (MEASURED, FM round 2: 11 of 100 and 5 of 50 ships lost; fuel left with
-  the lost ships in proportion).
+  the lost ships in proportion; CS-003-W: 58 of 660, none of 300 with
+  rated engines).
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
   fleet does not move (MEASURED, FM round 2: 2 of 40 fleets stopped at
   warp 7, 0 of 20 at warp 6).
@@ -1332,8 +1388,10 @@ ship designer lets a player save one is not established.
   colonists (at most all of them) per year moved, where `mid` =
   `trunc((radiation low + radiation high)/2)`; not for radiation-immune
   races or when low + high ≥ 170.
-- Fuel generators (anti-matter) add 50 mg each and fuel transports 200 mg
-  each per year, capped at the tank.
+- Fuel transports add 200 mg each per year to a stationary fleet
+  (CONFIRMED, CS-003-W: 200 with one, 600 with three, 200 with a
+  Super-Fuel Xport). Fuel generators (anti-matter) add 50 mg each. Both
+  are capped at the tank (BINARY-ONLY).
 - Refuelling at a friend's starbase, and at a starbase without a dock.
 
 ## Scores and victory conditions
@@ -1430,7 +1488,7 @@ Each of the first seven is on or off. Tests, per player and year:
   thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
   ships, S1; the others BINARY-ONLY).
 - Lead: with scores sorted, `second·(100 + pct)/100 ≤ top` flags the top
-  player (CONFIRMED, S1: 101·120/100 ≤ 623). When two or more players
+  player (CONFIRMED, KX-003 S1: 101·120/100 ≤ 623). When two or more players
   share the top score, `second` is that same score, so the test fails and
   nobody is flagged (BINARY-ONLY).
 - Highest score: the year index (years since 2400) ≥ the year count and
@@ -1563,8 +1621,9 @@ owned and unowned planets; unowned planets get no message.
 
 ### Mystery Trader appearance
 
-Runs right after new minerals. `OBJECTS.md` gives the rule; its draw
-order is:
+Runs right after new minerals. This section is the rule for when a
+Trader appears and what it carries, with the draw order an exact replay
+needs. `OBJECTS.md` "Spawn and movement" covers its flight:
 
 1. Nothing below year index 40. Chance draw: `rand(2)` when the year index
    mod 100 is 71, else `rand(3)` when it is 33, else `rand(4)` when the

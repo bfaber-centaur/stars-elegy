@@ -1,4 +1,4 @@
-# KB1-C: mining's random +1 and its draw order, by replaying the random
+# KB-1C: mining's random +1 and its draw order, by replaying the random
 # stream. Random events on (option byte 0x40, set by run-kb.sh), year
 # 2400. Five non-homeworld planets with 10 mines each and concentrations
 # chosen so that every mineral's output has a non-zero remainder (15 draws),

@@ -1,4 +1,4 @@
-# KB1-B: Alternate Reality maximum population by starbase hull, and AR
+# KB-1B: Alternate Reality maximum population by starbase hull, and AR
 # installation caps. Random events off (CB base). Player 1 is AR at tech
 # 26, with lesser traits that keep the race legal (No Advanced Scanners,
 # Low Starting Population, Bleeding Edge Technology, No Ram Scoop Engines;
