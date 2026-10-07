@@ -1,0 +1,416 @@
+# Takeover specification: bombing, invasion, colonization and capture
+
+Behavioral specification of the J-RC3 rules by which planets change hands
+or lose population to another player: orbital bombing, colonist drops and
+ground combat, colonization, what a captured planet keeps, and where each
+happens in the year. It also covers the waypoint tasks that move cargo or
+ships between owners (transport drops, scrap, remote mining, merge,
+transfer). It is written for an implementer working only from this public
+repository and describes what happens, not how any file encodes it.
+
+`PARITY.md`, section "Planet Takeover", holds the experiment records
+(TK-001 to TK-007; per-case values in `experiments/tk/README.md`). This file
+restates them as rules and adds rules that so far come only from white-box
+analysis of the original program (private `stars-decomp`, promoted here as
+behavior only). Part statistics (bomb kill rates, installation kills,
+defense coverage, costs) belong in the public components table. Parts are
+named here; numbers appear only where a rule needs a worked example.
+
+## Status of each rule
+
+- **CONFIRMED**: a white-box reading agrees with original-game oracle
+  observations (TK case ids, `T-n` = prediction ids in
+  `experiments/tk/README.md`). Vectors given for it are ground truth.
+- **BINARY-ONLY**: read from the original program, with no oracle
+  observation yet. Treat these as predictions; they are listed under Open
+  experiments.
+- **LEGACY BUG**: confirmed or read behavior that looks like an accident of
+  the original implementation rather than a design intent. Implement it
+  for parity, isolated so it can be switched off.
+
+"Confirmed" covers the measured scope only: two players with the same JOAT
+race (growth 15%), target planets at 100% habitability, the defender at
+energy tech 3 to 5, one year per run.
+
+## Conventions
+
+- Population `P` is in **units of 100 colonists**, the unit the game
+  stores. Colonists carried by a fleet are counted in the same units here.
+- `P'` is a planet's population after this year's growth (`KERNEL.md`,
+  Population growth).
+- Divisions truncate unless stated. `round(x)` rounds halves up.
+- `rand(n)` is a uniform draw in `0..n−1` from the game's generator.
+  Bombing draws up to three numbers per bombed planet; capture draws for
+  tech and artifacts; everything else here is deterministic.
+- Kill rates are in tenths of a percent (permille): Cherry Bomb 25 = 2.5%.
+
+## Where each task happens in the year (CONFIRMED where marked)
+
+This refines `KERNEL.md` "Turn order" steps 2 and 6.
+
+1. Orders, including manual cargo transfers, are applied.
+2. **Before movement**, for fleets already at their waypoint 0:
+   unloads (including colonist drops on other players' planets), scrap,
+   colonize; then all queued colonist drops are resolved (ground combat,
+   new colonies); then loads, merges and colonize retries; then cargo
+   gifted to other players moves.
+3. Movement; production and population growth.
+4. Battles, then **bombing** (after every battle at every location).
+5. **After movement**, for fleets at their new waypoint 0: unloads
+   (including invasions by arriving transports), colonize, remote mining,
+   mine laying; then queued drops are resolved; then the second research
+   level-up check (`KERNEL.md`); then loads, merges, colonize retries and
+   fleet transfers.
+
+Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
+
+- A transport **already in orbit** with "unload colonists" invades before
+  growth. 100 attacking units against 87 left 20, which then grew as the
+  attacker's colony to 23 (T-5).
+- A colony ship **already in orbit** with a colonize order colonizes
+  before growth: 25 became 28 the same year. One that **arrives**
+  colonizes after growth and ends the year with exactly the 25 it carried
+  (T-1).
+- Bombing uses `P'` and comes before arriving transports land. Every
+  bombing and arrival case matched only when computed on `P'`.
+- Research done this year applies to this year's bombing: the defender
+  reached energy 5 during the year and its defenses then covered as Missile
+  Batteries (T-8).
+- A starbase destroyed in this year's battle no longer protects the
+  planet. Bombing (T-2) and arrival invasions go ahead the same year.
+
+## Orbital bombing
+
+### Who bombs (CONFIRMED, T-3, T-19, T-20)
+
+A planet is bombed by a player when all of these hold:
+
+- the planet is owned by another player (unowned planets are never
+  bombed);
+- the planet has **no starbase** of any kind (an unarmed Orbital Fort is
+  enough to prevent it: T-3);
+- at least one of that player's fleets in orbit has a battle plan whose
+  "attack who" setting covers the planet's owner. "Nobody" never does.
+  "Enemies" covers enemies only. "Enemies and neutrals" covers anyone who
+  is not a friend. "Everyone" covers anyone, friends included. "Player
+  *i* only" covers player *i* only, whatever the relation. Measured: with
+  players enemies, "nobody" and "attacker itself only" did not bomb, and
+  "player 1 only", "everyone" and "enemies" did; with players neutral,
+  "enemies" did not bomb, but "player 1 only" and "everyone" did; with
+  players friends, "everyone" bombed.
+
+Nothing else is checked: not whether the fleet moved, fought or has fuel,
+and not whether the fleet with the attacking plan has bombs.
+
+**All of one player's fleets at the planet bomb as one** (CONFIRMED, T-20,
+TK-005). Once one fleet qualifies, every bomb on every fleet that player has
+in orbit there is summed into a single pass, whatever the other fleets'
+plans and whichever fleet comes first. A Laser Frigate with an attacking
+plan and no bombs made a bomber fleet with plan "nobody" bomb. Two fleets
+of 5 Cherry each are one pass of 10 Cherry.
+
+Several players bombing one planet (BINARY-ONLY): each player's pass is
+applied in turn against what the previous one left. Once the planet is
+emptied, it is unowned and not bombed further.
+
+### Bomb totals (CONFIRMED for the parts named, T-10..T-18)
+
+For one player's pass, sum over every bomb item:
+
+- **Normal bombs** (Lady Finger, Black Cat, M-70, M-80, Cherry, LBU-17,
+  LBU-32, LBU-74, Hush-a-Boom): kill rate `A += kill`, installation kills
+  `I += inst`. Lady Finger, Black Cat, M-70, M-80 and Cherry also add a
+  minimum kill `M += 3` units each; the others add none.
+- **Smart bombs** (Smart, Neutron, Enriched Neutron, Peerless,
+  Annihilator): `Π *= (1 − kill/1000)`, starting from `Π = 1`; they kill
+  no installations. `S = min(1000, round(1000 − 1000·Π))`.
+- **Retro Bomb**: `R += 1` per bomb (CONFIRMED, T-16).
+- **Multi Contained Munition** (a beam weapon) also counts as a normal
+  bomb: `A += 20`, `I += 5`, `M += 3` per item (CONFIRMED, T-18).
+- **Orbital Construction Module** counts as a bomb with only a minimum
+  kill: `M += 20` per module (CONFIRMED, T-17).
+
+Normal kill rates add (10 Cherry = 25%, not `1 − 0.975¹⁰`), and smart kill
+rates multiply.
+
+### Planetary defenses against bombs (CONFIRMED, T-6..T-9)
+
+Coverage uses the planet owner's **best** planetary defense at its
+**current** energy tech, not the one it built. Coverage per defense is
+`c` permille (SDI 10, Missile Battery 20; other defenses BINARY-ONLY from
+the components table). The counted defenses are `n = min(installed,
+operable defenses)` (`KERNEL.md`, Caps: `min(max defenses, 1000,
+ceil(P'/25))`). If the owner has no defenses or no defense part, nothing
+is reduced.
+
+```text
+s      = (1 − c/1000)^n        stored in single precision
+sSmart = (1 − c/2000)^n        smart bombs see half the coverage
+A = round(A·s)   M = round(M·s)   S = round(S·sSmart)
+I = round(I·(1 − (1 − s)/2))   installations see half the coverage
+```
+
+Bombing never destroys defenses through `s`; defenses are lost only as
+installation kills.
+
+Vectors (100 SDI, 20 Cherry; defender at 100% habitability):
+`P'` 1000 → 666 (40 counted); `P'` 100 → 42 (4 counted, the minimum
+decides); 20 Smart on 1000 → 812, defenses unchanged. With Missile
+Batteries the same cases give 777, 45 and 846.
+
+### Applying the pass (CONFIRMED, T-10..T-16; random parts MEASURED)
+
+Installations first, when `I > 0` and `T = mines + factories + defenses >
+0` (installed counts, not operable):
+
+1. factories lose `⌊I·F/T⌋`, plus 1 if `rand(T) < (I·F mod T)`, at most F;
+2. defenses lose `⌊I·D/T⌋`, plus 1 if `rand(T) < (I·D mod T)`, at most D;
+3. mines lose the rest, `I − factories lost − defenses lost`, at most the
+   mines there.
+
+A draw is made only when its remainder is non-zero.
+
+Population, when `P' > 0`:
+
+1. smart kill `k1 = ⌊P'·S/1000⌋`, at most `P' − 1`: smart bombs alone
+   never empty a planet;
+2. normal kill on the rest: `x = (P' − k1)·A`; `k2 = ⌊x/1000⌋`, plus 1 if
+   `rand(1000) ≤ x mod 1000`, drawn only when the remainder is non-zero
+   (so the chance is `(r + 1)/1000`);
+3. `k = k1 + k2`; if `A > 0` and `k = 0` then `k = 1`; `k = max(k, M)`;
+   `k = min(k, P')`.
+
+The order of random draws is factories, defenses, population.
+
+Vectors: 10 Cherry on 920 → 690; 1 Lady Finger on 10 → 7 (the minimum
+3); 1 LBU-17 on 10 → 9 (no minimum); 20 Peerless on 1150 → 412 and on 1 →
+1; 10 Smart + 10 Cherry on 921 → 606; LBU-32 on 1000 with mines 30 and
+factories 30 → pop 997, mines 16, factories 16. Random: Hush-a-Boom on 50
+→ 48 or 49, never 47; LBU-17 on mines 20 / factories 10 → factories 5 or
+4, mines always the rest of 16. Observed frequencies are in `PARITY.md`.
+
+**Retro bombs** (CONFIRMED, T-16): `R = R − ⌊(1 − s)·R/2⌋`, at most 500.
+Each environment axis moves toward its original value by up to `R`
+clicks, **each axis separately** (the clicks are not shared). 3 Retro on
+55/47/52 with original 50/50/50 → 52/50/50; the original is kept.
+
+A planet whose population reaches 0 is **emptied**; see Capture.
+
+## Colonist drops and ground combat
+
+### Unloading colonists on another player's planet (CONFIRMED, T-4, T-28, T-29)
+
+When a fleet unloads colonists on a planet it does not own:
+
+- the planet is unowned and was unowned at the start of this phase:
+  nothing lands, and the fleet keeps its colonists (message to the fleet
+  owner);
+- the planet has a starbase: refused, and the fleet keeps its colonists;
+- the fleet owner is Alternate Reality: refused (BINARY-ONLY);
+- otherwise the colonists leave the fleet and are queued as a drop. If the
+  planet is owned, the drop is an invasion. If the planet was owned at the
+  start of the phase but has been emptied since, for example by bombing
+  this year, the drop is a colonization. It needs no colony module: a
+  freighter colonized a planet bombed empty that year with all 50 units it
+  carried (T-4).
+
+The player relation is not checked. Unloading colonists on a **friend's**
+planet invades it exactly as an enemy's (T-29, order set in the file; the
+UI may not offer it).
+
+Fuel is never unloaded to or loaded from a planet (BINARY-ONLY).
+
+### Ground combat (CONFIRMED, T-21..T-25)
+
+All drops queued for one planet in one phase are resolved together.
+
+1. `s` is the planet owner's bombing survival factor (above; 1 when the
+   planet is unowned or has no defenses). Against troops it is
+   `s' = s + (1 − s)/4`: defenses are 75% as effective as against bombs.
+2. Each attacking player `p` has `troops[p]` (units), and its strength is
+   `strength[p] = ⌊⌊troops[p]·k/100⌋·s'⌋`, with `k = 110`. For War Monger
+   `k = 165`, and for Alternate Reality `k = 0` (both BINARY-ONLY).
+   `Σ` is the sum of all strengths.
+3. If the planet is owned, the defender strength is `D = P` (×2 for Inner
+   Strength, BINARY-ONLY).
+   - `D > Σ`: every attacker dies, and the planet loses `⌊P·Σ/D⌋`. 200
+     against 110 leaves 90.
+   - `D ≤ Σ` (**a tie goes to the attackers**): the planet is emptied
+     (Capture, below) and the attackers resolve as for an empty planet,
+     with `D` subtracted.
+4. Empty-planet resolution, with `D = 0` for an unowned planet. A single
+   attacking player `w` lands
+   `max(1, troops[w]·⌊(Σ − D)·best/Σ⌋/best)`, where `best =
+   strength[w]`. If `Σ = 0`, it lands all its troops.
+
+Vectors: 100 units (strength 110) against 100 → 9; against 110 → 1; 600
+against 500 with 20 SDI (strength 569) → 72; 300 against 200 with 10 SDI
+(strength 310) → 106. With 20 Missile Batteries, the 600 attackers had
+strength 495 < 500, and the defender kept 5.
+
+### Several players dropping at once (LEGACY BUG, CONFIRMED, T-32)
+
+When more than one player drops on the same planet in the same phase, the
+winner is picked by a scan over players in **index order**. Each player
+whose strength is **greater than or equal to** the current best becomes
+the new best, and the old best becomes `second`. A strength **equal** to
+the best also sets a tie flag, which a later strictly greater strength
+clears.
+
+- If the tie flag is set at the end, nobody lands. The planet stays empty,
+  and every dropping player loses its colonists. Colony ships are consumed
+  and their minerals delivered.
+- Otherwise the winner lands as in step 4, then reduced by
+  `·(best − second)/best` **only if `second > 0`**, and at least 1.
+
+Because `second` only ever holds a **lower-index** player's strength, a
+lower-index winner is never reduced by a higher-index rival, while a
+higher-index winner is. Measured with colony ships: player 0 25 vs
+player 1 12 → player 0 with 25; player 0 12 vs player 1 25 → player 1
+with 12 (reduced by `(27 − 13)/27`); 25 vs 25 → nobody, and the planet
+received both ships' minerals.
+
+## Colonization (CONFIRMED, T-1, T-30, T-31; requirements BINARY-ONLY)
+
+A colonize order succeeds when the fleet orbits a planet that is
+**unowned now**, carries colonists, and has at least one ship whose design
+has a Colonization Module or an Orbital Construction Module. Otherwise it
+fails with a message, and the fleet is kept. There is **no habitability
+check**: a red planet was colonized and its population then declines per
+`KERNEL.md` (T-31). The order is checked in every waypoint phase, so a
+fleet that fails before movement can succeed after arriving.
+
+On success:
+
+- The **whole fleet** is consumed, not just the colony ship.
+- The planet's surface gains, per mineral, `⌊3·C/4⌋`, where `C` is the
+  summed cost of every ship in the fleet. Each ship's cost is its design
+  cost for the owner **this year**, after miniaturization (`COMBAT.md`,
+  Design cost). Mineral cargo is added on top. CONFIRMED: Colony Ship hull +
+  Long Hump 6 + Colonization Module left 18/6/17 kT at tech 3 and 4/1/5 at
+  tech 26, which are exactly `⌊3/4⌋` of 25/9/23 and 6/2/7 (T-30). This is
+  also the first direct oracle check of the miniaturization rounding.
+- The colonists become a queued drop resolved as above. An uncontested
+  colony ship lands all its colonists.
+- The new colony gets the owner's default production queue. Alternate
+  Reality skips the first three default items, and Claim Adjuster skips
+  the fifth and sixth. The colony also gets the owner's default "only
+  leftover to research" setting, and an Alternate Reality colony gets a
+  starbase of the owner's first starbase design (all BINARY-ONLY).
+
+## Capture: what a planet keeps (CONFIRMED, T-21, T-26, T-27)
+
+A planet that loses its whole population (to bombing, ground combat,
+starvation, a packet or an AR starbase loss) is emptied:
+
+- **kept**: mines, factories (both may exceed what the new owner can
+  operate), surface minerals, concentrations, current and original
+  environment, and the population growth carry (37 before growth, 42
+  after growth and capture: T-27; see `KERNEL.md` Population growth);
+- **lost**: owner, population, defenses (0), planetary scanner (none),
+  production queue, starbase, mass-driver destination, and the
+  "only leftover to research" setting.
+- A Claim Adjuster owner's planet returns its current environment to its
+  original values when emptied (BINARY-ONLY).
+
+A captured planet then belongs to the winning player as a new colony
+(Colonization, above). Additionally (BINARY-ONLY):
+
+- the old owner is told;
+- the new owner may learn a tech level from the old owner as for battles
+  (`COMBAT.md`, Tech from battle), at most once per player per year;
+- a planet with an ancient artifact gives the new owner research points in
+  a random field (`100 + rand(301)` points, scaled down below 1,000
+  colonists), when random events are on.
+
+The production queue after capture was not testable in the corpus (no
+default queue in that game).
+
+## Design parts dropped when the year is generated (CONFIRMED in one setting)
+
+When the original game generates a year, it re-checks every ship design
+against its owner's tech. A slot whose part the owner **lacks the tech
+for** is emptied, the design is written back without it, and ships of that
+design act without it. Race-restricted parts (Retro Bomb, which only Claim
+Adjuster may build; the Orbital Construction Module, Alternate Reality only)
+and the twelve Mystery Trader parts (among them Hush-a-Boom and Multi
+Contained Munition) are **not** removed by this check, even when the owner
+could not have picked them, and they work.
+
+Measured with a JOAT owner at tech 3 in every field: Cherry, Smart,
+Peerless, LBU-17 and LBU-32 were removed. Lady Finger (within tech),
+Hush-a-Boom, Retro, the Orbital Construction Module and the Multi
+Contained Munition stayed and bombed. At tech 26 nothing was removed. This
+agrees with SC-021 (a scanner above the owner's tech was removed).
+
+For Elegy this matters only when designs come from outside the UI
+(imported files, edited states): such designs keep parts the owner could
+never have chosen. Whether Elegy accepts or rejects them is a project
+choice; parity is "keep and use".
+
+## Other waypoint tasks (BINARY-ONLY)
+
+- **Scrap**: before movement only. A fleet that arrives with a scrap order
+  is scrapped at the start of the next year's waypoint phase. Per mineral,
+  with `C` = the fleet's cost:
+  - at a planet with a starbase: `4C/5` (`9C/10` if the planet's owner has
+    Ultimate Recycling);
+  - at a planet without a starbase: `C/3` (`9C/20` with Ultimate
+    Recycling);
+  - in deep space: `C/3` left as salvage.
+
+  Mineral cargo is added on top. Ultimate Recycling is the **planet
+  owner's** trait. Colonists join the planet only if the fleet owner owns
+  it. Scrapping at a starbase may teach the planet owner a tech level, as
+  in battle.
+- **Remote mining**: after movement only, by a fleet that did not move
+  this year, at an unowned planet; the order stays. An arriving miner
+  therefore mines nothing the year it arrives.
+- **Merge with fleet**: in both load phases; the ordering fleet merges
+  into the target own fleet.
+- **Transfer fleet**: last task of the year. A fleet carrying colonists is
+  refused.
+- **Cargo to another player's fleet**: nothing moves to an enemy;
+  colonists are never given to another player's fleet.
+
+## Randomness
+
+| Draw | Rule |
+|---|---|
+| installation kill roundings, population kill rounding | Bombing |
+| tech learned on capture or scrap at a starbase | Capture, Scrap |
+| artifact field and points | Capture |
+
+Ground combat, colonization, scrap minerals and retro bombing are
+deterministic. Random-stream pinning for experiments: `ORACLE.md`.
+
+## Open experiments
+
+- War Monger and Inner Strength ground combat (`k = 165`, `D = 2P`) and
+  Alternate Reality drops and colonization (T-24, T-33).
+- Scrap at each place, with and without Ultimate Recycling, and the
+  arrival-delay rule (T-34).
+- Remote mining delay (T-35).
+- Several players bombing one planet.
+- Production queue and "only leftover to research" after capture.
+- Tech learned on capture; ancient artifacts.
+- Colonist loss when a colonize retry happens in the load phase
+  (suspected LEGACY BUG: the retry's drop is never resolved).
+- Fuel unloaded at a planet: is the fleet debited?
+- Planetary defenses other than SDI and Missile Battery against bombs and
+  troops.
+- Miniaturization at intermediate tech through colony minerals: the same
+  Colony Ship at tech 5, 10 and 15 everywhere should leave 17/6/15,
+  12/4/12 and 9/3/8 kT.
+- Design check at generation with one field short by one level that is the
+  current research field (predicted: still removed).
+
+## Sources
+
+- `PARITY.md` "Planet Takeover" and `experiments/tk/README.md`: TK-001 to
+  TK-007, every case and value; raw files in private
+  `stars-oracle-apparatus` `evidence/tk/`.
+- White-box reading: private `stars-decomp` `docs/takeover.md` (§10 is
+  the reconciliation with TK) and `docs/takeover-predictions.md`.
+- Related specs: `KERNEL.md` (turn order, growth, caps, research),
+  `COMBAT.md` (battles, design cost, tech gained), `SCANNING.md`.

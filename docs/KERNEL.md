@@ -368,8 +368,8 @@ settings and slower tech: BINARY-ONLY.
 
 ### Allocation
 
-- Planets without a production queue send all their resources to research
-  (CONFIRMED, PG). Planets with a queue send the research tax first
+- Planets without a production queue send all their resources to research,
+  whatever the research budget setting, 0% included (CONFIRMED, PG; TK-001). Planets with a queue send the research tax first
   (`trunc(resources·budget%/100)`, skipped with the leftover-only option)
   and whatever is left after the queue (CONFIRMED, PQ-001).
 - All research goes to the current field. Level-ups: while

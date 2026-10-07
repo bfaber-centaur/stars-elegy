@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Create a new game from a Stars! game definition file, with no UI input.
+#   tools/fleetlab/new-game GAME.DEF OUTDIR [CYCLES] [EXTRA_FILE...]
+# Resets the run copy to the `registered` snapshot, copies GAME.DEF (and any
+# EXTRA_FILE, e.g. a race file the definition names) into the games
+# directory, and starts `stars.exe -a game.def` under cycles=fixed CYCLES
+# (default 20000). Stars! writes the new game's files (named by the
+# definition's last line) and is stopped once the .HST appears and is
+# stable. Every new file is copied to OUTDIR/raw with a CombatLab dump.
+# Definition format: docs/ORACLE.md "New games from a definition file".
+# OUTDIR holds registered-copy output: keep it out of this repository.
+set -euo pipefail
+[[ $# -ge 2 ]] || { echo "usage: new-game GAME.DEF OUTDIR [CYCLES] [EXTRA_FILE...]" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+oracle="$here/../../scripts/oracle"
+def="$1" out="$2" cycles="${3:-20000}"
+shift $(( $# >= 3 ? 3 : 2 ))
+home="${ORACLE_HOME:-$HOME/.stars-oracle}"
+games="$home/run/games/stars_games"
+name="$(basename "$def")"; name="${name,,}"
+xy="$(tail -n 1 "$def" | tr -d '\r' | tr 'A-Z' 'a-z')"
+base="${xy%.xy}"
+mkdir -p "$out/raw"
+"$oracle/stop" >/dev/null 2>&1 || true
+"$oracle/reset" registered
+before="$(ls "$games")"
+cp "$def" "$games/$name"
+for f in "$@"; do cp "$f" "$games/"; done
+export ORACLE_CYCLES_OVERRIDE="fixed $cycles"
+export ORACLE_AUTOEXEC_OVERRIDE="set PATH=C:\\WINDOWS;C:\\STARS;C:\\NOTEBOOK
+d:
+win /n stars.exe -a $name"
+"$oracle/start" >/dev/null
+hst="$(echo "$base" | tr 'a-z' 'A-Z').HST"
+t0=$SECONDS
+until [[ -f "$games/$hst" ]]; do
+  ((SECONDS - t0 < 240)) || { echo "new-game: no $hst" >&2; "$oracle/screenshot" "$out/fail.png" >/dev/null || true; "$oracle/stop"; exit 1; }
+  sleep 1
+done
+sleep 5
+"$oracle/screenshot" "$out/screen.png" >/dev/null || true
+"$oracle/stop"
+for f in $(ls "$games"); do
+  grep -qxF "$f" <<<"$before" || cp "$games/$f" "$out/raw/"
+done
+"$here/combatlab" dump "$out/raw/"*.HST > "$out/after.dump"
+(cd "$out" && find raw -type f -print0 | sort -z | xargs -0 sha256sum > manifest.sha256)
+echo "new-game: $(ls "$out/raw" | tr '\n' ' ') in $out"
