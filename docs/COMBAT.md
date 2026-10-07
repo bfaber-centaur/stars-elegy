@@ -55,6 +55,54 @@ lesser racial traits are BINARY-ONLY unless a case says otherwise.
 - Relations are per player and need not be symmetric: friend, neutral or
   enemy.
 
+## Battle plans
+
+A player has between 1 and 16 battle plans, numbered 0..15 without gaps.
+Each plan has a name and the fields listed under "Conventions". Every
+fleet names one of its owner's plans. A starbase always fights with its
+owner's plan 0.
+
+**Starting plans** (MEASURED: every player of all 22 UG new games,
+2 to 16 players, single-human and multi-human). Every player starts with
+the same five plans:
+
+| plan | name | tactic | primary | secondary | attack-who | dump cargo |
+|---|---|---|---|---|---|---|
+| 0 | Default | 4 maximize damage ratio | 3 armed ships | 1 any | neutrals and enemies | no |
+| 1 | Kill Starbase | 4 maximize damage ratio | 2 starbase | 3 armed ships | neutrals and enemies | no |
+| 2 | Max-Defense | 3 maximize net damage | 3 armed ships | 4 bombers and freighters | neutrals and enemies | no |
+| 3 | Sniper | 1 disengage if challenged | 5 unarmed ships | 0 none | neutrals and enemies | no |
+| 4 | Chicken | 0 disengage | 1 any | 0 none | neutrals and enemies | no |
+
+Starting fleets use plan 0 (`UNIVERSE.md`). A ship built into a new fleet
+also gets plan 0 (MEASURED, CB-047-ctl, 2 runs; BINARY-ONLY in general).
+Ships split off keep their source fleet's plan (`ORDERS.md`).
+
+**LEGACY BUG (BINARY-ONLY): a stale "Default" attack-who.** Plan 0 is
+meant to attack "everyone" in a single-human game, but the generator
+creates the plans before it records whether the new game is single-human.
+It reads that setting left over from whatever game the program generated
+or opened before. So "Default" attacks everyone only when the previous
+game in the same program run was single-human, and the new game's own
+setting does not matter. The UG games were each generated in a fresh run
+and all got "neutrals and enemies", single-human ones included.
+
+- **Elegy's chosen rule:** "Default" starts with "neutrals and enemies"
+  in every game.
+
+**Adding, replacing and deleting** (BINARY-ONLY). Validation of the
+fields is in `ORDERS.md` ("Battle-plan fields").
+
+- A definition for an existing plan number replaces that plan.
+- A new plan takes the next number (the current count). The 17th plan is
+  refused.
+- Deleting plan `k` moves every later plan down by one number. Every
+  fleet of that player whose plan number is `k` or higher has it lowered
+  by one. So a fleet on a later plan keeps the same plan, and a fleet on
+  the deleted plan moves to the plan just before it, `k − 1`. The client
+  asks for confirmation first when some fleet uses plan `k`. It never
+  offers to delete plan 0.
+
 ## Where battles happen in the turn (BINARY-ONLY)
 
 Battles are fought after movement and production, at the start of the
@@ -402,7 +450,9 @@ armor, it does not trust a stored value):
 ## Rounds
 
 At most 16 rounds, numbered 0..15. Each round (BINARY-ONLY ordering,
-consistent with every replayed record):
+consistent with every replayed record; movement then the jitter draw,
+steps 3 and 4, CONFIRMED by the exact replays under "Choosing a
+square"):
 
 1. From round 1 on, regenerate shields (see RS).
 2. The battle ends if at most one player still has live tokens.
@@ -445,7 +495,7 @@ A token with speed code `s` gets `(s + 2)/4` moves in round `r`, plus 1 when:
 The average is `(s + 2)/4` squares per round (½ … 2½). For example,
 code 1 moves 1, 1, 0, 1 and code 5 moves 2, 2, 1, 2.
 
-### Movement order (CONFIRMED in 2 streams, CB-030)
+### Movement order (CONFIRMED, CB-030; exact replays CB-041, CB-042, CB-044, CB-046)
 
 Movement runs in three phases, `a = 3, 2, 1`. In phase `a`, every token
 with at least `a` moves left moves one square.
@@ -453,6 +503,10 @@ with at least `a` moves left moves one square.
 Inside a phase, tokens go in **descending jittered weight**:
 `W = mass + mass·(j − 7)·2/100`, where `j` is the token's current jitter
 (0..14). Ties keep token order. Starbases never move.
+
+The exact replays (see "Choosing a square") reproduced the order of every
+move, including battles of 255 identical one-ship tokens where only the
+jitter separates them.
 
 ### Disengaging (CONFIRMED, P-10, CB-003/004 D, CB-025, CB-034)
 
@@ -492,7 +546,7 @@ Inside a phase, tokens go in **descending jittered weight**:
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
 
-### Choosing a square (BINARY-ONLY in general; CONFIRMED for one mover vs a station, CB-012, CB-019, CB-020, CB-021)
+### Choosing a square (CONFIRMED by exact replay for tactics 0 and 5; one mover for tactics 3 and 4, CB-012, CB-019, CB-020, CB-021)
 
 For each single-square move, the token computes a **radius** and possibly
 a **goal**:
@@ -540,7 +594,27 @@ toward it, using the scores of its 8 neighbours:
 
 A step that would leave the board leaves the token where it is.
 
-### Square score (BINARY-ONLY)
+**Exact replays.** Every battle below was replayed from its random stream
+with this section, "Square score", "Movement order" and the draws in
+"Random draws in a battle"; shots were taken from the record. Every move
+of every round came out on the recorded square, in the recorded order,
+with every tie draw in place:
+
+- CB-041 (40 runs): two movers, a tactic-5 Destroyer stack and tactic-0
+  Super Freighters, against a Fort.
+- CB-046 (40 runs): beam Destroyers against torpedo Destroyers and
+  against shielded, armed Mini Morphs.
+- CB-042 (2 streams): three mutually hostile players, 255 one-ship
+  Laser Frigates, 2,032 moves and about 7,800 tie draws.
+- CB-044 (2 streams): two players, 255 one-ship Laser Frigates, 1,611
+  moves and about 8,700 tie draws.
+
+Not covered by these replays: tactics 1 to 4 with more than one mover,
+target-type mismatches (every token targeted "any"), tokens with weapons
+of different ranges, and capacitors, deflectors or sappers in the
+estimate. Those parts stay BINARY-ONLY.
+
+### Square score (CONFIRMED by replay for tactics 0 and 5; see "Choosing a square")
 
 The score of square `q` for token `T` is computed as follows:
 
@@ -604,6 +678,12 @@ subtracts 1 when `q` is its current square.
 
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
 `(armor + shields)·ships`, less its existing damage (at least 1).
+
+The replays exercised the beam estimate with dropoff and the out-of-reach
+floor, the torpedo estimate against an unshielded target, the cap with
+shields, the sum and maximum over many enemies of two other players, and
+the tactic-0 own-token and current-square terms. The torpedo shield term
+(step 3) and the tactic 3/4 row are BINARY-ONLY.
 
 ## Firing (CONFIRMED by replay: CB-001..CB-021, every hit record)
 
@@ -1119,7 +1199,10 @@ Not yet tested:
   battle record;
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
-- salvage at more than one point.
+- salvage at more than one point;
+- deleting a battle plan (fleets on later plans keep their plan, fleets
+  on the deleted plan move to the plan before it) and the stale "Default"
+  attack-who after a single-human game (see "Battle plans").
 
 The firing live-token recheck has no observable effect (see "Firing").
 
