@@ -4982,3 +4982,54 @@ the capture keeps them. Each player-year is compared with the prediction.
   One miss: the Automitron changed its scout's second waypoint to a new
   planet, where the prediction left a two-waypoint fleet alone. This went to
   the objects lane.
+
+## Production-queue edits through the client (LQ-0..LQ-7)
+
+Status: CONFIRMED for LQ-1..LQ-4, LQ-5b and LQ-6; MEASURED for LQ-5 and
+LQ-7 (predictions missed), 2026-10-07. Rules: `LIMITS.md` "Production-queue
+replace" and "Production queue"; the case table is `LIMITS.md` "LQ".
+
+### Question
+
+What the host keeps when the client replaces a planet's production queue,
+and which limits the client's Production dialog enforces.
+
+### Method
+
+Predictions from the decomp lane, committed before each batch. Combat Lab
+with research at 100%, so production barely touches the queue, and a
+pinned base year. Each case is one client session
+(`tools/fleetlab/client-orders`) and one pinned year (cycles 20000). LQ-3
+edits the host file's old queue between the client's view and the host
+year, so the client submits progress the host has no record of. Commands
+and specs: `experiments/lq/`. Raw files: private apparatus `evidence/lq/`.
+
+### Result
+
+- A partially built item keeps its progress when moved or when its count
+  changes; an item removed and added again starts at 0.
+- The host keeps a submitted percentage only against an old partial item of
+  the same id and kind, matched in queue order, count ignored: in LQ-3 the
+  client's 49% Factory was kept against an old 20% Factory ×9, and the
+  client's 30% Mine, second Factory and 50% Probe went to 0.
+- Clear leaves no queue and message 0x3f.
+- The dialog refuses a 41st item, clips a count at 1020 and holds Auto
+  Alchemy at 1.
+- Missed: Add with the Top row selected merged into the Factory below it
+  (LQ-7); and the factories in the whole queue are limited to 1020 (LQ-5),
+  after which Factory leaves the buildable list.
+
+## Ship-count boundary through the client (CO-06)
+
+Status: MEASURED, 2026-10-07. Full record: `experiments/fc/README.md`
+"CO-06, ship-count boundary". Summary for `LIMITS.md`:
+
+- The client's Merge Fleets was disabled for two 16000-ship fleets (it was
+  enabled for 10 + 10 and 2 + 2), so the direct merge order's boundary is
+  not reachable with legal orders.
+- The two-fleet ship exchange instead: the client stops the destination at
+  32766; the host stored 32765 each time (the extra ship lost), and moved
+  cargo and fuel by the share of ships moved. Controls kept 32765 and 32000.
+
+The same file records the other client-order cases, among them CO-07 and
+CO-08 (deleting and editing designs in use).
