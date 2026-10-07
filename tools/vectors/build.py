@@ -2,7 +2,7 @@
 """Build public parity vectors (vectors/<corpus>/<run>.json) from an oracle corpus.
 
   python3 tools/vectors/build.py CORPUS EVIDENCE_DIR [OUT_DIR]
-      CORPUS: fm2 | fo | tk2 | wt | pq     (vectors/README.md lists the format)
+      CORPUS: fm2 | fo | tk2 | wt | pq | pg    (vectors/README.md lists the format)
       EVIDENCE_DIR: the corpus's raw-evidence directory (private apparatus
       repository, e.g. stars-oracle-apparatus/evidence/fm2)
 
@@ -429,7 +429,7 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus in ('wt', 'pq'):
+    if corpus in ('wt', 'pq', 'pg'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
     else:
