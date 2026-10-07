@@ -567,33 +567,23 @@ CONFIRMED consequences (CB-009):
 - An already damaged stack is chosen before a fresh one.
 - The lower token index is chosen between identical stacks.
 
-### Design cost (BINARY-ONLY)
+### Design cost
 
-A design's cost is computed for its owner, in four components (resources,
-ironium, boranium, germanium). It is the hull's cost plus, for each slot,
-`count ×` that part's cost. For the hull and each part:
+A design's cost, for its owner, is its hull's cost plus `count ×` each
+part's cost, in four components (resources, ironium, boranium,
+germanium). Each hull and part cost is the owner cost of
+[`COMPONENTS.md`](COMPONENTS.md), "Cost for an owner": miniaturization,
+then the race adjustment, then Bleeding Edge Technology doubling, with
+the base costs in `data/components.json`. That section is CONFIRMED
+(CS-001) and is the rule to implement; it includes two cases this file
+used to leave out:
 
-1. Start from the part's base cost.
-2. **Miniaturization.**
-   - Let `m` be the smallest of `level − requirement` over the six fields
-     in which the part has a requirement above 0.
-   - If the part has no requirement, `m` is the owner's lowest level in
-     any field.
-   - If `m > 0`, let `d = 4·min(m, 19)`, at most 75. With Bleeding Edge
-     Technology, `d = 5·min(m, 19)`, at most 80.
-   - Each nonzero component `c` becomes `c − round(c·d/100)`, rounding
-     halves up, and at least 1.
-3. **Race.** The first case that matches applies, and no other:
-   - Interstellar Traveler, stargates: `c − c/4`.
-   - War Monger, beams, torpedoes and bombs: `c − c/4`.
-   - Inner Strength, beams, torpedoes and bombs: `c + c/4`.
-   - Cheap Engines, engines: `c − c/2`.
-4. **Bleeding Edge Technology.** If `m ≤ 0` and the part has a
-   requirement, every component is doubled. One game-wide flag, not
-   identified, suppresses this.
+- Bleeding Edge Technology never doubles terraform or planetary items.
+- Claim Adjuster pays half the resources for terraform items.
 
-Divisions truncate. The only oracle evidence is indirect: target choice
-among designs of different cost in CB-009 (Humanoid JOAT at tech 26).
+In combat the design cost is used only for target choice ("Cost" above).
+The combat evidence for it is indirect: target choice among designs of
+different cost in CB-009 (Humanoid JOAT at tech 26).
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
@@ -889,7 +879,6 @@ Not yet tested:
 - the plan-0 value X on the first location of a turn (not 0 or 1 in
   CB-022; unexplained), and a starbase owner in the player list but not
   involved (start-square rank past row `n` with `n ≥ 2`);
-- design-cost race adjustments and Bleeding Edge doubling;
 - three or more players, start squares for `n ≠ 2`, and friends joining;
 - the token cap;
 - the tech-attempt condition in larger battles, and for players outside
