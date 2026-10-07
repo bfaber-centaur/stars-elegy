@@ -6,16 +6,28 @@ can see, which orders it writes. It covers what all six personalities
 share. Each personality's own turn (fleets, ship designs, colonizing,
 war) gets its own file under docs/ai/:
 
-| Type (definition file) | Personality | PRT | File |
-|---|---|---|---|
-| 1 | Robotoid | HE | `docs/ai/robotoid.md` |
-| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
-| 3 | Automitron | IS | docs/ai/automitron.md (planned) |
-| 4 | Rototill | CA | `docs/ai/rototill.md` |
-| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
-| 6 | Macinti | AR | docs/ai/macinti.md (planned) |
+| Type (definition file) | Personality | PRT | File | Elegy |
+|---|---|---|---|---|
+| 1 | Robotoid | HE | `docs/ai/robotoid.md` | faithful candidate |
+| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) | legacy reference |
+| 3 | Automitron | IS | docs/ai/automitron.md (planned) | legacy reference |
+| 4 | Rototill | CA | `docs/ai/rototill.md` | faithful candidate |
+| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) | faithful candidate |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned) | legacy reference |
 
-Elegy reproduces these personalities (project decision). Related specs:
+**Project policy (2026-10-07).** Elegy reproduces faithfully only the
+personalities whose behavior has been checked against the original
+with oracle captures: Robotoid, Rototill and Cybertron, each matched over
+every captured player-year of its corpus (`../PARITY.md` cases). These
+are candidates for faithful implementation. Turindrone, Automitron and
+Macinti are documented as legacy-reference behavior: read from the
+original, only partly checked, and optional future work. Reproducing all
+six personalities is not an objective. Further computer-player
+experiments need a concrete reason: an Elegy implementation blocker, a
+contradiction in an existing spec, or a cheap experiment that closes a
+bounded question. The shared rules in this file apply to all six.
+
+Related specs:
 game creation and the starting setup of computer players are in
 `UNIVERSE.md`; the research, tech and terraforming mechanics the AI's
 choices feed are in `KERNEL.md` ("Research", "Terraforming"); part and
@@ -99,10 +111,36 @@ The host runs all computer players of a year one after another in one
 program, in player order (lowest player number first; human players are
 skipped). Two pieces of state survive from one computer player to the
 next within that run. Each makes a computer player's orders depend on
-which computer players ran before it that year. Elegy reproduces both
-behind one named switch, for example `legacy_ai_state_leak`. With the
-switch off, each computer player starts from clean state: empty slots read
-as never used, and the armada parameters below are the personality's own.
+which computer players ran before it that year.
+
+Elegy keeps each computer player's state separate by default: this
+**clean per-player state** is Elegy's normal behavior, and it is
+INTENTIONALLY DIFFERENT from the original. The original's whole-program
+behavior is reproduced only behind a named legacy-compatibility switch,
+for example `legacy_ai_state_leak`, off by default (project decision,
+2026-10-07). Clean state means every computer player reads shared state
+as the first computer player of a run does in the original:
+
+- an empty ship design slot reads as all zero, creation year 0;
+- the armada parameters read as 0 unless that computer player set them
+  earlier in its own turn.
+
+What this changes for the checked personalities:
+
+- **Robotoid**: nothing measured. It ran first in every captured game,
+  so its checks (AI-8, AI-9, AI-12) were taken under clean state.
+- **Rototill**: nothing in normal play. It reads design slots 0 and 1
+  without a presence check, but it never deletes its starting designs
+  (`docs/ai/rototill.md` §4).
+- **Cybertron**: its armadas see armada parameters of 0, so every
+  Cybertron armada idle at an own planet leaves home instead of waiting.
+  This is measured (AI-18: 11 of 11 armada-years with the values at 0).
+  In the AIX corpus, where Automitron ran just before Cybertron, the
+  original kept these armadas home in 16 armada-years (2452–2460).
+  Cybertron's captured orders are matched only with the switch on and the
+  original's player order.
+
+Both leaks are documented below as the switch reproduces them.
 
 - **Empty design slots keep the previous player's bytes.** Loading a
   computer player's file marks its unused ship design slots empty but
@@ -150,9 +188,9 @@ All computer players in one host run also draw from one shared random
 stream, in player order. So any change to an earlier computer player's
 turn shifts the draws of every later one (MEASURED, AI-18: skipping
 Robotoid's turn alone changed 17 to 19 of Cybertron's random-dependent
-order lines). With the switch off, Elegy still runs the computer players
-on one shared stream in player order; only the two leaks above are
-removed.
+order lines). The switch does not change this: Elegy runs the computer
+players on one shared stream in player order either way, and only the
+two leaks above depend on the switch.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
