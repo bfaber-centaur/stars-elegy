@@ -1,0 +1,8 @@
+# CO-03: two-fleet exchange, 1 ship from A (2 ships, 200 Ir, 600 fuel) to B (1 ship, empty).
+fleet first
+fleet next
+# on B (fleet 2); others: A
+fleet other 0
+fleet exchange
+ships 0 -1
+ships ok

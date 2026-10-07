@@ -33,6 +33,24 @@
 #                          the fleet panel's Next / Prev buttons
 #   fleet plan K           set the selected fleet's battle plan to item K
 #   fleet xfer             open Cargo Transfer with what the fleet orbits
+#   fleet rename NAME      Rename the selected fleet
+#   fleet split            Split: Ship Transfer with a new fleet (then ships, ships ok)
+#   fleet splitall         Split All (one fleet per ship; the first ship stays)
+#   fleet merge I...       Merge Fleets: Unselect All, select rows I... of its
+#                          list (every fleet at the place, the selected one
+#                          included, by fleet number; name the selected fleet's
+#                          row too), then OK. The dialog opens with some rows
+#                          already selected (all of them with two same-design
+#                          fleets), so a bare toggle is not reliable
+#   fleet other I          select item I of "Other Fleets Here" (the other fleets
+#                          at the selected fleet's place, by fleet number)
+#   fleet goto             that panel's Goto: select the other fleet
+#   fleet exchange         that panel's Merge: Ship Transfer with the other fleet
+#   fleet cargo            that panel's Cargo: Cargo Transfer with the other fleet
+#                          (then xfer ITEM N, xfer ok)
+#   ships ROW N            Ship Transfer: N ships of design row ROW from the
+#                          selected fleet to the other side (N < 0 the reverse)
+#   ships ok | ships cancel
 #   xfer ITEM N            ITEM fuel|ir|bo|ge|col; N > 0 moves N from the
 #                          fleet to the other side, N < 0 the reverse
 #   xfer ok | xfer cancel  close the Cargo Transfer dialog
@@ -111,7 +129,7 @@ fleetplan() {
 	pause
 }
 
-# Cargo Transfer dialog (fleet panel Xfer): rows fuel/ir/bo/ge/col; the
+# Cargo Transfer dialog (fleet panel Xfer, or Cargo with another fleet): rows fuel/ir/bo/ge/col; the
 # arrows at x 585 move fleet -> other side, x 567 the reverse. A click
 # moves 1 (kT or mg), shift-click 10, ctrl-click 100, each capped by what
 # is there and what fits.
@@ -123,12 +141,14 @@ xfer() {
 	nclick "$x" "$y" "$n"
 }
 # nclick X Y N: press the button at X,Y for N units, where a click is 1,
-# shift-click 10 and ctrl-click 100 (Cargo Transfer arrows, Production Add
+# shift-click 10, ctrl-click 100 and ctrl+shift-click 1000 (Ship Transfer) (Cargo Transfer arrows, Production Add
 # and Remove)
 nclick() {
 	local x="$1" y="$2" n="$3"
 	((n == 0)) && return
 	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; counts 1
+	((n >= 1000)) && xdotool keydown ctrl keydown shift click --repeat $((n / 1000)) --delay 150 1 keyup shift keyup ctrl
+	n=$((n % 1000))
 	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
 	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
 	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1
@@ -181,6 +201,21 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"fleet prev") "$O/click" 144 108; pause ;;
 	"fleet plan") fleetplan "$b" ;;
 	"fleet xfer") "$O/click" 161 213; pause 1.5 ;;
+	"fleet rename") "$O/click" 144 156; pause 1; "$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause ;;
+	"fleet split") "$O/click" 232 364; pause 1.2 ;;
+	"fleet splitall") "$O/click" 296 364; pause 1.2 ;;
+	"fleet merge")
+		"$O/click" 358 364; pause 1.2
+		"$O/click" 698 452; pause 0.4     # Unselect All
+		for r in $b $rest; do "$O/click" 450 $((352 + 13 * r)); pause 0.4; done
+		shot merge-list; "$O/click" 698 356; pause ;;
+	"fleet other") "$O/click" 297 412; pause 0.6; "$O/click" 280 $((431 + 50 * b / 3)); pause 0.6 ;;
+	"fleet goto") "$O/click" 232 473; pause ;;
+	"fleet exchange") "$O/click" 295 473; pause 1.2 ;;
+	"fleet cargo") "$O/click" 358 473; pause 1.2 ;;
+	"ships ok") "$O/click" 627 555; pause ;;
+	"ships cancel") "$O/click" 705 555; pause ;;
+	ships\ *) if ((b < 0)); then nclick 567 $((340 + 20 * a)) $((-b)); else nclick 585 $((340 + 20 * a)) "$b"; fi ;;
 	"xfer ok") "$O/click" 627 555; pause ;;
 	"xfer cancel") "$O/click" 705 555; pause ;;
 	xfer\ *) xfer "$a" "$b" ;;

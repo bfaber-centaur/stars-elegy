@@ -289,6 +289,36 @@ public class CombatLab {
                 byte[] d = b.getDecryptedData();
                 System.out.printf("%s order research pct=%d field=%d next=%d raw=%s%n", f, d[0] & 0xff, d[1] & 15,
                     (d[1] & 0xff) >> 4, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 23) {
+                // order file: ships moved between two fleets (split, Split All, the
+                // two-fleet Merge dialog). fleet word, other fleet word, kind byte, design
+                // mask word, then one signed word per set bit: the change to the first fleet
+                byte[] d = b.getDecryptedData();
+                int mask = u16(d, 5), o = 7;
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < 16; i++) {
+                    if ((mask >> i & 1) == 0) continue;
+                    sb.append(sb.length() == 0 ? " ships=" : ",").append(i).append(':').append((short) u16(d, o));
+                    o += 2;
+                }
+                System.out.printf("%s order move-ships fleet=%d other=%d kind=%02x%s raw=%s%n", f, u16(d, 0) & 0x1ff,
+                    u16(d, 2) & 0x1ff, d[4] & 0xff, sb, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 24) {
+                // order file: split (fleet word); the move-ships record after it names the new fleet
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order split fleet=%d raw=%s%n", f, u16(d, 0) & 0x1ff, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 37) {
+                // order file: Merge Fleets (the kept fleet word, then each merged fleet's word)
+                byte[] d = b.getDecryptedData();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 2; i + 1 < b.size; i += 2) sb.append(i == 2 ? "" : ",").append(u16(d, i) & 0x1ff);
+                System.out.printf("%s order merge fleet=%d merged=%s raw=%s%n", f, u16(d, 0) & 0x1ff, sb,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 44) {
+                // order file: rename fleet (fleet word, a word, then the name as a Stars! string)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order rename fleet=%d w2=%d name=\"%s\" raw=%s%n", f, u16(d, 0) & 0x1ff, u16(d, 2),
+                    Util.decodeStarsString(java.util.Arrays.copyOfRange(d, 4, b.size)), Util.bytesToString(d, 0, b.size));
             } else if (orders && b.typeId != 8 && b.typeId != 9 && b.typeId != 36 && b.typeId != 0
                     && !(b instanceof BattlePlanBlock) && b.typeId != 42) {
                 // other order records, raw (never the serial block 9 or the password block 36)
