@@ -3131,6 +3131,13 @@ nothing. The field lost 27% (2% + 25%) and nothing more for the hits:
   - the field lost 50 before its 2% decay: 3000 → 2950 → 2891. Decay
     first would give 2890.
   - The stopped fleet then swept 100, so the field ended at 2791.
+  - Re-checked against the MF-4 year order (stops during movement, then
+    decay counting planets inside the field as the stops left it, then
+    sweeping; no planet lies inside this field at 3000 or 2950): the three
+    no-hit settings ended at 2840 and the three hit settings at 2791, as
+    predicted (stars-elegy `experiments/mf/README.md`). The hit settings
+    have mine-hit messages (0xc6) at the stop point; the no-hit ones have
+    none. No contradiction with MF-4.
 - Hit odds per ly and shrink amounts for other field sizes (O-14, O-15)
   are not yet measured.
 
@@ -3322,7 +3329,7 @@ missed when a ship was lost. Details below.
   point, added as a new design. The traded fleet was removed.
 - A warp-9 Trader moved 81 ly in a year.
 
-### Minefield lane (MF-1..MF-12)
+### Minefield lane (MF-1..MF-13)
 
 Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
 BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
@@ -3451,6 +3458,15 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
   owner got "failed to lay mines this year due to technical difficulties"
   (0x17e). A layer inside an existing field merged normally in all three
   runs.
+- **Field 511 depends on object order (MEASURED, MF-13; LEGACY BUG
+  candidate).** With numbers 0..510 taken, field 511 was made only when no
+  universe object sorted after the owner's minefields. Objects sort by type
+  (minefields, packets and salvage, wormholes, the Mystery Trader), then
+  owner, then number. A player-1 field elsewhere (MF-13a) or a salvage
+  object (MF-13b) blocked player 0's 512th field: no field, message 0x17e,
+  mines lost. A player-0 field did not block player 1's 512th field, which
+  was made as number 511 (MF-13c). So the limit is 511 fields when anything
+  sorts after the owner's fields, and 512 otherwise (one run each).
 - **Laying order (CONFIRMED):** two layers of 160 in one 390-mine field
   merge one after the other, in fleet-number order. With the east layer
   first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
@@ -3459,6 +3475,110 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
 Not tested: the detonate-order validation gap (needs crafted orders), SS
 and SD safe-warp bonuses, fleets moving through gates in a field, and
 salvage from mine kills (OB-024).
+
+### Wormholes and Mystery Trader, round 2 (WT-001 to WT-005)
+
+Predictions O-43..O-53 come from the objects decomp lane. They were
+committed before the runs (`experiments/wt/README.md`). Deterministic
+runs were made at two cycles values; WT-004 ran over 16 streams. Raw
+evidence: stars-oracle-apparatus `evidence/wt/`.
+
+In the host file a wormhole has two player masks, the **known** mask
+(which players have the end on their map) and the **destination** mask
+(which players know where it leads).
+
+- **CONFIRMED: only transit reveals the destination (O-43, WT-001 A, G).**
+  - A player 0 fleet transited an end that both players already knew.
+    Player 0's bit went into the destination mask of both ends.
+  - Player 1 saw both ends of that pair in the same year and did not get
+    the bit. Neither did player 1 for a second, unknown pair it saw that
+    year: it got the known bit on both ends, and the destination mask
+    stayed 0.
+- **CONFIRMED: a jump keeps the destination (O-44, WT-004, 18 jumps in
+  16 streams).**
+  - Every jumped end kept player 0's destination bit and reset its years
+    to 0.
+  - 14 of the 18 jumped ends also lost the known bit. The other 4 landed
+    near a ship player 0 had just received from the Trader the same year,
+    were in player 0's file, and so were known again.
+  - Those 4 ends were 21, 27, 72 and 107 ly from the receiving fleet. That
+    is within the fleet's penetrating range (about 33 for an M.T. Scout
+    and 132 for an M.T. Lifeboat) but beyond R/4. An end 52 ly from an
+    M.T. Scout was not seen. These are MEASURED observations for the
+    scanning record; the scanning rule for a just-jumped end was not the
+    question here.
+  - All 302 ends that did not jump moved at most 12 ly on each axis, aged
+    one year and kept both masks.
+- **CONFIRMED: what transits (O-46, WT-001 B, C, D, E).**
+  - A fleet whose waypoint was the wormhole's position as a plain point
+    ended there, in normal space. A fleet whose waypoint was the wormhole
+    itself transited.
+  - The B2 wormhole was unknown to player 0 at the start of the year, and
+    the fleet still transited in that year. This fits OB-025/OB-027: an
+    unseen target turns into a plain position only at the end-of-year
+    waypoint check, after movement.
+  - A fleet whose straight move passed over an end did not transit.
+  - A warp-10 packet whose 100 ly move ended exactly on an end stayed
+    there, and so did a Trader whose 64 ly move ended on an end.
+- **MEASURED, contradicts O-47: a fleet aimed at the Trader goes to where
+  the Trader is after the Trader's move (WT-001 F1, WT-005, two streams
+  each).**
+  - The Trader moves before fleets. A fleet 30 ly west of the Trader's
+    start, aimed at the Trader at warp 6, flew its full 36 ly east to
+    (1206,1300), past the start (1200,1300).
+  - A fleet 50 ly east of the start flew 31 ly east to the Trader's end
+    point (1281,1300). It traded there and was consumed. The decomp
+    predicted that both fleets fly to the start-of-year position.
+  - A fleet flying onto the Trader's end point with a plain waypoint also
+    traded (WT-001 F2), as in OB-004.
+- **CONFIRMED: part rewards (O-48, WT-003 A).**
+  - Twelve Traders offering item bits 0–11 each gave player 0 (tech 26,
+    no parts) the part for that bit. After the year its Trader-item mask
+    was 0x0fff and its tech was unchanged.
+  - Every trade consumed the fleet.
+  - Messages: id 0x10b for ten parts, 0x10c for Mini Morph (bit 8), 0x10f
+    for the Genesis Device (bit 10).
+  - The bit-to-part map is in `experiments/wt/README.md` (WT-003 rows).
+- **CONFIRMED: a full design table (O-49, WT-003 B).** A player with all
+  16 design slots used traded for a ship. Its fleet was consumed, and it
+  got no ship and no new design. Message 0x150.
+- **CONFIRMED: ship gifts (O-49, O-51, WT-004 B, C; 30 meetings, 2 void).**
+  - Every ship gift was one of three designs:
+    - M.T. Lifeboat: a Nubian hull with 1 or 2 ships;
+    - M.T. Scout: a Mini Morph with Langston Shells, 1 to 4 ships;
+    - M.T. Probe: a Mini Morph with Mega Poly Shells, 1 to 4 ships.
+  - The design went into the player's first empty design slot. The new
+    fleet was at the trade point with full fuel. The Trader-item mask and
+    tech were unchanged.
+  - A player at tech 26 owning all twelve parts, offered item 0, got
+    nothing (message 0x10e) in 3 of 15 meetings and a ship in the other
+    12. The prediction was 1/5 nothing, else always a ship.
+  - Counts over 30 meetings: Lifeboat 5, Scout 11, Probe 11, nothing 3.
+    The predicted shares were 1/4, 3/8 and 3/8 of ships.
+- **CONFIRMED: a research step keeps accumulated research (O-50, WT-002
+  A).** A player with biotech 0 and 20 accumulated in biotech, all other
+  fields 26, traded for research. Biotech went to 1, its accumulated
+  research stayed 20, and the other fields stayed 26. Message 0x109.
+- **CONFIRMED: an owned offered part becomes research (O-52, WT-002 B).**
+  A player at tech 5 everywhere that owned the Anti Matter Torpedo traded
+  7,400 kT with a Trader offering it. It gained exactly 8 levels (3,2,1,0,0,2
+  and 1,3,2,0,0,2 in the two streams), and its item mask stayed 0x0040.
+- **MEASURED: the Trader's yearly warp bump.** 4 Traders, in about 80
+  Trader-years, changed warp 8 → 9 before moving, with message 0x130.
+  One of the 4 also got a new destination on the map's west edge (x
+  1020). The meetings staged for those Traders were void. This fits the
+  decomp's reading of 1/25 a year for the bump and then 1/3 for a new
+  destination.
+- **Message records.** In the player file's event block, a message record
+  starts with a little-endian word: the id in the low 9 bits and flags
+  above. 0x109 was written as `09 01` or `09 03`; the following bytes
+  carry the level count. The rest of the layout is not decoded.
+- **Not tested:**
+  - stability names (O-45, report text);
+  - computer-player planets trading (O-53);
+  - the 25th-redraw ship LEGACY BUG, which is too rare to reach by
+    sampling streams;
+  - Trader appearance (KX-004).
 
 ### Not tested
 

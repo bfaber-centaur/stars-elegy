@@ -405,6 +405,35 @@ for rid, n in (('MF-11a', 511), ('MF-11b', 510), ('MF-11c', 512)):
            '', ('merge_tiny',))
 
 
+# ------------------------------------------------------------------ MF-13: the 512th field and object order
+# stars-decomp objects.md §2.6 (corrected after MF-11): with numbers 0..510 taken,
+# number 511 is given only when no object sorts after the owner's minefields.
+for rid, owner, extra, title in (
+        ('MF-13a', 0, 'field1', 'player 0 has 511 fields; one player-1 field far away sorts after them'),
+        ('MF-13b', 0, 'salvage', 'player 0 has 511 fields; one salvage object (type 1) sorts after them'),
+        ('MF-13c', 1, 'field0', 'player 1 has 511 fields; one player-0 field far away sorts before them')):
+    r = run(rid, title)
+    if extra == 'field0':
+        r.field(0, 1400, 1400, 100, tag='other')
+    for i in range(511):
+        r.field(owner, 1005 + i % 23, 1005 + i // 23, 100, tag='tiny')
+    if extra == 'field1':
+        r.field(1, 1400, 1400, 100, tag='other')
+    elif extra == 'salvage':
+        r.lines.append('thing packet 0 0 1400 1400 0 4 1000 1000 1000')
+    r.fleet(owner, 1100, 1300, [(LAYER, 1)], tag='open')
+    r.lines[-1] += ' task lay'
+    if extra == 'field0':
+        r.case('A', 'MF-13', '511 player-1 fields of 100 (numbers 0..510), a player-0 field (sorts before), '
+               'and a player-1 layer in open space', 'a new 160 field (number 511) at (1100,1300)',
+               'refusal', ('limit', False, owner))
+    else:
+        r.case('A', 'MF-13', '511 player-0 fields of 100 (numbers 0..510), %s, and a layer in open space'
+               % ('a player-1 field' if extra == 'field1' else 'a salvage object'),
+               'no new field; "failed to lay" message (0x17e) for that layer',
+               'field 511 made (as in MF-11a)', ('limit', True, owner))
+
+
 def main():
     if sys.argv[1:] == ['--list']:
         for r in RUNS:
