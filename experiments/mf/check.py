@@ -128,6 +128,13 @@ def main():
                     if role == 'A' and stops:
                         ok = False
             verdict = 'HELD' if ok else 'CONTRADICTED'
+        elif kind == 'pairs':
+            rows = legs(run, fleets, lambda f: f['tag'].startswith('pair-'))
+            stops = [(f['tag'], o) for f, st, o in rows if st]
+            notes.append('%d/%d stopped %s; end offsets W %s, E %s' % (
+                len(stops), len(rows), stops, [o for f, st, o in rows if f['tag'] == 'pair-W'],
+                [o for f, st, o in rows if f['tag'] == 'pair-E']))
+            verdict = 'HELD' if not stops else 'CONTRADICTED'
         elif kind == 'legs':
             leg, pm = chk[1], chk[2]
             rows = legs(run, fleets, lambda f: f['tag'] == 'leg%d' % leg)
@@ -150,10 +157,12 @@ def main():
         elif kind == 'alone':
             rows = legs(run, fleets, lambda f: f['tag'] == 'mf4')
             n = sum(1 for _, st, _ in rows if st)
-            c = chk[2]
+            cnt = chk[2]
             for _ in range(n):
-                c -= gen.shrink(c)
-            want = gen.decay(c, len(run.fields[0]['planets'])) - (1280 if run.fields[0]['planets'] else 0)
+                cnt -= gen.shrink(cnt)
+            fd = run.fields[0]
+            # planets are counted with the count after this year's stops
+            want = gen.decay(cnt, len(gen.planets_in(fd['x'], fd['y'], cnt))) - (1280 if fd['planets'] else 0)
             t = fields(things, 0)
             got = int(t[0]['count']) if t else 0
             notes.append('%d stops %s; field %d, predicted %d' % (

@@ -193,3 +193,18 @@ same fleets, cycles 20000; and MF-04 again at cycles 25000:
 |---|---|---|---|---|
 | MF-04d-A | MF-4 | F2 alone (heavy 400, no planets), the MF-04 fleets (40 ly inside F2) | F2 = 400 less 20 per stop, then 2% decay (min 10) |  |
 
+
+### MF-02 follow-up (committed before this run)
+
+MF-02 with owner-qualified follow orders: in chains numbered A<B<C, A
+reached B's start in its first step (10 ly) and B never moved; in chains
+numbered C<B<A, B and A each got their whole remainder in one step and A was
+stopped twice in 6. So the 10-ly spacing did not test the fifth-of-warp²
+steps. Mutual chases keep both fleets deferred:
+
+### MF-02b: mutual chases inside a heavy field (mutual enemies)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-02b-A | MF-2 | 12 pairs 80 ly apart on one line, each Tank following the other at warp 9 | no stops: each moves in steps of about 17 ly (effective warp 4, below heavy safe 6) until they meet | per-year effective warp (9: 30 per mille per ly over about 40 ly each, 70% per fleet) |
+

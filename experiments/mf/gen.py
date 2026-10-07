@@ -237,6 +237,19 @@ r.case('A', 'MF-2', '12 chains on one line: C flies 81 ly east at warp 9, B (10 
        'C and B stopped at about the MF-1 rate; A never stopped (it moves in warp-4 steps)',
        'A stopped like B (effective warp per year for followers)', ('chain',))
 
+# follow-up after MF-02: with 10 ly between chain members the follower lands on its target in its
+# first step, which freezes the target (fleet-movement "Following"). Mutual chases keep both
+# fleets deferred for the whole year, so every step is a fifth of the remainder.
+r = run('MF-02b', 'mutual chases inside a heavy field (mutual enemies)')
+r.field(0, C[0], C[1], BIG, kind='heavy')
+for k, y in enumerate(rows(12, 1134, 1266)):
+    a = r.nfleet[1]
+    r.fleet(1, 1160, y, [(TANK, 1)], follow=(1240, y, a + 1), tag='pair-W')
+    r.fleet(1, 1240, y, [(TANK, 1)], follow=(1160, y, a), tag='pair-E')
+r.case('A', 'MF-2', '12 pairs 80 ly apart on one line, each Tank following the other at warp 9',
+       'no stops: each moves in steps of about 17 ly (effective warp 4, below heavy safe 6) until they meet',
+       'per-year effective warp (9: 30 per mille per ly over about 40 ly each, 70% per fleet)', ('pairs',))
+
 # ------------------------------------------------------------------ MF-3: effective warp from a short leg
 r = run('MF-03s', 'effective warp of a short final leg, standard field (mutual enemies)')
 r.field(0, C[0], C[1], BIG, kind='std')
