@@ -396,6 +396,105 @@ the load/unload planet-side amounts are in `TAKEOVER.md`. Cross-owner cargo
 given at order time is deferred to those later phases as described under
 Cross-owner cargo.
 
+## Waypoint upkeep and the remaining tasks
+
+After movement each turn the host walks every fleet's waypoint list and
+tidies it, then runs the tasks that were not covered above (route, patrol,
+transfer fleet). This is distinct from the order-time edits: it works on a
+fleet's own stored waypoints and state, so every behavior here can be set up
+by editing the host state (fleetlab HST editing) and reading the next turn —
+none of it needs a crafted order file or the registered serial. Status
+BINARY-ONLY throughout (read from the program, not yet measured), unless a
+line says otherwise.
+
+### Reaching a waypoint
+
+When a fleet arrives at its next waypoint (its position equals waypoint 1),
+that waypoint is consumed, and how depends on the fleet's **repeat-orders**
+flag:
+
+- **Repeat off:** the reached waypoint is dropped — the list shortens by one
+  and the fleet goes on to what was the next waypoint.
+- **Repeat on:** the reached waypoint is instead moved to the **end** of the
+  list, so the fleet cycles through its waypoints indefinitely. Two cases
+  fall back to a plain drop even with repeat on: a list of only two
+  waypoints, and a reached waypoint whose position already equals the current
+  last waypoint (no duplicate is appended).
+- A **patrol** waypoint never repeats, even with repeat orders on.
+- When a fleet reaches its **last** waypoint with no continuing task and no
+  planet route to follow, it goes idle and its owner is messaged that the
+  orders are complete.
+
+### Targets that moved, died or were captured
+
+A waypoint can name a fleet as its target instead of fixed coordinates. Each
+upkeep pass re-resolves that target:
+
+- **Target still exists:** the waypoint's coordinates are refreshed to the
+  target's current position, so a fleet ordered to meet a moving fleet keeps
+  chasing it. Only a position; the target's owner is not re-checked, so a
+  waypoint keeps tracking a target fleet even if it has changed hands
+  (been captured). An exception bit on the waypoint suppresses the refresh
+  (the waypoint then holds its coordinates).
+- **Target gone (destroyed, or no longer a fleet):** the target is cleared
+  and the waypoint becomes a plain go-to-coordinates waypoint at the
+  last-known position; the fleet still travels there and then treats it as an
+  ordinary reached waypoint. The order is not dropped outright.
+
+### Route task
+
+A fleet that reaches a planet while carrying the **route** task, where the
+planet belongs to the fleet's owner and has a route destination set, is
+automatically sent on to that destination (a fresh two-waypoint order):
+
+- the warp is the **ideal warp** for the distance, then reduced step by step
+  if the fleet lacks the fuel to sustain it;
+- if both the source and destination planets have a **stargate**, the fleet
+  carries no cargo, and the gate can move the fleet's heaviest hull over the
+  distance with no loss, the fleet is sent through the stargate instead
+  (warp set to the gate code).
+
+This chains across hops: each arrival re-routes. A planet with no route set,
+or not owned by the fleet, leaves the fleet idle rather than re-routing.
+
+### Patrol task
+
+Patrol sets a fleet to watch for enemy fleets within a stored **range** and
+move to intercept one. It never repeats (above). The rule for **which**
+in-range enemy a patrolling fleet intercepts, and the warp it uses, is read
+but not yet pinned down — this is the one item in this section that most
+needs a direct measurement, not a chosen rule.
+
+### Transfer fleet (give a whole fleet to another player)
+
+The transfer-fleet task hands the entire fleet to a named recipient. The host
+refuses it in three cases; an implementation that validates the gift up front
+reproduces the original:
+
+- **Recipient is not a real, active player** — an empty or eliminated slot,
+  or a **computer player**. A computer player never receives a gifted fleet.
+  Refused, with a message to the giver.
+- **Recipient treats the giver as an enemy.** If the recipient's relation
+  toward the giver is "enemy" (or the recipient otherwise declines gifts),
+  the transfer is refused.
+- **The fleet carries colonists.** A colonist-carrying fleet cannot be
+  gifted; the transfer is refused.
+
+Otherwise the fleet changes owner. (The computer-player and
+treated-as-enemy refusals are the two the coverage audit flagged as
+missing; the colonist refusal was already read.)
+
+### Oracle plan
+
+Every item above is reachable with **fleetlab HST editing** — set a fleet's
+waypoint list and its repeat-orders flag, point a waypoint at another fleet
+and then destroy or move that fleet, set a planet's route destination, set a
+patrol range with enemy fleets at chosen distances, set player relations, or
+include a computer player — then run one host turn and read the result. None
+of it needs the serial-gated OX order files, so this whole section can be
+measured now. The matching predictions are under Open experiments
+(**WU** prefix) below.
+
 ## Open experiments
 
 These rules are read from the original program and not yet measured in the
@@ -423,8 +522,9 @@ and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
   the merge-target note.
 - **OX design hull/parts.** Submit a design on a hull above the player's tech,
   and one whose engine is stripped; confirm the original stores both (hull
-  kept, engine slot back-filled with the basic engine) rather than rejecting.
-  Confirms "Design legality (hull not entitled, or every part stripped)".
+  kept, engine slot back-filled with Quick Jump 5 to capacity) rather than
+  rejecting. Confirms "Design legality (hull not entitled, or every part
+  stripped)".
 - **OX minefield detonate.** Submit a detonate-setting order naming another
   player's minefield, and one naming a field kind that cannot detonate;
   confirm the original accepts both. Confirms "Minefield detonate-setting".
@@ -432,6 +532,35 @@ and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
 - **OX split.** Split some ships off a loaded fleet; confirm the new fleet
   has exactly the ordered ships, a capacity-proportional share of the cargo,
   and the source's battle plan and waypoints. Confirms "Split".
+
+The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
+editing**, not crafted order files, so none needs the registered serial:
+
+- **WU repeat vs drop.** Give a fleet three waypoints and run it onto the
+  second, once with the repeat-orders flag off and once on; confirm the
+  reached waypoint is dropped in the first case and moved to the end of the
+  list in the second. Confirms "Reaching a waypoint".
+- **WU repeat fallbacks.** Repeat case with only two waypoints, and with a
+  reached waypoint equal to the last; confirm both fall back to a plain drop.
+- **WU patrol no-repeat.** Repeat flag on, a patrol waypoint reached; confirm
+  it is not rotated to the end.
+- **WU dead target.** Point a waypoint at another fleet, destroy that fleet,
+  and run a turn; confirm the waypoint keeps its last-known coordinates, loses
+  its target, and is not dropped. Confirms "Targets that moved, died or were
+  captured".
+- **WU live target.** Point a waypoint at a moving fleet; confirm the
+  waypoint's coordinates track the target's new position each turn.
+- **WU route task.** Set a planet's route destination and send an owned fleet
+  in on the route task; confirm it is re-dispatched to the destination at the
+  ideal warp (reduced for fuel), and that an empty fleet between two gated
+  planets is sent through the stargate. Confirms "Route task".
+- **WU patrol target.** Set a patrol range with enemy fleets at chosen
+  distances and strengths; observe which one the fleet intercepts and at what
+  warp. This is the measurement that pins the patrol target rule.
+- **WU transfer refusals.** Order a fleet gifted to: a computer player, a
+  player who treats the giver as an enemy, and (carrying colonists) a willing
+  ally; confirm each is refused, and that an empty fleet to a willing
+  non-enemy human transfers. Confirms "Transfer fleet".
 
 The order-ingestion predictions remain open:
 
