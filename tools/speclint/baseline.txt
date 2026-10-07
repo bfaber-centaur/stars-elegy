@@ -45,7 +45,7 @@ docs/ORDERS.md	pr-ref	cites PR #50: stars-elegy #50, `OBJECTS.md`). A detonate-s
 docs/ORDERS.md	pr-ref	cites PR #53: `KERNEL.md` (stars-elegy #53). A fleet whose waypoint targets another fleet is
 docs/ORDERS.md	pr-ref	cites PR #57: (stars-elegy #57), which this section defers to rather than restating.
 docs/ORDERS.md	pr-ref	cites PR #57: context in stars-elegy #57, `PRODUCTION-LAUNCH.md`). The host does **not**
-docs/ORDERS.md	pr-ref	cites PR #59: (see #59 for the plan analogue).
+docs/ORDERS.md	pr-ref	cites PR #59: (see #59 for the plan analogue). Client-reachable (the original client deletes
 docs/ORDERS.md	pr-ref	cites PR #59: battle-plan number against the owner's plans. See #59 for plan semantics (the
 docs/ORDERS.md	pr-ref	cites PR #59: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #65: not reproduce the whole-file abort. (See `LIMITS.md`, stars-elegy #65.)

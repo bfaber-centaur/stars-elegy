@@ -128,3 +128,45 @@ From an edited start with large legal stacks, client Merge Fleets to cross the
   vs empty-the-slot (task)** at 32768+.
 - **Elegy's chosen rule** matches the order's clamp (32768+ → 32766), as stated
   in `docs/ORDERS.md` "Merge order".
+
+### CO-07 — delete an in-use design (OR / elegy implementation Q11)
+
+Client-orders can delete a design that is in use through the original client
+(it raises the client's alert; DS-1, `ORACLE.md` "Client orders", stars-elegy
+#70/#74), so Q11 needs no crafted file. Set up one design **D** that is used
+three ways at once, then delete D:
+
+- a **fleet** holding ships of D (plus one ship of another design E, so the
+  fleet is not emptied);
+- a second fleet holding **only** D ships;
+- a **starbase** of design D on an owned planet;
+- a **production-queue** entry building D on another owned planet.
+
+Predicted effects (Elegy's Q11 rule):
+
+- the mixed fleet loses its D ships and keeps its E ship;
+- the D-only fleet is left with no ships and is **removed**;
+- the planet's **starbase is removed** (the planet keeps its other state);
+- the queue entry building D is **dropped**;
+- the design slot is cleared and later designs renumber (plan analogue, #59).
+
+Discriminators: does an emptied fleet vanish or linger as a zero-ship record;
+is the starbase actually removed (planet reads starbase-less); is the queue
+entry dropped or left dangling. Raw run to apparatus `evidence/fo/` (CO-07).
+
+### CO-08 — edit an occupied design slot (elegy implementation Q10)
+
+Try, through the client, to **change** a design slot that is in use (ships in
+the field, a starbase, or a queue entry building it).
+
+- **Prediction A (client refuses):** the original client does not let you edit a
+  design that is in use — a **client-limit** fact to record in `ORACLE.md`
+  "Client orders" (an occupied slot can only be deleted, CO-07, not edited).
+  This is Elegy's assumption and the likely outcome.
+- **Prediction B (client allows):** if the client does submit the change, read
+  whether the host **overwrites** the slot in place (existing ships then reading
+  as the new design) or **refuses** — the open BINARY-ONLY question. Elegy's
+  rule refuses either way.
+
+Either outcome is informative: A fixes a client limit, B resolves the host's
+overwrite-vs-refuse. Raw run to apparatus `evidence/fo/` (CO-08).

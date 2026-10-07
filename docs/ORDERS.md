@@ -213,7 +213,9 @@ BINARY-ONLY.
   use (ships, starbase, or queued), so a redefinition cannot silently mutate
   ships already built to the old design. Whether the original overwrites the
   slot in place (the ships then reading as the new design) or refuses is read
-  but unmeasured — BINARY-ONLY, pending the OX design-slot run.
+  but unmeasured — BINARY-ONLY, pending the **CO-08** client-orders run (if the
+  client refuses to edit an in-use slot, that is a client limit to record in
+  `ORACLE.md`; otherwise the run reads host overwrite-vs-refuse).
 - **Design delete effect (elegy implementation Q11).** Deleting a design
   removes every ship of that design: ships in the field are removed, a fleet
   left with no ships is removed, and a **starbase** of that design is removed,
@@ -221,7 +223,9 @@ BINARY-ONLY.
   destroyed design takes). A production-queue entry building the deleted design
   is dropped. Elegy applies this deterministically on the design-delete order;
   the slot renumbering of later designs follows the same rule as battle plans
-  (see #59 for the plan analogue).
+  (see #59 for the plan analogue). Client-reachable (the original client deletes
+  an in-use design with its alert, DS-1); the **CO-07** client-orders run
+  measures each effect. No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
   whole-design rejection, under the rules above: (1) a component above the
