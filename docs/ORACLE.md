@@ -807,6 +807,28 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   The race file must be copied into the games directory with the
   definition; `new-game` copies its extra arguments there. Copy it to a
   path outside the games directory first, because the reset deletes it.
+- More than one race file can follow the definition (`new-game DEF OUT
+  CYCLES a.r1 b.r1 …`); the definition names them by file name, one per
+  human player (UG16..UG21, up to six race files with ten computer
+  players).
+- A run can fail silently, with no new files: once, right after the
+  oracle reset, while the fleetlab tools were being rebuilt. Rerunning the
+  same definition worked. Check that `OUT/raw` has the `.HST` before
+  trusting a run.
+- **Race files** (`tools/fleetlab/racelab`, observed 2026-10-07, UG):
+  `racelab dump FILE.R1…` prints name, PRT, LRTs, growth, habitability,
+  the economy stats, the leftover-points spend, whether the checksum is
+  right, and the advantage points left. `racelab edit IN OUT prt=N
+  lrt=0xNNNN spend=N growth=N name=S plural=S` writes a new race file with a
+  recomputed checksum. PRT numbers run 0 HE, 1 SS, 2 WM, 3 CA, 4 IS, 5 SD,
+  6 PP, 7 IT, 8 AR, 9 JOAT; spend 0 surface minerals, 1 concentrations,
+  2 mines, 3 factories, 4 defenses.
+- The points come from StarsAPI's race calculator, compiled into the
+  fleetlab build. It agreed with every in-game legality result so far:
+  PG000.R1 changed to WM scores −12, and the game penalized that race
+  (message 0x117); PP (−37) and IT (−57) score below 0 as well and were
+  not used. Keep crafted races at 0 or above; with more than 50 points
+  left the homeworld gets the full 50-point spend.
 
 ### Component displays (observed 2026-10-07, CS-001)
 

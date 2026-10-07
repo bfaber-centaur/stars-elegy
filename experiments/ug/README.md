@@ -54,3 +54,33 @@ claims under test:
 - Every homeworld in a game starts with the same surface minerals (one
   draw set, before spends) and with planet 0's concentrations floored at
   30, not its own (UG-9, candidate LEGACY BUG).
+
+## Results
+
+All 21 games matched the model field by field with 0 mismatches, and so
+did UG01 rebuilt at cycles 30000. No prediction missed. The behavior is
+recorded in `docs/PARITY.md` "Universe generation".
+
+`homeworlds.py` prints each game's homeworld facts from the dump that
+`new-game` writes (`OUT/after.dump`):
+
+```sh
+python3 experiments/ug/homeworlds.py OUT/after.dump
+```
+
+Round 2 observations (UG16..UG21):
+
+- Starting tech by PRT was as listed above in every game.
+- Spends with L = 50: mines 10 → 35, factories 10 → 20, defenses 10 → 15,
+  surface minerals +500 kT (+250 on the smallest, +125 on the others),
+  concentrations +25 on the lowest and +13 on all.
+- IT and PP got the second planet (homeworld population 200 of 250,
+  second planet 100, 10 mines, 4 factories) on small, medium, large and
+  huge maps, and none on the tiny map of UG19.
+- UG-9 held in all six games, up to 16 players (UG21): every homeworld
+  without a spend had planet 0's concentrations floored at 30 and the
+  game's one surface-mineral draw.
+
+Tool note: the model's checker crashed on games with an AR homeworld
+(an owned planet with no installations); a one-line local patch was used
+for the runs, and the fix was sent to the decomp lane.
