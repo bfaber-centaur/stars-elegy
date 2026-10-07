@@ -55,6 +55,25 @@ claims under test:
   draw set, before spends) and with planet 0's concentrations floored at
   30, not its own (UG-9, candidate LEGACY BUG).
 
+## Round 3: BINARY-ONLY generation rules (UG22..UG30)
+
+Committed before running (definitions, race files and the model's
+predicted games in the apparatus, `evidence/ug/round3/` at ff01ff25; model
+stars-decomp `tools/universe.py` at 20e93b8). Each game is predicted
+field by field, as in rounds 1 and 2.
+
+| Game | Setup | Tests | Model's count or value |
+|---|---|---|---|
+| UG22 | tiny packed, seed 18, PG000 + 1 computer player | a tiny packed game below `N` = 60 | 57 planets |
+| UG23 | tiny packed, seed 2 | the same | 59 planets |
+| UG24 | small packed, seed 333 | a small packed game below 240 | 239 planets |
+| UG25 | large packed, seed 20 | the seed-dependent large packed count | 900 planets |
+| UG26 | UG01 + slower tech advances | the option changes nothing at creation | UG01 exactly, option word 0x2 |
+| UG27 | UG01 + computer players form alliances | the same | UG01, option word 0x10 |
+| UG28 | UG01 + public player scores | the same | UG01, option word 0x40 |
+| UG29 | small, seed 1, a PP race with 40–60 on every axis (pp20, 520 points) + 1 computer player | the second planet's 100 redraws all used: it takes the homeworld environment (LEGACY BUG) | second planet env 50/50/50 |
+| UG30 | the same race, seed 2 (control) | the second planet reaches 10% within 100 redraws and keeps its redrawn environment | second planet env 40/42/45 |
+
 ## Results
 
 All 21 games matched the model field by field with 0 mismatches, and so
