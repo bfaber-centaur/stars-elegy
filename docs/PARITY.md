@@ -528,8 +528,11 @@ Model under test (behavioral summary of the decomp reading):
   cost component (cost − already spent) is available.
 - Otherwise the item gets a partial percentage. Per component with
   available `a` (including what is already spent) and cost `c`:
-  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`, i.e. the largest whole
-  percentage whose truncated cost does not exceed `a`; the item's
+  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`. The formula is the
+  rule. It is close to "the largest whole percentage whose truncated cost
+  does not exceed `a`" but not equal to it: when `c` does not divide
+  `(a+1)·100` it can be one lower (`c = 9`, `a = 4`: 54, where 55 would
+  still cost only 4; KX-001 M4 observed 54). The item's
   percentage is the minimum over components. Every component is then
   charged up to `floor(c·p/100)`. The amount already spent on a partial
   unit is `floor(c·pct/100)`.
@@ -638,8 +641,9 @@ Result:
 - Every predicted quantity matched in all 15 cases, both repeats and the
   pilot. The corpus confirms, for this race and planet:
   - research tax first, truncating; leftover-only box skips it (C08);
-  - partial percentage = largest whole percent whose truncated cost fits,
-    minimum over cost components, all components charged to it (C01, C08,
+  - partial percentage = `max(floor((a+1)·100/c) − 1, floor(a·100/c))`
+    per component (not always the largest percentage that fits; see
+    the model above), minimum over cost components, all components charged to it (C01, C08,
     C12); spent amount of a carried partial = `floor(cost × pct / 100)`
     (C01 year 2, C11);
   - a zero-resource partial records a percentage with nothing spent (C11:
@@ -803,6 +807,55 @@ Result:
   points formula are not measured).
 - Nothing contradicted the white-box reading. Nothing here draws random
   numbers.
+
+Follow-up A5 (predicted and committed before it ran): does an Auto
+Alchemy prefix stay in the queue after the auto item it serves builds
+everything it can? Binary reading: an auto item whose count (capped by
+operable installations) is used up returns "done for this year", which
+moves to the next item without removing anything; only a non-auto item
+that completes removes its prefix. Case A5: pop 9000 (R 900), minerals
+100/100/0, queue Auto Alchemy, Auto Factories ×2, Mine ×2. Predicted:
+factories 2, mines 2; minerals 108/108/0; queue Auto Alchemy ×1, Auto
+Factories ×2 (prefix kept); research 70; alchemy (8), factories, mines and
+"completed its orders" messages. If the prefix were removed with the auto
+item's year, the queue would be Auto Factories ×2 alone.
+
+A6, A7 (predicted and committed before they ran). Re-reading the
+binary for the tie question showed that "limited by a mineral" is not
+decided by the minimum alone. While the percentages are compared
+(minerals first, then resources; a component replaces the current minimum
+only when strictly lower), two flags are kept: "some mineral is short"
+and "resources were strictly lowest". An **auto** item is treated as
+mineral-limited (skipped without a prefix, alchemy with one) whenever
+some mineral is short, even if resources are strictly lower; with a prefix
+the alchemy then uses the shortfall of the component that was lowest,
+which can be the resource shortfall. A **non-auto** item with a prefix
+buys minerals unless resources were strictly lowest, so a resource/mineral
+tie goes to the mineral. Ties between minerals keep the first in Fe, Bo,
+Ge order. The PQ-001 and KX-001 cases never had resources strictly below
+a short mineral on an auto item, so they did not test this.
+
+| Case | Start | Queue | Predicted (binary) | If only the minimum decided |
+|---|---|---|---|---|
+| A6 | pop 10 (R 1), minerals 100/100/0 | Auto Alchemy, Auto Factories ×2 | queue Mineral Alchemy ×1 @1%, Auto Alchemy ×1, Auto Factories ×2; minerals 100/100/0; research 0 | Factory ×1 @19% at the front |
+| A7 | pop 10 (R 1), minerals 100/100/0 | Auto Factories ×2, Mine ×1 | Auto Factories skipped; queue Auto Factories ×2, Mine ×1 @39%; research 0; no "completed" message | Factory ×1 @19% at the front, Mine untouched |
+
+(At pop 10 the auto cap is one factory. Germanium 0 gives 24% for the
+factory's germanium; 1 resource gives 19% for its 10 resources.)
+
+Observation (A5–A7, 2408):
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| A5 | factories 2, mines 2; minerals 108/108/0; queue Auto Alchemy ×1, Auto Factories ×2; research 70; alchemy (8), factories, mines, "completed its orders" | match |
+| A6 | queue Mineral Alchemy ×1 @1%, Auto Alchemy ×1, Auto Factories ×2; minerals 100/100/0; research 0 | match (binary) |
+| A7 | queue Auto Factories ×2, Mine ×1 @39%; research 0; no events | match (binary) |
+
+So an Auto Alchemy prefix stays in front of an auto item after that item
+builds (A5), and an auto item counts as mineral-blocked whenever any
+mineral is short, even when resources give the lower percentage (A6 with
+a prefix, A7 without). Tie-breaking (resources vs a mineral, mineral vs
+mineral) is not observed; it rests on the binary reading.
 
 Not covered: terraforming costs (Total Terraforming, Claim Adjuster),
 packets, scanners, starbase and ship costs, the tamper check's points
