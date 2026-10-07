@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Reset to a snapshot, edit one planet in GAME.HST and GAME.M1, generate
+# turns, and keep every file. Used for the PQ production experiments.
+#
+#   scripts/oracle/edit-turn OUTDIR [key=value...]     (keys: see hst-edit)
+#
+# Environment: GAME (default PG001), SNAPSHOT (default registered),
+# TURNS (default 1). OUTDIR gets edit-args.txt, before/, after/ (or
+# after1/, after2/, ... when TURNS > 1), turn.log and dump.txt.
+# Game files written by a registered copy are evidence: keep OUTDIR out of
+# this repository.
+source "$(dirname "$0")/lib.sh"
+
+[[ $# -ge 1 ]] || die "usage: edit-turn OUTDIR [key=value...]"
+outdir="$1"
+shift
+game="${GAME:-PG001}" snap="${SNAPSHOT:-registered}" turns="${TURNS:-1}"
+here="$(dirname "$0")"
+[[ -n "$ORACLE_D_DIR" ]] || die "edit-turn expects game files on D: (ORACLE_D_DIR)"
+g="$RUN/$ORACLE_D_DIR"
+
+mkdir -p "$outdir/before"
+"$here/stop" >/dev/null 2>&1 || true
+"$here/reset" "$snap" >/dev/null
+chmod u+w "$g" "$g"/* 2>/dev/null || true
+for ext in HST M1; do
+	"$here/hst-edit" edit "$g/$game.$ext" "$outdir/edited.$ext" "$@"
+	cp "$outdir/edited.$ext" "$g/$game.$ext"
+done
+rm -f "$outdir"/edited.*
+cp "$g/$game".* "$outdir/before/"
+printf '%s\n' "$@" >"$outdir/edit-args.txt"
+: >"$outdir/turn.log"
+dumps=("$outdir/before/$game.HST")
+for t in $(seq 1 "$turns"); do
+	"$here/start" >/dev/null
+	"$here/wait-for" "$ORACLE_HOME/refs/main-menu-open.png" 367 802 60 >/dev/null
+	"$here/turn" "$game.M1" >>"$outdir/turn.log" 2>&1
+	"$here/stop" >/dev/null 2>&1 || true
+	d="$outdir/after"
+	((turns > 1)) && d="$outdir/after$t"
+	mkdir -p "$d"
+	cp "$g/$game".* "$d/"
+	[[ -d "$g/BACKUP" ]] && cp -r "$g/BACKUP" "$d/"
+	dumps+=("$d/$game.HST" "$d/$game.M1")
+done
+"$here/hst-edit" dump "${dumps[@]}" | sed "s|$outdir/||" | tee "$outdir/dump.txt"

@@ -406,3 +406,190 @@ Planned:
 - differential fixture for the clean 10% / 100%-habitability run;
 - follow-up tests varying growth rate and habitability to determine how the
   accumulator interacts with other modifiers.
+
+## Production Queues
+
+Status: MEASURED (PQ-001: 15 cases plus two repeats and a pilot, 20
+generated years, one planet, one race; 2026-10-07). This section is the production track; it does not
+touch population or movement results.
+
+### PQ-001 — production-queue boundary corpus
+
+Question: does one year of J-RC3 production follow the queue algorithm
+read from the binary in the private `stars-decomp` notes, at the boundaries
+where plausible implementations differ (partial builds, mineral shortfall,
+auto items, alchemy, research tax, queue caps)?
+
+Method. Every case starts from the `registered` oracle snapshot (PG001,
+2407). Before the turn, Endeavor (planet 7) and player 1 are edited in both
+`PG001.HST` and `PG001.M1` with the StarsAPI codec (decode, change fields,
+re-encode; an unmodified file round-trips byte-identically). Then
+`turn PG001.M1` runs one year with no client orders. The 2408 `.HST` and
+`.M1` are decoded for surface minerals, installations, the production
+queue, the player's "resources to research this year" field and the year's
+event records.
+
+Common starting edits, unless a case says otherwise: mines 0 (so nothing is
+mined), factories 0, defenses 10 (unchanged), research budget 0%,
+"contribute only leftover resources to research" off, surface minerals
+500/500/500 kT, `excessPop` 80 (unchanged). With no factories the planet's
+resources are `R = population / 10` (population in units of 100).
+Race costs (PG001, observed in the player block): factory 10 resources +
+4 kT germanium, mine 5 resources, defense 15 resources + 5/5/5 kT, alchemy
+100 resources.
+
+Model under test (behavioral summary of the decomp reading):
+
+- The research tax `floor(R × budget% / 100)` is taken first, unless the
+  leftover-only box is set.
+- Items are processed in order. A unit is completed when every remaining
+  cost component (cost − already spent) is available.
+- Otherwise the item gets a partial percentage. Per component with
+  available `a` (including what is already spent) and cost `c`:
+  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`, i.e. the largest whole
+  percentage whose truncated cost does not exceed `a`; the item's
+  percentage is the minimum over components. Every component is then
+  charged up to `floor(c·p/100)`. The amount already spent on a partial
+  unit is `floor(c·pct/100)`.
+- A non-auto item that ends partial stops the queue; later items get
+  nothing. An auto item that is short of a mineral is skipped (nothing
+  spent) and the walk continues.
+- Auto items build at most `min(count, cap)` per year, cap = operable
+  installations after this year's growth minus installed; they stay in the
+  queue. A resource-limited auto item that ends partial inserts a hidden
+  ×1 item of the real type at the queue front carrying the percentage, and
+  stops the queue.
+- Auto Alchemy as the last item ignores its count, converts 100 resources
+  into 1 kT of each mineral per unit, and leaves a Mineral Alchemy ×1
+  partial at the front. Auto Alchemy before another item buys exactly that
+  item's mineral shortfall (1 kT of all three minerals per 100 resources)
+  and is removed with it when that item completes.
+- A non-auto installation order above `max(maximum, operable) − installed`
+  is clipped to that cap, with a message.
+- All resources left at the end go to research. A queue that empties, or
+  is walked to the end with nothing mineral-blocked, sends "completed its
+  orders".
+
+Predictions (written before any PQ-001 case ran). Queue notation:
+`Item ×count @pct%`. "Research" is the player's resources-to-research for
+the year. Minerals are Fe/Bo/Ge.
+
+| Case | Start (differences from common) | Queue | Predicted 2408 |
+|---|---|---|---|
+| C01 | pop 1050 (R 105) | Factory ×20 | factories 10; Ge 458; queue Factory ×10 @59%; research 0 |
+| C01 year 2 | (C01 result, no edits) R = 115 + 10 | — | factories 20; Ge 420; queue empty; research 30; "completed its orders" |
+| C02 | pop 2000 (R 200), Ge 10 | Factory ×5, Mine ×5 | factories 2, mines 0; Ge 0; queue Factory ×3 @74%, Mine ×5; research 173 |
+| C03 | pop 2000, Ge 2 | Auto Factories ×100, Mine ×5 | factories 0, mines 5; Ge 2; queue Auto Factories ×100; research 175; no "completed" message |
+| C04 | pop 230 (R 23) | Auto Mines ×100 | mines 4; queue Mine ×1 @79%, Auto Mines ×100; research 0 |
+| C05 | pop 2500 (R 250), minerals 100/100/100 | Auto Alchemy ×1 | minerals 102/102/102; queue Mineral Alchemy ×1 @50%, Auto Alchemy ×1; research 0; alchemy message |
+| C06 | pop 4000 (R 400), minerals 100/100/1 | Auto Alchemy ×1, Factory ×1, Mine ×2 | factories 1, mines 2; minerals 103/103/0; queue empty; research 80 |
+| C07 | pop 2500, minerals 100/100/1 | Auto Alchemy ×1, Factory ×1, Mine ×2 | factories 0, mines 0; minerals 102/102/2; queue Mineral Alchemy ×1 @46%, Auto Alchemy ×1, Factory ×1 @49%, Mine ×2; research 0 |
+| C08a | pop 1070 (R 107), budget 15% | Factory ×20 | factories 9; Ge 464; queue Factory ×11 @19%; research 16 |
+| C08b | as C08a, leftover-only on | Factory ×20 | factories 10; Ge 457; queue Factory ×10 @79%; research 0 |
+| C09 | pop 500, factories 50, mines 48 (R 100) | Auto Mines ×100, Auto Factories ×3 | mines 55, factories 53; queue unchanged; research 35; "completed its orders"; minerals = start + mined − 12 Ge (mining not predicted) |
+| C10 | pop 1000, factories 995 (R 200) | Factory ×10 | factories 1000; Ge 480; queue empty; research 150; clipped-order message |
+| C11 | pop 50 (R 5), minerals 100/100/2 | Factory ×1 @59%, Mine ×10 | factories 1; Ge 0; queue Mine ×10 @19%; research 0 |
+| C12 | pop 1000 (R 100), minerals 3/2/100 | Defenses ×5, Mine ×2 | defenses 10, mines 0; minerals 1/0/98; queue Defenses ×5 @59%, Mine ×2; research 92 |
+
+Second batch, predicted after C01–C12 had run and before these ran:
+
+| Case | Start (differences from common) | Queue | Predicted |
+|---|---|---|---|
+| C13 | pop 1010 (R 101), defenses 40 | Auto Defenses ×100 | defenses 45; minerals 475/475/475; queue unchanged; research 26; "completed its orders" |
+| C14 | C04 repeated, two years | Auto Mines ×100 | 2408 as C04; 2409: mines 9, queue Mine ×1 @79%, Auto Mines ×100, research 0 |
+| C07r | C07 repeated | as C07 | as C07 |
+
+C13 tests the operable-defenses cap `ceil(P/25)` with P the population
+after this year's growth (1111 → 45, so 5 may be built; `floor` gives 4,
+pre-growth population gives 1). C14 tests that the hidden partial item is
+completed first the next year and the auto item spawns a new one.
+
+What each case discriminates:
+
+- C01, C08, C11: the partial percentage (59% for 5 of 10 resources, not
+  50%), and the remaining cost of a carried partial (C11: a 59% factory
+  needs exactly 5 resources and 2 kT Ge, not 41% of cost). C11 also
+  predicts that a zero-resource partial records 19% with nothing spent.
+- C02 vs C03: a non-auto item short of minerals stops the queue; an auto
+  item short of minerals is skipped.
+- C04, C05: hidden partial items spawned by auto items; C05 also whether
+  Auto Alchemy's count is ignored (count respected would give 101/101/101,
+  research 150).
+- C06, C07: the alchemy prefix, including that alchemy raises all three
+  minerals, not only the missing one.
+- C08a vs C08b: research tax before production, and the leftover-only box.
+- C09: auto caps come from operable installations after growth, and the
+  auto count limits the build.
+- C10: the clip of non-auto installation orders.
+- C12: the partial percentage is the minimum over components (Bo 59%, not
+  Fe 79% or a 40% ratio).
+
+Observation (2408 unless noted; decoded from the oracle's `.HST` and `.M1`;
+every value in the predicted columns was also checked: minerals,
+installations, queue, research, messages):
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| C01 | factories 10; Ge 458; Factory ×10 @59%; research 0 | match |
+| C01 year 2 (2409) | factories 20; Ge 420; queue gone; research 30; "factories built" (10) and "completed its orders" | match |
+| C02 | factories 2, mines 0; Ge 0; Factory ×3 @74%, Mine ×5; research 173 | match |
+| C03 | mines 5, factories 0; Ge 2; Auto Factories ×100 left; research 175; no "completed" message | match |
+| C04 | mines 4; Mine ×1 @79%, Auto Mines ×100; research 0 | match |
+| C05 | minerals 102/102/102; Mineral Alchemy ×1 @50%, Auto Alchemy ×1; research 0; alchemy message | match |
+| C06 | factories 1, mines 2; minerals 103/103/0; queue gone; research 80; alchemy, factory, mines and "completed" messages | match |
+| C07, C07r | minerals 102/102/2; Mineral Alchemy ×1 @46%, Auto Alchemy ×1, Factory ×1 @49%, Mine ×2; research 0; alchemy message | match, both runs |
+| C08a | factories 9; Ge 464; Factory ×11 @19%; research 16 | match |
+| C08b | factories 10; Ge 457; Factory ×10 @79%; research 0 | match |
+| C09 | mines 55, factories 53; queue unchanged; research 35; "completed its orders"; minerals 514/554/528 | match (mining was not predicted: +14/+54/+40 kT from 48 mines) |
+| C10 | factories 1000; Ge 480; queue gone; research 150; clipped-order message first | match |
+| C11, C11r | factories 1; Ge 0; Mine ×10 @19%; research 0 | match, both runs |
+| C12 | defenses 10; minerals 1/0/98; Defenses ×5 @59%, Mine ×2; research 92; no event at all | match |
+| C13 | defenses 45; minerals 475/475/475; Auto Defenses ×100 left; research 26; "completed its orders" | match |
+| C14 | 2408 as C04; 2409: mines 9, Mine ×1 @79%, Auto Mines ×100, research 0, "5 mines built" | match |
+
+Pilot P0 (unedited PG001 plus Factory ×5, budget 15%): 5 factories, Ge
+545 + 8 mined − 20 = 533, research 8 = floor(58 × 15%), queue gone,
+"completed its orders".
+
+Result:
+
+- Every predicted quantity matched in all 15 cases, both repeats and the
+  pilot. The corpus confirms, for this race and planet:
+  - research tax first, truncating; leftover-only box skips it (C08);
+  - partial percentage = largest whole percent whose truncated cost fits,
+    minimum over cost components, all components charged to it (C01, C08,
+    C12); spent amount of a carried partial = `floor(cost × pct / 100)`
+    (C01 year 2, C11);
+  - a zero-resource partial records a percentage with nothing spent (C11:
+    19% on a 5-resource mine);
+  - a non-auto item short of a mineral stops the queue (C02); an auto item
+    short of a mineral is skipped, spends nothing, and suppresses
+    "completed its orders" (C03);
+  - auto mines/factories/defenses build `min(count, cap)`, cap from the
+    operable count after this year's growth (C09, C13: `ceil(P/25)` for
+    defenses), and stay queued;
+  - a resource-limited auto item leaves a hidden ×1 partial of its real
+    item at the queue front, which is finished first next year (C04, C14);
+  - Auto Alchemy ignores its count when last (C05), and as a prefix buys
+    the item's mineral shortfall as kT of all three minerals and leaves a
+    Mineral Alchemy partial when resources run short (C06, C07);
+  - non-auto installation orders above `max(maximum, operable) − installed`
+    are clipped with a message (C10);
+  - leftover resources go to research whether the queue empties or stops
+    (C02, C06, C09, C10, C13).
+- Nothing contradicted the white-box reading.
+- Repeats (C07r, C11r) were identical. Nothing in these cases is known to
+  draw random numbers; mining (C09, C14 year 2) was not predicted.
+
+Not covered (open): ship and starbase designs, terraforming, mineral
+packets, planetary scanners, Genesis Device, Mineral Alchemy LRT rates,
+other race costs (e.g. cheap factories), ultimate-recycling scrap bonus,
+non-100% habitability caps, items with count 0 or an empty queue block,
+whether "completed its orders" repeats every year for an auto-only queue
+(seen for one year in C09/C13), and message wording (only ids were read).
+
+Evidence: edited inputs, every resulting game file, decoded dumps, the
+prediction model and a SHA-256 manifest are in the private
+`bfaber-centaur/stars-oracle-apparatus` repository under `evidence/pq001/`.
+Tooling to repeat a case: `scripts/oracle/edit-turn` with
+`scripts/oracle/hst-edit` (docs/ORACLE.md, "Setting up a state").
