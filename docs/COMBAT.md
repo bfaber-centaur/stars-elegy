@@ -609,8 +609,11 @@ used to leave out:
 - Claim Adjuster pays half the resources for terraform items.
 
 In combat the design cost is used only for target choice ("Cost" above).
-The combat evidence for it is indirect: target choice among designs of
-different cost in CB-009 (Humanoid JOAT at tech 26).
+Oracle evidence from combat is indirect: target choice among designs of
+different cost in CB-009 (Humanoid JOAT at tech 26). Colony-ship minerals
+in TK T-30 (`TAKEOVER.md`, Colonization) match the base cost and
+miniaturization exactly at tech 3 and 26, including the rounding of the
+reduction.
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
