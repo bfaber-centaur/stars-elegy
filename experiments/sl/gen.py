@@ -61,7 +61,7 @@ def limit_a(ctl=False):
     return s
 
 
-def limit_b(ctl=False):
+def limit_b(ctl=False, units=100):
     # SL-10: player 0 at 512 with fleets 3 (10 damaged Scouts) and 5 at the planet;
     # player 1 at 512 with fleet 3 holding 32765 Scouts.
     s = TECH + 'relation 0 1 2\nrelation 1 0 2\n'
@@ -73,7 +73,7 @@ def limit_b(ctl=False):
         s += f'fleet {p} 4 at 1020 {1230 + 20 * p} ships 1:1 fuel 300\n'
         s += f'fleets {p} 6-511 at 1020 {1230 + 20 * p} ships 1:1 fuel 300\n'
         s += f'fleet {p} 5 at {x} {y} planet {planet} ships 0:1 fuel 50\n'
-    s += 'fleet 0 3 at 1306 1060 planet 17 ships 0:10 dmg 0:100:50 fuel 500\n'
+    s += f'fleet 0 3 at 1306 1060 planet 17 ships 0:10 dmg 0:{units}:50 fuel 500\n'
     s += 'fleet 1 3 at 1169 1145 planet 8 ships 0:32765 fuel 1638250\n'
     return s
 
@@ -101,7 +101,9 @@ def starbases(ctl=False):
 
 
 SPECS = {'sl-routes': routes(), 'sl-limit-a': limit_a(), 'sl-limit-a-ctl': limit_a(True),
-         'sl-limit-b': limit_b(), 'sl-limit-b-ctl': limit_b(True), 'sl-starbases': starbases(),
+         'sl-limit-b': limit_b(), 'sl-limit-b-ctl': limit_b(True),
+         # follow-up: 300 damage units, so a year's repair cannot hide the merged damage
+         'sl-limit-b300': limit_b(units=300), 'sl-limit-b300-ctl': limit_b(True, units=300), 'sl-starbases': starbases(),
          # controls: no build at planets 4 and 12 (mining and repair baselines), richer planet 15
          'sl-starbases-ctl': starbases(True)}
 

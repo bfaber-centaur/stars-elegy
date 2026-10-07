@@ -80,6 +80,11 @@ Every building planet has population 1000 (100,000 colonists),
 - The control has the same fleets with empty queues. It shows what the
   year does to fleet 3's damage without a build, such as repair at the
   starbase.
+- **SL-10 follow-up** (`sl-limit-b300`, added after the first runs and
+  committed before its own). This is the same setup with fleet 3 at
+  50% / 300 units. The merge predicts 11 Scouts at 45% / 375 units.
+  After that year's repair, the final units should be 375 less the
+  repair that its control (`sl-limit-b300-ctl`) shows on 300 units.
 
 ### `sl-starbases` (player 0 JOAT + Improved Starbases; player 1 AR + Improved Starbases)
 
