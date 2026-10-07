@@ -122,3 +122,8 @@ OUTDIR`, built on `base/raw/GT.HST`, one pinned year, checked with `check.py OUT
 | GT-004-G2 | gate encoding | player 1 (base tech 3, below the gate's requirement) Laser DD, the same setup, planets 193 to 158 | at planet 158, fuel 100: gate use does not check the owner's tech | refused (0xe6 or 0xe2) |
 | GT-004-G3 | gate encoding | player 0 Laser DD at planet 98 whose Space Station has the gate in its second orbital slot (slot 10), to planet 27 | at planet 27, fuel 100 (any orbital slot counts) | refused 0xe6 (only the first slot read) |
 | GT-004-G4 | gate encoding | player 0 Laser DD at gated planet 3, warp 11 to planet 39 whose starbase has no gate | stays at 3, fuel 100, only 0xe2 (destination gate) | moves at normal warp; fuel used |
+
+GT-004 result: G1, G2 and G3 jumped (0x4e, at the destination planet) and G4 stayed with only 0xe2,
+as predicted. `check.py` reports MISSED for all four on the fuel field alone: the cases wrote "fuel
+100" for "no fuel used", but these fleets ended the year over Space Stations, which refilled them to
+280 mg. Evidence: apparatus `evidence/gt/gt004`.

@@ -458,6 +458,13 @@ everything of that design is lost (CONFIRMED, GT-001: 1250 ly and 500 kT
 through 100/250 lost the fleet; 1251 ly was refused). The damage of each
 gate type matched in GT-001 N1–N6 (one stream).
 
+- **What makes a gate** (CONFIRMED, GT-004): a planet has a gate when it
+  has a starbase whose design holds a stargate in any orbital slot. That
+  design is the planet's own starbase design, so redefining the design
+  changes every planet that uses it; nothing else on the planet records
+  the gate. A Space Station with the gate in either of its two orbital
+  slots worked, and a player whose tech is below the gate's requirement
+  could still use it. A gate jump is asked for with waypoint warp 11.
 - **Source:** the gate on the starbase of the planet the fleet is at, owned
   by the fleet owner or a friend. "Friend" is the gate owner's relation
   toward the fleet owner; the fleet owner's own view of the gate owner does

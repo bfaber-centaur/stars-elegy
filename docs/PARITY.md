@@ -4034,6 +4034,17 @@ in three streams, 12 GT-003 cases, 6 TP cases). Raw evidence: apparatus
   5,000 kT, germanium first then boranium; at tech sum 150 nothing
   happened. The human homeworld never traded.
 
+#### GT-004: what makes a gate (MEASURED, one year)
+
+Predictions committed before the run (487627f). Starbase design 0 of both
+players was redefined as a Space Station with a Stargate any/any in its
+first orbital slot. Laser Destroyers with a warp-11 waypoint to another
+such planet jumped (message 0x4e), for a player at tech 26 and for one at
+tech 3. So did one leaving a Space Station whose gate sat in the second
+orbital slot. One aimed at a planet whose starbase had no gate stayed,
+with only message 0xe2. The fleets that ended over a Space Station were
+refilled with fuel, as any fleet over a starbase that can refuel is.
+
 ### Not tested
 
 Packet limits (32,760 and 16,300 kT), PP terraforming as rates and the
