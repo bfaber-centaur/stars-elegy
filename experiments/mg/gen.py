@@ -130,6 +130,21 @@ r.case('C', 'M-5', 'Scout X, fuel 2, next leg about 330 ly at warp 10, own empty
        'H1: 0x03d (capacity 50 below the need) or 0x03c, X keeps 2. H2: Y gets 2 (0x02d)', '')
 
 
+# ------------------------------------------------------------- MG-004 load-optimal fuel at an own planet with a starbase
+# MG-003 matched H1 for fleet targets, yet at planets without a starbase (MG-002 E..I) the order did nothing and the
+# fleets left. Does a planet with a starbase (a fuel source) behave like a fleet target?
+r = Run('MG-004', 'load-optimal fuel at own planets with a starbase (follow-up to MG-002 and MG-003)',
+        'sbdesign 0 0 Orbital Fort, empty, empty, empty, empty, empty = Fort\n')
+for n, fid, fuel, to, warp in ((15, 0, 1, (1020, 1380), 6), (18, 1, 280, (1324, 1172), 6)):
+    x, y = XY[n]; r.own(n, 0, 1000, sb='0')
+    r.add('fleet 0 %d planet %d at %d %d ships 0:1 plan 0 fuel %d %s to %d %d warp %d' % (fid, n, x, y, fuel, FUEL, to[0], to[1], warp))
+r.case('A', 'M-5', 'Laser DD, fuel 1, load-optimal fuel at own planet 15 with an Orbital Fort, next leg 400 ly at warp 6',
+       'if the order runs as with a fleet target: 0x03c and the fleet waits (no load, H1); '
+       'if planets are skipped as in MG-002: no message and the fleet leaves', '')
+r.case('B', 'M-5', 'Laser DD, fuel 280, load-optimal fuel at own planet 18 with an Orbital Fort, next leg 20 ly',
+       'if the order runs: surplus offered to the planet; else no message, fuel kept', '')
+
+
 def main():
     if sys.argv[1:] == ['--list']:
         for r in RUNS:

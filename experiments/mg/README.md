@@ -37,7 +37,7 @@ Checked against the existing message records before this batch was built:
 
 ## Predictions (stars-decomp reading)
 
-MG-003 was added after the MG-002 fuel cases missed, and committed before its own run.
+MG-003 was added after the MG-002 fuel cases missed, and MG-004 after MG-003. Each was committed before its own run.
 
 ### MG-001: PP packet terraforming and impact messages; a gate jump to an enemy gate
 
@@ -72,4 +72,11 @@ MG-003 was added after the MG-002 fuel cases missed, and committed before its ow
 | MG-003-A | M-5 | Laser DD X, fuel 50, load-optimal fuel targeting own empty Laser DD Y (deep space), next leg 340 ly at warp 6 | H1: 0x03c with the shortfall, X keeps 50, Y 0. H2: X gives all 50 to Y (0x02d 50) |  |
 | MG-003-B | M-5 | the same with X fuel 280 and a 20-ly next leg | H1: X keeps about the need for 20 ly and Y gets the rest (0x02d). H2: Y gets all 280 |  |
 | MG-003-C | M-5 | Scout X, fuel 2, next leg about 330 ly at warp 10, own empty Laser DD Y | H1: 0x03d (capacity 50 below the need) or 0x03c, X keeps 2. H2: Y gets 2 (0x02d) |  |
+
+### MG-004: load-optimal fuel at own planets with a starbase (follow-up to MG-002 and MG-003)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MG-004-A | M-5 | Laser DD, fuel 1, load-optimal fuel at own planet 15 with an Orbital Fort, next leg 400 ly at warp 6 | if the order runs as with a fleet target: 0x03c and the fleet waits (no load, H1); if planets are skipped as in MG-002: no message and the fleet leaves |  |
+| MG-004-B | M-5 | Laser DD, fuel 280, load-optimal fuel at own planet 18 with an Orbital Fort, next leg 20 ly | if the order runs: surplus offered to the planet; else no message, fuel kept |  |
 
