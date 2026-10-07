@@ -13,6 +13,8 @@ import org.starsautohost.starsapi.encryption.Decryptor;
 //       starbase=0|1 (planet's has-starbase flag; 1 keeps the existing design slot)
 //       race edits on player 0: prt=N lrt=HEX (32-bit LRT word) stat=I:V[/I:V...] (race stat I = byte 0x36+I of the full data)
 //       hab=C,C,C,L,L,L,H,H,H (race hab centre/low/high per axis grav,temp,rad; full data bytes 8..16)
+//       tech=E,W,P,C,EL,B (current tech levels; full data bytes 0x12..0x17)
+//       mt=HEX (Mystery Trader items owned, 16-bit mask; full data bytes 0x4a..0x4b, little-endian)
 public class ProdTool {
   static long le32(byte[] d, int o) { return (d[o]&0xffL)|(d[o+1]&0xffL)<<8|(d[o+2]&0xffL)<<16|((long)d[o+3])<<24; }
   static String hex(byte[] d, int n) { StringBuilder sb=new StringBuilder(); for(int i=0;i<n;i++) sb.append(String.format("%02x",d[i]&0xff)); return sb.toString(); }
@@ -70,6 +72,8 @@ public class ProdTool {
         if (kv.containsKey("prt")) { d[0x44]=(byte)Integer.parseInt(kv.get("prt")); ch=true; }
         if (kv.containsKey("lrt")) { long v=Long.parseLong(kv.get("lrt"),16); for (int k=0;k<4;k++) d[0x46+k]=(byte)(v>>(8*k)); ch=true; }
         if (kv.containsKey("stat")) { for (String sv: kv.get("stat").split("/")) { String[] f=sv.split(":"); d[0x36+Integer.parseInt(f[0])]=(byte)Integer.parseInt(f[1]); } ch=true; }
+        if (kv.containsKey("tech")) { String[] t=kv.get("tech").split(","); for (int k=0;k<6;k++) d[0x1a-8+k]=(byte)Integer.parseInt(t[k]); ch=true; }
+        if (kv.containsKey("mt")) { int v=Integer.parseInt(kv.get("mt"),16); d[0x4a]=(byte)v; d[0x4b]=(byte)(v>>8); ch=true; }
         if (kv.containsKey("hab")) { String[] h=kv.get("hab").split(","); for (int k=0;k<9;k++) d[8+k]=(byte)Integer.parseInt(h[k]); ch=true; }
         if (ch) p.encode();
       }

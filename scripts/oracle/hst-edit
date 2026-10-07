@@ -9,6 +9,8 @@
 # Edit keys (planet defaults to 7): planet= fe= bo= ge= pop= excess= mines=
 # factories= defenses= leftover=0|1 researchPct= queue=SPEC|none, where SPEC
 # is id:count:pct:kind[,...] with kind 1 = planetary item, 2 = ship design.
+# Player 0 race and tech: prt= lrt=HEX stat=I:V[/I:V] hab=... tech=E,W,P,C,EL,B
+# mt=HEX (see starsapi/ProdTool.java).
 # Needs git and a JDK; network on first run.
 source "$(dirname "$0")/lib.sh"
 

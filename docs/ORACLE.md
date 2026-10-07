@@ -664,6 +664,26 @@ experiments/sc/check.py RUN CB.XY OUT/after.dump
 - Visibility did not depend on the random stream: SC-001 generated with
   cycles 20000 and 30000 gave different bytes and identical views.
 
+### Component displays (observed 2026-10-07, CS-001)
+
+- `hst-edit edit` also takes `tech=E,W,P,C,EL,B` (current levels) and
+  `mt=HEX` (Mystery Trader items owned). Edit `PG001.HST` and `PG001.M1`
+  the same way; opening the `.M1` shows the edited race, with no turn
+  needed. Race checks (message 0x117) happen only when a turn is
+  generated, so display-only setups may be outside the point budget.
+- Technology Browser: Help → Technology Browser (`alt+h b`); Space steps
+  to the next item through every category, wrapping at the end. The item
+  pane is at (395, 257), 362×350.
+- Ship & Starbase Designer: F4. "Available Hull Types" radio at (303, 307),
+  "Starbases" at (303, 240). Click the hull combo (730, 212) twice to give
+  it focus with the list closed; Down then steps through the hulls (Return
+  or Escape would close the dialog). The panel shows the slot layout and
+  the cost of one hull for this race.
+- The planet status panel (left, "Defense Type", "Def Coverage") gives the
+  homeworld's 10 defenses' coverage for the best defense the tech allows.
+- CS-002: designs using engines the race may not build (HE-only, IFE,
+  NRSE) were kept at tech 26; parts above the owner's tech are not.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
