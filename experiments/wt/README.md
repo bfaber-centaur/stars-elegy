@@ -73,3 +73,89 @@ Raw evidence: stars-oracle-apparatus `evidence/wt/wt000`, `wt000s` (cycles
   point. The fleet was removed, the Trader's met mask became `0002`, and
   player 1's tech went from 3 everywhere to 5,6,3,3,4,3 (+6 levels in
   total, as in OB-004-D).
+
+## Batch WT-001..004: predictions
+
+These predictions are from stars-decomp #21 (commit f1daf60,
+`objects.md` §5b, O-43..O-53), restated as behavior. They were committed
+before any WT-001..004 run. Outcome sets come from the decomp's
+`objects.py mtmeet`. `gen.py --list` prints the same table.
+
+- WT-001..003 are deterministic. Each runs at cycles 20000 and again at
+  26000 as a control.
+- WT-004 runs once per value in `gen.STREAMS`: 16 cycles values with
+  distinct startup ticks.
+- Not run:
+  - O-45, stability names: it is a report-text reading.
+  - O-53, computer planets: there is no computer player in the Combat Lab
+    base.
+  - The 25th-redraw LEGACY BUG: about 1% of meetings for a maxed player
+    missing one part, which 16 streams cannot reach.
+- Message checks are byte matches in the player file's event block, whose
+  record layout is not decoded.
+- In WT-001, player 1 has electronics 10, so its JOAT scouts see unknown
+  ends within R/4 = 50 ly. The F2 research gift is still 6 levels in every
+  `mtmeet` outcome for tech 3,3,3,3,10,3.
+- In WT-004 the O-49 outcome set is (`mtmeet --item 0x1000 --year 0`):
+
+  | Gift | Ships | Probability |
+  |---|---|---|
+  | Lifeboat | 1 | 1/6 |
+  | Lifeboat | 2 | 1/12 |
+  | Scout or Probe, each | 1 | 1/8 |
+  | Scout or Probe, each | 2 | 1/6 |
+  | Scout or Probe, each | 3 | 1/24 |
+  | Scout or Probe, each | 4 | 1/24 |
+
+- O-51 adds "nothing" with 1/5 and scales the rest by 4/5.
+- A jiggling end keeps its known bit. Only a jump clears it (O-30).
+
+### WT-001: wormhole destination knowledge, what transits, aiming at the Trader (mutual enemies)
+
+| Case | Setup | Predicted | Rules out |
+|---|---|---|---|
+| WT-001-A1 | O-43: player 0 scout 40 ly from end 0 (known to both players, destination known to none) at warp 9, waypoint on the wormhole | scout at end 1's start position (1240,1040) | stays at end 0 |
+| WT-001-A2 | O-43: the transit sets the destination mask on both ends for the traveller only | end 0 and end 1 destination mask 0x1; end 1 known mask has bit 0x1 | destination bit for player 1 too |
+| WT-001-G | O-43: player 1 scouts beside both ends of an unknown pair, no transit | both ends known to player 1 (known mask bit 0x2); destination mask 0 on both | destination known once both ends are seen |
+| WT-001-B1 | O-46: scout 30 ly from end 4 with a plain waypoint at its position, warp 6 | scout at (1380,1220) in normal space | scout at end 5's start (1200,1240) |
+| WT-001-B2 | O-46: scout 30 ly from end 4 with a waypoint on the wormhole, warp 6 | scout at end 5's start position (1200,1240) | stays at (1380,1220) |
+| WT-001-C | O-46: scout flies 60 ly east along y=1150 over end 6 (20 ly along its path), plain waypoint | scout at (1070,1150) | scout at end 7 (1300,1350) |
+| WT-001-D | 5.7: player 0 warp-10 packet from (1166,1370) toward planet 6 (1166,1017); end 8 sits at its 100 ly point (1166,1270) | packet near (1166,1270) (within 1 ly), not near end 9 (1390,1160) | packet at end 9 |
+| WT-001-E | 5.7: Trader 0 at (1200,1100) heading east at warp 8 ends its 64 ly move on end 10 (1264,1100) | Trader 0 at (1264,1100), destination unchanged | Trader at end 11 (1050,1390) |
+| WT-001-F1 | O-47: player 0 fleet with 5000 kT 60 ly west of Trader 1 (heading east, warp 9), waypoint on the Trader, warp 9 | fleet at (1200,1300), kept with its cargo; no trade | fleet follows the Trader to (1281,1300) and trades |
+| WT-001-F2 | O-47: player 1 fleet with 5000 kT flying onto (1281,1300), Trader 1's end point | fleet consumed; Trader 1 at (1281,1300) with met mask 0x2; player 1 gains 6 levels in total | no trade |
+
+### WT-002: Trader research gifts: one step keeps accumulated research; an owned part becomes research
+
+| Case | Setup | Predicted | Rules out |
+|---|---|---|---|
+| WT-002-A | O-50: player 0 at 26 in five fields and 0 in biotech with 20 accumulated in biotech, research 0%, field energy; 5000 kT to Trader 0 (item 0) | biotech 0 -> 1, biotech accumulated research still 20, other fields 26; message 0x109 | 40 (doubled kept) or 0 (cleared) |
+| WT-002-B | O-52: player 1 at tech 5 everywhere owning the Anti Matter Torpedo (mt 0x40); 7400 kT to Trader 1 offering it | research: exactly 8 levels in total (sum 30 -> 38); mt still 0x0040; message 0x109 | a part, or another level count |
+
+### WT-003: Trader part bits and a full design table
+
+| Case | Setup | Predicted | Rules out |
+|---|---|---|---|
+| WT-003-A00 | O-48: player 0 (mt 0) trades 5000 kT with Trader 0 offering bit 0 | part Multi Cargo Pod: bit 0x0001 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A01 | O-48: player 0 (mt 0) trades 5000 kT with Trader 1 offering bit 1 | part Multi Function Pod: bit 0x0002 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A02 | O-48: player 0 (mt 0) trades 5000 kT with Trader 2 offering bit 2 | part Langston Shell: bit 0x0004 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A03 | O-48: player 0 (mt 0) trades 5000 kT with Trader 3 offering bit 3 | part Mega Poly Shell: bit 0x0008 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A04 | O-48: player 0 (mt 0) trades 5000 kT with Trader 4 offering bit 4 | part Alien Miner: bit 0x0010 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A05 | O-48: player 0 (mt 0) trades 5000 kT with Trader 5 offering bit 5 | part Hush-a-Boom: bit 0x0020 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A06 | O-48: player 0 (mt 0) trades 5000 kT with Trader 6 offering bit 6 | part Anti Matter Torpedo: bit 0x0040 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A07 | O-48: player 0 (mt 0) trades 5000 kT with Trader 7 offering bit 7 | part Multi Contained Munition: bit 0x0080 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A08 | O-48: player 0 (mt 0) trades 5000 kT with Trader 8 offering bit 8 | part Mini Morph: bit 0x0100 added; tech unchanged; message 0x10c | research or another part |
+| WT-003-A09 | O-48: player 0 (mt 0) trades 5000 kT with Trader 9 offering bit 9 | part Enigma Pulsar: bit 0x0200 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A10 | O-48: player 0 (mt 0) trades 5000 kT with Trader 10 offering bit 10 | part Genesis Device: bit 0x0400 added; tech unchanged; message 0x10f | research or another part |
+| WT-003-A11 | O-48: player 0 (mt 0) trades 5000 kT with Trader 11 offering bit 11 | part Jump Gate: bit 0x0800 added; tech unchanged; message 0x10b | research or another part |
+| WT-003-A | O-48: all twelve trades together | player 0 mt 0x0fff, tech 26 everywhere |  |
+| WT-003-B | O-49: player 1 with all 16 design slots used trades 5000 kT with Trader 12 offering a ship | fleet consumed; no new fleet or design; mt unchanged; message 0x150 | a ship |
+
+### WT-004: wormhole jumps keep destination knowledge; ship gifts (one run per stream)
+
+| Case | Setup | Predicted | Rules out |
+|---|---|---|---|
+| WT-004-A | O-44: ten class-2 pairs at 30 years (6%/year), known to player 0 with known destination | each end either jiggles (each axis within 12 ly; years 31; known and destination bit 0x1) or jumps (years 0; known bit 0x1 cleared; destination bit 0x1 kept) | a jump clears the destination mask |
+| WT-004-B | O-51: player 0 at tech 26 owning all twelve parts trades 5000 kT with Trader 0 (item 0) | nothing (message 0x10e) 1/5, else ship: one of M.T. Lifeboat (Nubian) 1/4, M.T. Scout 3/8, M.T. Probe 3/8 (Mini Morph); mt unchanged | research or a part |
+| WT-004-C | O-49: player 1 (tech 3, 2 designs) trades 5000 kT with Trader 1 offering a ship (year index 0) | ship: one of M.T. Lifeboat (Nubian) 1/4, M.T. Scout 3/8, M.T. Probe 3/8 (Mini Morph) in design slot 2; 1 ship 2/3 or 2 ships 1/3, plus 0..count more for the Mini Morphs (objects.py mtmeet); new fleet at the trade point with full fuel; mt unchanged | no ship, or a ship elsewhere |
+

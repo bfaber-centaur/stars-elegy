@@ -55,7 +55,8 @@ def parse(path):
         elif line.startswith('player ') and 'energy=' in line:
             p = int(line.split()[1])
             st['players'][p] = dict(tech=[int(kv[k]) for k in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio')],
-                                    mt=kv.get('mt', '?'))
+                                    mt=kv.get('mt', '?'),
+                                    accum=[int(x) for x in kv.get('accum', '0,0,0,0,0,0').split(',')])
     return st
 
 

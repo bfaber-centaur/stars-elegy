@@ -21,6 +21,8 @@ import org.starsautohost.starsapi.items.Items;
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
+//   accum P FIELD N                 set P's accumulated research in FIELD (resources toward
+//                                   the next level; dumped as accum=)
 //   field P FIELD                   set the current research field
 //   defqueue P ID:COUNT[,...]|none  set P's default production queue for new colonies (at
 //                                   most 12 items; ID = planetary item id, 0 auto mines,
@@ -429,6 +431,7 @@ public class CombatLab {
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
+        Map<String, Long> accums = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
@@ -458,6 +461,7 @@ public class CombatLab {
                         break;
                     }
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "accum": accums.put(t[1] + " " + t[2], Long.parseLong(t[3])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "mt": {
@@ -669,6 +673,13 @@ public class CombatLab {
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
+            for (Map.Entry<String, Long> e : accums.entrySet()) {
+                String[] pf = e.getKey().split(" ");
+                if (Integer.parseInt(pf[0]) != k) continue;
+                int i = Arrays.asList(TECH).indexOf(pf[1]);
+                if (i < 0) throw new Exception("accum: unknown tech field " + pf[1]);
+                Util.write32(p.fullDataBytes, 0x18 + 4 * i, e.getValue());
+            }
             if (fields.containsKey(k)) {
                 if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
