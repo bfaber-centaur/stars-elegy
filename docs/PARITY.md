@@ -3763,7 +3763,7 @@ is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
 
-## Race design (RD-1..RD-6, RD-P1..RD-P10)
+## Race design (RD-1..RD-7, RD-P1..RD-P12)
 
 Predictions were committed before the runs (80037c8). `experiments/rd/` holds
 the case tables (`races.tsv`, `README.md`) and the game definitions. Raw race
@@ -3846,3 +3846,28 @@ colonists per resource and race stat 15 are repaired without any penalty.
 That differs from game creation, where stat 15 = 1 set the flag. The base
 game has one player, so message 0x182 to other players was not observable.
 A second year after a punished case was not run.
+
+### Follow-up: AR spends, growth 0, several players (MEASURED, RD-7, RD-P11, RD-P12)
+
+Predictions were committed before the runs (60bd6ef, 50f14ba). The decomp's
+model matched every case: `universe.py check` gave 93 matches and 0
+mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
+
+- **AR leftover spend (RD-7).** Five human AR races (34 points, L 34)
+  differed only in the spend, plus one computer player.
+  - The minerals spend (0) and the concentrations spend (1) applied as for
+    other PRTs: 98/88/85 became 107/97/111.
+  - The mines, factories and defenses spends (2, 3, 4) were lost. Those
+    homeworlds had no installations and unchanged minerals and
+    concentrations: an AR homeworld's installations are set to 0 after the
+    spend.
+- **Growth 0 in a running game (RD-P11)** is punished, unlike growth above
+  20: message 0x117, flag 0x10, growth set to 1. Nothing else changed,
+  since growth 1 gives 7329 points.
+- **Several players (RD-P12).** Player 0's race in the 6-player RD-7 game
+  was edited to −1058 points.
+  - It was first clamped silently into range, then repaired: colonists per
+    resource 2500, growth 7, 985 points, flag 0x10.
+  - Player 0 got 0x117, and each of the four other human players got
+    0x182 ("hacked race discovered"). The computer player's `.M` file has
+    no message block at all, so whether it is told is not observable.

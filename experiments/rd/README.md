@@ -130,3 +130,16 @@ and the computer player) gets 0x182 "hacked race discovered". Player 0 is
 first clamped silently into range (factory output 5, colonists 700), is
 still negative, and is then repaired: colonists raised to 2500, growth
 lowered to 7 (985 points), flag 0x10.
+
+### Follow-up results
+
+Evidence: stars-oracle-apparatus `evidence/rd/rd07`, `rp11`, `rp12`.
+
+- RD-7: held. `universe.py check` 93 match, 0 mismatch. Players 2, 3 and 4
+  (spends 2, 3, 4): 0 mines, factories and defenses; surface 676/279/426
+  and concentrations 98/88/85 unchanged. Player 1: concentrations
+  107/97/111. Player 0: surface 761/449/511.
+- RD-P11: held (punished; growth 1, colonists 1800).
+- RD-P12: held for the humans (0x117 to player 0; 0x182 to players 1..4;
+  colonists 2500, growth 7). The computer player's `.M6` carries no
+  message block, so its 0x182 is not observable.
