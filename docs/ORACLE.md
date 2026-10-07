@@ -725,6 +725,33 @@ One turn on the Combat Lab base (`experiments/cltool`, cycles 20000):
   (SC-021); hidden Mystery Trader parts are not.
 - `mt 1 0x0003` survived the turn unchanged.
 
+### Route destinations and fleet ranges (observed 2026-10-07, SL-TOOL)
+
+- `planetset N route=DEST` gives planet N a route destination. DEST is
+  a planet number, and the tool writes DEST + 1. `route=raw:HEX` writes
+  the whole word, and `route=none` clears it. `combatlab dump` prints
+  the word as `route=` in the `pdetail` line.
+- `fleets OWNER FROM-TO <fleet tokens>` makes one fleet per id in the
+  range. Fleet ids are 0..511.
+- Fleet lines now show bytes 2, 3 and 5 and the waypoint count. A
+  fleet-name block (block 21), if present, prints as `fleetname`.
+- Starbase design ids in a queue are 16 + slot, kind 2 (`17:1:2` builds
+  starbase design 1).
+- Giving `sbdesign` lines for a player replaces that player's whole
+  starbase design list. Restate slot 0 if a planet's existing starbase
+  uses it.
+
+One turn on the Combat Lab base (`experiments/sltool`, cycles 30000):
+
+- Both route words came back unchanged.
+- Each new fleet had waypoint 1 at the route destination, task 8
+  (route).
+- Two Scouts from one queue item became one fleet with full fuel.
+- An Orbital Fort in the queue replaced a Space Station.
+- A player at 510 fleets built one more (fleet 510). Its queue kept the
+  rest at 28%, which looks resource-limited.
+- No fleet-name blocks were written.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh

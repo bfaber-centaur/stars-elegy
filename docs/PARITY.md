@@ -1881,7 +1881,7 @@ AI player.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, round 5 CB-035 to CB-041, 2026-10-07; cloud
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, round 5 CB-035 to CB-041, round 6 CB-042 to CB-047, 2026-10-07; cloud
 oracle). Predictions from the private binary reading (stars-decomp
 `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
 at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
@@ -2323,7 +2323,51 @@ counted by distinct battle record. Every hit replayed with the checker,
   discriminated: a **JOAT** owner at its own planet with ten Freighters
   left, after losing its Fort and destroying propulsion-9 Destroyers,
   never gained in 8 streams (about 4% at the expected 1/3), and gained in
-  1 of 4 streams where its Fort survived. Open.
+  1 of 4 streams where its Fort survived. Resolved after the round by the
+  Combat decomp pass's exact replay of every CB-041 battle from its stream
+  (stars-decomp #22): the JOAT result is as predicted in 12 of 12 streams
+  (the 0 of 8 was chance), and in 4 AR streams an attempt would have
+  gained and none did, so the AR no-attempt rule holds (CONFIRMED by
+  replay, no new run).
+
+### Round 6 (CB-042 to CB-047)
+
+Predictions from the Combat decomp pass (stars-decomp #22, COMBAT.md #38)
+and committed here before each batch (bd91da5; 62e2792 and 69e1ef9 for
+two setups added after the first runs). Pinned runs; streams counted by
+battle record. The tooling check for this round is ORACLE.md "Production
+queues and Mystery Trader parts".
+
+- **Token cap, CONFIRMED (CB-042 to CB-044, 2 streams each).** Each
+  player first gets `255 / n` stacks; a starbase counts toward the 255
+  but not toward a quota; the second pass skips a fleet that does not fit
+  and goes on.
+  - Three players with 100 fleets each: 255 tokens, 85 each; left out
+    player 0's fleets 1..15 and players 1 and 2's fleets 0..14.
+  - At player 1's planet with an armed Orbital Fort, 140 and 131 fleets
+    (one with three designs): player 0 127 stacks, player 1 127 stacks
+    plus the Fort; left out player 0's 1..13 and player 1's 0..5.
+  - CB-039 with player 1's fleet 12 holding two designs: 255 tokens, 127 /
+    128; fleet 12 sat out and fleet 11 fought.
+  - The checker replayed every hit except one carried-damage hit in each
+    three-player stream (open for the decomp pass).
+- **Cargo in the speed code, CONFIRMED (CB-045, 2 streams).** Each ship's
+  mass is its design mass plus `C · c / F`, truncated (fleet cargo `C`,
+  the ship's cargo capacity `c`, fleet capacity `F`): a Medium and a Small
+  Freighter sharing 140 kT weighed 174 and 69 (codes 0 and 2); three
+  Medium Freighters with 212 kT weighed 139 each and with 213 kT 140.
+- **Queued ships lost with a starbase, CONFIRMED (CB-047, 2 streams).**
+  Player 1's homeworld queued 50 Destroyers, then 20 factories. Without
+  attackers the queue ended the year as 49 Destroyers (92% done on the
+  next) and the factories. When the Station was destroyed the Destroyer
+  item was gone and the factories stayed; the Destroyer built that year
+  (production comes before battles) fought and died.
+- **Mystery Trader items from battle: none gained (CB-046, MISSED).** A
+  player with every field at 26 and no Mystery Trader items destroyed six
+  Anti Matter Torpedo Destroyers (12 streams) or three Mini Morphs with
+  five more Mystery Trader parts (12 streams) and never gained an item.
+  With its biotechnology at 3 instead, the same 12 streams gave a
+  biotechnology level in 2 and still no item, so attempts happen. Open.
 
 ### Resolved reconciliation
 
@@ -2335,9 +2379,9 @@ counted by distinct battle record. Every hit replayed with the checker,
 
 ### Not tested
 
-Queued ships lost with a starbase (P-25), salvage at more than one point
-(E-8), the firing live-token recheck (no observable effect), Mystery
-Trader items from battle, the AR no-attempt rule (CB-041), minefields. Bombing and invasion: see
+Salvage at more than one point (E-8), the firing live-token recheck (no
+observable effect), minefields. Mystery Trader items from battle were
+never observed (CB-046). Bombing and invasion: see
 "Planet Takeover".
 
 ## Scanning
