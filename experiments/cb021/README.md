@@ -24,3 +24,11 @@ per round toward the station and all three are destroyed in round 4.
 
 "Yes" means weapons reaches level 4 in the same generation. Player 1 is at
 a planet it does not own and makes no attempt.
+
+## Result
+
+Frigate squares r0..r4 matched the table in all six streams, and all three
+frigates died in round 4. Weapons went from 3 to 4 in the 2401 file at
+12000, 16000 and 20000 and stayed 3 at 8000, 30000 and 50000, exactly as
+predicted; every research accumulator was 0. Six distinct records; all 24
+hits replayed with 0 mismatches. R-9 CONFIRMED.

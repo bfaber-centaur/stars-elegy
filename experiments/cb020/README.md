@@ -25,3 +25,11 @@ in and is destroyed in round 9.
 The 8000 and 20000 tactic 3/4 cells are CB-019 observations and are rerun
 only as controls. Tactic 5 paths: 20000 passes (5,5) in round 6 and (6,4)
 in round 8; 8000 reaches (6,5) in round 8.
+
+## Result
+
+All 14 new cells matched, and the tactic 5 Long DD was destroyed in round 9
+in all six streams (tactic 5 paths at 20000 and 8000 also as predicted).
+The six cycle counts gave six distinct battle records for each tactic.
+Every hit replayed with the stars-decomp checker (134256d), 0 mismatches.
+R-8 CONFIRMED.

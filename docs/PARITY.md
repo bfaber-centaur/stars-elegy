@@ -1055,9 +1055,10 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-2026-10-07; cloud oracle). Predictions from the private binary reading
-(stars-decomp `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for
-round 1, Q-1..Q-14 at 4a8c82b for round 2) were committed before every
+round 3 CB-020 to CB-022, 2026-10-07; cloud oracle). Predictions from the
+private binary reading (stars-decomp `docs/combat-predictions.md`:
+P-1..P-29 at 8cad60f for round 1, Q-1..Q-14 at 4a8c82b for round 2,
+R-8..R-10 at 134256d for round 3) were committed before every
 run (`experiments/cbNNN/README.md`).
 Rules marked CONFIRMED agree with both that reading and the oracle;
 CONTRADICTED means the oracle disagrees with the prediction as stated.
@@ -1136,7 +1137,8 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   Bazooka, Colloidal Phaser) attacking an immobile Laser Station moved
   identically until round 6, then stopped on (5,5) under tactic 3 and on
   (5,6) under tactic 4 (both 3 squares from the station), with the same
-  hits, in both of two seeds (CB-019).
+  hits, in both of two seeds (CB-019). Round 3 (R-8) predicted the end
+  square for tactics 3, 4 and 5 in six streams and all matched.
 
 ### Weapons and damage (CONFIRMED by replay)
 
@@ -1250,7 +1252,8 @@ stars-decomp checker at 4a8c82b except where noted below.
 - **Plan 0 "everyone" / "player 1" (Q-2, CONTRADICTED).** The same S1
   battle happened, identical to the "enemies" case, with plan 0
   "everyone" (three seeds) and "player 1" (one seed). The binary reading
-  predicted that usually no battle happens.
+  predicted that usually no battle happens. Round 3 (R-10) shows the
+  outcome depends on what the game handled earlier in the turn.
 - **Station targets ignore plan 0 (Q-3, CONFIRMED).** With plan 0
   primary "starbase" and no secondary, the Laser Station fired at enemy
   frigates (CB-016).
@@ -1286,6 +1289,49 @@ stars-decomp checker at 4a8c82b except where noted below.
   nothing), with every research accumulator 0. A random gain matches the
   binary reading; the level rising in the same generation contradicts
   its "the level stays until the next generation's research update".
+  Round 3 (R-9) predicted which streams gain, and all six matched.
+
+### Round 3 (CB-020 to CB-022)
+
+Every run was pinned (`tools/fleetlab/pinned-turn`). Cycle counts 8000,
+12000, 16000, 20000, 30000 and 50000 gave six distinct battle records for
+each setup. The binary reading predicted exact squares and outcomes for each
+stream. Every hit in the round-3 records replayed with the binary-derived
+checker (stars-decomp 134256d) with no mismatches.
+
+- **Tactic movement (R-8, CONFIRMED, 14 new cells).** In the CB-019 setup
+  (one Long Destroyer, Phaser Bazooka range 2 and Colloidal Phaser range 3,
+  against an immobile Laser Station), the final square matched the
+  prediction for tactics 3, 4 and 5 in every stream. Under tactic 5
+  ("maximize damage") the destroyer closed in and was destroyed in round 9
+  in all six streams. The binary reading's account, consistent with all
+  18 observed cells: tactics 3 and 4 score squares the same way, but
+  tactic 3 (like 5) limits how far it looks using the shortest weapon
+  range and tactic 4 the longest; ties use the random stream.
+- **Tech from battle per stream (R-9, CONFIRMED 6/6).** Player 0 (weapons
+  3, research 0%, other fields 26) had a Laser Station at its homeworld;
+  three player-1 frigates armed with Colloidal Phasers attacked it. The
+  frigates' squares in rounds 0 to 4 matched in all six streams, all died
+  in round 4, and weapons rose to 4 in the 2401 file in exactly the three
+  predicted streams (12000, 16000, 20000), not in the other three.
+- **Plan 0 "player i" and "everyone" (R-10, LEGACY BUG).** Player 0 owns a
+  planet with a Laser Station; player 1 sees player 0 as neutral, and
+  player 1's armed fleet attacking "enemies" sits there. Player 1's other
+  fleet, a lone hauler with a lower fleet number, is in a battle-free spot.
+  - With plan 0 "player 1", the game wrote a battle record with one
+    player, two tokens (the visitor's stack at (1,4), the station at
+    (4,4)) and no actions, in both seeds (CONFIRMED).
+  - With plan 0 "enemies", it was an ordinary battle: the station destroyed
+    all five frigates in round 4 (CONFIRMED).
+  - With plan 0 "everyone", the record was the same degenerate one,
+    byte-identical to the "player 1" record (CONTRADICTED; predicted an
+    ordinary battle).
+  - With plan 0 "player 1" and no lone hauler, no battle record at all.
+
+  Together with round 2, where "everyone" and "player 1" behaved like
+  "enemies" right after another battle, a station's plan 0 attack-who
+  other than "enemies" does not act as written: the outcome depends on
+  what the game handled earlier in the same turn.
 
 ### Resolved reconciliation
 

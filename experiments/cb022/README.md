@@ -27,3 +27,14 @@ Each is generated with `tools/fleetlab/pinned-turn` at cycles 20000 and
   the station fires.
 - `cb022-nolone`: no prediction (the slot's value on the turn's first ring
   is unknown). Reported for information.
+
+## Result
+
+- `cb022` (plan 0 "player 1"): a battle record with one player
+  (`players=1`, mask 0x3), two tokens (the frigate stack at (1,4), the
+  station at (4,4)) and no actions at all, in both seeds. CONFIRMED.
+- `cb022-enemies`: an ordinary two-player battle; the station destroyed
+  all five frigates in round 4 (both seeds). CONFIRMED.
+- `cb022-everyone`: CONTRADICTED. The same degenerate one-player record as
+  `cb022`, byte-identical to it for each seed, not an ordinary battle.
+- `cb022-nolone`: no battle record at all in either seed.
