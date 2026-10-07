@@ -1300,3 +1300,158 @@ stars-decomp checker at 4a8c82b except where noted below.
 Stack movement order by weight (P-9), queued ships lost with a starbase
 (P-25), the "moved" repair rate, starbase repair, salvage at more than one
 point (E-8), three or more players, minefields, bombing and invasion.
+
+## Scanning
+
+Status: MEASURED (SC-001 to SC-023, 25 valid runs, 2026-10-07; cloud
+oracle). Predictions
+S-1..S-24 from the private binary reading (stars-decomp
+`docs/scanning-predictions.md`, PR #6 at 3b5de74) were restated as a
+behavior model (`experiments/sc/sclib.py`) and committed with every case
+before the runs (`experiments/sc/README.md`; commits 91b46a5, 376cc45,
+04e892f). CONFIRMED below means the rule agreed with the oracle in every
+case that tested it; the counts say how many. This section states behavior
+only.
+
+### Method
+
+- Universe "Combat Lab" (`docs/ORACLE.md`), two JOAT players, one pinned
+  generation 2400 → 2401 per run (`tools/fleetlab/pinned-turn`). Both
+  homeworlds' planetary scanners removed (`planet N scanner none`) unless
+  the run tests planet scanners; tech 26 everywhere unless stated;
+  stationary fleets; viewers are player 0.
+- Targets sit at exact integer squared distances d² from one viewer, in
+  pairs just inside and just past each predicted bound. For every case the
+  case table names the plausible alternative rules that would predict the
+  other outcome.
+- Observation: each player's 2401 `.M` section (`combatlab dump`): partial
+  fleets (kind 3) or cargo-bearing ones (kind 4), planet report level and
+  starbase bit, foreign design blocks (partial or full), other players'
+  blocks. `experiments/sc/check.py` compares each case and also the whole
+  view of both players with the model.
+- Result: 453 cases in 25 runs, all as predicted, and no other
+  difference in either player's view (fleets, planets, designs, player
+  blocks). One further run, SC-021, was invalid: the game removed a
+  scanner part above the owner's tech from the design, and the view
+  matched the stripped design (`docs/ORACLE.md`); SC-023 repeated the
+  test with legal tech.
+- SC-001 regenerated under a different random stream (cycles 30000) gave
+  different bytes but the same views.
+- Raw files, dumps and checks: private `stars-oracle-apparatus`,
+  `evidence/sc/`.
+
+### Ranges
+
+- **Ship scanners (S-1, CONFIRMED at the edges tested).** Normal range:
+  Rhino 50 (d² 2500 seen, 2501 not), Mole 100 (10000 / 10001), Bat 0
+  (nothing at 1 ly). Penetrating range (edges below): Ferret 50,
+  Chameleon 45, Dolphin 100, Robber Baron 120, Elephant 200. Distance is
+  compared as d² ≤ R²; a target 50.01 ly from a 50 ly scanner is not
+  seen.
+- **Several scanners on one design (S-2, CONFIRMED).** Ranges combine as
+  ⌊⁴√Σ rᵢ⁴⌋: two Rhinos on a Large Freighter reach d² 3481 (59) but not
+  3482.
+- **No combination across a fleet (S-3, CONFIRMED).** A fleet uses its best
+  design's range: a fleet of two Rhino designs and a fleet of two Rhino
+  ships both missed a target at 55 ly.
+- **JOAT hull scanner (S-10, CONFIRMED).** A JOAT Scout with no scanner
+  part scans 20·elec / 10·elec (electronics 10: deep space 200 seen,
+  √40001 not; planet at 100 reported, √10001 not). With a scanner part
+  the two combine like S-2: Scout + Possum at electronics 10 saw 214 ly
+  (d² 45796) and not √45797; Scout + Elephant at electronics 16
+  penetrated to 217 (planet at d² 47089 reported, 47090 not), past the
+  Elephant's own 200.
+- **NAS (S-9, CONFIRMED).** Ship normal ranges double (Rhino 100: 10000
+  seen, 10001 not); ship penetrating ranges stay (NAS Ferret still
+  reported the planet at d² 2500 and saw the freighter orbiting it).
+  Planets use the best non-penetrating planetary scanner, doubled:
+  electronics 10 / energy 3 / bio 3 gave 560 ly and no penetration
+  (every deep-space freighter seen, none of 13 orbiting ones, no planet
+  reports).
+- **Planet scanners (S-7, S-8, CONFIRMED).** A planet scans with the best
+  planetary scanner the owner's current tech allows: electronics 5 →
+  150 ly, 6 → 220, and electronics 10 with energy and bio 3 → 320 with
+  160 penetration (planets within 160 reported; freighters orbiting
+  planets within 160 seen, beyond 160 not). The homeworld's installed
+  scanner did not limit this.
+
+### Penetration, planets and orbit (S-5, S-6, CONFIRMED)
+
+- Planets are reported only through penetrating range: a Mole 30 ly from
+  a planet reported no planet at all; with Ferret, Chameleon, Dolphin,
+  Robber Baron and Elephant the planet at d² = P² was reported and the
+  one at the next representable d² past it was not.
+- A fleet in orbit is seen only within both the normal and the
+  penetrating range: a freighter orbiting 30 ly from a Mole viewer was
+  unseen, and at each penetrating edge the orbiting freighter was seen at
+  d² = P² and unseen just past it.
+- The cloak test uses the penetrating range for an orbiting fleet: a
+  Stealth (35%) freighter orbiting the edge planet was unseen, while one in
+  deep space at the same distance was seen.
+
+### Cloaking (S-12, S-13, S-14, CONFIRMED)
+
+- Cloak points: Stealth 70, Super-Stealth 140, Ultra-Stealth 540,
+  Transport Cloaking 300. A fleet's points are weighted by stack mass and
+  divided by the fleet's mass plus its cargo (not fuel): u =
+  Σ(points·stack mass) / (Σ stack mass + cargo). Percent: u/2 up to 100;
+  50 + (u−100)/8 up to 300; 75 + (u−300)/24 up to 612; 88 + (u−612)/64
+  up to 1124; 96 (97 from 1380) below 1612; 98 above (all divisions
+  truncate).
+- Detection bound for cloak c: d² ≤ ⌊⌊(100−c)·R²/100⌋·(100−c)/100⌋.
+  Tested against R 50 (c 35, 17, 10, 55, 75, 85 and a mixed fleet at 18),
+  R 59 (c 26, 31, 45, where a single rounding would differ by one) and
+  R 100 under NAS (c 35). Shrinking the range first (⌊R(100−c)/100⌋) is
+  ruled out (SC-001 cases at d² 1053, 1721, 505, 153, 53).
+- Cargo dilutes: one Stealth Small Freighter (31 kT) is 35% empty, 17%
+  with 31 kT of cargo, 10% with 70 kT. Fuel does not (130 mg of fuel left
+  it at 35%). A Stealth freighter and a plain one in one fleet are 18%,
+  not the better stack's 35%.
+- Tachyon Detectors scale the target's cloak by 95% (one) and 93% (two),
+  rounded down: against Transport Cloaking (75%), a Mole saw to d² 625
+  with none, 841 with one (cloak 71) and 961 with two (cloak 69; rounding
+  to 70 would stop at 900).
+
+### Co-location and orbit reports (S-4, S-15, CONFIRMED)
+
+- A fleet at exactly the viewer's position is seen regardless of the
+  viewer's scanner or the target's cloak: a scannerless freighter saw a
+  98% fleet on its own square, and that blind 98% fleet saw it back. One
+  ly away, neither a blind nor a Bat Scanner viewer saw anything.
+- A planet orbited by a scannerless fleet is reported at level 1, by any
+  scanner (Bat included) at level 3, by a Robber Baron at level 4.
+
+### Starbases (S-16, CONFIRMED)
+
+A planet inside penetrating range whose starbase cloak c gives
+d² > ⌊(100−c)²·P²/10000⌋ is reported without its starbase (level 3, the
+starbase bit clear, no starbase design sent). Dolphin (P 100) against a
+Space Station with one Stealth Cloak (35%, unweighted points): starbase
+shown at d² 4225, hidden at 4226; with two (55%): shown at 2025, hidden
+at 2026.
+
+### Disclosure (S-20, CONFIRMED)
+
+- Designs of seen enemy ships arrive partial (hull and mass); a War
+  Monger viewer receives them in full (SC-015, whose race was over its
+  point budget and was degraded in the generated year, and SC-015L, a
+  legal War Monger race with five cheap LRTs).
+- A Claim Adjuster viewer receives each known player's block with that
+  player's habitability ranges and every tech level zero; with no contact
+  (SC-016N) no block for the other player is written at all.
+- Pick Pocket and Robber Baron viewers see the cargo of an enemy fleet at
+  their exact position (kind 4); 30 ly away, or with a Rhino at the same
+  position, the fleet arrives without cargo.
+
+### Allies (S-23, CONFIRMED in one run)
+
+Setting both players to friends (SC-001F) left both views identical to
+SC-001: allies do not share scanner coverage.
+
+### Not tested
+
+Wormholes, minefields, packets and the Mystery Trader (S-17, S-18, S-19;
+the Combat Lab universe has none), PP packet scanners and the IT gate
+scan, SD minefield detection and the population estimate (S-21, S-22,
+random), AR planet scanners (S-11), chase retargeting (S-24), and
+scanners on more than two players.

@@ -635,6 +635,35 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   not runs.
 - A generation takes a few seconds after DOSBox starts.
 
+### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
+
+```sh
+experiments/sc/gen.py CB.XY OUTDIR            # specs + case tables (docs/PARITY.md "Scanning")
+experiments/sc/check.py RUN CB.XY OUT/after.dump
+```
+
+- CombatLab keys added for this corpus: `planet N scanner none` (removes
+  the planetary scanner: scanner id 31), `prt P N` (primary trait, 0 HE …
+  9 JOAT) and `hab P C,C,C,L,L,L,H,H,H`. `combatlab dump` now prints, for
+  `.M` files, one `seen planet N owner=… level=L starbase=…` line per
+  planet report, and each full player block's habitability.
+- A player's `.M` holds one section per year since its last submission
+  (2400 and 2401 here); read the section whose `file turn=` matches the
+  generated year.
+- **Designs are checked against tech.** SC-021 gave player 0 electronics
+  10 and a Scout with an Elephant Scanner (electronics 16). In the
+  generated 2401 files the part was gone (`Scout, 1 Quick Jump 5, empty,
+  empty`, mass 18 → 12), and the turn's scanning matched the stripped
+  design. Keep every part within its owner's tech. (FM-004's LRT-gated
+  engines were kept; whether that check differs was not tested.)
+- Race edits and the point budget: JOAT → Claim Adjuster and JOAT + NAS
+  generated without message 0x117. JOAT → War Monger did not (SC-015:
+  0x117, colonists-per-resource stat raised from 10 to 23); adding No Ram
+  Scoop, Cheap Engines, Only Basic Remote Mining, Low Starting Population
+  and Bleeding Edge Tech (`lrt 0 0x1b80`) made it legal (SC-015L).
+- Visibility did not depend on the random stream: SC-001 generated with
+  cycles 20000 and 30000 gave different bytes and identical views.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take

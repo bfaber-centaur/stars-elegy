@@ -130,4 +130,28 @@ every part within the owner's tech.
 
 ## Results
 
-(after the runs)
+Every run was generated once with `pinned-turn` (cycles 20000) and
+checked with `check.py`; raw files, dumps and check outputs are in the
+private apparatus repository under `evidence/sc/`.
+
+| Run | Cases | Result |
+|---|---|---|
+| SC-001, SC-001F | 28 + 28 | all as predicted; views identical with friends |
+| SC-002 | 12 | all as predicted |
+| SC-003..SC-007 | 5 × 26 | all as predicted |
+| SC-008 | 26 | all as predicted |
+| SC-009 | 4 | all as predicted |
+| SC-010 | 21 | all as predicted |
+| SC-011..SC-013 | 8 + 8 + 43 | all as predicted |
+| SC-014 | 4 | all as predicted |
+| SC-015 | 3 | as predicted (full designs), but the race was over budget (0x117) |
+| SC-015L | 3 | all as predicted, legal race |
+| SC-016, SC-016N | 3 + 0 | as predicted, including the player blocks |
+| SC-017..SC-020 | 4 + 26 + 43 + 28 | all as predicted |
+| SC-021 | 28 | invalid: Elephant Scanner removed from the design (tech 10 < 16); 11 cases and 15 view items differ, all explained by a bare Scout |
+| SC-022, SC-023 | 5 + 26 | all as predicted |
+
+Beyond the case tables, the whole view of both players (every fleet,
+planet report, foreign design count and player block) matched the model in
+every valid run. SC-001 regenerated with cycles 30000 gave the same views.
+Behavior-level write-up: `docs/PARITY.md`, "Scanning".
