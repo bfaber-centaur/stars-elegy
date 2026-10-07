@@ -17,3 +17,14 @@ stars-decomp Q-11 (4a8c82b):
 - The weapons level itself stays 3 in the 2401 file.
 - Player 1, which lost only its own ships to a lower-tech enemy, gains
   nothing.
+
+## Amendment before the second batch
+
+The first batch (research at 15%) is confounded: with every other field
+at 26, ordinary research flows into weapons. In all six seeds player 0
+reached weapons 4 in 2401 and every accumulator read 0. The second
+batch sets player 0's research to 0% (`research 0 0`, a new CombatLab
+directive) and adds `cb018-control.spec`, identical except that player
+1's frigates are 280 ly away (no battle). Predictions unchanged: the
+control stays at weapons 3 with nothing accumulated; the battle runs
+gain one weapons level's cost (or the level) in about half the seeds.

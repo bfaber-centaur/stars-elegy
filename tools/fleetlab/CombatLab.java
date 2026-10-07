@@ -16,6 +16,7 @@ import org.starsautohost.starsapi.items.Items;
 // SPEC is line based ('#' starts a comment). Players are numbered from 0.
 //   tech P FIELD LEVEL              set a tech level (energy weapons prop con elec bio)
 //   lrt P MASK                      set the lesser racial traits bit mask (StarsAPI order)
+//   research P PCT                  set the share of resources spent on research
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -278,7 +279,7 @@ public class CombatLab {
         Decryptor dec = new Decryptor();
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
-        Map<Integer, Integer> lrts = new HashMap<>();
+        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
         Map<Integer, Map<Integer, Integer>> relations = new HashMap<>();
@@ -294,6 +295,7 @@ public class CombatLab {
                 switch (t[0]) {
                     case "tech": tech.put(t[1] + " " + t[2], Integer.parseInt(t[3])); break;
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
+                    case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "relation":
                         relations.computeIfAbsent(Integer.parseInt(t[1]), k -> new TreeMap<>())
                             .put(Integer.parseInt(t[2]), Integer.parseInt(t[3]));
@@ -449,6 +451,7 @@ public class CombatLab {
                 p.fullDataBytes[0x46] = (byte) (lrts.get(k) & 0xff);
                 p.fullDataBytes[0x47] = (byte) (lrts.get(k) >> 8);
             }
+            if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
             p.fleets = fleetCount.getOrDefault(k, 0);
