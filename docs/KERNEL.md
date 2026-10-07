@@ -1041,6 +1041,132 @@ needed number of **enabled** conditions wins; one winner and several
 winners get different messages, the others a loss message. What happens
 after a win is not covered here.
 
+## Random events
+
+When the game's random events option is on, the end of production (after
+growth and research, turn order step 4) runs, in this order: a comet
+strike, a planetary climate change, a new-minerals discovery and the
+Mystery Trader (`OBJECTS.md`). With the option off none of them runs
+(CONFIRMED, KX-004 E0: 40 years, no event).
+
+"Protected" below means: the planet is owned, its population (after this
+year's growth) is more than 50 units, and the year index (years since
+2400, before the year advances) is below 20. Population is in units of
+100 colonists.
+
+All three are CONFIRMED by KX-004: 23 events (9 comets, 2 climate
+changes, 12 new-mineral finds) from 17 distinct random streams and three
+game states, each reproduced exactly (concentrations, environment, surface
+minerals, population, queue and every message) by replaying the
+original's random generator with the draw order below, plus the
+protection and early-year cases (`PARITY.md` KX-004). That the original
+environment value moves with the current one is BINARY-ONLY (the dumps
+used do not show it). The probabilities are BINARY-ONLY: the oracle
+cannot sample them, since each startup tick gives one fixed stream.
+
+### Comet strike
+
+1. With chance 1/20 (`rand(20) = 0`) pick a planet `rand(planets)`, owned
+   or not.
+2. Stop (no further effect or draw) if the planet is protected, or if the
+   year index is below 10 (CONFIRMED, S3: no change at index 5).
+3. Size `e = rand(4)`: small, medium, large, huge.
+4. Message axis order `A`: start `[0, 1, 2]`; for i = 0, 1, 2 swap `A[i]`
+   with `A[rand(3)]`.
+5. Base amounts `b[i] = 50 + rand(250)` for minerals i = 0, 1, 2
+   (ironium, boranium, germanium).
+6. Struck-mineral order `B`: start `[0, 1, 2]`; swap `B[0]` with
+   `B[rand(3)]`, then `B[1]` with `B[1 + rand(2)]`.
+7. Messages: every player gets one naming the planet. The owner, unless
+   its race is Alternate Reality, gets the "colonists killed" form, which
+   also names environment axes `A[0..]` (one for small, two for medium,
+   three for large and huge); everyone else gets the plain form.
+8. Population (owner not AR): `P −= trunc(P·(20e + 25)/100)`, i.e. 25, 45,
+   65 or 85% killed, applied to this year's grown population.
+   Vectors (CONFIRMED): small 9237 → 6928; medium 9237 → 5081; large
+   8110 → 2839; huge 9237 → 1386.
+9. For k = 0 .. min(e, 2), mineral `m = B[k]`: `b[m] += 3000 + rand(17000)`;
+   then its concentration `+= 50 + rand(50)`, and for a huge comet a further
+   `15 + rand(15)`; capped at 200 (CONFIRMED: huge comet, 112 → 200).
+10. Surface minerals: every mineral, struck or not, gains `trunc(b[i]/16)`
+    kT (3–18 unstruck, 190–1268 struck).
+11. Environment: for axis d = 0 .. min(e, 2) **in index order** (gravity,
+    then temperature, then radiation): `s = 3 + rand(3)`, a huge comet adds
+    `3 + rand(3)`; `rand(2) ≠ 0` makes it negative. The current and the
+    original value both move by `s`, each clamped to 1..99.
+12. The planet's production queue loses every item except the automatic
+    ones (Auto Mines, Auto Factories, Auto Defenses, Auto Alchemy, Auto
+    Min/Max Terraform, Auto Mineral Packets), which keep their counts
+    (CONFIRMED: Auto Factories ×5 kept, Factory and a ship design dropped).
+
+**LEGACY BUG (CONFIRMED, KX-004 S2):** the axes the owner's message
+names come from `A`, while the axes that move are the first `e + 1` in
+index order. A small comet on planet 15 moved gravity +4 while the owner's
+message named radiation. For large and huge comets both cover all three
+axes. It is deterministic and affects only the message text.
+
+Unprotected unowned planets are struck the same way (no population,
+messages to every player). An AR owner gets the plain message and loses
+no population (BINARY-ONLY: no AR owner was struck).
+
+### Planetary climate change
+
+1. With chance 1/20 pick a planet `rand(planets)`; stop if protected.
+   There is no year-index minimum (CONFIRMED, S3: unowned planet 18 at
+   index 5).
+2. Axis `rand(3)`. The owner (if any) gets a message naming the axis.
+3. Magnitude `3 + rand(3)`; if that is 3, it becomes `6 + rand(3)`. So 4 or
+   5 (1/3 each), or 6, 7 or 8 (1/9 each). `rand(2) ≠ 0` makes it
+   negative.
+4. Current and original value move together, each clamped to 1..99.
+5. The production queue is cut to the automatic items, as for a comet.
+
+Vectors (CONFIRMED): S3, unowned planet 18 at year index 5, gravity
+50 → 44; S5, owned planet 7 at index 30, radiation 50 → 44, owner message
+naming radiation, queue cut to Auto Factories ×5.
+
+### New minerals
+
+1. With chance `1/(15 − size)` (`size` 0 tiny .. 4 huge; 1/15 on tiny),
+   pick a planet `rand(planets)`.
+2. Stop if the year index is below 10 (CONFIRMED, S3). No protection.
+3. Mineral `rand(3)`. The owner (if any) gets a message naming the planet
+   and mineral, even when nothing changes.
+4. If that concentration is below 180, it rises by `5 + rand(15)` (5..19).
+   The cap at 180 is BINARY-ONLY.
+
+Vectors (CONFIRMED): +13 ironium, +8 germanium, +16, +10, +19, +5, +14 on
+owned and unowned planets; unowned planets get no message.
+
+### Implementing
+
+Elegy draws from its own generator, so only the rules matter, not the
+original's stream. The draw order above is given so a parity harness can
+replay oracle runs exactly; the comet's draw sequence after the planet is
+`e`, three for `A`, three for `b`, two for `B`, then per struck mineral
+`rand(17000)`, `rand(50)` (and `rand(15)` if huge), then per moved axis
+`rand(3)` (twice if huge) and `rand(2)`.
+
+## Game options during a turn
+
+The game's option flags that matter after creation:
+
+- **Random events**: gates the three events above, the Mystery Trader and
+  wormholes (`OBJECTS.md`) and the ancient-artifact research bonus on
+  a planet's new owner (`TAKEOVER.md`). CONFIRMED off (E0) and on (KX-004).
+- **Public player scores**: a player's file holds another player's score
+  record only if (a) the game has been decided, or (b) that player is dead,
+  or (c) public scores are on and the year index of the file is at least
+  20, i.e. from the 2420 file on (CONFIRMED, KX-004 E1: own record only
+  through 2419, both from 2420 to 2548; E0 with the option off: own only
+  through 2440). (a) and (b) are BINARY-ONLY. A player always gets its own.
+- **Slower tech advances**: research (see Research, "Slower tech"; KX-003).
+- **Accelerated BBS play, maximum minerals, galaxy clumping**: used only
+  when the universe is created (`UNIVERSE.md`); the turn generator never
+  reads them (BINARY-ONLY: no reference in the turn code).
+- **Computer players form alliances**: read only by computer-player logic,
+  which this specification does not cover.
+
 ## Open experiments
 
 None for this specification. The three earlier items (Auto Alchemy before
@@ -1051,7 +1177,7 @@ reach are listed at the end of its section in `PARITY.md`.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001, KX-001..003 and TK-117 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001..004 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that

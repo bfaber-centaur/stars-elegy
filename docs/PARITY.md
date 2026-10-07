@@ -1238,7 +1238,12 @@ and game-record dump lines.
 
 ### KX-004 — random events and turn-time game options
 
-Status: PREDICTED. Predictions committed before any case ran.
+Status: CONFIRMED (comets, climate change, new minerals, public scores,
+random events off), with one draw-order correction (two draws, not three,
+for the struck-mineral shuffle) found in S1 and applied before S2–S5.
+Predictions were committed before any case ran; round 2 predictions
+before S2–S4 were examined. Rules: `KERNEL.md` "Random events" and "Game
+options during a turn".
 
 Question: what do the yearly random events (comet strikes, planetary
 climate change, new mineral deposits) do, when, and how often; and what do
@@ -1257,7 +1262,7 @@ events. `experiments/kx004/run-kx4.sh` generates one year per
 stream each year).
 
 - **E1:** game option byte `0x40` (random events on, public scores on),
-  300 years (2400 → 2700).
+  300 years (2400 → 2700) planned; stopped after 148 (see Results).
 - **E0 (control):** option byte `0x80` (random events off, public scores
   off), 40 years.
 
@@ -1392,6 +1397,50 @@ position 4 (tiny universe, 24 planets):
   same unowned comets as at 2430 (year index ≥ 10 suffices); 109 and 768
   give the same new minerals; 1098 changes nothing: planet 17 has more
   than 5,000 colonists and the year index is below 20.
+
+#### Results
+
+S1–S5 used `experiments/kx004/sweep.sh` (one year from a saved E1 state
+per cycles value).
+
+| Run | State | Runs | Outcome |
+|---|---|---|---|
+| E0 | events off, public scores off | 40 years | no event message, no environment or concentration change; own score record only (2401–2440) — as predicted |
+| E1 | events on, public scores on | 148 years (2401–2548) | public scores as predicted: own record only through 2419, both from 2420. No random event in any year: the cycles range reached only a few ticks (above) |
+| S1 | 2430, cycles 60000–3400 | 29 | 3 comets, 1 large comet on owned planet 17, 2 new-mineral finds; all reproduced after the shuffle correction |
+| S2 | 2430, cycles 3500–880 | 61 | medium comet on owned 11 with new minerals on 8, small comet on owned 15, 8 new-mineral finds; the rest no event; every run as replayed |
+| S3 | 2405 (index 5) | 6 | comet at tick 384 suppressed (too early), climate change on unowned 18 (gravity −6) still happens; new minerals at ticks 109 and 768 suppressed; tick 1098 nothing |
+| S4 | 2415 (index 15) | 5 | unowned comets (ticks 329, 384) and new minerals (109, 768) as at 2430; owned planet 17 protected at tick 1098 |
+| S5 | 2430, cycles 1995–1135 | 12 | huge comet on owned planet 2; climate change on owned planet 7 (radiation −6, message axis 2, queue cut) |
+
+Every event run is reproduced exactly by one tick's replay: each changed
+planet's concentrations and environment, every event message with its
+parameters, and for owned planets the surface minerals, population and
+queue. Totals: 9 comets (small, medium, large and huge; owned and
+unowned), 2 climate changes, 12 new-mineral finds, from 17 distinct
+startup ticks. E1 year 2422 failed once to generate and succeeded on a
+retry with identical inputs; `run-kx4.sh` now retries once.
+
+Owned-planet comet vectors (population after growth → after the comet):
+small 9237 → 6928, medium 9237 → 5081, large 8110 → 2839, huge 9237 →
+1386, i.e. `P − trunc(P·(20e + 25)/100)`. Each queue kept Auto Factories ×5
+only.
+
+Interpretation:
+
+- The comet's environment change hits the first `e + 1` axes in index
+  order, while the owner's message names axes from a separate shuffle.
+  S2's small comet on planet 15 moved gravity and its message named
+  radiation: a deterministic LEGACY BUG in the message.
+- The oracle's random events are a fixed function of the startup tick
+  for a given state. Sampling frequencies needs different streams, not
+  more years; the probabilities stay BINARY-ONLY.
+- Not reached: an Alternate Reality owner (plain message, no population
+  loss), the 180 concentration cap for new minerals, a clamp at 1 or 99,
+  the original environment value (not in the dumps used), and deciding
+  the game or dead players for score visibility.
+
+Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
 
 ## Fleet Movement
 

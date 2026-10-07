@@ -681,6 +681,20 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   To sample a random outcome, compare record hashes and count streams,
   not runs.
 - A generation takes a few seconds after DOSBox starts.
+- **Which stream a cycles value reaches** (KX-004, 2026-10-07). The
+  startup tick is `trunc(k·54.925)` ms for a small integer k, about
+  `k ≈ 70000/cycles`. Ticks identified by replaying random events: 35000
+  and 45000 → 109; 11500 → 329; 10500, 9800 → 384; 6000 → 659; 5200 → 768;
+  3700 → 1098; 2260, 2190 → 1812; 1985–1955 → 2032; 1750, 1710 → 2306;
+  1490 → 2691; 1210 → 3295; 1190, 1170, 1160 → 3405; 1165, 1155 → 3460;
+  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. Below
+  about 1200 the mapping is not monotonic. Runs down to cycles 880 still
+  took well under a minute each.
+- A range like `15000 + 37·year` reaches only two or three ticks, so a
+  long run of pinned years repeats the same few streams; with nothing else
+  drawing, yearly random events read the same draws every year (KX-004 E1:
+  148 years, no event). To sample random outcomes, choose cycles values
+  that reach different ticks.
 
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
