@@ -252,6 +252,17 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
   colony with a starbase and at an unowned planet. So the starbase decides,
   not the homeworld. BINARY-ONLY: a battle plan that would not attack the
   owner (for example "nobody") gives only the orbit report.
+  **When it is decided (BINARY-ONLY).** The test is made at the bombing
+  step, right after battles, against the state at that moment: the planet
+  is owned by another player (not unowned) and has no starbase, and the
+  viewer's fleet orbits it with a plan that attacks that owner. The report
+  itself is the ordinary end-of-year report, written from the planet as it
+  stands at the end of the year, provided the fleet is still in orbit. So
+  the two can differ when the planet changes between bombing and the end
+  of the year. The case that matters: bombing that kills the last colonists
+  leaves the planet unowned, and the viewer still gets a normal report of
+  it, where an end-of-year test would give the orbit report only.
+  Prediction SC-035 below.
 - **Remote miners (BINARY-ONLY).** A stationary fleet remote-mining an
   unowned planet that yields minerals gets a detailed report of it.
 - **Interstellar Traveler through gates, IT (CONFIRMED, OB-013).** From
@@ -441,6 +452,11 @@ fleet's or planet's ranges.
   SC-015, SC-015L).
 - A design is disclosed in full to every player whose forces fought it in
   a battle, even when every ship of it was destroyed (CONFIRMED, SC-031).
+  "Fought it" means took part in the same battle, whatever the sides
+  (BINARY-ONLY for allies): each player in a battle gets, in full, the
+  design of every ship stack and starbase of every other player in that
+  battle's record, a friend on the same side included. Each other player
+  in the battle also becomes a known player. Prediction SC-036 below.
   BINARY-ONLY: also to the owner of an SD minefield it struck, and
   (starbases) to a PP player whose packet that starbase caught.
 - A planet report without its starbase (starbase cloak) reveals no
@@ -449,6 +465,8 @@ fleet's or planet's ranges.
 ### Players
 
 - Another known player is identified by name only (CONFIRMED, SC corpus).
+- Taking part in a battle makes every other player in it known, allies
+  included (BINARY-ONLY; see Designs).
 - A **Claim Adjuster** viewer also receives each known player's
   habitability ranges, with every tech level shown as zero. With no contact
   it receives nothing about the other player (CONFIRMED, SC-016, SC-016N).
@@ -494,6 +512,19 @@ picks the nearest visible enemy fleet it can attack within
 9. Design disclosure after SD mine hits and PP packet catches.
 10. Three or more players, and scanners on moving fleets mid-year.
 11. Headings of chasers and of fleets travelling by stargate.
+12. **SC-035 Bombing check, decided at the bombing step.** A viewer's
+   bomber fleet (battle plan attacking the owner, no scanner on any fleet
+   at the planet) orbits an enemy colony without a starbase whose few
+   colonists the bombs kill. Predict: the planet ends the year unowned and
+   the viewer gets a normal report of it (environment and the unowned
+   state), not the position-only orbit report. Control: the same planet
+   unowned from the start → position only.
+13. **SC-036 Allies in a battle.** Three players. Players 0 and 1 treat
+   each other as friends; player 2 is an enemy of both. One fleet of each
+   meets in deep space and fights; players 0 and 1 have no other contact.
+   Predict: player 0's file has player 1's design from that battle in full
+   and player 1 as a known player (and the same the other way), as well as
+   player 2's design in full.
 
 ## Notes for comparing with original-game files
 
