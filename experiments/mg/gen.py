@@ -160,6 +160,39 @@ r.case('A', 'T-41', 'player 0 freighter in orbit of player 1\'s homeworld 8 (pop
        'player 0\'s homeworld 17 still marked', 'mark cleared, or moved to a planet of player 1')
 
 
+# ------------------------------------------------------------- MG-006 fuel orders by target type (after MG-002..004)
+# Binary reading (stars-decomp messages-predictions.md M-5b): fuel is handled only when waypoint 0 targets a fleet or
+# deep space. For a planet or an object every fuel action is skipped; deep space accepts no fuel.
+r = Run('MG-006', 'fuel orders by waypoint target: planets, deep space (follow-up to MG-002..004)',
+        'design 0 2 Medium Freighter, 1 Long Hump 6, empty, empty = Freighter\n'
+        'sbdesign 0 0 Orbital Fort, empty, empty, empty, empty, empty = Fort\n')
+r.own(15, 0, 1000); r.own(16, 0, 1000, sb='0')
+x, y = XY[15]
+r.add('fleet 0 0 planet 15 at %d %d ships 2:1 plan 0 fuel 300 cargo 20 0 0 0 task transport 2:0,-,-,-,4:100' % (x, y))
+r.case('A', 'M-5b F1', 'Freighter at own planet 15 (no starbase), 20 kT ironium, fuel 300: unload all ironium and unload '
+       'exactly 100 fuel', '0x02d for the ironium (20); no fuel message, fuel 300', 'fuel 200')
+x, y = XY[16]
+r.add('fleet 0 1 planet 16 at %d %d ships 2:1 plan 0 fuel 100 task transport -,-,-,-,1:0' % (x, y))
+r.case('B', 'M-5b F1', 'Freighter at own planet 16 with an Orbital Fort, fuel 100: load all fuel',
+       'no 0x02b for fuel (the fort refuels it at the end of the year anyway)', '0x02b fuel')
+x, y = XY[4]
+r.add('fleet 0 2 planet 4 at %d %d ships 2:1 plan 0 fuel 300 task transport -,-,-,-,7:0' % (x, y))
+r.case('C', 'M-5b F1', 'Freighter at unowned planet 4, fuel 300: load optimal, no further waypoint',
+       'no message, fuel 300', '0x02d 300')
+r.add('fleet 0 3 at 1040 1230 ships 2:1 plan 0 fuel 20 task transport -,-,-,-,7:0 to 1380 1230 warp 6')
+r.case('D', 'M-5b F2', 'Freighter in deep space (1040,1230), fuel 20: load optimal, next leg 340 ly at warp 6',
+       '0x03c with location (1040,1230) and the shortfall; the fleet waits with fuel 20', 'leaves')
+r.add('fleet 0 4 at 1200 1230 ships 2:1 plan 0 fuel 300 task transport -,-,-,-,7:0')
+r.case('E', 'M-5b F3', 'Freighter in deep space (1200,1230), fuel 300: load optimal, no further waypoint',
+       'no message, fuel 300 (deep space takes no fuel)', '0x02d 300, fuel 0')
+r.add('fleet 0 5 at 1100 1230 ships 2:1 plan 0 fuel 300 task transport -,-,-,-,2:0')
+r.case('F', 'M-5b F4', 'Freighter in deep space (1100,1230), fuel 300: unload all fuel', 'no message, fuel 300',
+       'fuel 0')
+r.add('fleet 0 6 at 1260 1230 ships 1:1 plan 0 fuel 2 task transport -,-,-,-,7:0 to 1000 1000 warp 10')
+r.case('G', 'M-5b F2', 'Scout in deep space (1260,1230), fuel 2: load optimal, next leg about 347 ly at warp 10',
+       '0x03d (capacity 50 below the need); waits with fuel 2', 'leaves')
+
+
 def main():
     if sys.argv[1:] == ['--list']:
         for r in RUNS:

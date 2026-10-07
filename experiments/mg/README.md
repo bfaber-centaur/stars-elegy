@@ -37,7 +37,7 @@ Checked against the existing message records before this batch was built:
 
 ## Predictions (stars-decomp reading)
 
-MG-003 was added after the MG-002 fuel cases missed, MG-004 after MG-003, and MG-005 (homeworld mark, `TAKEOVER.md` T-41) last. Each was committed before its own run.
+These were added in order: MG-003 after the MG-002 fuel cases missed, MG-004 after MG-003, MG-005 (homeworld mark, `TAKEOVER.md` T-41), and MG-006 (fuel by target type, from a new binary reading). Each was committed before its own run.
 
 ### MG-001: PP packet terraforming and impact messages; a gate jump to an enemy gate
 
@@ -85,6 +85,18 @@ MG-003 was added after the MG-002 fuel cases missed, MG-004 after MG-003, and MG
 | Case | Prediction | Setup | Predicted | Rules out |
 |---|---|---|---|---|
 | MG-005-A | T-41 | player 0 freighter in orbit of player 1's homeworld 8 (pop 10, no starbase) unloads 100 colonists on waypoint 0 (invasion before movement, T-5) | planet 8 owned by player 0 and still marked homeworld; player 1's record still names planet 8; player 0's homeworld 17 still marked | mark cleared, or moved to a planet of player 1 |
+
+### MG-006: fuel orders by waypoint target: planets, deep space (follow-up to MG-002..004)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MG-006-A | M-5b F1 | Freighter at own planet 15 (no starbase), 20 kT ironium, fuel 300: unload all ironium and unload exactly 100 fuel | 0x02d for the ironium (20); no fuel message, fuel 300 | fuel 200 |
+| MG-006-B | M-5b F1 | Freighter at own planet 16 with an Orbital Fort, fuel 100: load all fuel | no 0x02b for fuel (the fort refuels it at the end of the year anyway) | 0x02b fuel |
+| MG-006-C | M-5b F1 | Freighter at unowned planet 4, fuel 300: load optimal, no further waypoint | no message, fuel 300 | 0x02d 300 |
+| MG-006-D | M-5b F2 | Freighter in deep space (1040,1230), fuel 20: load optimal, next leg 340 ly at warp 6 | 0x03c with location (1040,1230) and the shortfall; the fleet waits with fuel 20 | leaves |
+| MG-006-E | M-5b F3 | Freighter in deep space (1200,1230), fuel 300: load optimal, no further waypoint | no message, fuel 300 (deep space takes no fuel) | 0x02d 300, fuel 0 |
+| MG-006-F | M-5b F4 | Freighter in deep space (1100,1230), fuel 300: unload all fuel | no message, fuel 300 | fuel 0 |
+| MG-006-G | M-5b F2 | Scout in deep space (1260,1230), fuel 2: load optimal, next leg about 347 ly at warp 10 | 0x03d (capacity 50 below the need); waits with fuel 2 | leaves |
 
 
 ## Results
