@@ -49,8 +49,8 @@ def everyone_designs(design):
 # Player 0's armed station at its homeworld, plan 0 "player 1". Players 1..14
 # orbit it with Laser Frigates; player 1's plan names player 15 (absent), the
 # others attack nobody. Player 0 has no fleets, so this ring is the first one.
-def a6(extra):
-    s = players16() + everyone_designs(L_FR) + [
+def a6(extra, rel=None):
+    s = players16(rel=rel) + everyone_designs(L_FR) + [
         f"sbdesign 0 0 {LASER_STATION} = Laser Station",
         f"planet {HW0[0]} owner 0 pop 500 starbase 0",
         "plan 0 0 5 1 0 5 = Station Player 1",
@@ -68,6 +68,14 @@ specs["cb035-move"] = a6([f"fleet {p} 1 at {1000 + 10 * p} 1100 ships 0:1 fuel 1
                           for p in range(2, 15)])
 # control: a lone player-0 fleet in deep space is the first ring, so X = 0
 specs["cb035-p0lone"] = a6(["fleet 0 0 at 1060 1080 ships 0:1 fuel 100"])
+# a first ring with no battle whose last fleet is player 3's: X = 3
+specs["cb035-prev3"] = a6(["fleet 0 0 at 1060 1080 ships 0:1 fuel 100",
+                           "fleet 3 1 at 1060 1080 ships 0:1 plan 1 fuel 100"])
+# the same ring with a battle (players 0 and 3 enemies there): X = 0
+specs["cb035-prevbattle"] = a6(["plan 0 1 5 1 0 1 = Enemies", "plan 3 2 5 1 0 1 = Enemies",
+                                "fleet 0 0 at 1060 1080 ships 0:1 plan 1 fuel 100",
+                                "fleet 3 1 at 1060 1080 ships 0:1 plan 2 fuel 100"],
+                               rel={(0, 3): 2, (3, 0): 2})
 
 # CB-036: start squares for n = 4 and 6, and a starbase owner past row n.
 rel = {(a, b): 2 for a in range(1, 7) for b in range(1, 7) if a != b}

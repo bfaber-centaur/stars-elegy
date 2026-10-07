@@ -45,3 +45,18 @@ Variants, each pinned at cycles 8000, 12000, 16000, 20000, 30000, 50000:
   variants give the same outcome class.
 - `cb035-p0lone`: an ordinary battle with players {0, 1} (X = 0), in
   every stream.
+
+## Added variants: X from the previous location (committed before their run)
+
+Committed after the first four variants ran (no battle in 24 of 24 runs,
+results below) and before these two ran. Both put a player-0 fleet and a
+player-3 fleet at (1060,1080), which is then the first location; planet
+16 comes second.
+
+- `cb035-prev3`: all neutral, so no battle there. The last fleet of that
+  location is player 3's, so **X = 3**: at planet 16 player 3's Frigate
+  attacks player 1. Record players {0, 1, 3}, `n` = 2, only player 3
+  fires; player 1 does not fire back (its plan names player 15).
+- `cb035-prevbattle`: players 0 and 3 are enemies and fight there. After
+  a battle **X = 0**: at planet 16 the station attacks player 1, players
+  {0, 1}, as in `cb035-p0lone`.
