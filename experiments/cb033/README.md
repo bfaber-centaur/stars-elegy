@@ -39,3 +39,18 @@ it joins. Nobody names F.
   found out stopped firing, F would make no fire action after A's death.
 - The firing live-token recheck has no observable effect and is not
   tested here.
+
+## Result
+
+Six cycle counts gave six distinct records; all hits (40 or 41 per record)
+replayed with the checker. Every prediction held in every stream.
+CONFIRMED.
+
+- Five players (mask 0x1f); F has a token. Start squares exactly as
+  predicted.
+- E fired once, in round 2, destroying A's frigate; it never fired at F
+  and made no other fire action.
+- F fired at E every round from round 0 to 15 (15 or 16 fire actions), 13
+  of them in rounds 3 to 15, after A was gone.
+- Players 3 and 4 fired only at each other (12 actions each) and all their
+  ships survived; the battle ran to round 15.

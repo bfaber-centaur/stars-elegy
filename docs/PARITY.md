@@ -1309,7 +1309,7 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, round 4 CB-023 to CB-031, 2026-10-07; cloud
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-033, 2026-10-07; cloud
 oracle). Predictions from the private binary reading (stars-decomp
 `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
 at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
@@ -1653,6 +1653,38 @@ Planet-side starbase damage was set with the new `planetset sbdmg` key.
   has no attacker left. A discriminating setup needs four or more players
   with one-sided attack sets, or a plan-0 setup like CB-022.
 
+### Round 4b (CB-032, CB-033)
+
+Setups from the Combat decomp pass after round 4 (stars-elegy #38,
+stars-decomp #17); predictions committed before the runs. Each ran at six
+cycle counts (8000 to 50000), giving six distinct records; every hit
+replayed with the checker. CB-033 used a new five-player game
+(`experiments/cb033/cb5p.def`).
+
+- **Out players still fire, friends join (CB-033, CONFIRMED 6/6).** Five
+  players in deep space. Player 0 (one Laser Frigate) and player 1 (four
+  Phaser Destroyers) name each other. Player 2 (one Phaser Frigate)
+  attacks nobody and considers player 0 a friend. Players 3 and 4 name
+  each other. In every stream:
+  - The record holds five players (mask 0x1f), and player 2 has a token,
+    so it joined through its friend. Start squares: (4,1), (6,8), (1,4),
+    (8,4), (2,8) for players 0 to 4, as in the COMBAT.md table for five.
+  - Player 1 destroyed player 0's frigate in round 2 with one shot, and
+    never fired again; it never fired at player 2.
+  - Player 2 fired at player 1 in rounds 0 to 15, 13 times after player 0
+    was gone. So a player found out at step 5 (player 2 names only player
+    1, which names only the dead player 0) keeps firing.
+  - Players 3 and 4 fired only at each other, and the battle ran all 16
+    rounds.
+- **Stay-put disengage (CB-032, CONTRADICTED as predicted; rule still not
+  tested).** Three players: players 0 and 2 (two Laser Destroyers each)
+  name player 1, whose only token is an unarmed Freighter starting at
+  (8,8). The prediction was a first move to (9,9) and six stays there.
+  In all six streams the Freighter changed square on every one of its 8
+  moves (it reached (9,9) only once, in one stream), often moving towards
+  the Destroyers, and left in round 7. No move kept it on its square, so
+  whether such a move counts is still open. No shots were fired.
+
 ### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
@@ -1664,8 +1696,8 @@ Planet-side starbase damage was set with the new `planetset sbdmg` key.
 ### Not tested
 
 Queued ships lost with a starbase (P-25), salvage at more than one point
-(E-8), four or more players, stay-put disengage moves, the firing
-live-token recheck, minefields. Bombing and invasion: see
+(E-8), four players and six or more, stay-put disengage moves, the firing
+live-token recheck (no observable effect), minefields. Bombing and invasion: see
 "Planet Takeover".
 
 ## Scanning

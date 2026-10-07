@@ -27,3 +27,29 @@ Pinned at cycles 8000, 12000, 16000, 20000, 30000 and 50000.
   distance ≥ 2 from (9,9) in round 7.
 - If moves that keep it on its square did not count, it would still be on
   the board after round 7 (and after round 15, if it never moved again).
+
+## Result
+
+Six cycle counts gave six distinct records; no shots in any.
+
+- Record and start squares as predicted: three players (mask 0x7),
+  player 0 (4,1), the Runner (8,8), player 2 (1,8). Speed codes: Runner 2,
+  Brutes 0.
+- **CONTRADICTED:** the Runner never stayed on its square. In every stream
+  each of its 8 moves (one per round, rounds 0 to 7) went to a different
+  square from the one before, with the counter going 7 … 0. It reached
+  (9,9) only in 8000 (first move) and moved on; in several streams it
+  moved towards the Brutes (12000 ended at (6,6) with Brutes at (4,5) and
+  (5,8)). Its squares, by move:
+
+  | cycles | squares |
+  |---|---|
+  | 8000 | (9,9) (8,8) (9,8) (8,9) (9,8) (8,8) (7,9) |
+  | 12000 | (7,9) (7,8) (6,8) (7,8) (6,7) (5,6) (6,6) |
+  | 16000 | (7,9) (6,8) (5,7) (6,6) (7,7) (6,7) (7,6) |
+  | 20000 | (7,7) (8,6) (7,6) (6,7) (7,6) (8,6) (7,7) |
+  | 30000 | (7,8) (7,9) (8,9) (9,8) (8,7) (7,8) (6,7) |
+  | 50000 | (8,7) (9,7) (8,7) (9,7) (8,6) (7,6) (7,7) |
+
+- It left the board on its 8th move, in round 7, as in CB-028. Whether a
+  move that keeps it on its square counts is still not tested.
