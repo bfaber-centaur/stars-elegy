@@ -10,6 +10,9 @@ docs/COVERAGE.md	missing-file	AI.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-file	RACES.md does not exist
+docs/COVERAGE.md	missing-file	RACES.md does not exist
+docs/COVERAGE.md	missing-file	RACES.md does not exist
+docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	missing-path	`docs/ai/` does not exist
 docs/COVERAGE.md	missing-path	`docs/ai/` does not exist
 docs/COVERAGE.md	missing-section	docs/ORDERS.md has no section "Waypoint upkeep and the remaining tasks"
