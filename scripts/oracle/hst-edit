@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Decode or edit planet/production state in Stars! game files (.HST, .M1)
+# with StarsAPI (stars-4x/starsapi, pinned commit), built under $ORACLE_HOME.
+#
+#   scripts/oracle/hst-edit dump FILE...
+#   scripts/oracle/hst-edit edit IN OUT key=value...
+#   scripts/oracle/hst-edit roundtrip IN OUT      # decode + re-encode, no edits
+#
+# Edit keys (planet defaults to 7): planet= fe= bo= ge= pop= excess= mines=
+# factories= defenses= leftover=0|1 researchPct= queue=SPEC|none, where SPEC
+# is id:count:pct:kind[,...] with kind 1 = planetary item, 2 = ship design.
+# Needs git and a JDK; network on first run.
+source "$(dirname "$0")/lib.sh"
+
+rev=194732ce0d018b8ca818e5d732d0b14c01739768
+src="$ORACLE_HOME/starsapi"
+out="$ORACLE_HOME/starsapi-build"
+tool="$(cd "$(dirname "$0")" && pwd)/starsapi/ProdTool.java"
+if [[ ! -f "$out/.rev-$rev" ]]; then
+	[[ -d "$src" ]] || git clone -q https://github.com/stars-4x/starsapi.git "$src"
+	git -C "$src" checkout -q "$rev"
+	rm -rf "$out"
+	mkdir -p "$out/org/starsautohost/starsapi/items"
+	# shellcheck disable=SC2046
+	javac -nowarn -encoding ISO-8859-1 -d "$out" \
+		$(find "$src/src/main/java/org/starsautohost/starsapi" -name '*.java' -not -path '*/tools/*') 2>&1 |
+		grep -v '^Note:\|^Picked up' >&2 || true
+	cp "$src"/src/main/java/org/starsautohost/starsapi/items/*.MOD \
+		"$src"/src/main/java/org/starsautohost/starsapi/items/*.properties \
+		"$out/org/starsautohost/starsapi/items/"
+	touch "$out/.rev-$rev"
+fi
+if [[ ! -f "$out/ProdTool.class" || "$tool" -nt "$out/ProdTool.class" ]]; then
+	javac -nowarn -cp "$out" -d "$out" "$tool" 2>&1 | grep -v '^Picked up' >&2 || true
+fi
+set +e
+java -cp "$out" ProdTool "$@" 2>&1 | { grep -v '^Picked up' || true; }
+exit "${PIPESTATUS[0]}"
