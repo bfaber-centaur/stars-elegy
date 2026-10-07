@@ -487,6 +487,28 @@ for i in $(seq 1 17); do
 done
 ```
 
+## Synthetic fleet starts (FleetLab, observed 2026-10-07)
+
+`tools/fleetlab` builds controlled starting states for movement experiments
+by editing a host file with StarsAPI (pinned commit, built on first use into
+`~/.cache/fleetlab`; needs a JDK and network once).
+
+```sh
+tools/fleetlab/fleetlab dump FILE...                  # fleets, waypoints, designs, events
+tools/fleetlab/fleetlab build BASE.HST SPEC OUT.HST   # spec format: header of FleetLab.java
+tools/fleetlab/oracle-turn START.HST OUTDIR           # reset registered, install as PG001.HST, one turn
+python3 tools/fleetlab/summarize.py OUTDIR            # per-fleet start/end/fuel/events
+```
+
+- Re-encoding PG001.HST unchanged with FleetLab reproduces the original
+  bytes except one waypoint target-type byte (`0x91` is written as `0x11`).
+- Edited files (replaced fleets, cloned designs, changed tech) loaded and
+  generated a turn without any visible complaint (FM-000 to FM-003). Only
+  `PG001.HST` is replaced; the old `PG001.M1` is opened, and the turn reads
+  the host file. The 2408 `.M1` reflects the edited fleets.
+- `OUTDIR` holds registered-copy output: preserve it in the apparatus
+  repository, never here.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
