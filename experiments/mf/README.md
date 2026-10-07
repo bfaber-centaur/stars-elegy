@@ -281,6 +281,10 @@ per run with `check.txt`. Summary in `docs/PARITY.md` "Minefield lane".
 | MF-11b-A | HELD | with 510 fields, field number 510 made |
 | MF-11c-A | HELD | with 512 fields: no field, message 0x17e, mines lost |
 | MF-11a/b/c-B | HELD | the layer inside a tiny field merged (90 + 160 = 250) |
+| MF-13a-A | HELD | a player-1 field sorted after player 0's 511: no field, 0x17e |
+| MF-13b-A | HELD | a salvage object sorted after them: no field, 0x17e |
+| MF-13c-A | HELD | player 1's 511 fields with a player-0 field before them: field 511 made (160) |
+| OB-010-S re-check | HELD | no hit 2840 in three settings (20000, 15000, 25000); hit 2791 in three (30000, 40000, 60000), 0xc6 messages at the stop |
 
 Field counts in every run fit: stops shrink the field during movement,
 then decay (planets counted in the shrunken field), then sweeping.
