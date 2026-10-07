@@ -8,10 +8,10 @@ builder, ageing, splitting, merging and the shared fleet rules) are in
 `../AI.md` and are named here by section.
 
 Status (cases in `../PARITY.md`, "Computer players"):
-- Ship designs are CONFIRMED (AI-13): the predicted design orders matched
+- Ship designs are CONFIRMED (AI-19): the predicted design orders matched
   the AIX corpus in every year, 2400–2460.
-- Starbase queueing is MEASURED (AI-14) and the fleet pass is MEASURED
-  (AI-15): every own fleet's orders matched in every AIX year.
+- Starbase queueing is MEASURED (AI-20) and the fleet pass is MEASURED
+  (AI-21): every own fleet's orders matched in every AIX year.
 - Everything else is BINARY-ONLY unless marked.
 
 Notation: `y` = year index; `lvl` = AI level 0..3 (easy, standard,
@@ -56,7 +56,7 @@ Cybertron's memory between years is empty: every turn starts with no
 remembered planet state (`../AI.md` §1, AI-10). The per-planet notes
 below are made and used within one turn.
 
-## 2. Ship designs (CONFIRMED, AI-13)
+## 2. Ship designs (CONFIRMED, AI-19)
 
 Each step builds its design with the builder of `../AI.md` §10, from one
 of Cybertron's class lists below. A *range* `a..b` tries lists in random
@@ -168,7 +168,7 @@ The fleet pass (§5) also makes per-planet notes (inbound colonists, no
 colonizable target here, no drop-off, guard present and weak). Those
 notes are lost: production and the freighter drop-off choice never see
 them, and a note about planet 0 lands on the last planet instead (LEGACY
-BUG, MEASURED, AI-15: with the notes kept, 64 freighter-years in AIX
+BUG, MEASURED, AI-21: with the notes kept, 64 freighter-years in AIX
 would differ). So, for example, a planet whose idle colony ships found
 no target still builds colony ships.
 
@@ -208,7 +208,7 @@ queue's cost. Items are appended.
       - else the guard candidate and `r1 > 25`: ×1;
       - else `DD` ×1.
 
-### 4.3 Starbases (MEASURED, AI-14)
+### 4.3 Starbases (MEASURED, AI-20)
 
 Every own planet in planet-id order (not shuffled) with no starbase,
 value above 14 and at least 50,000 colonists gets, unless its queue
@@ -219,7 +219,7 @@ after this turn's fleet pass: colonists Cybertron's own freighters
 unloaded or loaded there this turn already count. Starbase upgrades
 (`../AI.md` §7) start at year index 40.
 
-## 5. Fleets (MEASURED, AI-15)
+## 5. Fleets (MEASURED, AI-21)
 
 In AIX every own Cybertron fleet's resulting orders matched these rules
 in all 61 years: 2,064 fleet-years, with waypoints, cargo, scrap, battle
