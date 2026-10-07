@@ -388,8 +388,8 @@ def evaluate6(k, A, B):
         env1 = [int(v) for v in planets[n]['env'].split('/')]
         d = [b - a for a, b in zip(env0, env1)]
         others = [d[i] for i in range(3) if i != mi]
-        before = tuple(int(v) for v in B[1][n]['surface'].split('/'))
-        after = tuple(int(v) for v in planets[n]['surface'].split('/'))
+        before = tuple(int(v) for v in B[1][n].get('surface', '0/0/0').split('/'))
+        after = tuple(int(v) for v in planets[n].get('surface', '0/0/0').split('/'))
         sd = [b - a for a, b in zip(before, after)]
         ok = 1 <= d[mi] <= 10 and others == [0, 0] and sd[mi] == 111
         return ok, dict(env_before=env0, env_after=env1, orig=planets[n].get('orig'), surface_delta=sd)
@@ -404,7 +404,8 @@ def evaluate6(k, A, B):
         after = tuple(int(v) for v in planets[n]['surface'].split('/'))
         got = dict(pop=int(planets[n]['pop']), control=int(planets[ctl]['pop']),
                    surface=tuple(b - a for a, b in zip(before, after)))
-        return got['pop'] == got['control'] and got['surface'] == sd, got
+        # an AR planet mines on its own (the control shows how much); the packet's mineral is ironium only
+        return got['pop'] == got['control'] and got['surface'][0] == sd[0], got
     if kind == 'tradertwo':
         _, ids = k
         got = {'%d/%d' % f: ('kept' if tuple(f) in fleets else 'gone') for f in ids}
