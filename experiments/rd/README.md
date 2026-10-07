@@ -85,3 +85,43 @@ generated field of RD-1..RD-6, including each race and name. RD-4 ran once
 the three race files with bad checksums were rewritten. Seven of ten
 penalty cases held. RD-P5, P6 and P7 were not punished: the fields were
 clamped silently.
+
+## Follow-up: RD-7 and RD-P11..RD-P12 (committed before the runs)
+
+From the race decomp's reconciliation (stars-decomp #21 at f1daf60,
+RACES.md in stars-elegy #49): three cases still untested.
+
+### RD-7: AR leftover spends (new game `rd07.def`)
+
+Five human AR races, identical (34 points, so L 34) except race stat 7,
+the leftover spend 0..4 (`racelab edit rw02m.r1 OUT spend=N`), plus one
+computer player. An AR homeworld starts with no mines, factories or
+defenses.
+
+| Player | Spend | Prediction | Rules out |
+|---|---|---|---|
+| 0 | 0 minerals | surface 676/279/426 → 761/449/511 (+85 on the smallest… as RD-1) | |
+| 1 | 1 concentrations | 98/88/85 → 107/97/111 (+17 on the lowest, then +9 on all); minerals unchanged | |
+| 2 | 2 mines | **no mines** (0), minerals and concentrations unchanged: the spend is lost | 17 mines kept; minerals instead |
+| 3 | 3 factories | **no factories** (0); spend lost | 6 factories |
+| 4 | 4 defenses | **no defenses** (0); spend lost | 3 defenses |
+
+(The generator applies the spend, then sets an AR homeworld's installations
+to 0.) Numbers are the decomp's model for this seed; the comparison is
+`universe.py check`.
+
+### RD-P11: growth 0 in a running game
+
+The RD-7 start, `hst-edit ... growth=0` on player 0 (AR, 34 points), one
+pinned year. Prediction: punished. Message 0x117 to player 0, flag 0x10
+set, growth reset to 1. At growth 1 the race is far above 500 points, so
+nothing else changes (colonists per resource stay 1800). The other
+growth repairs (< 0, > 20) are silent; growth 0 is not.
+
+### RD-P12: penalty messages with several players
+
+The RD-7 start, player 0 edited to negative points (`stat=2:5/5:2`, as
+RD-P1), one pinned year. Prediction: player 0 gets 0x117; **every other
+player** (the four humans and the computer player) gets 0x182 "hacked race
+discovered"; player 0 is repaired as RD-P1 (colonists per resource raised
+until points ≥ 500, then growth lowered).
