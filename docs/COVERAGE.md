@@ -30,14 +30,14 @@ Levels:
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | `PRODUCTION-LAUNCH.md` | Confirmed | SL-01..SL-12. The same-hull replacement cost and the research share of an unbuilt ship are Read. |
 | Population growth | `KERNEL.md` | Confirmed | |
-| Research and tech progression | `KERNEL.md` "Research" | Confirmed | KX-005. |
+| Research and tech progression | `KERNEL.md` "Research" | Confirmed | KX-002, KX-003, KX-005 and KB-2 (field switching at 26, stealing under slower tech). The level-10 cap for capped players is Read. |
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` "Random events", `OBJECTS.md` | Confirmed | KX-004. |
 | Battles, battle plans | `COMBAT.md` | Confirmed | Battle movement confirmed by exact replays. |
 | Bombing, invasion, colonization, capture | `TAKEOVER.md` | Confirmed | |
 | Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `ORDERS.md`, `SCANNING.md`, `TAKEOVER.md` | Read / Partial | Route, patrol and transfer-fleet rules (with the computer-player and enemy refusals) are in `ORDERS.md`, mostly Read and waiting on the WU batch. |
 | Waypoint upkeep | `ORDERS.md` "Waypoint upkeep and the remaining tasks", `SCANNING.md` | Read | Repeat orders, reached and dropped waypoints, targets that moved, died or were captured. Waiting on the WU batch. |
 | Sweeping, repair | `OBJECTS.md`, `COMBAT.md` | Confirmed | |
-| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` "Terraforming" | Confirmed | KX-005, OT-4. |
+| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` "Terraforming" | Confirmed | KX-005 (drift, year-end step, half-price terraform), OT-4, TK-108 and TK-118..120 (after a capture). |
 | Duplicate-serial penalties | `KERNEL.md`, `MESSAGES.md` | Read | |
 | What each player knows | `SCANNING.md` | Confirmed | |
 | Scores and victory | `KERNEL.md` "Scores and victory conditions" | Confirmed / Read | Score KX-003; the victory conditions are Read. |
