@@ -48,8 +48,13 @@ def events(path, player, turn):
 
 
 def has_msg(hexs, mid):
-    pat = '%02x%02x' % (mid & 0xff, mid >> 8)
-    return any(hexs.startswith(pat, i) for i in range(0, len(hexs) - 3, 2))
+    """A record header is a little-endian word: message id in the low 9 bits,
+    flags above (0x109 appears as 09 01 or 09 03 in WT-002). Any byte offset."""
+    for i in range(0, len(hexs) - 3, 2):
+        lo, hi = int(hexs[i:i + 2], 16), int(hexs[i + 2:i + 4], 16)
+        if lo == mid & 0xff and (hi & 1) == mid >> 8:
+            return True
+    return False
 
 
 def gift_kind(desc):

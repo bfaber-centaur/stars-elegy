@@ -87,9 +87,10 @@ r.case('E', '5.7: Trader 0 at (1200,1100) heading east at warp 8 ends its 64 ly 
        ('trader', 0, 1264, 1100, None))
 # F (O-47): aiming at the Trader reaches its start-of-year position.
 r.trader((1200, 1300), (1395, 1300), 9)
-r.fleet(0, 1140, 1300, SF2, fuel=2000, extra='cargo 5000 0 0 0 to 1200 1300 thing %#x warp 9' % (TRADER | 1))
-r.case('F1', 'O-47: player 0 fleet with 5000 kT 60 ly west of Trader 1 (heading east, warp 9), waypoint on '
-       'the Trader, warp 9', 'fleet at (1200,1300), kept with its cargo; no trade',
+# Setup fix after the first WT-001 run: from 60 ly at warp 9 the loaded freighters ran dry after 8 ly.
+r.fleet(0, 1170, 1300, SF2, fuel=2000, extra='cargo 5000 0 0 0 to 1200 1300 thing %#x warp 6' % (TRADER | 1))
+r.case('F1', 'O-47: player 0 fleet with 5000 kT 30 ly west of Trader 1 (heading east, warp 9), waypoint on '
+       'the Trader, warp 6', 'fleet at (1200,1300), kept with its cargo; no trade',
        'fleet follows the Trader to (1281,1300) and trades', [('fleetat', 0, 4, 1200, 1300), ('cargo', 0, 4, 5000)])
 r.meet(1, axis_move((1200, 1300), (1395, 1300), 9), 20, 5, MF24, '5000 0 0 0')
 r.case('F2', 'O-47: player 1 fleet with 5000 kT flying onto (1281,1300), Trader 1\'s end point',
@@ -161,6 +162,20 @@ r.case('C', 'O-49: player 1 (tech 3, 2 designs) trades 5000 kT with Trader 1 off
        '(objects.py mtmeet); new fleet at the trade point with full fuel; mt unchanged',
        'no ship, or a ship elsewhere', ('gift', 1, 0, 2, 0))
 
+
+# ---------------------------------------------------------------- WT-005 follow-up on O-47 (after WT-001)
+# WT-001-F1 (fixed setup) ended at (1206,1300): 36 ly east at warp 6, past the Trader's start (1200,1300),
+# i.e. toward its end point (1281,1300). This run discriminates the two readings.
+r = run('WT-005', 'aiming at a moving Trader (follow-up to WT-001-F1)')
+r.trader((1200, 1300), (1395, 1300), 9)
+r.fleet(0, 1250, 1300, SF2, fuel=2000, extra='cargo 5000 0 0 0 to 1200 1300 thing %#x warp 6' % TRADER)
+r.case('A', 'player 0 fleet with 5000 kT 50 ly east of Trader 0\'s start (heading east, warp 9), waypoint on the '
+       'Trader, warp 6 (36 ly)', 'flies 31 ly to the Trader\'s end point (1281,1300) and trades: consumed; '
+       'Trader met mask 0x1', 'flies 36 ly west toward the start (1214,1300), kept (O-47)',
+       [('gone', 0, 0), ('trader', 0, 1281, 1300, 0x1)])
+r.fleet(1, 1170, 1300, MF24, fuel=2000, extra='cargo 5000 0 0 0 to 1200 1300 thing %#x warp 6' % TRADER)
+r.case('B', 'WT-001-F1 repeated by player 1: 30 ly west of the start, waypoint on the Trader, warp 6',
+       'moves 36 ly east to (1206,1300), kept', 'stops at (1200,1300)', [('fleetat', 1, 0, 1206, 1300)])
 
 def table():
     out = []

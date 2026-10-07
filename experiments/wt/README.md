@@ -159,3 +159,21 @@ before any WT-001..004 run. Outcome sets come from the decomp's
 | WT-004-B | O-51: player 0 at tech 26 owning all twelve parts trades 5000 kT with Trader 0 (item 0) | nothing (message 0x10e) 1/5, else ship: one of M.T. Lifeboat (Nubian) 1/4, M.T. Scout 3/8, M.T. Probe 3/8 (Mini Morph); mt unchanged | research or a part |
 | WT-004-C | O-49: player 1 (tech 3, 2 designs) trades 5000 kT with Trader 1 offering a ship (year index 0) | ship: one of M.T. Lifeboat (Nubian) 1/4, M.T. Scout 3/8, M.T. Probe 3/8 (Mini Morph) in design slot 2; 1 ship 2/3 or 2 ships 1/3, plus 0..count more for the Mini Morphs (objects.py mtmeet); new fleet at the trade point with full fuel; mt unchanged | no ship, or a ship elsewhere |
 
+
+## WT-005: follow-up predictions
+
+These were committed after WT-001..003 ran and before WT-005 ran.
+
+- **WT-001-F1 setup fix.** As first written, the fleet started 60 ly away
+  at warp 9. The loaded freighters ran dry after 8 ly, so that run says
+  nothing about O-47. The fixed case starts 30 ly away at warp 6.
+- **What the fixed case showed.** The fleet ended at (1206,1300). It flew
+  its full 36 ly east, past the Trader's start (1200,1300), toward the
+  Trader's end point (1281,1300). WT-005 tells the two readings apart.
+### WT-005: aiming at a moving Trader (follow-up to WT-001-F1)
+
+| Case | Setup | Predicted | Rules out |
+|---|---|---|---|
+| WT-005-A | player 0 fleet with 5000 kT 50 ly east of Trader 0's start (heading east, warp 9), waypoint on the Trader, warp 6 (36 ly) | flies 31 ly to the Trader's end point (1281,1300) and trades: consumed; Trader met mask 0x1 | flies 36 ly west toward the start (1214,1300), kept (O-47) |
+| WT-005-B | WT-001-F1 repeated by player 1: 30 ly west of the start, waypoint on the Trader, warp 6 | moves 36 ly east to (1206,1300), kept | stops at (1200,1300) |
+
