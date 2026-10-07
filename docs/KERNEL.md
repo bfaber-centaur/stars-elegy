@@ -109,6 +109,18 @@ In units. Rule:
 - Alternate Reality: 0 unless the planet has the owner's starbase; then by
   starbase hull, in hull order: 2,500, 5,000, 10,000, 20,000, 30,000 units,
   regardless of habitability (OBRM +10% still applies). BINARY-ONLY.
+- Alternate Reality with maximum 0 (population on a planet without the
+  owner's starbase): the original cannot generate the year. If the planet's
+  habitability is ≥ 0, population growth divides by the maximum and the
+  program stops with an integer divide-by-zero error; no file is written.
+  CONFIRMED (KX-001 Z1, from both the player screen and Host Mode).
+  LEGACY BUG: there is no original behavior to reproduce, so an
+  implementation must choose one and say so. A hostile planet (`hab < 0`)
+  takes the hostile death rule, which does not use the maximum, and
+  generates normally (CONFIRMED, KX-001 Z3). AR colonization gives the
+  planet a starbase; the route to this state in play is deleting the
+  starbase's design, which removes the starbase and keeps the population
+  (BINARY-ONLY).
 
 Vectors (BINARY-ONLY): HE at hab 100 → 5,000; JOAT at hab 100 → 12,000;
 OBRM at hab 100 → 11,000; hab 3 → 500; JOAT+OBRM at hab 79 → 10,428.
@@ -216,9 +228,14 @@ per 100 units).
    `min(2·max, max + trunc((P − max)/2))` (BINARY-ONLY above max).
 2. Non-AR: `resources = trunc(E / R0) + trunc((F·n + 9) / 10)`, where
    `n = min(installed factories, operable factories)`.
-3. Alternate Reality: `trunc(sqrt(trunc(E / R0)·max(1, energy tech))·
-   max(25, hab)·0.1 + 0.999)` (floating point). BINARY-ONLY.
+3. Alternate Reality: `trunc(sqrt((E / R0)·max(1, energy tech))·
+   max(25, hab)·0.1 + 0.999)`, all in floating point, including `E / R0`.
+   CONFIRMED at one point (KX-001 Z2: `E = 486`, `R0 = 10`, energy 2,
+   hab 100 → `trunc(9.859·100·0.1 + 0.999) = 99`; truncating `E / R0`
+   first would give 98).
 4. A result of 0 becomes 1 (unless `P = 0`, which gives 0).
+
+AR with maximum 0 has `E = 0`, so 1 resource (CONFIRMED, KX-001 Z3).
 
 CONFIRMED (PG-001..003, `R0 = 10`, `F = 10`, 10 factories): this year's
 research resources are `trunc(P/10) + 10` from last year's population, for
@@ -235,7 +252,7 @@ every year 2408–2436. Vectors: P 486 → 58, 1042 → 114, 2704 → 280,
 | operable mines | `max(1, min(max mines, trunc(P'·Mo/100)))` | CONFIRMED for auto mines (PQ C04, C09, C14) |
 | operable factories | `max(1, min(max factories, trunc(P'·Fo/100)))` | CONFIRMED for auto factories (PQ C09) |
 | operable defenses | `min(max defenses, 1000, ceil(P'/25))` | CONFIRMED (PQ C13) |
-| mines working this year | `min(installed, operable with P' = P)`; AR: `trunc(sqrt(P))` | CONFIRMED non-AR (PG mining) |
+| mines working this year | `min(installed, operable with P' = P)`; AR: `trunc(sqrt(P))` | CONFIRMED (PG mining; AR: KX-001 Z2, Z3, P 486 → 22) |
 
 `P'` is `P` for the year's mining and resources, and `P` plus this year's
 growth when production caps are computed. Production caps differ by order
@@ -396,6 +413,68 @@ The PQ-001 model in `PARITY.md` ("Production Queues") is CONFIRMED in all
 percentage per component, stopping vs skipping, auto items and their hidden
 partial items, Auto Alchemy, installation-order clipping, leftover to
 research. Its predictions table doubles as the test vectors.
+
+### Item costs
+
+Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
+
+| Item | Cost | Status |
+|---|---|---|
+| Factory (and Auto Factories) | race factory cost; Ge 4, or 3 with "factories cost 1 kT less germanium" | CONFIRMED (PQ-001 cost 10; KX-001 M3 cost 7, M3b cost 15; Ge 3 in M3, M3b) |
+| Mine (and Auto Mines) | race mine cost | CONFIRMED (PQ-001 cost 5; KX-001 M3b cost 8) |
+| Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
+| Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
+| Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | BINARY-ONLY |
+
+Race settings outside the race wizard's advantage-point budget do not
+survive: at the start of turn generation the game sends the player a
+message and degrades the race before production (MEASURED once, KX-001
+M3: colonists per resource went from 1,000 to 2,400). The binary reading
+says the trigger is a negative advantage-point total; the points formula
+is not specified here. Test races must be legal.
+
+### Auto Alchemy before a multi-count item (CONFIRMED, KX-001)
+
+An Auto Alchemy that is not the last item does nothing itself; it lets the
+next item buy minerals. For a ×n item the purchase is made **one unit at a
+time** inside the item's normal unit loop:
+
+1. If the unit's remaining cost is available, it completes; go to the next
+   unit.
+2. Otherwise the unit takes its partial percentage as usual (every
+   component charged up to it). If the limiting component is a mineral,
+   alchemy then buys `k = min(trunc(resources / rate), s)` units, where `s`
+   is that mineral's shortfall for this unit (`cost − available − already
+   spent`, taken before the partial charge) and `rate` the alchemy cost;
+   each unit adds 1 kT of all three minerals. An auto item (Auto Factories
+   and so on) skips the partial charge and goes straight to alchemy.
+3. If `k = s`, retry the unit (it now completes). Otherwise the unit keeps
+   the percentage from step 2, unchanged by the minerals just bought; if
+   resources remain, they become a Mineral Alchemy ×1 item at the largest
+   whole percentage they pay for (`max(trunc((r + 1)·100/rate) − 1,
+   trunc(r·100/rate))`, charging `trunc(rate·pct/100)`), inserted at the
+   queue front; the queue stops. The prefix and the item (with its reduced
+   count) stay.
+4. If every unit completes, the item and its prefix are removed and the
+   walk continues.
+
+Vectors (PG race: factory 10 + 4 kT Ge, mine 5, alchemy 100; no tax;
+minerals 100/100/g before the year):
+
+| Case | Resources | g | Queue | Result |
+|---|---:|---:|---|---|
+| A1 | 900 | 0 | Auto Alchemy, Factory ×5, Mine ×2 | 2 factories; 108/108/0; Mineral Alchemy ×1 @78%, Auto Alchemy, Factory ×3 @24%, Mine ×2; research 0 |
+| A2 | 900 | 6 | same | 3 factories; 108/108/2; Mineral Alchemy ×1 @68%, Auto Alchemy, Factory ×2 @24%, Mine ×2 |
+| A3 | 900 | 0 | Auto Alchemy, Auto Factories ×5, Mine ×2 | 2 factories; 108/108/0; Mineral Alchemy ×1 @80%, Auto Alchemy, Auto Factories ×5, Mine ×2 |
+| A4 | 820 | 0 | Auto Alchemy, Factory ×2, Mine ×2 | 2 factories; 108/108/0; Mine ×2 @19% (0 resources left) |
+| M2 (alchemy 25) | 300 | 0 | Auto Alchemy, Factory ×5, Mine ×2 | 2 factories; 111/111/3; Mineral Alchemy ×1 @15%, Auto Alchemy, Factory ×3 @24%, Mine ×2 |
+
+Worked A1: unit 1 has no germanium, so it takes 24% (`max(1·100/4 − 1, 0)`),
+spending 2 resources and 0 kT; alchemy buys the 4 kT short (400); the unit
+completes with the remaining 8 resources (410 in all). Unit 2 the same:
+80 resources left. Unit 3 takes 24% (2 resources), alchemy can buy none,
+and the remaining 78 become Mineral Alchemy @78%. Minerals: +8 kT each,
+8 kT of germanium used.
 
 Additional rules, BINARY-ONLY:
 
@@ -693,27 +772,13 @@ is one at a planet without a starbase.
 
 ## Open experiments
 
-Questions the binary reading does not settle; each needs an oracle case.
-
-- **Auto Alchemy before a multi-count item.** PQ C06/C07 cover an Auto
-  Alchemy prefix before a ×1 item. Unknown for a ×n item: whether alchemy
-  buys the shortfall for one unit or for the whole remaining count, and
-  in which order the item's partial and the alchemy are taken when
-  resources run short. Case: Auto Alchemy, Factory ×5 with germanium for
-  fewer than 5, resources above and below the full shortfall.
-- **Zero maximum population** (Alternate Reality planet without a
-  starbase). The crowding rule divides by the maximum population, which
-  is 0 there. Case: an AR race with population on a planet whose
-  starbase is removed.
-- **Cost modifiers.** PQ-001 measured item costs for one race only. The
-  binary reads Mineral Alchemy as 100 resources per kT, 25 with the
-  Mineral Alchemy LRT; neither that rate nor race options that change
-  installation costs has an oracle case. Case: the same queue for races
-  with each modifier.
+None for this specification. The three earlier items (Auto Alchemy before
+a multi-count item, zero maximum population, cost modifiers) were settled
+by KX-001; see the rules above and `PARITY.md`.
 
 ## Sources
 
-- Oracle: PG-001..003 and PQ-001 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001 and KX-001 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that
