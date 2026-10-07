@@ -4196,3 +4196,78 @@ stays BINARY-ONLY.
 
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
+
+## Computer players: Turindrone and Automitron designs (AP-001..AP-003)
+
+Specs: `docs/ai/turindrone.md`, `docs/ai/automitron.md`. Predictions were
+committed in the private binary reading before the runs. Raw evidence:
+private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
+`evidence/ai/ai01/` (AP-003).
+
+- **Setup (AP-001, AP-002).** A small map (size 1, density 1, positions 1,
+  seed 4101, random events on) with three players: a human race (player
+  1), an expert Turindrone (player 2) and an expert Automitron (player 3).
+  The built-in races were Turindrone SS with IFE, ARM, MA and RS, and
+  Automitron IS with GR, OBRM, NAS and LSP (`AI.md` §3). Before 2400 was
+  generated, both computer players' tech was edited in the `.HST`
+  (`hst-edit … player=N tech=…`): AP-001 to energy 10, weapons 10,
+  propulsion 10, construction 13, electronics 10, biotech 10; AP-002 to 20
+  in every field. Two years were generated at cycles 20000, and each
+  computer player's order file was captured.
+- **Year 2400:** no ship-design orders. The `.HST` already held the
+  edited tech, but a computer player plans from its own player file, which
+  still held the old tech (`ORACLE.md`).
+- **Year 2401 (CONFIRMED):** every ship-design order of both players in
+  both games was as predicted. The table gives 33 slot records in all.
+  Each part is listed with its count, in hull slot order. Turindrone
+  deleted slot 2 first, because its starting Midget Miners were scrapped
+  in 2400. Automitron deleted slot 1 first, because its starting Colony
+  Ship was scrapped in 2400.
+
+| Game | Player | Slot | Design |
+|---|---|---|---|
+| AP-001 | Turindrone | 8, 15 | Rogue: 2 Trans-Galactic Fuel Scoop, 3 Shadow Shield, 2 Super Cargo Pod, 1 Pick Pocket Scanner, 2 Neutronium, 2 Delta Torpedo, 2 Maneuvering Jet, 1 Jammer 20, 1 Battle Computer |
+| AP-001 | Turindrone | 9 | Galleon: 4 Trans-Galactic Fuel Scoop, 2 Bear Neutrino Barrier, 2 Neutronium, 3 Delta Torpedo, 3 Maneuvering Jet, 2 Battle Computer, 2 Super Cargo Pod, 2 Pick Pocket Scanner |
+| AP-001 | Turindrone | 10 | Destroyer: 1 Trans-Galactic Fuel Scoop, 1 Delta Torpedo ×3 slots, 2 Depleted Neutronium, 1 Maneuvering Jet, 1 Battle Computer |
+| AP-001 | Turindrone | 2 | Miner: 2 Trans-Galactic Fuel Scoop, 2 Maneuvering Jet, Robo-Super-Miner 2, 1, 2, 1 |
+| AP-001 | Turindrone | 12 | Privateer: 1 Trans-Galactic Fuel Scoop, 2 Shadow Shield, 1 Jammer 20, 1 Mine Dispenser 50 ×2 slots |
+| AP-001 | Turindrone | 13 | Stealth Bomber: 2 Trans-Galactic Fuel Scoop, 4 M-70 Bomb, 4 Neutron Bomb, 1 Jammer 20, 3 Jammer 20 |
+| AP-001 | Turindrone | 4 | Battleship: 4 Trans-Galactic Fuel Scoop, 1 Jammer 20, 8 Bear Neutrino Barrier, Delta Torpedo 6, 6, 2, 2, 4, 6 Depleted Neutronium, 3 Jammer 20, 3 Battle Computer (template b, the only one buildable) |
+| AP-001 | Automitron | 4 | Medium Freighter: 1 Trans-Galactic Fuel Scoop, 1 Super Cargo Pod, 1 Croby Sharmor |
+| AP-001 | Automitron | 5 | Super Freighter: 3 Trans-Galactic Fuel Scoop, 3 Super Cargo Pod, 5 Croby Sharmor, 2 Jammer 20 |
+| AP-001 | Automitron | 14 | Destroyer: 1 Radiating Hydro-Ram Scoop, 1 Delta Torpedo ×2 slots, 1 Maneuvering Jet, 2 Neutronium, 1 Maneuvering Jet, 1 Battle Computer |
+| AP-001 | Automitron | 1 | Medium Freighter: 1 Radiating Hydro-Ram Scoop, 1 Colonization Module, 1 Croby Sharmor |
+| AP-001 | Automitron | 6 | Privateer: 1 Radiating Hydro-Ram Scoop, 2 Croby Sharmor, 1 Jammer 20, 1 Mine Dispenser 50, 1 Speed Trap 20 |
+| AP-001 | Automitron | 2 | B-17 Bomber: 2 Trans-Galactic Fuel Scoop, 4 M-70 Bomb ×2 slots, 1 Jammer 20 |
+| AP-001 | Automitron | 9 | Battleship: as Turindrone's slot 4, with 8 Croby Sharmor and 6 Neutronium (template b) |
+| AP-002 | Turindrone | 8, 15 | Rogue: 2 Galaxy Scoop, 3 Elephant Hide Fortress, 2 Super Cargo Pod, 1 Robber Baron Scanner, 2 Valanium, 2 Rho Torpedo, 2 Overthruster, 1 Jammer 30, 1 Battle Nexus |
+| AP-002 | Turindrone | 9 | Galleon: 4 Galaxy Scoop, 2 Elephant Hide Fortress, 2 Valanium, 3 Rho Torpedo, 3 Overthruster, 2 Battle Nexus, 2 Super Cargo Pod, 2 Robber Baron Scanner |
+| AP-002 | Turindrone | 10 | Destroyer: 1 Galaxy Scoop, 1 Rho Torpedo ×3 slots, 2 Valanium, 1 Overthruster, 1 Battle Nexus |
+| AP-002 | Turindrone | 2 | Miner: 2 Galaxy Scoop, 2 Overthruster, Robo-Ultra-Miner 2, 1, 2, 1 |
+| AP-002 | Turindrone | 12 | Privateer: 1 Galaxy Scoop, 2 Elephant Hide Fortress, 1 Jammer 30, 1 Mine Dispenser 50 ×2 slots |
+| AP-002 | Turindrone | 13, 14 | Stealth Bomber: 2 Galaxy Scoop, 4 Cherry Bomb, 4 Enriched Neutron Bomb, 1 Jammer 30, 3 Jammer 30 |
+| AP-002 | Turindrone | 4 | Battleship: 4 Galaxy Scoop, 1 Jammer 30, 8 Elephant Hide Fortress, 6 Gatling Gun, 6 Disruptor, 2 Bludgeon, 2 Disruptor, 4 Phased Sapper, 6 Valanium, 3 Energy Capacitor ×2 slots (template a) |
+| AP-002 | Automitron | 4 | Medium Freighter: 1 Trans-Galactic Mizer Scoop, 1 Super Cargo Pod, 1 Elephant Hide Fortress |
+| AP-002 | Automitron | 5 | Super Freighter: 3 Trans-Galactic Mizer Scoop, 3 Super Cargo Pod, 5 Elephant Hide Fortress, 2 Jammer 30 |
+| AP-002 | Automitron | 14 | Destroyer: 1 Radiating Hydro-Ram Scoop, 1 Rho Torpedo ×2 slots, 1 Overthruster, 2 Valanium, 1 Overthruster, 1 Battle Nexus |
+| AP-002 | Automitron | 1 | Medium Freighter: 1 Radiating Hydro-Ram Scoop, 1 Colonization Module, 1 Elephant Hide Fortress |
+| AP-002 | Automitron | 6 | Privateer: 1 Radiating Hydro-Ram Scoop, 2 Elephant Hide Fortress, 1 Jammer 30, 1 Mine Dispenser 50, 1 Speed Trap 20 |
+| AP-002 | Automitron | 2 | B-17 Bomber: 2 Trans-Galactic Mizer Scoop, 4 Cherry Bomb ×2 slots, 1 Jammer 30 |
+| AP-002 | Automitron | 3 | B-52 Bomber: 3 Trans-Galactic Mizer Scoop, 4 Cherry Bomb ×4 slots, 2 Jammer 30, 2 Elephant Hide Fortress |
+| AP-002 | Automitron | 9 | Battleship: 4 Trans-Galactic Mizer Scoop, 1 Jammer 30, 8 Elephant Hide Fortress, Rho Torpedo 6, 6, 2, 2, 4, 6 Valanium, 3 Jammer 30, 3 Battle Nexus (template b) |
+
+- **AP-003 (MEASURED)** is the AI01 capture: one expert of each type,
+  2400–2402, with no edits (`AI.md` Status). Turindrone in 2400:
+  - queued 5 of design 0 on a 128-planet map;
+  - merged and scrapped its two Midget Miner fleets;
+  - loaded 25 kT of colonists into its Colony Ship, which then stayed at
+    home through 2402;
+  - wrote no design orders in 2400–2402.
+
+  Automitron:
+  - scrapped its Colony Ship in 2400;
+  - in 2401 and 2402, deleted and rewrote slot 1 as a Medium Freighter
+    with 1 Long Hump 6, 1 Colonization Module and 1 Cow-hide Shield, at
+    tech 3 in every field (predicted exactly);
+  - queued no ships, because homeworld population was below the
+    production threshold.

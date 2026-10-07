@@ -1089,7 +1089,7 @@ python3 experiments/wt/trace.py OUT/run                # per-year wormholes, Tra
   years running, every wormhole end moved by the same vector each year.
   Cycles values also fall into few streams: 21 values from 20000 to 45000
   gave 3 on the WT-000 start. This matches the KX-004 cycles-to-tick map
-  (stars-elegy #44), so a sweep for random outcomes such as jump odds has
+  (`PARITY.md` KX-004), so a sweep for random outcomes such as jump odds has
   to reach low cycles values. `trace.py` flags a year whose wormhole moves repeat the year
   before as `SAME STREAM?`. Year-1 stream classes for the WT-000 start are
   in `experiments/wt/README.md`.
@@ -1227,6 +1227,14 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
 - A rerun from the same start at the same cycles captured the same
   computer orders; a different stream changed only random choices such as
   names and pictures (one 7-player game, one year).
+- A computer player plans from its own player file (`.Mn`), not from the
+  `.HST`. Editing its tech in the `.HST` (`scripts/oracle/hst-edit edit IN
+  OUT player=N planet=HW tech=…`, its homeworld as `planet`) changed
+  nothing in that year's orders; the next year's orders used the edited
+  tech (AP-001, AP-002). So run one extra year after an `.HST` edit.
+- A game definition whose first race line is a computer player (`# 2 4`)
+  is refused ("unable to load the race file"); put a race file first
+  (observed once, 2026-10-07).
 
 ## Known fragility
 

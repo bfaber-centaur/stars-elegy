@@ -82,13 +82,14 @@ public class ProdTool {
     Map<String,String> kv=new LinkedHashMap<>();
     for (int i=3;i<a.length;i++){ String[] s=a[i].split("=",2); kv.put(s[0],s[1]); }
     int planet = Integer.parseInt(kv.getOrDefault("planet","7"));
+    int player = Integer.parseInt(kv.getOrDefault("player","0"));
     List<Block> bl = new Decryptor().readFile(a[1]);
     List<Block> out = new ArrayList<>();
     boolean found=false;
     for (int i=0;i<bl.size();i++) {
       Block b=bl.get(i);
       if (b instanceof ProductionQueueBlock && found && kv.containsKey("queue") && out.get(out.size()-1) instanceof PartialPlanetBlock && ((PartialPlanetBlock)out.get(out.size()-1)).planetNumber==planet) continue; // drop old
-      if (b instanceof PlayerBlock && ((PlayerBlock)b).fullDataBytes!=null && ((PlayerBlock)b).playerNumber==0) {
+      if (b instanceof PlayerBlock && ((PlayerBlock)b).fullDataBytes!=null && ((PlayerBlock)b).playerNumber==player) {
         PlayerBlock p=(PlayerBlock)b; byte[] d=p.fullDataBytes; boolean ch=false;
         if (kv.containsKey("researchPct")) { d[0x38-8]=(byte)Integer.parseInt(kv.get("researchPct")); ch=true; }
         if (kv.containsKey("prt")) { d[0x44]=(byte)Integer.parseInt(kv.get("prt")); ch=true; }
