@@ -547,12 +547,42 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   byte) on the planet line. LRT bits used: 1 Total
   Terraforming, 4 Generalized Research, 9 Only Basic Remote Mining.
   `TURNS=3 edit-turn …` ran three years in a row without trouble.
+- Added for KX-003 (2026-10-07): `hst-edit xy IN.XY OUT.XY OFF:HEX…`
+  sets bytes of the game record (block type 7 in the `.XY` file):
+  `0x10` game options (bit 1 slower tech, bit 7 no random events; CB has
+  `0x80`), `0x14 + i` victory condition i (bit 7 enabled, low 7 bits the
+  value; `KERNEL.md`, "Victory conditions"). An unedited `.XY` round-trips
+  byte for byte. Put the edited `CB.XY` in the `pinned-turn` base
+  directory: the generated year used it (S2's slower tech took effect).
+  `dump` prints `game` (the record's first 32 bytes) for a `.XY` and
+  `scores` (block type 45) for a `.M`: per record, word 0 the flag word,
+  word 1 the rank, then score (32 bits), resources (32), planets,
+  starbases, unarmed, escort and capital ship counts and the tech-level
+  sum (16 bits each). A player's `.M` held only its own record. The
+  `race` line now prints 14 stats (8–13 the research cost settings). On
+  a Combat Lab file, `hst-edit edit` needs `planet=` set to a planet player
+  0 owns (the default 7 is not).
 - An edited race must stay within the race wizard's point budget. KX-001
   M3 (cheaper factories and mines, nothing paid for them) was flagged in
   the generated year: message id 0x117 in the `.M1`, and the race's
   colonists-per-resource stat raised from 10 to 24 before production, which
   changes every resource figure. Check the `race` line of the after-dump
   and the event list for 0x117 before trusting a race-edit case.
+  JOAT → Super Stealth (`prt 1 1`) is over budget (KX-003 S3: 0x117,
+  colonists-per-resource 24); LRTs `0x1b80` made it legal (S3L). JOAT →
+  Claim Adjuster is legal.
+- KX-004 (2026-10-07): long runs go one year per `pinned-turn` process
+  (`experiments/kx004/run-kx4.sh`, about 13 s a year), with a different
+  cycles value each year so each year draws from a different random
+  stream. Running several `stars.exe -g` in one DOSBox autoexec does not
+  work: Windows stays up after the first generated year.
+- Event records in a `.M` file's events block (the `events` hex from
+  `hst-edit dump`): a 16-bit word whose low 9 bits are the message id and
+  whose bits 9 and up flag which parameters take 2 bytes; a 16-bit
+  object word; then the parameters, 1 byte each unless flagged. The number
+  of parameters depends on the message id (a table in the original
+  program; the private KX-004 checker carries it). Example: `5901 feff 00
+  17` is message 0x159 with object −2 and parameters 0 and 23.
 - A state the game cannot process shows a Windows "Application Error"
   dialog (KX-001 Z1: "integer divide by 0") and no year is written; `turn`
   and `host-turn` then time out with the dialog still open. Take a
@@ -651,6 +681,20 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   To sample a random outcome, compare record hashes and count streams,
   not runs.
 - A generation takes a few seconds after DOSBox starts.
+- **Which stream a cycles value reaches** (KX-004, 2026-10-07). The
+  startup tick is `trunc(k·54.925)` ms for a small integer k, about
+  `k ≈ 70000/cycles`. Ticks identified by replaying random events: 35000
+  and 45000 → 109; 11500 → 329; 10500, 9800 → 384; 6000 → 659; 5200 → 768;
+  3700 → 1098; 2260, 2190 → 1812; 1985–1955 → 2032; 1750, 1710 → 2306;
+  1490 → 2691; 1210 → 3295; 1190, 1170, 1160 → 3405; 1165, 1155 → 3460;
+  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. Below
+  about 1200 the mapping is not monotonic. Runs down to cycles 880 still
+  took well under a minute each.
+- A range like `15000 + 37·year` reaches only two or three ticks, so a
+  long run of pinned years repeats the same few streams; with nothing else
+  drawing, yearly random events read the same draws every year (KX-004 E1:
+  148 years, no event). To sample random outcomes, choose cycles values
+  that reach different ticks.
 
 - In the round-5 starts, 20000 and 25000 always gave the same stream,
   and so did 30000, 35000, 40000 and 45000: twelve values from 5000 to
