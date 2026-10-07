@@ -215,21 +215,35 @@ BINARY-ONLY.
   with **ships in the field**, a **starbase**, or a **production-queue entry**
   that builds it. Elegy's chosen rule: **refuse** a change to a slot that is in
   use (ships, starbase, or queued), so a redefinition cannot silently mutate
-  ships already built to the old design. Whether the original overwrites the
-  slot in place (the ships then reading as the new design) or refuses is read
-  but unmeasured — BINARY-ONLY, pending the **CO-08** client-orders run (if the
-  client refuses to edit an in-use slot, that is a client limit to record in
-  `ORACLE.md`; otherwise the run reads host overwrite-vs-refuse).
+  ships already built to the old design. MEASURED (CO-08, stars-elegy #77 /
+  apparatus #46): the original **client disables Edit** for any design used by
+  **ships or a starbase**, so that case is not client-reachable (a client limit,
+  also noted in `ORACLE.md`). A design used **only by a production-queue entry**
+  can be edited: the host **overwrites the slot in place** and the queue entry
+  then builds the edited design. So for the **queue-only** case Elegy's "refuse
+  if queued" is more conservative than the original, which overwrites — an
+  INTENTIONALLY DIFFERENT choice (Elegy avoids silently changing what a queued
+  entry will build); the ships-or-starbase case is unreachable from the client
+  either way. The host's behaviour when a slot in use by **ships** is
+  overwritten by a **crafted** order remains BINARY-ONLY (serial-gated).
 - **Design delete effect (elegy implementation Q11).** Deleting a design
   removes every ship of that design: ships in the field are removed, a fleet
   left with no ships is removed, and a **starbase** of that design is removed,
   following the object-removal rules in `KERNEL.md` (the same path a scrapped or
   destroyed design takes). A production-queue entry building the deleted design
-  is dropped. Elegy applies this deterministically on the design-delete order;
-  the slot renumbering of later designs follows the same rule as battle plans
-  (see #59 for the plan analogue). Client-reachable (the original client deletes
-  an in-use design with its alert, DS-1); the **CO-07** client-orders run
-  measures each effect. No serial needed.
+  is dropped. MEASURED (CO-07/CO-07b/CO-07c, stars-elegy #77 / apparatus #46):
+  ships of the deleted design are removed and a fleet of only those ships
+  disappears; a queue entry building it is dropped **even at 66% done**; the
+  slot is **cleared in place with no renumbering** of later designs (correcting
+  the earlier battle-plan-renumber reading for this order); and deleting the
+  **starbase** design in use removed the homeworld's starbase (CO-07b). When the
+  deleted ships shared a fleet with survivors, their fuel and cargo are shared
+  out exactly as a ship **move** does it: the leaving ships take
+  `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with
+  the survivors with no clamp to the survivors' tank (CO-07c: a 500 mg fleet of
+  capacity 950 losing a 900-capacity design kept `500 − floor(500·900÷950) = 27`
+  mg; 100 kT of iron shared the same way left 0). Client-reachable (the original
+  client deletes an in-use design with its alert, DS-1). No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
   whole-design rejection, under the rules above: (1) a component above the
@@ -496,7 +510,13 @@ run merged two damaged ships totalling 201 units and stored `201/2 → 100`
 (`ceil(100·ΣD/n)`, `D` the damaged-ship count per stack, `n` the slot total).
 So the merge order keeps a higher per-ship figure than the task's dilution,
 and the **task's damage rule is refuted for the direct merge** — an
-implementation must not assume the single task damage rule holds here.
+implementation must not assume the single task damage rule holds here. A richer
+case confirms the two formulas together (CO-05c): merging ten ships at 100
+units/50% damaged with ten at 200 units/20% damaged stored per-ship units
+`(500 + 400)/7 = 128.6 → 128` (`Σ(D·units)/ΣD` over the seven damaged ships,
+rounded down) at `100·7/20 = 35%` of the slot. Note the stored damage is read
+*before* the year's repair: the same file **after** the turn's repair reads
+**118 units**, so an audit must compare at the same phase.
 
 **Merge-with-Fleet waypoint task** (CONFIRMED, FO-01..07). The ordering fleet
 joins a target fleet on arrival; ship counts add per design and cargo and
@@ -630,10 +650,18 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   target's current position, so a fleet ordered to meet a moving fleet keeps
   chasing it. CONFIRMED (a waypoint aimed at a fleet that moved north came
   back with the target's new coordinates). Only a position is copied; the
-  target's owner is not re-checked, so a waypoint keeps tracking a target fleet
-  even if it has changed hands (been captured) — the captured case is
-  BINARY-ONLY. An exception bit on the waypoint suppresses the refresh (the
-  waypoint then holds its coordinates) — BINARY-ONLY.
+  target's owner is not re-checked, so a waypoint keeps tracking a target even
+  if it has changed hands (been captured). MEASURED for a **planet target**
+  (WU wuCAP, apparatus `evidence/wu`): a fleet's waypoint naming an enemy planet
+  survived that planet being captured the same turn — a one-sided colonist drop
+  invaded the undefended planet (owner flipped at the drop step, before fleet
+  movement), yet the pursuing fleet's waypoint still named the planet (same
+  target type) afterwards, not cleared. The **fleet-target** capture (an
+  in-place owner change of a *fleet* target) stays BINARY-ONLY: it is not
+  reachable from the client, because a fleet gift removes the original and
+  creates a new fleet for the recipient, which is the "target gone" case below,
+  not an in-place capture. An exception bit on the waypoint suppresses the
+  refresh (the waypoint then holds its coordinates) — BINARY-ONLY.
 - **Target gone (destroyed, or no longer a fleet):** the target is cleared
   and the waypoint becomes a plain go-to-coordinates waypoint at the
   last-known position; the fleet still travels there and then treats it as an
@@ -680,10 +708,10 @@ automatically sent on to that destination (a fresh two-waypoint order):
 
 - the warp is the **ideal warp** for the distance, then reduced step by step
   if the fleet lacks the fuel to sustain it;
-- if both the source and destination planets have a **stargate**, the fleet
-  carries no cargo, and the gate can move the fleet's heaviest hull over the
-  distance with no loss, the fleet is sent through the stargate instead
-  (warp set to the gate code).
+- if both the source and destination planets have a **stargate**, both planets
+  belong to the fleet's owner, the fleet carries no cargo, and the gate can move
+  the fleet's heaviest hull over the distance with no loss, the fleet is sent
+  through the stargate instead (warp set to the gate code, **11**).
 
 This chains across hops: each arrival re-routes. A planet with no route set,
 or not owned by the fleet, leaves the fleet idle rather than re-routing.
@@ -691,10 +719,26 @@ or not owned by the fleet, leaves the fleet idle rather than re-routing.
 CONFIRMED for the ideal-warp case: a fleet carrying the route task at a planet
 whose route pointed to another planet ~161 ly away came back with a fresh
 two-waypoint order to that planet at warp 6 (the Long Hump 6 ideal warp, with
-fuel to spare) and had begun moving. The stargate case is BINARY-ONLY (the
-base starbases have no gate). This routing rule is the same one new fleets use
-when they leave production; the shared statement lives in `PRODUCTION-LAUNCH.md`
-(stars-elegy #57), which this section defers to rather than restating.
+fuel to spare) and had begun moving.
+
+MEASURED for the **stargate case** (WU wuRSG2, apparatus `evidence/wu`): with
+both the source (planet 17) and destination (planet 8) owned by the fleet's
+player and each carrying a stargate, a cargo-free fleet with the route task at
+planet 17 was re-routed through the gate — it arrived at planet 8 the same year
+(a ~161 ly hop, farther than warp 10's 100 ly/year reach, so the move can only
+be a gate jump) and its regenerated waypoint read warp 11 (the gate code,
+GT-004). A direct warp-11 control fleet naming the same gated destination jumped
+identically. **Both planets must belong to the fleet's owner** for the shared
+routing check (`FCanFleetUseStargates`): a friend's gate does not count. (A
+non-IT fleet carrying cargo may change the choice, since the no-cargo condition
+and the gate's mass/range limits then apply; not separately measured here.) One
+observation left open: both fleets' fuel read 100 before and 50 after the jump,
+though a gate hop is conventionally fuel-free — recorded, not interpreted, and
+distinct from the CO-07c design-delete fuel accounting below.
+
+This routing rule is the same one new fleets use when they leave production; the
+shared statement lives in `PRODUCTION-LAUNCH.md` (stars-elegy #57), which this
+section defers to rather than restating.
 
 ### Patrol task
 
@@ -830,32 +874,27 @@ cycle), and the computer-player transfer refusal (a fleet gifted to an expert
 computer, measured on a computer-opponents base built with the fleetlab
 `keepfleets-ordered` directive).
 
-Still open (fleetlab HST editing, no serial). Each needs a setup the current
-CombatLab directives do not yet build, so they are not part of the plain WU
-batch:
+Both previously-open WU cases are now **run** (fleetlab HST editing, no serial):
 
-- **WU captured target (planet-invasion variant).** A fleet does not change
-  owner in place — a gift removes it and makes a new fleet for the recipient
-  (that is the "target gone" case above, CONFIRMED). The reachable analogue of
-  the owner-not-re-checked claim is a **planet** target whose owner changes by
-  invasion mid-turn: fleet B holds a waypoint targeting planet P (target type
-  11); another player-0 fleet drops colonists onto an **undefended** foreign P
-  in the first drop step (before movement, TK-501), so P becomes player 0's
-  that turn. **Prediction:** at waypoint upkeep (after the drop step) B's
-  waypoint still targets P — P still exists, so only its position is re-copied
-  and its owner is not re-checked; the waypoint is not dropped. The
-  **suppress-bit** variant holds B's stored coordinates instead of re-resolving.
-  Staged with `planetset` (zero P's defenses) + a colonist-unload drop.
-- **WU route stargate.** Route between two **gated** planets with an empty
-  fleet; confirm it is sent through the stargate rather than at warp.
-  CombatLab's `sbdesign` *builds* a gated starbase design, but a WU gate run
-  (`wuGATE`) showed the host did not perform a gate hop from it (a routed fleet
-  warped; a warp-11 waypoint burned fuel and did not move), so the planet-gate
-  flag and the waypoint gate value are not yet understood. The gate encoding is
-  with the Objects lane (stargates / `objects.py` gatejump); this case waits on
-  their staging recipe (see also the Q13 note above).
+- **WU captured target (planet-invasion variant) — RESOLVED (MEASURED, wuCAP).**
+  A player-0 fleet dropped 200 colonists onto an **undefended** foreign planet
+  (its starbase removed and defenses zeroed so the drop is not refused — a
+  foreign starbase otherwise cancels the drop with message 0x135, `MESSAGES.md`);
+  the planet flipped to player 0 at the drop step, before fleet movement. A
+  second player-0 fleet carrying a waypoint that named that planet (target type
+  11) still named it after the capture — the waypoint was not dropped when the
+  planet changed hands. See "Targets that moved, died or were captured" above.
+  The **fleet-target** in-place capture stays BINARY-ONLY (not client-reachable;
+  a fleet gift is the "target gone" case).
+- **WU route stargate — RESOLVED (MEASURED, wuRSG2).** A cargo-free fleet with
+  the route task, both route endpoints owned by the fleet's player and each
+  gated, was sent through the gate (warp 11), arriving the same year over a hop
+  longer than any warp could cover; the earlier `wuGATE` miss was only because
+  its destination waypoint did not name the gated planet as its target object.
+  See the Route task section above; the gate encoding itself (warp 11 = gate,
+  GT-004) is the Objects lane's.
 
-(**WU patrol no-repeat** is now MEASURED — see the patrol bullet above, run
+(**WU patrol no-repeat** is also MEASURED — see the patrol bullet above, run
 `wuPNR`.)
 
 The order-ingestion predictions remain open:
