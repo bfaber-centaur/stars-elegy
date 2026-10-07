@@ -158,3 +158,23 @@ Player 1 is JOAT, immune to gravity, with temperature and radiation 45–55
 |---|---|---|---|
 | 10 (P1) | 20/47/50, pop 5,000, Terraform ×5 | capacity 3 (gravity immune, temperature 47 → 50, radiation at the centre). The order is cut to ×3 (message 0x12f) and built: 20/50/50, item gone | gravity counted: capacity 6, ×5 kept, gravity moved |
 | 11 (P1) | 10/50/50, pop 5,000, Terraform ×2 | capacity 0: the order is removed (0x12f), nothing built, 10/50/50 | units built on gravity |
+
+### Batch 2 results
+
+Every prediction held in both streams (cycles 20000 and 3700 gave the same
+files' values).
+
+- KB-2A: player 1's research was 1,449 (energy 5, 529 stored). Message
+  0x5c carried 414, and planet 13 gained 378/0/99 kT. Planets 9 and 12
+  sent 0xb9 and 0x129, then 0x3e, with their queues freed. Planet 16 sent
+  nothing and kept its zero-item queue. Player 0 ended at 26/1/1/5/5/5 with
+  weapons current, 185 stored and the next field "same". Its level
+  messages named weapons, propulsion and weapons as the field research
+  continues in.
+- KB-2B: player 1 stored energy 60 and weapons 44, and received 0x159 for
+  23 (energy) and 88 (weapons). Player 0 stored weapons 178.
+- KB-2C: planet 10 went to 20/50/50, with 0x12f, three clicks and 0x3e.
+  Planet 11 stayed at 10/50/50, with 0x12f and 0x3e. The first run is void:
+  its race had only the gravity centre at 255. The host repaired that
+  (0x117, centre forced to 50) and terraformed gravity. The spec now sets
+  centre, low and high to 255, and the rerun is the result above.

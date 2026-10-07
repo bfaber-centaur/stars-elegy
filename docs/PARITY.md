@@ -1762,6 +1762,37 @@ from 1,000 to 2,400 before production, and with that value the resource
 rule gives exactly 120 left after the research tax. CombatLab's dump now
 prints each player's advantage points so a start can be checked first.
 
+### KB batch 2 — production pre-checks, research switching, slow-tech stealing, immune terraforming
+
+Status: CONFIRMED. Each case ran at cycles 20000 and 3700 with identical
+results. Predictions were committed before the runs (stars-elegy
+`734498a`); `experiments/kb/` has the specs, model and tables. Raw
+evidence: private apparatus `evidence/kb/`. Rules: `KERNEL.md`
+"Research" ("Level cost", "Allocation"), "Production" and
+"Terraforming".
+
+Question: do KERNEL.md's remaining production and research rules hold,
+including the Ultimate Recycling bonus, the queue pre-checks and the
+zero-item queue? And field switching after a "same field" research reaches
+26, stealing under slower tech, and terraforming with an immune axis?
+
+| Case | Rule | Observation | Result |
+|---|---|---|---|
+| KB-2A 13 | Ultimate Recycling scrap bonus `r + trunc(x·r/(x+r))` | 10 ships of owner cost 241 (`x` 2,410) at a 500-resource planet with no queue: research total 1,449 (500 + 414 + others); the message carried 414. Minerals 378/0/99 = `9C/20` | CONFIRMED |
+| KB-2A 9 | A scanner order on a planet with a scanner | Removed (0xb9), queue freed (0x3e), 300 resources to research | CONFIRMED |
+| KB-2A 12 | A packet order with no driver | Removed (0x129), queue freed (0x3e), 200 to research | CONFIRMED |
+| KB-2A 16 | Zero-item queue | Nothing to research, no message; the empty queue block stayed | CONFIRMED |
+| KB-2A P0 | "Same field" at 26 acts as "lowest" for the rest of the year | Research 1,135: energy 26, weapons 1, propulsion 1, then weapons current with 185; three level messages naming weapons, propulsion, weapons as next; stored choice still "same" ("same" kept would give weapons 2 with 155) | CONFIRMED |
+| KB-2B | Stolen research halved rounding up under slower tech | Super Stealth stored energy 48 + 12 = 60 and weapons 44 (two 0x159 messages showing 23 and 88); the other player's weapons 355 stored as 178 | CONFIRMED |
+| KB-2C | An immune axis is not terraformed and adds no capacity | Gravity-immune race: 20/47/50, Terraform ×5 cut to ×3 (0x12f) → 20/50/50; 10/50/50, ×2 removed (0x12f), nothing built | CONFIRMED |
+
+Interpretation: every reading tested holds. KB-2C's first run was void.
+Its race marked gravity immune with only the centre byte at −1, and the
+host repaired it before production: message 0x117, gravity centre forced
+to the midpoint of low and high (50), and both planets were then
+terraformed in gravity. An immune axis needs centre, low and high all at
+−1 (`docs/ORACLE.md`); the rerun used that.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the

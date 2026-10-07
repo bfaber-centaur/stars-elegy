@@ -706,8 +706,9 @@ half is treated like normal research (stored as half, rounded up), and
 each other field's 15% share `o` is added to its stored value as
 `trunc(o/2)` (CONFIRMED, KX-005 R2: research 1,995, energy current →
 stored 499, every other field 150 (`o` = 300); weapons at level 0 did not
-level). Stolen research (Super Stealth) is halved rounding up
-(BINARY-ONLY).
+level). Stolen research (Super Stealth) is halved rounding up: the
+message shows the full `s`, and `ceil(s/2)` is stored (CONFIRMED, KB-2B:
+stolen 23 and 88 stored as 12 and 44).
 
 ### Allocation
 
@@ -743,7 +744,9 @@ level). Stolen research (Super Stealth) is halved rounding up
   field" (CONFIRMED, KX-005 R3: energy 25 → 26 with 15 left over; weapons
   became current with 15 stored, choice still "same"). For the rest of
   that year the switch logic acts as if "lowest field" were chosen
-  (BINARY-ONLY).
+  (CONFIRMED, KB-2A: energy 25 → 26 with 1,115 left; weapons 0 → 1, then
+  propulsion 0 → 1, then back to weapons with 185 stored; the stored
+  choice stayed "same").
 - **Messages.** Each level gained sends the player one message naming the
   field, the new level and the field research continues in (Generalized
   Research players get a variant). It is followed by one message per part
@@ -885,21 +888,29 @@ completes with the remaining 8 resources (410 in all). Unit 2 the same:
 and the remaining 78 become Mineral Alchemy @78%. Minerals: +8 kT each,
 8 kT of germanium used.
 
-Additional rules, BINARY-ONLY:
+Additional rules (CONFIRMED by KB-2A unless marked):
 
 - A planet with a production queue of zero items contributes nothing to
-  research that year, not even the research tax. (A queue emptied during
-  the year is removed, so the next year takes the no-queue path and sends
-  everything to research.)
+  research that year, not even the research tax, and gets no production
+  message; the empty queue stays. (A queue emptied during the year is
+  removed, so the next year takes the no-queue path and sends everything
+  to research.) A zero-item queue does not arise in play; KB-2A wrote one
+  directly.
 - Resources from ships scrapped at a planet this year with Ultimate
-  Recycling (`x`) raise that planet's production resources `r` to
-  `r + trunc(x·r/(x + r))`.
+  Recycling (`x`, the ships' resource cost for their owner) raise that
+  planet's production resources `r` to `r + trunc(x·r/(x + r))`, also on
+  a planet without a queue. The scrap message shows the added amount
+  (KB-2A: `x` 2,410, `r` 500 → 914, message 414).
 - A planetary scanner order on a planet that already has one is removed
   with a message; a mass-driver packet order without a driver or
-  destination is removed with a message; a terraform order above the
-  remaining terraform capacity is clipped (or removed at 0; CONFIRMED for
-  terraforming, KX-002 T1, T3; see "Terraforming").
-- A planet with 0 resources builds nothing and sends no messages.
+  destination is removed with a message. Either way, a queue left empty
+  is freed with the "completed its orders" message and the planet's
+  resources go to research. A terraform order above the remaining
+  terraform capacity is clipped, or removed at 0 (KX-002 T1, T3; KB-2C;
+  see "Terraforming").
+- A planet with 0 resources builds nothing and sends no messages
+  (BINARY-ONLY; an owned planet with population has at least 1 resource,
+  so only the duplicate-serial ×4/5 cut of a 1-resource planet reaches it).
 
 ### Terraforming
 
@@ -915,7 +926,10 @@ BINARY-ONLY where marked):
   only toward the race's centre, stopping at it. CONFIRMED: Gravity
   Terraform ±3 from 60 reaches 57 (T1), and from a current 58 with
   original 60 only 57 remains (T3); TT ±3 applies to gravity and
-  temperature (T2). An immune axis is not terraformed (BINARY-ONLY).
+  temperature (T2). An immune axis is not terraformed and adds nothing to
+  the capacity (CONFIRMED, KB-2C: a gravity-immune race at 20/47/50 had
+  Terraform ×5 cut to ×3 and reached 20/50/50; at 10/50/50 ×2 was
+  removed with nothing built).
 - **Capacity.** The clicks still available are the sum over axes of the
   distance from the current value to its limit. An order (or the part of
   it left) above that is cut to it when the queue reaches it, with a

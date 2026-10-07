@@ -28,14 +28,14 @@ Levels:
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | none | Missing | Where built ships go: one new fleet per build, its number and name, full fuel, the per-player fleet limit and what happens at it, routing to the planet's route destination with the warp chosen, a new fleet's default orders, what replacing or upgrading a starbase does to the old one. |
 | Population growth | `KERNEL.md` | Confirmed | |
-| Research and tech progression | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. |
+| Research and tech progression | `KERNEL.md` | Confirmed | KX-002, KX-003, KX-005 and KB-2 (field switching at 26, stealing under slower tech). The level-10 cap for capped players is Read. |
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#44), `OBJECTS.md` | Confirmed (#44) | KX-004. Check that #44 states meteors and climate change also clear the non-automatic items from a planet's queue. |
 | Battles | `COMBAT.md` | Confirmed | |
 | Bombing, invasion, colonization, capture | `TAKEOVER.md` | Confirmed | |
 | Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `SCANNING.md`, `TAKEOVER.md` | Read / Partial | The route task is missing. Patrol target choice is Read. Two transfer-fleet refusals are missing: a computer player never receives a fleet, and a recipient that treats the giver as an enemy refuses. |
 | Waypoint upkeep | `KERNEL.md`, `SCANNING.md` | Partial | Repeat orders (reached waypoints move to the end of the list), when a reached waypoint is dropped, waypoints whose target was destroyed or captured. |
 | Sweeping, repair | `OBJECTS.md`, `COMBAT.md` | Confirmed | |
-| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. Currently one paragraph, Read. |
+| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` | Confirmed | KX-005: Claim Adjuster drift and year-end step, orbital adjusters, the half-price terraform. |
 | Duplicate-serial penalties | `KERNEL.md` | Read | |
 | What each player knows; estimates | `SCANNING.md` | Confirmed / Read | |
 | Scores and victory | `KERNEL.md` (#44) | In progress | |

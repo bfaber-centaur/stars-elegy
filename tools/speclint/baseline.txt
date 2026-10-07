@@ -34,7 +34,6 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: Vectors (CONFIRMED): small 9
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: Which component limits a unit (CONFIRMED where cases are cited,
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: `15 + rand(15)`; capped at 200 (CONFIRMED: huge comet, 112 → 200).
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: message, and removed if it is 0 (CONFIRMED, T1: ×5 → ×3; T3: ×5 → ×1;
-docs/KERNEL.md	uncited	CONFIRMED without a case ID: only toward the race's centre, stopping at it. CONFIRMED: Gravity
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
 docs/OBJECTS.md	untagged	section "Visibility" has no status tag

@@ -1,6 +1,6 @@
 # KB-2C: terraforming with an immune axis. Random events off (CB base).
 # Player 1: JOAT, gravity immune, temperature and radiation 45..55 (centre
-# 50), with No Ram Scoop Engines, No Advanced Scanners, Low Starting
+# 50; an immune axis has centre, low and high all −1, written 255), with No Ram Scoop Engines, No Advanced Scanners, Low Starting
 # Population and Bleeding Edge Technology (legal); every field at 3, so
 # its reach is ±3 on each axis. Research tax 0.
 #   10: environment 20/47/50, pop 5000, queue Terraform ×5: the immune
@@ -13,7 +13,7 @@
 research 0 0
 research 1 0
 lrt 1 7552
-hab 1 255,50,50,15,45,45,85,55,55
+hab 1 255,50,50,255,45,45,255,55,55
 tech 1 energy 3
 tech 1 weapons 3
 tech 1 prop 3
