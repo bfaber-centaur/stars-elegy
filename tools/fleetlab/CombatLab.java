@@ -73,7 +73,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
-//                                   artifact=1|0 (ancient artifact flag, any planet)
+//                                   artifact=1|0 (ancient artifact: the file flag, and on
+//                                   owned planets the installations bit the host reads)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
@@ -978,8 +979,19 @@ public class CombatLab {
             }
         }
         pl.encode();
+        if (pl.hasArtifact && pl.hasInstallations) setInstallationArtifactBit(pl);
         pl.setData(pl.getDecryptedData(), pl.size);
         pl.decode();
+    }
+
+    // The host reads a planet's artifact from the file flag only when the record has no installations
+    // block; with one (owned planets), it takes bit 6 of the block's seventh byte, which StarsAPI does not
+    // write. Set it here, after encode() (TK round 4).
+    static void setInstallationArtifactBit(PartialPlanetBlock pl) throws Exception {
+        byte[] d = pl.getDecryptedData();
+        int tail = (pl.hasStarbase ? (pl.typeId == BlockType.PARTIAL_PLANET ? 1 : pl.starbaseBytes.length) : 0)
+                + (pl.hasRoute && pl.typeId == BlockType.PLANET ? 2 : 0) + (pl.turn >= 0 ? 2 : 0);
+        d[pl.size - tail - 8 + 6] |= 0x40;
     }
 
     // One 18-byte universe-object record (docs/ORACLE.md "Universe objects").
