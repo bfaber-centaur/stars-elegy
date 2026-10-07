@@ -665,12 +665,14 @@ reset by the warp rule at the end of the turn.
 **Fleet classes.** Hull roles: freighters (Small to Super Freighter),
 privateers (Privateer, Rogue, Galleon), warships (Destroyer to
 Dreadnought), Frigate, Nubian, Meta Morph. A design's *power* is the
-same per-design power the score uses (`KERNEL.md` "Scores and victory conditions", the Ships
-row: beams, torpedoes and bombs, with capacitors and battle speed). The
-computer player computes it at the start of its turn for every design in
-its own view, including other players' designs it knows (BINARY-ONLY that
-the AI reads the same value; the formula itself is CONFIRMED at the score
-class boundaries, KX-003).
+same per-design power the score uses (`KERNEL.md` "Scores and victory
+conditions", the "Power of a design" list: beams, torpedoes and bombs,
+with capacitors and battle speed). The computer player computes it at the
+start of its turn for every design in its own view, including other
+players' designs it knows (BINARY-ONLY that the AI reads the same value;
+the formula is CONFIRMED at the score class boundaries KX-003 reached,
+with capacitors and sappers BINARY-ONLY and the speed term CONFIRMED by
+OT-6).
 - *Attack fleet*: walking its designs in slot order (slots with ships
   only): a warship → yes; a Frigate → yes if its power > 0, else **no,
   stop looking** (LEGACY BUG candidate: an unarmed frigate slot hides a
