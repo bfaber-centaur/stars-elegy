@@ -365,24 +365,31 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   colonisation or invasion under the takeover/objects rules — not in the
   post-movement waypoint phase and not credited silently to the planet.
 - **Missing endpoint.** A transfer record whose source or destination object
-  is missing is **skipped whole**; neither side changes.
+  is missing when the order is replayed is **skipped whole**; neither side
+  changes. Because the manual transfer is resolved in place at step 1, this
+  also covers a receiver **removed by an earlier order the same turn** (scrapped,
+  merged or destroyed, or whose owner's replay ran first): the gift is skipped
+  and the **giver keeps the cargo** — nothing is debited. BINARY-ONLY for the
+  same-turn-removal case (read from the order-time object lookup; the in-place
+  step-1 timing is MEASURED, TK-406/407/409).
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
-- **Endpoint gone by the credit pass (cross-owner, non-colonist).** A
-  cross-owner cargo gift to a foreign fleet or planet is **not** a single
-  in-place step: the giver is debited when the order is replayed, but the
-  matching credit is appended to a transfer queue and applied **after
-  movement**. If that destination is **gone by the credit pass** — merged,
-  scrapped or destroyed earlier the same turn — the queued credit is **skipped
-  and the already-debited cargo is lost**, *not* returned to the giver. So an
-  implementation that returns the cargo to the giver diverges here. BINARY-ONLY
-  (the post-movement credit routine looks the destination up and does nothing
-  when it is absent — there is no return-to-source path). This also means the
-  non-colonist cross-owner credit is **deferred post-movement**, in tension
-  with the "credited in place at step 1" wording above: the MEASURED gift cases
-  (TK-406/407/409) saw the credit land but, with a stationary endpoint, cannot
-  date it. Flagged for reconciliation with the Takeover lane.
+- **A separate deferred path (not the manual gift).** The manual transfer above
+  is in place and **silent**. There is a *distinct* cross-owner cargo path —
+  cargo moved to another player's object by a **transport task** rather than by
+  the hand transfer order — that debits the giver when the order is replayed but
+  **queues the credit** and applies it **after movement**, notifying both
+  players (messages `0x042`/`0x044`, and `0x046`/`0x048` on a shortfall). Tell
+  them apart by the messages: the manual gift sends none of these (only `0x0dd`
+  on a shortfall); this path does. If the destination is **gone by that
+  post-movement credit pass** (merged, scrapped or destroyed earlier the same
+  turn), the queued credit is **skipped and the already-debited cargo is lost**,
+  not returned to the giver — an implementation that returns it diverges.
+  BINARY-ONLY (the post-movement credit routine looks the destination up and
+  does nothing with no return-to-source path; its `0x042`–`0x048` messages are
+  themselves BINARY-ONLY in `MESSAGES.md`). This is **not** the manual gift of
+  the rules above, which is credited in place at step 1 (MEASURED, #84).
 
 An independent implementation that adopts the "validate ownership on every
 order" chosen rule above still needs the legitimate cross-owner paths —
