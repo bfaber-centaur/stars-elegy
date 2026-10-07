@@ -132,23 +132,20 @@ BINARY-ONLY.
   after the order is accepted, so an out-of-box waypoint is corrected, not
   rejected.
 - **Waypoint warp, target and transport (elegy implementation Q13).** The legal
-  travel-warp set is **0..10**. A stargate hop is encoded with a distinct warp
-  value; the specific value is **UNVERIFIED** — a WU gate run (`wuGATE`) found a
-  waypoint with warp **11** behaving as an *out-of-range travel warp* (the fleet
-  stayed put and burned fuel) rather than a gate, so "11 = gate" is not the
-  original's encoding as far as measured. The gate encoding (the planet-gate
-  flag and the waypoint gate value) is under investigation by the Objects lane
-  (stargates / `objects.py` gatejump); this bullet defers to that result for the
-  gate value. A nonexistent target object and a negative transport amount are
-  both malformed. Elegy's chosen rule is to **reject** each — a travel warp
-  outside `0..10` (and anything that is not the real gate value once fixed), a
-  waypoint naming a target that does not exist, and a transport order with a
-  negative amount are refused (the order dropped, the rest of the file
-  applying), rather than clamped or coerced. Whether the original clamps the
-  warp (as it clamps coordinates above) or coerces a negative amount is read but
-  unmeasured (BINARY-ONLY); the discriminating OX run submits each malformed
-  value and reads back whether it was clamped or dropped. The coordinate clamp
-  above is the one validation confirmed to correct-rather-than-reject.
+  travel-warp set is **0..10**, with **11** the stargate-hop value — CONFIRMED
+  (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
+  destination performs a gate jump. (A gate jump also needs a gated source and
+  destination; see "Route and the stargate" below for the gate conditions.) A
+  nonexistent target object and a negative transport amount are both malformed.
+  Elegy's chosen rule is to **reject** each — a travel warp outside `0..10`
+  (warp 11 reserved for the gate hop), a waypoint naming a target that does not
+  exist, and a transport order with a negative amount are refused (the order
+  dropped, the rest of the file applying), rather than clamped or coerced.
+  Whether the original clamps the warp (as it clamps coordinates above) or
+  coerces a negative amount is read but unmeasured (BINARY-ONLY); the
+  discriminating OX run submits each malformed value and reads back whether it
+  was clamped or dropped. The coordinate clamp above is the one validation
+  confirmed to correct-rather-than-reject.
 - **Design legality (tech strip).** A design that lists a component the
   player has not yet earned the tech for, or that the chosen hull does not
   allow in that slot, has that component **dropped** from the stored design
@@ -427,13 +424,17 @@ INTENTIONALLY DIFFERENT. BINARY-ONLY until run.
 A direct cargo transfer between two of the submitting player's fleets at the
 same location applies at order time and is **owner-checked**: both fleets
 must belong to the submitter, or the transfer is refused (CONFIRMED,
-FO-01..07, which exercised the transfer-fleet task and its refusals). When
-it applies, the two fleets' cargo of each kind and their fuel are pooled and
-shared out **in proportion to each fleet's capacity**, so nothing is lost
-while the combined capacity holds; accumulated ship damage is likewise shared
-across the combined ships (BINARY-ONLY — the balancing split itself is read
-from the program, not separately measured). Giving cargo to another player's
-fleet is the deferred cross-owner path above, not this operation.
+FO-01..07, which exercised the transfer-fleet task and its refusals). When it
+applies, it carries an **explicit amount per cargo kind and for fuel**, not a
+capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
+client caps the amount by the other fleet's **free hold** and by **what is
+aboard** the source, then writes that amount; the host applies the written
+amount as it stands. (A "load all" of 200 against a hold with 70 free gave
+140/210; "set amount 300" of a source holding 200 moved 200.) An earlier
+reading of this path as a capacity-proportional pooling (where 350 over two
+equal holds would even to 175/175) is **refuted**. Giving cargo to another
+player's fleet is the cross-owner path above, not this operation. A waypoint
+transport task *aimed at a fleet* was not reachable from the client (CO-04).
 
 **Elegy implementation Q4 (transfer preconditions).** Elegy's chosen rules,
 each stated next to the open host question:
@@ -464,32 +465,38 @@ emptied fleets are removed. There are two ways to order a merge, and they do
 is summed into a signed 16-bit count, one source fleet at a time, with the
 emptied source fleets removed. The boundary, stated exactly:
 
-- a resulting stack of **32766** is kept as 32766;
-- a resulting stack of **32767** is kept as 32767 — this is the largest count
-  the order can store, not 32766;
-- a stack that would reach **32768 or more** is slammed to **32766**, and the
-  excess ships are **lost** (not spilled back into a source fleet, and the
-  order is not refused). The clamp is applied after each addition, so once a
-  running total passes 32767 it becomes 32766 and any further source fleets
-  merged into the same slot re-trigger it.
+MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
+ship count at **32765**. A direct merge forced (from an edited start) to reach
+a total of 16766..17000 against a 16000 stack stored **32765** in every case —
+one ship short of 32766 — with the excess lost, the order not refused. So the
+measured cap is **32765**, not the 32766/32767 an earlier read of the signed
+16-bit count suggested.
 
-Elegy's chosen clamp reproduces this exactly: keep counts up to 32767, and a
-stack that would exceed 32767 becomes 32766 with the remainder dropped. This
-path is otherwise BINARY-ONLY — read from the program, not yet oracle-tested.
+Client-side caps (what a legal client can even issue): the two-fleet **Ship
+Transfer** stops at **32766**, and **Merge Fleets is disabled** for
+16000-ship fleets (the exact fleet size at which the client disables it is
+unmeasured). So reaching the 32765 host clamp needs an edited start; the
+**task** path's "32766/32767 kept, 32768+ empties the slot" (below) is **not
+reachable by any legal order**.
+
+**Elegy's chosen rule** (kept separate from the measurement, reconciliation
+pending with the kernel/orders lanes): the standing overflow rule stores
+**32766**. This differs from the measured **32765** by one ship; an
+implementation should treat 32765 as the host truth and may adopt it as the
+clamp, but the project's chosen-rule text still reads 32766 until the lanes
+reconcile it. Flagged for that reconciliation.
 
 This path also combines damage by its **own** routine, not the one the
-Merge-with-Fleet task uses, and the two do not agree on magnitude. The
-**percentage** combines the same way — a damaged stack merged into healthy
-ships of the same design has its percent spread over the full post-merge
-count, `ceil(100·ΣD/n)` with `D` the damaged-ship count per stack and `n` the
-slot total. But the per-ship **damage units** are averaged over the
-**damaged** ships only (`Σ(D·units)/ΣD`), not over all `n`, so the merge order
-keeps a higher per-ship figure than the task's dilution: for the task's own
-example (10 ships at 100 units/50% + 10 at 200 units/20%) both give 35%, but
-the merge order yields ~129 units/ship where the task gives 45. An
-implementation should therefore not assume ORDERS.md's single damage rule
-(stated for the task) holds verbatim here. BINARY-ONLY — this whole path is
-read from the program but not yet oracle-tested.
+Merge-with-Fleet task uses, and the two do not agree on magnitude —
+CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+**damage units** are averaged over the **damaged** ships only
+(`Σ(D·units)/ΣD`), **rounded down**, not over all `n` ships of the slot: the
+run merged two damaged ships totalling 201 units and stored `201/2 → 100`
+(rounded down). The percentage combines over the full post-merge count
+(`ceil(100·ΣD/n)`, `D` the damaged-ship count per stack, `n` the slot total).
+So the merge order keeps a higher per-ship figure than the task's dilution,
+and the **task's damage rule is refuted for the direct merge** — an
+implementation must not assume the single task damage rule holds here.
 
 **Merge-with-Fleet waypoint task** (CONFIRMED, FO-01..07). The ordering fleet
 joins a target fleet on arrival; ship counts add per design and cargo and
@@ -532,14 +539,25 @@ the precise messages needs the OX runs.
 
 ### Split
 
-BINARY-ONLY.
+CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
 
 A split creates a new fleet from part of an existing one. The new fleet
 carries exactly the ships named in the order, and **inherits the source
 fleet's battle plan and its full waypoint list** (so the detached ships keep
-following the same orders until changed). The source's cargo and fuel are
-then divided between the two fleets in proportion to capacity. "Split all"
-is the same operation taken to the limit: one new single-ship fleet per ship.
+following the same orders until changed). The source's cargo and fuel are then
+divided between the two fleets **in proportion to capacity, rounded down** (the
+remainder staying with the source). The two-fleet **ship exchange** moves
+cargo and fuel with the ships by the same capacity-proportional, round-down
+rule (CO-03).
+
+**Split All** is the same operation taken to the limit — one single-ship fleet
+per ship — but its *form* is specific (CO-02): the client **keeps the source
+fleet with one ship** and writes **one split-and-move per new fleet**; each
+move takes `floor(share)` of what is *left*, so the **rounding remainder stays
+with the source** (the lowest id). For three ships over 100 Ir / 1000 fuel the
+result is **34/334** on the retained source fleet and **33/333, 33/333** on the
+two split-offs — the numbers my prediction gave, with the remainder landing on
+the source rather than a new fleet.
 
 ### Turn placement
 
@@ -767,18 +785,15 @@ serial decision: `tools/fleetlab/client-orders` issues them as **legal** client
 orders. Predictions for that round are committed in
 `experiments/fo/client-orders.md` (**CO** prefix). Still open:
 
-- **OX merge-order cap and loss (→ CO-06).** The direct merge order's per-design
-  cap is read but untested. The Merge-with-Fleet *task* (FO-06) keeps 32766 and
-  32767 and **empties the ship slot** at 32768 and above (the fleet record,
-  cargo and fuel stay). Push a direct merge across the same boundary and confirm
-  whether it empties the slot the same way or clamps. **Elegy's chosen rule**
-  for the overflow is 32768+ → **32766** with the excess lost, next to the host
-  behaviour. Confirms "Merge order".
-- **OX merge-order damage (→ CO-05).** Merge (direct order) a damaged stack into
-  healthy ships of the same design and read back the stored percent and per-ship
-  damage units; confirm the percent dilutes over the full count like the task
-  but the units divide by the damaged count, not the slot total (so the figure
-  differs from the task path). Confirms the merge-order damage note.
+- **OX merge-order cap and loss — RESOLVED (CO-06).** The direct merge order
+  clamps the stored ship count at **32765** (one ship lost) for any merge
+  reaching 32766+; the client caps it earlier (Ship Transfer stops at 32766,
+  Merge Fleets disabled for 16000-ship fleets). The task path's 32766/32767
+  keep and 32768 empty are unreachable by legal orders. See "Merge order".
+- **OX merge-order damage — RESOLVED (CO-05).** CONFIRMED: the direct order
+  averages damage units over the **damaged** ships only, rounded down
+  (`201/2 → 100`); the task's dilution rule is refuted for the direct merge.
+  See "Merge order".
 - **OX merge-target validation.** With the Merge-with-Fleet task, aim it at a
   co-located fleet owned by another player, and at a fleet that has already
   merged away the same turn; confirm each is refused with no change. Confirms
@@ -792,20 +807,14 @@ orders. Predictions for that round are committed in
   player's minefield, and one naming a field kind that cannot detonate;
   confirm the original accepts both. Confirms "Minefield detonate-setting".
   Keep the crafted inputs in private apparatus.
-- **OX split (→ CO-01, CO-02).** Split some ships off a loaded fleet; confirm
-  the new fleet has exactly the ordered ships, a capacity-proportional share of
-  the cargo and fuel (rounded down), and the source's battle plan and waypoints.
-  Split All (CO-02) pins where the rounding remainder lands. Confirms "Split".
-- **OX own-fleet transfer order (→ CO-04; elegy implementation Q2).** An open
-  contradiction. "Transfer between the player's own fleets" above reads the
-  direct order as a **capacity rebalance** (pool each kind and fuel, share by
-  capacity) — BINARY-ONLY, read from the program, not measured. The elegy
-  implementation's proposed rule is **explicit amounts** (load-all /
-  set-amount / fill-to-%) clamped by free space, like the FO-02 task actions.
-  CO-04 runs the discriminating case (350 Ir over two equal-capacity fleets →
-  `175/175` if rebalance, `210/140` if explicit). If rebalance holds, the elegy
-  rule is INTENTIONALLY DIFFERENT; if explicit holds, correct the section. The
-  contradiction is preserved until the run settles it.
+- **OX split — RESOLVED (CO-01, CO-02, CO-03).** CONFIRMED: split and exchange
+  share cargo/fuel by capacity, rounded down; Split All keeps the source with
+  one ship and leaves the rounding remainder on it (lowest id). See "Split".
+- **OX own-fleet transfer order — RESOLVED (CO-04; elegy Q2).** CONFIRMED
+  **explicit amounts**, not a capacity rebalance: the client caps the amount by
+  the other fleet's free hold and by what is aboard, and the host applies the
+  written amount. The earlier capacity-rebalance reading is refuted. See
+  "Transfer between the player's own fleets".
 
 The waypoint-upkeep predictions (**WU** prefix) all use **fleetlab HST
 editing**, not crafted order files, so none needed the registered serial, and

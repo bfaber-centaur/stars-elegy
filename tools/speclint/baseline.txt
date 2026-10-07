@@ -40,6 +40,12 @@ docs/ORDERS.md	missing-section	docs/COMBAT.md has no section "Order validation"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #28: combat decomp, stars-elegy #59 / stars-decomp #28; order validation
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
+docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
+docs/ORDERS.md	pr-ref	cites PR #46: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+docs/ORDERS.md	pr-ref	cites PR #46: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
+docs/ORDERS.md	pr-ref	cites PR #46: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
+docs/ORDERS.md	pr-ref	cites PR #47: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
+docs/ORDERS.md	pr-ref	cites PR #49: (GT-004, stars-elegy #49, apparatus #47): a waypoint with warp 11 and a gated
 docs/ORDERS.md	pr-ref	cites PR #49: elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
 docs/ORDERS.md	pr-ref	cites PR #50: stars-elegy #50, `OBJECTS.md`). A detonate-setting order names a minefield,
 docs/ORDERS.md	pr-ref	cites PR #53: `KERNEL.md` (stars-elegy #53). A fleet whose waypoint targets another fleet is
@@ -52,6 +58,10 @@ docs/ORDERS.md	pr-ref	cites PR #65: not reproduce the whole-file abort. (See `LI
 docs/ORDERS.md	pr-ref	cites PR #65: progress from a crafted percentage. (See `LIMITS.md`, stars-elegy #65.)
 docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
 docs/ORDERS.md	pr-ref	cites PR #76: TK-409, stars-elegy #76) and the short-receiver `0x0dd` is CONFIRMED (#76).
+docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-01, CO-02, CO-03; stars-elegy #77 / apparatus #46).
+docs/ORDERS.md	pr-ref	cites PR #77: CONFIRMED (CO-05/CO-05b, stars-elegy #77 / apparatus #46). The per-ship
+docs/ORDERS.md	pr-ref	cites PR #77: MEASURED (CO-06, stars-elegy #77 / apparatus #46): the host clamps the stored
+docs/ORDERS.md	pr-ref	cites PR #77: capacity rebalance — CONFIRMED (CO-04, stars-elegy #77 / apparatus #46). The
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (a two-waypoint repeat fleet came back with only the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-07, registered host, research order, three
@@ -73,6 +83,19 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED 
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
 docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
+docs/ORDERS.md	unknown-case	CO-1 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-1 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-2 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-2 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-3 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-3 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-4 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-4 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-4 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-5 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-5 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-5 is not in PARITY.md or vectors/
+docs/ORDERS.md	unknown-case	CO-6 is not in PARITY.md or vectors/
 docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
