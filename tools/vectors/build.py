@@ -39,6 +39,7 @@ GAMES = {
     'CB3P': dict(name='CB3P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB5P': dict(name='CB5P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB16P': dict(name='CB16P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'PG001': dict(name='PG001', size='tiny'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
 }
 
@@ -200,11 +201,14 @@ def state(hst, xy, game, xy_path=None):
                 p['original_environment'] = [int(x) for x in d['orig'].split('/')]
             if 'surface' in d:
                 p['surface_minerals'] = [int(x) for x in d['surface'].split('/')]
-                p['population'] = int(d['pop'])
-                for k in ('excess', 'mines', 'factories', 'defenses'):
-                    p[k] = int(d[k])
-                p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
-                p['leftover_to_research'] = d['leftover'] == 'true'
+                for k, name in (('pop', 'population'), ('excess', 'excess'), ('mines', 'mines'),
+                                ('factories', 'factories'), ('defenses', 'defenses')):
+                    if k in d:
+                        p[name] = int(d[k])
+                if 'scanner' in d:
+                    p['planetary_scanner'] = None if int(d['scanner']) == 31 else int(d['scanner'])
+                if 'leftover' in d:
+                    p['leftover_to_research'] = d['leftover'] == 'true'
             planets[n] = p
         elif s.startswith('queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
@@ -473,7 +477,11 @@ if __name__ == '__main__':
         sys.exit(__doc__)
     corpus, ev = sys.argv[1], sys.argv[2]
     out = sys.argv[3] if len(sys.argv) > 3 else os.path.join(ROOT, 'vectors', corpus)
-    if corpus in ('cb', 'sc'):
+    if corpus in ('kx001', 'kx002', 'kx003', 'kx004'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        kx = __import__('build_kx')
+        kx.build(corpus, ev, out) if corpus in ('kx001', 'kx002') else getattr(kx, 'build_' + corpus)(ev, out)
+    elif corpus in ('cb', 'sc'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
     elif corpus == 'cb':

@@ -277,11 +277,12 @@ type Expectation struct {
 	ID          *int            `json:"id,omitempty"`
 	Planet      *int            `json:"planet,omitempty"`
 	Player      *int            `json:"player,omitempty"`
+	SeenBy      *int            `json:"seen_by,omitempty"` // the player whose file showed it
 	Slot        *int            `json:"slot,omitempty"`
 	X           *int            `json:"x,omitempty"`
 	Y           *int            `json:"y,omitempty"`
 	Equals      json.RawMessage `json:"equals,omitempty"`
-	Tolerance   int             `json:"tolerance,omitempty"`
+	Tolerance   any             `json:"tolerance,omitempty"` // ly for a packet, or {field: amount}
 	MessageID   *int            `json:"message_id,omitempty"`
 	Present     *bool           `json:"present,omitempty"`
 	ObservedNew []int           `json:"observed_new,omitempty"`

@@ -24,6 +24,9 @@ vectors/<corpus>/<run>.json      one oracle run
 | `tk2` | TK-101..121 | 64 | planet takeover: bombing, invasion, what the new owner gets | `docs/TAKEOVER.md` |
 | `wt` | WT-001..005 | 31 | wormholes and the Mystery Trader | `docs/OBJECTS.md` |
 | `sc` | SC-001..034 | 680 | scanning: what each player's file shows of fleets, planets, designs and player blocks | `docs/SCANNING.md` |
+| `kx001`, `kx002` | KX-001, KX-002 cases | 38 | planet economy: production, Auto Alchemy, growth, research, mining (one year from an edited PG001 file) | `docs/KERNEL.md` |
+| `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
+| `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
 | `cb` | CB-001..047 | 68 | combat: battle records and everything a battle turn changed | `docs/COMBAT.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -114,10 +117,15 @@ unconstrained by that case.
 | `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
 | `production_queue` | planet `planet` | the queue as `{id, count, percent}` items (`percent` omitted when 0) |
 | `design` | design `owner`/`slot` | `hull`, `slots` |
-| `player` | player `id` | `tech`, `research_accumulated`, `mystery_trader_items`, `ship_design_count` |
+| `player` | player `id` | `tech`, `research_accumulated`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it) |
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
+
+`tolerance` as an object (`{"surface_minerals": 1}`) allows that much
+difference in the named field. Kernel vectors use it for surface minerals,
+because mining's +1 remainder is random (`KERNEL.md`).
+
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
 | `object` | a new or changed map object | the object, as in `initial_state.objects` |
@@ -199,6 +207,7 @@ python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
 python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
+python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
 go test ./internal/vectors
 ```
 
@@ -211,6 +220,9 @@ go test ./internal/vectors
   research), the superseded CB-046 morph v1, and CB-017's second year.
 - SC-015 (the tamper check fired; SC-015L repeats it) and SC-021 (invalid
   setup).
-- Races (`rd`), minefields (`mf`) and kernel (`kx*`): in
-  progress. Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
+- KX-001 M3 (the prediction was void: the race edit tripped the tamper
+  check), KX-001 Z1/Z1h (the original crashed: no year was generated; see
+  PARITY "KX-001 Z"), KX-004 E0/E1 (the long runs that made the start
+  states), KX-005 (not merged yet).
+- Races (`rd`) and minefields (`mf`): in progress. Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.
