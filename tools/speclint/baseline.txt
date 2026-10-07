@@ -32,6 +32,7 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: this year **whether or not t
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
 docs/OBJECTS.md	untagged	section "Visibility" has no status tag
+docs/ORACLE.md	pr-ref	cites PR #44: (stars-elegy #44), so a sweep for random outcomes such as jump odds has
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
