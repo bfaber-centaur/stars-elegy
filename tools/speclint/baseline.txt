@@ -11,14 +11,6 @@ docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, 
 docs/COVERAGE.md	pr-ref	cites PR #44: | Scores and victory | `KERNEL.md` (#44) | In progress | |
 docs/COVERAGE.md	pr-ref	cites PR #47: | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: ...
 docs/COVERAGE.md	pr-ref	cites PR #49: | Race checks at the start of the year | `KERNEL.md`, RACES.md (#49) | In progress | |
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
-docs/KERNEL.md	missing-file	MESSAGES.md does not exist
 docs/KERNEL.md	missing-file	PRODUCTION-LAUNCH.md does not exist
 docs/KERNEL.md	missing-file	PRODUCTION-LAUNCH.md does not exist
 docs/KERNEL.md	missing-file	RACES.md does not exist

@@ -76,6 +76,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   sbdmg=U (starbase damage, U/500 of its armor)
 //                                   driver=DEST[,WARP] (mass-driver packet destination
 //                                   planet and chosen packet warp; needs a starbase)
+//                                   artifact=1|0 (ancient artifact flag, any planet)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK] [w14 HEX] [w16 HEX]
@@ -196,9 +197,9 @@ public class CombatLab {
                     for (int i = 62; i <= 67; i++) sb.append(i == 62 ? "" : ",").append(p.fullDataBytes[i] & 0xff);
                     sb.append(" resLast=").append(Util.read32(p.fullDataBytes, 0x32));
                 }
-                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
+                System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s homeworld=%d%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
-                    Arrays.toString(p.playerRelations), sb);
+                    Arrays.toString(p.playerRelations), u16(p.getDecryptedData(), 8), sb);
             } else if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 String owner = "?";
@@ -256,9 +257,9 @@ public class CombatLab {
                     System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s env=%s popest=%d defest=%d surface=%s%n", f,
                         p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
                         p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
-                if (p.owner >= 0 || p.hasStarbase)
-                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
-                        p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
+                if (p.owner >= 0 || p.hasStarbase || (host && p.isHomeworld))
+                    System.out.printf("%s planet %d owner=%d homeworld=%b starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
+                        p.planetNumber, p.owner, p.isHomeworld, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.starbaseBytes == null ? -1 : ((p.starbaseBytes[0] & 0xff) | (p.starbaseBytes[1] & 0xff) << 8) >> 4,
                         p.ironium, p.boranium, p.germanium, p.population);
@@ -363,6 +364,7 @@ public class CombatLab {
             }
         }
         if (p.isHomeworld) sb.append(" homeworld");
+        if (p.hasArtifact) sb.append(" artifact");
         if (p.isTerraformed) sb.append(String.format(" orig=%d/%d/%d", p.origGravity, p.origTemperature, p.origRadiation));
         if (p.hasSurfaceMinerals) sb.append(String.format(" surface=%d/%d/%d pop=%d", p.ironium, p.boranium, p.germanium, p.population));
         if (p.hasInstallations)
@@ -975,6 +977,7 @@ public class CombatLab {
                         pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
                     }
                     break;
+                case "artifact": pl.hasArtifact = !v.equals("0"); break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
