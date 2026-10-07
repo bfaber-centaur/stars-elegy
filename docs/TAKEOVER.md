@@ -52,8 +52,8 @@ This refines `KERNEL.md` "Turn order" steps 2 and 6.
 2. **Before movement**, for fleets already at their waypoint 0:
    unloads (including colonist drops on other players' planets), scrap,
    colonize; then all queued colonist drops are resolved (ground combat,
-   new colonies); then loads and merges; then cargo
-   gifted to other players moves.
+   new colonies); then loads and merges; then a queued-gift step that
+   manual gifts do not use (see Manual cargo transfers below).
 3. Movement; production and population growth.
 4. Battles, then **bombing** (after every battle at every location).
 5. **After movement**, for fleets at their new waypoint 0: unloads
@@ -496,8 +496,18 @@ cargo when the orders are applied (step 1).
 - **Minerals** onto another player's planet join its surface at once (100
   ironium, enemy and friend alike). **No message is sent** to either
   player (MEASURED, TK-405 and TK-412; the prediction of 0x042/0x044 was
-  wrong: those messages belong to gifts to another player's fleet, which
-  are not yet tested).
+  wrong).
+- **When a gift is credited.** A gift that is not a colonist drop is
+  credited when the orders are applied (step 1), in place, before any
+  waypoint task (MEASURED for planets: TK-405, TK-412). The binary reading
+  gives fleets the same path: debits are applied before credits, the
+  credit is in place whatever the owners or relation, and the queued-gift
+  step after the loads never receives anything in this build, so its
+  messages (0x042–0x04d) are not sent. A transfer whose source or
+  receiver no longer exists when the order is applied is skipped whole:
+  nothing is taken from the giver. The fleet cases are predicted, not run
+  (`experiments/tk/manual-transfers.md`, TK-406 to TK-409, TK-413,
+  TK-414).
 
 ### Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED)
 

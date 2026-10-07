@@ -3303,7 +3303,10 @@ unowned planet; minerals added), which had no committed prediction.
 
 ### Not tested
 
-Cargo given by hand to another player's fleet (0x042–0x04d); the year's
+Cargo given by hand to another player's fleet: TK-406 to TK-409, TK-413
+and TK-414 in `experiments/tk/manual-transfers.md` (revised before any
+run: credited in place when the orders are applied, with no message, so
+0x042–0x04d would not be sent at all); the year's
 full draw order through the random stream (owned by the KERNEL
 experiments); Alternate Reality `k = 0` in a contested drop (not reachable
 with legal orders).

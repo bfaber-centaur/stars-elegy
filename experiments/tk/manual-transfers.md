@@ -55,6 +55,35 @@ the client automation opens Cargo Transfer only with the orbited planet.
 The client allowed colonists onto an unowned planet and onto a starbase
 planet.
 
+## Revised predictions for fleet receivers (before the runs)
+
+The TK-406..409 predictions above assumed the gift queue. A closer reading
+of the order replay (stars-decomp `docs/takeover.md` §14, asm-checked)
+says the replay applies every transfer in two passes, debits first and
+credits second, and that a credit to another player's object takes the
+in-place path in the second pass whatever the owners, relation or object
+kind. The path that would add to the gift queue is never reached when
+giving, and nothing else fills that queue, so the queued-gift step (after
+the pre-movement loads) has nothing to do in this build. TK-405 and
+TK-412 (minerals to a planet, silent, in place) fit this reading. The
+original predictions stay above as written; these replace them for the
+runs:
+
+| Case | Setup | Predicted |
+|---|---|---|
+| TK-406 | Player 0 Freighter gives 100 ironium to a player 1 fleet with 50 kT free | The client offers at most the receiver's free room. If an order for 100 reaches the host anyway: 50 received at order time, the giver gets 0x0dd (shortfall 50, request 100), the other 50 are lost (not refunded). No 0x046/0x048 |
+| TK-407 | As TK-406, receiver hold full | Client offers nothing. If 100 is ordered: nothing received, 0x0dd to the giver, 100 lost. No 0x04a/0x04c |
+| TK-408 | Player 0 Freighter gives 20 colonists to a player 1 Freighter with room | Received in full at order time (colonists to a fleet are not a drop). No message to either player |
+| TK-409 | Player 0 fleet gives 50 mg of fuel to a player 1 fleet with room | Received at order time. No message (no 0x043/0x045) |
+| TK-413 | Player 0 Freighter gives 100 ironium to a player 1 Freighter that has an unload-all task at its own planet this year | In place at order time, so the receiver's before-movement unload carries the gift to the planet the same year: player 1's planet surface +100 and 0x02d to player 1. (A queued gift would credit after that unload and leave the 100 in the hold.) |
+| TK-414 | As TK-408 with players 0 and 1 friends | Same as TK-408: no relation check on a manual gift |
+
+Not runnable with legal orders yet: a gift whose receiver is gone when
+the order is replayed (it would need another player's earlier order in
+the same year to merge or scrap the receiver). Reading: the replay looks
+up both objects first and skips the whole transfer if either is missing,
+so nothing is debited and the giver keeps the cargo.
+
 ## Not predicted
 
 - Whether the client lets a player give colonists to an unowned planet

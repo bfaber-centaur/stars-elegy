@@ -166,7 +166,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
 | 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
-| 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet ordered by hand (a planet takes minerals in place and nothing is sent, TK-405): destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
+| 0x042 | Your cargo was delivered to the other player's object | Queued gift to another player's object, destination accepts all of it; minerals or colonists. No manual order reaches the queue in this build: gifts are credited in place at order time with no message (TK-405, TK-412 for planets; fleets predicted, `TAKEOVER.md` "Manual cargo transfers to other players") | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
 | 0x044 | Your object received cargo from another player | Counterpart of 0x042 | receiving object's owner | object, amount, mineral, object | destination | P2 | BINARY-ONLY |
 | 0x045 | Same as 0x044, worded for colonists | Counterpart of 0x043 (fuel) | receiving object's owner | as 0x044 | destination | P2 | BINARY-ONLY; LEGACY BUG? |
@@ -238,7 +238,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x165 | Colonists can't be beamed into empty space | Unload colonists with a deep-space target; task cancelled | fleet owner | fleet | fleet | P2, P6c | CONFIRMED (tk3/tk201) |
 | 0x17e | Fleet failed to lay mines for technical reasons | A new field is needed but the game's object limit is reached (512-field limit); those mines are lost | fleet owner | fleet | fleet | P6c | CONFIRMED (MF-13) |
 
-- Within a fleet's task, unload runs before load: before movement (P2) and again after movement (P6c). Colonist landings resolve between the unload and load halves. Hand-ordered cargo gifts to other players (0x042–0x04d) are delivered once, after the pre-movement load half.
+- Within a fleet's task, unload runs before load: before movement (P2) and again after movement (P6c). Colonist landings resolve between the unload and load halves. 0x042–0x04d belong to a queued-gift step after the pre-movement load half; hand-ordered gifts do not use it in this build (they are credited in place when orders are applied, `TAKEOVER.md`), so no legal order is known to send them.
 - Any refusal message on a waypoint task also cancels that task, and 0x04e follows when it was the last waypoint. Oracle: 0x076 then 0x04e, and 0x052 then 0x04e. Load refusals (0x11f/0x120/0x123, 0x121/0x122, 0x126) are sent only after movement; before movement the same condition just waits. 0x03c/0x03d are sent only before movement.
 - Colonizing sends a scrap-style message, 0x059, before 0x00a/0x00b. Oracle: cs/cs-003 and tk2.
 - Scrapping at your own planet sends two messages to the same player: one as fleet owner (0x059/0x05a/0x05c/0x05d) and one as planet owner (0x140–0x143 or 0x13c–0x13f). Oracle: tk2/tk111. At a foreign planet the planet owner gets the second message, the recycled resources and the tech roll.
@@ -677,7 +677,8 @@ five groups by what it would take to see them.
    0x0dd. Legal client orders that Combat Lab cannot write into a host
    file; the client automation reaches only the orbited planet so far
    (planet transfers: TK-501, TK-502). On `COVERAGE.md` as a targeted
-   experiment.
+   experiment. The revised reading predicts that a fleet gift sends none
+   of 0x042–0x04d (TK-406 to TK-409, TK-413).
 3. **Shown only by the client** (0x0aa–0x0ae, 0x151–0x154, 0x15d). Made
    when the turn is opened and never stored in a turn file, so the file
    decoder cannot see them. Seeing them means reading the client's
