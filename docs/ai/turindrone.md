@@ -20,6 +20,8 @@ and the two personalities share several rules, marked below.
   year-2401 game, one stream each (apparatus `evidence/ai/ap/`): the yearly
   rewrite of empty design slots, no production at a planet whose queue holds
   a ship, the production steps in order, and the Scout scrap. Marked below.
+- **MEASURED** (AI-22): the fleet pass, every own fleet in AIX's 61
+  years (689 of 689 fleet-years).
 - **BINARY-ONLY**: everything else here. It was read from the original
   and has not yet been tested against its output.
 
@@ -203,60 +205,138 @@ personality's.
    - Destroyers (10, 11): cap `P/4 + 12`.
    - Slot 15 Rogue: cap `P/12 + 8`, only while slot 15 holds a design.
 
-## Fleet pass (BINARY-ONLY)
+## Fleet pass (MEASURED, AI-22)
 
-### Classification
+AI-22 replays this pass for every own fleet in AIX's 61 Turindrone years.
+All 689 fleet-years agree: waypoints, the waypoint-1 warp, colonist loads
+and merges. Rules marked "not exercised" below never fired there and stay
+BINARY-ONLY.
 
-A fleet with any ship whose hull is between Scout and Dreadnought in the
-hull list counts as an **attack** fleet. That includes the Scout and the
-Frigate. Every other fleet counts as **support**.
+**The AI's planet list.** The pass works over the planets the player has
+in its turn file or history file (`AI.md` §1), in planet-id order. A
+planet in neither file is **unknown** to it. Counting unknown planets as
+known breaks 54 of the 689 fleet-years.
 
-Then, for each fleet, its current target or colonizing planet is checked
-again. A target that is gone or now owned by another player clears the
-fleet's task. There is one exception. A fleet that carries colonists and
-whose target is an invasion target (not an AR planet, and with no
-starbase) gets a waypoint to that planet with a transport task, which
-lands its colonists as an invasion (`TAKEOVER.md`). The target is marked
-and the fleet is sent toward the nearest own starbase.
+### Merges
+
+Before anything else, fleets at the same spot merge by the shared merge
+rule. This happens for each group whose design slot holds a design: slots
+4–7 and 13–15 when slot 13 has one, slot 12 (Privateers), slots 10–11
+(destroyers), and slots 2–3 (miners). AIX: 51 fleets merged away, 51 of 51
+ship moves reproduced.
+
+### Planet notes
+
+The planet pass (above) leaves notes the fleet rules read:
+- **Invasion value:** for another player's planet, the planet value
+  (`KERNEL.md`) when it is above 0.
+- **Defended:** for another player's planet, whether it has a starbase.
+- **Mining score:** for unowned planets known in detail.
+- **Unwanted:** for own planets with a negative value.
+
+### Classification and target check
+
+Fleets are taken in fleet order. An own fleet holding any ship whose hull
+is between Scout and Dreadnought in the hull list is an **attack** fleet.
+That includes Scout and Frigate hulls. Other players' fleets form the
+**foreign** list, latest fleet first.
+
+Then colony ships and Rogue/Galleon fleets have their **target** checked.
+The target is the planet they orbit (one waypoint) or their waypoint-1
+planet. Miners are checked only when their last waypoint has no task.
+- When the target is another player's planet, or a planet unknown to the
+  AI, a fleet that carries colonists invades it, provided the planet has
+  an invasion value, is not AR and has no starbase. The fleet gets a
+  transport task that unloads its colonists on waypoint 0 when it is
+  already at that planet. It is then sent toward the nearest own
+  starbase. Otherwise the route is cut to waypoint 0 and its task is
+  cleared. AIX: 14 invasions, 10 cut routes.
+- A Rogue or Galleon whose waypoint 1 is deep space has its route cut the
+  same way (AIX: 3).
+- A miner with a task out in space gets the remote-mining task on
+  waypoint 1. Over another player's planet, its route is cut (not
+  exercised).
 
 ### Orders by contents
 
-The first rule that matches the fleet applies.
+Each own fleet gets the first rule that matches.
 
 1. **Miners** (slots 2, 3). In year 2400 they are scrapped (MEASURED,
-   AP-003: both starting Midget Miners). Later, when the mining score of
-   the planet they orbit is below 4, they move to the best remote-mining
-   target with the remote-mine task.
-2. **Fleets with two or more waypoints** are left as they are.
-3. **Colony ships** (slot 1), not carrying colonists and not over an own
-   planet with population ≥ 5,000:
-   - if the design's engine is better than a Fuel Mizer, go to the nearest
-     own starbase;
-   - otherwise, or if there is none, the fleet is scrapped.
-
-   Otherwise:
-   - over an own planet, it loads 25 kT of colonists (MEASURED, AP-003);
-   - it colonizes the nearest colonizable planet if there is one;
-   - else it moves toward the closest suitable planet;
-   - else, with chance 1/10, it explores a wormhole.
-
-   In AP-003 the starting colony ship loaded 25 kT and then waited at home
-   for three years, with no target known.
+   AP-003 and AIX). Later, when the mining score of the planet they orbit
+   is below 4, they move to the best remote-mining target with the
+   remote-mining task (not exercised).
+2. **Fleets with two or more waypoints** are left alone (AIX: 422).
+3. **Colony ships** (slot 1):
+   - **No colonists**, and not over an own planet with at least 5,000
+     colonists. Over an own planet with a starbase, the fleet waits.
+     Elsewhere, if slot 1's engine is better than a Fuel Mizer, it goes to
+     the nearest own starbase; otherwise, or if there is none, it is
+     scrapped (not exercised).
+   - **Otherwise**, over an own planet, it loads 25 kT of colonists. It
+     then colonizes the nearest colonizable planet (`AI.md` §11). AIX: 26
+     colonize orders; 25 kT loads in every case.
+   - **No colonizable planet:** the fleet moves with a transport task
+     that unloads its colonists onto the nearest other player's planet
+     that has an invasion value, no starbase, is not AR and has not
+     already been picked this turn. "Nearest" is measured from the own
+     planet the fleet orbits, else the first own planet with a starbase.
+     AIX: 9 such drops. Dropping this rule breaks those 9.
+   - There is **no wormhole move** for colony ships. Their wormhole
+     branch can never be reached.
 4. **Rogues and Galleons** (slots 8, 9). In year 2400 they are scrapped.
-   Later they act as freighters for their hub (`AI.md` §6): the hub that
-   lists this fleet, else the first own planet with a starbase.
+   If the player has no planet with a starbase, the fleet pass stops
+   there, and later fleets get no orders this year. Otherwise they act
+   as hub freighters (`AI.md` §11). The source is the hub that lists
+   them, else the first own planet with a starbase in the shuffled planet
+   order. At the source, when it holds more than 120,000 colonists and
+   the target is an owned planet with fewer, they load 100,000
+   colonists. AIX: 10 freighter orders, 6 of them to salvage, 2 colonist
+   loads.
 5. **Bombers** (slots 13, 14). Over an own planet with a starbase, a group
    waits until it has at least G bombers and at least `A/2` battleships
-   (slots 4, 5). Then it moves to the best enemy planet to bomb, chosen by
-   the shared target rule. The choice of rule depends on a game option.
-6. **Scouts and destroyers** (slots 0, 10, 11). A fleet with ships of
-   slot 0, while construction > 5 and slot 0 is still a Scout hull, is
-   scrapped. That retires the starting Scout so that a Frigate replaces
-   it (MEASURED, AP-004, AP-005: the Scout fleet got a scrap task at the
-   homeworld at construction 13). Otherwise the shared scout targeting applies: in AP-003 the starting
-   Scout got one waypoint to an unexplored planet at warp 6.
-7. **A lone Privateer fleet** with one waypoint and no task gets the
-   lay-mines task with both task parameters 5.
+   (slots 4, 5). Over another player's planet it stays, unless a fleet
+   there counts as an attack fleet. That check reads the foreign fleet's
+   slots through Turindrone's own designs (LEGACY BUG candidate). Then it
+   moves to the best target by the armada target rule of `AI.md` §11
+   (not exercised).
+6. **Scouts and destroyers** (slots 0, 10, 11). A fleet with ships of slot
+   0, while construction > 5 and slot 0 is still a Scout hull, is
+   scrapped (AIX: 6). That retires the starting Scout so that a Frigate
+   replaces it (MEASURED, AP-004, AP-005: the Scout fleet got a scrap task
+   at the homeworld at construction 13). Otherwise scout targeting
+   applies (below). AIX: 70 scout and 58 destroyer orders.
+7. **Privateers.** A fleet with Privateers (slot 12), exactly one
+   waypoint and no task gets the lay-mines task with both parameters 5
+   (AIX: 2).
+
+### Scout targeting (shared with Automitron)
+
+- **Armed fleets** (a beam or torpedo part in any design) look for the
+  nearest foreign fleet within 1,000 ly, scanning the foreign list. A
+  fleet another own attack fleet already chases is considered only with
+  `Random(3) != 0`. Within 180 ly, chase it. Farther away, a fleet with
+  less than half its fuel goes to the nearest own starbase. Otherwise it
+  targets the known planet nearest that foreign fleet that no own attack
+  fleet already targets, unless it orbits that planet. Without a
+  candidate, it uses the unarmed rule. "Computer players form alliances"
+  skips computer players' fleets first. AIX: 58 destroyer years, 15 of
+  them decided by a skipped chase. Treating armed fleets as unarmed
+  breaks 58.
+- **Unarmed fleets** go to the nearest planet unknown to the AI that no
+  own fleet's waypoint 1 already names, including targets given earlier
+  this turn. When the fleet orbits a planet, with `Random(100) < 5` it
+  heads to a wormhole instead (AIX: 2 of about 50 chances, one of them
+  Automitron's). With no unknown planet, it targets the best planet by
+  the armada target rule from its homeworld, else a random planet (not
+  exercised).
+- A planet target is then excluded for the colonize choice of later
+  fleets in the same turn (AIX: dropping this breaks 8). The move has no
+  task.
+
+The colonize marks of `AI.md` §11 ("once per turn, any task") are
+MEASURED here: using Robotoid's colonize-task-only marks breaks 23.
+Recomputing them for every fleet changes nothing in AIX, because each
+new target is excluded either way.
 
 ## Elegy
 
@@ -268,13 +348,13 @@ template has no observable effect and needs nothing.
 
 ## Open experiments
 
-1. Production and fleet rules as predictions. Most need a long capture,
-   about 60 years. Predictable early items: no Frigate design before
-   Frigate tech, then no scouts; the delete-and-recreate of slot 1 when no
-   colony ship is alive; the Privateer odds.
-2. Easy, standard and harder levels. The routine reads no level, so the
+1. Production rules as predictions. Most need a long capture, about 60
+   years. Predictable early items: no Frigate design before Frigate tech,
+   then no scouts; the delete-and-recreate of slot 1 when no colony ship
+   is alive; the Privateer odds.
+2. Fleet rules AI-22 never exercised: miner moves, Galleons, bombers, an
+   empty colony ship, the freighter stop, and the scout fallbacks and
+   far-enemy branches.
+3. Easy, standard and harder levels. The routine reads no level, so the
    designs should be the same at every level.
-3. The shared helpers named above need their rules in `AI.md`: merge,
-   split and design ageing, scout targeting, freighter routing, the
-   colonize and invasion choices, the bombing target choice, and the
-   nearest-starbase move.
+4. Merge, split and design ageing still need their rules in `AI.md`.
