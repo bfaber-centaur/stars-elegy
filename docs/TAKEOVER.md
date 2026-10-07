@@ -52,8 +52,8 @@ This refines `KERNEL.md` "Turn order" steps 2 and 6.
 2. **Before movement**, for fleets already at their waypoint 0:
    unloads (including colonist drops on other players' planets), scrap,
    colonize; then all queued colonist drops are resolved (ground combat,
-   new colonies); then loads and merges; then cargo
-   gifted to other players moves.
+   new colonies); then loads and merges; then a queued-gift step that
+   manual gifts do not use (see Manual cargo transfers below).
 3. Movement; production and population growth.
 4. Battles, then **bombing** (after every battle at every location).
 5. **After movement**, for fleets at their new waypoint 0: unloads
@@ -452,8 +452,9 @@ starvation, a packet or an AR starbase loss) is emptied:
   also a Claim Adjuster, its end-of-year automatic terraforming (`KERNEL.md`
   Turn order, step 7) runs later the same year and can move the environment
   straight back toward the new owner's ideal. In TK-108 a CA attacker's
-  capture ended the year at 50/50/50 (MEASURED in that one case; the CA
-  terraforming rule itself is not yet in `KERNEL.md`).
+  capture ended the year at 50/50/50 (MEASURED in that one case; the rule
+  and worked capture examples are in `KERNEL.md` "Terraforming", Claim
+  Adjuster).
 
 A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally:
@@ -496,8 +497,23 @@ cargo when the orders are applied (step 1).
 - **Minerals** onto another player's planet join its surface at once (100
   ironium, enemy and friend alike). **No message is sent** to either
   player (MEASURED, TK-405 and TK-412; the prediction of 0x042/0x044 was
-  wrong: those messages belong to gifts to another player's fleet, which
-  are not yet tested).
+  wrong).
+- **When a gift is credited.** A gift that is not a colonist drop is
+  credited when the orders are applied (step 1), in place, before any
+  waypoint task (MEASURED for planets: TK-405, TK-412). The binary reading
+  gives fleets the same path: debits are applied before credits, the
+  credit is in place whatever the owners or relation, and the queued-gift
+  step after the loads never receives anything in this build, so its
+  messages (0x042–0x04d) are not sent. A transfer whose source or
+  receiver no longer exists when the order is applied is skipped whole:
+  nothing is taken from the giver (binary reading).
+- **Gifts to another player's fleet** (MEASURED, TK-406, TK-407, TK-409).
+  Ironium and fuel arrive when the orders are applied, with no message.
+  The client does not see the receiver's free room, so it can order more
+  than fits: the receiver takes what fits, the giver loses the whole
+  amount, and the giver gets 0x0dd (shortfall, request). No message goes
+  to the receiver. The client gives no colonists to another player's
+  fleet, enemy or friend (TK-408, TK-414: no order written).
 
 ### Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED)
 
@@ -667,12 +683,12 @@ resolutions after movement. Random-stream pinning for experiments:
 
 ## Open experiments
 
-Rounds 1–4 (TK-001..TK-306), the FO corpus and the MG runs measured every
+Rounds 1–7 (TK-001..TK-606), the FO corpus and the MG runs measured every
 other rule here. What is left:
 
-- Manual cargo transfers to another player's **fleet** (full, partial
-  and refused gifts, fuel). The client automation opens Cargo Transfer
-  only with the orbited planet so far.
+- Where a gift is credited relative to the receiver's own waypoint-0
+  tasks in the same year (TK-413 was void; the 0x0dd notices place the
+  credit in the order replay).
 - Why Mystery Trader parts came from scrapping more often than the model
   predicts (TK-305). A larger sample, or replaying the random stream with
   the known draw counts, would tell a wrong model from an unlucky one.

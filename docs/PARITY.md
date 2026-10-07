@@ -3301,9 +3301,49 @@ at its planet. These agree with the XF-1 observation of the combat oracle
 lane (colonists lost with 0x058 at a foreign homeworld and 0x002 at an
 unowned planet; minerals added), which had no committed prediction.
 
+### Round 7: gifts to another player's fleet (TK-406 to TK-409, TK-413, TK-414)
+
+Status: MEASURED, 2026-10-07, one run each (cycles 20000), given through
+the client's fleet panel ("Other Fleets Here", Cargo). Predictions were
+revised before the runs (`experiments/tk/manual-transfers.md`) and made
+concrete in `experiments/tk/gen7.py`; raw files are in private
+`stars-oracle-apparatus` `evidence/tk7/`.
+
+| Case | Gift | Predicted (revised) | Observed |
+|---|---|---|---|
+| TK-406 | 100 ironium to an enemy fleet with 50 kT free | 50 received, giver loses 100, 0x0dd, no 0x046/0x048 | as predicted; the client did not cap the order |
+| TK-407 | 100 ironium to a full enemy fleet | nothing received, giver loses 100, 0x0dd | as predicted |
+| TK-408 | 20 colonists to an enemy fleet | received, no message | **the client wrote no order**: colonists stay with the giver |
+| TK-409 | 50 mg fuel to an enemy fleet | received, no message | as predicted |
+| TK-413 | ironium to a fleet with an unload task | unloaded the same year | void: the task was cleared in year 1 |
+| TK-414 | 20 colonists to a friend's fleet | as TK-408 | the client wrote no order |
+
+0x042–0x04d did not appear. The shortfall notice 0x0dd (CONFIRMED) is
+sent by the order replay, which places the credit at order time.
+
+### Round 6: bombing message variants (TK-601 to TK-606)
+
+Status: CONFIRMED, 2026-10-07, one run (cycles 20000). Predictions
+(`experiments/tk/gen6.py`, `experiments/tk/README.md` "Round 6
+predictions") were committed before the run; raw files are in private
+`stars-oracle-apparatus` `evidence/tk6/`.
+
+| Case | Setup | Observed |
+|---|---|---|
+| TK-601 | one LBU-17 bomber, planet with one factory | factory gone, 1 colonist unit killed; 0x063 / 0x06d |
+| TK-602 | as TK-601 plus a second (unarmed) fleet | 0x169 / 0x173 |
+| TK-603 | one LBU-17 behind 69 counted Planetary Shields | 9 installations, no colonists (kill rate rounds to 0); 0x067 / 0x071, 87.77% stopped |
+| TK-604 | as TK-603 plus a second fleet | 0x16d / 0x177 |
+| TK-605 | LBU-17 and a second fleet, planet with one defense | 0x16e / 0x178 |
+| TK-606 | three Retro bombs and a second fleet | 8 clicks; 0x17a / 0x17b, no damage message |
+
+Every prediction held. The "installations only, no defenses" and "one
+installation, no colonists, defenses" texts are left as not reachable
+(`docs/MESSAGES.md` LEGACY BUG summary).
+
 ### Not tested
 
-Cargo given by hand to another player's fleet (0x042–0x04d); the year's
+The year's
 full draw order through the random stream (owned by the KERNEL
 experiments); Alternate Reality `k = 0` in a contested drop (not reachable
 with legal orders).
