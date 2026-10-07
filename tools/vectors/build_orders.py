@@ -210,7 +210,7 @@ RUNS = {
     ],
 }
 
-WU_SPEC = 'docs/ORDERS.md (waypoint upkeep and the remaining tasks)'
+WU_SPEC = 'docs/ORDERS.md "Waypoint upkeep and the remaining tasks"'
 WU_PAR = 'experiments/wu/README.md (turn orders lane)'
 # (run, case id, title, prediction held, verdict)
 WU = [
@@ -287,6 +287,13 @@ def one(rundir, vid, title, held, verdict, x_orders=True, focus=None):
     return vec
 
 
+# the ORDERS.md section that states each CO result (the CO text folded in by
+# the turn orders lane); design change and delete are rules Q10 and Q11
+CO_SECTION = [('CO-01', 'Split'), ('CO-02', 'Split'), ('CO-03', 'Split'),
+              ('CO-04', "Transfer between the player's own fleets"), ('CO-05', 'Merge'), ('CO-06', 'Merge'),
+              ('CO-07', 'Range and legality clamps'), ('CO-08', 'Range and legality clamps')]
+
+
 def build(corpus, ev, out):
     os.makedirs(out, exist_ok=True)
     if corpus == 'wu':
@@ -294,6 +301,8 @@ def build(corpus, ev, out):
     else:
         runs = RUNS[corpus]
     for run, vid, title, held, verdict, spec, parity, exp in runs:
+        if spec == CO_SPEC:
+            spec = next(('docs/ORDERS.md "%s"' % sec for pre, sec in CO_SECTION if vid.startswith(pre)), spec)
         rd = os.path.join(ev, run)
         vec = one(rd, vid, title, held, verdict, corpus != 'wu', WU_FOCUS.get(run))
         vec['cases'][0]['rule'] = spec.split(';')[0].split(' (')[0].replace('docs/', '').replace('.md', '')
