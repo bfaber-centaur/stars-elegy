@@ -23,3 +23,13 @@ stars-decomp (8cad60f):
   capped at the maximum; once shields reach 0 they stay 0.
 - Armor Destroyer armor 250 per ship (hull 200 + 2 × 50/2), not 300.
 - Every hit replays through `combat.py check` (which models regeneration).
+
+## CB-008 (follow-up, predictions committed before its run)
+
+R1 gave only one hit (the unarmed RS stack fled), so regeneration was not
+exercised. CB-008 (`cb008.spec`) makes the RS stack armed and aggressive
+(5 "RS Gunboats": Laser ×2 + Mole-skin ×2, plan attack enemies) so it
+closes and takes fire for several rounds: Q1 vs 4 Laser Destroyers
+(2 Tritanium), Q2 vs 10 Laser Frigates. Same predictions: shields 70 per
+ship, +35 per round for the stack while above 0, none once at 0; every
+hit replays through `combat.py check`.
