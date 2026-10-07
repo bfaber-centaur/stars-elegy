@@ -61,8 +61,10 @@ def after_dirs(case_dir):
     return [os.path.join(case_dir, 'after1'), os.path.join(case_dir, 'after2')]
 
 
-def observe(year, adir):
-    """Expectations for one generated year from its .HST and .M1."""
+def observe(year, adir, mined):
+    """Expectations for one generated year from its .HST and .M1. When the
+    planet had mines at the start of the year (`mined`), its minerals include
+    the mining draw and go in a separate sampled expectation."""
     hst = B.dump(os.path.join(adir, 'PG001.HST'))
     m1 = B.dump(os.path.join(adir, 'PG001.M1'))
     planet, queue, player = None, [], None
@@ -74,11 +76,12 @@ def observe(year, adir):
             queue = [it.split(':') for it in d.get('items', '').split(',') if it]
         elif s.startswith('player %d ' % PLAYER) and 'energy' in d:
             player = d
+    minerals = [int(x) for x in planet['surface'].split('/')]
+    eq = {'mines': int(planet['mines']), 'factories': int(planet['factories']), 'defenses': int(planet['defenses'])}
+    if not mined:
+        eq = dict(surface_minerals=minerals, **eq)
     out = [
-        {'year': year, 'kind': 'planet', 'id': PLANET, 'equals': {
-            'surface_minerals': [int(x) for x in planet['surface'].split('/')],
-            'mines': int(planet['mines']), 'factories': int(planet['factories']),
-            'defenses': int(planet['defenses'])}},
+        {'year': year, 'kind': 'planet', 'id': PLANET, 'equals': eq},
         {'year': year, 'kind': 'production_queue', 'planet': PLANET,
          'equals': [{'id': int(i[0]), 'count': int(i[1])} for i in queue]},
         {'year': year, 'kind': 'player', 'id': PLAYER, 'equals': {
@@ -95,7 +98,13 @@ def observe(year, adir):
         out.append({'year': year, 'kind': 'message', 'player': PLAYER, 'message_id': mid, 'present': True})
     if COMPLETED not in ids:
         out.append({'year': year, 'kind': 'message', 'player': PLAYER, 'message_id': COMPLETED, 'present': False})
-    return out
+    sample = None
+    if mined:
+        sample = {'year': year, 'kind': 'sample', 'check': 'surface_minerals_after_mining', 'target': [PLANET],
+                  'observed': minerals,
+                  'constraint': 'production spending plus mining, which includes a random draw '
+                                '(KERNEL.md "Mining"); the run was not pinned to a random stream'}
+    return out, sample, int(planet['mines'])
 
 
 def build(ev, out):
@@ -106,11 +115,16 @@ def build(ev, out):
         dirs = spec[2] if len(spec) > 2 else [name]
         before = os.path.join(raw, dirs[0], 'before')
         st = B.state(B.dump(os.path.join(before, 'PG001.HST')), B.dump(os.path.join(before, 'PG001.XY')), 'PG001')
-        per = {}
+        mines0 = next(p['mines'] for p in st['planets'] if p['id'] == PLANET)
+        per, sampled = {}, {}
         for d in dirs:
-            exps = []
+            exps, mines = [], mines0
             for y, adir in enumerate(after_dirs(os.path.join(raw, d)), 1):
-                exps += observe(y, adir)
+                e, smp, mines2 = observe(y, adir, mines > 0)
+                exps += e
+                if smp:
+                    sampled.setdefault('run ' + d, []).append(smp)
+                mines = mines2
             per['run ' + d] = exps
         years = max(e['year'] for e in per['run ' + dirs[0]])
         rid = 'PQ-001-' + name
@@ -122,6 +136,9 @@ def build(ev, out):
                'random': 'single_stream' if len(dirs) == 1 else 'several_streams',
                'streams': len(dirs), 'initial_state': st,
                'cases': [B.case(rid, rule, setup, per, True, set())]}
+        if sampled:
+            vec['cases'].append(B.case(rid + '-mining', 'KERNEL Mining (not predicted by PQ-001)',
+                                       setup + '; surface minerals after the year\'s mining', sampled, True, set()))
         with open(os.path.join(out, name.lower() + '.json'), 'w') as f:
             B.json.dump(vec, f, indent=1)
             f.write('\n')

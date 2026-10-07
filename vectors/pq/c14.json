@@ -987,11 +987,6 @@
      "kind": "planet",
      "id": 7,
      "equals": {
-      "surface_minerals": [
-       501,
-       505,
-       503
-      ],
       "mines": 9,
       "factories": 0,
       "defenses": 10
@@ -1048,6 +1043,30 @@
      "player": 0,
      "message_id": 62,
      "present": false
+    }
+   ]
+  },
+  {
+   "id": "PQ-001-C14-mining",
+   "rule": "KERNEL Mining (not predicted by PQ-001)",
+   "setup": "pop 230 (R 23); Auto Mines x100; two years; surface minerals after the year's mining",
+   "tag": "MEASURED",
+   "prediction_held": true,
+   "varies_by_stream": false,
+   "expect": [
+    {
+     "year": 2,
+     "kind": "sample",
+     "check": "surface_minerals_after_mining",
+     "target": [
+      7
+     ],
+     "observed": [
+      501,
+      505,
+      503
+     ],
+     "constraint": "production spending plus mining, which includes a random draw (KERNEL.md \"Mining\"); the run was not pinned to a random stream"
     }
    ]
   }
