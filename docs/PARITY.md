@@ -4572,10 +4572,12 @@ the capture keeps them. Each player-year is compared with the prediction.
     The first setups therefore did not test AI-4: the colonizers flew to the
     newly owned planets and came back.
   - Owner records added to its player file changed the orders as predicted.
-  - Owner records added only to its history file left the orders unchanged.
-    Those records named a player that the history file has no record of. The
-    decomp lane's reading is that the history file is part of the view. So
-    this run does not show that the history file is ignored.
+  - Owner records added only to its history file count too, once the file is
+    well formed (its planet-record count raised, and a record for the owner
+    player). The colonizers were then scrapped exactly as with the player-file
+    edit. An earlier history-file edit without those two fixes had no effect.
+  - History records that name the computer player itself as owner read as
+    unowned: with such records it colonized as if they were not there.
 - **CONFIRMED: computer planets trade with a waiting Mystery Trader (O-53).**
   - Setup: four computer planets near the Trader's end point, each with a
     starbase, one at each of Standard, Harder and Expert (two Expert).
