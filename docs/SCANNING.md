@@ -38,7 +38,7 @@ of WM, CA or JOAT+NAS against JOAT, stationary fleets, one year each.
 - Divisions truncate. `⌊x⌋` is used where the order of truncations
   matters.
 - `rand(n)` is a uniform draw in `0..n−1` from the game's generator. Only
-  two rules here draw random numbers (population estimates and Space Demon
+  two rules here draw random numbers (population estimates and Space Demolition
   minefield detection); everything else is deterministic.
 
 ## When knowledge is computed (BINARY-ONLY)
@@ -216,7 +216,7 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
   report with a Robber Baron Scanner.
 - **Remote miners (BINARY-ONLY).** A stationary fleet remote-mining an
   unowned planet that yields minerals gets a detailed report of it.
-- **Inner Strength through gates, IT (BINARY-ONLY).** An IT player's planets
+- **Interstellar Traveler through gates, IT (BINARY-ONLY).** An IT player's planets
   with stargates report every planet with a stargate within the gate's
   range (unlimited range gates reach every such planet), subject to the
   starbase cloak rule.
@@ -246,7 +246,7 @@ shared by every viewer that year:
 
 where `u` is the population in units of 100 colonists. That is the true
 population within about −12.5%..+12.5%, rounded down to a multiple of 400.
-An uninhabited planet shows none. AR planets always show none. A coarse
+An uninhabited planet shows none. AR planets report an estimate of 0. A coarse
 defense coverage estimate (16 steps) accompanies it.
 
 **Old reports (BINARY-ONLY; a client feature).** A player's client keeps
@@ -263,8 +263,7 @@ this history.
   the fleet is inside the field. A minefield the player has seen before is
   seen again within the full normal range. A minefield's owner becomes a
   known player.
-- **Wormholes.** Seen within `P` or a quarter of `R`, and known forever
-  after (every later year, at any distance).
+- **Wormholes.** An unknown wormhole is seen within `P` or a quarter of `R`. A persistent known-bit is kept after discovery; the binary-derived model predicts that a known wormhole is seen again within full normal range. This persistence/range rule is BINARY-ONLY.
 - **Mineral packets.** Seen within `R`. A Packet Physics (PP) player knows
   every packet in the universe.
 - **Mystery Trader.** Known to every player while it exists, at any
@@ -272,7 +271,7 @@ this history.
 - **PP packet scanners.** A PP player's own moving packets scan as
   penetrating scanners with range warp² ly (warp 10 → 100), seeing fleets
   (with the cloak rule), space objects and planets.
-- **Space Demon minefields.** An SD player's minefields detect any
+- **Space Demolition minefields.** An SD player's minefields detect any
   non-orbiting enemy fleet inside them: an uncloaked fleet always, a
   cloaked one when `rand(100) ≥ c`.
 
@@ -338,7 +337,7 @@ picks the nearest visible enemy fleet it can attack within
    rule, the inside-the-field rule, persistent knowledge, PP sees all
    packets, MT seen by everyone (needs a universe with these objects).
 2. PP packet scanners and the IT gate scan.
-3. Space Demon minefield detection and the population estimate (random;
+3. Space Demolition minefield detection and the population estimate (random;
    inject the generator in tests; repeated oracle runs are not
    independent).
 4. Alternate Reality planet scanners.
@@ -346,7 +345,7 @@ picks the nearest visible enemy fleet it can attack within
 6. Planet reports after battle, bombing or minefield hits, and after a
    planet is lost.
 7. Built-in scanners in Mega Poly Shell, Multi Contained Munition and
-   Langston Shell; cloak points of non-device parts; SS cloak; IS starbase
+   Langston Shell; cloak points of non-device parts; SS cloak; Improved Starbases (ISB) starbase
    cloak bonus.
 8. More than two tachyon detectors; tachyon detectors spread over several
    designs.
