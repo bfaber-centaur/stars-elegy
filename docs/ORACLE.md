@@ -1169,6 +1169,22 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   dialog starts in `c:\stars`, so type the full path (`d:\cb.m2`). With
   the fleet view up, alt+r p did not open the planet report; F3 did.
 
+### Files written during a generation (observed 2026-10-07)
+
+- `PINNED_CAPTURE=DIR tools/fleetlab/pinned-turn …` starts
+  `tools/fleetlab/capture-writes`, an inotify watcher on the games directory
+  that copies every file as it is closed to `DIR/NNN-name` (write order) and
+  logs create/write/delete events to `DIR/events.log`. It starts after the
+  reset, which deletes the directory.
+- With computer players, a `-g` generation writes one `.Xn`/`.Hn` pair per
+  computer player (in player order) before the `.HST`, then the `.M` files
+  and the `.HST` again; the computer players' `.Xn` files are gone when
+  Stars! exits, so only the capture keeps them. They are registered-copy
+  output (private apparatus only); the decoder is private.
+- A rerun from the same start at the same cycles captured the same
+  computer orders; a different stream changed only random choices such as
+  names and pictures (one 7-player game, one year).
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
