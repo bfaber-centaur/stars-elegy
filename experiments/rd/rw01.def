@@ -1,0 +1,29 @@
+RW01
+4 1 1 3001
+0 0 0 0 0 0 0
+16
+rw01a.r1
+rw01b.r1
+rw01c.r1
+rw01d.r1
+rw01e.r1
+rw01f.r1
+rw01g.r1
+rw01h.r1
+rw01i.r1
+rw01j.r1
+rw01k.r1
+rw01l.r1
+rw01m.r1
+rw01n.r1
+rw01o.r1
+rw01p.r1
+1 60
+0 26 4
+0 5000
+0 100
+0 100
+0 100
+0 100
+1 50
+rw01.xy

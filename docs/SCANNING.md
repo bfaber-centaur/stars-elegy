@@ -8,7 +8,7 @@ for an implementer working only from this public repository. It describes
 what a player is told, not how any file encodes it.
 
 `PARITY.md`, section "Scanning", holds the experiment records (SC-001 to
-SC-023). This file restates them as rules and adds rules that so far come
+SC-034). This file restates them as rules and adds rules that so far come
 only from white-box analysis of the original program (private
 `stars-decomp`, promoted here as behavior only). Part statistics (each
 scanner's normal and penetrating range, each part's cloak points) belong in
@@ -27,7 +27,8 @@ where a rule needs a worked example.
   for parity unless the project decides otherwise.
 
 "Confirmed" covers the measured scope only: two players, both JOAT or one
-of WM, CA or JOAT+NAS against JOAT, stationary fleets, one year each.
+of WM, CA, SS or JOAT+NAS against JOAT, one year each, with stationary
+viewers (SC-027 measured moving targets' headings).
 
 ## Conventions
 
@@ -70,9 +71,11 @@ Every scanner has a **normal** range `R` and a **penetrating** range `P`
   `⌊⁴√Σ rᵢ⁴⌋` over every scanner on the design, counting each part in a
   stack. Normal and penetrating ranges are combined separately. Vector: two
   Rhino Scanners (50 each) give 59.
-- **Built-in scanners (BINARY-ONLY).** Three non-scanner parts also scan,
-  combining like scanner parts: Mega Poly Shell, Multi Contained Munition
-  and Langston Shell (components table).
+- **Built-in scanners.** Three non-scanner parts also scan, combining like
+  scanner parts: Mega Poly Shell, Multi Contained Munition and Langston
+  Shell (components table). CONFIRMED for Mega Poly Shell (80 / 40) and
+  Multi Contained Munition (150 / 75) by designer readouts (CS-003-D);
+  BINARY-ONLY for Langston Shell.
 - **JOAT hulls (CONFIRMED, SC-020, SC-022, SC-023).** A JOAT player's
   Scout, Frigate and Destroyer have a built-in scanner of `20·E` normal and
   `10·E` penetrating, where `E` is the owner's electronics level. It
@@ -93,17 +96,21 @@ Every scanner has a **normal** range `R` and a **penetrating** range `P`
   largest penetrating range. Stacks and different designs do not combine:
   a fleet of two Rhino ships, or of two different Rhino designs, still
   scans 50.
-- **Tachyon detectors (CONFIRMED for 0, 1 and 2 on a one-design fleet;
-  BINARY-ONLY beyond).** The number of Tachyon Detectors on a design
+- **Tachyon detectors (CONFIRMED for 0 to 3 on one design, SC-010,
+  SC-028, SC-033; BINARY-ONLY beyond 3).** The number of Tachyon Detectors on a design
   (summed over its slots, not multiplied by ship count) selects a factor
   `T` from this table (index = count, capped at 17):
 
   `100, 95, 93, 91, 90, 89, 88, 87, 86, 86, 85, 84, 84, 83, 83, 82, 82, 81`
 
   Against this fleet a target's cloak `c` becomes `⌊c·T/100⌋`. Vector: a
-  75% cloak is 71% against one detector and 69% against two (SC-010).
-  BINARY-ONLY: a fleet uses the smallest factor among its designs, so
-  detectors on different designs or ships do not add up.
+  75% cloak is 71% against one detector and 69% against two (SC-010), and
+  68% against three (factor 91: seen at d² 27688, not at 27689, SC-033).
+  A fleet uses the smallest factor among its designs, so detectors on
+  different designs or ships do not add up (CONFIRMED, SC-029): a fleet of
+  two one-detector ships, or a one-detector design with another
+  one-detector design, is 95; a two-detector design with a one-detector
+  design is 93.
 
 ### Planets
 
@@ -154,9 +161,14 @@ cloak (98% included), and is seen back. One ly away a blind or Bat
 Scanner viewer sees nothing. This looks like a consequence of the distance
 test rather than a designed rule.
 
-**Fleets at your planets (BINARY-ONLY).** Every enemy fleet in orbit around
-one of the viewer's planets is seen, whatever its cloak and whether or not
-the planet has a scanner.
+**Fleets at your planets (CONFIRMED, SC-024, SC-026).** Every enemy fleet in
+orbit around one of the viewer's planets is seen, whatever its cloak and
+whether or not the planet has a scanner, and with no viewer fleet present.
+Vectors: a 98% cloaked fleet at the viewer's homeworld and a plain
+freighter at a colony without a starbase were seen; the same designs 1 ly
+away in deep space were not. A fleet at the planet's exact position that
+was not in orbit was also seen (SC-024-E, one case), which is the
+co-location rule above.
 
 ## Cloaking
 
@@ -164,17 +176,21 @@ the planet has a scanner.
 
 1. Each ship design has **cloak points**: the sum over its parts of
    each part's cloak points times the stack count (components table).
-   Cloaking devices carry points, and so do some other parts
-   (BINARY-ONLY for the non-device parts: Depleted Neutronium, Mega Poly
-   Shell, Enigma Pulsar, Chameleon Scanner, Shadow Shield, Langston Shell,
-   Multi Contained Munition, Alien Miner, Orbital Adjuster, Multi Cargo
-   Pod). Super Stealth (SS) players add 300 points to every design
-   (BINARY-ONLY).
+   Cloaking devices carry points, and so do some other parts. CONFIRMED by
+   designer readouts (CS-003-D) for Enigma Pulsar (20), Alien Miner (60),
+   Mega Poly Shell (40) and Multi Contained Munition (20), and by detection
+   edges for Langston Shell (20 per shell, SC-034: one shell on a Small
+   Freighter is 10%, five on a Super Freighter 50%); BINARY-ONLY for
+   Depleted Neutronium, Chameleon Scanner, Shadow Shield, Orbital Adjuster
+   and Multi Cargo Pod. Super Stealth (SS) players add 300
+   points to every design (CONFIRMED, SC-030: a plain SS freighter is 75%,
+   seen at d² 5625 and not at 5626 by a 100 ly scanner).
 2. The fleet's points are mass-weighted:
    `u = trunc(Σ (points × stack mass) / (Σ stack mass + cargo))`, where a
    stack's mass is ship mass times ship count and cargo is the fleet's
    ironium, boranium, germanium and colonists. Fuel is never counted. For
-   an SS fleet cargo is left out (BINARY-ONLY).
+   an SS fleet cargo is left out (CONFIRMED, SC-030: the SS freighter with
+   50 kT of cargo was still 75%, where dilution would give 51%).
 3. Percent from points:
 
    | Points `u` | Cloak % |
@@ -202,8 +218,10 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
   hidden at 2026.
 - A starbase's cloak uses its design's points **without mass weighting**
   (CONFIRMED, SC-009, for cloaking devices), plus 40 points for an
-  Improved Starbases player on any starbase hull and 300 for SS
-  (BINARY-ONLY). A point total above 25,000 counts as 0 (BINARY-ONLY).
+  Improved Starbases player on any starbase hull (BINARY-ONLY) and 300 for
+  SS (CONFIRMED, SC-030: an SS player's bare Space Station is 75%, so a
+  viewer with P 200 at d² 3600 got the planet without its starbase). A
+  point total above 25,000 counts as 0 (BINARY-ONLY).
 - The planet itself is still reported; only the starbase is hidden.
 
 ## Seeing planets
@@ -214,12 +232,26 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
 - **Penetration needs `P > 0` (BINARY-ONLY rule; its consequence is
   CONFIRMED, SC-002 `SC002-blind-orbit`).** A fleet or planet with `P = 0`
   reveals no planets at all, even the planet it orbits at `d² = 0`. The only
-  report a `P = 0` fleet gets of its orbited planet is the orbit report
-  below (position only when it has no scanner).
-- **Orbiting (CONFIRMED, SC-002, SC-014).** A planet orbited by one of the
-  viewer's fleets is reported: position only if that fleet has no scanner,
-  a normal report if it has any scanner (Bat Scanner included), a detailed
-  report with a Robber Baron Scanner.
+  reports a `P = 0` fleet gets of its orbited planet are the orbit report
+  and the bombing check below.
+- **Orbiting (CONFIRMED, SC-002, SC-014, SC-032).** A planet orbited by one
+  of the viewer's fleets is reported: position only if that fleet has no
+  scanner, a normal report if it has any scanner (Bat Scanner included), a
+  detailed report with a Robber Baron Scanner. A scannerless fleet can
+  still get a normal report from the bombing check.
+- **Bombing check (CONFIRMED for scannerless fleets without bombs, SC-024,
+  SC-031, SC-032; mechanism BINARY-ONLY).** When the viewer would bomb a
+  planet by the "Who bombs" test in `TAKEOVER.md` (another player owns it,
+  it has no starbase, and one of the viewer's fleets in orbit has a battle
+  plan that attacks the owner), the planet gets a normal report, whatever
+  the viewer's scanners and whether or not any fleet carries bombs.
+  Measured with default plans and relations: a blind freighter got a
+  normal report (environment, population and defense estimates, no
+  surface minerals) at an enemy colony without a starbase and at an enemy
+  homeworld whose starbase was removed, and position only at an enemy
+  colony with a starbase and at an unowned planet. So the starbase decides,
+  not the homeworld. BINARY-ONLY: a battle plan that would not attack the
+  owner (for example "nobody") gives only the orbit report.
 - **Remote miners (BINARY-ONLY).** A stationary fleet remote-mining an
   unowned planet that yields minerals gets a detailed report of it.
 - **Interstellar Traveler through gates, IT (CONFIRMED, OB-013).** From
@@ -229,9 +261,16 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
   starbase cloak rule still applies (BINARY-ONLY). Vectors from a range-250
   gate: a gated enemy planet at 75 ly was reported, one at 259 ly was not,
   and a starbase without a gate at 138 ly was not.
-- **Battles and bombing (BINARY-ONLY, unclear).** A fleet that bombed,
-  fought or hit a minefield at a planet this year gives a normal report of
-  that planet.
+- **Battles (CONFIRMED, SC-032).** Fighting at a planet gives the same
+  report as being there without fighting: a scannerless fleet that fought
+  at an unowned planet, and one that fought at an enemy colony with a
+  starbase, each got position only. A battle at a planet always gives each
+  participant at least a position-only report of it (BINARY-ONLY; it
+  matters only for a fleet that did not end the year in orbit).
+- **Left out of a battle or hit by mines (BINARY-ONLY).** A fleet in orbit
+  that was left out of a battle there because of the battle's size limit,
+  or that was hit by a detonating minefield, gives a normal report of the
+  planet it orbits.
 - **Lost planets (BINARY-ONLY).** A planet the viewer lost this year, or one
   named in certain loss and invasion messages, gets a normal report.
 
@@ -245,17 +284,19 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
 | Detailed | normal, plus surface minerals |
 
 (BINARY-ONLY for the field list; CONFIRMED for which planets get which
-report in SC-001..SC-023.)
+report in SC-001..SC-033.)
 
-**Starbases in every report (BINARY-ONLY).** The starbase rule above is the
-only thing that hides a starbase. Every report of a planet, including the
-position-only report from a scannerless fleet in orbit, says whether it has
-a starbase and sends that starbase's design (partially). The orbiting fleet
-makes the planet's owner a known player. The SC orbit cases used unowned
-planets, so this is untested.
+**Starbases in every report (CONFIRMED, SC-024..SC-026).** The starbase
+rule above is the only thing that hides a starbase. Every report of a
+planet, including the position-only report from a scannerless fleet in
+orbit, says whether it has a starbase and sends that starbase's design
+(partially). The orbiting fleet makes the planet's owner a known player:
+a blind freighter at an enemy homeworld with a starbase got position only
+with the starbase and its partial design, and the owner's player data
+arrived although nothing else of that player was seen.
 
-**Population estimate (BINARY-ONLY; a private check found all 131
-estimates in the preserved single-player games inside this range).** Once a
+**Population estimate (range CONFIRMED, SC-024..SC-033: all 9 estimates
+fell in it, 300 colonists → 400 included; the draw itself is random).** Once a
 year each planet with population gets one estimate, shared by every viewer
 that year. The estimates are drawn after battles, production, mine
 sweeping, repair, terraforming and the duplicate-serial penalty, and before
@@ -274,18 +315,24 @@ population within about −12.5%..+12.5%, rounded down to a multiple of 400.
   nothing.
 An uninhabited planet shows none. AR planets report an estimate of 0.
 
-**Defense coverage estimate (BINARY-ONLY).** Computed at the same time,
-with no random draw:
+**Defense coverage estimate (CONFIRMED, SC-024..SC-033, 9 planets).**
+Computed at the same time, with no random draw:
 
 1. A planet with no defenses gets 0 ("none").
 2. Otherwise take the best planetary defense the owner's current tech
    allows (its coverage `v` per defense, in tenths of a percent;
    components table) and `n` = the planet's defenses, capped at the number
-   the planet can operate.
+   the planet can operate (`KERNEL.md`, Caps, "operable defenses", the
+   same cap bombing uses).
 3. `s = (1 − v/1000)ⁿ`, the share of a bomb's kill that gets through, in
    floating point.
 4. `k = trunc(100·s + 0.5)`.
 5. `estimate = max(1, min(15, trunc((104 − k)/6)))`.
+
+Vectors with Neutron Shields (`v = 38`): 1, 3, 5 and 10 defenses give 1,
+2, 3 and 6; 40 defenses on a planet that can operate 10 give 6; 100
+defenses with population 104,400 (42 operable) give 14. Without the cap
+the last two would be 13 and 15.
 
 If the owner has no defense type available, `s = 1` and the estimate is 1.
 Each step is about 6% of coverage. How the client words a step is
@@ -357,10 +404,12 @@ fleet's or planet's ranges.
   their exact position. 30 ly away, or with a Rhino at the same position,
   the fleet arrives without cargo (CONFIRMED, SC-002, SC-014).
 - The mass shown is ship mass plus ironium, boranium, germanium and
-  colonists, without fuel (BINARY-ONLY here; a private check matched every
-  partial fleet in the CB combat corpus, not yet recorded in `PARITY.md`).
+  colonists, without fuel (CONFIRMED, SC-027): an empty 29 kT ship shows
+  29; with 10/20/30 kT of minerals and 40 kT of colonists, 129; two ships
+  with 50 kT of colonists, 108. The cargo itself shows as 0.
 - BINARY-ONLY: colonists and fuel are never shown to another player.
-- **Heading (BINARY-ONLY).**
+- **Heading (CONFIRMED, SC-027, for straight moves; BINARY-ONLY for
+  chasers).**
   - A fleet that moved this year shows a heading vector and the warp of
     its next waypoint.
   - The vector is the next waypoint minus the fleet's position just
@@ -368,9 +417,14 @@ fleet's or planet's ranges.
     step, and the last movement step of the year wins.
   - While either component has magnitude ≥ 128, both are halved,
     truncating toward zero. The result fits in −127..127.
-  - It is not reduced by a gcd. Vector: a move from (1000, 1000) toward
-    (1300, 1100) shows (75, 25), after two halvings.
-  - A fleet that did not move this year shows no heading and no warp.
+  - It is not reduced by a gcd. Vectors: (300, 100) → (75, 25);
+    (50, −120) unchanged; (−128, 3) → (−64, 1); (300, −7) → (75, −1);
+    (−1, −395) → (0, −98). Halving toward −∞ would give (75, −2) and
+    (−1, −99).
+  - A fleet that reached its waypoint this year still shows the vector and
+    warp of the move it finished (one case: (10, 0) at warp 5).
+  - A fleet that did not move this year shows no heading and no warp
+    (heading 0, 0 and warp 0).
   - Fleets travelling by stargate were not read.
 
 ### Designs
@@ -379,9 +433,10 @@ fleet's or planet's ranges.
   (CONFIRMED, SC-001..SC-023).
 - A **War Monger** viewer gets every seen design in full (CONFIRMED,
   SC-015, SC-015L).
-- BINARY-ONLY: a design is also disclosed in full to every player whose
-  forces fought it in a battle, to the owner of an SD minefield it struck,
-  and (starbases) to a PP player whose packet that starbase caught.
+- A design is disclosed in full to every player whose forces fought it in
+  a battle, even when every ship of it was destroyed (CONFIRMED, SC-031).
+  BINARY-ONLY: also to the owner of an SD minefield it struck, and
+  (starbases) to a PP player whose packet that starbase caught.
 - A planet report without its starbase (starbase cloak) reveals no
   starbase design.
 
@@ -391,8 +446,9 @@ fleet's or planet's ranges.
 - A **Claim Adjuster** viewer also receives each known player's
   habitability ranges, with every tech level shown as zero. With no contact
   it receives nothing about the other player (CONFIRMED, SC-016, SC-016N).
-- BINARY-ONLY: scores of other players are shown when public scores are
-  enabled and more than 20 years have passed.
+- Scores of other players are in a player's file when public scores are
+  enabled and the file's year index is at least 20, i.e. from 2420 on
+  (CONFIRMED, KX-004; `KERNEL.md` "Game options during a turn").
 
 ### Allies (CONFIRMED in one run, SC-001F)
 
@@ -421,28 +477,35 @@ picks the nearest visible enemy fleet it can attack within
    independent).
 4. Alternate Reality planet scanners.
 5. Chase retargeting and patrol target choice.
-6. Planet reports after battle, bombing or minefield hits, and after a
-   planet is lost.
-7. Built-in scanners in Mega Poly Shell, Multi Contained Munition and
-   Langston Shell; cloak points of non-device parts; SS cloak; Improved Starbases (ISB) starbase
-   cloak bonus.
-8. More than two tachyon detectors; tachyon detectors spread over several
-   designs.
-9. Design disclosure after battle, SD mine hits and PP packet catches.
-10. Three or more players, and scanners on moving fleets mid-year (all SC
-    runs were stationary).
-11. A scannerless fleet orbiting an owned planet with a starbase: starbase,
-    owner and design in the position-only report.
-12. Heading vectors of moving enemy fleets (halving, chasers, gates) and the
-    defense coverage estimate.
+6. Planet reports from the bombing check with a fleet that carries bombs,
+   or with a battle plan that attacks nobody; after a detonating minefield
+   hit or a battle's size limit; and after a planet is lost.
+7. The Langston Shell built-in scanner; cloak points of the non-device
+   parts not yet confirmed (Depleted Neutronium, Chameleon Scanner, Shadow
+   Shield, Orbital Adjuster, Multi Cargo Pod); Improved
+   Starbases (ISB) starbase cloak bonus.
+8. Four or more tachyon detectors on one design.
+9. Design disclosure after SD mine hits and PP packet catches.
+10. Three or more players, and scanners on moving fleets mid-year.
+11. Headings of chasers and of fleets travelling by stargate.
+
+## Notes for comparing with original-game files
+
+These describe how the original's per-player turn file stores some of the
+facts above. They are not rules; they matter only to a tool that compares
+an Elegy view with an oracle view (MEASURED, SC-027, SC-031).
+
+- A heading component is stored as one byte holding `value + 127`. A
+  fleet that did not move stores 0 for both components and warp 0, and is
+  read as "no heading".
+- Another player's design records carry no owner field. Their owners
+  follow from the order of the records, which are grouped by owner in
+  player order.
 
 ## Sources
 
-- Oracle: SC-001..SC-023 (`PARITY.md`, "Scanning"; `experiments/sc/`;
+- Oracle: SC-001..SC-034 (`PARITY.md`, "Scanning", including "Round 4"; `experiments/sc/`;
   `ORACLE.md`, "Scanning experiments"). Raw evidence: private
   `stars-oracle-apparatus`, `evidence/sc/`.
-- Partial-fleet mass and population estimates were also checked privately
-  against the CB combat corpus and the preserved single-player games; these
-  checks are not yet public records.
 - White-box reading: private `stars-decomp` (scanning notes and the
   per-player view checker that reproduces every SC and CB view).
