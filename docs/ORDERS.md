@@ -440,9 +440,15 @@ flag:
 - **Repeat on:** the reached waypoint is instead moved to the **end** of the
   list, so the fleet cycles through its waypoints indefinitely. CONFIRMED (the
   same fleet with repeat on kept three waypoints, the reached one now last).
-  Two cases fall back to a plain drop even with repeat on: a list of only two
-  waypoints, and a reached waypoint whose position already equals the current
-  last waypoint (no duplicate is appended) — both BINARY-ONLY.
+  Two cases fall back even with repeat on. A list of only two waypoints — one
+  forward leg — collapses to a single standing waypoint once that leg is
+  reached: the circuit is not regenerated, so the fleet ends idle exactly as if
+  repeat were off. And a reached waypoint whose position already equals the
+  current last waypoint is not appended again, so the list does not grow. Both
+  CONFIRMED (a two-waypoint repeat fleet came back with only the
+  current-position waypoint; a three-waypoint repeat fleet whose last two
+  waypoints shared a position came back with those two coincident waypoints and
+  no third added).
 - A **patrol** waypoint never repeats, even with repeat orders on. BINARY-ONLY.
 - When a fleet reaches its **last** waypoint with no continuing task and no
   planet route to follow, it goes idle and its owner is messaged that the
@@ -477,27 +483,28 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
 
 ### Following another fleet (leader linkage)
 
-BINARY-ONLY (from KERNEL.md's complete turn order, stars-elegy #53). A fleet
-whose waypoint targets another fleet is a **follower**; the targeted fleet is
-its **leader**. Upkeep resolves the link each turn (the tracking rule above
-fixes the follower's waypoint onto the leader's current position), and the
-movement phase then resolves chains and cycles of followers:
+CONFIRMED for the upkeep link, with the movement-phase freeze deferred to
+`KERNEL.md` (stars-elegy #53). A fleet whose waypoint targets another fleet is
+a **follower**; the targeted fleet is its **leader**. Upkeep resolves the link
+each turn (the tracking rule above fixes the follower's waypoint onto the
+leader's current position), and the movement phase then resolves chains and
+cycles of followers:
 
 - The leader is simply the fleet named by the waypoint target; a follower can
   itself be a leader to another follower (a **chain**), and two fleets can name
-  each other (a **cycle**).
+  each other (a **cycle**). CONFIRMED (a three-fleet chain came back with each
+  follower advanced toward its leader and its waypoint re-pointed at the
+  leader's new position for the next turn; a two-fleet cycle of equal-warp
+  fleets met at the midpoint and both waypoints cleared to a plain go-to once
+  the two fleets were co-located).
 - Chains and cycles are what produce the chase-order freeze recorded in
   `KERNEL.md`: fleets move in id order, a follower that lands on its leader
   finishes, and a leader that is itself an unfinished follower stops for the
   year where it is caught. This document defers the movement resolution to
-  `KERNEL.md` (the chaser rules, CONFIRMED there via FM-001..003) and records
-  only that the upkeep link is the plain waypoint target, re-resolved each
-  turn.
-
-Prediction (WU-style, fleetlab HST editing): build a two-fleet cycle (each
-waypoint targets the other) and a three-fleet chain, run a turn, and confirm
-the leader each follower resolves to and the resulting freeze match the
-`KERNEL.md` chaser rules.
+  `KERNEL.md` (the chaser rules, CONFIRMED there via FM-001..003): the measured
+  symmetric cycle above converged cleanly, matching FM-001, and the id-order
+  freeze is the asymmetric case recorded there. The upkeep link itself is the
+  plain waypoint target, re-resolved each turn.
 
 ### Route task
 
@@ -595,10 +602,12 @@ and the Merge-with-Fleet task (including its damage dilution and the missing
 ship-count cap) have since been measured — see the Fleet operations section
 and `PARITY.md`, "Fleet Operations" (FO-01..07). Still open there:
 
-- **OX merge-order cap and loss.** The direct merge order's 32766 per-design
-  cap is read but untested (only the waypoint task was measured, and it has no
-  cap); push a direct merge past 32766 and confirm the stack caps at 32766
-  with the excess lost (not spilled, not refused). Confirms "Merge order".
+- **OX merge-order cap and loss.** The direct merge order's per-design cap is
+  read but untested (only the waypoint task was measured, and it has no cap);
+  push a direct merge past 32767 and confirm a stack of 32767 is kept while one
+  that would reach 32768 or more is slammed to 32766 with the excess lost (not
+  spilled, not refused) — the same boundary as the Merge-with-Fleet task above
+  (32767 kept, 32768+ becomes 32766). Confirms "Merge order".
 - **OX merge-order damage.** Merge (direct order) a damaged stack into healthy
   ships of the same design and read back the stored percent and per-ship
   damage units; confirm the percent dilutes over the full count like the task
@@ -627,13 +636,14 @@ most have now been **run** (the WU batch; `experiments/wu/` here, raw evidence
 in private `stars-oracle-apparatus` `evidence/wu/`). Measured and folded into
 the sections above as CONFIRMED: repeat vs drop, the idle message, live and
 gone fleet targets, the route task (ideal-warp case), the enemy and
-colonist transfer refusals plus the empty-fleet success, and the patrol target
-rule (nearest enemy within ~50 ly, ties by fleet order, warp `min(10,range/5)`).
+colonist transfer refusals plus the empty-fleet success, the patrol target
+rule (nearest enemy within ~50 ly, ties by fleet order, warp `min(10,range/5)`),
+the two repeat fall-backs (a two-waypoint circuit and a coincident reached/last
+waypoint), and the follower-linkage upkeep (a three-fleet chain and a two-fleet
+cycle).
 
 Still open (fleetlab HST editing, no serial):
 
-- **WU repeat fallbacks.** Repeat case with only two waypoints, and with a
-  reached waypoint equal to the last; confirm both fall back to a plain drop.
 - **WU patrol no-repeat.** Repeat flag on, a patrol waypoint reached; confirm
   it is not rotated to the end.
 - **WU captured target.** Track a fleet target that changes owner mid-turn;
@@ -643,9 +653,6 @@ Still open (fleetlab HST editing, no serial):
   confirm it is sent through the stargate rather than at warp.
 - **WU computer-player transfer.** Gift a fleet to a computer player; confirm
   it is refused (needs a base with an AI player).
-- **WU follower linkage.** Build a two-fleet cycle and a three-fleet chain of
-  fleet-target waypoints; confirm the leader each resolves to and the freeze
-  match the `KERNEL.md` chaser rules (stars-elegy #53).
 
 The order-ingestion predictions remain open:
 
