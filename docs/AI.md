@@ -52,9 +52,13 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - If an order file for that player already exists when the host runs, the
   computer player does not act that year; the existing file is used.
 - **What it sees.** Exactly that player's own view of the game (what its
-  player file holds: its planets, fleets, designs, scanned reports) plus a
-  private memory it keeps between years (§6). It never reads other
-  players' hidden state.
+  player file holds: its planets, fleets, designs, scanned reports). It
+  never reads other players' hidden state. It keeps no memory between
+  years: the original writes a private memory block into the player's
+  history file each year but never reads it back on this path, so every
+  turn starts from an empty one (BINARY-ONLY; consistent with 61 years of
+  captured history files, AI-10). Elegy keeps no computer-player state
+  across years.
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
   tech level edited in the host file) shows in its orders only one year
@@ -226,7 +230,8 @@ same hull; after 20 failures, the last name tried with a number from
 ### AI part classes
 
 Each class is a list tried in order; the AI takes the first entry the
-race can build. Parts are named as in `COMPONENTS.md`. Classes 34–38, 0,
+race can build. There are 45 classes, 0–44. Parts are named as in
+`COMPONENTS.md`. Classes 34–38, 0,
 9, 10, 11, 17 and 19 are used by starbases; the rest by ship designs
 (personality files).
 
@@ -272,14 +277,21 @@ race can build. Parts are named as in `COMPONENTS.md`. Classes 34–38, 0,
 | 37 | Langston Shell, Complete Phase Shield, Elephant Hide Fortress, Gorilla Delagator, Langston Shell, Bear Neutrino Barrier, Shadow Shield, Croby Sharmor, Wolverine Diffuse Shield, Cow-hide Shield, Mole-skin Shield |
 | 38 | Mega Disruptor, Heavy Blaster, Colloidal Phaser, Phaser Bazooka, Laser |
 | 39 | Jammer 50, Jammer 30, Jammer 20, Jammer 10, Multi Function Pod, Ultra-Stealth Cloak, Super-Stealth Cloak, Stealth Cloak |
+| 40 | Orbital Construction Module |
+| 41 | Mega Poly Shell, Jammer 50, Jammer 30, Jammer 20, Jammer 10, Overthruster, Maneuvering Jet, Beam Deflector, Super Fuel Tank, Fuel Tank |
+| 42 | Alien Miner, Robo-Ultra-Miner, Robo-Super-Miner, Robo-Maxi-Miner |
+| 43 | Alien Miner, Robo-Ultra-Miner, Robo-Midget Miner |
+| 44 | Galaxy Scoop, Trans-Galactic Mizer Scoop, Trans-Galactic Super Scoop, Trans-Galactic Fuel Scoop, Sub-Galactic Fuel Scoop, Fuel Mizer |
 
 ## 6. Hubs: the AI's private memory (BINARY-ONLY)
 
-A computer player keeps a list of up to 64 *hubs* between years: each a
-planet with up to 8 freighter fleets assigned. Robotoid, Turindrone,
-Automitron and Rototill update it every year from year index 20:
+A computer player builds a list of up to 64 *hubs* during its turn: each
+a planet with up to 8 freighter fleets assigned. The list starts empty
+every year (§1), so it is rebuilt from the player's own state each time.
+Robotoid, Turindrone, Automitron and Rototill build it from year index 20:
 
-1. Drop hubs whose planet the player no longer owns.
+1. Drop hubs whose planet the player no longer owns (with the list
+   starting empty, this never matters).
 2. Every own planet with a starbase becomes a hub. A starbase-less own
    planet becomes a hub when it has population ≥ 8,000, ≥ 20 mines, ≥ 20
    factories and `Σ over minerals (surface + 4·concentration²) ≥ 7000`;
@@ -421,7 +433,11 @@ scraps at least one starting fleet at its homeworld.
   before 200, 100 after) orbiting an own planet is scrapped when that
   planet has a starbase, else with chance 1/5 per year.
 - **Macinti (MEASURED, AI-5)** scraps its early fleets and repeatedly
-  builds and scraps its first colonizer; docs/ai/macinti.md (planned).
+  builds and scraps its first colonizer until the year it creates design
+  slot 7; docs/ai/macinti.md (planned). The colonizer it scraps in 2401 in
+  AIX is the one built in 2400, not a starting ship. Macinti merges its
+  fleets every year before its fleet pass (§10 "Merging"), so the scrap
+  rules see that turn's merged fleets.
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -506,7 +522,15 @@ fleets in fleet order). A *move order* replaces the fleet's route: it
 keeps waypoint 0 and sets waypoint 1 to the target with the given task
 and warp, dropping any later waypoints; if the fleet is already at the
 target, the task goes on waypoint 0 and the route is cut to that one
-waypoint. Warp 4 below means the waypoint's warp is written as 4 and later
+waypoint. When the existing waypoint 0 lies at the fleet's position, the move
+order overwrites it in place (BINARY-ONLY; details with Cybertron,
+docs/ai/cybertron.md, planned).
+
+**Supplies.** When a rule loads colonists or minerals between a planet
+and a fleet, the planet and fleet change at once in the computer player's
+own picture of the game, so later steps of the same turn (for example
+starbase queueing in §7) see the moved cargo. A load is limited to what
+the source holds and the target can take. Warp 4 below means the waypoint's warp is written as 4 and later
 reset by the warp rule at the end of the turn.
 
 **Fleet classes.** Hull roles: freighters (Small to Super Freighter),
@@ -647,15 +671,34 @@ hub, or the player's first planet with a starbase):
    to foreign targets. Salvage targets get no task (LEGACY BUG: their
    load orders do nothing).
 
-**Warp choice.** At the end of each personality's fleet work (§7 step
-1), every own fleet with a waypoint 1 gets its waypoint-1 warp reset:
-- Standing in another player's minefield: heavy field → 6; standard
-  field → 4 or 5 (`Random(10) < 4` → 4); SS races +1.
-- Otherwise the fastest warp up to 9 that the fleet's current fuel
-  covers (never below its ideal warp); capped at the engine's efficient
-  warp unless heading to an own planet whose starbase is not an Orbital
-  Fort; then lowered to the slowest warp with the same whole-year travel
-  time (not below 2); warp 11 when a stargate route applies.
+**Warp choice** (CONFIRMED, AI-11). At the end of each personality's
+fleet work (§7 step 1), every own fleet with at least two waypoints, in
+fleet order, gets its waypoint-1 warp re-picked. Target and task are kept,
+and an order is written only when the warp changes.
+- **Minefields.** For this test, and for the whole turn, the computer
+  player sees every minefield as larger than it is: a field of `n` mines
+  counts as `⌊√n + 10.5⌋²` (about 10 ly more radius). A fleet inside
+  another player's enlarged field (squared distance below that count;
+  the first such field in object order) gets: heavy field 6; standard
+  field 4 when `Random(10) < 4`, else 5; plus 1 for an SS race. Speed
+  bump fields are not considered.
+- **Otherwise**, with `ideal` the fleet's ideal warp (`ESTIMATES.md`
+  "Fleets") and `raw` the same without the free-warp step-down:
+  1. Start from 9 and step down while the warp is above `ideal` and the
+     fuel needed to reach waypoint 1 at that warp (the waypoint fuel
+     estimate of `ESTIMATES.md` "Fleets") exceeds the fleet's fuel. If `ideal` is 9
+     or more, start at `ideal`.
+  2. Cap at `raw`, unless waypoint 1's task is colonize or scrap, a ship
+     carries a colonization or orbital construction module, or a planet
+     lies exactly at waypoint 1's position that the player owns and whose
+     starbase slot holds a design other than an Orbital Fort (the slot is
+     read even when the planet has no starbase).
+  3. Unless waypoint 1 targets a fleet: with `d` = the whole light-years
+     from waypoint 0 to waypoint 1, lower the warp while one less (not
+     below 2) still gives the same `⌈d / warp²⌉` years.
+  4. A stargate route gives 11 (not yet observed).
+- Example (AI oracle round 2): a lone Scout with Long Hump 6, 18 ly from
+  its target at warp 6, is rewritten to warp 5, which also takes one year.
 
 ## Open experiments
 
