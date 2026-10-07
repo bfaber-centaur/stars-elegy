@@ -1341,6 +1341,58 @@ E0: no environment or concentration change on any planet other than the
 homeworlds' mining, no event message of these kinds, and only the own
 score record in every year, 2420 on included.
 
+#### Round 2 predictions: replaying the random stream
+
+Committed after E1 years 1–148 and the first cycles sweep (S1), before S2,
+S3 and S4 were examined.
+
+E1 drew no event at all in 148 years (public scores matched). The reason
+is the harness, not the game: a `pinned-turn` process seeds its random
+stream from the startup tick, which under fixed cycles is
+`trunc(k·54.925)` ms for a small k, so the cycles range E1 used
+(15037–26100) reaches only two or three streams, and with no mines,
+battles or other random draws the year's events always read the same
+draw positions. ORACLE.md "Pinned battle RNG" already warned that few
+streams are reachable. A year's events are therefore a deterministic
+function of the startup tick, and the original's generator
+(stars-decomp `tools/starsrng.py`) can be replayed for any tick.
+
+S1 (one year from E1's 2430 state, 29 cycles values from 60000 to 3400)
+gave three comets and two new-mineral events. Replaying each candidate
+tick with the event rules located the events four draws after seeding
+and showed one correction: the shuffle that picks the struck minerals
+makes two draws, not three. With that, every S1 run's planet changes and
+messages are reproduced exactly by exactly the tick its cycles value
+reaches, including a large comet on the owned planet 17 (population 8110
+after growth → 2839, `8110 − trunc(8110·65/100)`).
+
+Predictions for the remaining runs, each from the replay at draw
+position 4 (tiny universe, 24 planets):
+
+- **S2** (2430 state, cycles `70000/k` for k = 20..80): each run shows
+  exactly the events the replay gives for the tick it reaches, and none
+  otherwise. Ticks with events at year index 30 include:
+  - 1812: a medium comet on owned planet 11 (boranium +85, germanium
+    +86; gravity +3, temperature +4; the owner's message names axes 1
+    and 0), then new minerals on homeworld 8 (boranium +5);
+  - 2032: a huge comet on owned planet 2 (concentrations +88/+84/+76;
+    environment −7/+8/+10; the owner loses 85% of its grown population);
+  - 3460: climate change on owned planet 7, radiation −6, owner message
+    naming axis 2, queue cut to the auto items;
+  - 4284: a small comet on owned planet 15 (ironium +86, gravity +4).
+  Owned-planet comets: population `G − trunc(G·(20e + 25)/100)`, the
+  queue keeps Auto Factories ×5 only.
+- **S3** (E1's 2405 state, year index 5): cycles 10500 (tick 384): the
+  comet is too early and changes nothing, but climate change still moves
+  unowned planet 18's gravity by −6 (no year minimum). Ticks 109 and 768
+  (cycles 35000, 5200): no new-mineral change before year index 10.
+  Ticks 329, 659: no comet. Tick 1098 (cycles 3700): no change
+  (protected and early).
+- **S4** (E1's 2415 state, year index 15): ticks 329, 384 and 659 give the
+  same unowned comets as at 2430 (year index ≥ 10 suffices); 109 and 768
+  give the same new minerals; 1098 changes nothing: planet 17 has more
+  than 5,000 colonists and the year index is below 20.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the

@@ -22,7 +22,12 @@ for n in 0 1 2 3 4 5 6 7 9 10 11 12 13 14 15 16; do
 done
 for ((y = 1; y <= years; y++)); do
   d="$out/$(printf 'y%03d' "$y")"
-  [[ -f "$d/raw/after/CB.HST" ]] || tools/fleetlab/pinned-turn "$cur" "$out/base" "$d" $((15000 + 37 * y)) >/dev/null 2>&1
+  # one retry: an oracle start occasionally fails to generate (E1 2422)
+  for try in 1 2; do
+    [[ -f "$d/raw/after/CB.HST" ]] && break
+    rm -rf "$d"
+    tools/fleetlab/pinned-turn "$cur" "$out/base" "$d" $((15000 + 37 * y)) >/dev/null 2>&1 || echo "year $y try $try failed"
+  done
   cur="$d/raw/after/CB.HST"
   echo "year $y done"
 done
