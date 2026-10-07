@@ -896,7 +896,7 @@ What the client did, at 1152x864:
   - Fleet Composition lists the designs. It has Split (232, 364), Split All (296, 364) and Merge (358, 364). Split is disabled for a one-ship fleet.
   - "Other Fleets Here" has a combo (297, 412) listing the other fleets at the same place by fleet number. Its rows are about 17 px apart from y 431. Below it are Goto (232, 473), which selects that fleet, Merge (295, 473) and Cargo (358, 473).
   - Split and the other-fleet Merge open "Ship Transfer": one row per design every 20 px from y 340, with the arrows at x 585 (to the right-hand fleet) and x 567 (to the left). OK is at (627, 555) and Cancel at (705, 555). Split's right-hand side is a new fleet, "Fleet #N" with the lowest free number.
-  - The composition Merge opens "Merge Fleets": every fleet at the place, the selected one included, by fleet number, with rows 13 px apart from y 352 (x 450). A click toggles a row. OK is at (698, 356), Select All at (698, 423) and Unselect All at (698, 452).
+  - The composition Merge opens "Merge Fleets": every fleet at the place, the selected one included, by fleet number, with rows 13 px apart from y 352 (x 450). The dialog opened with rows already selected (both, with two fleets of one design), and a click toggles a row, so `fleet merge` presses Unselect All first. OK is at (698, 356), Select All at (698, 423) and Unselect All at (698, 452).
   - Cargo opens Cargo Transfer with the other fleet, laid out like the planet one; its fuel row works too.
   - Next and Prev don't follow fleet numbers. From fleet 0 at the homeworld, Next went to the highest-numbered fleet, then to fleet 1. Use Goto in "Other Fleets Here" instead.
   - What the client wrote (`combatlab dump`):

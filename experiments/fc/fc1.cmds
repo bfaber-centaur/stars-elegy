@@ -21,8 +21,8 @@ fleet split
 ships 0 1
 ships 1 1
 ships ok
-# fleets here: 1, 2, 3, 4, 5 (new); merge fleet 4 into fleet 1
-fleet merge 3
+# fleets here: 1, 2, 3, 4, 5 (new); merge fleet 4 into fleet 1 (run 2026-10-07 with the earlier toggle-only `fleet merge 3`)
+fleet merge 0 3
 fleet other 0
 fleet exchange
 ships 0 -1

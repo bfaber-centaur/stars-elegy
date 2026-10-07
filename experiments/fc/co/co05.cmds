@@ -2,4 +2,4 @@
 fleet first
 fleet next
 # on Y (fleet 2); Merge Fleets rows: 1 (X), 2 (Y)
-fleet merge 0
+fleet merge 0 1
