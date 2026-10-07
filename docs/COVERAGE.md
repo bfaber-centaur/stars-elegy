@@ -42,7 +42,7 @@ Levels:
 | New games | `UNIVERSE.md` | Confirmed | |
 | Messages to players | none | Missing | About 400 kinds of message. Which event sends which message, to which players, with which values. Battle reports are covered (`COMBAT.md`, battle record); the messages around them are not. Player-to-player mail is not covered either. |
 | Computer players | `UNIVERSE.md` (starting setup only) | Missing | How each of the six personalities plays. The original's computer players act only through ordinary orders, written by the host before it generates the year. Special rules for computer players inside the year are scattered and mostly missing: no fleet gifts to them, and automatic trading with the Mystery Trader. |
-| What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `SCANNING.md` ("Old reports") | Missing | Not part of the year's outcome, but a front end players recognise has to show it. |
+| What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings. Stargate legs, "Skipped" and Generalized Research are Read. |
 | Limits: fleets, space objects, minefields, designs, queue length | `OBJECTS.md` (minefields and objects) | Partial | Each player has at most 512 fleets. Design-slot and queue limits are not collected anywhere. |
 
 ## Largest gaps for a playable game
@@ -62,7 +62,7 @@ Levels:
    privately.
 4. **Messages.** They are the player's only account of the year.
 5. **Client estimates:** production schedules, arrival years, fuel and
-   research estimates.
+   research estimates. Now specified in `ESTIMATES.md` (CONFIRMED, ES-001).
 
 After those: colonists breeding inside fleets, packet launch, patrol
 targets, and a single list of limits. Not ranked, because a lane already

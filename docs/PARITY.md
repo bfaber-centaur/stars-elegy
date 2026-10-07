@@ -3880,3 +3880,63 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
   - Player 0 got 0x117, and each of the four other human players got
     0x182 ("hacked race discovered"). The computer player's `.M` file has
     no message block at all, so whether it is told is not observable.
+
+## Client estimates (ES-001)
+
+`docs/ESTIMATES.md` specifies the projections the original client shows:
+travel time, fuel use and range of fleets, leg distance, production
+completion, research estimates, population growth, value and optimal
+value, mining rate. The rules were read from the original program
+(private `stars-decomp` `docs/estimates.md`) and measured once.
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es001/gen.py`,
+cycles 20000). Player 0 had 9 fleets with two or three legs each (warp 0
+and warp 1 legs, a zero-length leg, a 25.495 ly leg, multi-year legs with
+a ram-scoop ship and a Fuel Transport, a route through its homeworld's
+Space Station, a fleet without the fuel for its first leg), one Scout per
+engine with a part-filled tank, 10 planets with production queues
+(resource-limited, germanium-limited, no germanium, automatic items, Auto
+Alchemy in the middle and at the end), planets of habitability −10% to
+100% including one above its maximum population, and research at 10% on
+weapons. Predictions were computed from the generated host file with
+`experiments/es001/estimates.py` and committed (503745c) before the
+client was opened. Raw evidence and screenshots: private
+`stars-oracle-apparatus` `evidence/es/es-001/`.
+
+### Result (CONFIRMED, 2026-10-07)
+
+`experiments/es001/check.py`: 149 of 149 readings matched.
+
+| Screen | Readings |
+|---|---:|
+| Fleet Waypoints tile: distance, travel time, est. fuel usage (and red) per waypoint | 63 |
+| Fleet Composition tile: Est. Range (every engine, three mixed fleets) | 23 |
+| Production tile: Completion of each queue item | 19 |
+| Planet report: Value (optimal value), Mining Rate | 20 |
+| Population popup | 10 |
+| Research dialog | 5 |
+| Fleet report: ETA column, red | 9 |
+| Not counted: queue colours, the planet report's resources "A / R" | |
+
+Discriminating cases that held:
+
+- A 25.495 ly leg at warp 5 is 1 year (`trunc(D) ≤ w²`), while its fuel is
+  priced as 2 years.
+- Fuel estimates priced year by year, the ram-scoop and Fuel Transport
+  credits (45 and 25 mg, against 114 and 103 for the whole leg at once),
+  and the running total restarting after a waypoint at the homeworld
+  (251, not 362).
+- The ideal warp for range: each engine's warp in `ESTIMATES.md`,
+  including the scoops' free-warp step down and warp 10 only for the five
+  named engines.
+- The production estimate's carried item (an alchemy item left over from
+  the real year), Auto Alchemy as the target ("As Needed") and as the last
+  item ("14 - ??? years"), automatic items blocked by germanium
+  ("Unknown") and a factory with no germanium ("Never").
+- Projected research budget (163) from the first estimated year of every
+  queue.
+
+Not exercised: stargate legs, "Skipped", Generalized Research, a field at
+level 26, distances with a zero tens-of-hundredths digit (e.g. 20.05).
