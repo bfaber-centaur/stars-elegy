@@ -1,59 +1,63 @@
 # Handoff
 
-## Objective
+## Current question
 
-PG-003 is done: PG001 was run from the registered base to 2436 on the real
-oracle, and Endeavor's population was read every year 2426–2436. Results are
-in `docs/PARITY.md`, PG-003. No formula was inferred or implemented.
+The original's turn generation is now mapped and mostly specified across
+the spec files in `docs/`. The public gap list is `docs/COVERAGE.md`
+(owned by the scanning/launch lane; its latest refresh rides the
+PRODUCTION-LAUNCH.md pull request). The project-level question is what new
+capacity should do now that the specs have outrun Elegy's implementation.
 
 ## State
 
-- Branch: `claude/project-thread-35fu2u` (stars-elegy and apparatus).
-- PR: the stars-elegy PR for this branch, and the apparatus PR adding
-  `evidence/pg003/`.
-- Oracle snapshots: `registered`, in the ephemeral VM's `~/.stars-oracle`
-  only (built by the SessionStart hook).
-- Universe / turn: run copy left at PG001 2436.
-- Processes running: none.
+- Specs on `main`: KERNEL, COMBAT, COMPONENTS, ESTIMATES, MESSAGES,
+  OBJECTS, ORDERS, SCANNING, TAKEOVER, UNIVERSE; PARITY.md holds the
+  measurements; `vectors/` holds parity vectors; `tools/speclint` runs in CI.
+- Open spec pull requests (2026-10-07 evening): RACES.md and stargates
+  (#49), ORDERS.md waypoint upkeep (#51), KERNEL.md full turn order and
+  terraforming (#53), PRODUCTION-LAUNCH.md and COVERAGE.md (#57), battle
+  plans (#59), ship launch and combat rounds 7–8 (#61), AI.md shared core
+  (#63, merge before #49), vectors (#65, #66).
+- The PG-003 crowding question from the previous handoff is settled:
+  growth is CONFIRMED in KERNEL.md "Population growth" (the quadratic in
+  integer permille plus the carry reproduces 2400–2436, and the decoded
+  `excessPop` matches the carry every year); KX-002 corrected the
+  overcrowding factor to 4.
 
-## Verified
+## What we know
 
-- `go test ./...` and `scripts/oracle/selftest` pass.
-- 2426 read 295,800 again, repeating PG-002 on an independent run.
-- 2427–2436 read 321,800 … 540,200; table and `.HST` SHA-256 in
-  `docs/PARITY.md`, PG-003. Raw files in apparatus `evidence/pg003/`.
-- 16/9 × (1 − x)² truncated is 0–4 units above observed growth at 10 of 11
-  crowded points and matches at one; (1 − x) / 0.75 is far off.
+- The five largest gaps of the first coverage audit are closed or owned:
+  ships leaving production (SL-01..12), waypoint upkeep (WU), messages
+  (catalogue of 387 kinds), client estimates (ES-001/002), computer
+  players (shared core AI-0..AI-2 CONFIRMED; personalities in progress).
+- Every open Elegy assumption already has an answer on an open spec PR.
+  Elegy does not yet implement the orders layer, space objects,
+  production launch, terraforming, messages or computer players.
 
-## Unresolved
+## What still matters
 
-- `excessPop` for 2407–2436 has not been extracted from the preserved
-  PG-003 `.HST` files. It is an existing observable: PG-001 decoded it with
-  StarsAPI's `PartialPlanetBlock` and found it tracked the growth carry
-  exactly (uncrowded case). Its meaning under crowding is open.
-- The PG-001 decoding was done outside this repository; no decoder script
-  is committed here.
-- Whether a carry, factor rounding, or order-of-operations variant of the
-  quadratic explains the 0–4 unit shortfall is untested.
-- 2431's second message was not read.
+- No oracle miss is unexplained right now: every MISSED or CONTRADICTED
+  case has been reconciled with a corrected rule or traced to a setup or
+  checker defect. Still open are committed predictions not yet run
+  (KB-2A..C, TK-301..305, packet launch O-16..19, O-45, O-53, WU patrol
+  no-repeat / captured target / route via stargate, the M-2 follow-up and
+  M-10 tie, AI-4, AI-7, the Turindrone/Automitron production and fleet
+  round) and every crafted-order (OX) case, which waits on the serial
+  decision. Some OX cases are legal client actions and may be reachable
+  through client-orders (ORACLE.md "Client orders", #61); untested.
+- Doc defects to fix by their owners: MESSAGES.md part announcements
+  (KX-005 shows all six requirements are checked); OBJECTS.md open item 5
+  on #49 ("counted once", GT-002 measured twice); AI.md links a
+  `docs/ai/macinti.md` that does not exist yet; PARITY.md population
+  "Unknown" list is stale.
+- Not owned by any lane: the effects of plain setting orders (research
+  settings, relations, planet flags, renames) and of replacing a
+  production queue; one collected list of limits (design slots, queue
+  length, space objects, battle plans); player-to-player mail.
+- The year-wide random draw order (KERNEL lane).
 
-## Next action
+## Best next move
 
-Owner-chosen next bounded task (2026-10-06): extract `excessPop` and
-population from the PG-003 `.HST` files (apparatus `evidence/pg003/raw/`,
-2407–2436) with the same StarsAPI decoder used for PG-001, and record the
-values alongside the UI table in `docs/PARITY.md`, PG-003. No more Stars!
-turns are needed. Check the decoder first against PG-001 2400–2407
-(`excessPop` 0, 0, 50, 70, 90, 40, 60, 80) and against the UI populations.
-
-## Do not do
-
-- Do not implement or "fit" a crowding formula without a discriminating
-  experiment chosen for it.
-- Do not decode `.HST` bodies beyond the planet population / `excessPop`
-  extraction above, and do not investigate header flags, `BACKUP/`/`.X1`
-  semantics, or `.H1` contents without an explicit task.
-- Do not run more oracle turns for crowding before `excessPop` is extracted.
-- Do not commit screenshots, `STARS.INI`, snapshots, archives, the serial,
-  or registered-copy game files to this repository.
-- Do not rewrite the apparatus repository's archives or evidence.
+Bias new capacity toward Elegy: implement settled specs (orders layer
+first) and send the questions implementation surfaces back into the
+experiment loop. Keep every active lane running to its own checkpoint.
