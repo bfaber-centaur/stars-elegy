@@ -113,7 +113,8 @@ def main(rd):
         if not os.path.isdir(base):
             print(f'{r.name}: no run')
             continue
-        dirs = sorted(d for d in os.listdir(base) if d.startswith('run') and d != 'run-y2')
+        dirs = sorted(d for d in os.listdir(base)
+                      if d.startswith('run') and d != 'run-y2' and os.path.isdir(os.path.join(base, d)))
         for d in dirs:
             states = {}
             for y, sub in ((1, d), (2, 'run-y2')):
