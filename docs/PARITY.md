@@ -3987,6 +3987,90 @@ missed when a ship was lost. Details below.
 - **IT (OB-022):** at 13% danger, all 5 DDs survived with the same damage.
   Neither the refused nor the successful freighter unloaded its cargo.
 
+#### Stargates, round 2 (GT-001, GT-002)
+
+Pinned years (cycles 20000) on a new medium universe (`experiments/gt`):
+two human players, tech 26, no random events. Player 0 is JOAT with Cheap
+Engines; player 1 is JOAT. Player 1 lists player 0 as a friend, and
+player 0 lists player 1 as an enemy. The predictions were stars-decomp
+O-54..O-67, committed before the run (47b39ac). GT-001 had 36 cases: 34
+held, 1 missed (H2), and 1 was a control. GT-002 tested the reconciled
+reading (370c76b), and all 5 cases held. Raw evidence is in
+stars-oracle-apparatus `evidence/gt/`.
+
+- **Jump Gates (CONFIRMED).**
+  - Two Jump Gate freighters flew 200 ly from deep space to an own 100/250
+    gate. They kept their 100 kT and their fuel.
+  - At 300 ly, five took 20/500 each. That is danger 5% from the
+    destination gate's 250 ly range, so the destination's limits stand
+    for both ends.
+  - A fleet with one ship lacking the part did not move (message 0xde).
+  - A Jump Gate freighter sitting at an own gated planet used that
+    planet's gate: it unloaded its 60 kT there and took the source gate's
+    danger.
+  - With no gate at the destination (a starbase without one, or no
+    starbase), the jump was refused with message 0xe2.
+- **Friends (CONFIRMED).** What counts is how the gate's owner treats the
+  fleet's owner:
+  - Player 0 (who calls player 1 an enemy) used player 1's gates as
+    source and as destination.
+  - Player 1 (who calls player 0 a friend) was refused at player 0's
+    source gate (0xe6) and destination gate (0xe5).
+  - Player 1 got no message about player 0's fleet arriving at its gate.
+- **Cargo at a friend's gate (CONFIRMED).**
+  - 70 kT of ironium went onto player 1's planet, and both players got
+    message 0xec.
+  - With colonists aboard, the jump was refused (0x15e) and nothing was
+    unloaded.
+  - When the destination also had no gate, the refusal was 0xe2, and
+    nothing was unloaded.
+- **Range refusal and the 5× boundary (CONFIRMED).** A freighter jumping
+  1301 ly from a 100/250 gate was refused (0xe3) after unloading its
+  50 kT. Three Jump Gate DDs (truncated distances to a 100/250 gate):
+  - at 1251 ly: refused, unharmed;
+  - at exactly 1250 ly: the fleet was deleted (0xe7);
+  - at 1249 ly: danger 99%. Two of three were lost, and the survivor
+    carried 495/500 damage.
+- **Mass exactly 5× (CONFIRMED).** A 500 kT ship through a 100 kT gate was
+  lost (0xe7), not refused.
+- **Mixed fleets (MEASURED, LEGACY BUG).** GT-001-H2 missed: a 500 kT ship
+  and a safe Laser DD in one fleet were all deleted (0xe7). GT-002 fits
+  this reading: each design lost entirely counts twice against the
+  fleet's number of designs, and the fleet is deleted when the count
+  comes to exactly zero.
+
+  | Designs in the fleet | Designs lost entirely | Count | Result |
+  |---|---|---|---|
+  | 500 kT, DD, freighter | 1 | 1 | DD and freighter arrive |
+  | 500 kT, 500 kT, DD, freighter | 2 | 0 | deleted |
+  | 500 kT, 500 kT, DD | 2 | −1 | DD arrives |
+  | 500 kT, DD | 1 | 0 | deleted |
+  | 500 kT, 500 kT | 2 | — | deleted (every design lost) |
+
+  The survivors kept only a little fuel (5 and 2 of 100), because fuel
+  goes with the lost capacity.
+- **After the jump (CONFIRMED).**
+  - A stack at 250/500 damage that jumped safely still had 250/500 after
+    the year. The same stack parked, and the same stack refused (0xe2),
+    both repaired to 210.
+  - Every fleet that jumped had the no-repair flag set, and its
+    stationary flag cleared. Refused fleets kept the stationary flag.
+  - In player 1's file, a fleet that had gated showed warp 0 and no
+    heading. A fleet that moved normally showed warp 6 and its heading.
+  - Player 1's fleet chasing a gating fleet kept its waypoint at the
+    departure gate. Player 0's own chaser had its waypoint moved to the
+    destination. A control chaser of a fleet moving normally followed it.
+- **Cheap Engines (CONFIRMED).** 20 gating fleets of the Cheap Engines
+  player all arrived, with no message 0xf2. In the control, 1 of 20 warp-9
+  fleets failed.
+- **No planet at the destination (CONFIRMED).** A warp-11 waypoint in deep
+  space was refused (0x147).
+- **Gate types (CONFIRMED, one stream).** The damage words matched the
+  formula for any/300 at 402 ly (40), 150/600 at 699 ly (20), 300/500 with
+  a 500 kT ship (80), 100/any with 202 kT ships (125; one of three lost,
+  fuel 100 → 67), and any/800 at 905 ly (15). any/any was safe at 901 ly
+  with 202 kT ships.
+
 #### Packets (OB-022, OB-023)
 
 - **Packet Physics decay (CONFIRMED):** classes 1, 2, 3 lost 5, 12 and 25%
@@ -4312,12 +4396,84 @@ In the host file a wormhole has two player masks, the **known** mask
     sampling streams;
   - Trader appearance (KX-004).
 
+### Round 6: the rest of OBJECTS.md's BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001, TP-002)
+
+Status: MEASURED, 2026-10-07. Predictions were committed before the runs
+(stars-elegy ee169d3: `experiments/ob/README.md` "Round 6",
+`experiments/gt/README.md` "GT-003", `experiments/tp/README.md`), one
+pinned year each at cycles 20000; OB-031 also at 30000 and 60000. Every
+predicted case held (16 launch cases, 9 PP cases, 2 OB-030 cases, OB-031
+in three streams, 12 GT-003 cases, 6 TP cases). Raw evidence: apparatus
+`evidence/ob/ob028`..`ob031-*`, `evidence/gt/gt003`, `evidence/tp/`.
+
+- **Packet launch (OB-028).** Warp 9 from a Mass Driver 7 launched as
+  class 2; a speed of 11 (above `Dw + 3`) fell back to 7; two Mass Driver
+  7s in the two orbital slots of a Space Station launched at 8 with the
+  speed unset, Mass Driver 7 with Mass Driver 5 at 7; two items in one
+  queue made one 200 kT packet; no destination: no packet, minerals
+  unchanged, two messages to the owner. Every packet stood at `⌊W²/2⌋` ly
+  after its launch year, decayed for half a year (class 2: 100 → 88;
+  class 3: 75). A class-3 packet that arrived in its launch year after
+  70% of the year kept 413 of 500 kT (half of its 70% share of the
+  year's decay) and added 45 kT to an unowned planet. An Interstellar
+  Traveler launcher added 1 to the class (warp 7: class 1, 90 kT) and
+  stopped at 3 (warp 10).
+- **Launch spend (MEASURED, side check).** 110 kT of the mineral per
+  100 kT item (IT 120, PP 70); 44 of each per mixed item (PP 25).
+- **Packet Physics (OB-029).** Items launched 70 kT, mixed 25 kT of each.
+  1000 kT of only ironium, boranium or germanium at warp 10 into an
+  unowned 20/20/20 planet moved only gravity (+3), temperature (+6) or
+  radiation (+2) toward the PP player's ideal, with the original values
+  unchanged, and added 111 kT. A 500 kT packet into a populated planet
+  killed as the damage rule says (pop 791 as predicted). OB-029-D2: the PP
+  player's file showed no foreign design after hitting a Laser Fort;
+  without a control this does not settle whether the design becomes
+  known.
+- **Alternate Reality target (OB-030-A).** 1000 kT at warp 10: surface
+  +111, population equal to the control planet's: no damage.
+- **Two Traders at one point (OB-030-T).** Trader 0 consumed player 0's
+  first fleet and player 1's fleet and refused player 0's second fleet;
+  Trader 1 consumed it. All three fleets gone.
+- **Lone Trader arrival (OB-031).** A warp-6 Trader 20 ly from its
+  destination arrived, stayed and took warp 7 with a new destination on
+  an edge, in all three streams. With OB-023 that is four lone arrivals,
+  all staying; the 1/2 chance of leaving has not been observed (four
+  stays in a row would happen 1 time in 16 if it holds).
+- **Stargate refusal order (GT-003 R1–R6).** Each fleet had two reasons
+  to be refused and got one message: source gate before destination gate
+  and before a deep-space destination; destination owner before range and
+  before mass; foreign colonists before mass, minerals kept aboard; range
+  before mass, with the hold unloaded onto the source planet first.
+- **Loss-roll wipe-out (GT-003 W0–W5).** A 491 kT freighter (32% loss
+  chance) with a Laser DD through a 100/250 gate: in W2 and W3 the roll
+  destroyed the freighter and the fleet arrived with its Laser DD, so a
+  design wiped out by the roll counts once (GT-002: a design lost
+  entirely at `pct = 100` counts twice). In the other four the freighter
+  survived.
+- **Computer players' planets (TP-001, TP-002).** An expert Turindrone
+  homeworld gained the offered part and lost all its surface minerals; with
+  that part already owned it drew another (bit 6). An expert Automitron
+  homeworld at tech 10,10,10,13,10,10 went to 12,11,11,13,11,11 and paid
+  5,000 kT, germanium first then boranium; at tech sum 150 nothing
+  happened. The human homeworld never traded.
+
+#### GT-004: what makes a gate (MEASURED, one year)
+
+Predictions committed before the run (487627f). Starbase design 0 of both
+players was redefined as a Space Station with a Stargate any/any in its
+first orbital slot. Laser Destroyers with a warp-11 waypoint to another
+such planet jumped (message 0x4e), for a player at tech 26 and for one at
+tech 3. So did one leaving a Space Station whose gate sat in the second
+orbital slot. One aimed at a planet whose starbase had no gate stayed,
+with only message 0xe2. The fleets that ended over a Space Station were
+refilled with fuel, as any fleet over a starbase that can refuel is.
+
 ### Not tested
 
-Packet launch (warp, class, amounts, same-year merge, the launch-year half
-move: O-16..O-19), PP terraforming, AR packet targets (O-25), wormhole jump
-odds to a measured rate (O-28), Mystery Trader spawning (O-32), Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
-a tiny map).
+Packet limits (32,760 and 16,300 kT), PP terraforming as rates and the
+design-known rule, wormhole jump odds to a measured rate (O-28), Mystery
+Trader leaving with 1/2 and ship counts after year index 100, Harder
+computer players' planets.
 
 ## Components (CS-001, CS-002, CS-003)
 
@@ -4476,7 +4632,8 @@ repository. Raw files are kept in private apparatus.
 
 ## Universe generation
 
-Status: MEASURED (UG01 to UG21, 2026-10-07; cloud oracle). Predictions
+Status: MEASURED (UG01 to UG30, 2026-10-07; cloud oracle; UG22..UG30 in
+"Round 3" below). Predictions
 UG-1..UG-9 from the private binary reading (stars-decomp
 `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
 whole predicted game per case were committed before the runs
@@ -4525,10 +4682,10 @@ Planets per game, by size and density:
 
 | size | sparse | normal | dense | packed |
 |---|---|---|---|---|
-| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | |
-| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | |
+| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | 57 (UG22), 59 (UG23) |
+| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | 239 (UG24) |
 | medium | | 288 (UG07, UG16, UG20) | 360 (UG03) | 540 (UG10) |
-| large | | 512 (UG14, UG17) | | 912 (UG04, clumped) |
+| large | | 512 (UG14, UG17) | | 912 (UG04, clumped), 900 (UG25) |
 | huge | | 800 (UG11, UG21) | 940 (UG05) | 940 (UG15) |
 
 With W the galaxy width (400, 800, 1200, 1600, 2000 ly from tiny to
@@ -4536,9 +4693,27 @@ huge), the normal-density counts are W²/5000, sparse 3/4 of that, dense
 5/4 and medium packed 15/8. Large packed and huge dense or packed come
 near the generator's limit of 999 candidates, and the binary reading says
 their count then depends on the seed (a too-close pass removes a variable
-number). Only one seed per size and density was run, so treat those three
-cells as single observations. Huge dense and huge packed gave the
-identical game at the same seed (UG05, UG15).
+number). Huge dense and huge packed gave the identical game at the same
+seed (UG05, UG15). Round 3 confirmed the seed dependence: large packed
+gave 912 and 900 for two seeds, and tiny and small packed fell below their
+usual 60 and 240 for the seeds the model picked (UG22..UG24).
+
+### Round 3: BINARY-ONLY generation rules (UG22..UG30)
+
+Predictions committed before the runs (stars-elegy 7726cc3,
+`experiments/ug/README.md` "Round 3"; apparatus ff01ff25). All nine games
+matched the whole predicted game field by field (37 to 44 fields each, 0
+mismatches).
+
+- **Seed-dependent counts** (UG22..UG25): 57, 59, 239 and 900 planets, as
+  predicted.
+- **Options with no effect at creation** (UG26..UG28): slower tech,
+  computer alliances and public scores each gave UG01's galaxy planet for
+  planet; only the option word differs.
+- **Second-planet redraw limit (LEGACY BUG, UG29, UG30).** A PP race with
+  40–60 on every axis: in UG29 the second planet used all 100 redraws and
+  took the homeworld's 50/50/50 environment; in UG30 (another seed) it
+  kept its redrawn 40/42/45.
 
 ### Options (CONFIRMED)
 
@@ -4624,7 +4799,7 @@ is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
 
-## Race design (RD-1..RD-7, RD-P1..RD-P12)
+## Race design (RD-1..RD-7, RW08, RD-P1..RD-P21)
 
 Predictions were committed before the runs (80037c8). `experiments/rd/` holds
 the case tables (`races.tsv`, `README.md`) and the game definitions. Raw race
@@ -4732,6 +4907,44 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
   - Player 0 got 0x117, and each of the four other human players got
     0x182 ("hacked race discovered"). The computer player's `.M` file has
     no message block at all, so whether it is told is not observable.
+
+### Round 3: the remaining BINARY-ONLY rules (MEASURED, RW08, RD-P13..RD-P21)
+
+Predictions were committed before the runs (7726cc3, fcbcf6e;
+`experiments/rd/README.md` "Round 3"). `universe.py check` matched RW08
+field by field (65 matches, 0 mismatches) and `races.py turn` matched every
+penalty year. Every prediction held except the RD-P21 candidate, which was
+written to explain an apparent miss and was ruled out.
+
+- **Repairs at creation (RW08).** A gravity low equal to the immune marker
+  made the axis immune (centre and high set to the marker); a high of 120
+  became 100 (centre 57); growth 25 became 20. All three races were kept,
+  marked tampered.
+- **Silent clamps in a running game.** Growth 25 with colonists 2500 (159
+  points) became 20 with no message and no flag (RD-P13). Growth −3 became
+  1, silently (RD-P18). A research share of 150% became 15%, silently
+  (RD-P15; the base share was 0%, and that year's research advanced a
+  field, so the year did research with a nonzero share).
+- **Clamp before the check (RD-P14).** Growth 25 at −440 points was scored
+  at growth 20, still negative, and punished: colonists 2500, growth 16
+  (502 points), message 0x117, flag 0x10.
+- **Habitat repairs (RD-P16, RD-P17).** A high of 120 was repaired to 100
+  and punished (colonists 1800, 538 points). A low equal to the immune
+  marker made the axis immune and was punished (colonists 2500, 527).
+- **No second punishment (RD-P19, RD-P21).** After RD-P1's punishment the
+  race (1042 points, tampered) was left alone for two more years; so were
+  RW08's three tampered races (159 to 413 points) in their first year.
+  The 0x117 and 0x182 messages seen in those years' turn files are the
+  earlier messages carried over (below), not new ones.
+- **Computer player (RD-P20).** A computer race at −1173 points with its
+  gravity centre one below the midpoint: centre moved back, flag 0x10 set,
+  nothing else changed, and the human player got no message.
+- **Message carry-over (MEASURED, an oracle side effect).** In these
+  pinned runs no player submitted orders, and each year's `.M` message
+  block began with the whole previous block, new messages after it
+  (RD-P19: 3, 6, 9 messages in years 1 to 3; RD-P21: the 8 messages written
+  at creation, then 2 new ones). Count only the messages after the carried
+  prefix when a multi-year run has no orders.
 
 ## Messages to players
 
@@ -4869,7 +5082,103 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-18)
+## Computer players: Turindrone and Automitron designs (AP-001..AP-005)
+
+Specs: `docs/ai/turindrone.md`, `docs/ai/automitron.md`. Predictions were
+committed in the private binary reading before the runs. Raw evidence:
+private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
+`evidence/ai/ai01/` (AP-003).
+
+- **Setup (AP-001, AP-002).** A small map (size 1, density 1, positions 1,
+  seed 4101, random events on) with three players: a human race (player
+  1), an expert Turindrone (player 2) and an expert Automitron (player 3).
+  The built-in races were Turindrone SS with IFE, ARM, MA and RS, and
+  Automitron IS with GR, OBRM, NAS and LSP (`AI.md` §3). Before 2400 was
+  generated, both computer players' tech was edited in the `.HST`
+  (`hst-edit … player=N tech=…`): AP-001 to energy 10, weapons 10,
+  propulsion 10, construction 13, electronics 10, biotech 10; AP-002 to 20
+  in every field. Two years were generated at cycles 20000, and each
+  computer player's order file was captured.
+- **Year 2400:** no ship-design orders. The `.HST` already held the
+  edited tech, but a computer player plans from its own player file, which
+  still held the old tech (`ORACLE.md`).
+- **Year 2401 (CONFIRMED):** every ship-design order of both players in
+  both games was as predicted. The table gives 33 slot records in all.
+  Each part is listed with its count, in hull slot order. Turindrone
+  deleted slot 2 first, because its starting Midget Miners were scrapped
+  in 2400. Automitron deleted slot 1 first, because its starting Colony
+  Ship was scrapped in 2400.
+
+| Game | Player | Slot | Design |
+|---|---|---|---|
+| AP-001 | Turindrone | 8, 15 | Rogue: 2 Trans-Galactic Fuel Scoop, 3 Shadow Shield, 2 Super Cargo Pod, 1 Pick Pocket Scanner, 2 Neutronium, 2 Delta Torpedo, 2 Maneuvering Jet, 1 Jammer 20, 1 Battle Computer |
+| AP-001 | Turindrone | 9 | Galleon: 4 Trans-Galactic Fuel Scoop, 2 Bear Neutrino Barrier, 2 Neutronium, 3 Delta Torpedo, 3 Maneuvering Jet, 2 Battle Computer, 2 Super Cargo Pod, 2 Pick Pocket Scanner |
+| AP-001 | Turindrone | 10 | Destroyer: 1 Trans-Galactic Fuel Scoop, 1 Delta Torpedo ×3 slots, 2 Depleted Neutronium, 1 Maneuvering Jet, 1 Battle Computer |
+| AP-001 | Turindrone | 2 | Miner: 2 Trans-Galactic Fuel Scoop, 2 Maneuvering Jet, Robo-Super-Miner 2, 1, 2, 1 |
+| AP-001 | Turindrone | 12 | Privateer: 1 Trans-Galactic Fuel Scoop, 2 Shadow Shield, 1 Jammer 20, 1 Mine Dispenser 50 ×2 slots |
+| AP-001 | Turindrone | 13 | Stealth Bomber: 2 Trans-Galactic Fuel Scoop, 4 M-70 Bomb, 4 Neutron Bomb, 1 Jammer 20, 3 Jammer 20 |
+| AP-001 | Turindrone | 4 | Battleship: 4 Trans-Galactic Fuel Scoop, 1 Jammer 20, 8 Bear Neutrino Barrier, Delta Torpedo 6, 6, 2, 2, 4, 6 Depleted Neutronium, 3 Jammer 20, 3 Battle Computer (template b, the only one buildable) |
+| AP-001 | Automitron | 4 | Medium Freighter: 1 Trans-Galactic Fuel Scoop, 1 Super Cargo Pod, 1 Croby Sharmor |
+| AP-001 | Automitron | 5 | Super Freighter: 3 Trans-Galactic Fuel Scoop, 3 Super Cargo Pod, 5 Croby Sharmor, 2 Jammer 20 |
+| AP-001 | Automitron | 14 | Destroyer: 1 Radiating Hydro-Ram Scoop, 1 Delta Torpedo ×2 slots, 1 Maneuvering Jet, 2 Neutronium, 1 Maneuvering Jet, 1 Battle Computer |
+| AP-001 | Automitron | 1 | Medium Freighter: 1 Radiating Hydro-Ram Scoop, 1 Colonization Module, 1 Croby Sharmor |
+| AP-001 | Automitron | 6 | Privateer: 1 Radiating Hydro-Ram Scoop, 2 Croby Sharmor, 1 Jammer 20, 1 Mine Dispenser 50, 1 Speed Trap 20 |
+| AP-001 | Automitron | 2 | B-17 Bomber: 2 Trans-Galactic Fuel Scoop, 4 M-70 Bomb ×2 slots, 1 Jammer 20 |
+| AP-001 | Automitron | 9 | Battleship: as Turindrone's slot 4, with 8 Croby Sharmor and 6 Neutronium (template b) |
+| AP-002 | Turindrone | 8, 15 | Rogue: 2 Galaxy Scoop, 3 Elephant Hide Fortress, 2 Super Cargo Pod, 1 Robber Baron Scanner, 2 Valanium, 2 Rho Torpedo, 2 Overthruster, 1 Jammer 30, 1 Battle Nexus |
+| AP-002 | Turindrone | 9 | Galleon: 4 Galaxy Scoop, 2 Elephant Hide Fortress, 2 Valanium, 3 Rho Torpedo, 3 Overthruster, 2 Battle Nexus, 2 Super Cargo Pod, 2 Robber Baron Scanner |
+| AP-002 | Turindrone | 10 | Destroyer: 1 Galaxy Scoop, 1 Rho Torpedo ×3 slots, 2 Valanium, 1 Overthruster, 1 Battle Nexus |
+| AP-002 | Turindrone | 2 | Miner: 2 Galaxy Scoop, 2 Overthruster, Robo-Ultra-Miner 2, 1, 2, 1 |
+| AP-002 | Turindrone | 12 | Privateer: 1 Galaxy Scoop, 2 Elephant Hide Fortress, 1 Jammer 30, 1 Mine Dispenser 50 ×2 slots |
+| AP-002 | Turindrone | 13, 14 | Stealth Bomber: 2 Galaxy Scoop, 4 Cherry Bomb, 4 Enriched Neutron Bomb, 1 Jammer 30, 3 Jammer 30 |
+| AP-002 | Turindrone | 4 | Battleship: 4 Galaxy Scoop, 1 Jammer 30, 8 Elephant Hide Fortress, 6 Gatling Gun, 6 Disruptor, 2 Bludgeon, 2 Disruptor, 4 Phased Sapper, 6 Valanium, 3 Energy Capacitor ×2 slots (template a) |
+| AP-002 | Automitron | 4 | Medium Freighter: 1 Trans-Galactic Mizer Scoop, 1 Super Cargo Pod, 1 Elephant Hide Fortress |
+| AP-002 | Automitron | 5 | Super Freighter: 3 Trans-Galactic Mizer Scoop, 3 Super Cargo Pod, 5 Elephant Hide Fortress, 2 Jammer 30 |
+| AP-002 | Automitron | 14 | Destroyer: 1 Radiating Hydro-Ram Scoop, 1 Rho Torpedo ×2 slots, 1 Overthruster, 2 Valanium, 1 Overthruster, 1 Battle Nexus |
+| AP-002 | Automitron | 1 | Medium Freighter: 1 Radiating Hydro-Ram Scoop, 1 Colonization Module, 1 Elephant Hide Fortress |
+| AP-002 | Automitron | 6 | Privateer: 1 Radiating Hydro-Ram Scoop, 2 Elephant Hide Fortress, 1 Jammer 30, 1 Mine Dispenser 50, 1 Speed Trap 20 |
+| AP-002 | Automitron | 2 | B-17 Bomber: 2 Trans-Galactic Mizer Scoop, 4 Cherry Bomb ×2 slots, 1 Jammer 30 |
+| AP-002 | Automitron | 3 | B-52 Bomber: 3 Trans-Galactic Mizer Scoop, 4 Cherry Bomb ×4 slots, 2 Jammer 30, 2 Elephant Hide Fortress |
+| AP-002 | Automitron | 9 | Battleship: 4 Trans-Galactic Mizer Scoop, 1 Jammer 30, 8 Elephant Hide Fortress, Rho Torpedo 6, 6, 2, 2, 4, 6 Valanium, 3 Jammer 30, 3 Battle Nexus (template b) |
+
+- **AP-003 (MEASURED)** is the AI01 capture: one expert of each type,
+  2400–2402, with no edits (`AI.md` Status). Turindrone in 2400:
+  - queued 5 of design 0 on a 128-planet map;
+  - merged and scrapped its two Midget Miner fleets;
+  - loaded 25 kT of colonists into its Colony Ship, which then stayed at
+    home through 2402;
+  - wrote no design orders in 2400–2402.
+
+  Automitron:
+  - scrapped its Colony Ship in 2400;
+  - in 2401 and 2402, deleted and rewrote slot 1 as a Medium Freighter
+    with 1 Long Hump 6, 1 Colonization Module and 1 Cow-hide Shield, at
+    tech 3 in every field (predicted exactly);
+  - queued no ships, because homeworld population was below the
+    production threshold.
+
+- **AP-004, AP-005 (MEASURED, one stream each).** One generated year from
+  AP-001's year-2401 game (apparatus `evidence/ai/ap/`, run001/y2401
+  base), predictions committed before the runs. AP-005 ran it unedited;
+  AP-004 emptied both homeworld queues, raised Automitron's homeworld to
+  160,000 colonists and set its Scout fleet's fuel to 0. Held:
+  - Turindrone deleted and rewrote slots 1, 2 and 12 (none of their ships
+    alive) exactly as predicted and kept slot 0;
+  - Turindrone queued nothing while its queue held a ship (AP-005); with
+    an empty queue it queued four colony ships, then three Privateers
+    (AP-004);
+  - Turindrone's starting Scout got a scrap task at the homeworld;
+  - Automitron rewrote slot 1 as predicted; it queued nothing at 25,800
+    colonists (AP-005) and three of design 6 at 160,000 (AP-004);
+  - Automitron's two-waypoint Scout fleet at 0 mg was scrapped (AP-004).
+
+  One prediction missed: Automitron's Scout fleet with fuel (AP-005) was
+  predicted to get no order, but in both runs its second waypoint's warp
+  went 6 → 5, target and task unchanged. The personality's rule did leave
+  the fleet alone; the change is the shared core's whole-year arrival
+  slowdown (`AI.md`, AI-11). Extra queue lines in both runs were the shared automation's.
+
+## Computer players (AI-0..AI-23)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4909,6 +5218,8 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-16 | Rototill colony ships: invasion unload or route cut in pass 1; load 2,500 colonists and colonize the nearest seen planet habitable after terraforming, or a wormhole, in pass 2; empty ones go home (`docs/ai/rototill.md` §3) | MEASURED: 98 idle colony-ship years (4 colonize, 2 wormhole, 92 no target), 1 unload, 1 cut, 1 move home, colonist loads in 166 of 166 years; ignoring habitability breaks 89 rows |
 | AI-17 | Rototill scouts move to the nearest never-seen planet (in neither turn file nor history file) not targeted by another own fleet, 5% wormhole when orbiting (`docs/ai/rototill.md` §3) | MEASURED: 75 of 75 scout moves; counting history-only planets as never seen breaks 31; fallbacks not exercised |
 | AI-18 | Cross-player leak of armada parameters (`AI.md` §1 "State leaking between computer players"): Cybertron's armada stay-or-leave test reads values only Robotoid, Turindrone, Automitron and Macinti set | MEASURED (prediction committed before the runs): for AIX 2453–2460, with the earlier computer players' captured orders submitted but their turns not run (values 0), every Cybertron armada idle at an own planet left home, 11 of 11 armada-years; with Automitron's values all stayed. Skipping a turn alone does not move them. Skipping Robotoid's turn shifted 17–19 of Cybertron's random-dependent order lines (shared random stream) |
+| AI-22 | Turindrone fleet orders each year: merges, waypoint-0 task and waypoint-1 target and task per own fleet, with the planet view of `AI.md` §1 and scout targeting (`docs/ai/turindrone.md` "Fleet pass") | MEASURED: every own Turindrone fleet in AIX's 61 years agrees, 689 of 689 fleet-years (618 fully determined, 71 as outcome sets from random gates), including one scout wormhole jump. Discriminating misreadings break rows: every planet known 54, ignoring the history file 73, Robotoid's per-task colonize marks 23, no unload-or-clear step 17, unarmed-fleet test dropped 58. Bombers never occurred, so the armada parameters were not exercised |
+| AI-23 | Automitron fleet orders each year, rule order: multi-waypoint fuel scrap, Privateers, colonizers, transports, bombers, scouts (`docs/ai/automitron.md` "Fleet pass") | MEASURED: every own Automitron fleet in AIX's 61 years agrees, 264 of 264 fleet-years (251 fully determined, 13 as outcome sets), including one scout wormhole jump and one colony ship scrapped at 0 mg of fuel. Every planet known breaks 20 rows, ignoring the history file 62. Bombers never occurred |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

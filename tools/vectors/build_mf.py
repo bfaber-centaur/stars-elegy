@@ -12,6 +12,15 @@ import build as B
 import build_kx as K
 
 
+# Runs whose OBSERVED lines the MF owner compared by hand with the predictions
+# committed before the run (789bffa): all held. check.py's det kind prints
+# observations without comparing them. MF-07sd's design learning is not in
+# check.txt: player 1's designs 2 and 4 appear in full in player 0's file.
+HAND_HELD = {'mf07', 'mf07f', 'mf07sd'}
+HAND_NOTE = ('held: every value compared by hand with the predictions committed before the run '
+             '(stars-oracle-apparatus evidence/mf/README.md verdict note)')
+
+
 def start_of(d):
     p = os.path.join(d, 'start.HST')
     return p if os.path.exists(p) else os.path.join(d, 'raw', 'before', 'CB.HST')
@@ -30,7 +39,9 @@ def build(ev, out):
     for runs in sorted(groups.values()):
         name = runs[0]
         lines = [l.strip() for l in open(os.path.join(ev, name, 'check.txt')) if re.match(r'^MF-\S+ (HELD|CONTRADICTED|OBSERVED)', l)]
-        res = [l.split()[1] for l in lines]
+        if name in HAND_HELD:
+            lines = [l.replace(' OBSERVED', ' HELD', 1) for l in lines] + [HAND_NOTE]
+        res = [l.split()[1] for l in lines if l.startswith('MF-')]
         rules = sorted(set(re.findall(r'\((MF-\d+)\)', ' '.join(lines))))
         held = 'CONTRADICTED' not in res
         tag = 'CONFIRMED' if all(r == 'HELD' for r in res) else 'MEASURED'
