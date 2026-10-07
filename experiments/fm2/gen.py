@@ -362,6 +362,23 @@ def runs():
             r.cur = cid
             r.expect('fleet', (0, keys[cid]), dict(x=p['x'], y=p['y'], fuel=p['fuel']), year=yr)
     out.append(r)
+
+    # ================================================================ FM-105 (follow-up, after FM-101..104)
+    # FM-102 F (Large Freighter, 1 of 2 engines, 2600 mg, warp 5) moved the whole 25 ly and
+    # ended with 0 mg, warp kept. Candidate: the range estimate multiplies 99999 x 1000 x 134
+    # in 32 bits, which wraps to 514964112, so C1000 = 25748 and R = fuel x 1000 / 25748
+    # (100 ly for 2600 mg); the move itself costs 99999 x 25 x 134 / 2000 = 167498 tenths, so
+    # the tank empties. Predicted here before FM-105 runs: with less fuel the wrapped range
+    # limits the move.
+    r = FmRun('fm105', 'follow-up: a design whose engine slot is not full, with little fuel')
+    for cid, fuel in (('A', 200), ('B', 50), ('C', 500)):
+        R = fuel * 1000 // 25748
+        r.case(cid, 'FM-102 F follow-up', f'Large Freighter with 1 of 2 LH6, warp 5, +100 x, {fuel} mg: wrapped range '
+               f'{R} ly, so it moves {min(R, 25)} and ends with 0, warp 5 kept')
+        y = r.lane()
+        k = r.fleet({8: 1}, (1005, y), fuel, wps=[(1105, y, 5)], model=False)
+        r.expect('fleet', (0, k), dict(x=1005 + min(R, 25), y=y, fuel=0, warp=5))
+    out.append(r)
     return out
 
 

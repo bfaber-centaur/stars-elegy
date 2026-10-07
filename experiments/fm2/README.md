@@ -109,3 +109,16 @@ left. Random cases predict a range.
 | E | KERNEL per-year rounding | QJ5 scout, warp 5, +100 x: 25 ly a year, rounded up each year | fleet 0/4: x 1030, y 1029, fuel 298; fleet 0/4: x 1055, y 1029, fuel 296 (year 2) |
 | F | KERNEL chains (fuel-limited leg then next) | QJ5 scout, 4 mg: waypoint 10 ly away at warp 9, then 50 ly further at warp 6 | fleet 0/5: x 1010, y 1035, fuel 0; fleet 0/5: x 1011, y 1035, fuel 1 (year 2) |
 
+
+## Follow-up predictions (FM-105; written after FM-101..104 ran, before FM-105)
+
+### FM105: follow-up: a design whose engine slot is not full, with little fuel
+
+1 year(s).
+
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | FM-102 F follow-up | Large Freighter with 1 of 2 LH6, warp 5, +100 x, 200 mg: wrapped range 7 ly, so it moves 7 and ends with 0, warp 5 kept | fleet 0/0: x 1012, y 1005, fuel 0, warp 5 |
+| B | FM-102 F follow-up | Large Freighter with 1 of 2 LH6, warp 5, +100 x, 50 mg: wrapped range 1 ly, so it moves 1 and ends with 0, warp 5 kept | fleet 0/1: x 1006, y 1011, fuel 0, warp 5 |
+| C | FM-102 F follow-up | Large Freighter with 1 of 2 LH6, warp 5, +100 x, 500 mg: wrapped range 19 ly, so it moves 19 and ends with 0, warp 5 kept | fleet 0/2: x 1024, y 1017, fuel 0, warp 5 |
+
