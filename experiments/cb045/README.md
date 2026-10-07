@@ -25,3 +25,10 @@ Pinned at cycles 20000 and 30000. Record `wt` is the per-ship mass.
 Alternatives: an even split per ship over the fleet would give fleet 0
 70 each (`wt` 139 and 104, codes 1 and 1); rounding instead of
 truncation would give fleet 2 `wt` 140, code 0.
+
+## Results
+
+Both streams, every stack as predicted (**CONFIRMED**): Medium in the
+mixed fleet `wt` 174 code 0, Small `wt` 69 code 2; three Medium with 210
+and 212 kT `wt` 139 code 1; with 213 kT `wt` 140 code 0. Cargo is shared
+by cargo capacity, truncated.

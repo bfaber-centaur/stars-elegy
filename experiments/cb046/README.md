@@ -32,3 +32,15 @@ In the first `cb046-morph` runs the unarmed Mini Morphs (battle speed 7)
 left the board in round 3 without being hit, so nothing was destroyed.
 The Morphs now carry two Lasers in their last free slot (armed, so they
 close in) and player 0 has 80 Phaser Destroyers. Predictions unchanged.
+
+## Results of `cb046` and `cb046-morph`, and a control (committed before the control's run)
+
+No Mystery Trader item was gained: player 0's mask stayed 0000 and its
+tech stayed 26 in all 12 distinct streams of `cb046` (all six Anti Matter
+Torpedo Destroyers destroyed each time) and all 12 of the armed
+`cb046-morph` (all three Morphs destroyed). Player 1 kept nothing.
+
+Control `cb046-bio`: `cb046` with player 0's biotechnology at 3 (the
+torpedo requires 21), to show whether player 0 makes attempts at all.
+Prediction: player 0 gains biotechnology (to 4) in some streams (about a
+third), and still no Mystery Trader item.

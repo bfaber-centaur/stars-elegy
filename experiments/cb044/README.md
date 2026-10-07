@@ -12,3 +12,10 @@ designs (two stacks). Pinned at cycles 20000 and 30000.
 - 255 tokens: player 0 127, player 1 128.
 - Left out: player 0's fleets 1..13, player 1's 0..10 and 12.
 - If the second pass stopped at the first fleet that does not fit: 254.
+
+## Results
+
+Both streams: **255 tokens, player 0 127, player 1 128**. Left out:
+player 0's fleets 1..13; player 1's 0..10 and the two-design fleet 12
+(intact after the turn). **CONFIRMED**: the second pass skipped fleet 12
+and added fleet 11. All hits replayed (738 and 769, 0 mismatches).

@@ -19,3 +19,14 @@ orbit destroy the Station. `cb047-ctl`: no attackers. Pinned at cycles
 - `cb047`: the Station is destroyed; after the turn the queue holds only
   the factory item (20 or fewer). Destroyers built this year before the
   battle exist (or died in it); the remaining Destroyer item is gone.
+
+## Results
+
+Both streams, **CONFIRMED**:
+
+- `cb047-ctl`: queue after the turn `0:49:92:2, 7:20:0:1` (one Destroyer
+  built, the next 92% done), and the new Destroyer fleet.
+- `cb047`: the Station was destroyed. The queue after the turn is only
+  `7:20:0:1`: the Destroyer item (49 left, 92% done on the next) is gone,
+  the factories are kept. The Destroyer built that year joined the
+  battle and was destroyed. The planet stays player 1's.

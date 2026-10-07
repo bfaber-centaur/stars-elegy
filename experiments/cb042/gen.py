@@ -91,6 +91,12 @@ specs["cb046"] = base46 + [
     f"design 1 0 {AMT_DD} = AMT DD",
     f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:30 plan 1 fuel 280",
     f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:6 plan 1 fuel 280"]
+# control: player 0's biotechnology at 3 (the Anti Matter Torpedo needs 21),
+# so an attempt that finds no trader part can gain a field
+specs["cb046-bio"] = [l for l in base46 if l != "tech 0 bio 26"] + ["tech 0 bio 3"] + [
+    f"design 1 0 {AMT_DD} = AMT DD",
+    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:30 plan 1 fuel 280",
+    f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:6 plan 1 fuel 280"]
 specs["cb046-morph"] = base46 + [
     f"design 1 0 {MORPH} = Morph",
     f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:80 plan 1 fuel 280",

@@ -13,3 +13,11 @@ All in orbit. Pinned at cycles 20000 and 30000.
 - Left out: player 0's fleets 1..13, player 1's 0..5.
 - If the Fort did not count toward the total, the second pass would add
   player 1's fleet 5 (player 1 128 stacks).
+
+## Results
+
+Both streams: **255 tokens**: player 0 127, player 1 127 ship stacks plus
+the Fort (fleet 130's three stacks among them). Left out: player 0's
+fleets 1..13, player 1's 0..5. **CONFIRMED**: the Fort counts toward the
+total and not toward a quota. All hits replayed (611 and 589, 0
+mismatches).
