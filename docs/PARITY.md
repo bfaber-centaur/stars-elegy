@@ -942,9 +942,11 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   while a shielded stack was present, and hits on the shielded stack
   removed shields only (P-15).
 - Armor damage first destroys whole ships, already-damaged ships first
-  (each costing its remaining armor); the rest, plus the stack's existing
-  damage, is spread evenly over the survivors (rounded up), and the record
-  shows per-ship damage in 1/500ths of armor, rounded up (P-22, P-23).
+  (each costing its remaining armor). The rest is spread evenly over the
+  survivors: rounded down when no surviving ship was already damaged;
+  when some were, their existing damage is added first and the share is
+  rounded up. The record shows per-ship damage in 1/500ths of armor,
+  rounded up (P-22, P-23).
   Beams hit shields before armor; a torpedo hit splits half to shields,
   half to armor.
 - Regenerating Shields: at the start of each later round a stack whose
@@ -990,11 +992,13 @@ B1, three kill events (3, 4 and 3 Small Freighters; 4 Ironium,
 per kill event, a third of the destroyed ships' mineral cost, then a
 quarter of that lost (integer at each step) (P-26).
 
-### Open reconciliation
+### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
-  C8); the binary-derived part table gives 23. Hit replay is unaffected in
-  this corpus. Unexplained.
+  C8), which is the game's part-table sum (Frigate 8 + Long Hump 6 9 +
+  Energy Dampener 2). An earlier figure of 23 came from a binary-analysis
+  tool that defaulted to 3 dampeners in the slot; it was not a game
+  discrepancy.
 
 ### Not tested
 
