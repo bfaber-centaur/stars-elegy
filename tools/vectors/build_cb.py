@@ -173,9 +173,9 @@ def diff(st0, st1, full=False):
             ex.append({'kind': 'planet', 'id': p['id'], 'equals': ch})
     pl0 = {p['id']: p for p in st0['players']}
     for p in st1['players']:
-        keys = ('tech', 'research_accumulated', 'mystery_trader_items', 'race')
+        keys = ('tech', 'research_accumulated', 'research_field', 'research_next_field', 'mystery_trader_items', 'race')
         if full:
-            keys += ('research_percent', 'research_field', 'relations', 'counts')
+            keys += ('research_percent', 'relations', 'counts')
         ch = {k: p[k] for k in keys if p[k] != pl0[p['id']][k]}
         if ch:
             ex.append({'kind': 'player', 'id': p['id'], 'equals': ch})

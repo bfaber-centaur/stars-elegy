@@ -79,7 +79,10 @@ file, so nothing in it is a default you have to guess.
 - `players`: `computer: true` for a computer player (the host plans its
   orders each year; a vector lists only the outcomes its case is about),
   tech levels by field, research accumulated per field, research
-  percent and field, relations to each other player (`neutral`, `friend`,
+  percent and field, `research_next_field` (the stored "next field to
+  research" choice: a field, `same` or `lowest`; an explicit field is used
+  at the next level-up in the current field and then reset to `same`,
+  `docs/KERNEL.md` "Research"), relations to each other player (`neutral`, `friend`,
   `enemy`), Mystery Trader items owned, and the race: PRT, LRTs, growth rate,
   habitability (center, low, high per axis, 255 = immune), colonists per
   resource, factory and mine settings, research cost per field, the leftover
@@ -94,7 +97,8 @@ file, so nothing in it is a default you have to guess.
 - `designs`, `starbase_designs`: owner, design slot, hull name, then one entry
   per hull slot (`{"count", "part"}`, or `null` for an empty slot).
 - `battle_plans`, `production_queues` (items `{id, count, percent, kind}`;
-  `percent` is the part of the first unit already built, omitted when 0).
+  `percent` is the part of the first unit already built, omitted when 0;
+  `kind` and `id` name the item as in "Queue items" below).
 - `fleets`: owner, id, position, the planet orbited, ships (`design` slot and
   `count`, with damage when damaged), cargo, fuel, battle plan,
   `repeat_orders` (present and true when the fleet repeats its waypoints),
@@ -115,6 +119,39 @@ file, so nothing in it is a default you have to guess.
 Without an `orders` block, the orders a case tests are the fleets'
 waypoints and tasks and the other standing orders in this state; no other
 orders were submitted for the generated years.
+
+#### Queue items
+
+A queue item's `kind` is 1 for a planetary item and 2 for a design. For
+kind 2, `id` 0–15 is the owner's ship design slot and 16–25 is starbase
+design slot `id − 16` (CONFIRMED: CL-TOOL built ship design 1 from
+`1:2:2`; SL starbase replacements queued ids 16–18). For kind 1:
+
+| id | item | evidence |
+|---|---|---|
+| 0 | Auto Mines (builds Mines) | CONFIRMED (PQ-001 C04, C09, C14) |
+| 1 | Auto Factories (builds Factories) | CONFIRMED (PQ-001 C03, C09; KX-001 A3) |
+| 2 | Auto Defenses (builds Defenses) | CONFIRMED (PQ-001 C13) |
+| 3 | Auto Alchemy (builds Mineral Alchemy; also the alchemy prefix) | CONFIRMED (PQ-001 C05–C07; KX-001) |
+| 4 | Auto Min Terraform (builds Terraform Environment) | CONFIRMED (KX-005) |
+| 5 | Auto Max Terraform (builds Terraform Environment) | CONFIRMED (KX-005) |
+| 6 | Auto Mineral Packets (builds Mixed Mineral Packets) | BINARY-ONLY |
+| 7 | Factory | CONFIRMED (PQ-001) |
+| 8 | Mine | CONFIRMED (PQ-001) |
+| 9 | Defenses | CONFIRMED (PQ-001 C12) |
+| 10 | unused (no cost, builds nothing) | BINARY-ONLY |
+| 11 | Mineral Alchemy | CONFIRMED (KX-001 A1: the partial left in front of Auto Alchemy) |
+| 12 | Terraform Environment | CONFIRMED (KX-005; `docs/KERNEL.md` "Terraforming") |
+| 13 | Genesis Device | BINARY-ONLY |
+| 14 | Ironium Mineral Packet | a packet order: CONFIRMED (KB-2A 12, OT-3); which mineral: BINARY-ONLY |
+| 15 | Boranium Mineral Packet | BINARY-ONLY |
+| 16 | Germanium Mineral Packet | BINARY-ONLY |
+| 17 | Mixed Mineral Packet | BINARY-ONLY |
+| 18–26 | one specific planetary scanner, in `docs/COMPONENTS.md` order (Viewer 50 first) | BINARY-ONLY |
+| 27 | Planetary Scanner (the best one available when it completes) | a scanner order: CONFIRMED (KB-2A 9); which scanner: BINARY-ONLY |
+
+Ids 0–6 are the auto items: their count is a yearly limit and they stay in
+the queue (`docs/KERNEL.md` "Production").
 
 ### `orders`
 
@@ -138,7 +175,7 @@ an order belong to the submitting player unless a field says otherwise.
 |---|---|
 | `production_queue` | `planet`, `items` (`{id, count, percent, kind}` as in `production_queues`): the planet's whole new queue |
 | `planet_settings` | `planet`, `leftover_to_research`, `route_to` |
-| `research` | `percent`, `field`, `next_field` (a field, `lowest`, or the stored number) |
+| `research` | `percent`, `field`, `next_field` (a field, `same`, `lowest`, or the stored number) |
 | `battle_plan` | `slot`, `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo`: add the plan at `slot` or change it |
 | `battle_plan_delete` | `slot` |
 | `fleet_battle_plan` | `fleet`, `plan` |

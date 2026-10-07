@@ -61,7 +61,7 @@ type Order struct {
 	// research
 	Percent   *int   `json:"percent,omitempty"`
 	Field     string `json:"field,omitempty"`
-	NextField any    `json:"next_field,omitempty"` // a field, "lowest", or the stored number
+	NextField any    `json:"next_field,omitempty"` // a field, "same", "lowest", or the stored number
 	// battle_plan
 	Name      string `json:"name,omitempty"`
 	Tactic    *int   `json:"tactic,omitempty"`
@@ -218,6 +218,7 @@ type Player struct {
 	ResearchAccumulated map[string]int    `json:"research_accumulated"`
 	ResearchPercent     int               `json:"research_percent"`
 	ResearchField       string            `json:"research_field"`
+	ResearchNextField   string            `json:"research_next_field"` // a field, "same" or "lowest"
 	Relations           map[string]string `json:"relations"`
 	MysteryTraderItems  []string          `json:"mystery_trader_items"`
 	Computer            bool              `json:"computer,omitempty"` // a computer player: the host plans its orders

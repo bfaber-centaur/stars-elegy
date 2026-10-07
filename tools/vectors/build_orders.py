@@ -16,6 +16,7 @@ import build_obs as O
 
 FIELDS = B.TECH
 NEXT = {i: f for i, f in enumerate(FIELDS)}
+NEXT[6] = 'same'
 NEXT[7] = 'lowest'
 CARGO_DUMP = {'ir': 'ironium', 'bo': 'boranium', 'ge': 'germanium', 'col': 'colonists', 'fuel': 'fuel'}
 OTHER = {1: 'planet', 2: 'fleet'}

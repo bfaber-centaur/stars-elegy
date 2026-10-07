@@ -178,7 +178,8 @@ public class CombatLab {
                     sb.append(" accum=");
                     for (int i = 0; i < 6; i++)
                         sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
-                    sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
+                    sb.append(String.format(" researchPct=%d field=%d next=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15,
+                        (p.fullDataBytes[0x31] & 0xff) >> 4));
                     sb.append(" hab=");
                     for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
                     // advantage points (RaceLab, StarsAPI racebuilder): negative = a race the

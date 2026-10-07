@@ -31,6 +31,8 @@ ACTIONS = {0: 'none', 1: 'load_all', 2: 'unload_all', 3: 'load_exactly', 4: 'unl
            5: 'fill_to_percent', 6: 'wait_for_percent', 7: 'load_optimal', 8: 'set_amount_to',
            9: 'set_waypoint_to'}
 CARGO = ['ironium', 'boranium', 'germanium', 'colonists', 'fuel']
+# stored next-field choice: a field, 6 same field, 7 lowest field (KERNEL Research; KB-2A)
+NEXT_FIELD = TECH + ['same', 'lowest']
 MT_ITEMS = ['Multi Cargo Pod', 'Multi Function Pod', 'Langston Shell', 'Mega Poly Shell', 'Alien Miner',
             'Hush-a-Boom', 'Anti Matter Torpedo', 'Multi Contained Munition', 'Mini Morph', 'Enigma Pulsar',
             'Genesis Device', 'Jump Gate', 'ship']
@@ -173,6 +175,7 @@ def state(hst, xy, game, xy_path=None):
                 'tech': {TECH[i]: int(d[DUMP_TECH[i]]) for i in range(6)},
                 'research_accumulated': dict(zip(TECH, (int(x) for x in d['accum'].split(',')))),
                 'research_percent': int(d['researchPct']), 'research_field': TECH[int(d['field'])],
+                'research_next_field': NEXT_FIELD[int(d['next'])],
                 'relations': {str(q): RELATION[r] for q, r in enumerate(rel) if q != p},
                 'mystery_trader_items': [MT_ITEMS[b] for b in mask_players(int(d['mt'], 16), 13)],
                 'race': {
