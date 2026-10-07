@@ -132,4 +132,10 @@ apart from the random terraform counts. MG-003 and MG-004 ran at 20000.
   - B: 0x02d gave 275 to Y. X kept 5 for the 20-ly leg and arrived with 0.
   - C: 0x03d with capacity 50 and need 305. X kept 2 and did not move.
 - **MG-004 (follow-up).** Own planets with an Orbital Fort behaved like MG-002: no message, and the fleets left. Load-optimal fuel aimed at a planet appears to be skipped. The cause is not yet read from the binary.
+- **MG-005 (T-41) CONFIRMED.** Player 0 captured player 1's homeworld 8
+  before movement (0x00c to player 0, 0x007 to player 1). In the written
+  host file, planet 8 was owned by player 0 and still marked as a
+  homeworld, and player 1's record still named planet 8. Player 1 was left
+  with nothing: 0x0bb (player 1 wiped out) and 0x0bc went to player 0, and
+  0x0b8 went to player 1.
 - Not run: the 0x0b8/0x0bc tie case (M-10) and 0x126.
