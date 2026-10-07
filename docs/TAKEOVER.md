@@ -78,7 +78,7 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
 - A starbase destroyed in this year's battle no longer protects the
   planet. Bombing (T-2) and arrival invasions go ahead the same year.
 
-### Order inside a phase (CONFIRMED, TK-114, TK-201; manual transfers BINARY-ONLY)
+### Order inside a phase (CONFIRMED, TK-114, TK-201; manual transfers MEASURED, TK-501)
 
 - **Fleet order.** Every per-fleet step (unloads, scrap, colonize, loads,
   merges, transfers, bombing triggers) walks fleets in **fleet order**: by
@@ -93,8 +93,11 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
   orders (step 1), then the drops made by fleets in fleet order.
   CONFIRMED (TK-201 A): fleets 0, 1 and 12 dropping on planets 14, 3 and 8
   were resolved 14, 3, 8 (capture messages in that order), not in planet
-  order. The manual-transfer part needs crafted orders and stays
-  BINARY-ONLY.
+  order. Manual drops (MEASURED in one run, TK-501): the client wrote
+  player 0's transfers as order records for fleets 7, 6, 5, 2 and 1
+  (planets 13, 14, 3, 21, 8), and fleet 4 had an unload task at planet 3.
+  The planets were resolved 13, 14, 3, 21, 8, the order of the records,
+  with fleet 4's drop joining fleet 5's at planet 3.
 - **"At the start of this phase".** Each of the two waypoint phases (step
   2, and steps 4–5 together) records, for every planet, whether it is
   owned, **before anything else in that phase**. For the after-movement
@@ -473,6 +476,29 @@ A captured planet then belongs to the winning player as a new colony
 The production queue and the leftover setting after a capture are the
 new owner's defaults, as for a colony (CONFIRMED, T-26).
 
+### Manual cargo transfers to other players (CONFIRMED, TK-501, TK-502)
+
+A player can move cargo by hand from a fleet to the planet it orbits, also
+when the planet belongs to another player or to nobody. The fleet loses the
+cargo when the orders are applied (step 1).
+
+- **Colonists** onto another player's planet are a drop. They join the
+  before-movement drop resolution with the unload tasks and fight as in
+  Ground combat: 30 against 100 left the defender 67 (77 after growth);
+  200 captured it with 109 (125 after growth); 200 by hand plus a 50-colonist
+  unload task at the same planet fought as one force of 250 and kept 159
+  (182). The messages are the unload ones (0x000/0x003, 0x00c/0x007). The
+  players' relations do not matter: the same 200 captured a friend's
+  planet (TK-502).
+- Colonists onto an **unowned** planet are lost and the planet stays
+  unowned; the giver gets 0x002 (colonists, planet). Onto a planet with a
+  **starbase** they are lost as well; the giver gets 0x058.
+- **Minerals** onto another player's planet join its surface at once (100
+  ironium, enemy and friend alike). **No message is sent** to either
+  player (MEASURED, TK-405 and TK-412; the prediction of 0x042/0x044 was
+  wrong: those messages belong to gifts to another player's fleet, which
+  are not yet tested).
+
 ### Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED)
 
 A planet may hold an ancient artifact (new games place them only with
@@ -644,10 +670,9 @@ resolutions after movement. Random-stream pinning for experiments:
 Rounds 1–4 (TK-001..TK-306), the FO corpus and the MG runs measured every
 other rule here. What is left:
 
-- Manual cargo transfers to another player's planet or fleet. They are
-  legal client orders but cannot be put in a host file, so they wait on
-  client automation (client-orders, combat oracle lane).
-  Predictions TK-401 to TK-410 are in `experiments/tk/manual-transfers.md`.
+- Manual cargo transfers to another player's **fleet** (full, partial
+  and refused gifts, fuel). The client automation opens Cargo Transfer
+  only with the orbited planet so far.
 - Why Mystery Trader parts came from scrapping more often than the model
   predicts (TK-305). A larger sample, or replaying the random stream with
   the known draw counts, would tell a wrong model from an unlucky one.

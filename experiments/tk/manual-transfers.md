@@ -44,6 +44,17 @@ fixed when the client side exists; amounts are in kT, colonists in units of
 | TK-409 | Player 0 fuel transport gives 50 mg of fuel to a player 1 fleet with room | Received; 0x043 / 0x045 (the fuel variants, whose wording speaks of colonists: LEGACY BUG? in `MESSAGES.md`) |
 | TK-410 | Player 0 fleet at player 1's planet with a starbase gives it 30 colonists by hand | Refused at the drop: colonists lost, planet unchanged; 0x058 to player 0 |
 
+## Results (TK-501, TK-502)
+
+Run with `gen5.py` (TK-401..405, TK-410 in TK-501; TK-411, TK-412 in
+TK-502); `check5.py` summarizes them and `docs/PARITY.md` "Round 5: manual
+cargo transfers" has the table. Every planet outcome held. Minerals given
+to a planet sent no 0x042/0x044 (TK-405, TK-412): those kinds belong to
+gifts to another player's fleet. TK-406..409 (fleet receivers) are not run:
+the client automation opens Cargo Transfer only with the orbited planet.
+The client allowed colonists onto an unowned planet and onto a starbase
+planet.
+
 ## Not predicted
 
 - Whether the client lets a player give colonists to an unowned planet

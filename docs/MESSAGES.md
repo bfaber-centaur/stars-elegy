@@ -20,7 +20,7 @@ Status tags follow `PARITY.md`:
 - **NEVER SENT**: a message kind exists but no reachable path sends it.
 
 Sources: a private read of every place the original sends a message (387
-kinds, ids 0x000–0x182), checked against 23,447 message records decoded from
+kinds, ids 0x000–0x182), checked against 23,486 message records decoded from
 the oracle turn files of every apparatus corpus (CB, CS, FM, FO, KX, MF, MG,
 OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot counts given here.
 
@@ -148,7 +148,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 |---|---|---|---|---|---|---|---|
 | 0x000 | Your landing troops were all killed by the planet's ground forces | Invasion of an owned planet fails (ground combat as in `TAKEOVER.md`) and the planet has no defenses that act on troops | each attacking player | colonists, planet, player (defender) | planet | P2, P6c | CONFIRMED (tk2/tk109) |
 | 0x001 | Your landing troops were killed: part by planetary defenses (percentage given), the rest on the ground | Same failure, and the planet has defenses that shot some troops (`TAKEOVER.md`) | each attacking player | colonists, planet, percent (troops lost to defenses), player (defender) | planet | P2, P6c | CONFIRMED (tk/tk003) |
-| 0x002 | Colonists you sent down by manual transfer died because the planet was not colonized | A manual colonist transfer onto a planet that was unowned when orders were read, and still is | dropping player | colonists, planet | planet | P2 | BINARY-ONLY |
+| 0x002 | Colonists you sent down by manual transfer died because the planet was not colonized | A manual colonist transfer onto a planet that was unowned when orders were read, and still is | dropping player | colonists, planet | planet | P2 | CONFIRMED (TK-404: tk5/tk501) |
 | 0x003 | Your ground forces beat off an invasion by the named player (no defenses involved) | Counterpart of 0x000; one per attacking player | planet owner | planet, colonists, player (attacker) | planet | P2, P6c | CONFIRMED (tk2/tk109) |
 | 0x004 | Your defenses and ground forces beat off an invasion by the named player | Counterpart of 0x001; one per attacking player | planet owner | planet, colonists, player (attacker) | planet | P2, P6c | CONFIRMED (tk/tk003) |
 | 0x005 | Your planet was attacked by several players at once and everyone died | An invasion empties an owned planet and two attackers tie for highest strength: nobody lands and the planet becomes unowned | former planet owner | count (attacking players), planet | planet | P2, P6c | CONFIRMED (tk2/tk113) |
@@ -166,7 +166,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
 | 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
-| 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet or planet ordered by hand: destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
+| 0x042 | Your cargo was delivered to the other player's object | Transfer to another player's fleet ordered by hand (a planet takes minerals in place and nothing is sent, TK-405): destination accepts all of it; minerals or colonists | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |
 | 0x043 | Same as 0x042, worded for colonists | Same, fuel cargo (see Notes) | sending object's owner | as 0x042 | source | P2 | BINARY-ONLY; LEGACY BUG? |
 | 0x044 | Your object received cargo from another player | Counterpart of 0x042 | receiving object's owner | object, amount, mineral, object | destination | P2 | BINARY-ONLY |
 | 0x045 | Same as 0x044, worded for colonists | Counterpart of 0x043 (fuel) | receiving object's owner | as 0x044 | destination | P2 | BINARY-ONLY; LEGACY BUG? |
@@ -186,7 +186,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x055 | Colonists can't be beamed onto an uninhabited planet; colonize it instead | Unload colonists onto a planet that is unowned now and was unowned when the phase began; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk2/tk114) |
 | 0x056 | Your crew refused to beam colonists down (race cannot live on planets) | Alternate Reality fleet unloads colonists onto a planet it does not own; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk2/tk107) |
 | 0x057 | Your colonists died on landing because your race cannot live on planets | Alternate Reality colonists land anywhere other than an unowned planet with a colonize order (for example a manual or invasion drop) | dropping player | planet | planet | P2, P6c | BINARY-ONLY |
-| 0x058 | A starbase shot down the colonists you tried to land | Colonists dropped on an owned planet that has a starbase | dropping player | planet | planet | P2, P6c | BINARY-ONLY |
+| 0x058 | A starbase shot down the colonists you tried to land | Colonists dropped on an owned planet that has a starbase | dropping player | planet | planet | P2, P6c | CONFIRMED (TK-410: tk5/tk501, manual transfer) |
 | 0x059 | Fleet was taken apart; its minerals went to the planet surface | Scrap at a planet without a starbase whose owner lacks Ultimate Recycling (or unowned); also on every successful colonization (the ship-cost share given to the new colony) | fleet owner | fleet, kT, planet | planet | P2 (scrap); P2, P6c (colonize) | CONFIRMED (cs/cs-003, tk2) |
 | 0x05a | Fleet was taken apart at the starbase; minerals deposited | Scrap at a planet with a starbase, owner without Ultimate Recycling | fleet owner | fleet, kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x05b | Fleet was taken apart in deep space, leaving salvage | Scrap with no planet | fleet owner | object (salvage), fleet | object (salvage) | P2 | CONFIRMED (tk2/tk111) |
@@ -642,12 +642,12 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Evidence
 
-- 358 rows cover all 387 kinds (some rows cover a range). 198 rows are
+- 358 rows cover all 387 kinds (some rows cover a range). 200 rows are
   confirmed by at least one oracle run. The rest are BINARY-ONLY or NEVER
   SENT.
 - The oracle records come from every corpus in apparatus `evidence/`
-  (23,447 message records, including the MG batch (MG-001 to MG-006)
-  and TK rounds 3 and 4). 192 distinct kinds appear in them, and every
+  (23,486 message records, including the MG batch (MG-001 to MG-006)
+  and TK rounds 3 to 5). 194 distinct kinds appear in them, and every
   one has a confirmed row. Each was checked against its row: slots in that
   order, sent to that player's file, and the trigger present in the run.
 - The minefield facts are CONFIRMED by MF-1..MF-13:
@@ -663,7 +663,7 @@ These kinds have a text and a slot count, but nothing in the turn generator or t
 
 ## Kinds not yet observed, and how to reach them
 
-Every kind has a row. The 160 rows without an oracle sighting fall into
+Every kind has a row. The 158 rows without an oracle sighting fall into
 five groups by what it would take to see them.
 
 1. **Legal orders and a Combat Lab setup reach them.** The rest of the
@@ -672,10 +672,12 @@ five groups by what it would take to see them.
    (scanners, starbases, packets, the fleet limit), remote terraforming,
    breeding in transit, waypoint upkeep, victory, battle summaries and
    Trader trades. This lane's next message batch takes them.
-2. **Manual cargo transfers** (0x002, 0x042–0x04d, 0x0db–0x0dd). Legal
-   client orders that Combat Lab cannot write into a host file. They wait
-   on client automation (`experiments/tk/manual-transfers.md`, TK-401 to
-   TK-410). On `COVERAGE.md` as a targeted experiment.
+2. **Manual cargo transfers to another player's fleet** (0x042–0x04d)
+   and to packets or salvage (0x0db, 0x0dc), and the shortfall notice
+   0x0dd. Legal client orders that Combat Lab cannot write into a host
+   file; the client automation reaches only the orbited planet so far
+   (planet transfers: TK-501, TK-502). On `COVERAGE.md` as a targeted
+   experiment.
 3. **Shown only by the client** (0x0aa–0x0ae, 0x151–0x154, 0x15d). Made
    when the turn is opened and never stored in a turn file, so the file
    decoder cannot see them. Seeing them means reading the client's

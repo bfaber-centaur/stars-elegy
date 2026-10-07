@@ -3107,11 +3107,38 @@ time, and a passing attempt gives the part with chance 0.215. Observed
 the model (TK-203 also gained more often than predicted: 7 of 12 first
 attempts against 0.33). Open.
 
+### Round 5: manual cargo transfers (TK-501, TK-502)
+
+Status: MEASURED, 2026-10-07, one run each (cycles 20000). The transfers
+were given in the original client through client automation
+(client-orders, added to `docs/ORACLE.md` by the combat oracle lane): one pinned year from a Combat Lab start
+made player 0's turn, the client gave the orders, and a second pinned year
+ran them. Predictions (`experiments/tk/gen5.py`, TK-401 to TK-412 in
+`experiments/tk/manual-transfers.md`) were committed before the runs; raw
+files, order files and screenshots are in private `stars-oracle-apparatus`
+`evidence/tk5/`.
+
+| Case | Transfer | Predicted | Observed |
+|---|---|---|---|
+| TK-401 | 30 colonists to an enemy planet of 100 | defender keeps 67 (77 after growth); 0x000 / 0x003 | as predicted |
+| TK-402 | 200 colonists to an enemy planet of 100 | captured with 109 (125); 0x00c / 0x007 | as predicted |
+| TK-403 | 200 by hand and 50 by an unload task, same planet | one fight of 250: 159 (182) | as predicted; 0x007 names 250 colonists |
+| TK-404 | 30 colonists to an unowned planet | lost, planet unowned, 0x002 | as predicted |
+| TK-405 | 100 ironium to an enemy planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+| TK-410 | 30 colonists to the enemy homeworld (starbase) | lost; 0x058 | as predicted |
+| TK-411 | 200 colonists to a friend's planet | captured as an enemy's | as predicted |
+| TK-412 | 100 ironium to a friend's planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+
+The planets were resolved in the order of the client's order records
+(fleets 7, 6, 5, 2, 1), and the unload task's drop joined the manual drop
+at its planet. These agree with the XF-1 observation of the combat oracle
+lane (colonists lost with 0x058 at a foreign homeworld and 0x002 at an
+unowned planet; minerals added), which had no committed prediction.
+
 ### Not tested
 
-Colonists or cargo given to another player by a manual cargo transfer
-(predictions TK-401 to TK-410 in `experiments/tk/manual-transfers.md`);
-the year's full draw order through the random stream (owned by the KERNEL
+Cargo given by hand to another player's fleet (0x042–0x04d); the year's
+full draw order through the random stream (owned by the KERNEL
 experiments); Alternate Reality `k = 0` in a contested drop (not reachable
 with legal orders).
 
