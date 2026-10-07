@@ -1,0 +1,5 @@
+# CO-06: Merge Fleets 16000 + 16768 Freighters (32768).
+fleet first
+fleet next
+# on fleet 2; Merge Fleets rows: 1, 2
+fleet merge 0
