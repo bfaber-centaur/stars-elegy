@@ -82,6 +82,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -155,6 +156,7 @@
     },
     "research_percent": 15,
     "research_field": "energy",
+    "research_next_field": "same",
     "relations": {},
     "mystery_trader_items": [],
     "race": {
@@ -1172,8 +1174,9 @@
        "electronics": 0,
        "biotechnology": 0
       },
-      "research_percent": 18,
-      "research_field": "propulsion"
+      "research_field": "propulsion",
+      "research_next_field": "electronics",
+      "research_percent": 18
      },
      "year": 1
     },
