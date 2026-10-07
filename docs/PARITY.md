@@ -843,6 +843,20 @@ a short mineral on an auto item, so they did not test this.
 (At pop 10 the auto cap is one factory. Germanium 0 gives 24% for the
 factory's germanium; 1 resource gives 19% for its 10 resources.)
 
+Observation (A5–A7, 2408):
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| A5 | factories 2, mines 2; minerals 108/108/0; queue Auto Alchemy ×1, Auto Factories ×2; research 70; alchemy (8), factories, mines, "completed its orders" | match |
+| A6 | queue Mineral Alchemy ×1 @1%, Auto Alchemy ×1, Auto Factories ×2; minerals 100/100/0; research 0 | match (binary) |
+| A7 | queue Auto Factories ×2, Mine ×1 @39%; research 0; no events | match (binary) |
+
+So an Auto Alchemy prefix stays in front of an auto item after that item
+builds (A5), and an auto item counts as mineral-blocked whenever any
+mineral is short, even when resources give the lower percentage (A6 with
+a prefix, A7 without). Tie-breaking (resources vs a mineral, mineral vs
+mineral) is not observed; it rests on the binary reading.
+
 Not covered: terraforming costs (Total Terraforming, Claim Adjuster),
 packets, scanners, starbase and ship costs, the tamper check's points
 formula.

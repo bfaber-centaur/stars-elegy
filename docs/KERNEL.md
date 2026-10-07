@@ -414,6 +414,28 @@ percentage per component, stopping vs skipping, auto items and their hidden
 partial items, Auto Alchemy, installation-order clipping, leftover to
 research. Its predictions table doubles as the test vectors.
 
+Partial percentage of one component with `a` available (including what is
+already spent on the unit) and cost `c`:
+`p = max(trunc((a + 1)·100/c) − 1, trunc(a·100/c))` (100 if `a ≥ c`). Use
+this formula as written. It is usually, but not always, the largest
+percentage whose truncated cost fits in `a`: for `c = 9`, `a = 4` it gives
+54, although 55 would also cost only 4 (CONFIRMED, KX-001 M4: Inner
+Strength defense, 4 resources left, 54%).
+
+Which component limits a unit (CONFIRMED where cases are cited,
+BINARY-ONLY otherwise): the components are compared in the order Fe, Bo,
+Ge, resources, and one replaces the current lowest only if its percentage
+is strictly lower. So the first of tied minerals wins, and a mineral wins
+a tie with resources (BINARY-ONLY). Two facts are recorded: whether **any**
+mineral is short, and whether resources were **strictly** the lowest.
+
+- An auto item with any mineral short is mineral-blocked: without an
+  alchemy prefix it is skipped with nothing spent, even when resources
+  give the lower percentage (CONFIRMED, KX-001 A7).
+- Otherwise the unit is charged up to the lowest percentage (all
+  components), and the queue stops there unless an alchemy prefix applies
+  (next section).
+
 ### Item costs
 
 Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
@@ -442,12 +464,16 @@ time** inside the item's normal unit loop:
 1. If the unit's remaining cost is available, it completes; go to the next
    unit.
 2. Otherwise the unit takes its partial percentage as usual (every
-   component charged up to it). If the limiting component is a mineral,
-   alchemy then buys `k = min(trunc(resources / rate), s)` units, where `s`
-   is that mineral's shortfall for this unit (`cost − available − already
-   spent`, taken before the partial charge) and `rate` the alchemy cost;
-   each unit adds 1 kT of all three minerals. An auto item (Auto Factories
-   and so on) skips the partial charge and goes straight to alchemy.
+   component charged up to it). Unless resources were strictly the lowest
+   component, alchemy then buys `k = min(trunc(resources / rate), s)`
+   units, where `s` is the lowest component's shortfall for this unit
+   (`cost − available − already spent`, taken before the partial charge)
+   and `rate` the alchemy cost; each unit adds 1 kT of all three minerals.
+   An auto item with any mineral short skips the partial charge and goes
+   straight to alchemy, even when resources were the lowest; `s` is then
+   the resource shortfall (CONFIRMED, KX-001 A6: 1 resource, no germanium,
+   Auto Factories → nothing bought, Mineral Alchemy ×1 @1% at the front,
+   not a 19% factory).
 3. If `k = s`, retry the unit (it now completes). Otherwise the unit keeps
    the percentage from step 2, unchanged by the minerals just bought; if
    resources `r` remain, they become a Mineral Alchemy ×1 item at
@@ -456,8 +482,13 @@ time** inside the item's normal unit loop:
    percentage that fits), charging `trunc(rate·pct/100)`, inserted at the
    queue front; the queue stops. The prefix and the item (with its reduced
    count) stay.
-4. If every unit completes, the item and its prefix are removed and the
-   walk continues.
+4. If every unit of a non-auto item completes, the item and its prefix
+   are removed and the walk continues. An auto item stays in the queue
+   when it has built its year's count, and so does its prefix, which
+   applies again next year (CONFIRMED, KX-001 A5: Auto Alchemy, Auto
+   Factories ×2, Mine ×2 with 900 resources and no germanium → 2
+   factories, 2 mines, queue Auto Alchemy, Auto Factories ×2, research
+   70).
 
 Vectors (PG race: factory 10 + 4 kT Ge, mine 5, alchemy 100; no tax;
 minerals 100/100/g before the year):
