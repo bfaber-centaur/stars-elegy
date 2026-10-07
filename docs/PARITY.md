@@ -2991,13 +2991,79 @@ Construction Module ship 5/2/5: BET miniaturization (80%) applies.
 the research field was energy or electronics; Hush-a-Boom (Mystery
 Trader), Retro (CA only) and every other part stayed.
 
+### Round 3 (TK-201 to TK-203)
+
+Status: MEASURED, 2026-10-07. A sweep of the rules `TAKEOVER.md` still
+tagged BINARY-ONLY after round 2. Predictions in `experiments/tk/gen3.py`
+and `experiments/tk/README.md` "Round 3" were committed before the runs
+(60cac43); `check3.py` summarizes the dumps. Combat Lab, two JOAT players,
+enemies; raw files in private `stars-oracle-apparatus` `evidence/tk3/`.
+Every prediction held. Fuel at a planet was settled separately (MG-006,
+`MESSAGES.md`).
+
+**Order across planets (CONFIRMED, TK-201 A, B; cycles 20000 and
+30000).** Freighters 0, 1 and 12 of player 0 invaded planets 14, 3 and 8
+before movement: the capture messages came in that order (fleet order),
+not planet order. Bombers 2 and 3 over planets 13 and 2: both players'
+bombing messages named 13 before 2. Every value matched (captures landed
+90, 103 after growth; Cherry pairs took 100 to 94).
+
+**Minerals to another player's or an unowned planet (CONFIRMED, TK-201
+C–E).** 50 kT ironium unloaded on an enemy planet without a starbase, one
+with an Orbital Fort, and an unowned planet: each surface went 0 → 50, the
+fleets kept none, and each owner got 0x02d.
+
+**Deep space (CONFIRMED, TK-201 F).** A freighter unloading 50 kT ironium
+and 50 colonists at an empty point lost the ironium (0x02d, no object
+created) and kept the colonists (0x165, then 0x04e).
+
+**Loading every colonist (CONFIRMED, TK-201 G).** "Load all" colonists
+took all 50 off player 0's planet 12 and off its homeworld 17 (0x02c). Both
+planets were lost at growth (0x040: the planet before each had grown) and
+were unowned at the end of the year.
+
+**Homeworld mark (CONFIRMED, T-41: MG-005, TK-201 G2, I).** MG-005 (`experiments/mg`) captured player 1's homeworld 8 before movement: it stayed marked under player 0, with player 1's record still naming it. The emptied homeworld 17 kept
+its mark at the end of that year and of a second year, with player 0's
+record still naming it. Player 1's homeworld 8, captured while player 1 kept
+other planets, stayed marked under player 0; player 1's record still named
+8 and no other player 1 planet was marked.
+
+**Colonize failures (CONFIRMED, TK-201 H).** A colony ship in deep space got
+0x051 and one with no colonists at an unowned planet 0x053; each then got
+0x04e, kept its cargo and had its task cleared.
+
+**Mines never go negative (CONFIRMED, TK-202, 12 cycle settings, 10
+distinct outcome vectors).** One Lady Finger over 20 Neutron Shields (`I =
+1`, mines 1, factories 20, defenses 20): every planet went 1000 → 997, and
+the 72 installation outcomes were mines 0 alone (21; predicted chance
+0.262), one factory or one defense with mines kept (40), and one factory
+and one defense with mines **still 1** (11; never 2). Two Lady Fingers (`I
+= 3`): 1000 → 994, mines lost only when exactly one factory and one defense
+were lost (7 of 24). Undefended, two fleets: 1000 → 988, mines 10 → 6 and
+1 → 0.
+
+**Bombing messages for several fleets (CONFIRMED, TK-202).** 0x169/0x173,
+0x16a/0x174 and 0x16f/0x179 as predicted. LEGACY BUG (CONFIRMED): the
+installation count in a bombing message keeps the negative mine remainder,
+so it reported 1 (and the singular text) when two installations were lost
+to `I = 1`, and 3 when four were lost to `I = 3`.
+
+**Tech from scrapping at a starbase (CONFIRMED, TK-203, 12 cycle
+settings).** Player 0 scrapped a Scout with Long Hump 6 (propulsion 3) at
+each of two starbases of player 1 (tech 0 everywhere) and at a third planet
+without one. Player 1 gained propulsion 1 in 8 of 12 settings (7 at the
+first starbase; 1 at the second after the first gave nothing; predicted
+chance 0.555), never 2 and never another field; the gaining scrap sent
+0x13d (field propulsion) instead of 0x141, and the third planet 0x140.
+Player 1's leftover research reached energy 1 only in the runs without the
+gain (level costs rise with levels held).
+
 ### Not tested
 
-Ancient artifacts; tech learned from scrapping at a starbase; fuel
-unloaded at a planet; loading every colonist from one's own planet; a
-colonize retry in a setting other than a tie (the tie case did not retry);
-planetary defenses other than SDI and Missile Battery; the bombing order
-across planets as seen through random draws.
+Ancient artifacts; colonists given to a foreign planet by a manual cargo
+transfer; the year's full draw order through the random stream; Laser
+Battery and Planetary Shield against bombs and troops; scrapping Mystery
+Trader parts at a starbase.
 
 ## Universe objects
 
@@ -4000,3 +4066,139 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
   - Player 0 got 0x117, and each of the four other human players got
     0x182 ("hacked race discovered"). The computer player's `.M` file has
     no message block at all, so whether it is told is not observable.
+
+## Messages to players
+
+Status: catalogue in `MESSAGES.md` (2026-10-07). All 387 message kinds are
+listed with trigger, recipient, slots, focus and phase. Rows are CONFIRMED
+against message records decoded from the oracle turn files of every corpus
+in the apparatus (189 kinds seen, `tools/fleetlab/events.py`), and the rest
+are BINARY-ONLY. Elegy writes its own message text from the slots (project
+rule); no original string is used.
+
+The MG batch (`experiments/mg`, predictions committed before each run) and
+earlier runs settled the binary reading's LEGACY BUG? candidates:
+
+- **CONFIRMED LEGACY BUG:**
+  - 0x132/0x134 go to the packet owner (MG-001);
+  - 0x181 does not carry the kT (MG-001);
+  - 0x0e2/0x0e5 put the destination in the departure slot (OB-021, MG-001);
+  - 0x023/0x040 is chosen by the previous planet's growth (MG-002);
+  - plural build counts are not merged (MG-002);
+  - 0x180 is never sent in 2-player battles, but is sent in 3-race ones (CB-039, CB-042);
+  - 0x0fa uses the CB-037 observer test.
+- **MEASURED:** load-optimal fuel never takes on fuel.
+  - With a fleet target it reports 0x03c/0x03d or hands over the surplus (MG-003).
+  - With a planet target, every fuel action is skipped (MG-002, MG-004, MG-006). The binary reading explains this: fuel is handled only for fleet and deep-space targets (`TAKEOVER.md`).
+
+## Client estimates (ES-001)
+
+`docs/ESTIMATES.md` specifies the projections the original client shows:
+travel time, fuel use and range of fleets, leg distance, production
+completion, research estimates, population growth, value and optimal
+value, mining rate. The rules were read from the original program
+(private `stars-decomp` `docs/estimates.md`) and measured once.
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es001/gen.py`,
+cycles 20000). Player 0 had 9 fleets with two or three legs each (warp 0
+and warp 1 legs, a zero-length leg, a 25.495 ly leg, multi-year legs with
+a ram-scoop ship and a Fuel Transport, a route through its homeworld's
+Space Station, a fleet without the fuel for its first leg), one Scout per
+engine with a part-filled tank, 10 planets with production queues
+(resource-limited, germanium-limited, no germanium, automatic items, Auto
+Alchemy in the middle and at the end), planets of habitability −10% to
+100% including one above its maximum population, and research at 10% on
+weapons. Predictions were computed from the generated host file with
+`experiments/es001/estimates.py` and committed (503745c) before the
+client was opened. Raw evidence and screenshots: private
+`stars-oracle-apparatus` `evidence/es/es-001/`.
+
+### Result (CONFIRMED, 2026-10-07)
+
+`experiments/es001/check.py`: 149 of 149 readings matched.
+
+| Screen | Readings |
+|---|---:|
+| Fleet Waypoints tile: distance, travel time, est. fuel usage (and red) per waypoint | 63 |
+| Fleet Composition tile: Est. Range (every engine, three mixed fleets) | 23 |
+| Production tile: Completion of each queue item | 19 |
+| Planet report: Value (optimal value), Mining Rate | 20 |
+| Population popup | 10 |
+| Research dialog | 5 |
+| Fleet report: ETA column, red | 9 |
+| Not counted: queue colours, the planet report's resources "A / R" | |
+
+Discriminating cases that held:
+
+- A 25.495 ly leg at warp 5 is 1 year (`trunc(D) ≤ w²`), while its fuel is
+  priced as 2 years.
+- Fuel estimates priced year by year, the ram-scoop and Fuel Transport
+  credits (45 and 25 mg, against 114 and 103 for the whole leg at once),
+  and the running total restarting after a waypoint at the homeworld
+  (251, not 362).
+- The ideal warp for range: each engine's warp in `ESTIMATES.md`,
+  including the scoops' free-warp step down and warp 10 only for the five
+  named engines.
+- The production estimate's carried item (an alchemy item left over from
+  the real year), Auto Alchemy as the target ("As Needed") and as the last
+  item ("14 - ??? years"), automatic items blocked by germanium
+  ("Unknown") and a factory with no germanium ("Never").
+- Projected research budget (163) from the first estimated year of every
+  queue.
+
+Not exercised by ES-001 (ES-002 below): stargate legs, "Skipped", Generalized Research, a field at
+level 26, distances with a zero tens-of-hundredths digit (e.g. 20.05).
+
+## Client estimates follow-up (ES-002)
+
+### Question
+
+Do the five client estimates ES-001 left unmeasured behave as read:
+stargate legs, "Skipped", Generalized Research, a field at level 26 and
+distances whose hundredths have a leading zero?
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es002/gen.py`,
+cycles 20000). Player 0 (Generalized Research, a legal LRT set) had gates
+100/250 on three planets and Space Station gate 100/250 on a fourth, a
+150/600 gate on a fifth, and 12 fleets: scouts and freighters ordered
+through gates (usable, two gate legs in a row, cargo, beyond range, over
+the mass limit, to an own planet without a gate, from a planet without a
+gate, to deep space, to another player's planet, to an unowned planet),
+and two scouts on short non-gate legs chosen for distances like 20.02.
+Two queues held automatic items with nothing to do. Player 1 researched
+energy at level 25 with "next field" left at "same field" and enough
+resources stored to reach 26 during the year (`KERNEL.md` KX-005).
+Predictions were committed (0600161) before the client was opened, with
+`expect.tsv` for the host-side result. Raw evidence and screenshots:
+private `stars-oracle-apparatus` `evidence/es/es-002/`.
+
+### Result (2026-10-07)
+
+`experiments/es002/check.py`: 81 of 83 matched. Both misses are fleet 7
+(own gate → an unowned planet): its waypoint tile and report ETA showed
+"Uncertain", predicted "Never".
+
+Interpretation: the prediction model treated every unowned planet as
+reported to the viewer this year. That planet was not in player 0's
+2401 `.M1` (its reports list planets 0, 2, 4, 11, 15–19, 21), so the
+client's rule as read ("Never" only for an unowned planet reported this
+year) gives "Uncertain". `estimates.py` now takes the reported planets
+(`predict.py after.dump m1.dump` gives "Uncertain" for both). The
+"reported unowned planet → Never" branch itself was not exercised and
+stays BINARY-ONLY.
+
+| Item | Observed | Status |
+|---|---|---|
+| Stargate legs (11 fleets) | 1 year, cumulative after the gate; "Unload" with cargo; "Danger" beyond range and over the mass limit; "Never" without a gate at either end or in deep space; "Uncertain" for another player's or an unreported planet; fuel 0mg; warp box "Use Stargate" | CONFIRMED |
+| Distances | 319.01 → "319.1", 20.02 → "20.2", 10.05 → "10.5", 7.07 → "7.7" | CONFIRMED, LEGACY BUG (display) |
+| "Skipped" | Auto Defenses at the defense limit, Auto Mines at the mine limit: "Skipped" in grey; following items unaffected | CONFIRMED |
+| Planet report, queue of one skipped item | "--- Queue is Empty ---" | MEASURED |
+| Generalized Research | 801 needed, projected 261 → 7 years | CONFIRMED |
+| Level 26 (KX-005) | energy 26, current field weapons, next field `<Same field>`; weapons 595 needed, 16 years; energy "Maxed Out" (needed and time) | CONFIRMED |
+
+Not predicted, observed: player 0's Est. Range for the three designs (561,
+166, 175 l.y.).
