@@ -547,12 +547,30 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   byte) on the planet line. LRT bits used: 1 Total
   Terraforming, 4 Generalized Research, 9 Only Basic Remote Mining.
   `TURNS=3 edit-turn …` ran three years in a row without trouble.
+- Added for KX-003 (2026-10-07): `hst-edit xy IN.XY OUT.XY OFF:HEX…`
+  sets bytes of the game record (block type 7 in the `.XY` file):
+  `0x10` game options (bit 1 slower tech, bit 7 no random events; CB has
+  `0x80`), `0x14 + i` victory condition i (bit 7 enabled, low 7 bits the
+  value; `KERNEL.md`, "Victory conditions"). An unedited `.XY` round-trips
+  byte for byte. Put the edited `CB.XY` in the `pinned-turn` base
+  directory: the generated year used it (S2's slower tech took effect).
+  `dump` prints `game` (the record's first 32 bytes) for a `.XY` and
+  `scores` (block type 45) for a `.M`: per record, word 0 the flag word,
+  word 1 the rank, then score (32 bits), resources (32), planets,
+  starbases, unarmed, escort and capital ship counts and the tech-level
+  sum (16 bits each). A player's `.M` held only its own record. The
+  `race` line now prints 14 stats (8–13 the research cost settings). On
+  a Combat Lab file, `hst-edit edit` needs `planet=` set to a planet player
+  0 owns (the default 7 is not).
 - An edited race must stay within the race wizard's point budget. KX-001
   M3 (cheaper factories and mines, nothing paid for them) was flagged in
   the generated year: message id 0x117 in the `.M1`, and the race's
   colonists-per-resource stat raised from 10 to 24 before production, which
   changes every resource figure. Check the `race` line of the after-dump
   and the event list for 0x117 before trusting a race-edit case.
+  JOAT → Super Stealth (`prt 1 1`) is over budget (KX-003 S3: 0x117,
+  colonists-per-resource 24); LRTs `0x1b80` made it legal (S3L). JOAT →
+  Claim Adjuster is legal.
 - A state the game cannot process shows a Windows "Application Error"
   dialog (KX-001 Z1: "integer divide by 0") and no year is written; `turn`
   and `host-turn` then time out with the dialog still open. Take a

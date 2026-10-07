@@ -68,7 +68,8 @@ One year, in order:
    battle therefore becomes a level in the same year (CONFIRMED, CB-018,
    CB-021); the step-4 level-ups have already run by then.
 7. Mine sweeping, ship repair, automatic and remote terraforming.
-8. The year advances; scores are computed; files are written.
+8. The year advances; scores and victory conditions are computed (see
+   Scores and victory conditions); files are written.
 
 ## Habitability
 
@@ -399,7 +400,17 @@ doubled when the game's slower-tech option is set.
 
 CONFIRMED for the normal setting, levels 3–9 of one field (PG), and for
 "costs 75% more" (KX-002 R1: `c = 210` → 368, rounding up) and "costs 50%
-less" (KX-002 R2: 100, 145, 215, 325). Slower tech: BINARY-ONLY.
+less" (KX-002 R2: 100, 145, 215, 325).
+
+Slower tech (CONFIRMED, KX-003 S2): the stored accumulation `S` is kept at
+half scale. Each year `L = 2S + research`; levels are taken while
+`L ≥ 2·cost`; what is left is stored as `ceil(L/2)`. Vectors (JOAT, every
+field at 3, energy): research 435 → level 3, stored 218 (a normal game
+levels with 45 left); next year 485 → `436 + 485 − 780` → level 4, stored
+71. Research 937 → level 4, stored 79; next year 954 → `158 + 954 − 1060`
+→ level 5, stored 26. Under Generalized Research the other fields get
+half their 15% share, and stolen research (Super Stealth) is halved
+rounding up (BINARY-ONLY).
 
 ### Allocation
 
@@ -426,8 +437,12 @@ less" (KX-002 R2: 100, 145, 215, 325). Slower tech: BINARY-ONLY.
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
-- Super Stealth gains, per field, `trunc(trunc(spent_by_all/players)/2)`
-  when it exceeds 1 (BINARY-ONLY).
+- Super Stealth: after every player's research, an SS player gains, per
+  field, `s = trunc(trunc(spent/players)/2)` when `s > 1`, where `spent` is
+  every player's research in that field this year, its own included, and
+  `players` the players still in the game; one message per field
+  (CONFIRMED, KX-003 S3L: the other player spent 355 on weapons and the SS
+  player 95 on energy; it ended with weapons 88 and energy 95 + 23 = 118).
 
 Vectors, CONFIRMED (PG003: one player, energy current, next "same field",
 other levels 0, 0, 0, 5 (electronics), 0; research = all resources):
@@ -600,12 +615,22 @@ BINARY-ONLY where marked):
   for Claim Adjuster (BINARY-ONLY); no minerals.
 - Auto Max Terraform builds Terraform Environment units up to the
   capacity; Auto Min Terraform does so only while the planet's population
-  would shrink this year or its habitability is 0 or less. Claim
-  Adjuster planets move in one step to the full reachable value after
-  production, and their original value can drift one click toward the
-  centre (rarely, at random). Orbital Adjuster fleets move a planet one
-  click per part each year with the fleet owner's tech and the planet
-  owner's habitat, away from the centre for an enemy. All BINARY-ONLY.
+  would shrink this year or its habitability is 0 or less. Orbital
+  Adjuster fleets move a planet one click per part each year with the
+  fleet owner's tech and the planet owner's habitat, away from the centre
+  for an enemy. All BINARY-ONLY.
+- **Claim Adjuster.** At the end of the year (after production and growth)
+  every axis of each CA planet moves in one step to the full reachable
+  value, as far as the reach rule above allows, with no items built and no
+  resources spent (CONFIRMED, KX-003 S3/S3L at reach 3: 60/42/56 →
+  57/45/53, and 58/50/50 with original 60/50/50 → 57/50/50; growth that
+  year used the old environment; TK-118..121 at reach 15 and 30 after a
+  capture). The CA owner's terraform parts follow the normal tech and LRT
+  rules (Total Terraform still needs TT). The original value of an axis
+  can also drift one click toward the centre: per planet and year, a
+  random axis, then a 1-in-10 roll, then a roll passed when the population
+  is 1000 units or more or `random(1000) <` the population (BINARY-ONLY;
+  no drift in the one KX-003 planet-year that could show it).
 
 ## Fleet movement
 
@@ -865,6 +890,15 @@ in deep space (a scout holding 400 mg of 300 keeps 400 away from a
 starbase). A fleet that leaves the planet this year is not refuelled, nor
 is one at a planet without a starbase.
 
+### Alternate Reality colonists in flight (CONFIRMED, TK-117)
+
+An Alternate Reality fleet carrying more than 10 kT of colonists loses
+`trunc((C + 11)·3/100)` kT (C the colonists in kT) in each year it moves,
+before the move, with a message to the owner. A fleet that does not move
+loses nothing. Vectors (TK-117, deep space): 10 → 10, 11 → 11, 40 → 39,
+200 → 194 moving; 200 stationary → 200. TK-107 matches too (25 → 24,
+100 → 97).
+
 ### Other movement rules (BINARY-ONLY)
 
 - A fleet whose current task is "transport" or "lay mines" does not move.
@@ -874,8 +908,6 @@ is one at a planet without a starbase.
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
   fleet does not move.
 - Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`.
-- Alternate Reality fleets carrying more than 10 kT of colonists lose
-  `trunc((colonists + 11)·3/100)` kT each year they move.
 - Radiating Hydro-Ram Scoop engines kill
   `max(1, trunc(colonists·trunc((86 − mid)/2)/100))` kT of carried
   colonists (at most all of them) per year moved, where `mid` =
@@ -885,6 +917,91 @@ is one at a planet without a starbase.
   each per year, capped at the tank.
 - Refuelling at a friend's starbase, and at a starbase without a dock.
 - Fuel unloaded onto a planet is lost.
+
+## Scores and victory conditions
+
+Computed once a year for every player, after all of the year's other
+phases (turn order step 8), and written to each player's `.M` file. The
+vectors are KX-003 S1 (`PARITY.md`); S2 and S3L (four more player-years)
+also matched.
+
+### Score (CONFIRMED, KX-003)
+
+The sum of five terms:
+
+| Term | Rule | KX-003 S1 player 0 | player 1 |
+|---|---|---|---|
+| Planets | per owned planet `min(6, ceil(P/1000))`, P the population in units of 100 after this year's growth | 287, 1001, 1000, 5739, 7412 → 1+2+1+6+6 = 16 | 287, 1148, 1, 3450 → 8 |
+| Starbases | 3 per owned starbase whose hull has a dock (an Orbital Fort scores 0) | Space Station ×2 (+ a Fort) → 6 | Fort → 0 |
+| Resources | `trunc(R/30)`, R = the year's resources over owned planets computed from population **after** growth (not the pre-growth figure research uses) | 1552 → 51 | 498 → 16 |
+| Tech | per field at level L: L (L ≤ 3), `2L − 3` (4–6), `3(L − 3)` (7–9), `4L − 18` (10+) | 6 × 86 = 516 | 3, 4, 6, 7, 9, 10 → 69 |
+| Ships | below | 34 | 8 |
+| **Score** | | **623** | **101** |
+
+Ships: every ship in the player's fleets (starbases excluded) is
+**unarmed** (power 0), an **escort** (power 1–1999) or a **capital ship**
+(power 2000 or more). With N owned planets and U, E, C ships of each
+class: `trunc(min(N, U)/2) + 2·min(N, E) + trunc(8·N·C/(N + C))` (last term
+0 when C = 0). S1 player 0: N = 5, U = 7, E = 3, C = 10 → 2 + 6 + 26;
+player 1: N = 4, U = 1, E = 5, C = 0 → 0 + 8 + 0.
+
+Power of a design (summed over its slots):
+
+- Beams: `(range + 3)·damage·count/4`, divided by 3 for shield sappers.
+  The beam total is then scaled by capacitors: a factor starts at 1000
+  and each capacitor multiplies it by `(100 + pct)/100`; if it changed,
+  `beam = beam·min(255, trunc(factor/10))/100`. Finally
+  `beam = beam + beam·(speed − 4)/10`, `speed` being the design's battle
+  speed code (`COMBAT.md`).
+- Torpedoes and missiles: `(range − 2)·damage·count/2`.
+- Bombs: `(kill rate in tenths of a percent + installations killed)·count·2`.
+
+CONFIRMED for the class boundaries KX-003 reached: 4 Omega Torpedoes
+(1896, escort), 5 (2370, capital), 2 Cherry Bombs (140, escort), an X-Ray
+Laser scout (escort), unarmed scouts. Capacitors, sappers and the speed
+adjustment are BINARY-ONLY.
+
+### Yearly score record
+
+Each player's record holds the score, the resources R, the planet count,
+the starbase count, U, E, C, the sum of the six tech levels, the rank and a
+flag word. Rank = 1 + the number of players with a strictly higher score
+(CONFIRMED, S1, S2, S3L). The flag word is the player number in the low 5
+bits, 0x20 always, and one bit per victory condition the player meets
+this year **whether or not the condition is enabled** (CONFIRMED for
+capital ships, disabled in S1 and flagged): 0x40 planets, 0x80 tech,
+0x100 score, 0x200 lead, 0x400 resources, 0x800 capital ships, 0x1000
+highest score after N years. S1: player 0 `0x0ae0`, player 1 `0x0021`.
+
+### Victory conditions
+
+The game's settings hold ten values (the new-game dialog's defaults in
+brackets): planets owned `(v + 4)·5`% [60], tech level `v + 8` [22] in
+`v + 2` fields [4], score `(v + 1)·1000` [11000], lead over second place
+`(v + 2)·10`% [100], resources `(v + 1)·10` thousand [100], capital ships
+`(v + 1)·10` [100], highest score after `(v + 3)·10` years [100], the
+number of conditions needed [1], and the minimum years `(v + 3)·10` [30].
+Each of the first seven is on or off. Tests, per player and year:
+
+- Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
+  S1: 24 planets at 20% need 5; 5 met, 4 did not).
+- Tech: the number of fields at the level or above ≥ the field count
+  (CONFIRMED met and unmet, S1).
+- Score ≥ the threshold; resources: `trunc(R/1000)` ≥ the threshold in
+  thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
+  ships, S1; the others BINARY-ONLY).
+- Lead: with scores sorted, `second·(100 + pct)/100 ≤ top` flags the top
+  player (CONFIRMED, S1: 101·120/100 ≤ 623).
+- Highest score: the year index (years since 2400) ≥ the year count and
+  exactly one player has rank 1 (BINARY-ONLY).
+
+Deciding the game (BINARY-ONLY): with one player, nothing further. A
+player with no planets and no ships becomes dead (message to the others).
+If all but one player are dead, the survivor wins. Otherwise, once the
+year index reaches the minimum years, every player meeting at least the
+needed number of **enabled** conditions wins; one winner and several
+winners get different messages, the others a loss message. What happens
+after a win is not covered here.
 
 ## Open experiments
 
@@ -896,7 +1013,7 @@ reach are listed at the end of its section in `PARITY.md`.
 
 ## Sources
 
-- Oracle: PG-001..003, PQ-001, KX-001 and KX-002 (`PARITY.md`); FM-001..004 movement
+- Oracle: PG-001..003, PQ-001, KX-001..003 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that

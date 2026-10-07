@@ -1069,7 +1069,11 @@ the `hst-edit` keys `field=` and `conc=` added for this corpus.
 
 ### KX-003 — scores, victory conditions, slower tech, Claim Adjuster, Super Stealth
 
-Status: PREDICTED. Predictions committed before any case ran. Correction
+Status: MEASURED (5 runs, 2026-10-07). Every predicted value held, except
+a side note in S1 (player 1's research, a prediction-script error below)
+and S3, where the Super Stealth race was over budget; S3L repeated it
+legally and matched. Predictions were committed (this work's first commit) before any
+case ran. Correction
 before S2 and S3 ran (after S1): the first prediction commit fed research
 with resources after growth, a script error; `KERNEL.md` says research
 uses this year's resources before growth. S2's populations were changed
@@ -1186,6 +1190,51 @@ legal; JOAT → SS is checked for message 0x117.
   player 1 spends 95 on energy. Player 1 ends with energy **118**
   (95 + 23) and weapons **88**. Excluding its own research would give
   energy 95.
+
+#### Results
+
+| Run | Predicted | Observed | |
+|---|---|---|---|
+| S1 player 0 record | score 623, R 1552, 5 planets, 2 starbases, U/E/C 7/3/10, tech sum 156, flags `0x0ae0`, rank 1 | the same | OK |
+| S1 player 1 record | score 101, R 498, 4 planets, 0 starbases, U/E/C 1/5/0, tech sum 39, flags `0x0021`, rank 2 | the same | OK |
+| S1 player 1 research | 498 into energy | 435 | prediction-script error: research uses resources before growth (`KERNEL.md`), the script used the after-growth figure; found here and corrected before S2/S3 ran (the second commit) |
+| S2 2401 | P0 3 / 218, P1 4 / 79 | P0 3 / 218, P1 4 / 79 | OK |
+| S2 2402 | P0 4 / 71, P1 5 / 26 | P0 4 / 71, P1 5 / 26 | OK |
+| S3 CA planets | 57/45/53, 57/50/50; originals unchanged | the same | OK |
+| S3 SS | energy 118, weapons 88 | energy 56, weapons 88; message 0x117 and the SS race's colonists-per-resource raised from 10 to 24 | void: JOAT → SS is over the race budget. Its own research (45) still gave 45 + 11 = 56, which fits the rule |
+| S3L (S3 + LRTs `0x1b80` for player 1) | energy 118, weapons 88; CA as S3 | energy 118, weapons 88, two messages 0x159 (23 energy, 88 weapons); CA 57/45/53 and 57/50/50; no 0x117 | OK |
+
+S2 and S3L's score records also follow the score rule (worked from their
+populations, levels and starbases): S2 2401 43 and 61, 2402 46 and 64;
+S3L 40 and 26. In every run each player's `.M` held only that player's
+score record.
+
+Interpretation:
+
+- The score rule, the class boundaries for ships (power 1896 escort,
+  2370 capital), the starbase dock rule (an Orbital Fort scores 0), the
+  planet cap of 6 and the use of after-growth resources hold. Rank is
+  1 + the number of higher scores.
+- Victory-condition flags are set when a condition is met even if it is
+  disabled (capital ships, disabled in S1, flagged). The planets threshold
+  rounds (5 of 24 at 20%; 4 did not count).
+- Slower tech stores research at half scale and doubles it back the next
+  year (S2 player 0 levelled in 2402 only because of the doubling).
+- Super Stealth steals half of each field's per-player average,
+  including its own research.
+- Claim Adjuster planets jump to the full reachable environment at the
+  end of the year; growth that year used the old environment.
+
+Still BINARY-ONLY after KX-003: capacitor, sapper and speed adjustments
+to power; the score, resources and highest-score flags; deciding the game
+(dead players, minimum years, number needed, win messages); CA original
+drift; CA's half-price terraform items; slower tech with GR or stolen
+research.
+
+Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
+`evidence/kx003/` (specs, edited `CB.XY`, every resulting file, dumps,
+the model and a SHA-256 manifest). Tooling: `hst-edit xy` and the score
+and game-record dump lines.
 
 ## Fleet Movement
 
