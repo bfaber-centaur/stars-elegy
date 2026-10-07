@@ -4,7 +4,11 @@ The original game tells each player what happened during the year through a
 list of messages. This file catalogues every message kind: when it is
 generated, who receives it, what parameters it carries and where in the
 year it is made. It describes behavior only. The wording here is ours, not
-the original text (see "Open questions").
+the original text.
+
+**Project rule (Bobby, 2026-10-07):** Elegy writes its own message text
+from the slots catalogued here. The original strings are never used or
+published.
 
 Status tags follow `PARITY.md`:
 
@@ -491,7 +495,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x0f0 | Wreckage from a battle at a planet boosted research | After 0x0fa (a non-participant with a fleet at the battle), with the same per-turn roll; no location condition | that fleet's owner | location, field, amount | special: research (inferred) | P6 | CONFIRMED (cb5/cb037-owner); LEGACY BUG? (text says in orbit, also used in deep space) |
 | 0x0f1 | A fleet found battle wreckage that boosted research | After 0x0f9 (the battle was at the player's planet and the player was not in it), with the same per-turn roll | that planet's owner | location, field, amount | special: research (inferred) | P6 | BINARY-ONLY; LEGACY BUG? (fleet wording for a planet owner) |
 | 0x0f9 | Your colony saw a battle in orbit that you were not part of | Battle at your planet (one with no starbase) without your involvement | planet owner | planet | planet | P6 | BINARY-ONLY |
-| 0x0fa | One of your fleets saw a battle it was not part of | You are not in the battle, have a fleet there, and pass a faulty observer test (see Notes) | non-participant fleet owner | fleet, location | fleet | P6 | CONFIRMED (cb5/cb035-prevbattle) LEGACY BUG? |
+| 0x0fa | One of your fleets saw a battle it was not part of | You are not in the battle, have a fleet there, and pass a faulty observer test (see Notes) | non-participant fleet owner | fleet, location | fleet | P6 | CONFIRMED (cb5/cb035-prevbattle); LEGACY BUG, same test as `COMBAT.md` CB-037 |
 | 0x113 | Your single ship destroyed every enemy ship | Other 2-player battles: you had one ship, lost nothing; enemy had more than one and lost all | each participant | location, player, design, count | battle | P6 | BINARY-ONLY |
 | 0x114 | A lone enemy ship wiped out your whole force unharmed | You had more than one ship and lost all; enemy had one ship and lost nothing | each participant | location, player, count, design | battle | P6 | BINARY-ONLY |
 | 0x115 | Your single ship and the enemy force both survived; enemy losses | Other 2-player battles: you had one ship and it survived; enemy not wiped | each participant | location, player, design, count, count | battle | P6 | CONFIRMED (cb5/cb035-prevbattle) |
@@ -534,7 +538,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
   - The planet is emptied before any message is sent.
   - The owner gets 0x08d or 0x08e, and every other participant gets 0x144.
   - Nobody gets a research boost or 0x180 from that battle.
-- **LEGACY BUG? Observer test (0x0fa).** Whether a non-participant fleet owner gets 0x0fa (and the 0x0f0 research chance) depends on an arithmetic mix-up between the player's number and the set of watching players. Player 1 (the first player) never gets it. Other players get it depending on which unrelated players were watching.
+- **LEGACY BUG (CONFIRMED) Observer test (0x0fa).** 0x0fa is sent by the same faulty observer test as the wreckage research attempt in `COMBAT.md` ("Players not in the battle", CB-031-obs, CB-037). Whether a non-participant fleet owner gets 0x0fa (and the 0x0f0 research chance) depends on that rule, which mixes up the player's number with the set of watching players. Player 1 (the first player) never gets it. Other players get it depending on which unrelated players were watching.
 - **LEGACY BUG? Swapped research texts.** A planet owner whose colony watched gets the text about a fleet finding wreckage (0x0f1). A watching fleet gets the text about a battle in orbit (0x0f0), even in deep space (observed at a deep-space location).
 - **LEGACY BUG? 0x180 missing in 2-player battles.** The left-out-fleets message is skipped for both participants of a 2-player battle, even when the size cap left fleets out.
 - **Bombing order.** Fleets bomb in fleet order. For each bombing:
@@ -648,7 +652,7 @@ row above says what happens.
 - **Wrong choice:**
   - 0x023 or 0x040 depends on the planet processed just before.
   - 0x036, 0x038 and 0x03a are not merged with each other.
-  - 0x0fa uses an observer test that depends on player numbers.
+  - 0x0fa uses an observer test that depends on player numbers (CONFIRMED as the `COMBAT.md` CB-037 rule).
   - 0x180 is never sent in 2-player battles.
   - 0x13e uses a scrap text for a trader reward.
 - **Never sent:**
@@ -657,10 +661,6 @@ row above says what happens.
 
 ## Open questions
 
-- **Exact text (for Bobby).** This file deliberately gives no original
-  wording. If Elegy's client must show the original sentences, someone has
-  to decide where that text may come from. The decision is open. The slot
-  order and types here are enough to write new wording.
 - **Focus screens.** The special focus codes (−2 … −7) are inferred from
   the messages that use them.
 - **Viewer-side rendering** of a few edge slots is not checked:
@@ -674,6 +674,5 @@ row above says what happens.
   - the 0x023/0x040 choice;
   - the merge of build counts;
   - load-optimal fuel (0x02b, 0x03c, 0x03d, 0x126);
-  - the 0x0fa observer test;
   - 0x180 in a 3-race battle;
   - the 0x0e2/0x0e5 slots.
