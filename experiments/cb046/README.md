@@ -44,3 +44,15 @@ Control `cb046-bio`: `cb046` with player 0's biotechnology at 3 (the
 torpedo requires 21), to show whether player 0 makes attempts at all.
 Prediction: player 0 gains biotechnology (to 4) in some streams (about a
 third), and still no Mystery Trader item.
+
+### Control result
+
+`cb046-bio` ran the same 12 battle streams as `cb046` (identical battle
+records). Player 0 gained biotechnology 3 → 4 in 2 of 12 streams (12000
+and 50000) and no Mystery Trader item in any. So player 0 does make
+attempts, and in at least those two streams an attempt passed the 50%
+gate with Anti Matter Torpedoes among the destroyed ships; in `cb046` the
+same streams gave no Mystery Trader item. **MISSED** (no gain anywhere,
+24 + 12 streams): either the per-part chance is 0 for these parts, or
+parts on destroyed ships are not what makes a part eligible. Open for the
+Combat decomp pass.
