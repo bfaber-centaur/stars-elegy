@@ -406,3 +406,106 @@ Planned:
 - differential fixture for the clean 10% / 100%-habitability run;
 - follow-up tests varying growth rate and habitability to determine how the
   accumulator interacts with other modifiers.
+
+## Production Queues
+
+Status: PREDICTED (PQ-001 not yet run). This section is the production
+track; it does not touch population or movement results.
+
+### PQ-001 — production-queue boundary corpus
+
+Question: does one year of J-RC3 production follow the queue algorithm
+read from the binary in the private `stars-decomp` notes, at the boundaries
+where plausible implementations differ (partial builds, mineral shortfall,
+auto items, alchemy, research tax, queue caps)?
+
+Method. Every case starts from the `registered` oracle snapshot (PG001,
+2407). Before the turn, Endeavor (planet 7) and player 1 are edited in both
+`PG001.HST` and `PG001.M1` with the StarsAPI codec (decode, change fields,
+re-encode; an unmodified file round-trips byte-identically). Then
+`turn PG001.M1` runs one year with no client orders. The 2408 `.HST` and
+`.M1` are decoded for surface minerals, installations, the production
+queue, the player's "resources to research this year" field and the year's
+event records.
+
+Common starting edits, unless a case says otherwise: mines 0 (so nothing is
+mined), factories 0, defenses 10 (unchanged), research budget 0%,
+"contribute only leftover resources to research" off, surface minerals
+500/500/500 kT, `excessPop` 80 (unchanged). With no factories the planet's
+resources are `R = population / 10` (population in units of 100).
+Race costs (PG001, observed in the player block): factory 10 resources +
+4 kT germanium, mine 5 resources, defense 15 resources + 5/5/5 kT, alchemy
+100 resources.
+
+Model under test (behavioral summary of the decomp reading):
+
+- The research tax `floor(R × budget% / 100)` is taken first, unless the
+  leftover-only box is set.
+- Items are processed in order. A unit is completed when every remaining
+  cost component (cost − already spent) is available.
+- Otherwise the item gets a partial percentage. Per component with
+  available `a` (including what is already spent) and cost `c`:
+  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`, i.e. the largest whole
+  percentage whose truncated cost does not exceed `a`; the item's
+  percentage is the minimum over components. Every component is then
+  charged up to `floor(c·p/100)`. The amount already spent on a partial
+  unit is `floor(c·pct/100)`.
+- A non-auto item that ends partial stops the queue; later items get
+  nothing. An auto item that is short of a mineral is skipped (nothing
+  spent) and the walk continues.
+- Auto items build at most `min(count, cap)` per year, cap = operable
+  installations after this year's growth minus installed; they stay in the
+  queue. A resource-limited auto item that ends partial inserts a hidden
+  ×1 item of the real type at the queue front carrying the percentage, and
+  stops the queue.
+- Auto Alchemy as the last item ignores its count, converts 100 resources
+  into 1 kT of each mineral per unit, and leaves a Mineral Alchemy ×1
+  partial at the front. Auto Alchemy before another item buys exactly that
+  item's mineral shortfall (1 kT of all three minerals per 100 resources)
+  and is removed with it when that item completes.
+- A non-auto installation order above `max(maximum, operable) − installed`
+  is clipped to that cap, with a message.
+- All resources left at the end go to research. A queue that empties, or
+  is walked to the end with nothing mineral-blocked, sends "completed its
+  orders".
+
+Predictions (written before any PQ-001 case ran). Queue notation:
+`Item ×count @pct%`. "Research" is the player's resources-to-research for
+the year. Minerals are Fe/Bo/Ge.
+
+| Case | Start (differences from common) | Queue | Predicted 2408 |
+|---|---|---|---|
+| C01 | pop 1050 (R 105) | Factory ×20 | factories 10; Ge 458; queue Factory ×10 @59%; research 0 |
+| C01 year 2 | (C01 result, no edits) R = 115 + 10 | — | factories 20; Ge 420; queue empty; research 30; "completed its orders" |
+| C02 | pop 2000 (R 200), Ge 10 | Factory ×5, Mine ×5 | factories 2, mines 0; Ge 0; queue Factory ×3 @74%, Mine ×5; research 173 |
+| C03 | pop 2000, Ge 2 | Auto Factories ×100, Mine ×5 | factories 0, mines 5; Ge 2; queue Auto Factories ×100; research 175; no "completed" message |
+| C04 | pop 230 (R 23) | Auto Mines ×100 | mines 4; queue Mine ×1 @79%, Auto Mines ×100; research 0 |
+| C05 | pop 2500 (R 250), minerals 100/100/100 | Auto Alchemy ×1 | minerals 102/102/102; queue Mineral Alchemy ×1 @50%, Auto Alchemy ×1; research 0; alchemy message |
+| C06 | pop 4000 (R 400), minerals 100/100/1 | Auto Alchemy ×1, Factory ×1, Mine ×2 | factories 1, mines 2; minerals 103/103/0; queue empty; research 80 |
+| C07 | pop 2500, minerals 100/100/1 | Auto Alchemy ×1, Factory ×1, Mine ×2 | factories 0, mines 0; minerals 102/102/2; queue Mineral Alchemy ×1 @46%, Auto Alchemy ×1, Factory ×1 @49%, Mine ×2; research 0 |
+| C08a | pop 1070 (R 107), budget 15% | Factory ×20 | factories 9; Ge 464; queue Factory ×11 @19%; research 16 |
+| C08b | as C08a, leftover-only on | Factory ×20 | factories 10; Ge 457; queue Factory ×10 @79%; research 0 |
+| C09 | pop 500, factories 50, mines 48 (R 100) | Auto Mines ×100, Auto Factories ×3 | mines 55, factories 53; queue unchanged; research 35; "completed its orders"; minerals = start + mined − 12 Ge (mining not predicted) |
+| C10 | pop 1000, factories 995 (R 200) | Factory ×10 | factories 1000; Ge 480; queue empty; research 150; clipped-order message |
+| C11 | pop 50 (R 5), minerals 100/100/2 | Factory ×1 @59%, Mine ×10 | factories 1; Ge 0; queue Mine ×10 @19%; research 0 |
+| C12 | pop 1000 (R 100), minerals 3/2/100 | Defenses ×5, Mine ×2 | defenses 10, mines 0; minerals 1/0/98; queue Defenses ×5 @59%, Mine ×2; research 92 |
+
+What each case discriminates:
+
+- C01, C08, C11: the partial percentage (59% for 5 of 10 resources, not
+  50%), and the remaining cost of a carried partial (C11: a 59% factory
+  needs exactly 5 resources and 2 kT Ge, not 41% of cost). C11 also
+  predicts that a zero-resource partial records 19% with nothing spent.
+- C02 vs C03: a non-auto item short of minerals stops the queue; an auto
+  item short of minerals is skipped.
+- C04, C05: hidden partial items spawned by auto items; C05 also whether
+  Auto Alchemy's count is ignored (count respected would give 101/101/101,
+  research 150).
+- C06, C07: the alchemy prefix, including that alchemy raises all three
+  minerals, not only the missing one.
+- C08a vs C08b: research tax before production, and the leftover-only box.
+- C09: auto caps come from operable installations after growth, and the
+  auto count limits the build.
+- C10: the clip of non-auto installation orders.
+- C12: the partial percentage is the minimum over components (Bo 59%, not
+  Fe 79% or a 40% ratio).
