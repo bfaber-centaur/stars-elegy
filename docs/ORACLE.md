@@ -688,7 +688,10 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   and 45000 → 109; 11500 → 329; 10500, 9800 → 384; 6000 → 659; 5200 → 768;
   3700 → 1098; 2260, 2190 → 1812; 1985–1955 → 2032; 1750, 1710 → 2306;
   1490 → 2691; 1210 → 3295; 1190, 1170, 1160 → 3405; 1165, 1155 → 3460;
-  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. Below
+  1135, 1130, 1090 → 3570; 930 → 4284; 890 → 4613; 880 → 4503. From
+  the scrap-tech replays (TK-307): 30000 and 50000 → 109; 20000 → 164;
+  17000 → 219; 15000 → 274; 12000 → 329; 10000 → 384; 8800 → 439;
+  7100 and 6500 → 604; 5500 → 714; 4300 → 933. Below
   about 1200 the mapping is not monotonic. Runs down to cycles 880 still
   took well under a minute each.
 - A range like `15000 + 37·year` reaches only two or three ticks, so a

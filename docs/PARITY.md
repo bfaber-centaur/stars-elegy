@@ -3644,7 +3644,16 @@ the other two starbases always sent 0x141. The electronics level also sent
 time, and a passing attempt gives the part with chance 0.215. Observed
 10 of 12 first attempts passed and 5 of 10 gains were the part, both above
 the model (TK-203 also gained more often than predicted: 7 of 12 first
-attempts against 0.33). Open.
+attempts against 0.33).
+
+**Resolved by replaying the random stream (CONFIRMED, TK-307).** With the
+roll at the first starbase placed at the third draw of the year, the
+binary rule reproduces every TK-305 run exactly (outcome and field). The
+12 cycles values reached only 9 streams, and 3 parts in 7 gaining streams
+is within chance. TK-307 then predicted five new cycles values before the
+run, including gains at the second and third starbase after earlier
+failures; all five matched (four at the expected stream, one at its
+listed neighbour). `experiments/tk/tk307.md` has the tables.
 
 ### Round 5: manual cargo transfers (TK-501, TK-502)
 
