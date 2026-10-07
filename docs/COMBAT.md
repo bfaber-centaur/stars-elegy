@@ -273,7 +273,10 @@ armor, it does not trust a stored value):
   reduced by a quarter (`jam − jam/4`) (BINARY-ONLY).
 - **Capacitor %**: `C = 1000`, `C = C·(100 + v)/100` per Energy Capacitor
   (v 10) or Flux Capacitor (20), at most 2550; capacitor % = C/10.
-  CONFIRMED: 2 Flux Capacitors and 1 Energy Capacitor give 132%.
+  The product runs over every item, so two Flux Capacitors in one slot
+  count twice. CONFIRMED only for one Flux and one Energy Capacitor (in
+  different slots): 132% (CB-002 C4, the "Cap DD"). Several of one kind
+  is BINARY-ONLY: 2 Flux + 1 Energy would give 158%.
 - **Deflector %**: `D = 1000`, `D = D·90/100` per Beam Deflector;
   deflector % = D/10 (100 = none).
 - **Shields**: sum of shield values, + 50 per Fielded Kelarium, + 100 per
@@ -614,7 +617,10 @@ jammer `j`:
 - otherwise: `p = acc·(100 − (j − c))/100`;
 - in both cases at least 1.
 
-**Hits `H` out of `N` torpedoes:**
+**Hits `H` out of `N` torpedoes.** `H` is computed afresh for each target
+the salvo reaches. `N` is the number of torpedoes still unfired, and `p`
+uses that target's jammer. With `N ≤ 200`, each target therefore gets its
+own `N` draws.
 
 - if `p ≥ 100`, all hit;
 - if `N > 200`, `H = N·p/100` exactly, with no random draw. CONFIRMED
@@ -624,7 +630,8 @@ jammer `j`:
 
 Per salvo, while torpedoes remain:
 
-1. Choose a target. Let `d` = the part's damage. `d` is doubled for a
+1. Choose a target, then compute `H` for it. Let `d` = the part's
+   damage. `d` is doubled for a
    missile against a target with total shields < 1. CONFIRMED (CB-002,
    P-20).
 2. **Decide how many torpedoes this target takes** (`n`):
@@ -687,10 +694,16 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
 
 - `total = dp + extra + units·armor/500`.
 - If `total < armor`, `units = total·500/armor`, at least one step more
-  than before. CONFIRMED: an unarmed Space Station with 400 shields went
-  through 90, 190, … 490 per 500, then died at the next hit.
+  than before. CONFIRMED (CB-011..013 S5):
+  - The unarmed Space Station has 400 shields and 500 armor. The first
+    hit came at distance 1 (90% dropoff) for 90, then 100 per hit.
+  - Shields took 90 + 100 + 100 + 100.
+  - The fifth hit put its last 10 into shields and 90 into armor (90/500).
+  - Then 190, 290, 390 and 490; the next hit (total 590) destroyed it.
 - Otherwise the starbase is destroyed. The planet no longer has one, and
   ships and packets queued for building there are lost (BINARY-ONLY).
+- Either way, **no damage is left over** after a hit on a starbase. A
+  beam stops there, even after destroying it (BINARY-ONLY).
 - Destroying an Alternate Reality race's starbase leaves the planet
   uninhabited (BINARY-ONLY).
 
@@ -750,10 +763,25 @@ Then:
 
 - **At a planet:** the planet's surface gains `× 8/10` if it has a
   starbase, else `× 5/10`. No salvage object is created.
-- **In deep space:** a quarter is lost (`S − S/4`). The rest goes into
-  one salvage object per battle, capped at 30000 kT. If all minerals of
-  a new salvage object would be 0, each gets `rand(10)` (BINARY-ONLY,
-  inferred to be a token amount).
+- **In deep space** (BINARY-ONLY in detail): a quarter is lost
+  (`S − S/4`).
+  - The rest goes into this battle's salvage object. Every kill event
+    in the battle adds to it.
+  - No salvage object is placed exactly on a planet's position.
+  - If all three minerals of an addition are 0, each becomes `rand(10)`.
+    This is redrawn until the total is above 0.
+  - **The 30000 kT limit** is counted in 10 kT steps: an object holds at
+    most 3000 steps, and adding `m` kT of one mineral uses `ceil(m/10)`
+    steps. When an addition happens, the object's existing minerals are
+    taken out and re-added with the new ones. Minerals are added in the
+    order ironium, boranium, germanium.
+  - A mineral that does not fit fills the object to exactly 3000 steps
+    with `10 × free steps` kT of that mineral. A **new salvage object**
+    is then created at the same position.
+  - The remainder of that mineral is added in a new pass (ironium,
+    boranium, germanium again) into the new object, and so are the
+    minerals not yet added. Nothing is lost to the limit, and nothing is
+    split proportionally.
 
 ### Repair (CONFIRMED, CB-017, 10 locations × 2 turns; Q-12)
 
