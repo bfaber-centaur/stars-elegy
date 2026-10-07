@@ -32,9 +32,12 @@ consume what is specified, and which few open research items it will hit.
 - Computer players, under Bobby's stopping rule (2026-10-07, option B,
   checked only for the legacy computer-player program):
   - Candidates for faithful implementation, oracle-checked: Robotoid
-    (AI-8/9/12), Cybertron (AI-19..21, #82) and Rototill (AI-14..17, #81).
-  - Reference only, optional future work: Macinti, Turindrone and
-    Automitron. Their specs and measurements are kept.
+    (AI-8/9/12), Cybertron (AI-19..21, #82), Rototill (AI-14..17, #81),
+    Turindrone (AI-22, 689/689, #49) and Automitron (AI-23, 264/264, #49).
+    Bombers and armadas were never exercised, so the armada parameters
+    stay BINARY-ONLY.
+  - Reference only, optional future work: Macinti. Its measurements are
+    kept.
   - Reproducing all six personalities is no longer an objective. Active
     computer-player lanes finish their current checkpoint and then stop
     unless reauthorized. A new computer-player experiment needs a concrete
@@ -69,7 +72,7 @@ consume what is specified, and which few open research items it will hit.
 Merge-chain repair, then send new capacity round the loop Elegy
 implementation → implementation-surfaced spec question → bounded
 prediction and oracle experiment → reconciliation. Candidates: space
-objects (OBJECTS.md) once #49 merges, and the three checked computer
-players once #81 and #82 merge. Do not start broad computer-player
+objects (OBJECTS.md) once #49 merges, and the five checked computer
+players once #49, #81 and #82 merge. Do not start broad computer-player
 archaeology. Keep every active lane running to its own
 checkpoint.
