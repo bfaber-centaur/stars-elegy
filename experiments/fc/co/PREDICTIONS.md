@@ -12,3 +12,10 @@ CO-05 (one damaged stack) cannot separate the two candidate units rules. With on
 ## CO-06 path change
 
 The first CO-06 runs found the fleet panel's Merge (Merge Fleets) disabled for the 16000-ship fleets, so the client wrote no order. The re-run moves all 16000 ships with the two-fleet exchange (a move-ships record, not the `0x25` merge). Turn orders' boundary prediction is unchanged: 32767 or fewer is kept, and 32768 or more empties the slot.
+
+## CO-06 controls (after the first exchange runs)
+
+The client's Ship Transfer stopped the destination at 32766, and the host stored **32765** for every total from 32766 up. Two controls separate "the host clamps the move at 32765" from "the host loses one ship":
+
+- 16000 + 16765 (32765): prediction **32765 kept**, fleet 1 gone.
+- 16000 + 16000 (32000): prediction **32000 kept**.
