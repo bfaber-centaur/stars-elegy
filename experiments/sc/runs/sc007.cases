@@ -1,0 +1,27 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC007-planet-edge	0	planet 18	3	S-5,S-6	-	d2=40000 pen=200
+SC007-planet-past	0	planet 5	0	S-5,S-6	normplanets	d2=40001 pen=200
+SC007-orbit-edge	0	fleet 1/0	3	S-6	-	d2=40000
+SC007-orbit-past	0	fleet 1/1	0	S-6	intdist,orbitR	d2=40001
+SC007-orbit-st35	0	fleet 1/2	0	S-6,S-13	-	d2=40000
+SC007-deep-st35	0	fleet 1/3	3	S-6,S-13	-	d2=40000
+SC007-planet0	0	planet 0	3	S-5	-	
+SC007-planet1	0	planet 1	0	S-5	normplanets	
+SC007-planet2	0	planet 2	3	S-5	-	
+SC007-planet3	0	planet 3	3	S-5	-	
+SC007-planet4	0	planet 4	0	S-5	normplanets	
+SC007-planet6	0	planet 6	0	S-5	-	
+SC007-planet7	0	planet 7	3	S-5	-	
+SC007-planet9	0	planet 9	3	S-5	-	
+SC007-planet10	0	planet 10	3	S-5	-	
+SC007-planet11	0	planet 11	0	S-5	normplanets	
+SC007-planet12	0	planet 12	0	S-5	normplanets	
+SC007-planet13	0	planet 13	3	S-5	-	
+SC007-planet14	0	planet 14	3	S-5	-	
+SC007-planet15	0	planet 15	0	S-5	-	
+SC007-planet16	0	planet 16	3	S-5	-	
+SC007-planet19	0	planet 19	0	S-5	normplanets	
+SC007-planet20	0	planet 20	3	S-5	-	
+SC007-planet21	0	planet 21	0	S-5	normplanets	
+SC007-planet22	0	planet 22	3	S-5	-	
+SC007-planet23	0	planet 23	3	S-5	-	

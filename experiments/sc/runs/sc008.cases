@@ -1,0 +1,27 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC008-planet0	0	planet 0	0	S-5	-	
+SC008-planet1	0	planet 1	0	S-5	-	
+SC008-planet2	0	planet 2	0	S-5	-	
+SC008-planet3	0	planet 3	0	S-5	-	
+SC008-planet4	0	planet 4	0	S-5	-	
+SC008-planet5	0	planet 5	0	S-5	-	
+SC008-planet6	0	planet 6	0	S-5	-	
+SC008-planet7	0	planet 7	0	S-5	-	
+SC008-planet9	0	planet 9	0	S-5	-	
+SC008-planet10	0	planet 10	0	S-5	-	
+SC008-planet11	0	planet 11	0	S-5	normplanets	
+SC008-planet12	0	planet 12	0	S-5	normplanets	
+SC008-planet13	0	planet 13	0	S-5	-	
+SC008-planet14	0	planet 14	0	S-5	-	
+SC008-planet15	0	planet 15	0	S-5	normplanets	
+SC008-planet16	0	planet 16	0	S-5	-	
+SC008-planet18	0	planet 18	0	S-5	normplanets	
+SC008-planet19	0	planet 19	0	S-5	normplanets	
+SC008-planet20	0	planet 20	0	S-5	-	
+SC008-planet21	0	planet 21	0	S-5	normplanets	
+SC008-planet22	0	planet 22	0	S-5	-	
+SC008-planet23	0	planet 23	0	S-5	-	
+SC008-orbit30	0	fleet 1/0	0	S-6	orbitR	d2=900
+SC008-deep30	0	fleet 1/1	3	S-1	-	d2=900
+SC008-deep100	0	fleet 1/2	3	S-1	-	d2=10000
+SC008-deep101	0	fleet 1/3	0	S-1	intdist	d2=10001
