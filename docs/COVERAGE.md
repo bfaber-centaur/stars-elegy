@@ -26,7 +26,7 @@ Levels:
 | Minefields | `OBJECTS.md` | Confirmed | MF-1..12 held in 33 of 35 cases (#47). Open: the 4050-object limit, SS and SD safe-warp bonuses. |
 | Colonists breeding inside fleets (one primary trait) | none | Missing | How carried colonists grow, and where the overflow goes. |
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
-| Ships and starbases leaving production | `PRODUCTION-LAUNCH.md` | Read | New fleets, numbers, fuel, default orders, routing warp, the 512-fleet limit, starbase replacement. Predictions SL-01..12 are with the oracle. |
+| Ships and starbases leaving production | `PRODUCTION-LAUNCH.md` | Read | New fleets, numbers, fuel, default orders, routing warp, the 512-fleet limit, starbase replacement and its cost. CONFIRMED by SL-01..12 (#61), except the parts marked BINARY-ONLY there. |
 | Population growth | `KERNEL.md` | Confirmed | |
 | Research and tech progression | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. |
 | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#44), `OBJECTS.md` | Confirmed (#44) | KX-004. Check that #44 states meteors and climate change also clear the non-automatic items from a planet's queue. |
@@ -54,8 +54,9 @@ Levels:
    difference INTENTIONALLY DIFFERENT. The in-year special rules for
    computer players need a spec either way.
 2. **Ships and starbases leaving production.** This happens every year
-   for every player. Now specified (BINARY-ONLY) in
-   `PRODUCTION-LAUNCH.md`; the SL-01..12 corpus will confirm it.
+   for every player. Now specified in `PRODUCTION-LAUNCH.md` and
+   CONFIRMED by SL-01..12 (#61); the same-hull replacement cost and the
+   research share of an unbuilt ship remain BINARY-ONLY.
 3. **Waypoint upkeep and the remaining tasks:** repeat orders, dropped
    waypoints, dead targets, the route and patrol tasks, transfer-fleet
    refusals. Every multi-waypoint order depends on these. Mostly read

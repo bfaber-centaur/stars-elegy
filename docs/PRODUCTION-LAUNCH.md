@@ -8,10 +8,12 @@ queue order) and stops where the new fleet starts its first waypoint.
 
 ## Status of each rule
 
-Tags as in `KERNEL.md`. Every rule here is **BINARY-ONLY** unless marked:
-read from the original program, with oracle predictions SL-01..SL-12
-written but not yet run. Two items were seen in a one-year tooling check
-(SL tooling, cycles 30000) and are marked **MEASURED** where they apply.
+Tags as in `KERNEL.md`. The rules were read from the original program and
+predicted as SL-01..SL-12 before the oracle ran them. The SL batch
+(`experiments/sl`, stars-elegy #61; two streams, cycles 20000 and 30000,
+identical results) held for every prediction it could test, so the rules
+it covers are **CONFIRMED**, citing the SL item. Rules it did not reach
+stay **BINARY-ONLY** and are marked so.
 
 ## Conventions
 
@@ -41,15 +43,17 @@ and is seen like any fleet. It does not move until next year.
 
 ### Can the planet build it
 
-- The planet must have a starbase. Without one, the item builds nothing.
+- The planet must have a starbase. Without one, the item builds nothing
+  (BINARY-ONLY).
 - The owner must have the technology for the hull and every part of the
   design. If not, the item builds nothing and the owner is told the plans
-  were lost.
+  were lost (BINARY-ONLY).
 - **The host does not check the starbase's dock** (LEGACY BUG). The
   original client offers ships only at a starbase with a dock, and only up
   to the dock's hull mass (200 kT for a Space Dock), but the host builds
   any ship in the queue at any starbase, including an Orbital Fort, and
-  any mass at a Space Dock (SL-12). A hand-built order or file can
+  any mass at a Space Dock (CONFIRMED, SL-12: an Orbital Fort built a
+  Scout, and a Space Dock built a 574 kT Mini-Miner). A hand-built order or file can
   therefore queue ships the client would refuse. **Chosen rule for an
   independent implementation:** reject at order validation any ship item
   the client could not queue (no dock, or hull mass above the dock's
@@ -57,35 +61,64 @@ and is seen like any fleet. It does not move until next year.
 
 In each case where nothing is built, the resources are already spent and
 the item is removed from the queue (as `KERNEL.md` "Production" removes a
-finished non-auto item).
+finished non-auto item). CONFIRMED for minerals at the fleet limit
+(SL-09: the planet ended 12/6/13 kT of Fe/Bo/Ge below its control); the
+resource share could not be tested there (both players at tech 26, so no
+research accumulates), and is BINARY-ONLY.
 
 ### The new fleet
 
-One new fleet per build event (SL-01; MEASURED once: two Scouts from one
-item became one fleet):
+One new fleet per build event (CONFIRMED, SL-01: a queue of 2 Scouts,
+1 Scout and 1 Colony Ship made three fleets of 2, 1 and 1 ships):
 
-- **Number:** the owner's lowest unused fleet number (SL-02). With fleets
-  #1, #2 and #4, the next is #3, then #5.
+- **Number:** the owner's lowest unused fleet number (CONFIRMED, SL-02).
+  With fleets #1, #2 and #4, the next is #3, then #5.
 - **Fleet order.** Fleets are processed in order of owner, then number. A
   new fleet takes its place in that order by its number, so a fleet that
-  fills a gap is processed before older fleets with higher numbers.
+  fills a gap is processed before older fleets with higher numbers
+  (BINARY-ONLY).
 - **Ships:** the item's ships, undamaged.
-- **Fuel:** tanks full (MEASURED once). **Cargo:** none.
-- **Orders:** one waypoint, at the planet, with no task. Repeat off. Battle
-  plan: the player's first plan (the default plan). No name.
+- **Fuel:** tanks full (CONFIRMED, SL-01: 100, 50 and 200 mg). **Cargo:**
+  none.
+- **Orders:** one waypoint, at the planet, with no task and warp 0. Repeat
+  off. Battle plan: the player's first plan (the default plan). No name.
+  CONFIRMED (SL-01).
 - **Default task** (AR only): an Alternate Reality player's new fleet that
   can mine gets the task "remote mining" on its first waypoint, at its own
-  planet (SL-11). No other race gets a default task at build. Whether
-  that task then mines an AR player's own planet is a remote-mining rule
-  (`KERNEL.md`), not settled here.
+  planet. No other race gets a default task at build. CONFIRMED (SL-11:
+  an AR Mini-Miner got remote mining and battle plan 0; a JOAT one got no
+  task).
+- **Mining at its own AR planet** (a `KERNEL.md` mining rule, recorded
+  here because SL-11 measured it). An AR planet mines with
+  `trunc(sqrt(P))` mines (`KERNEL.md` "Production"). A same-owner fleet
+  orbiting it with the remote-mining task that did not move this year
+  adds its mining-robot rate to those mines, and the planet mines once
+  with the total (BINARY-ONLY). The SL-11 measurement is consistent with
+  it (two streams, one setup): planet with `P` 1150 (33 mines) and
+  concentrations 62/10/87, Mini-Miner with two Robo-Mini-Miners (rate 8):
+  41 mines predict +25/+4/+35 or 36 kT and the planet gained +25/+4/+36,
+  against +20/+3/+29 in the control. Mining the fleet separately would
+  also fit these values within the random +1. The planet's own gain also matches
+  `KERNEL.md`: `P` 1000 → 31 mines → +19/+3/+27. In its build year the
+  miner adds nothing (it moved, below).
 - **"Moved this year."** The game marks, during movement, every fleet that
   did not move. A fleet built in production was not there to be marked,
   so for the rest of its first year it counts as a fleet that moved
-  (MEASURED once: new fleets lacked the flag, fleets that stayed had it).
+  (CONFIRMED, SL-03: new fleets lacked the flag in their build year, and
+  had it in year 2 once they had stayed put).
   Effects inside that year: it does not remote-mine (`KERNEL.md` "Remote
   mining" requires a fleet that did not move), it gets the moved-this-turn
   repair rate (`COMBAT.md` "Repair"), and it is not a stationary remote
   miner for `SCANNING.md` "Remote miners".
+- Two fleets lack the flag after a year at the planet (MEASURED, SL-03 and
+  SL-11, two streams; explanation BINARY-ONLY):
+  - A fleet routed to its own planet has a second waypoint there at warp
+    2. Movement treats it as moving (a leg of 0 ly), so it is not marked.
+    On arriving, the route task routes it to the same planet again, so this
+    repeats every year.
+  - An AR fleet whose remote mining is added to its own planet's mining
+    (above) has the flag cleared when that mining is applied, after
+    movement. It did mine.
 - If the planet has a route destination: see Routing.
 - The owner is told the planet built the ships, and where they are routed.
 
@@ -103,8 +136,8 @@ tooling check: the game wrote no name for new fleets.
 
 A planet can have a **route destination**: another planet. When it does,
 each new fleet gets a second waypoint at that planet with the task
-"route", at a warp chosen as below (MEASURED twice, below). The route
-setting itself is unchanged.
+"route", at a warp chosen as below. The route setting itself is unchanged.
+CONFIRMED (SL-04..SL-07: 28 of 28 warps, every route word unchanged).
 
 ### Ideal warp of the fleet
 
@@ -152,21 +185,33 @@ Trans-Galactic Super Scoop 7, Trans-Galactic Mizer Scoop 10, Galaxy Scoop
    design; the owner is then told the fleet will not be routed for lack of
    fuel, and the waypoint stays at warp 0.
 
-Vectors (Scout hull with Long Hump 6, Rhino Scanner and X-Ray Laser, 23
-kT, 50 mg; "QJ5 Scout": Quick Jump 5 and Bat Scanner, 14 kT, 50 mg):
+Vectors, CONFIRMED (SL-04..SL-07, both streams). Scout: Scout hull with
+Long Hump 6, Rhino Scanner and X-Ray Laser, 23 kT, 50 mg. QJ5 Scout: Quick
+Jump 5 and Bat Scanner, 14 kT, 50 mg. Stations are Space Stations; gates
+are Stargate 100/250.
 
-| Destination | Fleet | `d` | Warp | Status |
-|---|---|---|---|---|
-| unowned | 1 Scout | 41 | 5 (`⌊⌊41/6⌋/6⌋ = 1 = ⌊⌊41/5⌋/5⌋`; 4 gives 2) | MEASURED |
-| unowned | 2 Scouts with a Fuel Tank instead of the laser (25 kT, 600 mg) | 133 | 6 | MEASURED |
-| unowned | 1 Scout | 10 | 4 | SL-04 |
-| unowned | 1 Scout | 500 | 3 (the leg at 6, 5 and 4 costs over 50 mg) | SL-04 |
-| own, both with starbases, dock at the destination | 1 Scout | 41 | 7 | SL-05 |
-| same | 1 Scout | 133 | 6 | SL-05 |
-| same | 1 QJ5 Scout | 133 | 7 (5 without the dock) | SL-05 |
-| same | 1 QJ5 Scout | 300 | 6 (5 without the dock) | SL-05 |
-| same, safe gates at both ends | 1 Scout | 41 | gate | SL-06 |
-| the building planet itself | 1 Scout | 0 | 2 | SL-07 |
+| Destination | `d` | Scout | QJ5 Scout |
+|---|---|---|---|
+| unowned | 12 | 4 | 4 |
+| unowned | 17 | 5 | 5 |
+| unowned | 25 | 6 | 4 |
+| unowned | 41 | 5 | 5 |
+| unowned | 86 | 6 | 5 |
+| unowned | 299 | 6 | 5 |
+| own Station | 72 | 7 | 9 |
+| own Station | 84 | 7 | 7 |
+| own Station with a gate (source without one) | 94 | 7 | 7 |
+| own Orbital Fort (no dock) | 77 | 6 | 5 |
+| the other player's Station | 77 | 6 | 5 |
+| own Station, gates at both ends, `d` within range | 49 | 11 | 11 |
+| own Station, gates at both ends, `d` beyond the 250 ly range | 309 | 6 | 6 |
+| the building planet itself (a Station) | 0 | 2 | 2 |
+
+Without the dock rule the three own-Station rows would give 5/5, 6/5 and
+6/5, and with it the Fort and other-player rows would give 7/9. Two more
+from the SL tooling check (MEASURED once): one Scout to an unowned planet
+at 41 ly, warp 5; two Scouts with a Fuel Tank instead of the laser (25 kT,
+600 mg) to an unowned planet at 133 ly, warp 6.
 
 How a routed fleet behaves when it arrives (it is routed on again from
 that planet's route, or given the default orders) is the route task, in
@@ -181,7 +226,9 @@ When the owner already has 512 fleets, a build event makes no new fleet:
   fleet order, that is at the planet and whose stack of that design would
   stay at or below 32,765 ships. The owner is told they were merged into
   that fleet. So with 511 fleets and two items, the first item makes the
-  512th fleet and the second joins it (SL-08).
+  512th fleet and the second joins it (CONFIRMED, SL-08). A stack at
+  32,765 is passed over for the next fleet at the planet (CONFIRMED,
+  SL-10 variant).
 - **Damage of the receiving stack.** If the stack had no ships or no
   damage, it has no damage after. Otherwise, with `n` ships before, `b`
   built, armor `A`:
@@ -192,19 +239,25 @@ When the owner already has 512 fleets, a build event makes no new fleet:
   - `units' = ⌊⌊5T/D'⌋·100/A⌋`.
 
   The total is kept and spread over `D'` ships, and truncating `D'` can
-  concentrate it. Vector: 10 Scouts (armor 20) at 50% / 100 units, plus 1
-  built → 45% / 125 units (SL-10). This is not the merge rule of
-  `ORDERS.md` ("Damage dilution"), which would give 46% / 100.
+  concentrate it. CONFIRMED (SL-10, two setups): 10 Scouts (armor 20) at
+  50% / 100 units, plus 1 built → 45% / 125 units; at 50% / 300 units →
+  45% / 375. This is not the merge rule of `ORDERS.md` ("Damage
+  dilution"), which would give 46%. Starbase repair later in the same year
+  then acts on the merged stack as usual: 125 ended at 25 and 375 at 275,
+  each 100 units less, the same repair the controls without a build
+  showed (300 → 200, and 100 → undamaged).
 - **Lost.** If no fleet qualifies, the ships are lost, the owner is told
   that only 512 fleets can be tracked, the item is removed and its
-  resources stay spent (SL-09).
+  resources stay spent (CONFIRMED, SL-09: no ship, no fleet changed, both
+  ship items removed, the Factory item after them built; minerals spent,
+  the resource share untested as above).
 
 ## Starbases
 
 Building a starbase design at a planet:
 
 - The owner must have the technology for its hull and parts; otherwise
-  nothing is built and the item is removed, with no message.
+  nothing is built and the item is removed, with no message (BINARY-ONLY).
 - The new starbase replaces the old one, if any. The owner is told, with
   the dock limit when the new hull has one ("up to N kT", or "any size").
 - **Queued ships.** If the new starbase's hull comes **earlier** in the
@@ -214,17 +267,47 @@ Building a starbase design at a planet:
   (percent complete back to 0). This follows hull order, not dock size:
   Space Station → Space Dock and Death Star → Ultra Station both remove
   queued ships; Space Dock → Space Station and a same-hull replacement do
-  not (SL-12). Items earlier in the queue than the starbase were already
+  not (CONFIRMED, SL-12). Items earlier in the queue than the starbase were already
   built that year (MEASURED once: two Scouts queued before an Orbital Fort
   that replaced a Station were built).
 - **Damage is kept.** The planet's starbase damage stays as it was, as
   `units` (five-hundredths of armor), so it now applies to the new
-  starbase's armor (SL-12).
+  starbase's armor, and is repaired from there as usual (CONFIRMED,
+  SL-12: a Station at 200 units replaced by another Station design read
+  150 after the year, as the unreplaced control did).
 - **Mass driver.** If the planet had no mass driver before and the new
   starbase has one, the planet's packet speed is set to the new driver's
   speed. If it still has none, the planet's packet destination and speed
   are cleared and its queued packet items (not automatic packets) are
-  removed.
+  removed (BINARY-ONLY).
+
+### Cost of a replacement
+
+Building a starbase design at a planet that already has a starbase costs
+less than the design. Per component (Fe, Bo, Ge, resources), with `c` the
+new design's owner cost and `o` the old design's (`COMPONENTS.md`
+"Starbases", step 1–3: before the ISB/AR reduction and the halving):
+
+- **Different hull:** `max(⌊c/2⌋, c − ⌊o/2⌋)`.
+- **Same hull** (BINARY-ONLY): `c` less the hull's cost, then for each slot
+  position filled in both designs, with `N` the new slot's cost (count ×
+  part cost) and `O` the old slot's: the slot is charged
+  `max(0, N − O)` if it holds the same part; `max(N − ⌊8·O/10⌋, ⌊2·N/10⌋)`
+  if a different part of the same category; `max(N − ⌊7·O/10⌋,
+  ⌊3·N/10⌋)` otherwise. The cost falls by `N` less the charge, but not
+  below 0. So replacing a design by one with the same hull and the same
+  parts costs nothing.
+
+Then, as for any starbase design, ISB or AR takes `c − ⌊c/5⌋` and the
+result is halved rounding up.
+
+MEASURED for minerals (SL-12, two streams): a JOAT + ISB Space Dock
+replaced by a Space Station design of 92/72/157/364 costs 35/29/61 kT
+(a fresh design would cost 37/29/63). The item, short of resources,
+reached 88% and had spent 30/25/53 kT, which those costs give and the
+fresh costs do not (32/25/55). The resource cost (136 by the rule) is not
+pinned by this run. With three times the resources the Station and both
+queued Scouts were built.
 
 ## Not covered here
 
@@ -243,5 +326,5 @@ Elegy's production queue does not model ship or starbase items yet
 - the dock check is added at order validation (above), instead of the
   host's missing check;
 - the other rules are implemented as written, with regression tests from
-  the SL vectors once the oracle has run them. None of them is a crash or
+  the SL vectors above. None of them is a crash or
   data corruption, so no chosen rule replaces them.
