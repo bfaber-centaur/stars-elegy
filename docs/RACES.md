@@ -55,6 +55,13 @@ Rules this file relies on but does not restate: habitability (`KERNEL.md`
 | expensive fields start at tech 3 | on/off | off |
 | factories cost one less germanium | on/off | off |
 
+In the race files and in the oracle records (the `lrt=` words in
+`PARITY.md` "Race design"), these traits share one 32-bit word: bits 0–13
+are the LRTs in the order listed above (IFE = bit 0 … RS = bit 13), bit 29
+is "expensive fields start at tech 3", bit 30 marks the wizard's Random
+race template, and bit 31 is "factories cost one less germanium". So
+`a000006d` is IFE, ARM, ISB, UR, MA, bit 29 and bit 31.
+
 The default race is the wizard's Humanoid race. It scores 25 points.
 
 Below, `col` is colonists per resource / 100, `fo` factory output, `fc`
@@ -197,15 +204,26 @@ disagrees on a growth-0 race. Elegy should implement the rule above.
 Before scoring, the original repairs malformed fields. Each repair marks
 the race as **tampered**, a per-race flag that is visible in the game files:
 
-- Habitat, per axis: a low of "immune" makes the whole axis immune. Else
-  `lo` is clamped to 0..100, `hi` to `lo..100`, and the centre is forced to
-  `lo + (hi − lo)/2` (CONFIRMED: a centre one off was moved back, RD-4;
-  RD-P4, RD-P8). An axis with any value outside 0..100 that is not fully
-  immune is made immune (BINARY-ONLY).
+- Habitat, per axis. Only the low decides immunity: a low equal to the
+  immune marker (the byte 255, read as −1) makes the whole axis immune, and
+  a centre or high that is not also the marker is set to it (a repair).
+  Any other low is a number: `lo` is clamped to 0..100, `hi` to
+  `lo..100` (a high below the low becomes the low), and the centre is
+  forced to `lo + (hi − lo)/2`. A value outside 0..100 is therefore
+  clamped, never turned into immunity (CONFIRMED: a centre one off was
+  moved back, RD-4; RD-P4; a low of −5 became 0, RD-P8; the immune-marker
+  case and `hi > 100` are BINARY-ONLY). Settings are stored as signed
+  bytes, so a stored 200 reads as −56 and clamps to the low end.
 - Growth above 20 becomes 20 (BINARY-ONLY). Growth below 1 becomes **1**
   (CONFIRMED for growth 0, RD-4).
-- Every other setting is clamped to its range in the table above. Race
-  stat 15, an unused field, must be 0 (CONFIRMED at creation, RD-4).
+- Every other setting is clamped to its range in the table above: a value
+  below the range becomes the minimum, one above it the maximum. For a
+  research field that means below "costs 75% extra" stays "costs 75%
+  extra" and above "costs 50% less" becomes "costs 50% less"; a PRT above
+  JOAT becomes JOAT (RD-P7). Colonists per resource are stored in hundreds
+  (7–25), so a value that is not a multiple of 100 cannot occur in the
+  original. Race stat 15, an unused field, must be 0 (CONFIRMED at
+  creation, RD-4).
 
 ## At game creation (CONFIRMED)
 
@@ -258,6 +276,10 @@ Every year, before fleets move, each player's race is checked:
    of 51 → centre 50, colonists 1700 (525).
 4. A race already marked tampered is punished again only while its points
    are negative or a new repair is needed (BINARY-ONLY; follows from step 2).
+5. **Computer players** get steps 1 and 2 without the penalty: the silent
+   clamps, then the scoring repairs (habitat, growth 0 → 1), which do set
+   the tampered flag, but no message and no change to colonists, growth or
+   research, whatever the points (BINARY-ONLY).
 
 This differs from creation, where stat 15 = 1 marked the race tampered.
 
@@ -290,17 +312,29 @@ with a "random" marker. At creation it is replaced by a generated race:
    over its whole range (so spends 5 and 6 can occur).
 5. A race named "Random" gets a random computer-player name; any other
    name is kept (RD-4: "Zorgon").
-6. **Adjust to 0..50 points.** Until the race scores 0..50, try one change
-   per step and keep it only if it brings the points strictly closer to
-   0..50 (distance = how far outside 0..50):
-   - 3 in 10: one random research field one step dearer, else one step
-     cheaper;
-   - 3 in 10: one random LRT set to off, else on;
-   - 3 in 10: one random setting among colonists, factories and mines one
-     step down, else one step up;
-   - 1 in 20: one random axis: an immune axis becomes `lo = rand(31)`, 70
-     wide; any other becomes immune;
-   - 1 in 20: growth one lower (if above 1), else one higher (if below 15).
+6. **Adjust to 0..50 points.** Until the race scores 0..50, take one step.
+   A step picks one kind of change at random and tries its options in
+   order; the first option that brings the points strictly closer to
+   0..50 is kept and ends the step, and when none does the race is left as
+   it was. Distance is `max(points − 50, −points)`. "Else" below means
+   "try this next", never a coin flip: there is exactly one random draw for
+   the kind of change and one for which field, trait, setting or axis.
+   - 3 in 10: one of the six research fields, uniform. Try one step dearer
+     (skipped when already "costs 75% extra"), then one step cheaper
+     (skipped when already "costs 50% less").
+   - 3 in 10: one of the 14 LRTs, uniform. Try it off, then on. Setting it
+     to its current value changes nothing, so this is a toggle kept only if
+     it helps.
+   - 3 in 10: one of the seven economy settings (colonists per resource,
+     factory output, factory cost, factories operated, mine output, mine
+     cost, mines operated), uniform. Try one step down, then one step up.
+     Each try is clamped to the setting's range, so at a limit the blocked
+     direction is a try that changes nothing.
+   - 1 in 20: one of the three axes, uniform. An immune axis becomes `lo =
+     rand(31)`, `hi = lo + 70`, centre `lo + 35`; any other axis becomes
+     immune.
+   - 1 in 20: growth one lower (tried only above 1), then one higher (tried
+     only below 15).
 
    After 251 steps without success the race becomes the default race,
    keeping its name.
