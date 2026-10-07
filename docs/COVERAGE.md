@@ -27,14 +27,15 @@ Levels:
 | Colonists breeding inside fleets (one primary trait) | none | Missing | How carried colonists grow, and where the overflow goes. |
 | Mining, resources, research tax, production queues, terraform items | `KERNEL.md`, `PARITY.md` PQ | Confirmed | |
 | Ships and starbases leaving production | none | Missing | Where built ships go: one new fleet per build, its number and name, full fuel, the per-player fleet limit and what happens at it, routing to the planet's route destination with the warp chosen, a new fleet's default orders, what replacing or upgrading a starbase does to the old one. |
-| Population growth, research | `KERNEL.md` | Confirmed | |
-| Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md`, `OBJECTS.md` | In progress | KX-004. Meteors and climate change also clear the non-automatic items from a planet's queue. |
+| Population growth | `KERNEL.md` | Confirmed | |
+| Research and tech progression | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. |
+| Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#44), `OBJECTS.md` | Confirmed (#44) | KX-004. Check that #44 states meteors and climate change also clear the non-automatic items from a planet's queue. |
 | Battles | `COMBAT.md` | Confirmed | |
 | Bombing, invasion, colonization, capture | `TAKEOVER.md` | Confirmed | |
 | Tasks after movement: remote mining, laying mines, patrol, route, transfer fleet | `KERNEL.md`, `OBJECTS.md`, `SCANNING.md`, `TAKEOVER.md` | Read / Partial | The route task is missing. Patrol target choice is Read. Two transfer-fleet refusals are missing: a computer player never receives a fleet, and a recipient that treats the giver as an enemy refuses. |
 | Waypoint upkeep | `KERNEL.md`, `SCANNING.md` | Partial | Repeat orders (reached waypoints move to the end of the list), when a reached waypoint is dropped, waypoints whose target was destroyed or captured. |
 | Sweeping, repair | `OBJECTS.md`, `COMBAT.md` | Confirmed | |
-| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` | Read | One paragraph, no vectors. |
+| Claim Adjuster and orbital-adjuster terraforming | `KERNEL.md` | In progress | Owned by the KERNEL experiments lane. Currently one paragraph, Read. |
 | Duplicate-serial penalties | `KERNEL.md` | Read | |
 | What each player knows; estimates | `SCANNING.md` | Confirmed / Read | |
 | Scores and victory | `KERNEL.md` (#44) | In progress | |
@@ -63,8 +64,7 @@ Levels:
 5. **Client estimates:** production schedules, arrival years, fuel and
    research estimates.
 
-After those: colonists breeding inside fleets, Claim Adjuster and
-orbital-adjuster terraforming (needs an oracle), packet launch, patrol
+After those: colonists breeding inside fleets, packet launch, patrol
 targets, and a single list of limits. Not ranked, because a lane already
-owns them: random events, scores and victory, race design, wormholes and
-the Mystery Trader.
+owns them: research and terraforming, random events (CONFIRMED in #44),
+scores and victory, race design, wormholes and the Mystery Trader.
