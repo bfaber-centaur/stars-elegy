@@ -301,13 +301,26 @@ new design's owner cost and `o` the old design's (`COMPONENTS.md`
 Then, as for any starbase design, ISB or AR takes `c − ⌊c/5⌋` and the
 result is halved rounding up.
 
-MEASURED for minerals (SL-12, two streams): a JOAT + ISB Space Dock
-replaced by a Space Station design of 92/72/157/364 costs 35/29/61 kT
-(a fresh design would cost 37/29/63). The item, short of resources,
-reached 88% and had spent 30/25/53 kT, which those costs give and the
-fresh costs do not (32/25/55). The resource cost (136 by the rule) is not
-pinned by this run. With three times the resources the Station and both
-queued Scouts were built.
+MEASURED for a different hull (SL-12, two streams): a JOAT + ISB Space
+Dock replaced by a Space Station design of 92/72/157/364 costs
+35/29/61 kT and 136 resources (a fresh design would cost 37/29/63 and
+149). The item, short of resources, reached 88% and had spent
+30/25/53 kT, which those costs give and the fresh costs do not
+(32/25/55). The planet had 120 resources for it (below), and 88% of 120
+resources means a resource cost of 135 or 136, so the fresh 149 is ruled
+out too. With three times the resources the Station and both queued
+Scouts were built.
+
+Note on the SL races: both SL races were over their advantage-point
+budget (JOAT + ISB −42, AR + ISB −94), so the host degraded them before
+production (`KERNEL.md` "Item costs": colonists per resource 1,000 →
+2,400 for player 0 and 2,500 for player 1). That changes resources only:
+`trunc(1000/24) + 100 = 141`, less the 15% research share of 21, gives
+the 120 above. No other SL result here depends on resources or colonists
+per resource: fleet numbers, fuel, orders, warps, the fleet limit,
+damage and repair do not, and the AR mining figures depend on population
+and concentrations only. Where a planet built everything it queued
+(every case but this one), the item counts were not resource-limited.
 
 ## Not covered here
 
