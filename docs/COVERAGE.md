@@ -42,7 +42,7 @@ Levels:
 | What each player knows | `SCANNING.md` | Confirmed | |
 | Scores and victory | `KERNEL.md` "Scores and victory conditions" | Confirmed / Read | Score KX-003; the victory conditions are Read. |
 | New games | `UNIVERSE.md`, `RACES.md` | Confirmed | |
-| Messages to players | `MESSAGES.md` | Partial | Every message kind is catalogued (sender, recipients, values, phase); about 40% are CONFIRMED (MG batch). Player-to-player mail is not covered. |
+| Messages to players | `MESSAGES.md` | Confirmed / Read | All 387 kinds are catalogued (sender, recipients, values, phase); 198 rows are CONFIRMED. The rest are listed under "Kinds not yet observed, and how to reach them" and as gap 4 below. Player-to-player mail is not covered. |
 | Computer players | `AI.md` (shared core), `UNIVERSE.md` (starting setup) | In progress | Shared core specified (built-in races, research and starbase designs CONFIRMED; planet automation Read). Each personality's own turn is in progress (`docs/ai/`). Special rules for computer players inside the year are scattered: no fleet gifts to them (`ORDERS.md`), automatic trading with the Mystery Trader (`OBJECTS.md`). |
 | What the client shows: production completion estimates, arrival estimates, fuel and research estimates, planet value, report history | `ESTIMATES.md`, `SCANNING.md` ("Old reports") | Confirmed | ES-001 matched 149 of 149 readings; ES-002 confirmed stargate legs, "Skipped", Generalized Research, "Maxed Out" and the distance display. |
 | Limits: fleets, space objects, minefields, designs, queue length | `PRODUCTION-LAUNCH.md` (fleets), `OBJECTS.md` (minefields and objects) | Partial | Fleets (512) and minefields (512, or 511) are CONFIRMED or MEASURED. Design-slot and queue limits are not collected anywhere. |
@@ -59,8 +59,25 @@ Levels:
 3. **The plain setting orders** (research settings, relations, planet
    flags, renames) and the production-queue replacement rule: nothing
    states them.
-4. **Messages:** catalogued in `MESSAGES.md`; the remaining kinds need
-   their triggers measured.
+4. **Messages not yet observed** (`MESSAGES.md`, "Kinds not yet observed,
+   and how to reach them"). Most are reachable with legal orders and
+   Combat Lab setups, and the messages lane batches them. Targeted
+   experiments for the rest:
+   1. Manual cargo transfers (0x002, 0x042–0x04d, 0x0db–0x0dd): legal
+      client orders, now being run through client orders. Transfers to
+      another player's fleet (0x046–0x04d partial and refused, fuel
+      0x043/0x045) still need a client path, since the Cargo Transfer
+      dialog the tool opens shows only the orbited planet.
+   2. Kinds the client makes when a turn is opened and never writes to a
+      file (0x0aa–0x0ae, 0x15d newly found planets, 0x151 incoming packet
+      the planet cannot catch, 0x152 starbase finishing its whole queue,
+      0x153/0x154 battle count): read the client's message list after legal
+      setups, using client automation.
+   3. Registration penalties (0x100–0x107): need a player flagged for an
+      invalid or shared serial; waiting on Bobby's serial decision.
+   4. Never sent (0x00e–0x022, 0x065, 0x06f, 0x16b, 0x175, 0x0d1, 0x0d2,
+      0x124, 0x125 and the "no sender" table): no experiment is possible;
+      the check is negative, and no corpus has shown one so far.
 5. **A single list of limits:** design slots, queue length, space objects.
 
 Not ranked, because a lane already owns them or they are covered:
