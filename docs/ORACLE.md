@@ -891,6 +891,24 @@ What the client did, at 1152x864:
   lay 80 mines per year."). The host laid an 80-mine field at the
   fleet's deep-space position that year, with message 0x0c3.
 
+- **Fleet orders** (FO-1, 2026-10-07). The fleet view has more panels:
+  - The fleet name panel has Rename (144, 156). It opens "Rename Fleet" with the name selected; type and Return.
+  - Fleet Composition lists the designs. It has Split (232, 364), Split All (296, 364) and Merge (358, 364). Split is disabled for a one-ship fleet.
+  - "Other Fleets Here" has a combo (297, 412) listing the other fleets at the same place by fleet number. Its rows are about 17 px apart from y 431. Below it are Goto (232, 473), which selects that fleet, Merge (295, 473) and Cargo (358, 473).
+  - Split and the other-fleet Merge open "Ship Transfer": one row per design every 20 px from y 340, with the arrows at x 585 (to the right-hand fleet) and x 567 (to the left). OK is at (627, 555) and Cancel at (705, 555). Split's right-hand side is a new fleet, "Fleet #N" with the lowest free number.
+  - The composition Merge opens "Merge Fleets": every fleet at the place, the selected one included, by fleet number, with rows 13 px apart from y 352 (x 450). A click toggles a row. OK is at (698, 356), Select All at (698, 423) and Unselect All at (698, 452).
+  - Cargo opens Cargo Transfer with the other fleet, laid out like the planet one; its fuel row works too.
+  - Next and Prev don't follow fleet numbers. From fleet 0 at the homeworld, Next went to the highest-numbered fleet, then to fleet 1. Use Goto in "Other Fleets Here" instead.
+  - What the client wrote (`combatlab dump`):
+    - split: a 2-byte record naming the fleet, then a move-ships record;
+    - move-ships: fleet, other fleet, a mask of designs, and one signed count per design, as the change to the first fleet;
+    - merge: the kept fleet, then the merged fleets;
+    - fleet-to-fleet cargo: the cargo record with the other fleet;
+    - rename: the fleet and its new name.
+  - A fleet emptied by a move needs no record of its own. Split All is one split and one move-ships record per new fleet. Within one turn the client reused the numbers that a merge or empty freed.
+  - The host applied every record. Split and the exchange shared fuel and cargo by capacity, rounding down: 280 mg × 500/1450 → 96, and 10 kT × 210/630 → 3.
+  - Commands: `fleet rename NAME`, `fleet split`, `fleet splitall`, `fleet merge I...`, `fleet other I`, `fleet goto`, `fleet exchange`, `fleet cargo`, `ships ROW N`, `ships ok`, `ships cancel`.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh
