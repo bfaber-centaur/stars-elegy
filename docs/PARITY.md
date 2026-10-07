@@ -1882,7 +1882,9 @@ colonize failed in the same phase did **not** retry: before movement and
 after movement alike, the ship kept its colonists, its waypoint task was
 cleared (message 0x4e), and the planet stayed unowned with no minerals.
 The reading in stars-elegy #34 (a load-phase retry, and the after-movement
-LEGACY BUG) is not supported by this case.
+LEGACY BUG) is not supported by this case; the binary reading was since
+corrected to "colonize is tried once" (stars-elegy #37), which T-39 above
+confirms.
 
 **Tech on capture (MEASURED).** Player 0 at tech 3 captured two planets of a
 player at weapons 10 (other fields 3). Over 8 cycle settings, weapons went
