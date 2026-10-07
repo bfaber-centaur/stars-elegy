@@ -251,9 +251,11 @@ def state(hst, xy, game, xy_path=None):
             st['fleets'].append(fleet)
         elif s.startswith('  wp ') and fleet is not None:
             fleet['waypoints'].append(waypoint(d, fleet['owner'], len(owners)))
+        elif s.startswith('  fleetname ') and fleet is not None:
+            fleet['name'] = re.search(r'fleetname "(.*)" raw=', s).group(1)
         elif s.startswith('thing ') and 'type' in d:
             st['objects'].append(thing(d))
-        if not s.startswith('  wp ') and not s.startswith('fleet '):
+        if not s.startswith(('  wp ', 'fleet ', '  fleetname ')):
             fleet = None
     for n, p in planets.items():
         if n in sb:
@@ -512,7 +514,7 @@ if __name__ == '__main__':
     elif corpus in ('cb', 'sc', 'mf', 'rp'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
-    elif corpus in ('xf', 'bp', 'tk5', 'wu'):
+    elif corpus in ('xf', 'bp', 'tk5', 'wu', 'fc', 'co'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_orders').build(corpus, ev, out)
     elif corpus == 'wt':

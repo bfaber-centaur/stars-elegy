@@ -79,7 +79,8 @@ type Order struct {
 	Waypoint *Waypoint `json:"waypoint,omitempty"`
 	// repeat_orders, detonate
 	On *bool `json:"on,omitempty"`
-	// split: the ships that leave; merge: the fleets joining Fleet
+	// move_ships: signed counts per design, positive into Fleet from With;
+	// merge: the fleets joining Fleet
 	Ships  []Ships `json:"ships,omitempty"`
 	Fleets []int   `json:"fleets,omitempty"`
 	// detonate
@@ -106,7 +107,8 @@ var OrderFields = map[string][]string{
 	"waypoint_delete":    {"fleet", "index"},
 	"repeat_orders":      {"fleet", "on"},
 	"cargo":              {"fleet", "with", "amounts"},
-	"split":              {"fleet", "ships"},
+	"split":              {"fleet"},
+	"move_ships":         {"fleet", "with", "ships"},
 	"merge":              {"fleet", "fleets"},
 	"rename":             {"fleet", "name"},
 	"detonate":           {"minefield", "on"},
@@ -313,6 +315,7 @@ type Fleet struct {
 	BattlePlan   int            `json:"battle_plan"`
 	Waypoints    []Waypoint     `json:"waypoints"`
 	RepeatOrders bool           `json:"repeat_orders,omitempty"`
+	Name         string         `json:"name,omitempty"` // a name the player gave the fleet
 }
 
 type Ships struct {

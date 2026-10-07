@@ -25,6 +25,17 @@ def u16(b, o):
     return b[o] | b[o + 1] << 8
 
 
+def other_of(kind, word, player):
+    """The other side of a cargo or ship move (the kind byte's high nibble)."""
+    if kind & 15 != 2 or kind >> 4 not in OTHER:
+        raise ValueError('kind %02x not decoded' % kind)
+    if kind >> 4 == 2:
+        if word >> 9:
+            raise ValueError('fleet word %04x names another owner: not decoded' % word)
+        return {'kind': 'fleet', 'owner': player, 'id': word}
+    return {'kind': 'planet', 'id': word}
+
+
 def orders_of(xpath, nplayers):
     """(player, [order, ...]) from a player order file, in file order."""
     player, out = None, []
@@ -34,13 +45,21 @@ def orders_of(xpath, nplayers):
             player = int(d['player'])
         elif s.startswith('order cargo '):
             kind = int(d['kind'], 16)
-            if kind & 15 != 2 or kind >> 4 not in OTHER:
-                raise ValueError('cargo order kind %02x not decoded' % kind)
-            other = {'kind': OTHER[kind >> 4], 'id': int(d['other'])}
-            if other['kind'] == 'fleet':
-                raise ValueError('cargo to a fleet: the other fleet id word is not decoded yet')
+            other = other_of(kind, int(d['other']), player)
             out.append({'kind': 'cargo', 'fleet': int(d['fleet']), 'with': other,
                         'amounts': {CARGO_DUMP[k]: int(v) for k, v in d.items() if k in CARGO_DUMP}})
+        elif s.startswith('order split '):
+            out.append({'kind': 'split', 'fleet': int(d['fleet'])})
+        elif s.startswith('order move-ships '):
+            ships = [x.split(':') for x in d['ships'].split(',') if x]
+            out.append({'kind': 'move_ships', 'fleet': int(d['fleet']),
+                        'with': other_of(int(d['kind'], 16), int(d['other']), player),
+                        'ships': [{'design': int(a), 'count': int(b)} for a, b in ships]})
+        elif s.startswith('order merge '):
+            out.append({'kind': 'merge', 'fleet': int(d['fleet']),
+                        'fleets': [int(x) for x in d['merged'].split(',') if x]})
+        elif s.startswith('order rename '):
+            out.append({'kind': 'rename', 'fleet': int(d['fleet']), 'name': re.search(r'name="(.*)" raw=', s).group(1)})
         elif s.startswith('order queue '):
             items = [it.split(':') for it in d.get('items', '').split(',') if it]
             out.append({'kind': 'production_queue', 'planet': int(d['planet']),
@@ -81,6 +100,9 @@ def orders_of(xpath, nplayers):
 
 
 CLIENT = 'docs/ORACLE.md, client orders'
+CO_SPEC = 'docs/ORDERS.md "Fleet operations"'
+CO_PAR = 'experiments/fc/README.md "CO-01..06"'
+CO_PAR7 = 'experiments/fc/README.md "CO-07, CO-07b, CO-08"'
 XF_SPEC = 'docs/ORDERS.md "Fleet operations"; docs/TAKEOVER.md'
 # corpus: [(run dir, case id, title, prediction held, verdict, spec, parity, experiment)]
 RUNS = {
@@ -127,6 +149,52 @@ RUNS = {
         ('bpl/run', 'BP-L', 'battle plans: ten copies, the client stops at 15 plans', True,
          'held: the client wrote plans 5..14 (a 16th copy was refused) and the host kept 15 plans',
          'docs/COMBAT.md', 'docs/PARITY.md "Battle plans through the client (BP)"', 'experiments/bp'),
+    ],
+    'fc': [
+        ('fc1/run', 'FC-1', 'fleet orders: rename, cargo between own fleets, split, merge, move a ship', False,
+         'tooling check, no prediction committed; every order applied: the split and the exchange shared fuel and '
+         'cargo by capacity, rounding down', 'docs/ORDERS.md "Fleet operations"',
+         'experiments/fc/README.md "FC-1"', 'experiments/fc'),
+    ],
+    'co': [
+        ('co01/run', 'CO-01', 'split one ship off a loaded fleet', True,
+         'held: the new fleet got a capacity share of cargo and fuel', CO_SPEC, CO_PAR, 'experiments/fc'),
+        ('co02/run', 'CO-02', 'Split All of three ships', False,
+         'missed in form (the client keeps the source with one ship and writes a split and a move per new fleet); '
+         'the numbers held: the remainder stays with the source, the lowest id', CO_SPEC, CO_PAR, 'experiments/fc'),
+        ('co03/run', 'CO-03', 'move one ship from fleet 1 to fleet 2', True, 'held', CO_SPEC, CO_PAR, 'experiments/fc'),
+        ('co04a/run', 'CO-04a', 'cargo between own fleets: an explicit amount the client capped', True,
+         'held for the explicit amount; the capacity-rebalance alternative was refuted', CO_SPEC, CO_PAR,
+         'experiments/fc'),
+        ('co04b/run', 'CO-04b', 'cargo between own fleets into an empty fleet', True,
+         'held for the explicit amount; the capacity-rebalance alternative was refuted', CO_SPEC, CO_PAR,
+         'experiments/fc'),
+        ('co05/run', 'CO-05', 'merge fleets: one damaged stack into a healthy one', True,
+         'held for the percent (25% after repair); the units do not discriminate', CO_SPEC, CO_PAR, 'experiments/fc'),
+        ('co05c/run', 'CO-05c', 'merge fleets: two damaged stacks of different damage', True,
+         'held: 35%, units (500 + 400) / 7 rounded down', CO_SPEC, CO_PAR, 'experiments/fc'),
+        ('co05b/run', 'CO-05b', 'merge fleets: two equally damaged stacks', True,
+         'held for the direct-order rule (units over the damaged count, rounded down); the task rule was refuted',
+         CO_SPEC, CO_PAR, 'experiments/fc'),
+    ] + [('co06-%d/run' % n, 'CO-06-%d' % n, 'move %s ships into a 16000-ship fleet' % m, held, v, CO_SPEC, CO_PAR,
+          'experiments/fc') for n, m, held, v in (
+        (16000, '16000 of 16000', True, 'control: 32000 kept'),
+        (16765, '16765 of 16765', True, 'control: 32765 kept'),
+        (16766, '16000 of 16766 (the client stops at 32766)', False, 'the host stored 32765: one ship lost'),
+        (16767, '15999 of 16767', False, 'the host stored 32765; cargo and fuel moved by the share of ships'),
+        (16768, '15998 of 16768', False, 'the host stored 32765'),
+        (17000, '15766 of 17000', False, 'the host stored 32765'))] + [
+        ('co07/run', 'CO-07', 'delete a ship design in use by fleets and a queue', False,
+         'held except renumbering: ships of the design destroyed, the queue entry dropped, later designs keep their '
+         'slots (predicted to renumber)', CO_SPEC, CO_PAR7, 'experiments/fc'),
+        ('co07b/run', 'CO-07b', 'delete the starbase design in use', True, 'held: the starbase was removed', CO_SPEC,
+         CO_PAR7, 'experiments/fc'),
+        ('co07c/run', 'CO-07c', 'fuel and cargo of a fleet that loses ships to a design delete', True,
+         'held: fuel and cargo leave with the deleted ships by capacity, rounded down', CO_SPEC, CO_PAR7,
+         'experiments/fc'),
+        ('co08/run', 'CO-08', 'edit a design used only by a queue', True,
+         'held: the host overwrote the slot in place and the queue builds the edited design', CO_SPEC, CO_PAR7,
+         'experiments/fc'),
     ],
     'tk5': [
         ('tk501/y2', 'TK-501', 'manual cargo transfers to enemy and unowned planets (TK-401..405, TK-410)', False,

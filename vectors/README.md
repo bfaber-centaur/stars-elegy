@@ -36,6 +36,8 @@ vectors/<corpus>/<run>.json      one oracle run
 | `xf` | XF-1, PQ-1, WP-1, DS-1 (with ML-1) and their exploration runs | 8 | orders the original client wrote: cargo transfers, production queue, research, waypoint-0 tasks, designs, lay mines | `docs/ORDERS.md`, `docs/ORACLE.md` |
 | `bp` | BP-1, BP-L | 2 | battle plans and fleet plan assignments from the client | `docs/COMBAT.md` |
 | `tk5` | TK-501, TK-502 | 2 | manual cargo transfers to other players' and unowned planets (TK-401..412) | `docs/TAKEOVER.md`, `docs/ORDERS.md` "Cross-owner cargo" |
+| `fc` | FC-1 | 1 | fleet orders from the client: rename, cargo between own fleets, split, merge, ship moves | `docs/ORDERS.md` "Fleet operations" |
+| `co` | CO-01..08 | 18 | split, Split All, ship moves, own-fleet cargo, merge damage, the 32765 ship cap, deleting and editing designs in use | `docs/ORDERS.md` "Fleet operations" |
 | `wu` | WU-A..WU-WARP90 | 28 | waypoint upkeep, repeat, followers, route and transfer tasks, patrol target choice | `docs/ORDERS.md` |
 
 `internal/vectors` holds the same format as Go types and a test that
@@ -90,6 +92,7 @@ file, so nothing in it is a default you have to guess.
 - `fleets`: owner, id, position, the planet orbited, ships (`design` slot and
   `count`, with damage when damaged), cargo, fuel, battle plan,
   `repeat_orders` (present and true when the fleet repeats its waypoints),
+  `name` (when the player named the fleet),
   and the waypoints. A
   waypoint has a position, warp, target (`planet`, `fleet`, `space`,
   `wormhole`, `trader`) and task. Waypoint 0 is where the fleet is now. Transport tasks list one order per cargo type:
@@ -139,18 +142,20 @@ an order belong to the submitting player unless a field says otherwise.
 | `waypoint_delete` | `fleet`, `index` |
 | `repeat_orders` | `fleet`, `on` |
 | `cargo` | `fleet`, `with` (`{kind: planet or fleet, id, owner}`), `amounts` per cargo type (kT; colonists in hundreds; fuel in mg), positive into the fleet and negative out of it |
-| `split` | `fleet`, `ships` (`{design, count}`) that leave in a new fleet |
+| `split` | `fleet`: a new empty fleet beside it, which the next `move_ships` fills |
+| `move_ships` | `fleet`, `with` (`{kind: fleet, owner, id}`), `ships` (`{design, count}`), counts positive into `fleet` and negative out of it |
 | `merge` | `fleet`, `fleets` that join it |
 | `rename` | `fleet`, `name` |
 | `detonate` | `minefield`, `on` |
 | `relations` | `relations` (player → `neutral`, `friend`, `enemy`) |
 
-The client-order corpora so far use `cargo` (to planets),
-`production_queue`, `research`, `battle_plan`, `battle_plan_delete`,
+The client-order corpora so far use `cargo` (to planets and own fleets),
+`split`, `move_ships`, `merge`, `rename`, `production_queue`, `research`, `battle_plan`, `battle_plan_delete`,
 `fleet_battle_plan`, `design`, `design_delete` and `waypoint_change`. The
 other kinds are defined for the rest of `ORDERS.md` and have no vector yet.
 Order vectors' `fleet` expectations also list the fleet's `waypoints`,
-`battle_plan` and `repeat_orders`.
+`battle_plan`, `repeat_orders` and `name` (when the player named the
+fleet).
 
 ### `cases`
 
