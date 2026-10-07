@@ -45,7 +45,8 @@ import org.starsautohost.starsapi.items.Items;
 //         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
-//         [task TASK] [to X Y [planet N|thing ID] warp W [task TASK]]...
+//         [task TASK] [to X Y [planet N|thing ID|fleet N] warp W [task TASK]]...
+//                                   ("fleet N": follow the owner's fleet N; X Y its position)
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
@@ -237,6 +238,7 @@ public class CombatLab {
                 StringBuilder h = new StringBuilder();
                 for (int i = 0; i < b.size; i++) h.append(String.format("%02x", d[i]));
                 System.out.printf("%s events raw=%s%n", f, h);
+                printMessages(f, d, b.size);
             } else if (b.typeId == BlockType.OBJECT) {
                 System.out.printf("%s %s%n", f, thingString(b.getDecryptedData(), b.size));
             } else if (b.typeId == BlockType.PLANETS) {
@@ -927,6 +929,61 @@ public class CombatLab {
         }
     }
 
+    // Turn messages (block 12). Each record: word w (id = w & 0x1ff, size flags =
+    // w >> 9), word obj, then the message's parameters, parameter k being 2 bytes
+    // when flag bit k is set and 1 byte otherwise. How many parameters each id takes
+    // is read at run time from the local original game (STARS_EXE, default the
+    // oracle run copy); without it only the raw line is printed.
+    static byte[] msgParams;
+    static final Map<Integer, String> MSG_NAMES = new HashMap<>();
+    static {
+        String[] n = {"c2", "mine-swept", "c3", "mine-laid", "c4", "mine-added", "c5", "mine-stopped",
+            "c6", "mine-hit", "c7", "mine-hit-losses", "c8", "mine-annihilated", "c9", "own-mine-stopped",
+            "ca", "own-mine-hit", "cb", "own-mine-hit-kills", "cc", "own-mine-annihilated",
+            "be", "own-mine-swept", "bf", "lay-no-pod", "f4", "starbase-swept", "111", "target-field-gone",
+            "15f", "detonate-annihilated", "160", "detonate-hit", "161", "detonate-hit-losses",
+            "162", "own-detonate-annihilated", "163", "own-detonate-hit", "164", "own-detonate-hit-kills",
+            "17e", "lay-failed"};
+        for (int i = 0; i < n.length; i += 2) MSG_NAMES.put(Integer.parseInt(n[i], 16), n[i + 1]);
+    }
+
+    static byte[] msgParams() {
+        if (msgParams != null) return msgParams.length == 0 ? null : msgParams;
+        msgParams = new byte[0];
+        String exe = System.getenv("STARS_EXE");
+        if (exe == null) exe = System.getProperty("user.home")
+            + "/.stars-oracle/run/StarsBox.app/Contents/Resources/c_drive/STARS/stars.exe";
+        try {
+            byte[] x = Files.readAllBytes(Paths.get(exe));
+            byte[] sum = java.security.MessageDigest.getInstance("SHA-256").digest(x);
+            if (String.format("%02x%02x%02x%02x", sum[0], sum[1], sum[2], sum[3]).equals("10f8b5f9"))
+                msgParams = Arrays.copyOfRange(x, 0x1eca6, 0x1eca6 + 0x1c0);
+        } catch (Exception e) {
+            // no local game: raw only
+        }
+        return msgParams.length == 0 ? null : msgParams;
+    }
+
+    static void printMessages(String f, byte[] d, int size) {
+        byte[] t = msgParams();
+        if (t == null) return;
+        int i = 0;
+        while (i + 4 <= size) {
+            int w = u16(d, i), id = w & 0x1ff, fl = w >> 9, obj = u16(d, i + 2);
+            i += 4;
+            if (id >= t.length) { System.out.printf("%s msg bad id=0x%x at=%d%n", f, id, i - 4); return; }
+            StringBuilder p = new StringBuilder();
+            for (int k = 0; k < (t[id] & 0xff); k++) {
+                int v;
+                if ((fl >> k & 1) != 0) { v = u16(d, i); i += 2; } else { v = d[i] & 0xff; i += 1; }
+                p.append(k == 0 ? "" : ",").append(v);
+            }
+            System.out.printf("%s msg id=0x%x name=%s obj=0x%04x p=%s%n", f, id,
+                MSG_NAMES.getOrDefault(id, "-"), obj, p);
+        }
+        if (i != size) System.out.printf("%s msg trailing=%d%n", f, size - i);
+    }
+
     // Dump line for one object block (count or 18-byte record).
     static String thingString(byte[] d, int size) {
         if (size == 2) return "things count=" + u16(d, 0);
@@ -992,7 +1049,8 @@ public class CombatLab {
                     int obj = 0, type = 0x14;
                     if (t[i].equals("planet")) { obj = Integer.parseInt(t[i + 1]); type = 0x11; i += 2; }
                     else if (t[i].equals("thing")) { obj = Integer.decode(t[i + 1]); type = 0x18; i += 2; }
-                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID] warp W");
+                    else if (t[i].equals("fleet")) { obj = Integer.parseInt(t[i + 1]); type = 0x12; i += 2; }
+                    if (!t[i].equals("warp")) throw new Exception("to X Y [planet N|thing ID|fleet N] warp W");
                     fs.wps.add(new int[]{x, y, obj, type, Integer.parseInt(t[i + 1])});
                     i += 2;
                     break;
