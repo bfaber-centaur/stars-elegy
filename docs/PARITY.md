@@ -1236,6 +1236,111 @@ Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
 the model and a SHA-256 manifest). Tooling: `hst-edit xy` and the score
 and game-record dump lines.
 
+### KX-004 — random events and turn-time game options
+
+Status: PREDICTED. Predictions committed before any case ran.
+
+Question: what do the yearly random events (comet strikes, planetary
+climate change, new mineral deposits) do, when, and how often; and what do
+the game options change during a turn? Mystery Trader and wormholes are
+in `OBJECTS.md`, creation-time options (maximum minerals, BBS, clumping)
+in `UNIVERSE.md`, and slower tech in `KERNEL.md` (KX-003).
+
+Method: Combat Lab game CB (tiny, 24 planets, two JOAT players), start
+`experiments/kx004/kx4e1.spec`: planets 0–7 and 9–16 owned (population
+30, 45, 600 or 3000; environment 50/50/50; no mines, factories or
+defenses; queue Auto Factories ×5, Factory ×1, design 0 ×1), 18–23
+unowned, homeworlds 8 and 17. With no mines, an owned planet's
+concentrations, surface minerals and environment change only through
+events. `experiments/kx004/run-kx4.sh` generates one year per
+`pinned-turn` process with cycles `15000 + 37·year` (a different random
+stream each year).
+
+- **E1:** game option byte `0x40` (random events on, public scores on),
+  300 years (2400 → 2700).
+- **E0 (control):** option byte `0x80` (random events off, public scores
+  off), 40 years.
+
+Messages are read from each player's `.M` event list (format in
+`ORACLE.md`).
+
+#### Rules under test (from the binary reading)
+
+At the end of production, after research, when random events are on, in
+this order:
+
+1. **Comet strike.** With chance 1/20 a uniformly random planet (any
+   owner, or none) is chosen. Nothing happens before year index 10, or
+   if the planet is owned with more than 5,000 colonists and the year
+   index is below 20. Size `e` = 0–3 (small, medium, large, huge), equally
+   likely.
+   - Every player gets a message naming the planet. A non-AR owner's
+     message says the colonists killed (25/45/65/85%) and names `e + 1`
+     environment axes (all three for e = 3).
+   - A non-AR owner loses `trunc(P·(20e + 25)/100)` of its population P
+     (after this year's growth).
+   - `min(e + 1, 3)` distinct random minerals each gain concentration
+     `50 + rand(50)` (huge: a further `15 + rand(15)`), capped at 200.
+   - Surface minerals: each struck mineral gains
+     `trunc((50 + rand(250) + 3000 + rand(17000))/16)` kT (190–1268); every
+     other mineral gains `trunc((50 + rand(250))/16)` (3–18).
+   - Environment: axes gravity, then temperature, then radiation, the
+     first `min(e + 1, 3)` of them (not a random choice), each move by
+     `±(3 + rand(3))` (huge: `±(6 + rand(3) + rand(3))`, 6–10), the current
+     and the original value alike, clamped to 1–99.
+   - The production queue loses every item except the auto items (Auto
+     Mines, Factories, Defenses, Alchemy, Min/Max Terraform, Mineral
+     Packets), which keep their counts.
+   - The owner's message names its axes from a separate random shuffle,
+     so for small and medium comets it can name axes other than the ones
+     that moved.
+2. **Climate change.** With chance 1/20 a random planet, with the same
+   protection (owned, more than 5,000 colonists, year index below 20); no
+   year-10 minimum. One random axis moves by 4 or 5 (1/3 each) or 6, 7
+   or 8 (1/9 each), sign random, current and original alike, clamped
+   1–99. The owner (if any) gets a message naming the axis; its queue is
+   cut to the auto items.
+3. **New minerals.** With chance `1/(15 − size)` (1/15 on tiny) a random
+   planet; nothing before year index 10. One random mineral: the owner
+   (if any) gets a message even when nothing changes; the concentration
+   rises by `5 + rand(15)` if it is below 180.
+
+With random events off, none of these happen.
+
+Public scores: a player's file contains another player's score record
+only if the game is decided, that player is dead, or public scores are on
+and the year index is at least 20.
+
+#### Predictions
+
+E1, per year, from each year's before and after files:
+
+1. Every change of an owned planet's environment, concentration or
+   surface minerals, and every change of an unowned planet's environment
+   or concentration, is explained by exactly the events above. No other
+   change happens.
+2. Comets: none before 2410. For each, every player has a comet message
+   for that planet; the size `e` from the message matches the number of
+   struck minerals and moved axes and the ranges above. Gravity always
+   moves, and temperature for `e ≥ 1`, whichever axes the message names.
+   A non-AR owner's population is the year's growth result minus
+   `trunc(G·(20e + 25)/100)`. The queue keeps only Auto Factories ×5.
+3. Climate: one axis, `|Δ|` in {4, 5, 6, 7, 8} unless clamped, current and
+   original alike; the owner's message names that axis; queue cut to Auto
+   Factories ×5. None on a protected planet before 2420.
+4. New minerals: none before 2410; one mineral `+5..+19`; an owner message
+   for owned planets.
+5. Frequencies are reported against the expected counts (about 14.5
+   comets, 15 climate changes and 19 new-mineral events over 300 years);
+   these counts test nothing exact.
+6. Queues of owned planets without an event stay as set.
+7. Public scores: each `.M` holds only its own score record through 2419
+   and both from 2420 on.
+
+E0: no environment or concentration change on any planet other than the
+homeworlds' mining, no event message of these kinds, and only the own
+score record in every year, 2420 on included.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
