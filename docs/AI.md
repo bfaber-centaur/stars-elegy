@@ -296,7 +296,12 @@ personality files.
 
 After its own work, every computer player runs these steps, in order.
 
-1. Keep fleets moving (fleet rules: personality files).
+1. **Keep fleets moving.** Every own fleet with at least two waypoints
+   gets the warp of waypoint 1 re-picked by "Warp choice" (§11). Its
+   target and task stay as they are, and only a changed warp makes an
+   order. This applies to fleets the personality pass left alone too, so
+   a scout heading to a planet at warp 6 can get an order changing only
+   its warp to 5 (the same whole-year travel time).
 2. **Starbases for hubs** (not Macinti; in a tutorial game only before
    year index 31). Cybertron uses its own rule (docs/ai/cybertron.md, planned).
    The others: every own planet with no starbase, population ≥ 8,000, not
@@ -642,8 +647,8 @@ hub, or the player's first planet with a starbase):
    to foreign targets. Salvage targets get no task (LEGACY BUG: their
    load orders do nothing).
 
-**Warp choice.** At the end of each personality's fleet work, every own
-fleet with a waypoint 1 gets its waypoint-1 warp reset:
+**Warp choice.** At the end of each personality's fleet work (§7 step
+1), every own fleet with a waypoint 1 gets its waypoint-1 warp reset:
 - Standing in another player's minefield: heavy field → 6; standard
   field → 4 or 5 (`Random(10) < 4` → 4); SS races +1.
 - Otherwise the fastest warp up to 9 that the fleet's current fuel
