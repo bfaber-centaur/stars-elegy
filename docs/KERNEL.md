@@ -713,7 +713,7 @@ Questions the binary reading does not settle; each needs an oracle case.
 
 ## Sources
 
-- Oracle: PG-001..003 and PQ-001 (`PARITY.md`); FM-001..003 movement
+- Oracle: PG-001..003 and PQ-001 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
   research, mining, production, movement and fuel notes; model checks that
