@@ -141,3 +141,68 @@ FO-03 C (both stacks damaged) and E (32000 + 1000 ships) missed; see "Results". 
 |---|---|---|---|
 | A | FO-06 follow-up | X 2 at 101 units on 50% into Y 2 at 100 on 50%: units 201/4 = 50.25, rounded up 51 (nearest: 50), 50%; repair -> 41/50 | fleet 0/0: ships 11:4, dmg 11: 41/50% |
 
+
+## Results
+
+Run 2026-10-07, one pinned generation each (cycles 20000). Checked with
+`python3 experiments/fo/check.py RUNDIR` (pinned-turn output directories
+named by run). Raw files, dumps and the checker output are in
+stars-oracle-apparatus `evidence/fo/`.
+
+**81 checks: 76 OK, 5 MISS.** FO-01, FO-02, FO-04 and FO-05 held in every
+check. The misses are all in FO-03 (merge) and FO-06 A; FO-06 and FO-07
+were added after them to pin the rule.
+
+| Run | Case | Predicted | Observed |
+|---|---|---|---|
+| FO-03 | C, both stacks damaged | 118 units on 35% | **35 units** on 35% |
+| FO-03 | E, 32000 + 1000 ships | 32766 | **no ships**: the fleet record stayed, with fuel 400 and an empty ship mask |
+| FO-03 | F, merge target 195 ly away (two checks) | merged | **refused**: both fleets unchanged, the orderer's task cleared to none |
+| FO-06 | A, 1700/40 = 42.5 | 42 → 32 after repair | **43** → 33 |
+
+What the misses and the follow-ups show:
+
+- **Merged damage.** With only one stack damaged, the damaged ships keep
+  their damage units and the percentage becomes `ceil(100·D/n)` over all
+  `n` ships (FO-03 D, FO-06 C and D, both directions). With both stacks
+  damaged, units = `Σ D·units / n`, **rounded up**, over all `n` ships of
+  the slot, not over the damaged ones (FO-03 C 900/20 = 45; FO-06 A
+  1700/40 → 43; FO-06 B 1500/10 = 150; FO-07 201/4 = 50.25 → 51), with
+  `D = max(1, pct·count/100)` per stack and the same percentage rule.
+  Repair (10 units for a fleet stationary in deep space) then applies as
+  usual.
+- **Ship counts.** No clamp on a merge by waypoint task: 32000 + 766 =
+  32766 and 32000 + 767 = 32767 were kept; 32000 + 768 and 32000 + 1000
+  left the merged fleet with no ships at all (cargo and fuel stayed).
+- **Distance.** A merge task whose target fleet was 195 ly away did
+  nothing and the task was cleared. In this setup waypoint 0 sat at the
+  orderer's own position and targeted the far fleet, a state the game's
+  own interface does not create; arriving merges (FO-03 H) worked.
+
+Everything else held as predicted, including:
+
+- loads capped by the free hold (and by what the source has), cargo kinds
+  loaded in the order Ir, Bo, Ge, colonists, so Ir filled the hold before
+  Bo (FO-01 B, FO-02 L);
+- the fuel tank clamped separately from the hold: a full hold still took
+  250 mg of fuel (FO-02 M); no fuel from a planet (FO-01 E);
+- unloads into a fleet capped by its free space, the rest staying aboard
+  (FO-02 N: 200 → Y gets 110, X keeps 90; fuel FO-02 O);
+- "load optimal" fuel with one waypoint gave away all fuel (FO-02 Q);
+- fill to %, set amount, set waypoint and wait-for-% amounts; a fleet
+  waiting for 100% did not leave, the "fill to" control did (FO-01 F–J);
+- loading before movement (FO-01 J, FO-02 R) and after arrival (FO-01 K,
+  FO-02 S and U); a fleet whose only waypoint targeted a departing fleet
+  loaded first and then followed it to its destination (FO-02 R);
+- merge: ship counts per design, cargo and fuel pooled, target keeps its
+  id, orderer removed; before movement the merged ships left with the
+  target, and an arriving fleet merged after movement (FO-03 A, B, G, H);
+- another player's fleet: minerals given when the receiver's relation
+  toward the giver is not "enemy" and refused when it is, whatever the
+  giver's relation; colonists refused; loading from it without a
+  cargo-stealing scanner did nothing; merging into it was refused
+  (FO-04, FO-05 A–D);
+- transfer fleet: accepted when the recipient is not an enemy toward the
+  giver (it received the fleet under a free design slot holding a copy of
+  the design, with cargo and fuel), refused when it is, and refused for a
+  fleet carrying colonists (FO-04, FO-05 E–F).

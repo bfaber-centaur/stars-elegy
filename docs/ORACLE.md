@@ -766,6 +766,29 @@ python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs 
   allows at the end of the year, so a CA new owner hides the capture-time
   revert of the environment.
 
+### Fleet operations experiments (observed 2026-10-07, FO-01..FO-07)
+
+```sh
+python3 experiments/fo/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fo01.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT 20000
+python3 experiments/fo/check.py RUNDIR    # RUNDIR/fo01/after.dump ...
+```
+
+- New spec syntax: `target fleet OWNER ID` points waypoint 0 at a fleet
+  (id `number | owner << 9`, target type 0x12); `to X Y fleet OWNER ID warp
+  W` adds a fleet-targeted waypoint; `task merge` (task 4) and `task
+  transfer K` (task 9, one word: the K-th player other than the owner).
+  All three were accepted by the host as written.
+- After the task ran (or was refused), the host had rewritten waypoint 0
+  to deep space or the planet. The stars-decomp reading keeps a
+  fleet-targeted waypoint 0 at turn start only for transport and merge.
+- `combatlab dump` prints an empty `ships=` for a fleet record that has no
+  ships (seen after a merge above 32767 ships).
+- Relations are per direction: `relation 1 0 2` is player 1's view of
+  player 0. Cross-player cargo and fleet transfers depend on the
+  receiver's view.
+
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
 ```sh

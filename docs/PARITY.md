@@ -1306,6 +1306,102 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 - Minefields, stargates, wormholes, and movement
   that interacts with other players were deliberately not tested.
 
+## Fleet Operations
+
+Status: MEASURED, 2026-10-07 (FO-01 to FO-07). Tests the "Fleet
+operations" rules of `ORDERS.md` (stars-elegy #40) that can be set up with
+waypoint tasks in the host file. Predictions were committed before each
+batch of runs. Specs, predictions and the checker are in
+`experiments/fo/` (`gen.py`, `check.py`); every case and value is in
+`experiments/fo/README.md`. Raw evidence is in stars-oracle-apparatus
+`evidence/fo/`.
+
+### Method
+
+Combat Lab (CB, two JOAT players), one pinned generation per run. Fleets
+are Medium Freighters with Long Hump 6 (cargo 210 kT, fuel 450 mg) in deep
+space or at own planets without a starbase. CombatLab can now point
+waypoint 0 at a fleet and write the merge and transfer-fleet tasks
+(`ORACLE.md`).
+
+### Transport amounts and clamps (CONFIRMED)
+
+- A load takes at most the free cargo hold and what the source has. The
+  four cargo kinds are handled in order Ir, Bo, Ge, colonists, so "load
+  all" of Ir and Bo from 150/150 into an empty 210 kT hold took 150 Ir
+  and 60 Bo.
+- Fuel is clamped by the free fuel tank, independently: a fleet with a
+  full hold took 250 mg into its 200/450 tank. An own planet without a
+  starbase gave no fuel to a "load all" fuel order.
+- An unload into another fleet is capped by that fleet's free space; the
+  rest stays aboard (200 kT offered to a fleet with 110 kT free: 110
+  moved, 90 kept). The same holds for fuel.
+- Action amounts, loading from an own planet: fill to 50% loads half the
+  hold (105); set amount to 80 loads 80; set waypoint to 100 leaves 100
+  on the planet; wait for 100% keeps the fleet at the planet while unmet,
+  where fill to 100% lets it leave. "Load optimal" fuel with a single
+  waypoint gives all of the fleet's fuel to the target fleet.
+- Colonists loaded from an own planet before growth (87 → 57, then
+  growth).
+
+### Turn placement (CONFIRMED)
+
+Waypoint loads and merges at the starting waypoint happen before
+movement: the loaded cargo and merged ships leave with the fleet. Tasks at
+an arrival waypoint run after movement (load from a planet, load from or
+unload into a fleet, merge). A fleet whose only waypoint targets another
+of its owner's fleets loaded from it before movement and then followed it
+to the target's destination.
+
+### Another player's fleet (CONFIRMED)
+
+Minerals unloaded into another player's fleet moved when the receiver's
+relation toward the giver was neutral, and nothing moved when it was
+enemy; the giver's own relation did not matter. Colonists were refused in
+both cases. A fleet without a cargo-stealing scanner loaded nothing from
+another player's fleet, and a merge into another player's fleet was
+refused.
+
+### Transfer fleet task (CONFIRMED)
+
+Giving a fleet to another player worked when the recipient's relation
+toward the giver was not enemy: the recipient got a fleet at the same
+place with the same ships, cargo and fuel, under a free design slot that
+holds a copy of the design (it was not matched to the recipient's existing
+Medium Freighter design, which differs in parts). It was refused when the
+recipient was an enemy toward the giver, and for a fleet carrying
+colonists.
+
+### Merge with Fleet task
+
+- **Ships, cargo, fuel (CONFIRMED).** The ordering fleet joins the target,
+  which keeps its id; ship counts add per design; cargo and fuel add up.
+- **Damage (MEASURED).** Per design slot, with `D = max(1, pct·count/100)`
+  damaged ships in each damaged stack and `n` ships after the merge, the
+  new percentage is `ceil(100·ΣD/n)`. When only one of the two stacks is
+  damaged, its damage units are kept. When both are, the units become
+  `ceil(Σ D·units / n)`: divided by **all** ships of the slot, not by the
+  damaged ones, which dilutes the damage (10 ships at 100 units on 50%
+  plus 10 at 200 on 20% gave 45 units on 35%). Seen in seven cases; the
+  year's repair then applied normally.
+- **No ship-count cap (MEASURED).** 32000 + 767 ships gave 32767;
+  32000 + 768 and 32000 + 1000 left a fleet with **no ships** (its cargo
+  and fuel kept). This contradicts the 32766 cap in `ORDERS.md` for the
+  waypoint task; the cap may still apply to the direct merge order, which
+  is not tested.
+- **Distance.** A merge task whose waypoint 0 sat at the orderer's own
+  position but targeted a fleet 195 ly away was refused and cleared. The
+  interface does not create that state, so this says only that the task
+  is not applied from a distance.
+
+### Not tested (waiting on the serial decision)
+
+Split, the direct transfer between own fleets (and its capacity-based
+sharing), direct merges, and the order-time placement of direct cargo
+orders need an order file accepted by the registered host. Also not
+tested: steal mode, a fleet that may not carry colonists, transfers to an
+AI player.
+
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
