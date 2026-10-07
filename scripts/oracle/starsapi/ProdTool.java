@@ -34,7 +34,9 @@ public class ProdTool {
       else if (b instanceof PartialPlanetBlock) {
         PartialPlanetBlock q=(PartialPlanetBlock)b; if (q.owner<0) continue;
         int def12 = (q.defenses & 0xff) | ((q.unknownInstallationsByte & 0x0f) << 8);
-        int scan = ((q.unknownInstallationsByte & 0xf0) >> 4) | (q.hasScanner?0:16);
+        // An omitted installations block means the game defaults: no
+        // scanner (31). StarsAPI leaves its fields zeroed, which read as 16.
+        int scan = !q.hasInstallations ? 31 : ((q.unknownInstallationsByte & 0xf0) >> 4) | (q.hasScanner?0:16);
         System.out.printf("%s planet=%d owner=%d fe=%d bo=%d ge=%d pop=%d excess=%d mines=%d factories=%d defenses=%d leftover=%b scannerField=%d conc=%d/%d/%d hab=%d/%d/%d%s starbase=%s%n",
           n, q.planetNumber, q.owner, q.ironium, q.boranium, q.germanium, q.population, q.excessPop, q.mines, q.factories, def12,
           q.contributeOnlyLeftoverResourcesToResearch, scan, q.ironiumConc, q.boraniumConc, q.germaniumConc, q.gravity, q.temperature, q.radiation,
