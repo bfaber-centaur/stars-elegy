@@ -7,7 +7,7 @@ Reads the `combatlab dump` of the generated CB.HST (lines from
 raw/after/CB.HST) and prints one line per case: HELD, CONTRADICTED or
 OBSERVED (no single predicted value), with the observed value.
 """
-import re, sys, os
+import math, re, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gen
 from gen import XY
@@ -353,6 +353,77 @@ def evaluate(c, A, B, run=None, M=None):
     raise SystemExit('unknown check ' + kind)
 
 
+# ---- round 6 (OB-028..OB-031)
+DUMP = {}
+
+
+def msgs(mfile):
+    """Message lines of the last year in a player's .M file of the after dump."""
+    lines = [l for l in open(DUMP['after']) if '/raw/after/CB.M%d msg ' % mfile in l]
+    return [l.split(' msg ', 1)[1].strip() for l in lines]
+
+
+def evaluate6(k, A, B):
+    things, planets, fleets, players, wps = A
+    kind = k[0]
+    if kind == 'launch':
+        _, owner, dest, W, cls, cargo, pos = k
+        ps = [t for t in things if t['type'] == 'packet' and int(t['owner']) == owner and int(t['dest']) == dest]
+        got = [dict(at=(int(t['x']), int(t['y'])), warp=int(t['warp']), cls=int(t['class']),
+                    cargo=tuple(int(v) for v in t['cargo'].split('/'))) for t in ps]
+        ok = len(got) == 1 and got[0] == dict(at=tuple(pos), warp=W, cls=cls, cargo=tuple(cargo))
+        return ok, got
+    if kind == 'nolaunch':
+        _, owner, n = k
+        pos = gen.XY[n]
+        before = tuple(int(v) for v in B[1][n]['surface'].split('/'))
+        after = tuple(int(v) for v in planets[n]['surface'].split('/'))
+        near = [(t['x'], t['y'], t['dest']) for t in things if t['type'] == 'packet' and int(t['owner']) == owner
+                and math.hypot(int(t['x']) - pos[0], int(t['y']) - pos[1]) <= 30]
+        m = [x for x in msgs(owner + 1) if 'obj=0x%04x' % n in x]
+        return after == before and not near, dict(surface=after, packets=near, msgs=m)
+    if kind == 'ppterra':
+        _, n, mi = k
+        env0 = [int(v) for v in B[1][n]['env'].split('/')]
+        env1 = [int(v) for v in planets[n]['env'].split('/')]
+        d = [b - a for a, b in zip(env0, env1)]
+        others = [d[i] for i in range(3) if i != mi]
+        before = tuple(int(v) for v in B[1][n]['surface'].split('/'))
+        after = tuple(int(v) for v in planets[n]['surface'].split('/'))
+        sd = [b - a for a, b in zip(before, after)]
+        ok = 1 <= d[mi] <= 10 and others == [0, 0] and sd[mi] == 111
+        return ok, dict(env_before=env0, env_after=env1, orig=planets[n].get('orig'), surface_delta=sd)
+    if kind == 'designknown':
+        _, mfile, owner, name = k
+        lines = [l for l in open(DUMP['after']) if '/raw/after/CB.M%d ' % mfile in l and 'design owner=%d ' % owner in l]
+        hit = [l.split(' :: ', 1)[1].strip() for l in lines if 'sbdesign' in l or name in l]
+        return None, dict(other_player_designs=hit)
+    if kind == 'arpacket':
+        _, n, ctl, sd = k
+        before = tuple(int(v) for v in B[1][n]['surface'].split('/'))
+        after = tuple(int(v) for v in planets[n]['surface'].split('/'))
+        got = dict(pop=int(planets[n]['pop']), control=int(planets[ctl]['pop']),
+                   surface=tuple(b - a for a, b in zip(before, after)))
+        return got['pop'] == got['control'] and got['surface'] == sd, got
+    if kind == 'tradertwo':
+        _, ids = k
+        got = {'%d/%d' % f: ('kept' if tuple(f) in fleets else 'gone') for f in ids}
+        tr = [(t['num'], t['x'], t['y'], t['warp']) for t in things if t['type'] == 'trader']
+        return all(v == 'gone' for v in got.values()), dict(fleets=got, traders=tr,
+                                                            mt=[(o, players[o]['mt']) for o in (0, 1)])
+    if kind == 'traderend6':
+        _, num, x, y = k
+        ts = [t for t in things if t['type'] == 'trader' and int(t['num']) == num]
+        if not ts:
+            return True, 'gone'
+        t = ts[0]
+        dx, dy = (int(v) for v in t['dest'].split(','))
+        got = dict(at=(int(t['x']), int(t['y'])), dest=(dx, dy), warp=int(t['warp']))
+        edge = dx in (1020, 1380) or dy in (1020, 1380)
+        return got['at'] == (x, y) and got['warp'] == 7 and edge and (dx, dy) != (x, y), got
+    return None
+
+
 def main():
     rid, after = sys.argv[1], sys.argv[2]
     before = sys.argv[3] if len(sys.argv) > 3 else after.replace('after.dump', 'before.dump')
@@ -360,11 +431,15 @@ def main():
     A, B = load(after), load(before, 'before')
     M = load(after, 'after', 'CB.M%d' % (run.scan['viewer'] + 1)) if run.scan else load(after, 'after', 'CB.M2')
     M_ALL[1], M_ALL[2] = load(after, 'after', 'CB.M1'), load(after, 'after', 'CB.M2')
+    DUMP['after'] = after
     year = int(os.environ.get('OB_YEAR', '0'))
     for c in run.cases:
         if year and c.get('year', 1) != year:
             continue
-        ok, got = evaluate(c, A, B, run, M)
+        if c['check'][0] in ('launch', 'nolaunch', 'ppterra', 'designknown', 'arpacket', 'tradertwo', 'traderend6'):
+            ok, got = evaluate6(c['check'], A, B)
+        else:
+            ok, got = evaluate(c, A, B, run, M)
         print('%-9s %-12s %-12s %s' % (c['id'], c['pred'], {True: 'HELD', False: 'CONTRADICTED', None: 'OBSERVED'}[ok], got))
 
 

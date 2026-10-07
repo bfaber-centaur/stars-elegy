@@ -92,10 +92,15 @@ def main():
                 if 'same_dmg_as' in k:
                     o = ah[0][(k['owner'], k['same_dmg_as'])]
                     ok &= dmg(f) == dmg(o)
+                if 'has' in k:
+                    ok &= any(x.split(':')[0] == str(k['has']) for x in f['ships'].split(','))
                 if 'designs' in k:
                     ok &= sorted(f['ships'].split(',')) == sorted('%s:%d' % (d, n) for d, n in k['designs'].items())
             if 'msg' in k:
                 ok &= hex(k['msg']) in ms
+            if k.get('only'):
+                # GT-003: exactly one refusal message, the predicted one
+                ok &= [m for m in ms if int(m, 16) in (0xde, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0x147, 0x15e)] == [hex(k['msg'])]
             if 'msg1' in k:
                 m = sorted({hex(i) for i, o, p in msgs[1] if p and p[0] == k['id'] and o < 0x8000})
                 seen.append('player 1 msgs %s' % (','.join(m) or '-'))

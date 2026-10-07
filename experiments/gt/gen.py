@@ -394,7 +394,76 @@ def build2():
     return s
 
 
+H502, H491 = 7, 8
+HEAD3 = HEAD2.replace('# GT-002', '# GT-003') + \
+    'design 0 7 Super Freighter, 3 Long Hump 6, empty, 5 Tritanium, empty = Heavy 502\n' + \
+    'design 0 8 Super Freighter, 1 Long Hump 6, 1 Super Cargo Pod, 5 Tritanium, empty = Heavy 491\n' + \
+    'design 1 3 Super Freighter, 3 Long Hump 6, empty, 5 Tritanium, empty = Heavy 502\n'
+REFUSALS = (0xde, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0x147, 0x15e)
+
+
+def build3():
+    """GT-003 (BINARY-ONLY sweep): the refusal order with two failures at once, and a design wiped out by
+    the loss rolls counting once against the fleet's design count. Written before GT-003."""
+    s = Spec()
+    gp = lambda owner, idx, **k: s.planet(owner, 1 + idx, **k)
+    A = gp(0, 0); B = s.planet(1, SB_NOGATE, near=XY[A], d=150)
+    f = s.gate(1, A, B, '0:1')
+    s.case('R1', 'refusal order', 'player 1 Laser DD at player 0\'s gate %d (source refused) to own planet %d without a '
+           'gate' % (A, B), 'stays; the only refusal message is 0xe6 (source gate)', '0xe2 (destination gate) first',
+           dict(kind='fleet', owner=1, id=f, at=XY[A], msg=0xe6, only=True))
+    A = gp(1, 0, near=(1000, 1000), d=0, tol=250); B = s.planet(0, 1, near=XY[A], d=1350, tol=90)
+    f = s.gate(1, A, B, '0:1')
+    s.case('R2', 'refusal order', 'player 1 Laser DD from own 100/250 gate %d to player 0\'s gate %d, %d ly (over 5 x 250)'
+           % (A, B, dist(XY[A], XY[B])), 'stays; only 0xe5 (destination owner)', '0xe3 (range) first',
+           dict(kind='fleet', owner=1, id=f, at=XY[A], msg=0xe5, only=True))
+    A = gp(1, 0); B = gp(0, 0, near=XY[A], d=150)
+    f = s.gate(1, A, B, '3:1')
+    s.case('R3', 'refusal order', 'player 1 502 kT freighter from own 100/250 gate %d to player 0\'s gate %d' % (A, B),
+           'stays; only 0xe5 (destination owner)', '0xe4 (mass) first',
+           dict(kind='fleet', owner=1, id=f, at=XY[A], msg=0xe5, only=True))
+    A = gp(1, 0); B = gp(0, 0, near=XY[A], d=150)
+    f = s.gate(0, A, B, '%d:1' % H502, cargo=(50, 0, 0, 10))
+    s.case('R4', 'refusal order', 'player 0 502 kT freighter with 50 kT ironium and 10 kT colonists at player 1\'s gate %d '
+           '(friend) to own gate %d' % (A, B), 'stays full; only 0x15e (colonists); planet %d surface +0' % A,
+           '0xe4 (mass) after the minerals were unloaded',
+           dict(kind='fleet', owner=0, id=f, at=XY[A], cargo=(50, 0, 0, 10), surface=(A, 0), msg=0x15e, only=True))
+    A = gp(0, 0, near=(2200, 1000), d=0, tol=250); B = s.planet(0, 7, near=XY[A], d=1350, tol=90)
+    f = s.gate(0, A, B, '%d:1' % H502, cargo=(50, 0, 0, 0))
+    s.case('R5', 'refusal order', 'player 0 502 kT freighter with 50 kT ironium, own 100/250 gate %d to own any/any %d, '
+           '%d ly (over range and over mass)' % (A, B, dist(XY[A], XY[B])),
+           'stays empty; only 0xe3 (range before mass); planet %d surface +50' % A, '0xe4 (mass) first',
+           dict(kind='fleet', owner=0, id=f, at=XY[A], cargo=(0, 0, 0, 0), surface=(A, 50), msg=0xe3, only=True))
+    A = s.planet(0, SB_NOGATE)
+    pt = (XY[A][0] + 100 if XY[A][0] < 1600 else XY[A][0] - 100, XY[A][1])
+    f = s.fleet(0, XY[A], '%d:1' % FR, planet=A, wps=' to %d %d warp 11' % pt)
+    s.case('R6', 'refusal order', 'player 0 freighter (no Jump Gate) at own planet %d without a gate, warp 11 to deep '
+           'space' % A, 'stays; only 0xde (no source gate)', '0x147 (destination not a planet) first',
+           dict(kind='fleet', owner=0, id=f, at=XY[A], msg=0xde, only=True))
+    pct = gate_pct(0, 6, 100, 491)
+    for i in range(6):
+        A = s.planet(0, 1); B = s.planet(0, 7, near=XY[A], d=100)
+        f = s.gate(0, A, B, '%d:1,%d:1' % (H491, DD))
+        s.case('W%d' % i, 'O-61 roll', 'Heavy 491 (danger %d%%, lost with %d%%) and a Laser DD, gate %d to %d'
+               % (pct, pct // 3, A, B), 'at planet %d with the Laser DD, with or without the Heavy (a design wiped out by '
+               'the roll counts once: 2 - 1 = 1)' % B, 'fleet gone (0xe7) whenever the Heavy is destroyed',
+               dict(kind='fleet', owner=0, id=f, at=XY[B], has=DD))
+    for c in s.cases:
+        c['id'] = c['id'].replace('GT-001', 'GT-003')
+    return s
+
+
 def main():
+    if sys.argv[1:2] == ['--three']:
+        s = build3()
+        if sys.argv[2:] == ['--list']:
+            for c in s.cases:
+                print('| %s | %s | %s | %s | %s |' % (c['id'], c['pred'], c['what'], c['expect'], c['alt']))
+            return
+        out = sys.argv[2]
+        open(os.path.join(out, 'gt003.spec'), 'w').write(HEAD3 + ''.join(s.planets) + '\n'.join(s.lines) + '\n')
+        json.dump(s.cases, open(os.path.join(out, 'cases3.json'), 'w'), indent=1)
+        return
     if sys.argv[1:2] == ['--two']:
         s = build2()
         if sys.argv[2:] == ['--list']:

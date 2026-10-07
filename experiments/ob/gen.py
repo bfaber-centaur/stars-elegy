@@ -893,6 +893,159 @@ r.case('B', 'O-31', 'scouts targeting wormholes 4-7, unknown at the start (as OB
        ('wormlost', [(0, i, i) for i in range(4, 8)]))
 
 
+# ================================================================ round 6: the BINARY-ONLY sweep (OB-028..OB-031)
+# Predictions restate OBJECTS.md "Mass-driver packets" (Launch, launch-year flight, AR and PP impact) and
+# "Mystery Trader" (arrival warp, several Traders), written before any round-6 run. Launch amounts, warp
+# and class follow "Launch"; costs (110 kT per 100 kT, IT 120, PP 70; mixed 44, IT 48, PP 25) are the
+# stars-decomp production reading, recorded here as a side check.
+
+def launch_pos(src, dest, W):
+    """Launch-year position: floor(W^2/2) ly toward planet dest, each coordinate rounded half away from zero."""
+    (x, y), (tx, ty) = XY[src], XY[dest]
+    dx, dy = tx - x, ty - y
+    d = math.hypot(dx, dy)
+    sp = W * W // 2
+    if int(d) <= sp:
+        return None
+    rnd = lambda v: int(v + 0.5) if v >= 0 else -int(-v + 0.5)
+    return x + rnd(sp * dx / d), y + rnd(sp * dy / d)
+
+
+def decay(m, cls, pct, pp=False):
+    rate = {0: 0, 1: 10, 2: 25, 3: 50}[cls]
+    if not rate:
+        return list(m)
+    mn = 10
+    if pp:
+        rate //= 2
+        mn = 5
+    return [0 if x == 0 else max(0, x - max(x * rate * pct // 10000, mn)) for x in m]
+
+
+SB_LAUNCH = ('sbdesign 0 3 Space Station, 1 Mass Driver 7, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, '
+             '8 Mole-skin Shield, empty, 8 Laser, empty, 8 Laser, 1 Mass Driver 7, 8 Mole-skin Shield = Twin 7\n'
+             'sbdesign 0 4 Space Station, 1 Mass Driver 7, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, '
+             '8 Mole-skin Shield, empty, 8 Laser, empty, 8 Laser, 1 Mass Driver 5, 8 Mole-skin Shield = MD7 and MD5\n')
+SB1 = ('sbdesign 1 0 Space Station, empty, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, 8 Mole-skin Shield, '
+       'empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield = Starbase\n'
+       'sbdesign 1 1 Orbital Fort, 1 Mass Driver 7, empty, empty, empty, empty = Catcher 7\n')
+TECH1 = ''.join('tech 1 %s 26\n' % f for f in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio'))
+LAUNCH = 'mines=0 factories=0 defenses=0 fe=5000 bo=5000 ge=5000 env=50,50,50 excess=0 scanner=31'
+
+
+def launcher(owner, n, sb, dest, warp, queue):
+    pk = 'none' if dest is None else '%d,%d' % (dest, warp)
+    return 'planet %d owner %d pop 1000 starbase %d\nplanetset %d %s packet=%s\nqueue %d %s\n' % (
+        n, owner, sb, n, LAUNCH, pk, n, queue)
+
+
+def launch_case(r, cid, owner, src, dest, W, cls, cargo, cost, what, alt, pp=False, it=False):
+    m = decay(cargo, cls, 50, pp)
+    pos = launch_pos(src, dest, W)
+    r.case(cid, 'launch', what, 'one packet to planet %d: warp %d, class %d, %s kT after the half-year decay, at %s'
+           % (dest, W, cls, '/'.join(map(str, m)), pos), alt, ('launch', owner, dest, W, cls, tuple(m), pos))
+    r.case(cid + 'c', 'launch cost', 'launcher planet %d surface minerals' % src,
+           'down %s (side check of the production reading)' % '/'.join(map(str, cost)), '',
+           ('surface', src, tuple(-c for c in cost)))
+
+
+# ---------------------------------------------------------------- OB-028 packet launch (JOAT player 0, IT player 1)
+ex = SB_LAUNCH + 'prt 1 7\nlrt 1 0x1b80\n' + TECH1 + SB1
+ex += launcher(0, 0, 2, 23, 9, '14:1:1')
+ex += launcher(0, 1, 2, 19, 11, '14:2:1')
+ex += launcher(0, 2, 3, 21, 4, '17:1:1')
+ex += launcher(0, 3, 4, 22, 4, '17:1:1')
+ex += launcher(0, 4, 2, 20, 7, '14:1:1,14:1:1')
+ex += launcher(0, 5, 2, None, 7, '14:1:1')
+ex += launcher(0, 11, 2, 12, 10, '14:5:1')
+ex += launcher(1, 14, 1, 7, 7, '14:1:1')
+ex += launcher(1, 16, 1, 9, 10, '14:1:1')
+r = run('OB-028', 'packet launch: driver warp, two drivers, speed setting, class, amounts, merge, '
+        'no destination, launch-year flight (JOAT player 0); IT launcher class (player 1, tech 26)', extra=ex)
+launch_case(r, 'A', 0, 0, 23, 9, 2, (100, 0, 0), (110, 0, 0), 'Mass Driver 7 fort, speed set to 9, one ironium item',
+            'warp 7 class 0; or no launch-year decay')
+launch_case(r, 'B', 0, 1, 19, 7, 0, (200, 0, 0), (220, 0, 0),
+            'Mass Driver 7 fort, speed set to 11 (above 7 + 3), ironium item x2', 'warp 10 (capped); two packets')
+launch_case(r, 'C', 0, 2, 21, 8, 0, (40, 40, 40), (44, 44, 44),
+            'Space Station with Mass Driver 7 in both orbital slots, speed unset, one mixed item', 'warp 7')
+launch_case(r, 'D', 0, 3, 22, 7, 0, (40, 40, 40), (44, 44, 44),
+            'Space Station with Mass Driver 7 and Mass Driver 5 in the two orbital slots, speed unset, one mixed item',
+            'warp 8 (any two drivers)')
+launch_case(r, 'E', 0, 4, 20, 7, 0, (200, 0, 0), (220, 0, 0),
+            'Mass Driver 7 fort, speed 7, two separate ironium items in one queue', 'two packets of 100 kT')
+r.case('F', 'launch', 'Mass Driver 7 fort with no packet destination, one ironium item',
+       'no packet from planet 5; surface unchanged; a message to player 0', 'packet launched',
+       ('nolaunch', 0, 5))
+pct = 35 * 100 // 50 // 2
+m = decay((500, 0, 0), 3, pct)
+r.case('G', 'launch', 'Mass Driver 7 fort, speed 10 (class 3), ironium x5 to planet 12, 35 ly away (within 50 = 10^2/2)',
+       'arrives the launch year: decay for half its 70%% share (%d%%) leaves %d kT; unowned planet 12 surface +%d'
+       % (pct, m[0], m[0] * 111 // 1000), 'still in flight; or arrives with full-year decay',
+       ('surface', 12, (m[0] * 111 // 1000, 0, 0)))
+launch_case(r, 'H', 1, 14, 7, 7, 1, (100, 0, 0), (120, 0, 0), 'IT player 1: Mass Driver 7 fort, speed 7',
+            'class 0 (no IT +1)', it=True)
+launch_case(r, 'I', 1, 16, 9, 10, 3, (100, 0, 0), (120, 0, 0), 'IT player 1: Mass Driver 7 fort, speed 10 (class 3)',
+            'class 4; or 3 + 1 wrapping', it=True)
+
+
+# ---------------------------------------------------------------- OB-029 Packet Physics launcher: amounts, terraforming, damage
+ex = 'prt 1 6\nlrt 1 0x1b80\n' + TECH1 + SB1
+ex += launcher(1, 14, 1, 7, 7, '14:1:1')
+ex += launcher(1, 16, 1, 9, 7, '17:1:1')
+for n in (0, 3, 6):
+    ex += 'planetset %d env=20,20,20\n' % n
+ex += 'planet 9 owner 0 pop 1000 starbase 1\nplanetset 9 %s scanner=31\n' % PLAIN
+r = run('OB-029', 'Packet Physics player 1 (tech 26): launch amounts, terraforming by uncaught packets, damage and '
+        'the catcher\'s design', extra=ex)
+launch_case(r, 'A', 1, 14, 7, 7, 0, (70, 0, 0), (70, 0, 0), 'PP: Mass Driver 7 fort, speed 7, one ironium item',
+            '100 kT', pp=True)
+launch_case(r, 'B', 1, 16, 9, 7, 0, (25, 25, 25), (25, 25, 25), 'PP: Mass Driver 7 fort, speed 7, one mixed item',
+            '40 kT each', pp=True)
+for cid, n, mi, axis in (('T1', 0, 0, 'gravity'), ('T2', 3, 1, 'temperature'), ('T3', 6, 2, 'radiation')):
+    x, y = XY[n]
+    cargo = [0, 0, 0]
+    cargo[mi] = 1000
+    r.thing('packet', 1, '%d %d %d 10 %d %d %d' % ((x - 30, y, n) + tuple(cargo)))
+    r.case(cid, 'PP terraform', 'PP packet, 1000 kT %s only, warp 10, into unowned planet %d (environment 20/20/20, '
+           'player 1 ideal 50)' % ('ironium boranium germanium'.split()[mi], n),
+           'only %s moves, up by the success count (10 chunks at 1/2: 1-10, mean 5); the other two stay 20; '
+           'surface +111 of that mineral' % axis, 'another axis moves; or no terraforming',
+           ('ppterra', n, mi))
+r.thing('packet', 1, '%d %d 9 10 500 0 0' % (XY[9][0] - 30, XY[9][1]))
+r.case('D', 'PP impact', 'PP packet 500 kT warp 10 into player 0 planet 9 (pop 1000, Laser Fort, no driver, at '
+       'player 1\'s ideal)', 'damage 312: pop 688 -> %d; surface +55; environment unchanged (already at the ideal)'
+       % grown(688), '', ('planet', 9, dict(pop=grown(688), surface=(55, 0, 0))))
+r.case('D2', 'PP impact', 'player 1\'s file after D', 'player 0\'s Laser Fort design is known to player 1', '',
+       ('designknown', 2, 0, 'Laser Fort'))
+
+
+# ---------------------------------------------------------------- OB-030 AR target; two Traders on one point
+ex = 'prt 1 8\nlrt 1 0x1b80\n' + TECH1 + SB1 + 'design 1 0 Super Freighter, 3 Long Hump 6, empty, empty, empty = Super Freighter\n'
+for n in (20, 22):
+    ex += 'planet %d owner 1 pop 1000 starbase 0\nplanetset %d mines=0 factories=0 defenses=0 fe=0 bo=0 ge=0 excess=0 ' \
+          'scanner=31\n' % (n, n)
+r = run('OB-030', 'Alternate Reality target (player 1, tech 26); two Mystery Traders reaching the same point', extra=ex)
+r.thing('packet', 0, '%d %d 20 10 1000 0 0' % (XY[20][0] - 30, XY[20][1]))
+r.case('A', 'AR impact', 'player 0 warp-10 1000 kT packet into AR planet 20 (pop 1000, starbase without driver)',
+       'surface +111; no damage: pop equal to the control planet 22', '625 killed',
+       ('arpacket', 20, 22, (111, 0, 0)))
+r.thing('trader', 0, '1020 1230 1380 1230 8')
+r.thing('trader', 0, '1020 1230 1380 1230 8')
+for owner in (0, 0, 1):
+    r.fleet(owner, 1084, 1230, '9:2' if owner == 0 else '0:2', plan=1 if owner == 0 else 0, extra='cargo 5000 0 0 0')
+r.case('T', 'trader', 'Traders 0 and 1 (warp 8) both end at (1084,1230), where player 0 has fleets 0 and 1 and player 1 '
+       'fleet 0, each with 5000 kT', 'all three fleets consumed: Trader 0 takes player 0 fleet 0 and player 1 fleet 0 '
+       '(player 0 fleet 1 refused, "still recovering"), Trader 1 takes player 0 fleet 1',
+       'player 0 fleet 1 kept (one reward per player per year)', ('tradertwo', [(0, 0), (0, 1), (1, 0)]))
+
+
+# ---------------------------------------------------------------- OB-031 a warp-6 Trader arrives (run at three cycles)
+r = run('OB-031', 'the only Mystery Trader, warp 6, arrives (cycles 20000, 30000, 60000)')
+r.thing('trader', 0, '1360 1100 1380 1100 6')
+r.case('A', 'trader', 'warp-6 Trader 20 ly from its destination (1380,1100), no other Trader',
+       'gone (1/2), or at (1380,1100) with warp max(6, 6 - 2) + 1 = 7 and a new destination on an edge',
+       'warp 5 (warp - 1) or 6', ('traderend6', 0, 1380, 1100))
+
 def main():
     if sys.argv[1:2] == ['--defs']:
         out = sys.argv[2]

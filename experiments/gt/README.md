@@ -83,3 +83,26 @@ held. Write-up: `docs/PARITY.md` "Stargates, round 2"; rules in
   (message 0xe7). The reconciled reading (a design lost entirely counts
   twice against the fleet's design count; deletion at exactly 0) was
   written into GT-002 before it ran, and held in all five mixes.
+
+## GT-003: refusal order and loss-roll wipe-outs (BINARY-ONLY sweep)
+
+Written before the run (`python3 experiments/gt/gen.py --three OUTDIR`, then the same build, pinned
+turn and `check.py OUTDIR/cases3.json OUT`). R1-R6 each give a fleet two reasons to be refused and
+predict the single refusal message the first check produces. W0-W5 send a 491 kT freighter (danger
+97%, lost with 32%) with a Laser DD through a 100/250 gate: a design wiped out by the loss rolls should
+count once against the design count, so the Laser DD survives.
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| GT-003-R1 | refusal order | player 1 Laser DD at player 0's gate 0 (source refused) to own planet 16 without a gate | stays; the only refusal message is 0xe6 (source gate) | 0xe2 (destination gate) first |
+| GT-003-R2 | refusal order | player 1 Laser DD from own 100/250 gate 9 to player 0's gate 250, 1343 ly (over 5 x 250) | stays; only 0xe5 (destination owner) | 0xe3 (range) first |
+| GT-003-R3 | refusal order | player 1 502 kT freighter from own 100/250 gate 193 to player 0's gate 173 | stays; only 0xe5 (destination owner) | 0xe4 (mass) first |
+| GT-003-R4 | refusal order | player 0 502 kT freighter with 50 kT ironium and 10 kT colonists at player 1's gate 98 (friend) to own gate 122 | stays full; only 0x15e (colonists); planet 98 surface +0 | 0xe4 (mass) after the minerals were unloaded |
+| GT-003-R5 | refusal order | player 0 502 kT freighter with 50 kT ironium, own 100/250 gate 276 to own any/any 4, 1350 ly (over range and over mass) | stays empty; only 0xe3 (range before mass); planet 276 surface +50 | 0xe4 (mass) first |
+| GT-003-R6 | refusal order | player 0 freighter (no Jump Gate) at own planet 3 without a gate, warp 11 to deep space | stays; only 0xde (no source gate) | 0x147 (destination not a planet) first |
+| GT-003-W0 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 196 to 190 | at planet 190 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+| GT-003-W1 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 101 to 121 | at planet 121 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+| GT-003-W2 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 6 to 13 | at planet 13 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+| GT-003-W3 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 104 to 76 | at planet 76 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+| GT-003-W4 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 202 to 183 | at planet 183 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
+| GT-003-W5 | O-61 roll | Heavy 491 (danger 97%, lost with 32%) and a Laser DD, gate 107 to 84 | at planet 84 with the Laser DD, with or without the Heavy (a design wiped out by the roll counts once: 2 - 1 = 1) | fleet gone (0xe7) whenever the Heavy is destroyed |
