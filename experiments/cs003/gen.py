@@ -399,6 +399,35 @@ for name, n in (('Blackjack', 5), ('Bludgeon', 4), ('Blunderbuss', 12)):
            'armor damage %d per hit on the fort (beam)' % stat(name, 'damage'), 'no damage (sapper)', ('beam0', n, stat(name, 'damage')))
 
 
+# ------------------------------------------------------------------ CS-003-C2 single torpedoes (added after CS-003-C)
+# CS-003-C could not tell 1 hit of 2d from 2 hits of d for Alpha, Juggernaut and
+# Doomsday (6 torpedoes per salvo; Alpha's 5 dp is below the Hulk stack's damage
+# resolution). Here each attacker fires 1 torpedo per round, so every hit record
+# is one hit, at a single armed target (it does not disengage) whose armor
+# resolves the damage.
+r = run('CS-003-C2', 'single-torpedo salvos: Alpha Torpedo, Juggernaut and Doomsday Missile')
+r.head.append('relation 0 1 2\nrelation 1 0 2')
+r.head.append(tech26(0, 1).rstrip())
+r.head.append('research 0 0\nresearch 1 0')
+r.head.append('plan 0 0 5 1 0 1 = Enemies\nplan 1 0 5 1 0 1 = Enemies')
+light = r.design(1, 'Cruiser, 2 Long Hump 6, empty, empty, 1 Laser, empty, empty, empty', 'Light')
+heavy = r.design(1, 'Battleship, 4 Long Hump 6, empty, empty, 1 Laser, empty, empty, empty, empty, empty, empty, empty', 'Heavy')
+for k, (name, tg, armor) in enumerate((('Alpha Torpedo', light, 700), ('Juggernaut Missile', heavy, 2000),
+                                       ('Doomsday Missile', heavy, 2000))):
+    t = BYNAME[name]
+    d = r.design(0, 'Battleship, 4 Long Hump 6, empty, empty, 1 %s, empty, empty, empty, empty, empty, empty, empty' % name,
+                 'T1-%02d' % t['index'])
+    x, yy = (1060 + 80 * k, 1230)
+    r.fleet(0, x, yy, '%d:1' % d)
+    r.fleet(1, x, yy, '%d:1' % tg)
+    dmg = t['stats']['damage']
+    missile = t['stats']['kind'] == 'missile'
+    D = 2 * dmg if missile else dmg
+    r.case('T%02d' % t['index'], name, 'kind', 'Battleship with 1 %s vs one armed (1 Laser), unshielded ship, armor %d' % (name, armor),
+           'every hit record is one hit of %d armor damage' % D, '%d' % (dmg if missile else 2 * dmg),
+           ('torp1', x, yy, D, armor))
+
+
 def main():
     out = sys.argv[1]
     os.makedirs(out, exist_ok=True)

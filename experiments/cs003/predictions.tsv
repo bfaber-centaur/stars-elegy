@@ -76,3 +76,6 @@ CS-003-C-T11	Armageddon Missile	kind	Cruiser with 6 Armageddon Missile vs 3 unar
 CS-003-C-Z-Blackjack	Blackjack	kind	Destroyer with 1 Blackjack at a planet with an unarmed, unshielded Orbital Fort	armor damage 90 per hit on the fort (beam)	no damage (sapper)	["beam0", 5, 90]
 CS-003-C-Z-Bludgeon	Bludgeon	kind	Destroyer with 1 Bludgeon at a planet with an unarmed, unshielded Orbital Fort	armor damage 231 per hit on the fort (beam)	no damage (sapper)	["beam0", 4, 231]
 CS-003-C-Z-Blunderbuss	Blunderbuss	kind	Destroyer with 1 Blunderbuss at a planet with an unarmed, unshielded Orbital Fort	armor damage 592 per hit on the fort (beam)	no damage (sapper)	["beam0", 12, 592]
+CS-003-C2-T00	Alpha Torpedo	kind	Battleship with 1 Alpha Torpedo vs one armed (1 Laser), unshielded ship, armor 700	every hit record is one hit of 5 armor damage	10	["torp1", 1060, 1230, 5, 700]
+CS-003-C2-T09	Juggernaut Missile	kind	Battleship with 1 Juggernaut Missile vs one armed (1 Laser), unshielded ship, armor 2000	every hit record is one hit of 300 armor damage	150	["torp1", 1140, 1230, 300, 2000]
+CS-003-C2-T10	Doomsday Missile	kind	Battleship with 1 Doomsday Missile vs one armed (1 Laser), unshielded ship, armor 2000	every hit record is one hit of 560 armor damage	280	["torp1", 1220, 1230, 560, 2000]
