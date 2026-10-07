@@ -4645,3 +4645,18 @@ and specs: `experiments/lq/`. Raw files: private apparatus `evidence/lq/`.
 - Missed: Add with the Top row selected merged into the Factory below it
   (LQ-7); and the factories in the whole queue are limited to 1020 (LQ-5),
   after which Factory leaves the buildable list.
+
+## Ship-count boundary through the client (CO-06)
+
+Status: MEASURED, 2026-10-07. Full record: `experiments/fc/README.md`
+"CO-06, ship-count boundary". Summary for `LIMITS.md`:
+
+- The client's Merge Fleets was disabled for two 16000-ship fleets (it was
+  enabled for 10 + 10 and 2 + 2), so the direct merge order's boundary is
+  not reachable with legal orders.
+- The two-fleet ship exchange instead: the client stops the destination at
+  32766; the host stored 32765 each time (the extra ship lost), and moved
+  cargo and fuel by the share of ships moved. Controls kept 32765 and 32000.
+
+The same file records the other client-order cases, among them CO-07 and
+CO-08 (deleting and editing designs in use).

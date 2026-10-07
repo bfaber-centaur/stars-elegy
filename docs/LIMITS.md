@@ -50,8 +50,8 @@ What happens at a limit is one of:
 | Fleets per player | 512 | built ships join a fleet at the planet, or are lost | CONFIRMED (SL-08..SL-10) | `PRODUCTION-LAUNCH.md` "The 512-fleet limit" |
 | Fleets made by a split order | no check in the host; the client refuses a split at 512 | a crafted split past 512 would spill into the owner bits | BINARY-ONLY, serial-gated | |
 | Design stacks per fleet | 16 (one per design slot) | — | BINARY-ONLY | |
-| Ships per stack | 32,767 | the Merge-with-Fleet task has no cap and a total of 32,768 or more leaves no ships (LEGACY BUG); the merge order keeps 32,767 and turns more into 32,766 | CONFIRMED (task, FO-01..FO-07); order BINARY-ONLY | `ORDERS.md` "Merge" |
-| Ships moved between own fleets | destination stack at most 32,765 | clipped | BINARY-ONLY | `ORDERS.md` "Transfer between the player's own fleets" |
+| Ships per stack | 32,767 | the Merge-with-Fleet task has no cap: a total of 32,768 or more leaves no ships (LEGACY BUG). For the direct merge order, 32,768 or more becoming 32,766 is Elegy's chosen rule (`ORDERS.md` "Merge"), not a measured result: the client disables Merge Fleets for very large fleets, so no legal order reaches the boundary | CONFIRMED (task, FO-01..FO-07); merge order unconfirmed (CO-06), serial-gated | `ORDERS.md` "Merge" |
+| Ships moved between own fleets | destination stack at most 32,765 in the host; the client's Ship Transfer stops at 32,766 | the host stores 32,765 and the extra ship is lost; cargo and fuel move by the share of ships moved | MEASURED (CO-06) | `ORDERS.md` "Transfer between the player's own fleets"; `experiments/fc/README.md` |
 | Fleet-following passes | 8 | — | BINARY-ONLY | `KERNEL.md` turn order (open PR) |
 | Movement chase rounds | 10 | — | CONFIRMED (FM-001..003) | `KERNEL.md` "Chasing another fleet" |
 | Waypoints per fleet | **UNKNOWN.** The host checks only that a new waypoint's index is at most the current count; its count is a byte | — | UNKNOWN | |
@@ -245,7 +245,7 @@ production barely moves the queue. One pinned year (cycles 20000) made the
 base: Factory ×5 at 49%, Mine ×5 at 30%, Defenses ×5, Factory ×5 at 20%,
 Armed Probe ×3 at 50%. Each case is one client session
 (`tools/fleetlab/client-orders`) and one pinned year. Predictions were
-committed before each batch (LQ-5b and LQ-7 after LQ-5). Raw files: apparatus `evidence/lq/` (private).
+committed before each batch (LQ-5b and LQ-7 after LQ-5). Raw files: private apparatus `evidence/lq/`.
 
 | Case | Client action | Predicted | Observed |
 |---|---|---|---|
