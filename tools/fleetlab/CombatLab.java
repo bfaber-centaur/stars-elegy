@@ -133,6 +133,7 @@ public class CombatLab {
     static void dump(String f) throws Exception {
         List<Block> blocks = new Decryptor().readFile(f);
         boolean host = f.toUpperCase().endsWith(".HST");
+        boolean orders = f.toUpperCase().matches(".*\\.X\\d+$");
         List<PlayerBlock> players = new ArrayList<>();
         int shipSeen = 0, sbSeen = 0, filePlayer = -1, lastPlanet = -1;
         StringBuilder battle = null;
@@ -239,6 +240,26 @@ public class CombatLab {
                 for (int i = 8; i + 1 < w.size; i += 2) ex.append(i == 8 ? " orders=" : ",").append(String.format("%04x", u16(d, i)));
                 System.out.printf("%s   wp x=%d y=%d obj=%d type=%02x warp=%d task=%d%s%n", f,
                     u16(d, 0), u16(d, 2), u16(d, 4), d[7] & 0xff, (d[6] & 0xff) >> 4, d[6] & 15, ex);
+            } else if (orders && (b.typeId == 1 || b.typeId == 2 || b.typeId == 25)) {
+                // order file: manual cargo transfer. fleet word, other-side object word,
+                // kind byte, item mask (1 ir, 2 bo, 4 ge, 8 col, 16 fuel), then one signed
+                // amount per set bit (1, 2 or 4 bytes); negative = from the fleet
+                byte[] d = b.getDecryptedData();
+                int w = b.typeId == 1 ? 1 : b.typeId == 2 ? 2 : 4, mask = d[5] & 0xff, o = 6;
+                StringBuilder sb = new StringBuilder();
+                String[] it = {"ir", "bo", "ge", "col", "fuel"};
+                for (int i = 0; i < 5; i++) {
+                    if ((mask >> i & 1) == 0) continue;
+                    long v = w == 1 ? d[o] : w == 2 ? (short) u16(d, o) : (int) Util.read32(d, o);
+                    sb.append(' ').append(it[i]).append('=').append(v);
+                    o += w;
+                }
+                System.out.printf("%s order cargo fleet=%d other=%d kind=%02x%s raw=%s%n", f, u16(d, 0) & 0x1ff, u16(d, 2),
+                    d[4] & 0xff, sb, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId != 8 && b.typeId != 9 && b.typeId != 36 && b.typeId != 0
+                    && !(b instanceof BattlePlanBlock) && b.typeId != 42) {
+                // other order records, raw (never the serial block 9 or the password block 36)
+                System.out.printf("%s order type=%d raw=%s%n", f, b.typeId, Util.bytesToString(b.getDecryptedData(), 0, b.size));
             } else if (b instanceof BattlePlanBlock && b.size == 2) {
                 // order file: battle plan delete (byte 1 bit 6); plan = high nibble, player = low
                 byte[] d = b.getDecryptedData();

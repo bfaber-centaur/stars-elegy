@@ -793,6 +793,22 @@ What the client did, at 1152x864:
   (380, 327) and (380, 397)) only appears with more than six items, and
   the open list starts scrolled to the current plan.
 
+- **Manual cargo transfer** (XF-1, 2026-10-07). In the fleet view, Xfer
+  (161, 213) in the "Orbiting X" panel opens Cargo Transfer with the
+  orbited planet, foreign and unowned ones included. Rows (y): fuel 340,
+  ironium 380, boranium 400, germanium 420, colonists 440. The arrow at
+  x 585 moves cargo from the fleet to the planet, and the arrow at x 567
+  moves it back. A click moves 1 kT, shift-click 10, ctrl-click 100,
+  each capped. OK is at (627, 555). A foreign or unknown planet shows
+  0 kT on its side. The client let colonists go down on a foreign
+  homeworld and on an unowned planet. Each fleet's transfers are one
+  order record (`combatlab dump`: `order cargo fleet= other= ir= …`;
+  positive means loaded into the fleet). The host applied them all: the
+  minerals were added to both planets; the colonists were lost, with
+  message 0x058 at the foreign homeworld (it has a starbase) and 0x002
+  at the unowned planet.
+  `client-orders` commands: `fleet xfer`, `xfer ITEM N`, `xfer ok`.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh

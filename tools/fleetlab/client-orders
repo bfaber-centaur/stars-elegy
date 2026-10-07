@@ -32,6 +32,10 @@
 #   fleet next | fleet prev
 #                          the fleet panel's Next / Prev buttons
 #   fleet plan K           set the selected fleet's battle plan to item K
+#   fleet xfer             open Cargo Transfer with what the fleet orbits
+#   xfer ITEM N            ITEM fuel|ir|bo|ge|col; N > 0 moves N from the
+#                          fleet to the other side, N < 0 the reverse
+#   xfer ok | xfer cancel  close the Cargo Transfer dialog
 #   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
 #   shot NAME              extra screenshot
 set -euo pipefail
@@ -68,6 +72,23 @@ fleetplan() {
 		"$O/click" 300 $((327 + 14 * item))
 	fi
 	pause
+}
+
+# Cargo Transfer dialog (fleet panel Xfer): rows fuel/ir/bo/ge/col; the
+# arrows at x 585 move fleet -> other side, x 567 the reverse. A click
+# moves 1 (kT or mg), shift-click 10, ctrl-click 100, each capped by what
+# is there and what fits.
+xfer() {
+	local item="$1" n="$2" x=585 y
+	case "$item" in fuel) y=340 ;; ir) y=380 ;; bo) y=400 ;; ge) y=420 ;; col) y=440 ;;
+	*) echo "client-orders: xfer: unknown item $item" >&2; exit 2 ;; esac
+	((n < 0)) && { x=567; n=$((-n)); }
+	((n == 0)) && return
+	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; moves 1
+	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
+	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
+	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1
+	pause 0.5
 }
 
 "$O/stop" >/dev/null 2>&1 || true
@@ -109,6 +130,10 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"fleet next") "$O/click" 144 132; pause ;;
 	"fleet prev") "$O/click" 144 108; pause ;;
 	"fleet plan") fleetplan "$b" ;;
+	"fleet xfer") "$O/click" 161 213; pause 1.5 ;;
+	"xfer ok") "$O/click" 627 555; pause ;;
+	"xfer cancel") "$O/click" 705 555; pause ;;
+	xfer\ *) xfer "$a" "$b" ;;
 	key\ *) "$O/key" $a $b $rest; pause ;;
 	click\ *) "$O/click" "$a" "$b"; pause ;;
 	wait\ *) sleep "$a" ;;
