@@ -151,10 +151,27 @@ random stream and for the plan-0 legacy bug below.
    unarmed station, with an unarmed visitor, or with plan 0 "nobody".
 6. **During the battle**, a player's attack set is the one these steps
    produced. It does not change.
-7. **Token cap.** At most 256 tokens (BINARY-ONLY).
-   - If the involved fleets need more, each player gets a quota of
-     `255 / players` stacks, and fleets beyond their quota are left out.
-   - Then left-out fleets are added back while room remains.
+7. **Token cap** (CONFIRMED, CB-039: exact token counts and left-out
+   fleets in both streams). At most 255 tokens.
+   - Count the stacks of every fleet of a player in `P`, plus 1 for a
+     starbase token. If that is at most 255, everything fights.
+   - Otherwise each involved player gets a quota of `255 / n` stacks
+     (integer division; `n` is the size of `Q`). The starbase counts
+     toward the total but not toward its owner's quota.
+   - **First pass**, over the location's fleets in this order: the
+     location's first fleet (the lowest by owner, then fleet number),
+     then all the others from the highest to the lowest (by owner, then
+     fleet number). A fleet joins, with all its stacks, if its owner's
+     count plus its stacks is at most the quota. Otherwise it is left
+     out, and the pass goes on to the next fleet.
+   - **Second pass**, only if the total is below 255, in the same order:
+     each left-out fleet whose stacks still fit (total plus its stacks at
+     most 255) is added back whole.
+   - CB-039 (140 one-ship fleets each, `n = 2`, quota 127): player 0's
+     first fleet, then player 1's fleets 139..12 and player 0's fleets
+     139..14 joined. That is 254 stacks; the second pass added player 1's
+     fleet 12, for 255. Player 0's fleets 1..13 and player 1's fleets
+     0..11 sat out.
    - Players with a left-out fleet are told that some fleets missed the
      battle.
 8. **Excluded fleets** (BINARY-ONLY): a fleet carrying a particular
@@ -180,10 +197,19 @@ turn:
 - **Player 0**, if the previous location examined had a battle.
 - **The owner of the last fleet in that location's fleet order**, if it had
   no battle. For a lone fleet, X is that fleet's owner.
-- **Not determined** for the first location examined in a turn. The value
-  is left over from earlier processing. In CB-022 "no lone fleet" (two
-  random streams) it was neither 0 nor 1. An X that is not a player in the
-  game has no effect: plan 0 then contributes nothing.
+- **Not determined** for the first location examined in a turn
+  (BINARY-ONLY). The value is left over from earlier processing, so the
+  binary alone does not fix it. In CB-022 "no lone fleet" (two random
+  streams) it was neither 0 nor 1. In CB-035, a 16-player game, it was
+  never a player of the game in 36 of 36 runs, with and without other
+  fleets and moving fleets elsewhere. When X is not a player, the write
+  lands outside the attack sets, and no effect of it was observed.
+  - **Elegy's chosen rule:** at the first location of a turn, plan 0
+    "everyone" or "a named player" contributes nothing.
+
+CONFIRMED for the previous-location rule: X = 3 after a battle-less
+location whose last fleet was player 3's (CB-035-prev3), and X = 0 after a
+location with a battle (CB-035-prevbattle).
 
 Step 4 for X's own aggressor fleets runs after this. An "everyone" fleet of
 X replaces X's set.
@@ -195,7 +221,7 @@ with an aggressor fleet that attacks "enemies" while B considers A neutral.
 |---|---|---|
 | A | A attacks B: an ordinary battle, the same as "enemies" | CONFIRMED (CB-012 three streams, CB-013; the previous location had a battle) |
 | B | B's set names only B among the present players. `Q = {B}`, `n = 1`, `P = {A, B}`: a **one-player battle** | CONFIRMED for "player 1" and for "everyone", byte-identical records (CB-022, two streams each) |
-| not a player of the game | no battle: nobody's set names a present player | MEASURED (CB-022 "no lone fleet", "player 1"; two-player game) |
+| not a player of the game | no battle: nobody's set names a present player | MEASURED (CB-022 "no lone fleet", "player 1"; two-player game. CB-035, 16 players, 36 runs) |
 | C, a player of the game who is not present | C's set names B (or, for "everyone", every player but A). So `Q = {B, C}` and `n = 2`. B attacks C back, but C has no tokens. Squares come from `n = 2` (A rank 0 at (1,4), B rank 1 at (8,5)), and the battle ends after round 0's movement with no shots | BINARY-ONLY |
 
 The one-player battle runs as an ordinary battle with `n = 1`:
@@ -213,7 +239,7 @@ side effects).
 
 ## Board setup
 
-### Start squares (CONFIRMED for one, two, three and five involved players)
+### Start squares (CONFIRMED for one to six involved players)
 
 The board is 10×10. Each player in the battle's player list `P` has one
 start square, and all of that player's tokens, starbase included, start on
@@ -223,8 +249,10 @@ first, from 0) and by `n`, the number of involved players (the size of
 entry `n(n−1)/2 + rank`. When `P` has more players than `Q`, the rank runs
 past row `n` into the next row. CONFIRMED for `n = 2` (CB-001..CB-021) and
 for `n = 1` with two players in `P`: (4,4) and (1,4) (CB-022), for
-`n = 3` (CB-031, CB-032, CB-034) and for `n = 5` (CB-033). BINARY-ONLY
-for other `n`, and for a rank past row `n`.
+`n = 3` (CB-031, CB-032, CB-034), `n = 4` and `n = 6` (CB-036) and
+`n = 5` (CB-033). CONFIRMED for a rank past row `n` (CB-036: an
+uninvolved starbase owner with `n = 2` took (1,4), the involved players
+(8,5) and (4,1)).
 
 | n | squares (x,y) by rank |
 |---|---|
@@ -331,10 +359,16 @@ armor, it does not trust a stored value):
   - `w` = 10 for Interspace-10, Enigma Pulsar, Trans-Star 10,
     Trans-Galactic Mizer Scoop and Galaxy Scoop. Otherwise it is the
     highest warp ≤ 9 whose fuel-table entry is at most 120.
-  - Mass = design mass + the stack's share of the fleet's cargo (by cargo
-    capacity).
-  - CONFIRMED by the designer (CB-000, 32/32), without the battle-only
-    terms (cargo, WM, dump).
+  - Mass is per ship: design mass + `C · c / F`, truncated. `C` is the
+    fleet's total cargo, `c` the cargo capacity of one ship of this
+    design, and `F` the fleet's total cargo capacity. So a stack's share
+    is spread over its ships (CONFIRMED, CB-038: 1 kT in a fleet of two
+    Medium Freighters left each at mass 69, code 2; 1 kT in a one-ship
+    fleet gave 70, code 1). A design without cargo capacity adds nothing.
+  - CONFIRMED by the designer (CB-000, 32/32) without the battle-only
+    terms. War Monger `+2` and the cargo term are CONFIRMED in battle
+    (CB-038, six stacks, two streams). The dump term is CONFIRMED by
+    CB-025.
 
 ### Starbases in battle
 
@@ -798,7 +832,7 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
 - Either way, **no damage is left over** after a hit on a starbase. A
   beam stops there, even after destroying it (BINARY-ONLY).
 - Destroying an Alternate Reality race's starbase leaves the planet
-  uninhabited (BINARY-ONLY).
+  uninhabited (CONFIRMED, CB-041: 17 of 17 streams).
 
 **Regenerating Shields** (CONFIRMED, CB-007/008, 39 hits): at the start
 of each round after the first, a token whose shields are above 0 regains
@@ -875,7 +909,8 @@ Then:
 
 - **At a planet:** the planet's surface gains `× 8/10` if it has a
   starbase, else `× 5/10`. No salvage object is created.
-- **In deep space** (BINARY-ONLY in detail): a quarter is lost
+- **In deep space** (BINARY-ONLY in detail; the 30000 kT overflow
+  CONFIRMED, CB-040): a quarter is lost
   (`S − S/4`).
   - The rest goes into this battle's salvage object. Every kill event
     in the battle adds to it.
@@ -893,7 +928,9 @@ Then:
   - The remainder of that mineral is added in a new pass (ironium,
     boranium, germanium again) into the new object, and so are the
     minerals not yet added. Nothing is lost to the limit, and nothing is
-    split proportionally.
+    split proportionally. CB-040: 36098 kT of ironium and 50 kT of
+    germanium went into one object of 30000 ironium (3000 steps) and a
+    second of 6098 ironium and 50 germanium.
 
 ### Repair (CONFIRMED, CB-017, 10 locations × 2 turns; Q-12)
 
@@ -969,23 +1006,30 @@ draws come in that order.
     participant that lost nothing and destroyed nothing does attempt.
     CONFIRMED by the round-2 CB-012 chain (a player that lost nothing at
     its own planet). A wiped-out participant makes no attempt:
-    CONFIRMED by CB-029 (12 of 12 streams).
+    CONFIRMED by CB-029 (12 of 12 streams). A participant whose starbase
+    was destroyed but whose ships survived does attempt (CB-041, a
+    non-AR owner at its own planet: replayed per stream, below).
   - When `n` is not 2 (one involved player, or three or more), every
     participant makes an attempt, whatever it lost or destroyed.
     CONFIRMED by CB-031-n3 (a wiped-out player gained in 5 of 12 streams).
   - If the battle destroyed an Alternate Reality starbase, no
-    participant makes an attempt.
+    participant makes an attempt. CONFIRMED by per-stream replay
+    (CB-041): every move of every CB-041 battle with Super Freighters
+    was reproduced from its random stream (40 runs, 12 distinct
+    streams per race). The draws after each battle predict the JOAT
+    owner's result in all 12 streams: one gain, in the one stream where
+    the predicted draws succeed. In 4 of the 9 AR streams where the Fort
+    died, an attempt would have gained, and the AR owner gained in none.
   - Nothing is destroyed in some of these battles; the attempt still
     makes its draws (step 2 onwards), and the field step then finds no
     field behind.
 - **Players not in the battle:**
   - A player makes an attempt when the battle was at its own planet.
-  - **LEGACY BUG (CONFIRMED for player 0, CB-031-obs; the rest
-    BINARY-ONLY).** Otherwise, the game means to give an
+  - **LEGACY BUG (CONFIRMED, CB-031-obs, CB-037).** Otherwise, the game means to give an
     attempt to observers: players present at the location but not in the
     battle, and the owner of a planet there without a starbase. That
     owner's bit is in the observer set even when the owner is also a
-    participant (BINARY-ONLY); a participant never gets the observer
+    participant (CONFIRMED, CB-037-owner); a participant never gets the observer
     attempt itself, but its bit still counts for other players. It tests
     the player's **number** against the observer set instead of the
     player's bit: player `i` qualifies when `i AND observers ≠ 0`, where
@@ -993,31 +1037,28 @@ draws come in that order.
     qualifies; player 1 qualifies when player 0 is an observer, player 2
     when player 1 is, player 3 when player 0 or 1 is, and so on. A
     qualifying player also needs a fleet at the location. The location
-    rule does not apply here.
+    rule does not apply here. CB-037: with observers {1, 2, 3}, player 1
+    never gained in 8 streams while players 2 and 3 did; player 3 gained
+    with observers {1, 3} (the owner's bit) and never with {3}.
 
 ## Open experiments
 
-Round 3 (R-8 to R-10, CB-020..CB-022) is done. Every prediction held
-except the R-10 "everyone" control, which the LEGACY BUG section now
-explains. Rounds 4, 4b and 4c (CB-023..CB-034) confirmed the rules now
-tagged with them. CB-032 missed and is explained under "Disengaging".
+Rounds 3 to 5 (CB-020..CB-041) are done. Every rule they tested is
+tagged with its result. The misses were the predictions, not the rules:
+CB-032 (explained under "Disengaging"), the CB-035 retaliation
+prediction, the CB-038 two-ship stack, the CB-039 total and split, and the
+CB-041 JOAT control (chance, per the replay).
 
 Not yet tested:
 
-- the plan-0 value X on the first location of a turn (not 0 or 1 in
-  CB-022). It is a leftover value from code that ran before battles, so
-  reading the binary alone does not settle it; it needs a debugger run or
-  more oracle cases;
-- a starbase owner in the player list but not involved (start-square rank past row `n` with `n ≥ 2`);
-- start squares for `n` = 4 and 6;
-- the token cap;
-- the AR starbase case of tech attempts, and the observer LEGACY BUG for
-  players other than 0 (and the planet owner's bit when it is also a
-  participant);
+- the token cap with more than two involved players, with a starbase,
+  and with multi-design fleets (a left-out fleet whose stacks no longer
+  fit is skipped by the second pass, which goes on to later fleets);
+- the exact plan-0 value X at the first location of a turn (only that it
+  was never a player; Elegy's chosen rule is above);
 - Mystery Trader items from battle;
-- queued ships lost with a starbase; AR starbase loss;
-- salvage at more than one point;
-- War Monger and cargo in the speed code.
+- queued ships lost with a starbase;
+- salvage at more than one point.
 
 The firing live-token recheck has no observable effect (see "Firing").
 
