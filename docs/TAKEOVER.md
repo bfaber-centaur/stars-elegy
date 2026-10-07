@@ -260,6 +260,13 @@ planet's surface, and the fleet loses them (BINARY-ONLY). Only cargo to
 another player's **fleet** checks the relation: nothing moves to an enemy's
 fleet.
 
+**Unloading in deep space** (a waypoint that is not a planet, fleet or
+salvage; BINARY-ONLY): minerals are **destroyed**. The fleet loses them,
+the owner gets the usual "unloaded" message, and no salvage object is made.
+Colonists are refused: the fleet keeps them and the owner gets a failure
+message. Fuel does not move. Only scrapping a fleet in deep space leaves
+salvage (Other waypoint tasks).
+
 ### Unload and load amounts (BINARY-ONLY)
 
 A transport order sets, per cargo type (ironium, boranium, germanium,
@@ -494,6 +501,7 @@ resolutions after movement. Random-stream pinning for experiments:
 - Tech learned on capture; ancient artifacts.
 - Colonize retries (below).
 - Fuel unloaded at a planet: is the fleet debited?
+- Minerals unloaded in deep space (destroyed, no salvage).
 - Minerals unloaded on another player's planet, and the bomb case where
   rounded factory and defense kills exceed `I`.
 - Loading every colonist from one's own planet: does the planet stay owned
