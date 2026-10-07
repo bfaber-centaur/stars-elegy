@@ -1,0 +1,7 @@
+# LQ-2 (Q-2): remove the partial Factory (49%) and add Factory x5 back at the top.
+queue open
+queue select 1
+queue remove 5
+queue select 0
+queue add 6 5
+queue ok
