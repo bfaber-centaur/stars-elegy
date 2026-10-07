@@ -2475,3 +2475,153 @@ it carries the expected registration credential; a file without it is
 silently skipped, and a missing credential is distinct from the anti-tamper
 cheater check. The credential value is not recorded in this public
 repository. Raw files are kept in private apparatus.
+
+## Universe generation
+
+Status: MEASURED (UG01 to UG21, 2026-10-07; cloud oracle). Predictions
+UG-1..UG-9 from the private binary reading (stars-decomp
+`docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
+whole predicted game per case were committed before the runs
+(`experiments/ug/README.md`; stars-decomp 1327269, apparatus 80e6c1b).
+CONFIRMED below means every case that tested the rule agreed, field by
+field; the case ids say which. This section states behavior only.
+
+### Method
+
+- Each game is built from a game definition file with
+  `tools/fleetlab/new-game` (`docs/ORACLE.md` "New games from a definition
+  file"); the new `.HST` is read with `combatlab dump` and
+  `experiments/ug/homeworlds.py`.
+- UG01..UG15: the SS race file PG000.R1 and computer players, every size
+  and density, 2 to 16 players, the max-minerals, BBS, clumping and
+  no-random-events options. UG16..UG21: legal WM, SD, IT, JOAT and PP
+  races made from PG000.R1 by changing only the primary trait and the
+  leftover-points spend (`tools/fleetlab/racelab`), with 2 to 16 players.
+- The private model was compared on planet positions, name ids, every
+  planet's environment, concentrations and artifact flag, owners,
+  homeworlds, starting tech, designs, fleets, logos, wormholes and the
+  option word. All 21 games and a rerun of UG01 matched with 0
+  mismatches.
+- Raw files, dumps and checks: private `stars-oracle-apparatus`,
+  `evidence/ug/`.
+
+### Determinism and seeds (CONFIRMED)
+
+- A definition file that gives a seed produces the same game every time.
+  UG01 built at two DOSBox speeds (cycles 20000 and 30000) decoded
+  identically apart from the game id. The game id is the only difference,
+  and since the files are encrypted with it, compare decoded dumps, not
+  raw bytes.
+- Seeds that are equal modulo 4096 gave the same game in both pairs run:
+  seed 57 and seed 12345 (UG11 vs the first OB new game, huge), seed 4107
+  and seed 11 (UG14 vs OB-006's large game). Seeds 0 and 64 also gave
+  identical games (UG12, UG13). The binary reading says only the low 12
+  bits are used, as two 6-bit halves, and a seed whose halves are equal
+  behaves like the one with the upper half bumped by one; that explains
+  the 0/64 pair, the only such pair run.
+- Without a seed the game comes from the startup clock (not tested here).
+
+### Planet counts (MEASURED)
+
+Planets per game, by size and density:
+
+| size | sparse | normal | dense | packed |
+|---|---|---|---|---|
+| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | |
+| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | |
+| medium | | 288 (UG07, UG16, UG20) | 360 (UG03) | 540 (UG10) |
+| large | | 512 (UG14, UG17) | | 912 (UG04, clumped) |
+| huge | | 800 (UG11, UG21) | 940 (UG05) | 940 (UG15) |
+
+With W the galaxy width (400, 800, 1200, 1600, 2000 ly from tiny to
+huge), the normal-density counts are W²/5000, sparse 3/4 of that, dense
+5/4 and medium packed 15/8. Large packed and huge dense or packed come
+near the generator's limit of 999 candidates, and the binary reading says
+their count then depends on the seed (a too-close pass removes a variable
+number). Only one seed per size and density was run, so treat those three
+cells as single observations. Huge dense and huge packed gave the
+identical game at the same seed (UG05, UG15).
+
+### Options (CONFIRMED)
+
+- **Maximum minerals** (UG02, UG09): every planet's concentrations are
+  100/100/100, except the homeworlds.
+- **BBS** (UG03, UG09, UG21) raises
+  concentrations below 40 by 5, homeworld surface minerals by 1/4, and
+  multiplies homeworld population by (growth% × k + 5)/5, k = 2 for HE and
+  1 otherwise. PG000.R1 (SS, 10%) starts with 750 colonists instead of
+  250 (UG03); IT, 4/5 of that, with 600 (UG21).
+- **No random events** (UG08, UG09): no wormholes and no artifacts.
+  UG19 (tiny, events on) also had no wormholes; no artifact appeared in
+  any game of this corpus.
+- **Clumping** (UG04, UG10) and player positions 0–3 (all games) moved
+  planets and homeworlds as the model predicted.
+
+### Starting tech by PRT (CONFIRMED)
+
+Energy/weapons/propulsion/construction/electronics/biotech for the human
+races of UG16..UG21 (all with the same research settings as PG000.R1):
+
+| PRT | tech |
+|---|---|
+| WM | 1/6/1/0/0/0 |
+| SD | 0/0/2/0/0/2 |
+| IT | 0/0/5/5/0/0 |
+| PP | 4/0/0/0/0/0 |
+| JOAT | 3/3/3/3/3/3 |
+| SS (PG000.R1) | 0/0/0/0/5/0 |
+
+Computer races start with their own settings on top (for example SS
+0/0/1/0/5/0, CA 3/3/3/3/3/6 and AR 1/0/1/0/0/0 in UG21). Starting designs and fleets
+per PRT matched the model in UG16..UG21; examples from UG21: WM with
+construction 0 has only a scout (Quick Jump 5, Bat Scanner, Yakimora Light
+Phaser) and a colony ship; SD
+has two Mini Mine Layers; IT a Destroyer and a Privateer; JOAT six
+designs and six fleets.
+
+### Starting planets (CONFIRMED)
+
+- Homeworld installations are 10 mines, 10 factories and 10 defenses
+  before leftover-point spends. AR homeworlds have no installations;
+  their starbase design 1 is a Space Station and design 0 an empty
+  Orbital Fort.
+- **IT and PP second planet.** On a map larger than tiny, an IT or PP
+  player starts with a second planet holding 2/5 of the homeworld's
+  starting population, 10 mines and 4 factories; the homeworld keeps
+  4/5 (IT and PP in UG16, UG17, UG18, UG20, UG21; computer PP in UG03).
+  On a tiny map there is no second planet and the homeworld keeps the
+  full population (UG19). IT starbases carry a Stargate 100/250 and an
+  Orbital Fort gate design exists; PP's carry a Mass Driver 5.
+- **Leftover advantage points.** With L = min(50, points left), all of
+  this corpus's races had L = 50. The spend selected in the race file
+  added, on the homeworld:
+  - mines: +25 (10 → 35; WM UG16, PP UG20);
+  - factories: +10 (10 → 20; SD UG16);
+  - defenses: +5 (10 → 15; IT UG16);
+  - surface minerals: +500 kT, +250 on the smallest of the three and +125
+    on each other (JOAT UG16: 423/253/234 → 548/378/484);
+  - mineral concentrations: +25 on the lowest and +13 on all three (JOAT
+    UG20: 53/30/82 → 66/68/95, with the 30 the floored value below).
+  Computer races of harder and expert levels also showed the
+  concentration and surface boosts (UG17, UG21).
+
+### Shared homeworld minerals (LEGACY BUG, MEASURED)
+
+In every game with two or more players (UG16..UG21 checked directly;
+up to 16 players in UG21), all homeworlds start, before spends, with:
+
+- the **same surface minerals**, one draw for the whole game; and
+- the **same concentrations: those of planet 0** (the first planet in
+  the planet list), each raised to at least 30, not the homeworld's own.
+
+Examples: UG16, planet 0 has 15/70/90, and the WM, SD, IT and JOAT
+homeworlds all have 30/70/90 with surface 423/253/234 (JOAT's minerals
+spend gives it 548/378/484). UG21, planet 0 has 47/37/29; the eight
+homeworlds without a concentration spend all have 47/37/30, and the ten
+without a minerals spend all have 438/262/450.
+
+Interpretation: the binary reading attributes this to the homeworld
+setup reading the first planet's record instead of the homeworld's. It
+is deterministic and observable, so it is recorded as LEGACY BUG; it
+makes every start mineral-identical, which may be what players have
+long seen as "fair starts". Elegy can reproduce it as one isolated rule.
