@@ -21,6 +21,12 @@ import org.starsautohost.starsapi.items.Items;
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
+//   field P FIELD                   set the current research field
+//   defqueue P ID:COUNT[,...]|none  set P's default production queue for new colonies (at
+//                                   most 12 items; ID = planetary item id, 0 auto mines,
+//                                   1 auto factories, 2 auto defenses, 3 auto alchemy,
+//                                   4 auto min terraform, 5 auto max terraform, 6 auto packets)
+//   defleftover P 0|1               set P's default "only leftover to research" for new colonies
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -112,7 +118,7 @@ public class CombatLab {
         List<Block> blocks = new Decryptor().readFile(f);
         boolean host = f.toUpperCase().endsWith(".HST");
         List<PlayerBlock> players = new ArrayList<>();
-        int shipSeen = 0, sbSeen = 0, filePlayer = -1;
+        int shipSeen = 0, sbSeen = 0, filePlayer = -1, lastPlanet = -1;
         StringBuilder battle = null;
         int turn = -1;
         for (Block b : blocks) {
@@ -139,6 +145,16 @@ public class CombatLab {
                     sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
                     sb.append(" hab=");
                     for (int i = 0; i < 9; i++) sb.append(i == 0 ? "" : ",").append(p.fullDataBytes[8 + i] & 0xff);
+                    // default production queue for new colonies (count at 0x4f, words id | count << 6 from 0x50)
+                    // and the default "only leftover to research" bit (0x4e bit 0)
+                    sb.append(" defqueue=");
+                    int nq = p.fullDataBytes[0x4f] & 0xff;
+                    for (int i = 0; i < nq && 0x51 + 2 * i < p.fullDataBytes.length; i++) {
+                        int w = Util.read16(p.fullDataBytes, 0x50 + 2 * i);
+                        sb.append(i == 0 ? "" : ",").append(w & 0x3f).append(':').append(w >> 6);
+                    }
+                    if (nq == 0) sb.append("none");
+                    sb.append(" defleftover=").append(p.fullDataBytes[0x4e] & 1);
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
@@ -194,6 +210,18 @@ public class CombatLab {
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
                         p.ironium, p.boranium, p.germanium, p.population);
                 if (host || p.owner >= 0) printPlanetDetail(f, p);
+                lastPlanet = p.planetNumber;
+            } else if (b instanceof ProductionQueueBlock) {
+                // a planet's production queue follows its planet block: per item id,
+                // count, percent done of the first unit, kind (as scripts/oracle/hst-edit)
+                byte[] d = b.getDecryptedData();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i + 4 <= b.size; i += 4) {
+                    int w0 = u16(d, i), w1 = u16(d, i + 2);
+                    sb.append(i == 0 ? " items=" : ",").append(String.format("%d:%d:%d:%d",
+                        (w0 >> 10) | ((w1 & 1) << 6), w0 & 0x3ff, (w1 >> 4) & 0x7f, (w1 >> 1) & 7));
+                }
+                System.out.printf("%s queue planet=%d n=%d%s%n", f, lastPlanet, b.size / 4, sb);
             } else if (b.typeId == 12) {
                 // events: one record per message, layout not decoded; printed raw
                 byte[] d = b.getDecryptedData();
@@ -378,6 +406,8 @@ public class CombatLab {
         Map<String, Integer> tech = new HashMap<>();
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
+        Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>();
+        Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
         Map<Integer, Map<Integer, Integer>> relations = new HashMap<>();
@@ -405,6 +435,21 @@ public class CombatLab {
                         break;
                     }
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
+                    case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "defqueue": {
+                        List<Integer> q = new ArrayList<>();
+                        if (!t[2].equals("none"))
+                            for (String e : t[2].split(",")) {
+                                String[] ic = e.split(":");
+                                int id = Integer.parseInt(ic[0]), c = Integer.parseInt(ic[1]);
+                                if (id < 0 || id > 63 || c < 0 || c > 1023) throw new Exception("defqueue: bad item " + e);
+                                q.add(id | c << 6);
+                            }
+                        if (q.size() > 12) throw new Exception("defqueue: at most 12 items");
+                        defQueues.put(Integer.parseInt(t[1]), q);
+                        break;
+                    }
                     case "relation":
                         relations.computeIfAbsent(Integer.parseInt(t[1]), k -> new TreeMap<>())
                             .put(Integer.parseInt(t[2]), Integer.parseInt(t[3]));
@@ -593,6 +638,18 @@ public class CombatLab {
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
+            if (fields.containsKey(k)) {
+                if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
+                p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
+            }
+            if (defLeftover.containsKey(k))
+                p.fullDataBytes[0x4e] = (byte) ((p.fullDataBytes[0x4e] & ~1) | (defLeftover.get(k) & 1));
+            if (defQueues.containsKey(k)) {
+                List<Integer> q = defQueues.get(k);
+                for (int i = 0x4f; i < 0x68; i++) p.fullDataBytes[i] = 0;
+                p.fullDataBytes[0x4f] = (byte) q.size();
+                for (int i = 0; i < q.size(); i++) Util.write16(p.fullDataBytes, 0x50 + 2 * i, q.get(i));
+            }
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
             p.fleets = fleetCount.getOrDefault(k, 0);

@@ -216,3 +216,190 @@ TK-007's 14 cycle settings gave 7 distinct outcome vectors: 10000,
 = 45000; 50000 = 60000 = 70000. The host files differed byte-wise
 between all settings, including settings with identical outcomes, while
 two runs at 20000 were byte-identical (TK-004).
+
+
+# Round 2: TK-101 to TK-115
+
+Round 2 tests the takeover rules round 1 could not reach (docs/TAKEOVER.md
+"Open experiments"), plus the rules added in stars-elegy #34 (order inside a
+phase, phase-start ownership, unload amounts, colonize retries, tech on
+capture). Specs and predictions are written by `gen2.py`; the predictions
+below were committed before any of these runs. `check2.py` compares them
+with the run dumps.
+
+## Round 2 setup
+
+- Combat Lab (CB, game id 82222, two JOAT players), as round 1, except
+  TK-113, which uses **TK3**: a tiny three-player game built with
+  `tools/fleetlab/new-game` (definition: tiny, seed 11, no random events,
+  three human players of the PG000 race file: Super Stealth, growth 10%,
+  hab 50±35). Homeworlds: player 0 planet 16, player 1 planet 12, player
+  2 planet 19.
+- Race changes (all checked legal before the runs: no message 0x117 in a
+  generated year): War Monger, Alternate Reality and Claim Adjuster with
+  NRSE, CE, OBRM, LSP and BET (`lrt 0x1b80`); Inner Strength alone; JOAT
+  with Ultimate Recycling needs the same five (`lrt 0x1ba0`; UR alone gave
+  0x117 and the race was penalized). BET changes miniaturization (80% at
+  26 instead of 75%), so colony minerals of these races differ from JOAT's.
+- Default production queue and "only leftover to research" (new CombatLab
+  keys `defqueue`, `defleftover`): player 0 queue auto factories 10, auto
+  mines 5, auto defenses 3, auto min terraform 2, auto max terraform 1
+  (item ids 1, 0, 2, 4, 5), leftover on. CB has no default queue, so a
+  capture or colony gets this queue only from the rule under test.
+- Player 0 tech 26 unless stated, research 0% for everyone. Ship costs
+  are computed with COMPONENTS.md "Cost for an owner" (`gen2.py
+  item_cost`). Colonizer (Colony Ship + Long Hump 6 + Colonization Module)
+  at tech 26 costs 6/2/7 kT; 30 of them 180/60/210.
+- Unowned planets start with no surface minerals.
+- Populations in units of 100 colonists; growth before the after-movement
+  phase (KERNEL.md), so P = 87 is 100 at the after-movement drops.
+
+## Round 2 predictions
+
+### TK-101: T-36 colony ship minerals, player 0 at tech 5 in every field
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-36 | Colonizer (Colony Ship + Long Hump 6 + Colonization Module) arrives at unowned planet 21, colonize 25, tech 5 | planet 21: owner 0, pop 25, surface 17/6/15 |
+
+### TK-102: T-36 colony ship minerals, player 0 at tech 10 in every field
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-36 | Colonizer (Colony Ship + Long Hump 6 + Colonization Module) arrives at unowned planet 21, colonize 25, tech 10 | planet 21: owner 0, pop 25, surface 12/4/12 |
+
+### TK-103: T-36 colony ship minerals, player 0 at tech 15 in every field
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-36 | Colonizer (Colony Ship + Long Hump 6 + Colonization Module) arrives at unowned planet 21, colonize 25, tech 15 | planet 21: owner 0, pop 25, surface 9/3/8 |
+
+### TK-104: T-37 player 0 tech 26 except electronics 7; research field energy
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-37 | designs after generation; research field energy | design 0 kept; design 1 kept; design 2 kept; design 3 kept; design 4 part removed; design 5 part removed; design 6 kept; design 7 kept; design 8 kept; design 9 kept; design 10 kept; design 11 kept; design 12 kept; design 13 kept |
+
+### TK-105: T-37 player 0 tech 26 except electronics 7; research field elec
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-37 | designs after generation; research field elec | design 0 kept; design 1 kept; design 2 kept; design 3 kept; design 4 part removed; design 5 part removed; design 6 kept; design 7 kept; design 8 kept; design 9 kept; design 10 kept; design 11 kept; design 12 kept; design 13 kept |
+
+### TK-106: T-24/T-26 War Monger attacker (NRSE CE OBRM LSP BET), default queue and leftover
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-24 | WM 100 arriving vs P=131 (150 after growth) | planet 0: owner 0, pop 9 |
+| A2 | T-26 | the captured planet gets the WM default queue and leftover setting | queue 0: 1:10, 0:5, 2:3, 4:2, 5:1; planet 0: leftover True |
+| B | control | P=131, nothing arrives | planet 5: owner 1, pop 150 |
+| C | T-25 | WM 600 arriving vs P=435 (500), 20 SDI | planet 3: owner 0, pop 248, defenses 0 |
+| D | T-26/BET | WM (BET) Colonizer arrives at unowned planet 21, colonize 25 | planet 21: owner 0, pop 25, surface 3/1/4; queue 21: 1:10, 0:5, 2:3, 4:2, 5:1; planet 21: leftover True |
+
+### TK-107: T-33 Alternate Reality player 0 (NRSE CE OBRM LSP BET), default queue
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-33 | AR OCM ship arrives at unowned planet 21, colonize 25 | planet 21: owner 0, pop 25, surface 5/2/5; queue 21: 4:2, 5:1; planet 21: leftover True; planet 21 starbase design 0 |
+| B | T-33 | AR freighter 100 arriving, unload on player 1 planet P=87 | planet 0: owner 1, pop 100; fleet 0/1: col 100 |
+
+### TK-108: T-26 Claim Adjuster both players (NRSE CE OBRM LSP BET), default queue
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-26 | CA 100 arriving vs CA P=87, env 50/50/50 orig 55/47/52 | planet 0: owner 0, pop 9, env 55/47/52; queue 0: 1:10, 0:5, 2:3 |
+| B | control | CA P=87, env 50/50/50 orig 55/47/52, nothing arrives | planet 5: owner 1, pop 100, env 50/50/50 |
+| C | T-26/BET | CA Colonizer arrives at unowned planet 21, colonize 25 | planet 21: owner 0, pop 25, surface 3/1/4; queue 21: 1:10, 0:5, 2:3; planet 21: leftover True |
+
+### TK-109: T-24 Inner Strength defender
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-24 | 150 arriving vs IS P=87 (100) | planet 0: owner 1, pop 18 |
+| B | T-24 | 300 arriving vs IS P=87 (100) | planet 3: owner 0, pop 118 |
+| C | control | IS P=87, nothing arrives | planet 5: owner 1, pop 100 |
+
+### TK-110: T-24 War Monger attacker against Inner Strength
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | T-24 | WM 150 arriving vs IS P=87 (100) | planet 0: owner 0, pop 28 |
+| B | control | IS P=87, nothing arrives | planet 5: owner 1, pop 100 |
+
+### TK-111: T-34 scrap and T-35 remote mining over two years; player 1 UR (plus NRSE CE OBRM LSP BET)
+
+Game CB, 2 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| S1 | T-34 | 30 Colonizers scrap at player 0 planet 0 with a starbase: 4C/5 | planet 0: surface 144/48/168 |
+| S2 | T-34 | 30 Colonizers scrap at player 0 planet 1 without a starbase: C/3 | planet 1: surface 60/20/70 |
+| S3 | #34/T-34 | S2 at planet 2 with cargo 100/0/0 and 50 colonists: cargo added, colonists join before growth | planet 2: surface 160/20/70, pop 157 |
+| S4 | T-34 | 30 Colonizers scrap at UR player 1 planet 3 with a starbase: 9C/10 | planet 3: owner 1, surface 162/54/189 |
+| S5 | T-34 | 30 Colonizers scrap at UR player 1 planet 4 without a starbase: 9C/20 | planet 4: owner 1, surface 81/27/94 |
+| S6 | T-34 | S5 at planet 5 with 50 colonists: colonists do not join (P 87 -> 100) | planet 5: owner 1, pop 100, surface 81/27/94 |
+| S7 | T-34 | 30 Colonizers scrap at unowned planet 6: C/3 on the surface | planet 6: owner -1, surface 60/20/70 |
+| S8 | T-34 | 30 Colonizers scrap in deep space at (1200,1220): C/3 salvage | salvage at 1200,1220: 60/20/70 |
+| S9 | T-34 | 30 Colonizers scrap at player 0 planet 7, second waypoint to planet 10: scrapped at 7 | planet 7: surface 60/20/70 |
+| S10 | T-34 | 30 Colonizers arrive at player 0 planet 9 with scrap: nothing in year 1, C/3 in year 2 | planet 9: surface 0/0/0; fleet 0/9: ships 12:30; planet 9: surface 60/20/70 (year 2) |
+| M1 | T-35 | Miner24 (24 robots) stationary at unowned planet 13, conc 100/50/25 | planet 13: surface 24/12/6; planet 13: surface 48/24/12 (year 2) |
+| M2 | T-35 | Miner24 arrives at unowned planet 14, conc 100/50/25: nothing in year 1, mines in year 2 | planet 14: surface 0/0/0; planet 14: surface 24/12/6 (year 2) |
+| M3 | T-35 | Miner24 stationary at player 1 planet 15: nothing | planet 15: surface 0/0/0 |
+| M4 | T-35 | Miner24 stationary at player 0 planet 16: nothing | planet 16: surface 0/0/0 |
+
+### TK-113: several bombers on one planet; colonize retries after a tie (three players, Super Stealth, growth 10%)
+
+Game TK3, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| B1 | bombing order | players 0 and 2, 10 Cherry each, on player 1 P=728 (800): 800 -> 600 -> 450 | planet 13: owner 1, pop 450 |
+| B2 | bombing order | player 0 10 Smart, player 2 10 Cherry, on P=37 (40): smart first 40 -> 36 -> 6 | planet 9: owner 1, pop 6 |
+| B3 | bombing order | player 0 10 Cherry, player 2 10 Smart, on P=37 (40): cherry first 40 -> 10 -> 9 | planet 3: owner 1, pop 9 |
+| R1 | #34 retry | before movement: players 0 and 2 unload 150 each on P=100 (tie, emptied), player 0 Colonizer in orbit retries: player 0 owns 25 after movement | planet 23: owner 0, pop 25, surface 4/1/5; fleet 0/3 gone |
+| R2 | #34 retry LEGACY BUG | after movement: players 0 and 2 arrive with 150 each on P=100 (110), player 0 Colonizer arrives: retry consumes it, colonists lost, planet unowned | planet 26: owner -1, surface 4/1/5; fleet 0/5 gone |
+
+### TK-114: #34 phase-start ownership record and own-planet unload amounts; player 1 Lady Finger bombers
+
+Game CB, 1 year(s).
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| PS1 | #34 phase start | unowned planet 13: player 0 Colonizer in orbit colonizes 25 (28 after growth), player 1 10 Lady Finger bomb it empty, player 0 freighter arrives with 50 and unloads: player 0 owns 50 | planet 13: owner 0, pop 50, surface 4/1/5; fleet 0/1: col 0 |
+| PS2 | T-4 control | unowned planet 16 with player 1 bombers in orbit; player 0 freighter arrives with 50: refused, keeps 50 | planet 16: owner -1; fleet 0/2: col 50 |
+| U1 | #34 unload | own planet 0 P=87, freighter in orbit unloads all 50 before growth: 137 -> 157 | planet 0: pop 157; fleet 0/3: col 0 |
+| U2 | #34 unload | own planet 1 P=87, freighter arrives and unloads all 50 after growth: 100 + 50 | planet 1: pop 150; fleet 0/4: col 0 |
+| U3 | #34 unload | own planet 2 P=87, in orbit, cargo 100/40/0/50: unload exactly 30 Ir, all Bo, exactly 20 colonists | planet 2: pop 123, surface 30/40/0; fleet 0/5: fe 70, bo 0, col 30 |
+| U4 | #34 unload | own planet 3 P=87, in orbit, cargo 100/0/0/50: set amount Ir 60, colonists 10 | planet 3: pop 146, surface 40/0/0; fleet 0/6: fe 60, col 10 |
+| U5 | #34 unload | own planet 4 P=87, in orbit, cargo 100/0/0/50: unload exactly 500 Ir (capped at 100), set waypoint colonists to 120 (unloads 33) | planet 4: pop 138, surface 100/0/0; fleet 0/7: fe 0, col 17 |
+
+### TK-115: #34 tech on capture: player 0 tech 3, player 1 weapons 10; two captures
+
+Game CB, 1 year(s). Cycles 20000, 12000, 15000, 25000, 30000, 40000, 50000, 17000.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | #34 tech | 100 arriving vs P=87 (100) on planet 0: captured with 9 | planet 0: owner 0, pop 9 |
+| B | #34 tech | 100 arriving vs P=87 (100) on planet 5: captured with 9 | planet 5: owner 0, pop 9 |
+| T | #34 tech | player 0 ends at weapons 3 or 4 (one gain at most per year), other fields 3 | tech (0,) weapons 3 or 4; others 3 |
+
