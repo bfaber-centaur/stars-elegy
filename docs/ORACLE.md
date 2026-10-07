@@ -697,8 +697,10 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
     `transport A:V,A:V,A:V,A:V,A:V` (Ir, Bo, Ge, colonists, fuel; action
     nibble and value; `-` for none).
   - `planetset N mines= factories= defenses= excess= fe= bo= ge=
-    scanner=ID conc=I,B,G env=G,T,R orig=G,T,R` sets planet fields after
-    any `planet` line (`orig` marks the planet terraformed).
+    scanner=ID conc=I,B,G env=G,T,R orig=G,T,R sbdmg=U` sets planet fields
+    after any `planet` line (`orig` marks the planet terraformed; `sbdmg`
+    sets the starbase's damage to U/500 of its armor and needs a
+    starbase).
   - `combatlab dump` prints each fleet's waypoints (`wp … task= orders=`)
     and a `pdetail` line per planet: concentrations, environment,
     original environment, surface minerals, population, growth carry,

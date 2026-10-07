@@ -58,6 +58,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   surface values; owned planets) scanner=ID (planetary
 //                                   scanner id, 31 = none) conc=I,B,G env=G,T,R
 //                                   orig=G,T,R (original environment; sets "terraformed")
+//                                   sbdmg=U (starbase damage, U/500 of its armor)
 //   thing minefield OWNER NUM X Y COUNT [kind std|heavy|bump] [det] [known MASK] [seen MASK]
 //   thing packet OWNER NUM X Y DEST WARP IR BO GE [class K] [moved] [bit15]
 //   thing wormhole NUM X Y PARTNER CLASS [years N] [seen MASK] [seen2 MASK]
@@ -205,9 +206,10 @@ public class CombatLab {
                     System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s%n", f, p.planetNumber,
                         p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase);
                 if (p.owner >= 0 || p.hasStarbase)
-                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s minerals=%d/%d/%d pop=%d%n", f,
+                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
                         p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
                         p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
+                        p.starbaseBytes == null ? -1 : ((p.starbaseBytes[0] & 0xff) | (p.starbaseBytes[1] & 0xff) << 8) >> 4,
                         p.ironium, p.boranium, p.germanium, p.population);
                 if (host || p.owner >= 0) printPlanetDetail(f, p);
                 lastPlanet = p.planetNumber;
@@ -798,6 +800,14 @@ public class CombatLab {
                     int id = Integer.parseInt(v);
                     pl.unknownInstallationsByte = (byte) ((pl.unknownInstallationsByte & 0x0f) | ((id & 15) << 4));
                     pl.hasScanner = (id & 16) == 0;
+                    break;
+                }
+                case "sbdmg": {
+                    // starbase damage units (1/500 of armor): bits 4-15 of starbase word 0
+                    if (pl.starbaseBytes == null) throw new Exception("planetset " + pl.planetNumber + ": no starbase");
+                    int w = (pl.starbaseBytes[0] & 0xff) | (pl.starbaseBytes[1] & 0xff) << 8;
+                    w = (w & 0x000f) | (Integer.parseInt(v) & 0x0fff) << 4;
+                    pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
                     break;
                 }
                 case "fe": pl.ironium = Long.parseLong(v); break;

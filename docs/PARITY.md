@@ -1309,11 +1309,12 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, 2026-10-07; cloud oracle). Predictions from the
-private binary reading (stars-decomp `docs/combat-predictions.md`:
-P-1..P-29 at 8cad60f for round 1, Q-1..Q-14 at 4a8c82b for round 2,
-R-8..R-10 at 134256d for round 3) were committed before every
-run (`experiments/cbNNN/README.md`).
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-031, 2026-10-07; cloud
+oracle). Predictions from the private binary reading (stars-decomp
+`docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
+at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
+BINARY-ONLY rules in `docs/COMBAT.md` and stars-decomp 385b473) were
+committed before every run (`experiments/cbNNN/README.md`).
 Rules marked CONFIRMED agree with both that reading and the oracle;
 CONTRADICTED means the oracle disagrees with the prediction as stated.
 This section states behavior only.
@@ -1588,6 +1589,70 @@ checker (stars-decomp 134256d) with no mismatches.
   other than "enemies" does not act as written: the outcome depends on
   what the game handled earlier in the same turn.
 
+### Round 4 (CB-023 to CB-031)
+
+Every run was pinned. Setups with a random element ran at twelve cycle
+counts (5000 to 50000), which gave twelve distinct battle records each;
+the others ran at two or three. Every hit replayed with the stars-decomp
+checker (385b473) with no mismatches. CB-031 used a new three-player
+game built with `tools/fleetlab/new-game` (`experiments/cb031/cb3p.def`).
+Planet-side starbase damage was set with the new `planetset sbdmg` key.
+
+- **Fuel lost with destroyed ships (CB-023, CONFIRMED by fuel capacity).**
+  Two Fuel Transports (fuel capacity 750 each) died out of a fleet with
+  three Small Freighters (130 each). The fleet kept
+  `F − ⌊F·Σ lost capacity / Σ capacity⌋` = 1000 − ⌊1000·1500/1890⌋ = 207,
+  in both seeds. The committed number (124) **missed** because it assumed
+  the fleet's start fuel, 600: each Fuel Transport adds 200 fuel per turn,
+  and that happens **before** battles (the no-battle control went
+  600 → 1000). A share by ship count would have left 400.
+- **Repair (CB-024, CONFIRMED, 28 of 28 values).** With and without
+  Inner Strength: moved, deep space, other player's planet, own planet
+  without a starbase, own planet with an Orbital Fort, docked at a Space
+  Station, and a Fuel Transport in the fleet. IS doubles every rate except
+  the Fuel Transport's 25. Starbases repair 50, or 75 with IS.
+- **Dump cargo (CB-025, CONFIRMED).** A battle plan with "dump cargo"
+  drops the whole cargo at setup: in deep space a salvage object with
+  exactly the cargo (no quarter lost, and nothing destroyed); at a planet,
+  the full amount onto its surface. Speed codes matched COMBAT.md: 0 for
+  the dumping Freighters, 1 for the loaded one that did not dump.
+- **Range-0 beams (CB-026, CONFIRMED).** A station with Blackjacks (range
+  0) first fired at distance 1, and every hit delivered full damage (no
+  dropoff at distance 1).
+- **Starbase target score (CB-027, CONFIRMED).** A Hunter with one
+  Colloidal Phaser and "any" as its primary target had a Bare Station and a
+  Fuel Transport in reach for 8 shots (2 seeds), with the station's damage
+  at most 97/500. Every shot went to the station: its score uses its plain
+  cost (a halved cost would have chosen the Fuel Transport).
+- **Disengage (CB-025, CB-028, CONFIRMED in part).** A disengaging token
+  leaves on its 8th move, which may be in round 7 (one move a round) or
+  round 14 (speed 0, moves in even rounds only). Each move record carries a
+  counter that counts down from 7 to 0. Every disengage move in 6 records
+  changed square, so whether a move that keeps a token on its square
+  counts is **not tested**.
+- **Wiped-out participant, two players (CB-029, CONFIRMED 12/12).** All of
+  player 0's ships died while destroying a weapons-10 design; player 0
+  (weapons 3, research 0%) stayed at 3 in all twelve streams.
+- **Three-player battles (CB-031-n3, CONFIRMED).** The record holds three
+  players (mask 0x7). Player 0 was wiped out in every stream and still
+  reached weapons 4 in 5 of 12 streams: with three players every
+  participant attempts. Start squares: player 0 (4,1), player 1 (8,8),
+  player 2 (1,8), as in the COMBAT.md table, in all twelve streams.
+- **Observer attempt (CB-031-obs, LEGACY BUG, CONFIRMED 12/12).** Player 0
+  had a fleet at a battle between players 1 and 2, and a weapons-10 design
+  was destroyed. Player 0 stayed at weapons 3 in all twelve streams; the
+  intended observer rule would give it an attempt. The battle record went
+  to players 1 and 2 only; player 0's file had none.
+- **Movement order (CB-030, CONFIRMED in 2 streams).** Two Heavy (mass 165)
+  and two Light (mass 23) stacks per side: inside every movement phase both
+  Heavy tokens moved before any Light token, and the order between the two
+  Heavy tokens varied.
+- **Not tested:** the firing live-token recheck and "step 5 only ends the
+  battle". In these battles attack sets are symmetric (every player that
+  can attack another is attacked back), so a player whose last token dies
+  has no attacker left. A discriminating setup needs four or more players
+  with one-sided attack sets, or a plan-0 setup like CB-022.
+
 ### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
@@ -1598,9 +1663,9 @@ checker (stars-decomp 134256d) with no mismatches.
 
 ### Not tested
 
-Stack movement order by weight (P-9), queued ships lost with a starbase
-(P-25), the "moved" repair rate, starbase repair, salvage at more than one
-point (E-8), three or more players, minefields. Bombing and invasion: see
+Queued ships lost with a starbase (P-25), salvage at more than one point
+(E-8), four or more players, stay-put disengage moves, the firing
+live-token recheck, minefields. Bombing and invasion: see
 "Planet Takeover".
 
 ## Scanning
