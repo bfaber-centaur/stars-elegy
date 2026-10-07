@@ -100,7 +100,7 @@ defenses.
 
 | Player | Spend | Prediction | Rules out |
 |---|---|---|---|
-| 0 | 0 minerals | surface 676/279/426 → 761/449/511 (+85 on the smallest… as RD-1) | |
+| 0 | 0 minerals | surface 676/279/426 → 761/449/511 (the smallest +170, the others +85, as RD-1) | |
 | 1 | 1 concentrations | 98/88/85 → 107/97/111 (+17 on the lowest, then +9 on all); minerals unchanged | |
 | 2 | 2 mines | **no mines** (0), minerals and concentrations unchanged: the spend is lost | 17 mines kept; minerals instead |
 | 3 | 3 factories | **no factories** (0); spend lost | 6 factories |
@@ -120,8 +120,13 @@ growth repairs (< 0, > 20) are silent; growth 0 is not.
 
 ### RD-P12: penalty messages with several players
 
-The RD-7 start, player 0 edited to negative points (`stat=2:5/5:2`, as
-RD-P1), one pinned year. Prediction: player 0 gets 0x117; **every other
-player** (the four humans and the computer player) gets 0x182 "hacked race
-discovered"; player 0 is repaired as RD-P1 (colonists per resource raised
-until points ≥ 500, then growth lowered).
+The RD-7 start, player 0 edited to negative points. RD-P1's arguments do
+not make this race negative, so the edit is `stat=0:1/1:1` (colonists per
+resource 100 and factory output 1, both below their ranges: −1058 points
+as written). One pinned year (both edits use `planet=81`, player 0's
+homeworld, since hst-edit's default planet 7 is not owned here).
+Prediction: player 0 gets 0x117; **every other player** (the four humans
+and the computer player) gets 0x182 "hacked race discovered". Player 0 is
+first clamped silently into range (factory output 5, colonists 700), is
+still negative, and is then repaired: colonists raised to 2500, growth
+lowered to 7 (985 points), flag 0x10.
