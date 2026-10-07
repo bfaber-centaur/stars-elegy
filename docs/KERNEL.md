@@ -1038,8 +1038,11 @@ BINARY-ONLY where marked):
   value, as far as the reach rule above allows, with no items built and no
   resources spent (CONFIRMED, KX-003 S3/S3L at reach 3: 60/42/56 →
   57/45/53, and 58/50/50 with original 60/50/50 → 57/50/50; growth that
-  year used the old environment; TK-118..121 at reach 15 and 30 after a
-  capture). The CA owner's terraform parts follow the normal tech and LRT
+  year used the old environment; TK-108 and TK-118..121 at reach 15 and
+  30 after a capture). After a capture the reach is measured from the
+  original value the capture restored (`TAKEOVER.md`), so a CA capturing a
+  CA planet ends the year at original ± reach toward its own centre:
+  55/47/52 → 50/50/50, 80/20/80 → 65/35/65 (±15) or 50/50/50 (TT ±30). The CA owner's terraform parts follow the normal tech and LRT
   rules (Total Terraform still needs TT). The original value of an axis
   can also drift one click toward the centre, before the year-end step
   (so the reach is measured from the new original): for each CA planet in
