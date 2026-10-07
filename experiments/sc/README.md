@@ -128,6 +128,28 @@ every part within the owner's tech.
 | SC-022 | S-10, S-2 | JOAT electronics 10, Scout + Possum (150): ⁴√(200⁴ + 150⁴) = 214. Deep-space freighters at d² 40000 (200), 40001, 42025 (205), 45796 (214) seen, 45797 unseen. Taking the larger scanner alone would stop at 200. |
 | SC-023 | S-10, S-2, S-5 | JOAT electronics 16, Scout + Elephant: 369/217. Planet at d² 47089 (217) reported, next one past it not; freighter orbiting the edge planet seen (the larger part alone gives pen 200). |
 
+## Round 4: rules SCANNING.md marked BINARY-ONLY (predictions committed before the runs)
+
+`round2.py` (second SC lane round) writes SC-024..SC-031 and checks them:
+`python3 round2.py specs OUTDIR`, `python3 round2.py list` (full case table
+with the competing reading per case), `python3 round2.py check scNNN
+AFTER.DUMP`. Both players are JOAT at tech 26, both homeworld scanners are
+removed and both homeworld starbases are an empty Space Station, so fleets
+in orbit start no battle. `combatlab dump` now also prints, for another
+player's fleet, `dx dy warp wbits mass`, and for a planet report `env
+popest defest surface`.
+
+| Run | Tests (SCANNING.md) | Content and predictions |
+|---|---|---|
+| SC-024 | Fleets at your planets; starbases in every report | Player 0 has no fleets and no planetary scanners. Player 1 freighters orbit player 0's homeworld (a 98% Ghost) and a player 0 colony without a starbase: both seen. The same designs 1 ly away in deep space: unseen. Player 1's blind orbiters get position-only reports (level 1, no environment); the homeworld's report has the starbase bit and the (partial) starbase design, and player 0 becomes known to player 1. A player 1 freighter at the homeworld's position without the orbit flag is recorded only. |
+| SC-025 | Starbases in every report; owner known | Player 0's only fleet is a blind freighter orbiting player 1's homeworld: position-only report with the starbase bit and the partial starbase design, player 1's block (partial). Player 1 sees the orbiter with no planetary scanner. |
+| SC-026 | control for SC-025 | The same freighter 1 ly away in deep space: no report, no block either way. |
+| SC-027 | Heading; mass; population and defense estimates | Player 0 Scout (built-in 520/260) sees moving player 1 freighters. Heading = waypoint − start, halved toward zero while a component is ≥ 128: (300,100) → (75,25); (50,−120) as is; (−127,0) as is; (−128,3) → (−64,1); (300,−7) → (75,−1) (floor halving would give −2); (−1,−395) → (0,−98) (floor: (−1,−99)). Warp is the waypoint's warp; a stationary fleet shows 0/0/0. A fleet that reaches its waypoint this year is recorded only. Mass: empty 29; 10/20/30 kT + 40 kT colonists → 129 (fuel not counted); two ships + 50 kT colonists → 108. Cargo shows 0. Planet estimates for player 1 colonies with 100,000 colonists and 1, 3, 5, 10, 40, 100 defenses (Neutron Shield, 3.8%): defense estimate `max(1, min(15, trunc((104 − k)/6)))` with `k = round(100·0.962ⁿ)`, i.e. 1, 2, 3, 6, 13, 15; 0 defenses → 0. Population estimate (in 400s) in `trunc((u + r − trunc(u/8))/4)`, `r < trunc(u/4)`, `u` = after-state population in 100s; u = 3 → 1. |
+| SC-028 | More than two Tachyon Detectors | JOAT Frigate, built-in 520, three detectors (factor 91): a 75% target is 68% (seen at d² 27688, not at 27689; three-as-two-detectors would stop at 25985, four at 29446); an 85% target is 77% (seen at 14297, not at 14305). |
+| SC-029 | Detectors over several designs or ships | Mole (100) viewers against 75%. A fleet of Mole + 1 detector with a second design carrying 1 detector, and a fleet of two Mole + 1 detector ships: factor 95 (71%, d² 841 seen, 842 not; adding up would see 842). Mole + 2 detectors with a 1-detector design: factor 93 (961 seen, 962 not). |
+| SC-030 | Super Stealth +300; SS cargo; SS starbase | Player 1 SS (`lrt 1 0x1b80`). Elephant (300) viewer: a plain freighter is 75% (d² 5625 seen, 5626 not); with 50 kT cargo still 75% (dilution would give 51%). The bare station on player 1's homeworld, 60 ly from the viewer (P 200), is 75% and hidden beyond d² 2500: the planet is reported without its starbase. |
+| SC-031 | Planet report after battle; design disclosure after battle | A player 0 Laser Cruiser (no scanner) and a player 1 Laser Destroyer orbit player 1's colony 5 and fight: player 0 gets a normal report (level 3) of planet 5, and each side gets the other's fighting design in full. Control: a blind player 0 freighter orbiting player 1 colony 12 with an unarmed player 1 freighter: position only, and both freighter designs partial. |
+
 ## Results
 
 Every run was generated once with `pinned-turn` (cycles 20000) and

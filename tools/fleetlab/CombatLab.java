@@ -186,6 +186,9 @@ public class CombatLab {
                 if (fl.kindByte == PartialFleetBlock.FULL_KIND)
                     for (int i = 0; i < 16; i++) if ((fl.damagedShipTypes & (1 << i)) != 0)
                         dmg.append(String.format(" dmg%d=%d/%d%%", i, fl.damagedShipInfo[i] >> 7, fl.damagedShipInfo[i] & 0x7f));
+                if (fl.kindByte != PartialFleetBlock.FULL_KIND)   // another player's fleet: heading, warp, mass
+                    dmg.append(String.format(" dx=%d dy=%d warp=%d wbits=%02x mass=%d",
+                        (byte) fl.deltaX, (byte) fl.deltaY, fl.warp, fl.unknownBitsWithWarp, fl.mass));
                 System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d%s%n",
                     f, fl.owner, fl.fleetNumber, fl.kindByte, fl.x, fl.y, fl.positionObjectId, ships,
                     fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan, dmg);
@@ -205,8 +208,9 @@ public class CombatLab {
             } else if (b instanceof PlanetBlock || b instanceof PartialPlanetBlock) {
                 PartialPlanetBlock p = (PartialPlanetBlock) b;
                 if (!host) // report detail: flag bits 0-6 of the second word
-                    System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s%n", f, p.planetNumber,
-                        p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase);
+                    System.out.printf("%s seen planet %d owner=%d level=%d starbase=%s env=%s popest=%d defest=%d surface=%s%n", f,
+                        p.planetNumber, p.owner, u16(p.getDecryptedData(), 2) & 0x7f, p.hasStarbase, p.hasEnvironmentInfo,
+                        p.popEstimate, p.defensesEstimate, p.hasSurfaceMinerals);
                 if (p.owner >= 0 || p.hasStarbase)
                     System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s sbdmg=%d minerals=%d/%d/%d pop=%d%n", f,
                         p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
