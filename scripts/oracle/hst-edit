@@ -7,7 +7,8 @@
 #   scripts/oracle/hst-edit roundtrip IN OUT      # decode + re-encode, no edits
 #
 # Edit keys (planet defaults to 7): planet= fe= bo= ge= pop= excess= mines=
-# factories= defenses= leftover=0|1 researchPct= queue=SPEC|none, where SPEC
+# factories= defenses= leftover=0|1 researchPct= env=G,T,R orig=G,T,R
+# queue=SPEC|none, where SPEC
 # is id:count:pct:kind[,...] with kind 1 = planetary item, 2 = ship design.
 # Needs git and a JDK; network on first run.
 source "$(dirname "$0")/lib.sh"

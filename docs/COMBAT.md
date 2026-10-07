@@ -111,6 +111,15 @@ random stream and for the plan-0 legacy bug below.
       Then, if `i` is in `Q`, add to `i`'s set every player whose set names
       `i`. CONFIRMED: a stack whose plan attacks nobody fires back once a
       battle has started (CB-002, CB-009; P-6).
+
+      The pass covers **every player in the game, present or not**, and
+      so do the sets read in step 6 (BINARY-ONLY).
+      - Steps 3 and 4 only fill the sets of present players. So an absent
+        player's set can be non-empty only through the plan-0 LEGACY BUG,
+        when X is a player of the game who is not at this location.
+      - Then X joins `Q` and counts toward `n`, which shifts the start
+        squares. X has no tokens, though, so it takes no part in the
+        fighting.
    8. **Friends**: passes over the location's fleets, in order, until a
       pass changes nothing. For a fleet whose owner `p` is in `P` but not
       in `Q`, rebuild `p`'s set as the union of the sets of `p`'s friends
@@ -183,7 +192,8 @@ with an aggressor fleet that attacks "enemies" while B considers A neutral.
 |---|---|---|
 | A | A attacks B: an ordinary battle, the same as "enemies" | CONFIRMED (CB-012 three streams, CB-013; the previous location had a battle) |
 | B | B's set names only B among the present players. `Q = {B}`, `n = 1`, `P = {A, B}`: a **one-player battle** | CONFIRMED for "player 1" and for "everyone", byte-identical records (CB-022, two streams each) |
-| neither | no battle (B's own set is empty) | MEASURED (CB-022 "no lone fleet", "player 1") |
+| not a player of the game | no battle: nobody's set names a present player | MEASURED (CB-022 "no lone fleet", "player 1"; two-player game) |
+| C, a player of the game who is not present | C's set names B (or, for "everyone", every player but A). So `Q = {B, C}` and `n = 2`. B attacks C back, but C has no tokens. Squares come from `n = 2` (A rank 0 at (1,4), B rank 1 at (8,5)), and the battle ends after round 0's movement with no shots | BINARY-ONLY |
 
 The one-player battle runs as an ordinary battle with `n = 1`:
 
@@ -273,7 +283,10 @@ armor, it does not trust a stored value):
   reduced by a quarter (`jam − jam/4`) (BINARY-ONLY).
 - **Capacitor %**: `C = 1000`, `C = C·(100 + v)/100` per Energy Capacitor
   (v 10) or Flux Capacitor (20), at most 2550; capacitor % = C/10.
-  CONFIRMED: 2 Flux Capacitors and 1 Energy Capacitor give 132%.
+  The product runs over every item, so two Flux Capacitors in one slot
+  count twice. CONFIRMED only for one Flux and one Energy Capacitor (in
+  different slots): 132% (CB-002 C4, the "Cap DD"). Several of one kind
+  is BINARY-ONLY: 2 Flux + 1 Energy would give 158%.
 - **Deflector %**: `D = 1000`, `D = D·90/100` per Beam Deflector;
   deflector % = D/10 (100 = none).
 - **Shields**: sum of shield values, + 50 per Fielded Kelarium, + 100 per
@@ -342,6 +355,14 @@ consistent with every replayed record):
    attack set counts, not target types. A player removed earlier in the
    same check no longer counts for later players. The battle ends if at
    most one player is left.
+   - A player's set can name itself, which only happens through the
+     plan-0 LEGACY BUG. That self-entry counts in this check, and only
+     here.
+   - Targeting, movement scores and firing always skip the token's own
+     player's tokens, whatever its set says.
+   - In the one-player battle the self-entry keeps B in while A drops
+     out. The battle then ends either way, so the outcome matches CB-022
+     (BINARY-ONLY).
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
@@ -616,7 +637,10 @@ jammer `j`:
 - otherwise: `p = acc·(100 − (j − c))/100`;
 - in both cases at least 1.
 
-**Hits `H` out of `N` torpedoes:**
+**Hits `H` out of `N` torpedoes.** `H` is computed afresh for each target
+the salvo reaches. `N` is the number of torpedoes still unfired, and `p`
+uses that target's jammer. With `N ≤ 200`, each target therefore gets its
+own `N` draws.
 
 - if `p ≥ 100`, all hit;
 - if `N > 200`, `H = N·p/100` exactly, with no random draw. CONFIRMED
@@ -626,7 +650,8 @@ jammer `j`:
 
 Per salvo, while torpedoes remain:
 
-1. Choose a target. Let `d` = the part's damage. `d` is doubled for a
+1. Choose a target, then compute `H` for it. Let `d` = the part's
+   damage. `d` is doubled for a
    missile against a target with total shields < 1. CONFIRMED (CB-002,
    P-20).
 2. **Decide how many torpedoes this target takes** (`n`):
@@ -689,10 +714,16 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
 
 - `total = dp + extra + units·armor/500`.
 - If `total < armor`, `units = total·500/armor`, at least one step more
-  than before. CONFIRMED: an unarmed Space Station with 400 shields went
-  through 90, 190, … 490 per 500, then died at the next hit.
+  than before. CONFIRMED (CB-011..013 S5):
+  - The unarmed Space Station has 400 shields and 500 armor. The first
+    hit came at distance 1 (90% dropoff) for 90, then 100 per hit.
+  - Shields took 90 + 100 + 100 + 100.
+  - The fifth hit put its last 10 into shields and 90 into armor (90/500).
+  - Then 190, 290, 390 and 490; the next hit (total 590) destroyed it.
 - Otherwise the starbase is destroyed. The planet no longer has one, and
   ships and packets queued for building there are lost (BINARY-ONLY).
+- Either way, **no damage is left over** after a hit on a starbase. A
+  beam stops there, even after destroying it (BINARY-ONLY).
 - Destroying an Alternate Reality race's starbase leaves the planet
   uninhabited (BINARY-ONLY).
 
@@ -752,10 +783,25 @@ Then:
 
 - **At a planet:** the planet's surface gains `× 8/10` if it has a
   starbase, else `× 5/10`. No salvage object is created.
-- **In deep space:** a quarter is lost (`S − S/4`). The rest goes into
-  one salvage object per battle, capped at 30000 kT. If all minerals of
-  a new salvage object would be 0, each gets `rand(10)` (BINARY-ONLY,
-  inferred to be a token amount).
+- **In deep space** (BINARY-ONLY in detail): a quarter is lost
+  (`S − S/4`).
+  - The rest goes into this battle's salvage object. Every kill event
+    in the battle adds to it.
+  - No salvage object is placed exactly on a planet's position.
+  - If all three minerals of an addition are 0, each becomes `rand(10)`.
+    This is redrawn until the total is above 0.
+  - **The 30000 kT limit** is counted in 10 kT steps: an object holds at
+    most 3000 steps, and adding `m` kT of one mineral uses `ceil(m/10)`
+    steps. When an addition happens, the object's existing minerals are
+    taken out and re-added with the new ones. Minerals are added in the
+    order ironium, boranium, germanium.
+  - A mineral that does not fit fills the object to exactly 3000 steps
+    with `10 × free steps` kT of that mineral. A **new salvage object**
+    is then created at the same position.
+  - The remainder of that mineral is added in a new pass (ironium,
+    boranium, germanium again) into the new object, and so are the
+    minerals not yet added. Nothing is lost to the limit, and nothing is
+    split proportionally.
 
 ### Repair (CONFIRMED, CB-017, 10 locations × 2 turns; Q-12)
 
