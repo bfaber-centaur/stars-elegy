@@ -2,78 +2,108 @@
 
 ## Current question
 
-The original's turn generation is now specified nearly end to end across
-`docs/`. The public gap list is `docs/COVERAGE.md` (owned by the
-scanning/launch lane). The project-level question is how fast Elegy can
-consume what is specified, and which few open research items it will hit.
+The original's turn generation is specified nearly end to end in `docs/`,
+and every spec pull request from the 2026-10-07 waves has merged. The
+question now is how quickly Elegy can consume what is specified, and which
+of the remaining open research items it will run into on the way.
 
 ## State
 
-- Specs on `main`: AI (shared core), COMBAT, COMPONENTS, ESTIMATES,
-  KERNEL, MESSAGES, OBJECTS, ORDERS, PRODUCTION-LAUNCH, SCANNING,
-  TAKEOVER, UNIVERSE, `docs/ai/robotoid.md`; PARITY.md holds the
-  measurements; `vectors/` holds parity vectors; `tools/speclint` runs in CI.
-- Open spec pull requests (2026-10-07, 21:40Z): RACES.md, UNIVERSE.md
-  answers, OBJECTS.md packets/Trader/stargates incl. GT-004, Turindrone
-  and Automitron (#49); KERNEL.md KX-005, OT and KB batches (#53);
-  LIMITS.md, setting orders and queue replace, LQ (#65); orders vectors
-  (#78); ORDERS.md client-order and WU results (#80); Rototill and
-  AI-10, AI-13..17 (#81); Cybertron, AI-19..21 (#82); TK-305
-  reconciled, TK-307 (#83).
-- Elegy waits on these merges: its kernel, orders-layer and new-game
-  pull requests follow #53, #80 and #49.
+Snapshot taken from GitHub on 2026-10-07 at 23:20Z.
+
+- **stars-elegy.** The only open pull request is this one (#67). The specs
+  on `main` are AI (the shared core, plus `docs/ai/` for Robotoid,
+  Rototill, Cybertron, Turindrone and Automitron), COMBAT, COMPONENTS,
+  ESTIMATES, KERNEL, LIMITS, MESSAGES, OBJECTS, ORDERS, PRODUCTION-LAUNCH,
+  RACES, SCANNING, TAKEOVER and UNIVERSE. `PARITY.md` holds the
+  measurements, `vectors/` the parity vectors, and `tools/speclint` runs in
+  CI. The public gap list is `docs/COVERAGE.md`.
+- **elegy.** No pull request is open. `main` has the following, each with
+  its own status file under `docs/`:
+  - the peaceful kernel and fleet movement;
+  - battles;
+  - per-player knowledge;
+  - takeover;
+  - the measured component table;
+  - fleet merges and scores;
+  - new-game generation and race design, including the built-in computer
+    races;
+  - production queues in the parity harness;
+  - the orders layer, including ships leaving production.
 
 ## What we know
 
-- Every top gap of the first coverage audit is closed or owned: ships
-  leaving production, waypoint upkeep, client estimates, the message
-  catalogue, setting orders and limits, and computer players (shared core
-  CONFIRMED).
-- Computer players, under Bobby's stopping rule (2026-10-07, option B,
-  checked only for the legacy computer-player program):
-  - Candidates for faithful implementation, oracle-checked: Robotoid
-    (AI-8/9/12), Cybertron (AI-19..21, #82) and Rototill (AI-14..17, #81).
-  - Reference only, optional future work: Macinti, Turindrone and
-    Automitron. Turindrone and Automitron's fleet passes are checked
-    (AI-22 689/689, AI-23 264/264, #49), but checked does not mean
-    committed to implementation. Bombers and armadas were never exercised,
-    so the armada parameters stay BINARY-ONLY. Their specs and
-    measurements are kept.
-  - Reproducing all six personalities is no longer an objective. Active
-    computer-player lanes finish their current checkpoint and then stop
-    unless reauthorized. A new computer-player experiment needs a concrete
-    reason: an Elegy implementation blocker, a spec contradiction, a
-    high-value question, or a cheap bounded closure.
-  - The state leak between computer players is kept behind a named
-    legacy-compatibility switch. Normal Elegy semantics use clean
-    per-player state.
-- Questions raised while implementing Elegy's orders layer were answered
-  by client-order runs (CO-01..08) and LIMITS.md the same evening.
+- No oracle miss is unexplained. The last one, TK-305 (Mystery Trader
+  parts from scrapping), was reconciled as random-stream variation, and
+  TK-307 then predicted 5 of 5.
+- Every top gap of the first coverage audit is closed or owned: ships leaving
+  production, waypoint upkeep, client estimates, the message catalogue,
+  setting orders and limits, and the shared core for computer players.
+- Under the checked-only policy for computer players (`AI.md` "Project
+  policy"):
+  - **Candidates for faithful implementation:** Robotoid, Rototill and
+    Cybertron. Each matches every captured player-year of its corpus.
+  - **Legacy reference:** Turindrone and Automitron, whose fleet passes
+    are checked (AI-22, AI-23) but which are not committed to
+    implementation, and Macinti. Their bomber paths stay BINARY-ONLY.
+  - Reproducing all six personalities is not an objective.
+  - A new computer-player experiment needs a concrete reason: an Elegy
+    blocker, a spec contradiction, or a cheap closure.
+  - The state leaks between computer players (AI-13, AI-18) sit behind a
+    named legacy-compatibility switch. Elegy defaults to clean per-player
+    state.
+- Cross-player cargo:
+  - A manual gift is resolved in place when orders are replayed, and is
+    silent. The timing is MEASURED (TK-406/407/409, TK-415/416).
+  - A gift to a receiver that has already gone is skipped whole, and the
+    giver keeps the cargo. This is BINARY-ONLY.
+  - A separate queued cross-owner credit path exists in the original, but
+    no legal order is known to reach it. `ORDERS.md` keeps it as an
+    **unresolved hypothesis, not a rule**, and makes no claim about
+    delivery after movement or about cargo lost on that path.
+- Every rule keeps its evidence label (CONFIRMED, MEASURED, BINARY-ONLY,
+  LEGACY BUG, UNREACHABLE, SERIAL-GATED). A BINARY-ONLY rule is the best
+  reading of the original but has not been run against it.
 
 ## What still matters
 
-- No oracle miss is unexplained. TK-305 (Mystery Trader parts from
-  scrapping) was reconciled as random-stream variation, and TK-307
-  predicted 5 of 5 (#83).
-- Still not run: about 147 reachable message kinds never seen; SCANNING
-  report edges (S-11, S-21, S-24); packet limits and Trader leave/reroll;
-  three-way chase cycles; victory edge cases. The unrun computer-player
-  items are kept as reference, not as a queue. Crafted-order (OX/OR) cases wait on the
-  serial decision.
-- Text that lags the evidence: MESSAGES.md part announcements (KX-005
-  shows every requirement is checked); LIMITS.md merge rows (#65) against
-  CO-06; #80's direct-merge clamp wording; AI.md's open list names cases
-  stage 1 settled; AI.md still links `docs/ai/macinti.md`, which is
-  unpublished (Macinti is now reference only; `cybertron.md` comes with #82).
-- Bobby's open decisions: the serial (crafted-order runs), and whether
-  strict whole-program legacy parity for computer players is ever wanted.
+Research items:
+
+- 147 message-catalogue rows have no oracle sighting yet (`MESSAGES.md`
+  "Kinds not yet observed"); most are reachable with legal orders.
+- These have not been run:
+  - the SCANNING report edges (S-11, S-21, S-24);
+  - packet limits and the Mystery Trader's leaving and part reroll;
+  - three-way chase cycles;
+  - the victory conditions;
+  - the 4050-object limit and waypoints per fleet.
+- The plain setting orders are written only in `LIMITS.md` and still need
+  folding into `ORDERS.md` and an oracle check.
+- Crafted-order cases (OX/OR) wait on Bobby's decision about the serial.
+- Whether a legal order ever reaches the queued cross-owner credit path
+  (above).
+- Bobby has not decided whether strict whole-program legacy parity for
+  computer players, with the leak switch on by default, is ever wanted.
+
+Next Elegy milestones, in the order the public spec supports them:
+
+1. Run the accepted orders inside each year's turn. `YearOrders` is not
+   yet called from `GenerateTurn`, so the orders' drops and gifts do not
+   yet reach the waypoint phases. This is the kernel lane's next step
+   (KERNEL.md "Turn order", step 1).
+2. Space objects from `OBJECTS.md`: minefields, mineral packets,
+   wormholes, the Mystery Trader and stargates. Their scanning rules
+   (`SCANNING.md` "Space objects") come with them. Elegy has none of these
+   objects yet.
+3. Terraforming other than the Claim Adjuster's year-end step.
+4. The three candidate computer players, on top of the `AI.md` shared
+   core, with the leak switch off by default.
 
 ## Best next move
 
-Merge-chain repair, then send new capacity round the loop Elegy
-implementation → implementation-surfaced spec question → bounded
-prediction and oracle experiment → reconciliation. Candidates: space
-objects (OBJECTS.md) once #49 merges, and the three checked computer
-players once #81 and #82 merge. Do not start broad computer-player
-archaeology. Keep every active lane running to its own
-checkpoint.
+Send new capacity round this loop: Elegy implementation, then the spec
+question that implementation raises, then a bounded prediction and oracle
+experiment, then reconciliation. Start with milestone 1, which every later
+milestone depends on to be playable. Do not start broad archaeology of the
+original or new personality-completion work. Let every active lane run to
+its own checkpoint.
