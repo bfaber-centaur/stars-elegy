@@ -178,3 +178,72 @@ files' values).
   its race had only the gravity centre at 255. The host repaired that
   (0x117, centre forced to 50) and terraformed gravity. The spec now sets
   centre, low and high to 255, and the rerun is the result above.
+
+## Batch 3: the year-wide random draw order
+
+The year's draws, in the program's order:
+
+1. The player shuffle.
+2. Before movement, a tech attempt for each scrap at a starbase (and each
+   capture).
+3. Mining.
+4. The random events.
+5. After movement, battles, then a draw for each bombing pass.
+
+KB-1C confirmed the shuffle, mining and events part. KB-3A puts a scrap-tech
+attempt, mining, the events and a bombing pass in one year, and predicts
+every stream by replaying the random generator from its startup tick (the
+replay tool is private; the rules it applies are public).
+
+### KB-3A (`kb3a.spec`)
+
+Random events on, year 2400 (year index 0: a comet or new-minerals draw
+picks a planet and does nothing; climate change acts).
+
+- **Scrap at a starbase.** Player 0 (tech 26) scraps a Scout with a Long
+  Hump 6 at player 1's planet 12, which has an Orbital Fort. Player 1 is at
+  tech 0, so only propulsion is behind what it saw. Its tech attempt draws
+  `rand(100)`, and below 50 nothing more. Otherwise it draws 13 `rand(13)`
+  Trader tries, with no second draws because no Trader part is involved,
+  then up to 6 `rand(6)` until propulsion (2) comes up. A gain adds one
+  level's cost to propulsion (level 1) and sends 0x13d.
+- **Mining** makes 5 draws: planet 8's germanium, planet 13's three
+  minerals (25 mines at 114/97/14), and planet 17's germanium.
+- **Events** make at least 3 draws: comet, climate change and new
+  minerals.
+- **Bombing.** Player 0's Mini Bomber with one LBU-17 (installations 16,
+  kill 0.2%, no minimum) orbits player 1's planet 13, which has no
+  starbase and mines 25, factories 45, defenses 0. Its population is 880
+  and 1,012 after growth. Factories lose `10 + [rand(70) < 20]`. There is
+  no defense draw. Mines lose the rest. Population loses
+  `2 + [rand(1000) ≤ 24]`.
+
+Predicted, for the streams whose tick is known (`docs/ORACLE.md`). The
+last two columns say whether that stream would come out differently if
+mining came before the scrap draws ("mine-first") or bombing before the
+events ("bomb-first"):
+
+| Cycles (tick) | Player 1 gains | Mining 8, 13, 17 (kT) | Climate | Planet 13 factories, mines, pop | mine-first differs | bomb-first differs |
+|---|---|---|---|---|---|---|
+| 20000 (164) | none | 3/3/9, 29/25/4, 3/3/9 | — | 35, 19, 1010 | yes | yes |
+| 35000 (109) | none | 3/3/9, 28/24/4, 3/3/9 | — | 34, 20, 1010 | yes | no |
+| 11500 (329) | propulsion 1 (0x13d) | 3/3/9, 28/25/3, 3/3/8 | — | 35, 19, 1010 | yes | no |
+| 10500 (384) | propulsion 1 (0x13d) | 3/3/9, 28/24/3, 3/3/9 | — | 35, 19, 1010 | yes | no |
+| 6000 (659) | none | 3/3/9, 29/24/3, 3/3/9 | — | 34, 20, 1010 | yes | no |
+| 5200 (768) | propulsion 1 (0x13d) | 3/3/9, 29/25/3, 3/3/8 | — | 35, 19, 1010 | yes | no |
+| 3700 (1098) | none | 3/3/9, 29/25/4, 3/3/9 | — | 35, 19, 1010 | yes | yes |
+| 2190 (1812) | none | 3/3/9, 28/24/4, 3/3/9 | — | 34, 20, 1010 | yes | no |
+| 1985 (2032) | propulsion 1 (0x13d) | 3/3/9, 29/25/4, 3/3/9 | — | 35, 19, 1010 | yes | no |
+| 1750 (2306) | none | 3/3/9, 29/24/3, 3/3/9 | — | 34, 20, 1009 | yes | yes |
+| 1490 (2691) | none | 3/3/9, 29/25/3, 3/3/9 | — | 35, 19, 1010 | yes | no |
+
+No climate change is predicted in these streams. The run adds 12 cycles
+values whose ticks are not yet known (2100, 2060, 2030, 2010, 1230,
+1220, 1200, 1180, 950, 940, 720, 580). Startup ticks are
+`trunc(k·54.925)`. Under this order, a climate change shows up at k = 35
+(planet 10, radiation −7), 58 (planet 7, temperature +4), 74 (planet 20,
+temperature +4), 97 (planet 18, gravity −6) and 121 (planet 6,
+temperature −5), each with its own scrap, mining and bombing outcome.
+Each of those runs is matched against every k from 2 to 150, and a run
+whose climate change and other values match one k confirms the order with
+a visible event.
