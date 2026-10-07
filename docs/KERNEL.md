@@ -40,36 +40,287 @@ Each rule says what that scope was.
   the oracle corpus are therefore correlated, not independent samples.
   Tests of random rules should inject the generator.
 
-## Turn order (BINARY-ONLY except where noted)
+## Turn order
 
-One year, in order:
+This is the authoritative, ordered list of everything the host does when it
+generates one year. The list comes from reading the original's generation
+routine from start to end (private `stars-decomp`, `turn.md`). Each step
+names the specification that owns its rules, or says **uncovered** if no
+public specification owns it yet.
 
-1. Players' orders are applied, one player at a time in a random order.
-   How the host ingests and validates each player's order file before this
-   step (file acceptance, per-order validation, ownership, cross-owner
-   cargo, conflict resolution) is specified in `ORDERS.md`.
-2. Waypoint tasks that act before movement (unload, scrap, colonist drops,
-   load).
-3. Mineral packets, wormholes and other space objects move; then fleets
-   move (see Movement).
-4. Production, in this order inside the phase: mining for every planet,
-   then per planet resources, research tax and production queue, then
-   population growth for every planet, then research level-ups, then
-   random events.
-   CONFIRMED (PG-001..003, PQ-001): mining and resources use the population
-   **before** this year's growth; installation caps for auto items use
-   population **after** growth (see Production); research uses this year's
-   resources.
-5. Space objects move again; fleets refuel.
-6. Battles (`COMBAT.md`); then waypoint tasks that act after movement:
-   unload (including remote mining), colonist drops, a **second research
-   level-up check**, then load. The second check raises every field whose
-   accumulated research now covers its next level. Research gained from a
-   battle therefore becomes a level in the same year (CONFIRMED, CB-018,
-   CB-021); the step-4 level-ups have already run by then.
-7. Mine sweeping, ship repair, automatic and remote terraforming.
-8. The year advances; scores and victory conditions are computed (see
-   Scores and victory conditions); files are written.
+Two tags appear on each step. The step's own rules carry their usual tags
+in the owning specification. The **Order** tag says how well the step's
+**place in the sequence** is known:
+
+- **CONFIRMED** means an oracle run separated this step from its
+  neighbour and matched this order (the run is named).
+- **BINARY-ONLY** means the order was read from the program and no run has
+  yet distinguished it.
+
+Top-level step numbers 1–8 and the letter sub-steps are the phase labels
+`MESSAGES.md` uses (P1, P1a, …). Numbered items inside a step run in the
+order shown. "Fleet order" means by owner, then by fleet number
+(`TAKEOVER.md`, "Order inside a phase").
+
+### 1. Orders
+
+1. The game is loaded. The random generator is reseeded only in tutorial
+   mode, so generation otherwise continues the stream it was started with.
+2. **Player order.** The players are shuffled. For each position `i` from
+   the first to the last, the host draws `Random(n − i)` (`n` players) and
+   swaps position `i` with position `i +` the draw. That is one draw per
+   player, the last of them always 0.
+3. Each player's order file, in that order, is accepted or skipped,
+   validated and applied: direct cargo moves, transfers, merges, splits,
+   waypoint and production changes, research settings. Owner: `ORDERS.md`
+   (file acceptance, per-order validation, conflicts, fleet operations).
+   Order CONFIRMED (FO-01..07): direct cargo, transfer, merge and split
+   orders take effect before any movement.
+
+**1a. Checks after the orders** (Order BINARY-ONLY)
+
+1. **Registration check.** Players with an invalid or duplicated serial
+   are flagged, and the penalty notices are sent. Owner: `ORDERS.md`
+   "Registered-copy gate", this file's "Duplicate-serial penalty",
+   `MESSAGES.md` 0x100–0x103. Elegy has no registration scheme, so this
+   step does nothing in Elegy.
+2. Ship-design housekeeping: starbase designs are marked as starbases.
+   Uncovered. No observable effect is known.
+3. **Following fleets.** A fleet whose only order is to follow another
+   fleet takes over the leader's next waypoint. Chains are resolved over
+   up to 8 passes, and a follower whose leader has no orders gets message
+   0x138 (`MESSAGES.md`, CONFIRMED fo/fo04). Then the **waypoint check**
+   runs: coordinates are clamped to the galaxy and waypoints aimed at a
+   fleet or object are moved to its current position (`ORDERS.md`
+   "Waypoint upkeep"). Every fleet's "fought this year, no repair" mark is
+   cleared before this (`COMBAT.md` "Repair"). The leader-linking rule
+   beyond the message row is uncovered.
+
+### 2. Waypoint tasks before movement
+
+Owner: `TAKEOVER.md` "Where each task happens in the year"; route and
+transfer-fleet tasks in `ORDERS.md` "Waypoint upkeep and the remaining
+tasks"; cross-owner cargo in `ORDERS.md`.
+
+1. Every planet records whether it is owned (`TAKEOVER.md`, "At the start
+   of this phase").
+2. Unload tasks: each fleet in fleet order runs its waypoint-0 task:
+   unload (including colonist drops on other players' planets), scrap,
+   colonize or route.
+3. All queued colonist drops are resolved (ground combat, new colonies).
+4. Research level-up check (see Research). The year has three such
+   checks: here, in step 4b and in step 6c.
+5. Load tasks: each fleet in fleet order runs load, merge or route.
+6. Cargo given to other players moves.
+
+Order CONFIRMED (TK-001..003): these tasks act before movement and before
+growth. A transport already in orbit invades, and a colony ship already in
+orbit colonizes, before the year's growth (T-5, T-1).
+
+**2a. Race check.** Each player's race is clamped and checked for
+legality, with the penalty for a human race. Owner: `RACES.md` "In a
+running game". Order BINARY-ONLY: in the program this runs **after** step
+2 and before any movement. `MESSAGES.md` currently groups messages
+0x117/0x182 under P1a; their place in the year is here, after step 2.
+
+### 3. Movement
+
+1. Every minefield forgets which players saw it this year (`OBJECTS.md`
+   "Visibility").
+2. **Objects move.** The Mystery Trader moves, and every packet already in
+   flight moves and, if it arrives, hits its target (`OBJECTS.md`). If any
+   object moved, the **waypoint check** runs again, so waypoints aimed at
+   the Trader or a wormhole move to its new position before any fleet
+   moves. Order CONFIRMED: Trader before fleets with the waypoint refresh
+   (WT-001 F1, WT-005); packet impacts before growth (OB-009).
+3. **Fleets move**, in fleet order, ordinary fleets first: the movement
+   gates (a waypoint-0 transport or lay-mines task holds the fleet; the
+   registration penalty; engine failure), stargate jumps, travel with
+   minefield hits on the way, and wormhole transit on arrival. Owners: this
+   file's "Fleet movement"; `OBJECTS.md` (minefield hits, stargates,
+   wormholes).
+4. **Chasing fleets** move after every ordinary fleet, over passes 1–10.
+   Owner: this file's "Chasing another fleet". Order CONFIRMED (FM-003,
+   MF-02, the chain freeze).
+5. Reached waypoints are consumed or rotated (`ORDERS.md` "Reaching a
+   waypoint").
+6. Every planet's homeworld mark is cleared, then set on each player's
+   homeworld. This mark feeds the homeworld floor in Mining. Uncovered:
+   which planet keeps the mark after its owner changes is not in any
+   specification.
+
+Order CONFIRMED (MF-4): a minefield stop's mine loss is taken during this
+step from the field's count at that moment, before step 3a's decay.
+
+**3a. Decay and detonation** (`OBJECTS.md` "Turn placement" step 5).
+Salvage decays, packets decay, detonating minefields go off, and then
+every minefield decays. Order CONFIRMED: decay comes before this year's
+laying (OB-002-F); a detonating field decays with the extra 25% in the same
+year (OB-002-M, MF-7, MF-8).
+
+**3b. Colonists breeding in transit** (Inner Strength). Uncovered:
+`COVERAGE.md` lists it as missing; `MESSAGES.md` 0x0fb and 0x158 describe
+the messages. Order BINARY-ONLY.
+
+### 4. Production
+
+Owner: this file's "Mining", "Resources and installation caps",
+"Research" and "Production".
+
+1. Mining on every planet.
+2. Per planet, in planet order: resources (including resources from ships
+   scrapped there this year, and the duplicate-serial ×4/5), the research
+   tax, then the production queue. Ships completed here become new fleets
+   (`PRODUCTION-LAUNCH.md`). Packets launched here start their flight
+   (`OBJECTS.md` "Launch"). Terraforming items follow this file's
+   "Terraforming".
+
+Order CONFIRMED (PG-001..003, PQ-001): mining and resources use the
+population **before** this year's growth. Installation caps for automatic
+items use population **after** growth (see Production). Production uses
+the tech levels from **before** this year's research (KX-005).
+
+**4a. Population growth** on every planet (this file's "Population
+growth"). Order CONFIRMED (TK-001..003, OB-009, PG): growth comes after
+the pre-movement tasks, packet impacts and mining.
+
+**4b. Research level-ups** (this file's "Research": the check that
+spends this year's research). Order CONFIRMED
+(KX-005): production used the old tech levels, and the terraforming in
+step 7 used the new ones.
+
+**4c. Random events**, when the option is on: comet strike, climate
+change, new minerals, then the Mystery Trader's appearance (this file's
+"Random events"; `OBJECTS.md` "Spawn and movement"). Order CONFIRMED
+(KX-004): the events run after growth (protection and comet losses use
+the after-growth population) and in this internal order.
+
+### 5. Objects move again; fleets refuel
+
+1. Packets launched this year fly half a year and may hit. Wormholes
+   jiggle or jump. The Trader does not move. If any object moved, the
+   waypoint check runs again (`OBJECTS.md`). Order CONFIRMED: wormholes
+   move after fleets, so a fleet transits to the exit's position from
+   before this step (OB-005-C). The launch-year flight's place
+   (BINARY-ONLY) puts a new packet's impact before battles and bombing.
+2. Fleets refuel at starbases (this file's "Refuelling at a starbase").
+   A fleet built in step 4 is already full (`PRODUCTION-LAUNCH.md`).
+
+### 6. Battles, bombing and tasks after movement
+
+1. Every planet records whether it is owned, before anything else in the
+   phase (`TAKEOVER.md`, "At the start of this phase").
+2. Battles at every location (`COMBAT.md`).
+
+**6a. Bombing**, after every battle at every location (`TAKEOVER.md`
+"Orbital bombing"). Order CONFIRMED: a starbase destroyed in this year's
+battle no longer protects the planet (T-2); bombing uses the after-growth
+population and tech researched this year (T-8).
+
+**6b. Mystery Trader encounters** (`OBJECTS.md` "Encounters"). Order
+BINARY-ONLY: after battles and bombing, before the unload tasks.
+
+**6c. Waypoint tasks after movement** (`TAKEOVER.md`; mine laying in
+`OBJECTS.md` "Laying"; remote mining in `TAKEOVER.md` "Other waypoint
+tasks").
+
+1. A per-planet working value is cleared. Uncovered; its meaning has not
+   been read.
+2. Unload tasks: each fleet in fleet order runs unload (including invasions
+   by arriving transports), colonize, remote mining, mine laying or route.
+3. All queued colonist drops are resolved.
+4. **Research level-up check** (the one `TAKEOVER.md` calls the second
+   check). Order CONFIRMED
+   (CB-018, CB-021): research gained from a battle becomes a level the
+   same year, after step 4b has run.
+5. Load tasks: each fleet in fleet order runs load, merge or transfer
+   fleet.
+
+Order CONFIRMED: an arriving colony ship colonizes after growth (T-1);
+mines are laid before sweeping (OB-007-D). That laying comes after battles
+is BINARY-ONLY.
+
+### 7. Sweeping, repair and terraforming
+
+1. Mine sweeping, by every fleet and then every starbase (`OBJECTS.md`
+   "Sweeping"). Order CONFIRMED: after laying (OB-007-D).
+2. Repair (`COMBAT.md` "Repair"). Order CONFIRMED (CB-017): it comes after
+   battles, and a fleet that fought gets none.
+3. Automatic terraforming: Claim Adjuster drift and the CA's free
+   terraforming (this file's "Terraforming").
+4. Remote terraforming by Orbital Adjusters (this file's "Terraforming").
+   Order CONFIRMED (KX-005): both use this year's researched tech, and a
+   fleet that arrived this year terraforms. The order of 3 against 4 is
+   BINARY-ONLY.
+
+**7a. End-of-year checks.**
+
+1. Registration penalties (`MESSAGES.md` 0x104–0x107). This step does
+   nothing in Elegy.
+2. The waypoint check (`ORDERS.md` "Waypoint upkeep").
+3. Each player's estimates of other players' planets (population and
+   defenses, with a random error) are refreshed. Owner: `SCANNING.md`.
+
+### 8. Year end, scores and files
+
+1. The previous host file is backed up, and the year advances.
+2. Scores, the yearly score record and the victory conditions (this file's
+   "Scores and victory conditions").
+3. Per-design caches written to the files: each design's scanner range,
+   a "can no longer be built" mark, and the cloak percentage of other
+   players' designs (`SCANNING.md`; uncovered as a file detail).
+4. Three per-year random bits in the game options are redrawn
+   (`Random(8)`). This affects the file contents only. Uncovered.
+
+**8a. Files are written**: the host file, then each player's file, with
+that player's knowledge (`SCANNING.md` "When knowledge is computed") and
+the checks on later waypoints that `MESSAGES.md` places at P8a.
+
+### Random draws
+
+Any step that draws from the generator moves every later draw. Read from
+the program, the steps that can draw are the shuffle in step 1, the movement gates and minefield
+hits (3), the Trader's and wormholes' movement (3, 5), salvage and packet
+decay with detonations (3a), breeding in transit (3b), production (4), the
+random events (4c), battles, bombing and ground combat (2, 6), Trader
+rewards (6b), Claim Adjuster drift (7), the estimates (7a) and the option
+bits (8). MEASURED (KX-004, KX-005): in quiet states with no fleets in
+motion, battles or drops, the random events (KX-004) and the Claim
+Adjuster drift with events off (KX-005) both began at draw 4 of the
+year's stream.
+
+### Orders still unpinned
+
+The orders above that are BINARY-ONLY, with a discriminating run for each
+one an implementation could get visibly wrong:
+
+- **Trader encounter before unloading (6b before 6c).** A fleet with
+  exactly 5,000 kT of minerals and an unload order at an own planet that
+  the Trader reaches this year. Encounter first predicts a trade and the
+  fleet is consumed; unload first predicts the fleet keeps an empty hold
+  and no trade happens. One year, events on, Trader placed by state edit.
+- **Trader encounter after battle (6b after 6).** An armed enemy fleet
+  and an unarmed freighter carrying 5,000 kT at the Trader's arrival point.
+  This order predicts the freighter dies and nothing is traded.
+- **Launch-year packet before bombing (5 before 6a).** A packet launched
+  at an enemy planet close enough to arrive in its first half year, while
+  bombers orbit that planet. This order predicts bombing applies to the
+  population and defenses as the packet left them.
+- **Claim Adjuster terraforming before Orbital Adjusters (7.3 before 7.4).**
+  A CA planet with a hostile Orbital Adjuster fleet in orbit, at a value
+  where the adjuster's choice of axis depends on whether the CA has
+  already moved the environment.
+- **Race check after pre-movement tasks (2a after 2).** Only a
+  hand-edited race file can tell the two orders apart, so no run is
+  proposed.
+- **Breeding in transit before production (3b before 4).** An Inner
+  Strength fleet with a full hold orbiting its own planet. The overflow
+  lands before growth, so the planet grows on it the same year. Pair this
+  with the breeding rules themselves (`COVERAGE.md`).
+
+The remaining BINARY-ONLY items (registration steps, design housekeeping,
+the working-value reset, file-only caches and bits) have no effect on game
+state that an implementation can observe.
 
 ## Habitability
 
@@ -1305,5 +1556,6 @@ reach are listed at the end of its section in `PARITY.md`.
 - Oracle: PG-001..003, PQ-001, KX-001..005 and TK-117 (`PARITY.md`); FM-001..004 movement
   corpus (`PARITY.md`, "Fleet Movement", and `experiments/fm00N/`).
 - White-box readings: private `stars-decomp` (population, economy,
-  research, mining, production, movement and fuel notes; model checks that
+  research, mining, production, movement and fuel notes, and the turn
+  generation routine for "Turn order"; model checks that
   reproduce the PG, PQ and FM observations listed above).
