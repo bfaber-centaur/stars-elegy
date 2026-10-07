@@ -652,6 +652,35 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   not runs.
 - A generation takes a few seconds after DOSBox starts.
 
+- In the round-5 starts, 20000 and 25000 always gave the same stream,
+  and so did 30000, 35000, 40000 and 45000: twelve values from 5000 to
+  50000 gave 8 streams. On CB-041, 6000, 7000, 9000 and 14000 added new
+  streams; 11000 repeated 10000, 18000 repeated 14000, and 22000 and
+  27000 repeated 20000.
+
+### Production queues and Mystery Trader parts (observed 2026-10-07, CL-TOOL)
+
+CombatLab `queue N ITEMS|none` replaces planet N's production queue in
+the host file, and `mt P HEX` sets the Mystery Trader items player P owns
+(a 16-bit mask; `combatlab dump` prints it as `mt=`). Queue items use
+hst-edit's layout, `ID:COUNT[:PCT]:KIND`, with kind 2 for a ship design
+and kind 1 for a planetary item. Designs may name Mystery Trader parts
+like any other part (StarsAPI names, e.g. `Anti Matter Torpedo`,
+`Multi Cargo Pod`, `Mini Morph`).
+
+One turn on the Combat Lab base (`experiments/cltool`, cycles 20000):
+
+- `queue 8 1:2:2` (two of player 1's design 1, a bare Scout): the
+  homeworld built both that year, as one new fleet, and the queue was
+  empty afterwards.
+- Player 0 owned no Mystery Trader items (`mt=0000`). Its Anti Matter
+  Torpedo Destroyer and a Mini Morph with Multi Cargo Pods, a Multi
+  Function Pod, a Mega Poly Shell and a Langston Shell were both kept by
+  the turn. The torpedoes fired, and the stars-decomp checker replayed
+  all 10 hits. Parts the owner lacks the tech for are still stripped
+  (SC-021); hidden Mystery Trader parts are not.
+- `mt 1 0x0003` survived the turn unchanged.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh

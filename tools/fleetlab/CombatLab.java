@@ -27,6 +27,14 @@ import org.starsautohost.starsapi.items.Items;
 //                                   1 auto factories, 2 auto defenses, 3 auto alchemy,
 //                                   4 auto min terraform, 5 auto max terraform, 6 auto packets)
 //   defleftover P 0|1               set P's default "only leftover to research" for new colonies
+//   mt P HEX                        set the Mystery Trader items P owns (16-bit mask, one bit
+//                                   per item; 0 = none). Designs may use Mystery Trader parts
+//                                   by name whatever the mask (see docs/ORACLE.md)
+//   queue N ID:COUNT[:PCT]:KIND[,...]|none
+//                                   replace planet N's production queue (owned planets).
+//                                   KIND 2 = ship design ID of the planet's owner, KIND 1 =
+//                                   planetary item ID (as defqueue); COUNT up to 1023; PCT
+//                                   = percent of the first unit already done (default 0)
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -140,6 +148,7 @@ public class CombatLab {
                     for (int i = 0; i < 6; i++) sb.append(' ').append(TECH[i]).append('=').append(p.fullDataBytes[0x12 + i]);
                     sb.append(String.format(" prt=%d lrt=%04x", p.fullDataBytes[0x44],
                         ((p.fullDataBytes[0x47] & 0xff) << 8) | (p.fullDataBytes[0x46] & 0xff)));
+                    sb.append(String.format(" mt=%04x", Util.read16(p.fullDataBytes, 0x4a)));
                     sb.append(" accum=");
                     for (int i = 0; i < 6; i++)
                         sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
@@ -408,7 +417,8 @@ public class CombatLab {
         Map<String, Integer> tech = new HashMap<>();
         Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
-        Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>();
+        Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
+        Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
         Map<Integer, List<Integer>> defQueues = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
@@ -439,6 +449,13 @@ public class CombatLab {
                     case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "field": fields.put(Integer.parseInt(t[1]), Arrays.asList(TECH).indexOf(t[2])); break;
                     case "defleftover": defLeftover.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    case "mt": {
+                        int v = Integer.parseInt(t[2].replaceFirst("^0x", ""), 16);
+                        if (v < 0 || v > 0xffff) throw new Exception("mt: 16-bit mask expected");
+                        mts.put(Integer.parseInt(t[1]), v);
+                        break;
+                    }
+                    case "queue": queues.put(Integer.parseInt(t[1]), parseQueue(t[2])); break;
                     case "defqueue": {
                         List<Integer> q = new ArrayList<>();
                         if (!t[2].equals("none"))
@@ -644,6 +661,7 @@ public class CombatLab {
                 if (fields.get(k) < 0) throw new Exception("field: unknown tech field");
                 p.fullDataBytes[0x31] = (byte) ((p.fullDataBytes[0x31] & 0xf0) | fields.get(k));
             }
+            if (mts.containsKey(k)) Util.write16(p.fullDataBytes, 0x4a, mts.get(k));
             if (defLeftover.containsKey(k))
                 p.fullDataBytes[0x4e] = (byte) ((p.fullDataBytes[0x4e] & ~1) | (defLeftover.get(k) & 1));
             if (defQueues.containsKey(k)) {
@@ -671,7 +689,11 @@ public class CombatLab {
         // Pass 2: rebuild the block list.
         List<Block> result = new ArrayList<>();
         boolean shipDone = false, fleetsDone = false, sbDone = false, thingsDone = false;
+        int lastPlanet = -1;
+        Set<Integer> queuesDone = new HashSet<>();
         for (Block b : blocks) {
+            // a planet's production queue block follows its planet block
+            if (b instanceof ProductionQueueBlock && queues.containsKey(lastPlanet)) continue;
             if (b instanceof DesignBlock) {
                 DesignBlock d = (DesignBlock) b;
                 if (!d.isStarbase && !shipDone) {
@@ -767,11 +789,47 @@ public class CombatLab {
                 }
             }
             result.add(b);
+            if (b instanceof PartialPlanetBlock) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                lastPlanet = pl.planetNumber;
+                byte[] q = queues.get(lastPlanet);
+                if (q != null) {
+                    if (pl.owner < 0) throw new Exception("queue: planet " + lastPlanet + " has no owner");
+                    if (q.length > 0) {
+                        ProductionQueueBlock pq = new ProductionQueueBlock();
+                        pq.setDecryptedData(Arrays.copyOf(q, q.length), q.length);
+                        pq.setData(q.clone(), q.length);
+                        result.add(pq);
+                    }
+                    queuesDone.add(lastPlanet);
+                }
+            }
         }
+        if (!queuesDone.containsAll(queues.keySet())) throw new Exception("queue: no planet " + queues.keySet());
         if (!plans.isEmpty()) throw new Exception("unplaced plans");
         if (!planetSets.isEmpty()) throw new Exception("planetset: no planet " + planetSets.keySet());
         dec.writeBlocks(out, result, false);
         System.out.printf("wrote %s: %d fleets%n", out, fleets.size());
+    }
+
+    // Production queue items: two little-endian words per item, as the game stores
+    // them (and scripts/oracle/hst-edit writes them): w0 = (id & 63) << 10 | count,
+    // w1 = pct << 4 | kind << 1 | id >> 6.
+    static byte[] parseQueue(String spec) throws Exception {
+        if (spec.equals("none")) return new byte[0];
+        String[] items = spec.split(",");
+        byte[] d = new byte[items.length * 4];
+        for (int j = 0; j < items.length; j++) {
+            String[] f = items[j].split(":");
+            if (f.length != 3 && f.length != 4) throw new Exception("queue: ID:COUNT[:PCT]:KIND expected, got " + items[j]);
+            int id = Integer.parseInt(f[0]), cnt = Integer.parseInt(f[1]);
+            int pct = f.length == 4 ? Integer.parseInt(f[2]) : 0, kind = Integer.parseInt(f[f.length - 1]);
+            if (id < 0 || id > 127 || cnt < 0 || cnt > 1023 || pct < 0 || pct > 100 || kind < 0 || kind > 7)
+                throw new Exception("queue: bad item " + items[j]);
+            Util.write16(d, 4 * j, ((id & 0x3f) << 10) | cnt);
+            Util.write16(d, 4 * j + 2, (pct << 4) | (kind << 1) | (id >> 6));
+        }
+        return d;
     }
 
     static void applyPlanetSet(PartialPlanetBlock pl, Map<String, String> kv) throws Exception {
