@@ -53,7 +53,8 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   computer player does not act that year; the existing file is used.
 - **What it sees.** Exactly that player's own view of the game (what its
   player file holds: its planets, fleets, designs, scanned reports). It
-  never reads other players' hidden state. It keeps no memory between
+  never reads other players' hidden state, except through the two leaks
+  below. It keeps no memory between
   years: the original writes a private memory block into the player's
   history file each year but never reads it back on this path, so every
   turn starts from an empty one (BINARY-ONLY; consistent with 61 years of
@@ -73,6 +74,43 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   order: research (§4, which also maintains the starbase designs of §5 and
   the hub memory of §6 for HE, SS, IS, CA and PP), then the personality's
   own work, then the planet automation of §7.
+
+### State leaking between computer players (LEGACY BUG)
+
+The host runs all computer players of a year one after another in one
+program, in player order (lowest player number first; human players are
+skipped). Two pieces of state survive from one computer player to the
+next within that run. Each makes a computer player's orders depend on
+which computer players ran before it that year. Elegy reproduces both
+behind one named switch, for example `legacy_ai_state_leak`. With the
+switch off, each computer player starts from clean state: empty slots read
+as never used, and the armada parameters below are the personality's own.
+
+- **Empty design slots keep the previous player's bytes.** Loading a
+  computer player's file marks its unused ship design slots empty but
+  leaves the rest of each slot as the previous computer player (in the
+  same run) left it. A rule that reads an empty slot's creation year
+  without first checking that the slot holds a design therefore reads the
+  previous player's design in that slot. For the first computer player in
+  the run the slot probably reads as never used (inferred, not yet read).
+  Known readers:
+  - Macinti's warship rule reads slot `s − 1`'s creation year this way.
+    In AIX, Macinti's slot 4 followed Cybertron's slot-3 design (created
+    2442), so Macinti did not create slot 4 in 2445–2460 although it
+    could build the design every year (Scanning lane's Macinti reading;
+    the Macinti check matches AIX in 61 of 61 years only when this is
+    modelled). Details in docs/ai/macinti.md (planned).
+  - Robotoid's slots 12 and 13 test the previous slot's age without a
+    presence check (docs/ai/robotoid.md §2). Robotoid is often the first
+    computer player in a run, as in AIX, where this never mattered.
+  - Cybertron checks presence first and is not affected.
+- **Armada parameters.** The armada potency and size (§11 "Armada
+  (invasion) fleets") are shared values that a personality sets during
+  its own turn. Robotoid and Macinti set them (Macinti's potency starts at
+  6, Robotoid's at 4). Cybertron's armada rules read them without setting
+  them, so Cybertron uses the values left by the last computer player
+  before it in the same run that set them. Which value it sees when no
+  earlier player set them is not yet read.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
