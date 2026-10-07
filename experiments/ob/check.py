@@ -10,6 +10,7 @@ OBSERVED (no single predicted value), with the observed value.
 import re, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gen
+from gen import XY
 
 
 def kv(line):
@@ -234,6 +235,121 @@ def evaluate(c, A, B, run=None, M=None):
             if abs(int(d['x']) - x) <= 20 and abs(int(d['y']) - y) <= 20:
                 got['fleet%d/%d' % key] = (d['ships'], ' '.join(v for kk, v in d.items() if kk.startswith('dmg')))
         return None, got
+    # ---- round 5
+    if kind == 'gate':
+        _, owner, fid, planet, n, word, fuel = k[:7]
+        cargo = k[7] if len(k) > 7 else None
+        f = fleets.get((owner, fid))
+        if not f:
+            return (None if n > 0 else False), 'fleet gone'
+        pos = (int(f['x']), int(f['y']))
+        ships = sum(int(x.split(':')[1]) for x in f['ships'].split(','))
+        dmg = sorted(v for kk, v in f.items() if kk.startswith('dmg'))
+        got = dict(at=pos, ships=ships, dmg=dmg, fuel=int(f['fuel']), cargo=f['cargo'])
+        ok = pos == XY[planet] and (ships == -n if n < 0 else 1 <= ships <= n)
+        ok &= dmg == ([word] if word else [])
+        if fuel is not None:
+            ok &= int(f['fuel']) == fuel
+        if cargo is not None:
+            ok &= tuple(int(v) for v in f['cargo'].split('/')) == tuple(cargo)
+        return ok, got
+    if kind == 'pkt':
+        _, owner, num, want = k
+        ps = [t for t in things if t['type'] == 'packet' and int(t['owner']) == owner and int(t['num']) == num]
+        if not ps:
+            return False, 'packet gone'
+        got = tuple(int(v) for v in ps[0]['cargo'].split('/'))
+        return got == tuple(want), dict(cargo=got, at=(ps[0]['x'], ps[0]['y']))
+    if kind in ('traderend', 'tradergone'):
+        num = k[1]
+        ts = [t for t in things if t['type'] == 'trader' and int(t['num']) == num]
+        if kind == 'tradergone':
+            return not ts, [(t['x'], t['y'], t['dest'], t['warp']) for t in ts] or 'gone'
+        if not ts:
+            return (True if k[2] is not None else None), 'gone'
+        t = ts[0]
+        got = dict(at=(int(t['x']), int(t['y'])), dest=t['dest'], warp=int(t['warp']), item=t['item'])
+        if k[2] is None:
+            return None, got
+        dx, dy = (int(v) for v in t['dest'].split(','))
+        edge = dx in (1020, 1380) or dy in (1020, 1380)
+        return got['at'] == (k[2], k[3]) and got['warp'] in (7, 8) and edge and (dx, dy) != (k[2], k[3]), got
+    if kind == 'mtpart':
+        _, owner, fid = k
+        gone = (owner, fid) not in fleets
+        before, after = int(B[3][owner]['mt'], 16), int(players[owner]['mt'], 16)
+        gained = after & ~before
+        dt = techsum(players[owner]) - techsum(B[3][owner])
+        return gone and bin(gained).count('1') == 1 and dt == 0, dict(
+            fleet='gone' if gone else 'kept', mt='%04x -> %04x' % (before, after), tech_levels=dt)
+    if kind == 'mtship':
+        _, owner, fid, x, y = k
+        gone = (owner, fid) not in fleets
+        new = [(i, d['ships']) for (o, i), d in fleets.items() if o == owner and (o, i) not in B[2]
+               and (int(d['x']), int(d['y'])) == (x, y)]
+        nd = int(players[owner]['shipdesigns']) - int(B[3][owner]['shipdesigns'])
+        dt = techsum(players[owner]) - techsum(B[3][owner])
+        cnt = [sum(int(z.split(':')[1]) for z in sh.split(',')) for _, sh in new]
+        ok = gone and len(new) == 1 and cnt[0] in (1, 2) and nd == 1 and dt == 0
+        return ok, dict(fleet='gone' if gone else 'kept', new=new, designs_added=nd, tech_levels=dt)
+    if kind == 'minehit2':
+        _, owner, fid, fx, fy, nohit, hit = k
+        f = fleets.get((owner, fid))
+        cnt = [int(t['count']) for t in fields_near(things, 1, fx, fy)]
+        salv = [(t['x'], t['y'], t['cargo']) for t in things if t['type'] == 'packet' and t['warp'] == '4']
+        got = dict(field=cnt, fleet=(f['x'], f['y'], f['ships'], ' '.join(v for kk, v in f.items() if kk.startswith('dmg')))
+                   if f else 'gone', salvage=salv)
+        if cnt == [nohit]:
+            return bool(f) and not any(kk.startswith('dmg') for kk in f), got
+        return cnt == [hit], got
+    if kind == 'wormage':
+        _, nums, years, cls = k
+        bw = {int(t['num']): t for t in B[0] if t['type'] == 'wormhole'}
+        got, ok = [], True
+        for t in things:
+            if t['type'] == 'wormhole' and int(t['num']) in nums:
+                n = int(t['num'])
+                dx, dy = int(t['x']) - int(bw[n]['x']), int(t['y']) - int(bw[n]['y'])
+                got.append((n, dx, dy, int(t['years']), int(t['class'])))
+                ok &= abs(dx) <= 12 and abs(dy) <= 12 and (dx, dy) != (0, 0) and int(t['years']) == years and int(t['class']) == cls
+        return ok and len(got) == len(nums), got
+    if kind == 'wormjump':
+        _, nums, year = k
+        bw = {int(t['num']): t for t in B[0] if t['type'] == 'wormhole'}
+        jumps, ok = [], True
+        for t in things:
+            if t['type'] == 'wormhole' and int(t['num']) in nums:
+                n = int(t['num'])
+                dx, dy = int(t['x']) - int(bw[n]['x']), int(t['y']) - int(bw[n]['y'])
+                yb, ya = int(bw[n]['years']), int(t['years'])
+                ok &= int(t['class']) == 2
+                if ya == 0:
+                    jumps.append((n, (bw[n]['x'], bw[n]['y']), (t['x'], t['y']), 'seen %s' % t['seen']))
+                else:
+                    ok &= ya == yb + 1 and abs(dx) <= 12 and abs(dy) <= 12 and (dx, dy) != (0, 0)
+        return ok, dict(jumps=jumps)
+    if kind == 'wormfollow':
+        out, ok = [], True
+        pos = {int(t['id']): (int(t['x']), int(t['y'])) for t in things if t['type'] == 'wormhole'}
+        bpos = {int(t['id']): (int(t['x']), int(t['y'])) for t in B[0] if t['type'] == 'wormhole'}
+        for owner, fid, wnum in k[1]:
+            ws = wps.get((owner, fid), [])
+            wid = 0x4000 + wnum
+            w1 = ws[1] if len(ws) > 1 else None
+            got = (int(w1['obj']), w1['type'], (int(w1['x']), int(w1['y']))) if w1 else None
+            out.append(dict(fleet=fid, wp1=got, worm_before=bpos.get(wid), worm_after=pos.get(wid)))
+            ok &= bool(w1) and int(w1['obj']) == wid
+        return ok, out
+    if kind == 'wormlost':
+        out, ok = [], True
+        for owner, fid, wnum in k[1]:
+            ws = wps.get((owner, fid), [])
+            w1 = ws[1] if len(ws) > 1 else None
+            b1 = B[4][(owner, fid)][1]
+            got = (int(w1['obj']), w1['type'], (int(w1['x']), int(w1['y']))) if w1 else None
+            out.append(dict(fleet=fid, wp1=got))
+            ok &= bool(w1) and w1['type'] == '14' and (int(w1['x']), int(w1['y'])) == (int(b1['x']), int(b1['y']))
+        return ok, out
     raise SystemExit('unknown check ' + kind)
 
 

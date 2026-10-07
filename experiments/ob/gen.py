@@ -602,6 +602,297 @@ r.case('C', 'O-42', 'known wormhole 170+ ly from every scanner (as OB-011-H)', '
 r.case('D', 'S-17', 'every object in player 1\'s file', 'as the rules (known wormholes within R)', '', ('scan',))
 
 
+
+# ---------------------------------------------------------------- round 5 (OBJECTS.md BINARY-ONLY rules)
+# Predictions below restate OBJECTS.md (written from the stars-decomp objects reading, PR #10) for rules
+# no earlier OB case tested. Numbers come from these helpers, written before any round-5 run.
+
+def gate_pct(R, Ms, Md, dist, mass):
+    """OBJECTS.md "Stargates": None when refused, else the danger percent (100 = lost)."""
+    R = 8000 if R is None else R
+    if dist > 5 * R:
+        return None
+    for M in (Ms, Md):
+        if M and mass > 5 * M:
+            return None
+    f = 10000
+    if dist > R:
+        f = (5 * R - dist) * 2500 // R
+        if f <= 0:
+            return 100
+    for M in (Ms, Md):
+        if M and 0 < M < mass:
+            g = (5 * M - mass) * 2500 // M
+            if g <= 0:
+                return 100
+            f = g * f // 10000
+    return (10000 - f) // 100
+
+
+def gate_word(pct, armor):
+    """Damage word of every survivor after a jump with 0 < pct < 100 and no earlier damage."""
+    nw = max(1, pct * armor // 100)
+    return '%d/100%%' % max(1, nw * 500 // armor)
+
+
+def dist(a, b):
+    return int(math.hypot(XY[a][0] - XY[b][0], XY[a][1] - XY[b][1]))
+
+
+DD_MASS, DD_ARMOR = 41, 200          # Destroyer, Long Hump 6, two Lasers (design 0/1 "Laser DD")
+SF_MASS, SF_ARMOR = 202, 400         # Super Freighter, three Long Hump 6 (design 0/9)
+HSF_MASS = 502                       # Super Freighter, three Long Hump 6, five Tritanium (design 0/11)
+GATES = ('sbdesign 0 3 Orbital Fort, 1 Stargate 100/250, empty, empty, empty, empty = Gate Fort\n'
+         'sbdesign 0 4 Orbital Fort, 1 Stargate 150/600, empty, empty, empty, empty = Gate 600\n')
+EXTRA_DESIGNS = ('design 0 11 Super Freighter, 3 Long Hump 6, empty, 5 Tritanium, empty = Heavy Freighter\n'
+                 'design 0 12 Super Mine Layer, 1 Long Hump 6, 2 Mine Dispenser 40, empty, empty, empty, empty = Super Layer\n')
+
+
+def own(n, owner, sb, pop=1000):
+    return 'planet %d owner %d pop %d starbase %s\nplanetset %d %s scanner=31\n' % (
+        n, owner, pop, sb if sb is not None else 'none', n, PLAIN)
+
+
+# ---------------------------------------------------------------- OB-021 stargates (JOAT player 0)
+ex = GATES + EXTRA_DESIGNS + 'tech 1 prop 5\ntech 1 con 5\n' + \
+    'sbdesign 1 0 Space Station, empty, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, 8 Mole-skin Shield, ' \
+    'empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield = Starbase\n' \
+    'sbdesign 1 1 Orbital Fort, 1 Stargate 100/250, empty, empty, empty, empty = Gate Fort\n'
+for n in (12, 15, 6, 16, 5, 11, 14, 22, 23, 0, 21, 18, 10):
+    ex += own(n, 0, 3)
+ex += own(1, 0, 4) + own(20, 0, 1) + own(9, 1, 1)
+r = run('OB-021', 'stargates: range, mass, refusal, cargo, gate ownership (JOAT player 0, gates 100/250 and 150/600)',
+        extra=ex)
+
+
+def gate_fleet(r, src, dst, ships, cargo=None, plan=1, fuel=100):
+    (x, y), (tx, ty) = XY[src], XY[dst]
+    c = ' cargo %d %d %d %d' % cargo if cargo else ''
+    return r.fleet(0, x, y, ships, plan=plan, planet=src, fuel=fuel, extra='%s to %d %d planet %d warp 11' % (c, tx, ty, dst))
+
+
+d = dist(12, 15); gate_fleet(r, 12, 15, '1:1')
+r.case('A', 'gate', 'Laser DD (mass %d) jumps %d ly between 100/250 gates' % (DD_MASS, d),
+       'at planet 15, undamaged, fuel 100 (no fuel used)', 'stays; or fuel spent', ('gate', 0, 0, 15, 1, None, 100))
+d = dist(6, 16); pct = gate_pct(250, 100, 100, d, DD_MASS); gate_fleet(r, 6, 16, '1:5')
+r.case('B', 'gate', '5 Laser DDs jump %d ly through a 100/250 gate (over range): danger %d%%' % (d, pct),
+       'at planet 16; each ship lost with %d%%; survivors %s (%d armor each)' % (pct // 3, gate_word(pct, DD_ARMOR),
+                                                                             max(1, pct * DD_ARMOR // 100)),
+       'refused; or no damage', ('gate', 0, 1, 16, 5, gate_word(pct, DD_ARMOR), 100))
+d = dist(5, 11); pct = gate_pct(250, 100, 100, d, SF_MASS); gate_fleet(r, 5, 11, '9:3', cargo=(100, 50, 25, 10))
+r.case('C', 'gate', '3 Super Freighters (mass %d > 100) jump %d ly carrying 100/50/25 kT and 10 kT colonists: danger %d%%'
+       % (SF_MASS, d, pct),
+       'at planet 11 empty; each ship lost with %d%%; survivors %s; source planet 5 surface +100/+50/+25 and pop '
+       '1010 -> %d' % (pct // 3, gate_word(pct, SF_ARMOR), grown(1010)), 'cargo carried through',
+       ('gate', 0, 2, 11, 3, gate_word(pct, SF_ARMOR), None, (0, 0, 0, 0)))
+r.case('C2', 'gate', 'the source planet of C', 'surface +100/+50/+25, pop %d' % grown(1010), 'unchanged (%d)' % grown(1000),
+       ('planet', 5, dict(surface=(100, 50, 25), pop=grown(1010))))
+d = dist(14, 22); gate_fleet(r, 14, 22, '11:1', cargo=(100, 0, 0, 0))
+r.case('D', 'gate', 'Heavy Freighter (mass %d > 5 x 100) at a gate, %d ly jump, carrying 100 kT ironium' % (HSF_MASS, d),
+       'refused: stays at planet 14, undamaged, hold empty', 'jumps with damage', ('gate', 0, 3, 14, 1, None, 100, (0, 0, 0, 0)))
+r.case('D2', 'gate', 'the source planet of D', 'surface +100 ironium (cargo dumped although the jump was refused, '
+       'LEGACY BUG)', 'surface unchanged', ('planet', 14, dict(surface=(100, 0, 0))))
+d = dist(1, 23); gate_fleet(r, 1, 23, '1:1')
+r.case('E', 'gate', 'Laser DD jumps %d ly from a 150/600 gate to a 100/250 gate' % d,
+       'at planet 23, undamaged (range from the source gate only)', 'damaged by the 250 range',
+       ('gate', 0, 4, 23, 1, None, 100))
+pct = gate_pct(250, 100, 150, d, DD_MASS); gate_fleet(r, 23, 1, '1:1')
+r.case('F', 'gate', 'Laser DD jumps the same %d ly the other way (100/250 source): danger %d%%' % (d, pct),
+       'at planet 1, lost with %d%%, else %s' % (pct // 3, gate_word(pct, DD_ARMOR)), 'undamaged',
+       ('gate', 0, 5, 1, 1, gate_word(pct, DD_ARMOR), 100))
+d = dist(0, 21); pct = gate_pct(250, 100, 100, d, SF_MASS); gate_fleet(r, 0, 21, '9:3')
+r.case('G', 'gate', '3 Super Freighters (mass %d) jump %d ly: range and mass factors multiply, danger %d%%' % (SF_MASS, d, pct),
+       'at planet 21; each lost with %d%%; survivors %s' % (pct // 3, gate_word(pct, SF_ARMOR)),
+       'danger %d%% if only the larger factor counted' % max(gate_pct(250, None, None, d, SF_MASS), gate_pct(250, 100, 100, 0, SF_MASS)),
+       ('gate', 0, 6, 21, 3, gate_word(pct, SF_ARMOR), 100))
+gate_fleet(r, 18, 20, '1:1')
+r.case('H', 'gate', 'Laser DD at a gate, destination planet 20 has a starbase without a gate',
+       'stays at planet 18, fuel 100', 'jumps', ('gate', 0, 7, 18, 1, None, 100))
+gate_fleet(r, 9, 10, '1:1')
+r.case('I', 'gate', 'Laser DD (plan "nobody") at enemy player 1\'s gate planet 9, gate warp to own gate planet 10',
+       'stays at planet 9 (source gate not owned by self or a friend)', 'jumps', ('gate', 0, 8, 9, 1, None, 100))
+
+
+# ---------------------------------------------------------------- OB-022 Interstellar Traveler: gates and packets
+IT = ('prt 1 7\nlrt 1 0x1b80\n' + ''.join('tech 1 %s 26\n' % f for f in ('energy', 'weapons', 'prop', 'con', 'elec', 'bio')) +
+      'design 1 0 Destroyer, 1 Long Hump 6, 1 Laser, 1 Laser, empty, empty, empty, empty = Laser DD\n'
+      'design 1 1 Super Freighter, 3 Long Hump 6, empty, empty, empty = Super Freighter\n'
+      'design 1 2 Super Freighter, 3 Long Hump 6, empty, 5 Tritanium, empty = Heavy Freighter\n'
+      'sbdesign 1 0 Space Station, empty, 8 Laser, 8 Mole-skin Shield, 8 Laser, 8 Mole-skin Shield, 8 Mole-skin Shield, '
+      'empty, 8 Laser, empty, 8 Laser, empty, 8 Mole-skin Shield = Starbase\n'
+      'sbdesign 1 1 Orbital Fort, 1 Stargate 100/250, empty, empty, empty, empty = Gate Fort\n'
+      'sbdesign 1 2 Orbital Fort, 1 Mass Driver 7, empty, empty, empty, empty = Catcher 7\n')
+for n in (6, 16, 14, 22, 5, 11):
+    IT += own(n, 1, 1)
+IT += own(20, 1, None) + own(9, 1, 2)
+r = run('OB-022', 'Interstellar Traveler player 1 (tech 26): stargates without losses or cargo dumps; packets into IT planets',
+        extra=IT)
+
+
+def gate_fleet1(r, src, dst, ships, cargo=None, fuel=100):
+    (x, y), (tx, ty) = XY[src], XY[dst]
+    c = ' cargo %d %d %d %d' % cargo if cargo else ''
+    return r.fleet(1, x, y, ships, plan=0, planet=src, fuel=fuel, extra='%s to %d %d planet %d warp 11' % (c, tx, ty, dst))
+
+
+d = dist(6, 16); pct = gate_pct(250, 100, 100, d, DD_MASS); gate_fleet1(r, 6, 16, '0:5')
+r.case('A', 'gate/IT', 'IT: 5 Laser DDs jump %d ly through a 100/250 gate: danger %d%%' % (d, pct),
+       'at planet 16, all 5 ships kept, each %s' % gate_word(pct, DD_ARMOR), 'ships lost with %d%%' % (pct // 3),
+       ('gate', 1, 0, 16, -5, gate_word(pct, DD_ARMOR), 100))
+gate_fleet1(r, 14, 22, '2:1', cargo=(100, 0, 0, 0))
+r.case('B', 'gate/IT', 'IT: Heavy Freighter (mass %d) refused, carrying 100 kT ironium' % HSF_MASS,
+       'stays at planet 14 with its 100 kT; planet 14 surface unchanged', 'cargo dumped',
+       ('gate', 1, 1, 14, 1, None, 100, (100, 0, 0, 0)))
+r.case('B2', 'gate/IT', 'the source planet of B', 'surface +0', '+100', ('planet', 14, dict(surface=(0, 0, 0))))
+pct = gate_pct(250, 100, 100, dist(5, 11), SF_MASS); gate_fleet1(r, 5, 11, '1:3', cargo=(100, 50, 25, 10))
+r.case('C', 'gate/IT', 'IT: 3 Super Freighters (danger %d%%) jump %d ly with 100/50/25 kT and 10 kT colonists'
+       % (pct, dist(5, 11)), 'at planet 11, all 3 kept, cargo carried through, each %s' % gate_word(pct, SF_ARMOR),
+       'cargo dumped at planet 5', ('gate', 1, 2, 11, -3, gate_word(pct, SF_ARMOR), 100, (100, 50, 25, 10)))
+r.thing('packet', 0, '1348 1340 20 10 1000 0 0')
+r.case('D', 'packet/IT', 'player 0 warp-10 1000 kT packet into IT planet 20 (no starbase, pop 1000)',
+       'w^2 halved to 50: 312 killed, pop 688 -> %d; surface +111' % grown(688), 'not halved: 625 killed, %d' % grown(375),
+       ('planet', 20, dict(pop=grown(688), surface=(111, 0, 0))))
+r.thing('packet', 0, '1208 1347 9 10 1000 0 0')
+r.case('E', 'packet/IT', 'the same into IT planet 9 with a Mass Driver 7 catcher (pop 1000)',
+       'w^2 50, c^2 24: q 480, surface +537; 162 killed, pop 838 -> %d' % grown(838),
+       'not halved: +546, %d; rounded c^2 25: +555, %d' % (grown(682), grown(844)),
+       ('planet', 9, dict(pop=grown(838), surface=(537, 0, 0))))
+
+
+# ---------------------------------------------------------------- OB-023 Packet Physics decay, single Trader arrival
+r = run('OB-023', 'Packet Physics player 1 packet decay; one Mystery Trader reaching its destination',
+        extra='prt 1 6\nlrt 1 0x1b80\n')
+PP_PKT = []
+for i, (x, y, cargo, cls, want, alt) in enumerate((
+        (1060, 1040, (1000, 0, 0), 1, (950, 0, 0), '900'), (1060, 1140, (1000, 0, 0), 2, (880, 0, 0), '750; 875 if 12.5%'),
+        (1060, 1240, (1000, 0, 0), 3, (750, 0, 0), '500'), (1060, 1340, (50, 0, 0), 1, (45, 0, 0), '40 (minimum 10)'),
+        (1380, 1040, (100, 100, 0), 2, (88, 88, 0), '75/75; germanium stays 0'))):
+    n = r.thing('packet', 1, '%d %d 23 5 %d %d %d class %d' % ((x, y) + cargo + (cls,)))
+    r.case('P%d' % i, 'packet/PP', 'PP packet class %d, %s kT, warp 5 in flight' % (cls, '/'.join(map(str, cargo))),
+           'cargo %s after one year (PP rates 5/12/25%%, minimum 5)' % '/'.join(map(str, want)), alt,
+           ('pkt', 1, n, want))
+n = r.thing('packet', 0, '1380 1140 23 5 1000 0 0 class 1')
+r.case('Q', 'packet', 'player 0 (JOAT) packet class 1, 1000 kT', 'cargo 900 (10%)', '', ('pkt', 0, n, (900, 0, 0)))
+n = r.thing('packet', 0, '1380 1240 23 5 50 0 0 class 1')
+r.case('R', 'packet', 'player 0 packet class 1, 50 kT', 'cargo 40 (minimum 10)', '45', ('pkt', 0, n, (40, 0, 0)))
+r.thing('trader', 0, '1360 1300 1380 1300 8')
+r.case('T', 'trader', 'the only Mystery Trader, warp 8, 20 ly from its destination (1380,1300)',
+       'gone (1/2), or at (1380,1300) with warp 7 (8 if its warp rose first) and a new destination on an edge',
+       'keeps moving past', ('traderend', 0, 1380, 1300))
+
+
+# ---------------------------------------------------------------- OB-024 minefield hits and the Super Mine Layer
+r = run('OB-024', 'minefield hits at warp 10: mines lost by field size, salvage, speed-bump stops; Super Mine Layer',
+        extra=EXTRA_DESIGNS)
+r.field(1, 1060, 1230, 400, kind='heavy')
+r.fleet(0, 1020, 1230, '1:1', plan=1, fuel=2000, extra='to 1120 1230 warp 10')
+r.case('A', 'O-14/O-15', 'one Laser DD at warp 10 (100 ly) crossing 40 ly of a heavy 400 field (40 per mille per ly)',
+       'no hit (20%): field 390, DD at (1120,1230); or hit: DD destroyed (2000 minimum), field 400-20-10 = 370, '
+       'salvage of 0-9 kT of each mineral at the stop point', 'mines lost 10', ('minehit2', 0, 0, 1060, 1230, 390, 370))
+r.field(1, 1200, 1230, 6000, kind='heavy', planets=[5, 9])
+r.fleet(0, 1110, 1230, '1:5', plan=1, fuel=2000, extra='to 1290 1230 warp 10')
+r.case('B', 'O-14/O-15', '5 Laser DDs at warp 10 crossing a heavy 6000 field (154 ly, two planets inside)',
+       'hit (99.8%%): all destroyed (500 each); field 6000-60 = 5940, decay 10%% -> %d; salvage 0-9 kT each'
+       % (5940 - 5940 * 10 // 100), 'mines lost 300 (N/20) or 50',
+       ('minehit2', 0, 1, 1200, 1230, 6000 - 6000 * 10 // 100, 5940 - 5940 * 10 // 100))
+r.field(1, 1060, 1060, 400, kind='bump')
+r.fleet(0, 1020, 1060, '1:1', plan=1, fuel=2000, extra='to 1120 1060 warp 10')
+r.case('C', 'O-14/O-15', 'one Laser DD at warp 10 crossing a speed-bump 400 field (175 per mille per ly)',
+       'stopped inside, undamaged; field 400-20 = 380, decay 2% (no minimum) -> 373', 'damaged; or field 392',
+       ('minehit2', 0, 2, 1060, 1060, 392, 373))
+r.fleet(0, 1360, 1360, '12:1', plan=1, fuel=400, extra='task lay')
+r.case('D', 'O-1', 'Super Mine Layer with 2 Mine Dispenser 40, laying in place', 'standard field 160 (doubled)', '80',
+       ('field', 0, 1360, 1360, 160))
+
+
+
+# ---------------------------------------------------------------- OB-025 three years: lay durations, wormhole ages and jumps
+# Run like OB-019: 2400 -> 2403, each year from the previous year's host file; check.py with OB_YEAR=N.
+r = run('OB-025', 'three years: lay-mines years words 2 and 3; wormhole years, classes and jumps (6%/yr ends)')
+r.fleet(0, 1210, 1230, '0:1', plan=1, fuel=400, extra='task lay 2')
+r.fields.append((0, 1210, 1230, 460, set()))
+for y, n, t in ((1, 160, '6'), (2, 310, '6'), (3, 460, '0')):
+    r.case('A%d' % y, 'O-4', 'year %d: stationary layer, years word 2' % y,
+           'field %d, task %s' % (n, 'kept' if t == '6' else 'cleared (3 years laid)'),
+           'cleared a year earlier (word = years)', ('layhold', 0, 0, 1210, 1230, n, 1, t))
+    r.cases[-1]['year'] = y
+r.fleet(0, 1080, 1360, '0:1', plan=1, fuel=400, extra='task lay 3')
+r.fields.append((0, 1080, 1360, 460, set()))
+for y, n in ((1, 160), (2, 310), (3, 460)):
+    r.case('B%d' % y, 'O-4', 'year %d: stationary layer, years word 3' % y, 'field %d, task kept' % n, '',
+           ('layhold', 0, 1, 1080, 1360, n, 1, '6'))
+    r.cases[-1]['year'] = y
+# wormholes: pair 0/1 class 1 years 0; ten pairs of class 2 ends aged 40 (6% per end per year)
+r.thing('wormhole', 0, '1360 1040 1 1')
+r.thing('wormhole', 0, '1360 1120 0 1')
+for y in (1, 2, 3):
+    r.case('W%d' % y, 'O-28/O-29', 'year %d: class-1 pair aged 0' % y,
+           'no jump (0%% before 10 years); years %d; class 1; each step at most 12 ly per axis' % y, '',
+           ('wormage', [0, 1], y, 1))
+    r.cases[-1]['year'] = y
+JW = [(1040, 1050), (1120, 1050), (1200, 1040), (1280, 1150), (1040, 1170), (1100, 1220), (1180, 1240),
+      (1260, 1230), (1040, 1330), (1120, 1380), (1200, 1380), (1300, 1350), (1340, 1260), (1240, 1100),
+      (1160, 1290), (1020, 1260), (1300, 1020), (1380, 1180), (1340, 1380), (1220, 1310)]
+for i, (x, y) in enumerate(JW):
+    num = 2 + i
+    partner = num + 1 if i % 2 == 0 else num - 1
+    r.thing('wormhole', 0, '%d %d %d 2 years 40' % (x, y, partner))
+for y in (1, 2, 3):
+    r.case('J%d' % y, 'O-28', 'year %d: twenty class-2 ends aged %d (jump 6%% per end per year)' % (y, 39 + y),
+           'each end jiggles (years +1) or jumps (years 0, anywhere); class stays 2; recorded per end', '',
+           ('wormjump', list(range(2, 22)), y))
+    r.cases[-1]['year'] = y
+# player 0 scouts heading for four of the aged ends at warp 1 (they never arrive)
+for k, i in enumerate((0, 5, 10, 15)):
+    x, y = JW[i]
+    r.fleet(0, x, y + 20, '10:1', plan=1, fuel=50, extra='to %d %d thing 0x%x warp 1' % (x, y, 0x4000 + 2 + i))
+for y in (1, 2, 3):
+    r.case('F%d' % y, 'O-31', 'year %d: scouts at warp 1 targeting aged ends (player 0 sees the whole map)' % y,
+           'the waypoint keeps the wormhole as target and follows its position, after jiggles and after jumps',
+           'target dropped to deep space after a jump', ('wormfollow', [(0, 2 + k, 2 + i) for k, i in enumerate((0, 5, 10, 15))]))
+    r.cases[-1]['year'] = y
+
+
+# ---------------------------------------------------------------- OB-026 Mystery Trader: arrival with another Trader, rewards
+r = run('OB-026', 'Mystery Trader: arrival while another exists, part and ship rewards (player 1 at tech 3)')
+r.extra += 'design 1 0 Medium Freighter, 1 Long Hump 6, empty, empty = Freighter\n'
+r.thing('trader', 0, '1300 1100 1380 1100 9')
+r.case('A', 'trader', 'Trader 0 (warp 9) 80 ly from its destination while three others exist', 'gone',
+       'stays (1/2)', ('tradergone', 0))
+r.thing('trader', 0, '1020 1210 1380 1210 8 item 1')
+r.fleet(1, 1084, 1210, '0:24', extra='cargo 5000 0 0 0')
+r.case('B', 'trader', 'Trader 1 offering part bit 0 moves 64 ly onto a player 1 fleet of 24 Medium Freighters with 5000 kT',
+       'fleet removed; player 1 gains exactly one Mystery Trader part bit; tech unchanged', 'research levels',
+       ('mtpart', 1, 0))
+r.thing('trader', 0, '1020 1300 1380 1300 8 item 0x1000')
+r.fleet(1, 1084, 1300, '0:24', extra='cargo 5000 0 0 0')
+r.case('C', 'trader', 'Trader 2 offering a ship moves 64 ly onto a second player 1 fleet with 5000 kT',
+       'fleet removed; a new player 1 fleet of 1 or 2 ships of one new design (added to its designs) at (1084,1300); tech '
+       'unchanged', 'research levels; nothing', ('mtship', 1, 1, 1084, 1300))
+r.thing('trader', 0, '1020 1050 1380 1050 9')
+r.case('D', 'trader', 'Trader 3, warp 9, mid-crossing', 'at (1101,1050) warp 9 (24/25), or warp 10 at (1120,1050), '
+       'perhaps with a new destination', '', ('traderend', 3, None, None))
+
+
+
+# ---------------------------------------------------------------- OB-027 wormhole targets known vs unknown (after OB-025-F1)
+# OB-025-F1: thing-target waypoints on wormholes player 0 had not seen at the start of the year became
+# deep-space waypoints at the old position after the first jiggle. The decomp reading: the target is kept
+# (and follows) only when the owner has the wormhole's seen bit.
+r = run('OB-027', 'scouts targeting wormholes known (seen bit) and unknown at the start of the year')
+KW = [(1040, 1050), (1120, 1050), (1200, 1040), (1280, 1150), (1040, 1170), (1100, 1220), (1180, 1240), (1260, 1230)]
+for i, (x, y) in enumerate(KW):
+    partner = i + 1 if i % 2 == 0 else i - 1
+    r.thing('wormhole', 0, '%d %d %d 1%s' % (x, y, partner, ' seen 1' if i < 4 else ''))
+    r.fleet(0, x, y + 20, '10:1', plan=1, fuel=50, extra='to %d %d thing 0x%x warp 1' % (x, y, 0x4000 + i))
+r.case('A', 'O-31', 'scouts at warp 1 targeting class-1 wormholes 0-3, known to player 0 (seen bit set)',
+       'waypoint keeps the wormhole as target (obj id kept)', 'deep space at the old position as in OB-025-F1',
+       ('wormfollow', [(0, i, i) for i in range(4)]))
+r.case('B', 'O-31', 'scouts targeting wormholes 4-7, unknown at the start (as OB-025)',
+       'deep-space waypoint at the old position (repeats OB-025-F1)', '',
+       ('wormlost', [(0, i, i) for i in range(4, 8)]))
+
+
 def main():
     if sys.argv[1:2] == ['--defs']:
         out = sys.argv[2]

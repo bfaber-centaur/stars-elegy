@@ -2576,11 +2576,108 @@ moves.
   orbiting a planet inside the field and the one far away were not
   (OB-014-B, one stream).
 
+### Round 4: rules SCANNING.md marked BINARY-ONLY (SC-024..SC-033)
+
+Predictions were committed before the runs (3547942, follow-ups SC-032 and
+SC-033 in bb65db9, SC-034 in 18d99b2); `experiments/sc/README.md` has the case tables and
+`experiments/sc/round2.py` the checker. One pinned stream each (cycles
+20000), 2400 → 2401. Both players JOAT at tech 26, no planetary scanners,
+bare starbases. 86 cases, 4 of them recorded only: 77 held and 5 did not.
+Two checks were corrected after the run, without changing a predicted
+rule: the dump now decodes heading bytes (stored as value + 127), and the
+defense estimate applies the operable cap SCANNING.md states.
+
+**Held (MEASURED, one stream each):**
+
+- **Fleets at your planets.** An enemy fleet orbiting the viewer's planet
+  is seen with no planetary scanner and no viewer fleet: a 98% Ghost at
+  the homeworld and a plain freighter at a colony without a starbase. The
+  same designs 1 ly away in deep space were not (SC-024 A–D). A fleet at
+  the planet's exact position *without* the orbit flag was also seen
+  (SC-024-E, recorded only), so the rule may be positional.
+- **Starbase and owner in a position-only report.** A blind freighter
+  orbiting an enemy homeworld with a starbase got level 1 (no
+  environment, estimates 0) with the starbase bit and the partial
+  starbase design, and the owner's block (partial) arrived although
+  nothing else of that player was seen. The planet's owner saw the
+  orbiter with no planetary scanner. 1 ly away in deep space: nothing,
+  either way (SC-025, SC-026; SC-024 for player 1's view of player 0's
+  homeworld).
+- **Heading.** Six moving fleets: the shown vector is the waypoint minus
+  the start position, halved toward zero while a component is ≥ 128:
+  (300,100) → (75,25); (50,−120); (−127,0); (−128,3) → (−64,1); (300,−7) →
+  (75,−1); (−1,−395) → (0,−98) (floor halving would give (75,−2) and
+  (−1,−99)). Warp is the waypoint's warp. In the file each component is
+  stored as `value + 127` in one byte; a fleet that did not move stores
+  0/0 and warp 0 (SC-027). A fleet that reached its waypoint this year
+  showed (10,0) warp 5, the vector of the move it finished (recorded
+  only).
+- **Partial fleet mass and cargo.** Ship mass plus ironium, boranium,
+  germanium and colonists, without fuel: 29; 29 + 10 + 20 + 30 + 40 = 129;
+  two ships with 50 kT of colonists 108. Cargo is shown as 0 (SC-027).
+- **Defense coverage estimate.** `max(1, min(15, trunc((104 − k)/6)))`,
+  `k = round(100·(1 − v/1000)ⁿ)`, Neutron Shield `v = 38`, with `n` the
+  operable defenses: 1, 3, 5, 10 defenses → 1, 2, 3, 6; 0 → 0. Planet 12
+  (40 defenses, hab below 0, so at most 10 operable) → 6; planet 4 (100
+  defenses, population 104,400 → `ceil(1044/25) = 42` operable) → 14. The
+  committed prediction left the operable cap out (13 and 15); SCANNING.md
+  states it, and with it all 9 planets match.
+- **Population estimate.** All 9 estimates (in 400s) fall in the stated
+  range computed from the year's final population, including 300
+  colonists → 1 (one stream; the draw itself is random).
+- **Three Tachyon Detectors** on one design: factor 91. A 75% target
+  (68%) seen at d² 27688, not at 27689 (SC-033); an 85% target (77%) seen
+  at 14297, not at 14305 (SC-028).
+- **Detectors over designs and ships.** A fleet's factor comes from its
+  best single design: Mole + 1 detector with a 1-detector design, and two
+  Mole + 1 detector ships, both 95 (d² 841 seen, 842 not); Mole + 2 with a
+  1-detector design 93 (961 seen, 962 not). Detectors do not add up
+  (SC-029).
+- **Super Stealth.** A plain SS freighter is 75% (d² 5625 seen, 5626
+  not); with 50 kT of cargo still 75% (dilution would have given 51%).
+  The SS player's bare Space Station is 75%: at d² 3600 from a P 200
+  viewer the planet was reported (level 3) without its starbase. JOAT →
+  SS with `lrt 1 0x1b80` gave no message 0x117 (SC-030).
+- **Langston Shell cloak points** (SC-034, added later): 20 per shell. One
+  shell on a Small Freighter gives 10% (seen by a Mole at d² 8100, not
+  8101); five on a Super Freighter give 100 points, 50% (seen at 2500,
+  not 2501).
+- **Design disclosure after battle.** A Laser Cruiser and a Laser
+  Destroyer that fought each got the other's design in full, the
+  destroyed Destroyer included. Designs seen without a battle stayed
+  partial (SC-031).
+
+**Did not hold:**
+
+- **Blind orbit of an owned planet without a starbase gives a normal
+  report**, not position only (SC-024 planet 20, SC-031 planet 12,
+  SC-032). SC-032 separated the readings: a blind freighter in orbit got
+  level 3 (environment, population and defense estimates; no surface
+  minerals) at an enemy colony without a starbase and at an enemy
+  homeworld whose starbase was removed; level 1 at an enemy colony with a
+  starbase and at an unowned planet. So the starbase, not the homeworld
+  flag, decides. SCANNING.md ("position only if that fleet has no
+  scanner") covers only the unowned and starbase cases. MEASURED; the
+  cause is not known (sent to the scanning decomp).
+- **No planet report from a battle.** A scannerless Cruiser that fought
+  at an unowned planet, and one that fought at an enemy colony with a
+  starbase, got level 1 like a blind orbiter (SC-032). The battle-report
+  rule in SCANNING.md ("a fleet that bombed, fought or hit a minefield at
+  a planet gives a normal report") did not show for fighting; bombing and
+  minefield hits were not tested. SC-031's level 3 at planet 5 is the
+  no-starbase rule above.
+- SC-028-T75-out is a setup artifact, not a rule: its fleet was placed at
+  y 920 and the game put it at y 1000, inside the bound. SC-033 repeated
+  the case from the centre.
+
 ### Not tested
 
-SD detection of cloaked fleets and the population estimate (S-21, S-22,
-random), AR planet scanners (S-11), chase retargeting (S-24), and
-scanners on more than two players.
+SD detection of cloaked fleets (S-21, random), AR planet scanners (S-11),
+chase retargeting (S-24), scanners on more than two players, planet
+reports after bombing, minefield hits or a lost planet, built-in scanners
+in Mega Poly Shell, Multi Contained Munition and Langston Shell, cloak
+points of non-device parts, the Improved Starbases starbase bonus, and
+headings of fleets travelling by stargate or chasing a fleet.
 
 ## Planet Takeover
 
@@ -3101,15 +3198,265 @@ The Mystery Trader works with random events off.
 - A second player 1 fleet with 5000 kT at the same trader in the same year
   was kept: each player gets one reward per trader.
 
+### Round 5: rules OBJECTS.md marked BINARY-ONLY (OB-021..OB-027)
+
+Status: MEASURED, 2026-10-07. Predictions were committed before the runs
+(`experiments/ob/README.md` "Round 5"; pushed as e1873db and 4c63088,
+re-applied as c0476b2 and 2cf004d after #42 was squash-merged), one
+pinned year each (cycles 20000) unless stated. OB-021 and OB-024 were also
+generated at cycles 15000, 25000, 30000, 40000 and 60000. In the base
+stream, 44 of 49 predicted cases held. The misses were the two IT packet
+cases and OB-025-F1..F3 (wormhole targets). In other streams, OB-024-A and
+C missed for a reason outside the objects rules, and OB-021-G's fuel check
+missed when a ship was lost. Details below.
+
+#### Stargates (CONFIRMED, OB-021, OB-022)
+
+- Gate travel is waypoint warp 11. A Laser DD jumped 100 ly between two
+  100/250 gates and arrived undamaged with its fuel unchanged.
+- **Danger.** Every case matched OBJECTS.md's formula:
+  - Range is judged by the source gate only. A 150/600 → 100/250 jump of
+    372 ly was safe. The reverse jump (danger 12%) left the DD with 60/500
+    of its armor as damage.
+  - Mass is per ship and is checked against both gates. Super Freighters
+    (mass 202) between 100/250 gates had danger 44%. Over 357 ly, range
+    and mass multiplied to 50%, not 44%.
+  - Every survivor took ⌊pct·armor/100⌋, written as one damage word on
+    100% of the ships: 5 DDs at 13% got 65/500, freighters 220/500 and
+    250/500.
+- **Losses** are random. In 6 streams:
+  - 5 DDs at 13% (4% each) lost none.
+  - 3 freighters at 44% (14% each) lost one in 3 streams.
+  - 3 freighters at 50% (16% each) lost one in 2 streams.
+  - When one of 3 ships was lost, fleet fuel went from 100 to 67, and the
+    survivors' damage word was unchanged.
+- **Refusal.** A ship over 5× a mass limit (mass 502 vs 100) was refused:
+  no move and no damage.
+- **Cargo dump (LEGACY BUG, MEASURED).** The refused freighter's 100 kT
+  ironium was still unloaded onto the source planet. A successful jump
+  unloaded 100/50/25 kT and 10 kT of colonists onto the source planet. The
+  population added before growth (1010 → 1161).
+- No destination gate, or an enemy's source gate, meant no jump.
+- **IT (OB-022):** at 13% danger, all 5 DDs survived with the same damage.
+  Neither the refused nor the successful freighter unloaded its cargo.
+
+#### Packets (OB-022, OB-023)
+
+- **Packet Physics decay (CONFIRMED):** classes 1, 2, 3 lost 5, 12 and 25%
+  per year (1000 kT → 950, 880, 750). Each non-empty mineral lost at least
+  5: 50 → 45, and a 100/100/0 packet → 88/88/0. A non-PP class-1 packet
+  lost 10% (1000 → 900), with at least 10 (50 → 40).
+- **IT targets: the OBJECTS.md rule missed (MEASURED).** OBJECTS.md halves
+  both the packet's w² and the catcher's c² when the target's owner is
+  IT.
+  - A warp-10 1000 kT packet into an IT planet with no starbase killed 625
+    units, as for any other owner (pop 1000 → 375 → 431 after growth).
+  - Into an IT planet with a Mass Driver 7, it added 324 kT and killed 475
+    units (pop 525 → 603). Both fit c² halved to ⌊49/2⌋ = 24 with w² = 100
+    unhalved: caught 240‰, damage ⌊(100 − 24)·1000/160⌋ = 475.
+  - So an IT catcher works at half its speed squared, and the packet's
+    speed is not reduced. Sent to the objects decomp for reconciliation.
+
+#### Minefield hits (CONFIRMED, OB-024)
+
+- **Mines lost to a hit:**
+  - heavy 400: −20 (N/20), then the 2% decay with the minimum of 10, to
+    370 (one stream);
+  - heavy 6000: −60 (N/100, since N/20 > 50), then 10% decay with two
+    planets inside, to 5346 (all six streams);
+  - speed bump 400: −20, then 2% with no minimum, to 373.
+- A speed-bump stop left the fleet undamaged. The stops were 7 and 13 ly
+  into the field.
+- **Salvage (LEGACY BUG candidate, MEASURED).** Destroyed fleets with no
+  cargo left salvage at the stop point. Each mineral was 0–9 kT: 4/5/0,
+  8/5/6, 6/3/1, 2/3/0 and 7/3/9.
+- **Setup caveat.** At warp 10 a Long Hump 6 ship can be lost before
+  moving: the fleet was deleted with message 0xe1, with no hit and no
+  salvage (one fleet in 4 of 6 streams). This is the overspeed rule for
+  engines not rated for warp 10 (`docs/COMPONENTS.md`), not a minefield
+  rule. Those streams' OB-024-A and C misses are this, not a field
+  result.
+- The Super Mine Layer doubles: two Mine Dispenser 40 laid 160.
+
+#### Lay-mines duration and wormholes over three years (OB-025, OB-027)
+
+- **Years word (CONFIRMED).** Word 2 laid three years (160, 310, 460), and
+  the task was cleared after the third. Word 3 was still laying after
+  three years. With word 0 (one year, OB-002-N) and word 1 (two years,
+  OB-019), a word of 0–3 lays word + 1 years.
+- **Wormhole ages (CONFIRMED).** A class-1 pair aged 0 jiggled each year:
+  years 1, 2, 3, class unchanged, at most 12 ly per axis.
+- **Jumps (MEASURED).** Twenty class-2 ends aged 40–42 (6% per end per
+  year) gave 5 jumps in 60 end-years. A jump reset years to 0 and kept the
+  class, and the new position was far away (for example (1180,1240) →
+  (1090,1034)).
+- **Wormhole targets (MEASURED; the prediction missed).** A waypoint aimed
+  at a wormhole its owner had not seen at the start of the year became a
+  deep-space waypoint at the wormhole's old position after the first
+  jiggle (OB-025-F1, OB-027-B, 8 fleets). It made no difference that the
+  owner saw the wormhole that year. With the owner's seen bit set at the
+  start, the waypoint kept the wormhole and moved with it (OB-027-A, 4
+  fleets). This agrees with the decomp's rule; the OB-025 prediction had
+  assumed the scouts' scanning would count in the same year.
+
+#### Mystery Trader (CONFIRMED, OB-023, OB-026)
+
+- A Trader that reached its destination while another Trader existed was
+  removed.
+- The only Trader, arriving at its edge destination, stayed: warp 8 → 7,
+  with a new destination on an edge ((1380,1300) → dest (1098,1380)). The
+  other outcome, leaving with 1/2, was not seen in this stream.
+- A part offer (item bit 0) traded to a tech-3 player gave exactly that
+  part. Its Mystery Trader part word, read little-endian at byte 0x4a of
+  the player block, gained bit 0, and tech was unchanged.
+- A ship offer gave a new fleet of one Nubian (mass 499) at the trade
+  point, added as a new design. The traded fleet was removed.
+- A warp-9 Trader moved 81 ly in a year.
+
+### Minefield lane (MF-1..MF-12)
+
+Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
+BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
+the runs (`experiments/mf/README.md`: 789bffa, follow-ups 7241879, 631b0ce,
+416ad73). One pinned year per run (cycles 20000 unless stated); the rate
+cases were repeated at cycles 15000 and 30000, the only other distinct
+streams for these starts. 33 of 35 cases held. MF-11 (the per-player
+field limit) missed by one, and the MF-2 chain claim held only for one
+fleet numbering. MF-04b first missed because the prediction counted the
+planets inside the field before the year's stops (see "Order" below).
+
+Setup: both players at tech 26, unarmed 3200-armor "Tank" destroyers on
+straight 81-ly warp-9 legs through 50,000-mine fields. Damage is read from
+the damage word, stops from the fleet position and from the hit messages.
+
+#### Stop odds (CONFIRMED, MF-1, MF-3)
+
+- A fleet makes one draw per whole ly travelled inside the field. The
+  stop odds per ly are (e − safe) × {3, 10, 35} per mille for standard,
+  heavy and speed-bump fields, with safe warps 4, 6 and 5. A stop on the
+  first draw leaves the fleet where it started (offset 0).
+  - Heavy, warp 9: 69 stops in 2137 draws over 3 streams, 32.3 per mille
+    (95% interval 25.4–40.3; predicted 30).
+  - Standard, warp 9: 43 in 2709 draws over 2 streams, 15.9 (11.6–21.0;
+    predicted 15).
+- **Effective warp comes from the distance travelled this year** (e = the
+  smallest warp 3..10 with e² ≥ d − 1), not the waypoint warp. Warp-9
+  fleets whose waypoint was 17 ly ahead in a standard field (e 4 = safe) or
+  36 ly ahead in a heavy field (e 6 = safe) were never stopped (0 in 204
+  and 432 draws; waypoint warp would give 23% and 66% per fleet). A 26-ly
+  leg (standard, e 5) stopped 1 fleet of 12; a 50-ly leg (heavy, e 7) gave
+  17 per mille (7.4–32.7; predicted 10).
+- **Cloak plays no part:** Super-Stealth-cloaked Tanks were stopped at 29.1
+  per mille (34 in 1168 draws) and uncloaked ones at 36.1 (35 in 969).
+- **Relation (MF-5, MF-6):** what counts is the field owner's relation
+  toward the fleet's owner. With the owner treating the victim as a friend
+  (the victim treating the owner as an enemy), 24 fleets crossed with no
+  stop in 1944 draws; reversed, they were stopped as in MF-1. The owner's
+  own fleets are never stopped.
+- One stopping hit per fleet per year; the fleet ends at the stop point.
+
+#### Damage (CONFIRMED, MF-9)
+
+Per design, (ships × {100, 500} + shortfall) × engines, with {125, 600}
+when the engine burns no fuel at warp 4. A fleet under 5 ships is brought
+up to a fleet minimum of {500, 2000} ({600, 2500}), all of the shortfall
+going to the first design. Shields absorb at most half. Every stopped fleet
+in two standard and one heavy run matched:
+
+| Fleet | Standard | Heavy |
+|---|---|---|
+| Tank (Trans-Galactic Drive) | 500 → 78/500 | 2000 → 312/500 |
+| Tank with Trans-Galactic Fuel Scoop | 600 → 93/500 | 2500 → 390/500 |
+| Tank with Fuel Mizer (not a ram scoop, no fuel at warp 4) | 600 → 93/500 | 2500 → 390/500 |
+| Tank with Complete Phase Shield (500) | 250 → 39/500 | 1500 → 234/500 |
+| Tank + cloaked Tank (2 ships) | 400 and 100 → 62/500, 15/500 | 1500 and 500 → 234/500, 78/500 |
+
+The engine rule is "no fuel at warp 4", not "is a ram scoop" (the Fuel
+Mizer took the higher figures). The hit messages report the damage before
+shields (the shielded Tank's message said 500, its damage word 250).
+
+#### Which field loses mines; order in the year (CONFIRMED, MF-4)
+
+- Heavy F1 (10,000 at 1160,1200) and heavy F2 (400 at 1210,1200, wholly
+  inside F1): 11 stops, 10 of them inside F2. F2 only decayed (400 → 390),
+  so F1 paid every stop: the paying field is the one with the smallest
+  d² − count at the stop point, not the nearest centre or edge. F1 alone
+  with the same fleets ended at the same count; F2 alone lost 20 per stop.
+- **Order:** stops shrink the field as the fleets move (each stop takes
+  max(10, count/20), or max(50, count/100) when count/20 > 50, from the
+  current count). Decay comes after movement and counts the planets inside
+  the shrunken field: F1 lost two of its five planets to the stops, so it
+  decayed 14%, not 22%. Starbase sweeping comes after decay. This order
+  fit the final count of every run exactly (for example MF-01: 50,000,
+  24 stops, 50% decay, 1,280 swept → 18,367).
+
+#### Followers (MF-2: chains CONTRADICTED as predicted, mutual chases CONFIRMED)
+
+The minefield check of a fleet following another fleet uses the step it
+moves in each movement pass, not its year's distance.
+
+- **Mutual chases** (MF-02b): 12 pairs of Tanks 80 ly apart in a heavy
+  field, each following the other at warp 9: no stop in either stream
+  (per-year warp 9 would stop about 70% of them). Each pass moves a fifth
+  of warp² (17 ly, effective warp 4). The west fleet, processed first,
+  moved 17 + 17 + 12 ly and landed on the east one, which had moved 34 ly
+  and moved no further.
+- **Chains (MF-02):** C flies 81 ly, B (10 ly behind) follows C, A (10 ly
+  behind B) follows B.
+  - Numbered C < B < A: B and A each moved their whole remainder in one
+    step after their target finished, and A was stopped in 2 of 6 chains.
+    The prediction "A is never stopped" does not hold for this numbering.
+  - Numbered A < B < C: A moved first, reached B's start in its first
+    17-ly step (10 ly) and was never stopped. **B never moved at all**: a
+    follower that lands on a still-waiting target ends the target's
+    movement for the year (LEGACY BUG candidate, MEASURED 6 of 6).
+
+#### Detonation (CONFIRMED, MF-7, MF-8)
+
+Fields were set to detonate by HST edit; owners were not SD unless stated.
+
+- **Heavy** field of 1000: the enemy Tank and the owner's own Tank each
+  took 2000 (312/500). The owner's Mini Mine Layer took nothing. Nobody
+  moved. The field decayed 27% to 730. With the owner treating the victim
+  as a friend, the victim's Tank took the same 2000.
+- **Speed bump** field of 1000: no damage, field 730 (no minimum of 10).
+  Each fleet inside still got a "stopped in a mine field" message
+  (0xc5/0xc9), though none was moving.
+- **Standard** field of 1000 (MF-8): the owner's Laser DD at 250/500
+  damage was destroyed (100 + 400 shortfall on 200 armor). An enemy fleet
+  of 5 Tanks at 250/500 went to 265/500 (1600 + 100 per ship). A fresh
+  single Tank took 500 (78/500).
+- **SD owner:** a detonating standard field gave the SD owner full designs
+  of both enemy designs it damaged (a Scoop Tank, 600, and a Shield Tank,
+  250 after shields). A non-SD owner got only the partial designs it saw.
+  The field decayed 27% (SD planet factor 1, no planets).
+
+#### Laying (MF-10, MF-11, MF-12)
+
+- **Merge cap (CONFIRMED):** an own standard field that held 1,050,000
+  mines after decay made the layer start a new 160-mine field. One that
+  held 999,500 merged (centre moved 1 ly toward the layer).
+- **Per-player field limit (MEASURED; predicted 511, measured 512).** With
+  511 own fields (numbers 0..510), a layer in open space made field number
+  511. With 512 fields (0..511) it made none: the mines were lost and the
+  owner got "failed to lay mines this year due to technical difficulties"
+  (0x17e). A layer inside an existing field merged normally in all three
+  runs.
+- **Laying order (CONFIRMED):** two layers of 160 in one 390-mine field
+  merge one after the other, in fleet-number order. With the east layer
+  first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
+  single weighted merge would give (+2,+2) in both.
+
+Not tested: the detonate-order validation gap (needs crafted orders), SS
+and SD safe-warp bonuses, fleets moving through gates in a field, and
+salvage from mine kills (OB-024).
+
 ### Not tested
 
 Packet launch (warp, class, amounts, same-year merge, the launch-year half
-move: O-16..O-19), PP terraforming and PP decay rates, AR and IT packet
-targets (O-25, O-26), wormhole jump odds over many streams and what a jump
-does to fleets aimed at the wormhole (O-28, O-30), Mystery Trader spawning,
-path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
-and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
-stargates.
+move: O-16..O-19), PP terraforming, AR packet targets (O-25), wormhole jump
+odds to a measured rate (O-28), Mystery Trader spawning (O-32), Jump Gates, friend-owned gates, and the gate refusal for range (5R is beyond
+a tiny map).
 
 ## Components (CS-001, CS-002, CS-003)
 
@@ -3415,3 +3762,112 @@ setup reading the first planet's record instead of the homeworld's. It
 is deterministic and observable, so it is recorded as LEGACY BUG; it
 makes every start mineral-identical, which may be what players have
 long seen as "fair starts". Elegy can reproduce it as one isolated rule.
+
+## Race design (RD-1..RD-7, RD-P1..RD-P12)
+
+Predictions were committed before the runs (80037c8). `experiments/rd/` holds
+the case tables (`races.tsv`, `README.md`) and the game definitions. Raw race
+files, games and checks are in the private apparatus, `evidence/rd/`. Each
+new game was generated once (`tools/fleetlab/new-game`, cycles 20000), and
+each penalty case is one pinned year (cycles 20000). The comparison with the
+predicted games (every generated field, each player's race and name) was
+private. The behavior it confirmed is recorded here.
+
+### Advantage points and leftover (MEASURED, RD-1..RD-4)
+
+- 48 legal races with predicted points 1..50 (RD-1..RD-3, one per case in
+  `races.tsv`) each got leftover `L = points`, seen in the homeworld's surface
+  minerals: the smallest mineral gains `10·L/4 + (10·L mod 4)` kT, and all
+  three gain `10·L/4` more. The races cover every growth-table row from 3 to
+  20, one to three immunities, a 0–20 axis, the factory and mine settings,
+  colonists per resource from 700 to 2500, AR, NAS with PP, SS and JOAT, LRT
+  sets, research settings, and every PRT. The 48 point values are the
+  `predicted points` column, all confirmed.
+- Boundaries (RD-4): a 0-point race is legal with L 0. Races with 50 and 51
+  points both get L 50.
+- Leftover spends 5 and 6, which the wizard does not offer, act as spend 0
+  (surface minerals).
+- racelab (StarsAPI's calculator) gives the same points except:
+  - it is one lower on 11 races (float truncation; the 9 the decomp named,
+    plus RD-4 e and i);
+  - it disagrees on the growth-0 race.
+  Before 18d99b2 it also ignored "expensive fields start at tech 3" and
+  "factories cost one less germanium", so it overstated races with those
+  traits by about 60 points each.
+
+### Illegal, malformed and Random races at game creation (MEASURED, RD-4..RD-6)
+
+- **Illegal human races are replaced.** A −1-point race and a −1433-point
+  race became the default race: JOAT, growth 15, 15–85 on every axis, the
+  standard economy and research, a computer name (Bulushi, American), L 25,
+  and race flag 0x10.
+- **Malformed fields are repaired, and the race is kept with flag 0x10:**
+  - a habitat centre one off its range midpoint was moved back;
+  - race stat 15 = 1 was reset to 0;
+  - growth 0 became growth 1, which left 5851 points and so L 50.
+- **A race file whose checksum is wrong is refused**, before any of this.
+  The game shows "The game file X.r1 appears to be corrupt, unable to load
+  file" and no game is created. Three corpus files first had bad checksums.
+  They were rewritten with `racelab edit` (only the checksum changed) and
+  RD-4 was run with them.
+- **Random races.** The wizard's Random race (RD-4 k..m; RD-5, RD-6) became
+  a generated race with a computer name. A Random race named Zorgon kept its
+  name. Generated races scored:
+  - 21, 21, 44 and 23 (RD-4);
+  - 12, 5, 35, 38, 8 and 32 (RD-5);
+  - 32, 3, 16 and 42 (RD-6).
+  That is 14 races, all within 0..50. Each matched the decomp's exact
+  prediction, as did every later draw of those games.
+- **Computer players are not checked.** RD-4's computer players kept races
+  worth 963 and −75 points; RD-5 kept one worth −173.
+
+### Turn-time penalty (RD-P1..RD-P10)
+
+Base: a one-player SS game in year 2407 (KX-001 A1). Player 0's race was
+edited with hst-edit, and one year was generated.
+
+| Case | Edit | Points after edit | Observed | vs prediction |
+|---|---|---|---|---|
+| P1 | two economy stats | −444 | message 0x117, flag 0x10; colonists per resource 2500, growth 7 (1042 points) | held |
+| P2 | six economy stats | −2092 | 2500, growth 4 (1602) | held |
+| P3 | P2 + research + LRTs | −3667 | 2500, growth 3 (1457) | held |
+| P4 | habitat centre 51 | 245 | punished: centre back to 50, colonists 1700 (525) | held |
+| P5 | race stat 15 = 1 | 245 | stat reset to 0 silently: no message, no flag, colonists unchanged | **missed** (predicted a penalty) |
+| P6 | colonists per resource 2600 | 845 | clamped to 2500 silently: no message, no flag | **missed** |
+| P7 | PRT 10 | 299 | became JOAT silently: no message, no flag, colonists unchanged | **missed** |
+| P8 | gravity low −5, centre 40 | 212 | punished: gravity 0–85, centre 42, colonists 1800 (532) | held |
+| P9 | 0 points exactly | 0 | not punished, unchanged, no message | held |
+| P10 | −1 point | −1 | 2500, growth 9 (559) | held |
+
+So in a running game, negative points and malformed habitat are punished
+(0x117, flag 0x10, colonists per resource raised until the race reaches 500
+points, growth lowered when that is not enough). Out-of-range PRT,
+colonists per resource and race stat 15 are repaired without any penalty.
+That differs from game creation, where stat 15 = 1 set the flag. The base
+game has one player, so message 0x182 to other players was not observable.
+A second year after a punished case was not run.
+
+### Follow-up: AR spends, growth 0, several players (MEASURED, RD-7, RD-P11, RD-P12)
+
+Predictions were committed before the runs (60bd6ef, 50f14ba). The decomp's
+model matched every case: `universe.py check` gave 93 matches and 0
+mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
+
+- **AR leftover spend (RD-7).** Five human AR races (34 points, L 34)
+  differed only in the spend, plus one computer player.
+  - The minerals spend (0) and the concentrations spend (1) applied as for
+    other PRTs: 98/88/85 became 107/97/111.
+  - The mines, factories and defenses spends (2, 3, 4) were lost. Those
+    homeworlds had no installations and unchanged minerals and
+    concentrations: an AR homeworld's installations are set to 0 after the
+    spend.
+- **Growth 0 in a running game (RD-P11)** is punished, unlike growth above
+  20: message 0x117, flag 0x10, growth set to 1. Nothing else changed,
+  since growth 1 gives 7329 points.
+- **Several players (RD-P12).** Player 0's race in the 6-player RD-7 game
+  was edited to −1058 points.
+  - It was first clamped silently into range, then repaired: colonists per
+    resource 2500, growth 7, 985 points, flag 0x10.
+  - Player 0 got 0x117, and each of the four other human players got
+    0x182 ("hacked race discovered"). The computer player's `.M` file has
+    no message block at all, so whether it is told is not observable.
