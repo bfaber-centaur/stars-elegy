@@ -62,7 +62,7 @@ Each plan has a name and the fields listed under "Conventions". Every
 fleet names one of its owner's plans. A starbase always fights with its
 owner's plan 0.
 
-**Starting plans** (MEASURED: every player of all 22 UG new games,
+**Starting plans** (MEASURED, UG01..UG21: every player of every new game,
 2 to 16 players, single-human and multi-human). Every player starts with
 the same five plans:
 
@@ -105,12 +105,23 @@ fields is in `ORDERS.md` ("Battle-plan fields").
   asks for confirmation first when some fleet uses plan `k`. It never
   offers to delete plan 0.
 
-## Where battles happen in the turn (BINARY-ONLY)
+## Where battles happen in the turn (CONFIRMED in part; see each rule)
 
 Battles are fought after movement and production, at the start of the
 post-movement waypoint phase (step 6 of the turn order in `KERNEL.md`):
 before bombing, before the post-movement unload/load tasks, mine sweeping
 and repair. Repair later in the same turn skips every fleet that fought.
+
+- After production: a starbase destroyed in battle loses the ship items
+  of its queue, but a ship built that year still fights (CONFIRMED,
+  CB-047).
+- Before bombing: a starbase destroyed in this year's battle no longer
+  protects its planet from the same year's bombing (CONFIRMED, T-2).
+- Before the second research level-up check: research gained from a
+  battle becomes a level in the same year (CONFIRMED, CB-018, CB-021).
+- Before repair, which skips fleets that fought (CONFIRMED, CB-017).
+- The order relative to the unload/load tasks and mine sweeping is
+  BINARY-ONLY.
 
 There is at most one battle per location per turn. A location is a set of
 fleets at **exactly** the same x and y. Planets are not members of a
@@ -125,7 +136,7 @@ random stream and for the plan-0 legacy bug below.
 
 1. **Aggressors.** A fleet is an aggressor when its plan's primary target
    is not "none", its attack-who is not "nobody", and it is armed (has at
-   least one beam weapon or torpedo; bombs do not count). CONFIRMED:
+   least one beam weapon or torpedo; bombs do not count). CONFIRMED (CB-005, CB-006):
    - No battle when both sides attack nobody (CB-005, P-5).
    - No battle when the only side that attacks enemies is unarmed
      (CB-006).
@@ -134,8 +145,8 @@ random stream and for the plan-0 legacy bug below.
    plan says. CONFIRMED: six lone-starbase configurations (CB-002 C9/C10,
    CB-003 S2, CB-004 S2, CB-006 both planets) and the Q-1 controls
    (CB-011..014 S2/S3).
-3. **The procedure** (BINARY-ONLY in its details; CONFIRMED where
-   marked). For one location:
+3. **The procedure** (BINARY-ONLY in its details; the steps confirmed
+   by oracle cases are marked). For one location:
    1. **Present set `P`**: the owner of a starbase at the location's
       planet, armed or not, plus the owner of every fleet at the location.
    2. **Attack sets** start empty. Each player has one.
@@ -232,7 +243,11 @@ random stream and for the plan-0 legacy bug below.
      tokens, 127 and 128. Player 1's fleet 12 sat out and fleet 11
      fought.
    - Players with a left-out fleet are told that some fleets missed the
-     battle.
+     battle, except in a 2-player battle, where neither player is told
+     (LEGACY BUG, CONFIRMED: CB-039 left 25 fleets out with no message;
+     in the three-player CB-042 each player with left-out fleets was
+     told). Elegy reproduces this behind its legacy-bug switch; the
+     message itself belongs to the player-messages specification.
 8. **Excluded fleets** (BINARY-ONLY): a fleet carrying a particular
    status flag is not grouped with the others. What sets that flag is not
    known.
@@ -460,8 +475,8 @@ armor, it does not trust a stored value):
 
 At most 16 rounds, numbered 0..15. Each round (BINARY-ONLY ordering,
 consistent with every replayed record; movement then the jitter draw,
-steps 3 and 4, CONFIRMED by the exact replays under "Choosing a
-square"):
+steps 3 and 4, CONFIRMED by the exact replays CB-041..CB-049 under
+"Choosing a square"):
 
 1. From round 1 on, regenerate shields (see RS).
 2. The battle ends if at most one player still has live tokens.
