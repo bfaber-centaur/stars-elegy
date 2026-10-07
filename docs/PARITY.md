@@ -4505,7 +4505,7 @@ the capture keeps them. Each player-year is compared with the prediction.
   design is scrapped. This agreed in 105 of 105 player-years over the three
   levels.
 - **MEASURED: Macinti's early scrapping and colonizer loop (AI-5).** It
-  agreed in 104 of 105 player-years over the three levels.
+  agreed in 105 of 105 player-years over the three levels.
   - While the year index is below 11, Macinti scraps fleets holding its first
     or third ship design.
   - While no seventh ship design exists, it also scraps an idle colonizer
@@ -4514,11 +4514,9 @@ the capture keeps them. Each player-year is compared with the prediction.
   - The loop ended in 2400 (Easy), 2413 (Standard) and 2407 (Expert). In each
     case it ended in the year the player created its seventh design, and a
     design created in that year's orders already counts.
-  - The one difference (Harder, 2400) also appeared in an earlier Expert game:
-    the player first moved its colony ship into another fleet in the same
-    orders. That fleet was not scrapped until the next year. So the
-    scrapping pass sees fleets after that year's ship transfers. This is
-    INFERRED from two cases.
+  - The scrap pass sees fleets after that year's whole-fleet merges. At
+    Harder in 2400 a merge emptied and deleted a fleet before scrapping. The
+    same fleet number then went to the next year's new colony ship.
 - **MEASURED: Robotoid scraps an idle colonizer with no target (AI-4).**
   In two setups (Harder, year index 5), Robotoid had three idle colonizer
   fleets at its homeworld.
