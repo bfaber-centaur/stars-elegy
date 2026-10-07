@@ -809,6 +809,54 @@ What the client did, at 1152x864:
   at the unowned planet.
   `client-orders` commands: `fleet xfer`, `xfer ITEM N`, `xfer ok`.
 
+- **Production queue** (PQ-1, 2026-10-07). With a planet shown, Change
+  (231, 332) on the Production tile opens "Production Queue for X". The
+  left list holds the buildable items, with this race's ship designs
+  first, then Factory, Mine, Defenses, Mineral Alchemy and the Auto Build
+  items. Its rows are 16 px apart from y 181, at x 300. The queue on the
+  right starts with a "Top of the Queue" row at y 181 (x 790), with items
+  every 16 px below it. Add (575, 244) inserts the selected left item
+  after the selected queue row: a click adds 1, shift-click 10 and
+  ctrl-click 100. Remove (575, 294) takes the same amounts off the
+  selected row. The client has no count field: a count is set with
+  Add and Remove. Item Up (575, 344), Item Down (575, 394), Clear
+  (575, 444), the "Contribute only leftover resources to research" box
+  (213, 700) and OK (824, 700). The order is one record per planet
+  holding its whole new queue. `combatlab dump` prints it as
+  `order queue planet= items=ID:COUNT:PCT:KIND`. The host replaced the
+  queue with it and built from it the same year (factory ×10 → 3 built).
+  Commands: `queue open`, `queue select R`, `queue add I N`,
+  `queue remove N`, `queue up`, `queue down`, `queue clear`,
+  `queue leftover`, `queue ok`.
+- **Research** (PQ-1). F5 opens Research. The field radio buttons are at
+  (313, 345 + 21k), k = 0 energy … 5 biotechnology. The budget spinner
+  has up (841, 474) and down (841, 485), 1 percent per click. The "Next
+  field to research" list (835, 379) has rows every 13 px from y 395:
+  <Same field>, the six fields, then <Lowest field>. Done is at
+  (742, 580). The order is a 2-byte record: the percent, then the field
+  (low nibble) and the next field (high nibble: 4 for electronics, 7 for
+  lowest). The host applied both and spent the year's research on the
+  new field. Commands: `research open`, `research field K`,
+  `research budget D`, `research next I`, `research done`.
+- **Waypoint tasks** (WP-1). In the fleet view, the Waypoint Task list
+  (181, 441) has rows every 14 px from y 459: none, Transport,
+  Colonize, Remote Mining, Merge with Fleet, Scrap Fleet, Lay Mine
+  Field, Patrol, Route, Transfer Fleet. Fleet waypoint rows start at
+  (60, 262). Transport adds an item list (160, 467: fuel, ironium,
+  boranium, germanium, colonists, rows every 16 px from y 486) and an
+  action list (123, 490: none, load all, unload all, load exactly,
+  unload exactly, fill up to %, wait for %, load dunnage, set amount
+  to, set waypoint to; rows every 14 px from y 508). Each item keeps its
+  own action, and the amount box is at (152, 490). Each fleet's
+  waypoint is one change record (type 5, printed raw). The host ran the
+  waypoint-0 tasks the same year:
+  - unload exactly 25 kT ironium and load exactly 30 kT germanium at
+    the own homeworld were exact;
+  - Colonize with no colony module failed with message 0x054;
+  - Scrap at a foreign homeworld removed the fleet, gave its cargo and
+    scrap minerals to that planet, and sent message 0x05a.
+  Commands: `wp select K`, `wp task T`, `wp transport ITEM ACTION [N]`.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh

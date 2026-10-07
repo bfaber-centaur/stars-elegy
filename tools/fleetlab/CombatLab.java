@@ -256,6 +256,24 @@ public class CombatLab {
                 }
                 System.out.printf("%s order cargo fleet=%d other=%d kind=%02x%s raw=%s%n", f, u16(d, 0) & 0x1ff, u16(d, 2),
                     d[4] & 0xff, sb, Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 29) {
+                // order file: a planet's whole new production queue (planet word, then
+                // items as in the host file's queue block)
+                byte[] d = b.getDecryptedData();
+                StringBuilder sb = new StringBuilder();
+                for (int i = 2; i + 4 <= b.size; i += 4) {
+                    int w0 = u16(d, i), w1 = u16(d, i + 2);
+                    sb.append(i == 2 ? " items=" : ",").append(String.format("%d:%d:%d:%d",
+                        (w0 >> 10) | ((w1 & 1) << 6), w0 & 0x3ff, (w1 >> 4) & 0x7f, (w1 >> 1) & 7));
+                }
+                System.out.printf("%s order queue planet=%d n=%d%s raw=%s%n", f, u16(d, 0) & 0x7ff, (b.size - 2) / 4, sb,
+                    Util.bytesToString(d, 0, b.size));
+            } else if (orders && b.typeId == 34) {
+                // order file: research budget percent, then field (low nibble) and next
+                // field (high nibble: 0-5 a field, 7 lowest; seen 2026-10-07)
+                byte[] d = b.getDecryptedData();
+                System.out.printf("%s order research pct=%d field=%d next=%d raw=%s%n", f, d[0] & 0xff, d[1] & 15,
+                    (d[1] & 0xff) >> 4, Util.bytesToString(d, 0, b.size));
             } else if (orders && b.typeId != 8 && b.typeId != 9 && b.typeId != 36 && b.typeId != 0
                     && !(b instanceof BattlePlanBlock) && b.typeId != 42) {
                 // other order records, raw (never the serial block 9 or the password block 36)

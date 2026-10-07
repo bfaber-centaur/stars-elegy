@@ -36,6 +36,26 @@
 #   xfer ITEM N            ITEM fuel|ir|bo|ge|col; N > 0 moves N from the
 #                          fleet to the other side, N < 0 the reverse
 #   xfer ok | xfer cancel  close the Cargo Transfer dialog
+#   wp select K            select row K of the fleet's waypoint list
+#                          (0 = where it is now)
+#   wp task T              Waypoint Task item T (0 none, 1 transport,
+#                          2 colonize, 3 remote mining, 4 merge, 5 scrap,
+#                          6 lay mine field, 7 patrol, 8 route, 9 transfer)
+#   wp transport ITEM ACTION [N]
+#                          transport order for one cargo item (see below)
+#   queue open             Production > Change for the selected planet
+#   queue select R         select queue row R (0 = "Top of the Queue");
+#                          Add inserts after the selected row
+#   queue add I N          add N of available item I (row in the left list)
+#   queue remove [N]       take N (default 1) off the selected queue item
+#   queue up | down | clear | leftover | ok
+#                          Item Up / Item Down / Clear / the "only
+#                          leftover resources to research" box / OK
+#   research open          Commands > Research (F5)
+#   research field K       field K (0 energy … 5 biotechnology)
+#   research budget D      D percent up (D > 0) or down (D < 0)
+#   research next I        "Next field" item I (0 same, 1..6 fields, 7 lowest)
+#   research done          Done
 #   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
 #   shot NAME              extra screenshot
 set -euo pipefail
@@ -46,7 +66,7 @@ dir="$1" out="$2" cmds="$3" mfile="${4:-cb.m1}" game="${5:-CB}"
 home="${ORACLE_HOME:-$HOME/.stars-oracle}"
 export DISPLAY="${ORACLE_DISPLAY:-:77}"   # for the bare xdotool clicks below
 games="$home/run/games/stars_games"
-n="${mfile##*.m}"; n="${n##*.M}"
+xn="${mfile##*.[mM]}"
 mkdir -p "$out/screens"
 cp "$cmds" "$out/commands.txt"
 step=0
@@ -83,18 +103,31 @@ xfer() {
 	case "$item" in fuel) y=340 ;; ir) y=380 ;; bo) y=400 ;; ge) y=420 ;; col) y=440 ;;
 	*) echo "client-orders: xfer: unknown item $item" >&2; exit 2 ;; esac
 	((n < 0)) && { x=567; n=$((-n)); }
+	nclick "$x" "$y" "$n"
+}
+# nclick X Y N: press the button at X,Y for N units, where a click is 1,
+# shift-click 10 and ctrl-click 100 (Cargo Transfer arrows, Production Add
+# and Remove)
+nclick() {
+	local x="$1" y="$2" n="$3"
 	((n == 0)) && return
-	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; moves 1
+	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; counts 1
 	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
 	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
 	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1
+	pause 0.5
+}
+# rclick X Y N: N plain clicks (spinner arrows)
+rclick() {
+	"$O/click" "$1" "$2"
+	(($3 > 1)) && xdotool click --repeat $(($3 - 1)) --delay 200 1
 	pause 0.5
 }
 
 "$O/stop" >/dev/null 2>&1 || true
 "$O/reset" registered >/dev/null
 cp "$dir/$game".* "$games/"
-rm -f "$games/$game.X$n"
+rm -f "$games/$game.X$xn"
 "$O/start" >/dev/null
 "$O/wait-for" "$home/refs/main-menu-open.png" 367 802 90 >/dev/null
 "$O/key" alt+o; pause 1; "$O/type" "d:\\$mfile"; "$O/key" Return
@@ -134,6 +167,31 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"xfer ok") "$O/click" 627 555; pause ;;
 	"xfer cancel") "$O/click" 705 555; pause ;;
 	xfer\ *) xfer "$a" "$b" ;;
+	"wp select") "$O/click" 60 $((262 + 14 * b)); pause 0.4 ;;
+	"wp task") "$O/click" 181 441; pause 0.6; "$O/click" 60 $((459 + 14 * b)); pause 0.8 ;;
+	"wp transport")
+		# wp transport ITEM ACTION [N]: ITEM 0 fuel, 1 ir, 2 bo, 3 ge, 4 col; ACTION is
+		# the row of the action list (0 none, 1 load all, 2 unload all, 3 load
+		# exactly, 4 unload exactly, 5 fill up to %, 6 wait for %, 7 load dunnage,
+		# 8 set amount to, 9 set waypoint to)
+		read -r wact wn <<< "$rest"
+		"$O/click" 160 467; pause 0.6; "$O/click" 40 $((486 + 16 * b)); pause 0.5
+		"$O/click" 123 490; pause 0.6; "$O/click" 40 $((508 + 14 * wact)); pause 0.5
+		if [[ -n "$wn" ]]; then "$O/click" 152 490; "$O/key" Home shift+End; "$O/type" "$wn"; "$O/key" Tab; pause 0.4; fi ;;
+	"queue open") "$O/click" 231 332; pause 1.5 ;;
+	"queue select") "$O/click" 790 $((181 + 16 * b)); pause 0.4 ;;
+	"queue add") "$O/click" 300 $((181 + 16 * b)); nclick 575 244 "${rest:-1}" ;;
+	"queue remove") nclick 575 294 "${b:-1}" ;;
+	"queue up") "$O/click" 575 344; pause 0.4 ;;
+	"queue down") "$O/click" 575 394; pause 0.4 ;;
+	"queue clear") "$O/click" 575 444; pause 0.4 ;;
+	"queue leftover") "$O/click" 213 700; pause 0.4 ;;
+	"queue ok") "$O/click" 824 700; pause ;;
+	"research open") "$O/key" F5; pause 1.5 ;;
+	"research field") "$O/click" 313 $((345 + 21 * b)); pause 0.4 ;;
+	"research budget") if ((b > 0)); then rclick 841 474 "$b"; elif ((b < 0)); then rclick 841 485 $((-b)); fi ;;
+	"research next") "$O/click" 835 379; pause 0.6; "$O/click" 780 $((395 + 13 * b)); pause 0.4 ;;
+	"research done") "$O/click" 742 580; pause ;;
 	key\ *) "$O/key" $a $b $rest; pause ;;
 	click\ *) "$O/click" "$a" "$b"; pause ;;
 	wait\ *) sleep "$a" ;;
@@ -145,14 +203,14 @@ done 3< "$cmds"
 
 "$O/key" alt+f; pause 0.6; "$O/key" s    # File > Save
 t0=$SECONDS
-until [[ -f "$games/$game.X$n" ]]; do
-	((SECONDS - t0 < 30)) || { echo "client-orders: no $game.X$n written" >&2; exit 1; }
+until [[ -f "$games/$game.X$xn" ]]; do
+	((SECONDS - t0 < 30)) || { echo "client-orders: no $game.X$xn written" >&2; exit 1; }
 	sleep 0.5
 done
 sleep 2; shot saved
-cp "$games/$game.X$n" "$out/"
-[[ -f "$games/$game.H$n" ]] && cp "$games/$game.H$n" "$out/"
+cp "$games/$game.X$xn" "$out/"
+[[ -f "$games/$game.H$xn" ]] && cp "$games/$game.H$xn" "$out/"
 "$O/key" alt+f x; "$O/wait-stable" 30 2 >/dev/null || true
 "$O/stop" >/dev/null
-"$here/combatlab" dump "$out/$game.X$n" > "$out/orders.dump"
+"$here/combatlab" dump "$out/$game.X$xn" > "$out/orders.dump"
 cat "$out/orders.dump"
