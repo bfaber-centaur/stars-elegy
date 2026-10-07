@@ -73,14 +73,18 @@ One new fleet per build event (CONFIRMED, SL-01: a queue of 2 Scouts,
 
 - **Number:** the owner's lowest unused fleet number (CONFIRMED, SL-02).
   With fleets #1, #2 and #4, the next is #3, then #5.
-- **Fleet order.** Fleets are processed in order of owner, then number. A
-  new fleet takes its place in that order by its number, so a fleet that
-  fills a gap is processed before older fleets with higher numbers
+- **Fleet order.** Fleets are processed in order of owner, then number.
+  Numbers are per owner. A new fleet takes its place in that order by
+  its own number among its owner's fleets, so a fleet that fills a gap is
+  processed before that owner's older fleets with higher numbers
   (BINARY-ONLY).
 - **Ships:** the item's ships, undamaged.
 - **Fuel:** tanks full (CONFIRMED, SL-01: 100, 50 and 200 mg). **Cargo:**
   none.
-- **Orders:** one waypoint, at the planet, with no task and warp 0. Repeat
+- **Orders:** one waypoint, at the planet, with no task and warp 0. Movement
+  and fuel use the next waypoint's warp; no rule found reads waypoint
+  0's warp (BINARY-ONLY, from a search of the movement, fuel and order
+  rules; a patrol order overwrites it, `ORDERS.md`). Repeat
   off. Battle plan: the player's first plan (the default plan). No name.
   CONFIRMED (SL-01).
 - **Default task** (AR only): an Alternate Reality player's new fleet that
@@ -224,7 +228,10 @@ When the owner already has 512 fleets, a build event makes no new fleet:
 
 - **Joins a fleet.** The ships join the first of the owner's fleets, in
   fleet order, that is at the planet and whose stack of that design would
-  stay at or below 32,765 ships. The owner is told they were merged into
+  stay at or below 32,765 ships. A fleet with no ships of that design
+  qualifies (its stack is 0, so `0 + b` passes). A fleet keeps one count
+  per design slot, so the new ships take their design slot's place among
+  its stacks, not the end of the list (BINARY-ONLY). The owner is told they were merged into
   that fleet. So with 511 fleets and two items, the first item makes the
   512th fleet and the second joins it (CONFIRMED, SL-08). A stack at
   32,765 is passed over for the next fleet at the planet (CONFIRMED,
@@ -258,8 +265,12 @@ Building a starbase design at a planet:
 
 - The owner must have the technology for its hull and parts; otherwise
   nothing is built and the item is removed, with no message (BINARY-ONLY).
-- The new starbase replaces the old one, if any. The owner is told, with
-  the dock limit when the new hull has one ("up to N kT", or "any size").
+- The new starbase replaces the old one, if any. The owner is told in one
+  of three forms, chosen by the new hull's dock (`MESSAGES.md` 0x0cd–0x0cf):
+  no dock (Orbital Fort) says it can build no ships; a limited dock
+  (Space Dock) gives the limit in kT; an unlimited dock (Space Station,
+  Ultra Station, Death Star) says any size. The first form is observed
+  (see `MESSAGES.md` 0x0cd); the choice by dock is BINARY-ONLY.
 - **Queued ships.** If the new starbase's hull comes **earlier** in the
   hull list than the old one's (Orbital Fort, Space Dock, Space Station,
   Ultra Station, Death Star), every ship item is removed from the planet's
@@ -304,10 +315,10 @@ result is halved rounding up.
 MEASURED for a different hull (SL-12, two streams): a JOAT + ISB Space
 Dock replaced by a Space Station design of 92/72/157/364 costs
 35/29/61 kT and 136 resources (a fresh design would cost 37/29/63 and
-149). The item, short of resources, reached 88% and had spent
+146). The item, short of resources, reached 88% and had spent
 30/25/53 kT, which those costs give and the fresh costs do not
 (32/25/55). The planet had 120 resources for it (below), and 88% of 120
-resources means a resource cost of 135 or 136, so the fresh 149 is ruled
+resources means a resource cost of 135 or 136, so the fresh 146 is ruled
 out too. With three times the resources the Station and both queued
 Scouts were built.
 
