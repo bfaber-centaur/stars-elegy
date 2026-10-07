@@ -145,6 +145,34 @@ base47 = tech(range(2)) + enemies(range(2)) + [
 specs["cb047"] = base47 + [f"fleet 0 0 planet {P1HW[0]} at {P1HW[1]} {P1HW[2]} ships 0:40 plan 1 fuel 280"]
 specs["cb047-ctl"] = base47 + [f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:1 plan 1 fuel 280"]
 
+# Round 8 (stars-decomp #28, "Round 8 predictions"). CB-050: the torpedo
+# estimate's shield term. Three players in CB3P deep space; 0 and 2 are
+# friends, both enemies of 1. The Upsilon and Jihad stacks target
+# starbases only, so only player 1's runner moves. The control's runner
+# has no shield.
+C3P = (1060, 1080)
+base50 = tech(range(3)) + [
+    "relation 0 1 2", "relation 0 2 0", "relation 1 0 2", "relation 1 2 2",
+    "relation 2 0 0", "relation 2 1 2",
+    "design 0 0 Destroyer, 1 Long Hump 6, 1 Upsilon Torpedo, 1 Upsilon Torpedo, empty, 2 Tritanium, empty, empty = Upsilon DD",
+    "design 1 0 Destroyer, 1 Long Hump 6, empty, empty, 1 Wolverine Diffuse Shield, 2 Tritanium, empty, empty = Shield Runner",
+    "design 1 1 Destroyer, 1 Long Hump 6, empty, empty, empty, 2 Tritanium, empty, empty = Bare Runner",
+    "design 2 0 Destroyer, 1 Long Hump 6, 1 Jihad Missile, 1 Jihad Missile, empty, 2 Tritanium, empty, empty = Jihad DD",
+    "plan 0 1 2 2 0 1 = Starbases only", "plan 2 1 2 2 0 1 = Starbases only", "plan 1 1 0 1 0 1 = Run",
+    f"fleet 0 0 at {C3P[0]} {C3P[1]} ships 0:2 plan 1 fuel 280",
+    f"fleet 2 0 at {C3P[0]} {C3P[1]} ships 0:4 plan 1 fuel 280"]
+specs["cb050"] = base50 + [f"fleet 1 0 at {C3P[0]} {C3P[1]} ships 0:2 plan 1 fuel 280"]
+specs["cb050-ctl"] = base50 + [f"fleet 1 0 at {C3P[0]} {C3P[1]} ships 1:2 plan 1 fuel 280"]
+# CB-051: falling back from the primary to the secondary target type.
+specs["cb051"] = tech(range(2)) + enemies(range(2)) + [
+    f"design 0 0 {L_DD} = Laser DD", f"design 1 0 {L_DD} = Laser DD", f"design 1 1 {MED} = Freighter",
+    "plan 0 1 3 2 3 1 = Starbase else armed", "plan 0 2 5 7 1 1 = Freighters else any",
+    "plan 1 1 2 3 0 1 = Careful",
+    f"fleet 0 0 at {DEEP[0]} {DEEP[1]} ships 0:3 plan 1 fuel 280",
+    f"fleet 0 1 at {DEEP[0]} {DEEP[1]} ships 0:2 plan 2 fuel 280",
+    f"fleet 1 0 at {DEEP[0]} {DEEP[1]} ships 0:3 plan 1 fuel 280",
+    f"fleet 1 1 at {DEEP[0]} {DEEP[1]} ships 1:1 fuel 450"]
+
 for name, lines in specs.items():
     d = os.path.join(os.path.dirname(HERE), name.split("-")[0])
     os.makedirs(d, exist_ok=True)
