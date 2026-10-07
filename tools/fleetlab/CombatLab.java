@@ -197,9 +197,16 @@ public class CombatLab {
                 if (fl.kindByte == PartialFleetBlock.FULL_KIND)
                     for (int i = 0; i < 16; i++) if ((fl.damagedShipTypes & (1 << i)) != 0)
                         dmg.append(String.format(" dmg%d=%d/%d%%", i, fl.damagedShipInfo[i] >> 7, fl.damagedShipInfo[i] & 0x7f));
-                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d%s%n",
+                System.out.printf("%s fleet owner=%d id=%d kind=%d x=%d y=%d obj=%d ships=%s cargo=%d/%d/%d/%d fuel=%d plan=%d b2=%02x b3=%02x b5=%02x wps=%d%s%n",
                     f, fl.owner, fl.fleetNumber, fl.kindByte, fl.x, fl.y, fl.positionObjectId, ships,
-                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan, dmg);
+                    fl.ironium, fl.boranium, fl.germanium, fl.population, fl.fuel, fl.battlePlan,
+                    fl.byte2 & 0xff, fl.byte3 & 0xff, fl.byte5 & 0xff, fl.waypointCount, dmg);
+            } else if (b.typeId == BlockType.FLEET_NAME) {
+                // a custom fleet name (block 21) follows its fleet block; Stars-encoded text
+                byte[] d = b.getDecryptedData();
+                String name;
+                try { name = Util.decodeStarsString(Arrays.copyOf(d, b.size)); } catch (Exception e) { name = "?"; }
+                System.out.printf("%s   fleetname \"%s\" raw=%s%n", f, name, Util.bytesToString(d, 0, b.size));
             } else if (b instanceof WaypointBlock) {
                 WaypointBlock w = (WaypointBlock) b;
                 byte[] d = w.getDecryptedData();
@@ -318,6 +325,8 @@ public class CombatLab {
                 p.excessPop, p.mines, p.factories,
                 (p.defenses & 0xff) | ((p.unknownInstallationsByte & 0x0f) << 8),
                 ((p.unknownInstallationsByte >> 4) & 15) | (p.hasScanner ? 0 : 16), p.contributeOnlyLeftoverResourcesToResearch));
+        // route destination word (planet id + 1 in bits 0-9 per the decomp; 0 = none)
+        if (p.hasRoute) sb.append(String.format(" route=%04x", p.routeShort));
         if (sb.length() > 0) System.out.printf("%s pdetail %d owner=%d%s%n", f, p.planetNumber, p.owner, sb);
     }
 
@@ -508,6 +517,16 @@ public class CombatLab {
                         break;
                     }
                     case "fleet": fleets.add(parseFleet(t)); break;
+                    case "fleets": {
+                        // fleets OWNER FROM-TO <fleet tokens>: one fleet per id in the range
+                        String[] r = t[2].split("-");
+                        for (int id = Integer.parseInt(r[0]); id <= Integer.parseInt(r[r.length - 1]); id++) {
+                            String[] one = t.clone();
+                            one[2] = "" + id;
+                            fleets.add(parseFleet(one));
+                        }
+                        break;
+                    }
                     case "thing": {
                         byte[] r = parseThing(t);
                         int id = u16(r, 0);
@@ -880,6 +899,14 @@ public class CombatLab {
                     pl.starbaseBytes[0] = (byte) w; pl.starbaseBytes[1] = (byte) (w >> 8);
                     break;
                 }
+                case "route":
+                    // route=DEST (planet number; stored as DEST + 1), route=none, or route=raw:HEX (whole word)
+                    if (v.equals("none")) { pl.hasRoute = false; pl.routeShort = 0; }
+                    else {
+                        pl.hasRoute = true;
+                        pl.routeShort = v.startsWith("raw:") ? Integer.parseInt(v.substring(4), 16) : Integer.parseInt(v) + 1;
+                    }
+                    break;
                 case "fe": pl.ironium = Long.parseLong(v); break;
                 case "bo": pl.boranium = Long.parseLong(v); break;
                 case "ge": pl.germanium = Long.parseLong(v); break;
@@ -1017,6 +1044,7 @@ public class CombatLab {
         FleetSpec fs = new FleetSpec();
         fs.owner = Integer.parseInt(t[1]);
         fs.id = Integer.parseInt(t[2]);
+        if (fs.id < 0 || fs.id > 511) throw new Exception("fleet id 0-511 expected, got " + fs.id);
         int i = 3;
         while (i < t.length) {
             switch (t[i]) {
