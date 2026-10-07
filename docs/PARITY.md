@@ -4242,12 +4242,20 @@ the capture keeps them. Each player-year is compared with the prediction.
     orders. That fleet was not scrapped until the next year. So the
     scrapping pass sees fleets after that year's ship transfers. This is
     INFERRED from two cases.
-- **UNKNOWN: Robotoid scrapping an idle colonizer with no target (AI-4).**
-  The setups did not test it. A computer player plans from its own player
-  file, which reflects the previous year. So editing the host file to give
-  every planet away did not remove the targets that year: the colonizers flew
-  to the now-owned planets and came back. A test needs the change to be a
-  year old, or the player's own file edited too.
+- **MEASURED: Robotoid scraps an idle colonizer with no target (AI-4).**
+  In two setups (Harder, year index 5), Robotoid had three idle colonizer
+  fleets at its homeworld.
+  - With every other planet owned in its own view, all three were scrapped.
+  - With one planet left free, the first fleet went to colonize it, and the
+    other two were scrapped. A planet one colonizer takes is not offered to
+    the next in the same year.
+- **MEASURED: a computer player plans from its own player file.**
+  - Changing planet owners only in the host file, or only in the player's
+    history file, left its orders unchanged. The first setups therefore did
+    not test AI-4: the colonizers flew to the newly owned planets and came
+    back.
+  - The owners as recorded in its own player file decide which planets count
+    as targets. That file reflects the previous year's turn.
 - **CONFIRMED: computer planets trade with a waiting Mystery Trader (O-53).**
   - Setup: four computer planets near the Trader's end point, each with a
     starbase, one at each of Standard, Harder and Expert (two Expert).
