@@ -1860,11 +1860,104 @@ moves.
   orbiting a planet inside the field and the one far away were not
   (OB-014-B, one stream).
 
+### Round 4: rules SCANNING.md marked BINARY-ONLY (SC-024..SC-033)
+
+Predictions were committed before the runs (3547942, follow-ups SC-032 and
+SC-033 in bb65db9); `experiments/sc/README.md` has the case tables and
+`experiments/sc/round2.py` the checker. One pinned stream each (cycles
+20000), 2400 → 2401. Both players JOAT at tech 26, no planetary scanners,
+bare starbases. 86 cases, 4 of them recorded only: 77 held and 5 did not.
+Two checks were corrected after the run, without changing a predicted
+rule: the dump now decodes heading bytes (stored as value + 127), and the
+defense estimate applies the operable cap SCANNING.md states.
+
+**Held (MEASURED, one stream each):**
+
+- **Fleets at your planets.** An enemy fleet orbiting the viewer's planet
+  is seen with no planetary scanner and no viewer fleet: a 98% Ghost at
+  the homeworld and a plain freighter at a colony without a starbase. The
+  same designs 1 ly away in deep space were not (SC-024 A–D). A fleet at
+  the planet's exact position *without* the orbit flag was also seen
+  (SC-024-E, recorded only), so the rule may be positional.
+- **Starbase and owner in a position-only report.** A blind freighter
+  orbiting an enemy homeworld with a starbase got level 1 (no
+  environment, estimates 0) with the starbase bit and the partial
+  starbase design, and the owner's block (partial) arrived although
+  nothing else of that player was seen. The planet's owner saw the
+  orbiter with no planetary scanner. 1 ly away in deep space: nothing,
+  either way (SC-025, SC-026; SC-024 for player 1's view of player 0's
+  homeworld).
+- **Heading.** Six moving fleets: the shown vector is the waypoint minus
+  the start position, halved toward zero while a component is ≥ 128:
+  (300,100) → (75,25); (50,−120); (−127,0); (−128,3) → (−64,1); (300,−7) →
+  (75,−1); (−1,−395) → (0,−98) (floor halving would give (75,−2) and
+  (−1,−99)). Warp is the waypoint's warp. In the file each component is
+  stored as `value + 127` in one byte; a fleet that did not move stores
+  0/0 and warp 0 (SC-027). A fleet that reached its waypoint this year
+  showed (10,0) warp 5, the vector of the move it finished (recorded
+  only).
+- **Partial fleet mass and cargo.** Ship mass plus ironium, boranium,
+  germanium and colonists, without fuel: 29; 29 + 10 + 20 + 30 + 40 = 129;
+  two ships with 50 kT of colonists 108. Cargo is shown as 0 (SC-027).
+- **Defense coverage estimate.** `max(1, min(15, trunc((104 − k)/6)))`,
+  `k = round(100·(1 − v/1000)ⁿ)`, Neutron Shield `v = 38`, with `n` the
+  operable defenses: 1, 3, 5, 10 defenses → 1, 2, 3, 6; 0 → 0. Planet 12
+  (40 defenses, hab below 0, so at most 10 operable) → 6; planet 4 (100
+  defenses, population 104,400 → `ceil(1044/25) = 42` operable) → 14. The
+  committed prediction left the operable cap out (13 and 15); SCANNING.md
+  states it, and with it all 9 planets match.
+- **Population estimate.** All 9 estimates (in 400s) fall in the stated
+  range computed from the year's final population, including 300
+  colonists → 1 (one stream; the draw itself is random).
+- **Three Tachyon Detectors** on one design: factor 91. A 75% target
+  (68%) seen at d² 27688, not at 27689 (SC-033); an 85% target (77%) seen
+  at 14297, not at 14305 (SC-028).
+- **Detectors over designs and ships.** A fleet's factor comes from its
+  best single design: Mole + 1 detector with a 1-detector design, and two
+  Mole + 1 detector ships, both 95 (d² 841 seen, 842 not); Mole + 2 with a
+  1-detector design 93 (961 seen, 962 not). Detectors do not add up
+  (SC-029).
+- **Super Stealth.** A plain SS freighter is 75% (d² 5625 seen, 5626
+  not); with 50 kT of cargo still 75% (dilution would have given 51%).
+  The SS player's bare Space Station is 75%: at d² 3600 from a P 200
+  viewer the planet was reported (level 3) without its starbase. JOAT →
+  SS with `lrt 1 0x1b80` gave no message 0x117 (SC-030).
+- **Design disclosure after battle.** A Laser Cruiser and a Laser
+  Destroyer that fought each got the other's design in full, the
+  destroyed Destroyer included. Designs seen without a battle stayed
+  partial (SC-031).
+
+**Did not hold:**
+
+- **Blind orbit of an owned planet without a starbase gives a normal
+  report**, not position only (SC-024 planet 20, SC-031 planet 12,
+  SC-032). SC-032 separated the readings: a blind freighter in orbit got
+  level 3 (environment, population and defense estimates; no surface
+  minerals) at an enemy colony without a starbase and at an enemy
+  homeworld whose starbase was removed; level 1 at an enemy colony with a
+  starbase and at an unowned planet. So the starbase, not the homeworld
+  flag, decides. SCANNING.md ("position only if that fleet has no
+  scanner") covers only the unowned and starbase cases. MEASURED; the
+  cause is not known (sent to the scanning decomp).
+- **No planet report from a battle.** A scannerless Cruiser that fought
+  at an unowned planet, and one that fought at an enemy colony with a
+  starbase, got level 1 like a blind orbiter (SC-032). The battle-report
+  rule in SCANNING.md ("a fleet that bombed, fought or hit a minefield at
+  a planet gives a normal report") did not show for fighting; bombing and
+  minefield hits were not tested. SC-031's level 3 at planet 5 is the
+  no-starbase rule above.
+- SC-028-T75-out is a setup artifact, not a rule: its fleet was placed at
+  y 920 and the game put it at y 1000, inside the bound. SC-033 repeated
+  the case from the centre.
+
 ### Not tested
 
-SD detection of cloaked fleets and the population estimate (S-21, S-22,
-random), AR planet scanners (S-11), chase retargeting (S-24), and
-scanners on more than two players.
+SD detection of cloaked fleets (S-21, random), AR planet scanners (S-11),
+chase retargeting (S-24), scanners on more than two players, planet
+reports after bombing, minefield hits or a lost planet, built-in scanners
+in Mega Poly Shell, Multi Contained Munition and Langston Shell, cloak
+points of non-device parts, the Improved Starbases starbase bonus, and
+headings of fleets travelling by stargate or chasing a fleet.
 
 ## Planet Takeover
 

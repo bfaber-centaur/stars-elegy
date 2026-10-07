@@ -149,8 +149,16 @@ popest defest surface`.
 | SC-029 | Detectors over several designs or ships | Mole (100) viewers against 75%. A fleet of Mole + 1 detector with a second design carrying 1 detector, and a fleet of two Mole + 1 detector ships: factor 95 (71%, d² 841 seen, 842 not; adding up would see 842). Mole + 2 detectors with a 1-detector design: factor 93 (961 seen, 962 not). |
 | SC-030 | Super Stealth +300; SS cargo; SS starbase | Player 1 SS (`lrt 1 0x1b80`). Elephant (300) viewer: a plain freighter is 75% (d² 5625 seen, 5626 not); with 50 kT cargo still 75% (dilution would give 51%). The bare station on player 1's homeworld, 60 ly from the viewer (P 200), is 75% and hidden beyond d² 2500: the planet is reported without its starbase. |
 | SC-031 | Planet report after battle; design disclosure after battle | A player 0 Laser Cruiser (no scanner) and a player 1 Laser Destroyer orbit player 1's colony 5 and fight: player 0 gets a normal report (level 3) of planet 5, and each side gets the other's fighting design in full. Control: a blind player 0 freighter orbiting player 1 colony 12 with an unarmed player 1 freighter: position only, and both freighter designs partial. |
+| SC-032 (follow-up) | Blind orbit reports; planet report after battle | Committed after SC-024/SC-031 and before its run. Blind orbiters at an enemy colony with a starbase (1), an enemy homeworld with its starbase removed (3 if the starbase decides, 1 if the homeworld flag does), an enemy colony without one (3) and an unowned planet (1). Cruisers fighting Laser Destroyers at an unowned planet and at an enemy colony with a starbase: normal reports (3). |
+| SC-033 (follow-up) | Three Tachyon Detectors | SC-028-T75 repeated with the viewer at (1200,1200): the SC-028 out case had been clamped to the universe edge. |
 
 ## Results
+
+Round 4 (SC-024..SC-033): `docs/PARITY.md`, Scanning, "Round 4". 77 of
+82 checked cases held. Misses: blind fleets orbiting an owned planet
+without a starbase get a normal report (SC-024, SC-031, SC-032); fighting
+at a planet gives no planet report (SC-032); SC-028-T75-out was a
+placement artifact (repeated in SC-033).
 
 Every run was generated once with `pinned-turn` (cycles 20000) and
 checked with `check.py`; raw files, dumps and check outputs are in the

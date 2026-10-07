@@ -680,6 +680,22 @@ experiments/sc/check.py RUN CB.XY OUT/after.dump
   and Bleeding Edge Tech (`lrt 0 0x1b80`) made it legal (SC-015L).
 - Visibility did not depend on the random stream: SC-001 generated with
   cycles 20000 and 30000 gave different bytes and identical views.
+- Round 4 (SC-024..SC-033, `experiments/sc/round2.py specs|list|check`):
+  - `combatlab dump` prints another player's fleet with `dx dy warp wbits
+    mass`. Each heading byte holds the component + 127; the dump subtracts
+    127, so a fleet that did not move (bytes 0/0) prints `dx=-127
+    dy=-127 warp=0`. Planet reports print `env popest defest surface`;
+    `popest` is in units of 400 colonists, `defest` 0..15.
+  - Design lines in a `.M` dump do not carry the design's owner: a
+    partial design prints `owner=?`, and a full foreign design (War
+    Monger, after a battle) prints the file's own player. Designs come in
+    player order, as many per player as that player's `shipdesigns=`
+    count; `round2.py` assigns owners that way.
+  - Fleets placed outside the universe are moved to its edge: SC-028 put
+    a fleet at y 920 in the tiny Combat Lab universe (1000..1400) and the
+    generated year had it at y 1000. Keep every position in range.
+  - The homeworld starbases carry Lasers; an enemy fleet in orbit starts a
+    battle. Round 4 replaces `sbdesign P 0` with an empty Space Station.
 
 ### Takeover experiments (observed 2026-10-07, TK-001..TK-007)
 
