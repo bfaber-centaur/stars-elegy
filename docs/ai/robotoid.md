@@ -132,7 +132,11 @@ List 35 is never used. Class 33 (Multi Contained Munition) has no
 fallback part, so list 36 fails until that weapon is available, and
 step 6 makes B-52 Bombers before that.
 
-## 3. Production (BINARY-ONLY)
+## 3. Production (BINARY-ONLY; structure MEASURED, AI-9)
+
+In AIX every Robotoid planet-year fit the order of items below (1,205
+planet-years, 70 of them adding ships). Counts that depend on draws and
+on the economy are not yet predicted exactly.
 
 Robotoid considers each own planet that has a starbase and at least
 20,000 colonists. A planet already holding a ship item of any design
@@ -233,5 +237,6 @@ freighter rule (`../AI.md` §11).
   exact target is not yet read.
 - Idle scouts at `y ≥ 41` get a waypoint-0 marker task with two
   parameters (5, 5). Its effect is not yet observed.
-- The production rules (§3) and the fleet passes (§4) need a corpus check
-  against AIX's queue and move orders.
+- Production (§3) needs an exact check: colonizer extras, the `rich` test
+  and the warship cost tests. The fleet passes (§4) need a check against
+  AIX's move orders.

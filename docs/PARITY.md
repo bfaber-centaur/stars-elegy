@@ -4203,7 +4203,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-8)
+## Computer players (AI-0..AI-9)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4231,6 +4231,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-3 | Robotoid scraps fleets holding its slot-0 Scout until year index 20 | MEASURED once: AIX 2400, the Scout fleet is scrapped and gone the next year |
 | AI-5 | Macinti scraps early fleets and builds and scraps its slot-1 colonizer each year until design 7 exists | MEASURED: AIX 2400–2406 |
 | AI-8 | Robotoid ship designs each year: ageing deletes, the design ladder, the slot-0 Frigate rebuild; slot, hull, parts, counts and picture (`docs/ai/robotoid.md` §2) | CONFIRMED: 61 of 61 player-years (AIX), covering 7 design orders and every year without one |
+| AI-9 | Robotoid production: each planet's newly queued ships follow the order freighter, colonizers, frigates, armada or warships, slot 14/15, using each group's newest design; none at planets without a starbase or with fewer than 20,000 colonists (`docs/ai/robotoid.md` §3) | MEASURED: 1,205 of 1,205 planet-years (AIX), 70 with ships queued |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the
