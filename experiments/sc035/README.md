@@ -34,4 +34,16 @@ player 2's design in full.
 
 ## Results
 
-(pending)
+- **SC-036: CONFIRMED** (2 streams, CB3P cycles 20000 and 30000). Each
+  player's `.M` file after the battle held three full designs: its own
+  Destroyer and the other two players' Destroyers, the ally's included.
+  It also held player blocks for both other players. The 2400 files had
+  only the player's own block. Allied players 0 and 1 had no other
+  contact.
+- **SC-035, first setup: not a test.** Planet 23 ended the year unowned
+  in both streams. Player 0's reports of planets 23 and 22 were both
+  position only (level 1, no environment). But planet 23's environment
+  (75/59/96) is outside player 1's habitat, so the 100 colonists may
+  have died from the environment rather than from the bombs. The setup
+  now makes planet 23 habitable (`env=50,50,50`), and the run is
+  repeated with the prediction unchanged.
