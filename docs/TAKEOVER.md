@@ -79,6 +79,28 @@ Consequences, all CONFIRMED (TK-001, TK-002, TK-003):
 - A starbase destroyed in this year's battle no longer protects the
   planet. Bombing (T-2) and arrival invasions go ahead the same year.
 
+### Order inside a phase (BINARY-ONLY)
+
+- **Fleet order.** Every per-fleet step (unloads, scrap, colonize, loads,
+  merges, transfers, bombing triggers) walks fleets in **fleet order**: by
+  owner, then by fleet number (the same order as `COMBAT.md`). Each fleet
+  carries out its whole waypoint-0 task before the next fleet starts.
+- **Drop resolution order.** Each drop joins a queue in the order it was
+  made. When drops are resolved, the queue is walked from the front, and
+  the first unresolved entry's planet is resolved with all of that
+  planet's entries together. Planets are therefore resolved in the order
+  of their first queued drop. Before movement, the queue starts with
+  colonists given to foreign planets by manual cargo transfers in the
+  orders (step 1), then the drops made by fleets in fleet order.
+- **"At the start of this phase".** Each of the two waypoint phases (step
+  2, and steps 4–5 together) records, for every planet, whether it is
+  owned, **before anything else in that phase**. For the after-movement
+  phase that is before battles and bombing. It is not the owner at the
+  start of the year: a planet colonized before movement and bombed empty
+  the same year counts as owned for the after-movement drop, so an
+  arriving freighter's unload colonizes it (as in T-4). A planet that was
+  unowned when the after-movement phase began refuses the unload.
+
 ## Orbital bombing
 
 ### Who bombs (CONFIRMED, T-3, T-19, T-20)
@@ -109,9 +131,16 @@ plans and whichever fleet comes first. A Laser Frigate with an attacking
 plan and no bombs made a bomber fleet with plan "nobody" bomb. Two fleets
 of 5 Cherry each are one pass of 10 Cherry.
 
-Several players bombing one planet (BINARY-ONLY): each player's pass is
-applied in turn against what the previous one left. Once the planet is
-emptied, it is unowned and not bombed further.
+**Bombing order** (BINARY-ONLY). Bombing walks fleets in fleet order
+(owner, then fleet number). The first fleet that qualifies at a planet
+triggers its owner's single pass there, which is applied at once with its
+random draws (factories, defenses, population); that owner's other fleets
+at the planet are then skipped. So planets are bombed in the order of their
+triggering fleets, not in planet order, and all of a lower-numbered
+player's passes come before any of a higher-numbered player's. Several
+players at one planet bomb it in player-number order, each against what
+the previous one left. Once the planet is emptied it is unowned, and later
+passes skip it.
 
 ### Bomb totals (CONFIRMED for the parts named, T-10..T-18)
 
@@ -221,6 +250,35 @@ UI may not offer it).
 
 Fuel is never unloaded to or loaded from a planet (BINARY-ONLY).
 
+### Unload and load amounts (BINARY-ONLY)
+
+A transport order sets, per cargo type (ironium, boranium, germanium,
+colonists, fuel), one action and an amount `v` (kT; colonists in units of
+100). With `C` = the fleet's cargo of that type and `A` = what the target
+holds (planet surface minerals, or the planet's population for colonists):
+
+| Action | Phase | Amount moved |
+|---|---|---|
+| unload all | unload | `C` |
+| unload exactly `v` | unload | `min(v, C)` |
+| load all | load | `min(A, free space)` |
+| load exactly `v` | load | `min(v, A, free space)` |
+| fill to `v`% | load | up to `v`% of capacity |
+| wait for `v`% | load | as fill, and the fleet waits until met |
+| set amount to `v` | either | `v − C`: load if positive, unload if negative |
+| set waypoint to `v` | either | `A − v`: load the excess, or unload the shortfall |
+
+Unload actions run in the first unload phase that reaches them and are then
+cleared, so they happen once; load actions persist until satisfied.
+
+On a planet the fleet's owner owns, unloaded colonists are added to the
+population at once, with no cap. Before movement that is **before** this
+year's growth, so they grow this year; after movement they do not.
+Unloaded minerals join the surface the same way. Loading colonists
+subtracts them from the population. These own-planet rules belong with
+`KERNEL.md` production; they are given here until KERNEL covers
+transport.
+
 ### Ground combat (CONFIRMED, T-21..T-25)
 
 All drops queued for one planet in one phase are resolved together.
@@ -318,8 +376,15 @@ A captured planet then belongs to the winning player as a new colony
 (Colonization, above). Additionally (BINARY-ONLY):
 
 - the old owner is told;
-- the new owner may learn a tech level from the old owner as for battles
-  (`COMBAT.md`, Tech from battle), at most once per player per year;
+- the new owner makes one **tech attempt** exactly as in `COMBAT.md`, Tech
+  from battle, steps 1–5. The "seen" levels are the **old owner's current
+  levels** in each field, and no Mystery Trader item has a chance, so step 3
+  always makes its 13 `rand(13)` draws and gives nothing. The attempt
+  shares the "already gained this turn" mark with battles and scrapping:
+  a player that gained this turn makes no draws. Only a capture of an
+  owned planet makes an attempt, not a colonization of an unowned one. On
+  that planet the draws come after the ground combat (which draws nothing)
+  and before the artifact draws below;
 - a planet with an ancient artifact gives the new owner research points in
   a random field (`100 + rand(301)` points, scaled down below 1,000
   colonists), when random events are on.
@@ -374,16 +439,38 @@ choice; parity is "keep and use".
 - **Cargo to another player's fleet**: nothing moves to an enemy;
   colonists are never given to another player's fleet.
 
+### Colonize retries (BINARY-ONLY; LEGACY BUG for the after-movement case)
+
+Colonize is checked in all four waypoint passes. A fleet whose colonize
+failed in an unload phase because the planet was owned is retried in the
+next load phase, after that phase's drops are resolved. The retry succeeds
+only if the planet is unowned **now**. In practice that happens only when
+the drops in between emptied it with nobody landing, i.e. a tie (Several
+players dropping at once). A successful retry consumes the fleet and
+delivers the minerals at once, like any colonize, and queues the
+colonists:
+
+- **Before movement**, the queued drop is not resolved until the
+  after-movement resolution. It is resolved then against the planet as it
+  is at that point, after movement, production and bombing.
+- **After movement**, nothing resolves it, and the queue is emptied at the
+  start of the next year: the colonists are lost and the planet stays
+  unowned (LEGACY BUG).
+
 ## Randomness
 
 | Draw | Rule |
 |---|---|
 | installation kill roundings, population kill rounding | Bombing |
-| tech learned on capture or scrap at a starbase | Capture, Scrap |
+| tech learned on capture or scrap at a starbase | Capture, Scrap (same sequence as `COMBAT.md`) |
 | artifact field and points | Capture |
 
 Ground combat, colonization, scrap minerals and retro bombing are
-deterministic. Random-stream pinning for experiments: `ORACLE.md`.
+deterministic. The draws of a year come in this order (BINARY-ONLY): drop
+resolutions before movement (planet by planet, as in "Order inside a
+phase"), then battles, then bombing passes in fleet order, then drop
+resolutions after movement. Random-stream pinning for experiments:
+`ORACLE.md`.
 
 ## Open experiments
 
@@ -395,9 +482,15 @@ deterministic. Random-stream pinning for experiments: `ORACLE.md`.
 - Several players bombing one planet.
 - Production queue and "only leftover to research" after capture.
 - Tech learned on capture; ancient artifacts.
-- Colonist loss when a colonize retry happens in the load phase
-  (suspected LEGACY BUG: the retry's drop is never resolved).
+- Colonize retries (below).
 - Fuel unloaded at a planet: is the fleet debited?
+- Loading every colonist from one's own planet: does the planet stay owned
+  at 0 population?
+- Takeover round 2 can test, with pinned streams where random: bombing
+  order across planets and players; the phase-start ownership record
+  (colonize before movement, bomb empty, arriving freighter); the tech
+  attempt on capture; own-planet unloads before and after growth; both
+  colonize-retry cases.
 - Planetary defenses other than SDI and Missile Battery against bombs and
   troops.
 - Miniaturization at intermediate tech through colony minerals: the same
