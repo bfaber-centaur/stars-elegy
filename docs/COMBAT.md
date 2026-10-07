@@ -647,7 +647,7 @@ CB-002, CB-003, CB-005; P-13):
 **Sappers** (CONFIRMED, CB-002; P-15): damage shields only. They make no
 hit on a target without shields.
 
-### Torpedoes and missiles (CONFIRMED, CB-001, CB-002, CB-009; P-17..P-21, Q-8, Q-14)
+### Torpedoes and missiles (CONFIRMED, CB-001, CB-002, CB-009, CS-003; P-17..P-21, Q-8, Q-14)
 
 Missiles are Jihad, Juggernaut, Doomsday and Armageddon. The other
 torpedo parts are torpedoes.
@@ -688,12 +688,22 @@ Per salvo, while torpedoes remain:
      - `armorDmg = hits·d/2` (or `hits·d − S'` when `S' < hits·d/2`);
 
      the condition is `armorDmg ≥ A`.
-3. **Misses** do `misses·d/8` to shields only. They are recorded only
-   against a target with shields. CONFIRMED (CB-009 K8, Q-14): 14 Beta
-   misses did 21.
-4. **Hits** do `hits·d/2` to shields first. A further `hits·d/2` goes
-   to armor directly; shield damage that gets past the shields is added
-   to it.
+3. **Misses** do `misses·d/8` to shields only, if that is above 0.
+   CONFIRMED (CB-009 K8, Q-14): 14 Beta misses did 21. A target without
+   shields left takes nothing from misses, and no miss record is written
+   for it (BINARY-ONLY).
+4. **Hits.** Let `h = hits·d/2`, truncated once for the whole group of
+   hits. `h` goes to shields first, and a further `h` goes to armor
+   directly; shield damage that gets past the shields is added to it. The
+   total is therefore `2·h`, which is 1 less than `hits·d` when
+   `hits·d` is odd. CONFIRMED (CS-003-C2): one Alpha Torpedo hit
+   (`d = 5`) did 4.
+   - A hit record is written for every target the salvo reaches, even
+     with 0 hits. A 0-hit record changes nothing (BINARY-ONLY). This
+     accounts for the no-change records with flag 0x80 that CS-003-C2
+     saw on an unshielded target, one per missed shot (7 for the Alpha
+     Torpedo, 12 and 11 for the missiles). They are hit records, not
+     miss records.
 5. **One kill per torpedo**: hits kill at most `n` ships, and any
    damage left after that limit is lost. CONFIRMED (CB-009 K1, Q-8): 202
    Jihads killed 202 ships per salvo with armor for 272.
