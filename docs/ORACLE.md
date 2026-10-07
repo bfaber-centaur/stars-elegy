@@ -521,6 +521,25 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   generating; whether editing the `.HST` alone suffices was not tested.
 - Set mines to 0 to keep surface minerals fixed during the year; mining
   happens before production.
+- Race and starbase keys (added for KX-001): `prt=N` (0 HE … 4 IS … 8 AR,
+  9 JOAT), `lrt=HEX` (the 32-bit lesser-trait word; bit 6 Mineral
+  Alchemy, bit 31 "factories cost 1 kT less germanium"),
+  `stat=I:V/...` (race stat I: 0 colonists per resource ÷100, 1 factory
+  output, 2 factory cost, 3 factories operated, 4 mine output, 5 mine
+  cost, 6 mines operated), `hab=C,C,C,L,L,L,H,H,H` (centre, low, high per
+  axis) and `starbase=0|1` on the planet. They edit player 1 only; `dump`
+  prints the race line and the planet's starbase design slot. All of them
+  took effect in KX-001 (2026-10-07).
+- An edited race must stay within the race wizard's point budget. KX-001
+  M3 (cheaper factories and mines, nothing paid for them) was flagged in
+  the generated year: message id 0x117 in the `.M1`, and the race's
+  colonists-per-resource stat raised from 10 to 24 before production, which
+  changes every resource figure. Check the `race` line of the after-dump
+  and the event list for 0x117 before trusting a race-edit case.
+- A state the game cannot process shows a Windows "Application Error"
+  dialog (KX-001 Z1: "integer divide by 0") and no year is written; `turn`
+  and `host-turn` then time out with the dialog still open. Take a
+  screenshot, then `stop`.
 
 ## Synthetic fleet starts (FleetLab, observed 2026-10-07)
 

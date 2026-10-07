@@ -10,6 +10,9 @@ import org.starsautohost.starsapi.encryption.Decryptor;
 //   edit IN OUT key=value...             edit planet P (default 7) and player 0
 // keys: planet=N fe= bo= ge= pop= excess= mines= factories= defenses=
 //       leftover=0|1 researchPct=N queue=SPEC (SPEC: id:count:pct:kind,... ; kind 1=planetary item, 2=design; "none" removes)
+//       starbase=0|1 (planet's has-starbase flag; 1 keeps the existing design slot)
+//       race edits on player 0: prt=N lrt=HEX (32-bit LRT word) stat=I:V[/I:V...] (race stat I = byte 0x36+I of the full data)
+//       hab=C,C,C,L,L,L,H,H,H (race hab centre/low/high per axis grav,temp,rad; full data bytes 8..16)
 public class ProdTool {
   static long le32(byte[] d, int o) { return (d[o]&0xffL)|(d[o+1]&0xffL)<<8|(d[o+2]&0xffL)<<16|((long)d[o+3])<<24; }
   static String hex(byte[] d, int n) { StringBuilder sb=new StringBuilder(); for(int i=0;i<n;i++) sb.append(String.format("%02x",d[i]&0xff)); return sb.toString(); }
@@ -29,9 +32,9 @@ public class ProdTool {
         PartialPlanetBlock q=(PartialPlanetBlock)b; if (q.owner<0) continue;
         int def12 = (q.defenses & 0xff) | ((q.unknownInstallationsByte & 0x0f) << 8);
         int scan = ((q.unknownInstallationsByte & 0xf0) >> 4) | (q.hasScanner?0:16);
-        System.out.printf("%s planet=%d owner=%d fe=%d bo=%d ge=%d pop=%d excess=%d mines=%d factories=%d defenses=%d leftover=%b scannerField=%d conc=%d/%d/%d hab=%d/%d/%d%n",
+        System.out.printf("%s planet=%d owner=%d fe=%d bo=%d ge=%d pop=%d excess=%d mines=%d factories=%d defenses=%d leftover=%b scannerField=%d conc=%d/%d/%d hab=%d/%d/%d starbase=%s%n",
           n, q.planetNumber, q.owner, q.ironium, q.boranium, q.germanium, q.population, q.excessPop, q.mines, q.factories, def12,
-          q.contributeOnlyLeftoverResourcesToResearch, scan, q.ironiumConc, q.boraniumConc, q.germaniumConc, q.gravity, q.temperature, q.radiation);
+          q.contributeOnlyLeftoverResourcesToResearch, scan, q.ironiumConc, q.boraniumConc, q.germaniumConc, q.gravity, q.temperature, q.radiation, q.hasStarbase ? Integer.toString(q.starbaseDesign) : "none");
       }
       else if (b instanceof ProductionQueueBlock) {
         byte[] d=b.getDecryptedData(); StringBuilder sb=new StringBuilder();
@@ -44,6 +47,8 @@ public class ProdTool {
         StringBuilder lv=new StringBuilder(), acc=new StringBuilder();
         for (int i=0;i<6;i++){ lv.append(i==0?"":",").append(d[0x1a-B+i]); acc.append(i==0?"":",").append(le32(d,0x20-B+4*i)); }
         System.out.printf("%s player=%d researchPct=%d field=%d resRes=%d levels=%s accum=%s%n", n, p.playerNumber, d[0x38-B], d[0x39-B]&15, le32(d,0x3a-B), lv, acc);
+        StringBuilder st=new StringBuilder(); for (int i=0;i<7;i++) st.append(i==0?"":",").append(d[0x36+i]&0xff);
+        System.out.printf("%s race player=%d prt=%d lrt=%08x stats=%s growth=%d hab=%d,%d,%d/%d,%d,%d/%d,%d,%d%n", n, p.playerNumber, d[0x44]&0xff, le32(d,0x46)&0xffffffffL, st, d[0x11], d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16]);
       }
       else if (b.typeId == 12) { System.out.printf("%s events %s%n", n, hex(b.getDecryptedData(), b.size)); }
     }
@@ -59,8 +64,14 @@ public class ProdTool {
     for (int i=0;i<bl.size();i++) {
       Block b=bl.get(i);
       if (b instanceof ProductionQueueBlock && found && kv.containsKey("queue") && out.get(out.size()-1) instanceof PartialPlanetBlock && ((PartialPlanetBlock)out.get(out.size()-1)).planetNumber==planet) continue; // drop old
-      if (b instanceof PlayerBlock && kv.containsKey("researchPct")) {
-        PlayerBlock p=(PlayerBlock)b; if (p.fullDataBytes!=null && p.playerNumber==0) { p.fullDataBytes[0x38-8]=(byte)Integer.parseInt(kv.get("researchPct")); p.encode(); }
+      if (b instanceof PlayerBlock && ((PlayerBlock)b).fullDataBytes!=null && ((PlayerBlock)b).playerNumber==0) {
+        PlayerBlock p=(PlayerBlock)b; byte[] d=p.fullDataBytes; boolean ch=false;
+        if (kv.containsKey("researchPct")) { d[0x38-8]=(byte)Integer.parseInt(kv.get("researchPct")); ch=true; }
+        if (kv.containsKey("prt")) { d[0x44]=(byte)Integer.parseInt(kv.get("prt")); ch=true; }
+        if (kv.containsKey("lrt")) { long v=Long.parseLong(kv.get("lrt"),16); for (int k=0;k<4;k++) d[0x46+k]=(byte)(v>>(8*k)); ch=true; }
+        if (kv.containsKey("stat")) { for (String sv: kv.get("stat").split("/")) { String[] f=sv.split(":"); d[0x36+Integer.parseInt(f[0])]=(byte)Integer.parseInt(f[1]); } ch=true; }
+        if (kv.containsKey("hab")) { String[] h=kv.get("hab").split(","); for (int k=0;k<9;k++) d[8+k]=(byte)Integer.parseInt(h[k]); ch=true; }
+        if (ch) p.encode();
       }
       out.add(b);
       if (b instanceof PartialPlanetBlock && ((PartialPlanetBlock)b).planetNumber==planet && ((PartialPlanetBlock)b).owner>=0) {
@@ -78,6 +89,7 @@ public class ProdTool {
             case "factories": q.factories=Integer.parseInt(v); break;
             case "defenses": { int d=Integer.parseInt(v); q.defenses=d&0xff; q.unknownInstallationsByte=(byte)((q.unknownInstallationsByte&0xf0)|((d>>8)&0x0f)); break; }
             case "leftover": q.contributeOnlyLeftoverResourcesToResearch=v.equals("1"); break;
+            case "starbase": q.hasStarbase=v.equals("1"); break;
           }
         }
         q.encode();

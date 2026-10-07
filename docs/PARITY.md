@@ -379,6 +379,86 @@ shows population in units of 100 and does not show the carry; `excessPop`
 in the preserved files has not been extracted yet. The
 experiment assumes nothing besides growth changed population.
 
+### KX-001 Z — Alternate Reality with zero maximum population
+
+Status: MEASURED, matches the binary reading (Z1–Z3 plus a Host Mode
+repeat of Z1, 2026-10-07). Predictions were committed (`a874f82`) before
+any case ran; results follow them.
+
+Question (`KERNEL.md`, "Open experiments"): an Alternate Reality planet
+without the owner's starbase has maximum population 0, and the crowding
+rule divides by the maximum population. What does a year do?
+
+Reachability: when an AR race colonizes, the planet receives a starbase.
+The binary reading has two ways to lose it: a destroyed starbase also
+uninhabits an AR planet, but deleting the starbase's design clears the
+planet's starbase without touching its population. So the state is
+reachable in play.
+
+Method: edit PG001 2407 (both files): player 1's PRT to Alternate Reality,
+Endeavor's starbase removed (Z1, Z3) or kept (Z2), no other planet edits
+(population 486, `excessPop` 80, no production queue, 10 mines). Endeavor
+is a 100% planet for this race, and its starbase is a Space Station hull.
+
+Binary reading (`stars-decomp`): the hostile-planet branch is taken
+before the maximum population is consulted, so it is safe. On a planet
+with habitability ≥ 0 the crowding test computes
+`trunc(1000·P / max)` whenever `trunc(max/4) ≤ P`, which is always true
+for `max = 0`; the 32-bit division helper then executes an integer divide
+by zero. The same function is also used to show next year's growth on the
+planet screen. Resources: AR effective population is
+`min(2·max, max + trunc((P − max)/2))` = 0, so resources are raised from
+0 to the minimum 1.
+
+Candidate outcomes for Z1:
+
+| | Outcome |
+|---|---|
+| a (binary) | integer divide-by-zero fault: the year is not generated (no 2408 host file), with a Windows or Stars! error; possibly already when the player file is opened and the planet is drawn |
+| b | the fault is ignored or trapped and garbage `c` feeds the overcrowding branch: deaths of up to 6% a year, or an arbitrary change |
+| c | population unchanged or planet abandoned (some guard the reading missed) |
+
+Predictions:
+
+| Case | Edit | Predicted 2408 |
+|---|---|---|
+| Z1 | AR, starbase removed, hab 100 | outcome a: no new year |
+| Z2 | AR, starbase kept (control) | year generates; maximum 10,000 (Space Station), pop 486 → 535, carry 80 → 40; research 99 (AR resources with floating `E/R0`: `trunc(sqrt(48.6·2)·100·0.1 + 0.999)`; `KERNEL.md`'s `trunc(E/R0)` gives 98); mining with `trunc(sqrt(486)) = 22` mines: +6/+24/+18, each +0 or +1 (random) |
+| Z3 | AR, starbase removed, race gravity range 70–100 (hab −15) | year generates (hostile branch); pop 479, carry 51; deaths message; research 1; mining as Z2 |
+
+Z2 separates "the race edit broke the files" from a real zero-maximum
+effect in Z1, and settles the AR resource rounding. Z3 checks that only
+the habitable branch divides. Random: mining's +1 per mineral (Z2, Z3);
+the population results draw no random numbers.
+
+Observation:
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| Z1 | The player file opened normally (planet screen: "Resources/Year 1 of 1", mines 22, "no starbase"). After Turn → Generate, Windows showed "Application Error — integer divide by 0"; no 2408 files were written | outcome a |
+| Z1 repeat | The same starting files generated from the Host Mode dialog (no planet screen drawn): the same "integer divide by 0" error; the host file stayed at 2407 | outcome a |
+| Z2 | pop 535, carry 40; research 99; minerals +7/+25/+19 | match (both random +1s came up) |
+| Z3 | pop 479, carry 51; research 1; minerals +7/+25/+18; message "population died" (id 0x25, 486 → 479) | match |
+
+Result:
+
+- An Alternate Reality planet with population, habitability ≥ 0 and no
+  starbase stops turn generation with an integer divide-by-zero error.
+  The year cannot be generated while that state exists. LEGACY BUG: the
+  original defines no behavior an implementation could copy.
+- The same planet with a hostile environment (Z3) generates normally on
+  the hostile-planet death rule, so only the habitable branch divides.
+- AR resources use floating division of population by colonists per
+  resource (Z2: 99, not 98), and AR mines are `trunc(sqrt(population))`
+  (22 here; ten installed mines would have given +3/+11/+8).
+- Not tested: reaching the state in play (the reading's route is deleting
+  the starbase design), AR maximum population by hull (Z2 was uncrowded),
+  and a population of 10 or fewer (the division happens before the
+  "within 10 of maximum" test in the reading, so it should fault too).
+
+Evidence: `evidence/kx001/` in the private apparatus repository (raw files,
+screenshots of both error dialogs, decoded dumps).
+
 ### Sources
 
 - Stars! User Manual, Population / Growth Rate / Maximum Population /
@@ -595,6 +675,143 @@ prediction model and a SHA-256 manifest are in the private
 `bfaber-centaur/stars-oracle-apparatus` repository under `evidence/pq001/`.
 Tooling to repeat a case: `scripts/oracle/edit-turn` with
 `scripts/oracle/hst-edit` (docs/ORACLE.md, "Setting up a state").
+
+### KX-001 — Auto Alchemy before a multi-count item; race cost options
+
+Status: MEASURED, matches the binary reading (9 cases, one year each,
+2026-10-07). Predictions below were committed (`a874f82`) before any case
+ran; results follow them.
+
+Questions (`KERNEL.md`, "Open experiments"):
+
+1. With an Auto Alchemy prefix before a ×n item, does alchemy buy the
+   shortfall one unit at a time, for the whole remaining count, or only
+   for the first unit, and how are the item's partial and the alchemy
+   ordered when resources run short?
+2. Do the Mineral Alchemy LRT and race options that change installation
+   costs (factory and mine resource cost, "factories cost 1 kT less
+   germanium", Inner Strength defenses) change production as the binary
+   reading says?
+
+Method: as PQ-001 (edit PG001 2407 `.HST` and `.M1` with
+`scripts/oracle/hst-edit`, generate one year, decode). Common edits as
+PQ-001: mines 0, factories 0, defenses 10, research budget 0%, minerals
+500/500/500, `excessPop` 80. Race options are edited in player 1's race
+data (`prt=`, `lrt=`, `stat=` keys, added to `hst-edit` for this
+experiment). PG race costs, unless changed: factory 10 resources + 4 kT
+germanium, mine 5, defense 15 + 5/5/5, alchemy 100 resources per kT of
+each mineral.
+
+Model (binary reading, `stars-decomp`; the PQ-001 model with costs taken
+from the race):
+
+- Alchemy prefix before a ×n item works **one unit at a time**. For each
+  unit short of a mineral, the unit first takes its partial percentage
+  (spending to that percentage on every component, as for any partial),
+  then alchemy buys that unit's shortfall in the limiting mineral (one
+  "unit" of alchemy = 1 kT of each of the three minerals). If it can buy
+  the whole shortfall the unit completes and the next unit starts the same
+  way. If it cannot, it buys what it can, the unit keeps the percentage
+  it had **before** the alchemy, any resources left become a Mineral
+  Alchemy ×1 partial at the queue front, and the queue stops; the prefix
+  and the item (count reduced) stay. If every unit completes, the item and
+  the prefix are removed.
+- An auto item after the prefix (Auto Factories) skips the partial spend
+  and goes straight to alchemy.
+- Mineral Alchemy LRT: alchemy costs 25 resources per unit instead of 100
+  (both as a final Auto Alchemy and as a prefix).
+- Factory resource cost = race factory cost; germanium 3 kT instead of 4
+  with "factories cost 1 kT less germanium"; mine cost = race mine cost;
+  Inner Strength defenses cost `trunc(c·3/5)` of every component (9
+  resources + 3/3/3 kT).
+
+Competing outcomes for A1 (Factory ×5, no germanium, 900 resources), to
+show what each case separates:
+
+| Hypothesis | A1 factories | A1 minerals | A1 queue |
+|---|---|---|---|
+| per unit (model) | 2 | 108/108/0 | Mineral Alchemy ×1 @78%, Auto Alchemy, Factory ×3 @24%, Mine ×2 |
+| whole count first (buy 9 of the 20 kT short, nothing left to build) | 0 | 109/109/9 | Auto Alchemy, Factory ×5, Mine ×2; research 0 |
+| first unit only, then a plain mineral-short partial | 1 | 104/104/0 | Auto Alchemy, Factory ×4 @24%, Mine ×2; research 488 |
+
+Predictions (2408). Pop in units of 100; `R = pop/10` resources (no
+factories). "Research" is the player's resources-to-research field.
+
+| Case | Race | Start (differences from common) | Queue | Predicted |
+|---|---|---|---|---|
+| A1 | PG | pop 9000 (R 900), minerals 100/100/0 | Auto Alchemy, Factory ×5, Mine ×2 | factories 2; minerals 108/108/0; queue Mineral Alchemy ×1 @78%, Auto Alchemy ×1, Factory ×3 @24%, Mine ×2; research 0; alchemy message (8), factories message |
+| A2 | PG | pop 9000, minerals 100/100/6 | as A1 | factories 3; minerals 108/108/2; queue Mineral Alchemy ×1 @68%, Auto Alchemy ×1, Factory ×2 @24%, Mine ×2; research 0 |
+| A3 | PG | pop 9000, minerals 100/100/0 | Auto Alchemy, Auto Factories ×5, Mine ×2 | factories 2; minerals 108/108/0; queue Mineral Alchemy ×1 @80%, Auto Alchemy ×1, Auto Factories ×5, Mine ×2; research 0 |
+| A4 | PG | pop 8200 (R 820), minerals 100/100/0 | Auto Alchemy, Factory ×2, Mine ×2 | factories 2; minerals 108/108/0; queue Mine ×2 @19%; research 0 (prefix removed with the item; 0 resources left) |
+| M1 | Mineral Alchemy LRT | pop 2600 (R 260), minerals 100/100/100 | Auto Alchemy | minerals 110/110/110; queue Mineral Alchemy ×1 @43%, Auto Alchemy ×1; research 0 (without the LRT: 102/102/102, @60%) |
+| M2 | Mineral Alchemy LRT | pop 3000 (R 300), minerals 100/100/0 | Auto Alchemy, Factory ×5, Mine ×2 | factories 2; minerals 111/111/3; queue Mineral Alchemy ×1 @15%, Auto Alchemy ×1, Factory ×3 @24%, Mine ×2; research 0 |
+| M3 | factory cost 7, mine cost 3, factories −1 kT Ge | pop 310 (R 31) | Factory ×3, Mine ×4 | factories 3, mines 3; minerals 500/500/491; queue Mine ×1 @65%; research 0 (PG costs would give Ge 488, Mine ×4 @39%) |
+| M4 | Inner Strength | pop 400 (R 40) | Defenses ×5 | defenses 14; minerals 487/487/487; queue Defenses ×1 @54%; research 0 (PG costs: defenses 12, Defenses ×3 @72%) |
+
+A2 also checks that a unit already holding part of its germanium spends
+its partial first and buys only the rest (2 kT, not 4), and that the last
+unit keeps 24% although alchemy has just added 2 kT of germanium.
+Nothing in these cases draws random numbers (mining is off: no mines).
+
+Observation (2408, decoded from the oracle's `.HST` and `.M1`; every
+predicted quantity checked):
+
+| Case | Observed | vs prediction |
+|---|---|---|
+| A1 | factories 2; minerals 108/108/0; Mineral Alchemy ×1 @78%, Auto Alchemy ×1, Factory ×3 @24%, Mine ×2; research 0; alchemy message (8 units), factories message (2) | match |
+| A2 | factories 3; 108/108/2; Mineral Alchemy ×1 @68%, Auto Alchemy ×1, Factory ×2 @24%, Mine ×2; research 0 | match |
+| A3 | factories 2; 108/108/0; Mineral Alchemy ×1 @80%, Auto Alchemy ×1, Auto Factories ×5, Mine ×2; research 0 | match |
+| A4 | factories 2; 108/108/0; Mine ×2 @19%; research 0 | match |
+| M1 | 110/110/110; Mineral Alchemy ×1 @43%, Auto Alchemy ×1; research 0; alchemy message (10) | match |
+| M2 | factories 2; 111/111/3; Mineral Alchemy ×1 @15%, Auto Alchemy ×1, Factory ×3 @24%, Mine ×2; research 0; alchemy message (11) | match |
+| M3 | race-tamper message (id 0x117); the race's colonists-per-resource setting went from 1000 to 2400 during the turn; factories 1; Ge 495; Factory ×2 @84%, Mine ×4; research 0 | prediction void: the race was changed before production (below) |
+| M3b | factories 2; Ge 494; Mine ×4 @24%; research 0; no tamper message | match |
+| M4 | defenses 14; 487/487/487; Defenses ×1 @54%; research 0 | match |
+
+M3 used a race the game judged over budget: factory cost 7 and mine cost 3
+are cheaper than the PG race's 10 and 5 and nothing paid for them. The
+year's first step flagged it and degraded it (white-box reading:
+`stars-decomp` race sanitising, which raises colonists per resource until
+the race's advantage points reach a threshold, message 0x117). With
+2,400 colonists per resource, `R = trunc(310/24) = 12`, and the model
+then gives exactly what was observed: one factory at 7 resources + 3 kT
+germanium, then 84% of the second (`max(6·100/7 − 1, 5·100/7) = 84`,
+spending 5 resources and `trunc(3·84/100) = 2` kT). So M3 still confirms
+the factory cost 7 and the 3 kT germanium. M3b repeated the cost test
+with costs above the PG race's (factory 15, mine 8, plus the germanium
+option), predicted with the same model after M3 and before M3b ran (not
+committed separately): two factories at 15 + 3 kT, then the mine partial
+at 24% of 8 (`max(2·100/8 − 1, 1·100/8)`; cost 5 would give 39%).
+
+Result:
+
+- Auto Alchemy before a ×n item works one unit at a time, as read (A1–A4,
+  M2). Each mineral-short unit first takes its partial percentage, then
+  alchemy buys that unit's shortfall; A2's last unit kept 24% although the
+  alchemy had just added 2 kT of germanium. When alchemy runs out the queue
+  stops behind a Mineral Alchemy partial at the front and the prefix stays;
+  when every unit completes, item and prefix are removed (A4). An auto item
+  after the prefix goes straight to alchemy without a partial (A3: 80%
+  Mineral Alchemy, not 78%).
+- Mineral Alchemy LRT: 25 resources per alchemy unit, final and prefix
+  (M1, M2).
+- Factory and mine resource costs come from the race settings, the
+  "factories cost 1 kT less germanium" option makes a factory 3 kT (M3,
+  M3b), and Inner Strength defenses cost 9 resources + 3/3/3 kT (M4).
+- A race edited beyond its advantage-point budget is degraded by the game
+  before production that year (M3, MEASURED once; the threshold and the
+  points formula are not measured).
+- Nothing contradicted the white-box reading. Nothing here draws random
+  numbers.
+
+Not covered: terraforming costs (Total Terraforming, Claim Adjuster),
+packets, scanners, starbase and ship costs, the tamper check's points
+formula.
+
+Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
+`evidence/kx001/` (edited inputs, every resulting file, decoded dumps, the
+model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with the
+race keys of `scripts/oracle/hst-edit` (`ORACLE.md`).
 
 ## Fleet Movement
 
