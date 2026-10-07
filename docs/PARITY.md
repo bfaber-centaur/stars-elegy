@@ -1054,10 +1054,11 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 
 ## Combat
 
-Status: MEASURED (first corpus, CB-000 to CB-008, 2026-10-07; cloud
-oracle). Predictions from the private binary reading (stars-decomp,
-`docs/combat-predictions.md` P-1..P-29 at 8cad60f) were committed before
-every run (`experiments/cb00N/README.md`, commits `36f3aaa` to `da39149`).
+Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
+2026-10-07; cloud oracle). Predictions from the private binary reading
+(stars-decomp `docs/combat-predictions.md`: P-1..P-29 at 8cad60f for
+round 1, Q-1..Q-14 at 4a8c82b for round 2) were committed before every
+run (`experiments/cbNNN/README.md`).
 Rules marked CONFIRMED agree with both that reading and the oracle;
 CONTRADICTED means the oracle disagrees with the prediction as stated.
 This section states behavior only.
@@ -1077,9 +1078,12 @@ This section states behavior only.
   records) with `combatlab dump`, and every hit was replayed through the
   binary-derived damage model: 189 hit records matched, 0 mismatched,
   2 not checkable (hits on a starbase), over 32 battles in 9 runs.
-- Not reproducible: CB-001 run twice from the same file gave different
-  token movement (see `docs/ORACLE.md`). Hit counts of the torpedo salvos,
-  which the rule makes independent of random draws, were identical.
+- Round 1 was not reproducible: CB-001 run twice from the same file gave
+  different token movement. Hit counts of the torpedo salvos, which the
+  rule makes independent of random draws, were identical. Round 2 pins
+  the random stream (`tools/fleetlab/pinned-turn`, `docs/ORACLE.md`):
+  the same file and DOSBox cycle setting gave byte-identical battle
+  records in every repeat tried.
 - Raw files, dumps, check outputs and designer screenshots: private
   `stars-oracle-apparatus`, `evidence/cb/`.
 
@@ -1127,9 +1131,12 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   move; the remaining-move counter is visible in the move record (P-10).
   A stack on "disengage if challenged" switched to disengaging after it
   first took armor damage and kept firing (CB-003/004 D).
-- Tactics "maximize net damage" vs "maximize damage ratio" (P-11):
-  INCONCLUSIVE. The two runs' moves diverge from round 2, but identical
-  reruns also diverge (CB-001), so this does not separate them.
+- Tactics "maximize net damage" vs "maximize damage ratio" (P-11, Q-9):
+  CONTRADICTED. With the stream pinned, one Long Destroyer (Phaser
+  Bazooka, Colloidal Phaser) attacking an immobile Laser Station moved
+  identically until round 6, then stopped on (5,5) under tactic 3 and on
+  (5,6) under tactic 4 (both 3 squares from the station), with the same
+  hits, in both of two seeds (CB-019).
 
 ### Weapons and damage (CONFIRMED by replay)
 
@@ -1159,9 +1166,11 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   while a shielded stack was present, and hits on the shielded stack
   removed shields only (P-15).
 - Armor damage first destroys whole ships, already-damaged ships first
-  (each costing its remaining armor); the rest, plus the stack's existing
-  damage, is spread evenly over the survivors (rounded up), and the record
-  shows per-ship damage in 1/500ths of armor, rounded up (P-22, P-23).
+  (each costing its remaining armor). The rest is spread evenly over the
+  survivors: rounded down when no surviving ship was already damaged;
+  when some were, their existing damage is added first and the share is
+  rounded up. The record shows per-ship damage in 1/500ths of armor,
+  rounded up (P-22, P-23).
   Beams hit shields before armor; a torpedo hit splits half to shields,
   half to armor.
 - Regenerating Shields: at the start of each later round a stack whose
@@ -1176,8 +1185,9 @@ Per-design values: `experiments/cb000/predictions.tsv` and `results.tsv`.
   side whose plan attacks enemies is unarmed (CB-006).
 - A stack whose plan attacks nobody fires back once a battle has started
   (P-6).
-- **Lone starbases did not start battles — CONTRADICTS the binary
-  reading.** In all six tested cases an armed starbase whose owner had no
+- **Lone starbases did not start battles — CONTRADICTED the round-1
+  prediction; the binary reading now agrees (only fleets start battles,
+  see round 2).** In all six tested cases an armed starbase whose owner had no
   armed fleet there started no battle with an enemy fleet in orbit:
   - CB-002 C9: Laser station, plan 0 attack everyone; unarmed visitor
     attacking nobody.
@@ -1207,16 +1217,86 @@ B1, three kill events (3, 4 and 3 Small Freighters; 4 Ironium,
 per kill event, a third of the destroyed ships' mineral cost, then a
 quarter of that lost (integer at each step) (P-26).
 
-### Open reconciliation
+### Round 2 (CB-009 to CB-019)
+
+Pinned RNG, tech 26 unless stated. All hits replayed through the
+stars-decomp checker at 4a8c82b except where noted below.
+
+- **One kill per missile (Q-8, CONFIRMED).** 202 Jihads at 20% (40 hits
+  of 170 = 6800, enough armor for 272 Small Freighters) killed 202 per
+  salvo in four salvos, leaving survivors undamaged (CB-009 K1).
+- **Carried beam damage is rescaled (Q-7, CONFIRMED).** After a beam
+  destroys a stack, the next stack in the same action receives damage
+  from R' = min(R − 1, R·L/dp) passed again through deflector and range
+  dropoff (L leftover, dp the damage that was applied). A checker using
+  only this rule replayed all 59 hits of CB-010 (Colloidal Phaser frigates
+  vs Beam-Deflector frigates); carrying the raw leftover mismatched 8.
+- **Beam target order (Q-6, CONFIRMED in 4 cases × 2 seeds).** Among
+  stacks in range the attacker chose: a 5-ship stack over a 3-ship stack
+  of the same design; the more expensive design at equal armor (Fuel Tank
+  frigates); an already damaged stack over a fresh one; the lower token
+  index between identical stacks. In one of the two seeds or both, the
+  first three choices went to the stack with the higher token index, so
+  they are not the index rule.
+- **Torpedo misses against shields (Q-14, CONFIRMED).** A salvo that
+  misses a shielded target writes a miss record (flags 0xc4) before the
+  hit record; the misses do floor(misses × damage / 8) to shields in
+  total (Beta 12: 14 misses → 21).
+- **Starbases join, never start (Q-1, CONFIRMED).** With player 1 seeing
+  player 0 as neutral, player 1's armed fleet (attack enemies) at
+  player 0's Laser Station planet fought, and the station fired, when
+  player 0's plan 0 was "enemies". No battle when the station was
+  unarmed, when the visitor was unarmed, or when plan 0 was "nobody".
+- **Plan 0 "everyone" / "player 1" (Q-2, CONTRADICTED).** The same S1
+  battle happened, identical to the "enemies" case, with plan 0
+  "everyone" (three seeds) and "player 1" (one seed). The binary reading
+  predicted that usually no battle happens.
+- **Station targets ignore plan 0 (Q-3, CONFIRMED).** With plan 0
+  primary "starbase" and no secondary, the Laser Station fired at enemy
+  frigates (CB-016).
+- **An unarmed station is an armed-class target (Q-4, CONFIRMED).**
+  Frigates with primary "unarmed", no secondary, produced a battle record
+  with no hits against an unarmed station; with primary "armed" they
+  destroyed it.
+- **Starbase damage and loss (Q-5, CONFIRMED in part).** An unarmed Space
+  Station (400 shields) took 100-damage laser hits: shields first, then
+  90, 190, …, 490 per 500 of armor, destroyed at the next hit; a Bare
+  Orbital Fort died in one hit. Both planets had no starbase after the
+  turn. Queued ships were not tested.
+- **Starbase beam dropoff (MEASURED, against the checker).** A Laser
+  Station (8 Lasers per slot, 80 damage) hit frigates at distance 2 with
+  64 per slot: 80% dropoff, i.e. distance × 10 / 1, using the Laser's own
+  range, although the station's reach is range + 1. The stars-decomp
+  checker at 4a8c82b mismatched these hits and the hits on the unarmed
+  station (CB-011..013, CB-016); the values above are the record's.
+- **Salvage at a planet (Q-13, CONFIRMED, one case each).** Six Small
+  Freighters destroyed in one kill event left no salvage object; the
+  planet surface gained 6 Ironium, 8 Germanium with a starbase (⅓ of
+  cost × 8/10) and 4 Ironium, 5 Germanium without (× 5/10).
+- **Repair (Q-12, CONFIRMED, 10 locations × 2 turns).** Per turn, in
+  1/500 of armor per damaged ship: 10 stationary in deep space, 15
+  orbiting another player's or an unowned planet, 25 at an own planet
+  without starbase, 40 with an Orbital Fort, 100 with a Space Dock or
+  Space Station; a Fuel Transport in the fleet adds 25 and a Super-Fuel
+  Xport 50. The damaged-ship percentage stayed 100%.
+- **Tech from battle (Q-11, MEASURED).** Player 0 (weapons 3, research
+  0%, every other field 26) destroyed three frigates armed with Colloidal
+  Phasers. Without a battle weapons stayed 3; with it, weapons was 4 in
+  the 2401 file for 4 of 6 distinct random streams (2 streams gained
+  nothing), with every research accumulator 0. A random gain matches the
+  binary reading; the level rising in the same generation contradicts
+  its "the level stays until the next generation's research update".
+
+### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
-  C8); the binary-derived part table gives 23. Hit replay is unaffected in
-  this corpus. Unexplained.
+  C8), which is the game's part-table sum (Frigate 8 + Long Hump 6 9 +
+  Energy Dampener 2). An earlier figure of 23 came from a binary-analysis
+  tool that defaulted to 3 dampeners in the slot; it was not a game
+  discrepancy.
 
 ### Not tested
 
-Weight/attractiveness order between targets (P-9), damage carried to the
-next stack (P-16), P-21, P-25, battle tech gain (P-27; tech 26 suppresses
-it), repair after battle (P-28), more than one salvage point (E-8), E-10,
-misses against shielded targets, three or more players, minefields,
-bombing and invasion.
+Stack movement order by weight (P-9), queued ships lost with a starbase
+(P-25), the "moved" repair rate, starbase repair, salvage at more than one
+point (E-8), three or more players, minefields, bombing and invasion.

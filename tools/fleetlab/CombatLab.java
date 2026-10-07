@@ -16,6 +16,7 @@ import org.starsautohost.starsapi.items.Items;
 // SPEC is line based ('#' starts a comment). Players are numbered from 0.
 //   tech P FIELD LEVEL              set a tech level (energy weapons prop con elec bio)
 //   lrt P MASK                      set the lesser racial traits bit mask (StarsAPI order)
+//   research P PCT                  set the share of resources spent on research
 //   relation P Q REL                P's relation to Q: 0 neutral, 1 friend, 2 enemy
 //   design P N HULL, SLOT, ... = NAME
 //                                   ship design N of player P. HULL and SLOTs are
@@ -31,8 +32,14 @@ import org.starsautohost.starsapi.items.Items;
 //                                   who 0 nobody 1 enemies 2 neutral+enemies 3 everyone
 //                                   4+i player i)
 //   fleet P ID [planet N] at X Y ships D:C[,D:C...] [plan K] [fuel F] [cargo IR BO GE COL]
+//         [dmg D:UNITS:PCT[,...]]  (damage word per design: UNITS/500 of armor on PCT% of ships)
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
+//   planet N [owner P] [pop X] [starbase D|none]
+//                                   make planet N player P's (installations copied from
+//                                   P's homeworld, none built), set its population (in
+//                                   the file's units) and its starbase design (starbase
+//                                   bytes copied from P's homeworld starbase)
 // Every fleet in BASE is replaced by the SPEC fleets.
 public class CombatLab {
     static final String[] TECH = {"energy", "weapons", "prop", "con", "elec", "bio"};
@@ -96,6 +103,10 @@ public class CombatLab {
                     for (int i = 0; i < 6; i++) sb.append(' ').append(TECH[i]).append('=').append(p.fullDataBytes[0x12 + i]);
                     sb.append(String.format(" prt=%d lrt=%04x", p.fullDataBytes[0x44],
                         ((p.fullDataBytes[0x47] & 0xff) << 8) | (p.fullDataBytes[0x46] & 0xff)));
+                    sb.append(" accum=");
+                    for (int i = 0; i < 6; i++)
+                        sb.append(i == 0 ? "" : ",").append(Util.read32(p.fullDataBytes, 0x18 + 4 * i));
+                    sb.append(String.format(" researchPct=%d field=%d", p.fullDataBytes[0x30], p.fullDataBytes[0x31] & 15));
                 }
                 System.out.printf("%s player %d shipdesigns=%d sbdesigns=%d fleets=%d relations=%s%s%n", f,
                     p.playerNumber, p.shipDesignCount, p.starbaseDesignCount, p.fleets,
@@ -136,8 +147,10 @@ public class CombatLab {
             } else if (b instanceof PlanetBlock || b instanceof PartialPlanetBlock) {
                 PartialPlanetBlock p = (PartialPlanetBlock) b;
                 if (p.owner >= 0 || p.hasStarbase)
-                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d%n", f, p.planetNumber, p.owner,
-                        p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1);
+                    System.out.printf("%s planet %d owner=%d starbase=%s design=%d sbbytes=%s minerals=%d/%d/%d pop=%d%n", f,
+                        p.planetNumber, p.owner, p.hasStarbase, p.hasStarbase ? p.starbaseDesign : -1,
+                        p.starbaseBytes == null ? "-" : Util.bytesToString(p.starbaseBytes, 0, 4),
+                        p.ironium, p.boranium, p.germanium, p.population);
             } else if (b.typeId == BlockType.PLANETS) {
                 PlanetsBlock p = (PlanetsBlock) b;
                 int x = 1000;
@@ -208,6 +221,7 @@ public class CombatLab {
         int owner, id, x, y, fuel, plan, planet = -1;
         long[] cargo = new long[4];
         int[] ships = new int[16];
+        int[] dmg = new int[16];
     }
 
     static DesignBlock parseDesign(boolean starbase, int n, String spec) throws Exception {
@@ -265,11 +279,12 @@ public class CombatLab {
         Decryptor dec = new Decryptor();
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
-        Map<Integer, Integer> lrts = new HashMap<>();
+        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>();
         Map<Integer, TreeMap<Integer, DesignBlock>> shipDesigns = new TreeMap<>(), sbDesigns = new TreeMap<>();
         Map<Integer, BattlePlanBlock> plans = new HashMap<>();
         Map<Integer, Map<Integer, Integer>> relations = new HashMap<>();
         List<FleetSpec> fleets = new ArrayList<>();
+        Map<Integer, int[]> planetSpecs = new HashMap<>(); // N -> {owner, pop, starbase}; -2 = keep, -1 = none
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -280,6 +295,7 @@ public class CombatLab {
                 switch (t[0]) {
                     case "tech": tech.put(t[1] + " " + t[2], Integer.parseInt(t[3])); break;
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
+                    case "research": research.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     case "relation":
                         relations.computeIfAbsent(Integer.parseInt(t[1]), k -> new TreeMap<>())
                             .put(Integer.parseInt(t[2]), Integer.parseInt(t[3]));
@@ -308,6 +324,20 @@ public class CombatLab {
                         break;
                     }
                     case "fleet": fleets.add(parseFleet(t)); break;
+                    case "planet": {
+                        int[] ps = {-2, -2, -2};
+                        for (int i = 2; i + 1 < t.length; i += 2) {
+                            int v = t[i + 1].equals("none") ? -1 : Integer.parseInt(t[i + 1]);
+                            switch (t[i]) {
+                                case "owner": ps[0] = v; break;
+                                case "pop": ps[1] = v; break;
+                                case "starbase": ps[2] = v; break;
+                                default: throw new Exception("planet: unknown key " + t[i]);
+                            }
+                        }
+                        planetSpecs.put(Integer.parseInt(t[1]), ps);
+                        break;
+                    }
                     default: throw new Exception("unknown directive " + t[0]);
                 }
             } catch (Exception e) {
@@ -318,6 +348,7 @@ public class CombatLab {
         // Pass 1: classify existing blocks.
         List<PlayerBlock> players = new ArrayList<>();
         Map<Integer, byte[]> fleetTemplate = new HashMap<>();
+        Map<Integer, PartialPlanetBlock> homeworld = new HashMap<>();
         Map<Integer, List<DesignBlock>> oldShip = new TreeMap<>(), oldSb = new TreeMap<>();
         int shipSeen = 0, sbSeen = 0;
         for (Block b : blocks) {
@@ -333,6 +364,10 @@ public class CombatLab {
                     }
                     seen -= n;
                 }
+            }
+            if (b instanceof PartialPlanetBlock) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                if (pl.isHomeworld && pl.owner >= 0) homeworld.putIfAbsent(pl.owner, pl);
             }
             if (b instanceof PartialFleetBlock) {
                 PartialFleetBlock fl = (PartialFleetBlock) b;
@@ -383,6 +418,10 @@ public class CombatLab {
             fl.population = fs.cargo[3];
             fl.fuel = fs.fuel;
             fl.damagedShipTypes = 0;
+            for (int i = 0; i < 16; i++) {
+                fl.damagedShipInfo[i] = fs.dmg[i];
+                if (fs.dmg[i] != 0) fl.damagedShipTypes |= 1 << i;
+            }
             fl.battlePlan = fs.plan;
             fl.waypointCount = 1;
             fl.encode();
@@ -412,6 +451,7 @@ public class CombatLab {
                 p.fullDataBytes[0x46] = (byte) (lrts.get(k) & 0xff);
                 p.fullDataBytes[0x47] = (byte) (lrts.get(k) >> 8);
             }
+            if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
             p.shipDesignCount = ship.get(k).size();
             p.starbaseDesignCount = sbs.get(k).size();
             p.fleets = fleetCount.getOrDefault(k, 0);
@@ -445,6 +485,39 @@ public class CombatLab {
                 continue;
             }
             if (b instanceof PartialFleetBlock || b instanceof WaypointBlock) continue;
+            if (b instanceof PartialPlanetBlock && planetSpecs.containsKey(((PartialPlanetBlock) b).planetNumber)) {
+                PartialPlanetBlock pl = (PartialPlanetBlock) b;
+                int[] ps = planetSpecs.remove(pl.planetNumber);
+                int owner = ps[0] >= 0 ? ps[0] : pl.owner;
+                PartialPlanetBlock hw = homeworld.get(owner);
+                if (hw == null) throw new Exception("planet " + pl.planetNumber + ": no homeworld for player " + owner);
+                if (ps[0] >= 0 && pl.owner != owner) {
+                    pl.owner = owner;
+                    pl.isHomeworld = false;
+                    pl.hasEnvironmentInfo = hw.hasEnvironmentInfo;
+                    pl.bitWhichIsOffForRemoteMiningAndRobberBaron = hw.bitWhichIsOffForRemoteMiningAndRobberBaron;
+                    pl.hasSurfaceMinerals = true;
+                    pl.hasInstallations = true;
+                    pl.excessPop = 0; pl.mines = 0; pl.factories = 0; pl.defenses = 0;
+                    pl.unknownInstallationsByte = hw.unknownInstallationsByte;
+                    pl.hasScanner = false;
+                    pl.contributeOnlyLeftoverResourcesToResearch = false;
+                    if (pl.population == 0) pl.population = 100;
+                }
+                if (ps[1] >= 0) pl.population = ps[1];
+                pl.popEstimate = (int) Math.min(4095, pl.population * 100 / 400);
+                if (ps[2] == -1) pl.hasStarbase = false;
+                else if (ps[2] >= 0) {
+                    if (hw.starbaseBytes == null) throw new Exception("player " + owner + "'s homeworld has no starbase to copy");
+                    pl.hasStarbase = true;
+                    pl.starbaseBytes = Arrays.copyOf(hw.starbaseBytes, 4);
+                    pl.starbaseBytes[0] = (byte) ((pl.starbaseBytes[0] & 0xF0) | ps[2]);
+                    pl.starbaseDesign = ps[2];
+                }
+                pl.encode();
+                pl.setData(pl.getDecryptedData(), pl.size);
+                pl.decode();
+            }
             if (b instanceof BattlePlanBlock) {
                 BattlePlanBlock bp = (BattlePlanBlock) b;
                 bp.decode();
@@ -493,6 +566,13 @@ public class CombatLab {
                 case "planet": fs.planet = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "plan": fs.plan = Integer.parseInt(t[i + 1]); i += 2; break;
                 case "fuel": fs.fuel = Integer.parseInt(t[i + 1]); i += 2; break;
+                case "dmg":
+                    // dmg D:UNITS:PCT[,...]  damage word per design (UNITS/500 of armor, PCT% of ships)
+                    for (String p : t[i + 1].split(",")) {
+                        String[] du = p.split(":");
+                        fs.dmg[Integer.parseInt(du[0])] = Integer.parseInt(du[1]) << 7 | Integer.parseInt(du[2]);
+                    }
+                    i += 2; break;
                 case "cargo":
                     for (int k = 0; k < 4; k++) fs.cargo[k] = Long.parseLong(t[i + 1 + k]);
                     i += 5; break;
