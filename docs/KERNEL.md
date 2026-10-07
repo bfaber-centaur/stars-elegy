@@ -45,6 +45,9 @@ Each rule says what that scope was.
 One year, in order:
 
 1. Players' orders are applied, one player at a time in a random order.
+   How the host ingests and validates each player's order file before this
+   step (file acceptance, per-order validation, ownership, cross-owner
+   cargo, conflict resolution) is specified in `ORDERS.md`.
 2. Waypoint tasks that act before movement (unload, scrap, colonist drops,
    load).
 3. Mineral packets, wormholes and other space objects move; then fleets
