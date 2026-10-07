@@ -542,3 +542,91 @@ the corpus author's error: at 60/40/60 the race's habitability is below
 100%, so P = 87 grew to 96 (not 100), and the captures then landed 12
 (110 against 96, the ground combat rule) instead of 9. The checker shows
 these as MISS on `pop` only.
+
+
+# Round 3: TK-201 to TK-203
+
+Round 3 sweeps the rules `docs/TAKEOVER.md` still tagged BINARY-ONLY after
+rounds 1 and 2 (the rest were confirmed by round 2, the FO corpus and the
+MG runs; see the TAKEOVER.md tags). Specs and predictions are written by
+`gen3.py`, which reuses the round-2 spec writer; the predictions below were
+committed before any of these runs. They restate the private binary
+reading (stars-decomp `docs/takeover.md`, `docs/messages/`) as behavior.
+
+## Round 3 setup
+
+- Combat Lab (CB), two JOAT players, enemies, research 0%; player 0 tech
+  26. Player 1 tech 3, except TK-202 (energy 26, so Neutron Shield
+  defenses, `c = 38`) and TK-203 (tech 0 in every field).
+- Bombers fly plan 0 ("Enemies"); freighters and colony ships fly plan 1
+  ("Nobody"), so they never start a bombing pass.
+- Message order is read from the order of records in each player's `.M`
+  file (`tools/fleetlab/events.py`).
+- TK-201 runs two years at cycles 20000 and 30000 (the second year only for
+  the homeworld mark). TK-202 and TK-203 run one year at twelve cycle
+  settings that reached different streams before (ORACLE.md).
+
+## Round 3 predictions
+
+Working for TK-202. Twenty Neutron Shields counted: `s = 0.962^20 =
+0.4610`. One Lady Finger: `I = round(2·0.7305) = 1`, `A = round(6·s) = 3`,
+`M = round(3·s) = 1`, so 1000 → 997 with no population draw. Two Lady
+Fingers: `I = 3`, `A = 6`, `M = 3`, 1000 → 994. Undefended, two Lady
+Fingers: `I = 4`, `A = 12`, `M = 6`, 1000 → 988. With `I = 1` on mines 1,
+factories 20, defenses 20 (`T = 41`), factories and defenses each lose 1
+with chance 20/41, and the mines take the rest, `1 − f − d`. When both lose
+one, the rest is −1: the rule says the mines then lose nothing (they stay
+at 1, not 2).
+
+Scrap tech (TK-203). Each scrap at a starbase is one attempt for the planet
+owner: a 1/2 draw, then 13 Mystery Trader draws that give nothing, then up
+to 6 field draws until one names a field where the scrapped ships' parts
+needed more than the owner has. Long Hump 6 needs propulsion 3 and the
+Scout hull nothing, so only propulsion can come up.
+
+### TK201: order across planets, foreign and deep-space unloads, emptying own planets, colonize failures; second year for the homeworld mark
+
+Game CB, 2 year(s). Cycles 20000, 30000.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| A | drop order | fleet 0 Freighter unloads 100 colonists on player 1 planet 14 (P 10); fleet 1 Freighter unloads 100 on player 1 planet 3 (P 10); both in orbit, before movement | planet 14: owner 0, pop 103; planet 3: owner 0, pop 103; player 0 invasion messages: planet 14 before planet 3 (fleet order), not planet order |
+| B | bombing order | fleet 2 Cherry2 bomber at player 1 planet 13 (P 87); fleet 3 Cherry2 at player 1 planet 2 (P 87); no defenses or installations | planet 13: owner 1, pop 94; planet 2: owner 1, pop 94; player 0 bombing messages: planet 13 before planet 2; player 1's the same order |
+| C | minerals to a foreign planet | fleet 4 Freighter with 50 kT ironium unloads all on player 1 planet 9 (P 87, no starbase, surface 0) | planet 9: owner 1, surface 50/0/0; fleet 0/4: fe 0 |
+| D | minerals to a foreign planet | fleet 5 the same at player 1 planet 10 with an Orbital Fort | planet 10: owner 1, surface 50/0/0; fleet 0/5: fe 0 |
+| E | minerals to an unowned planet | fleet 6 the same at unowned planet 4 (surface 0) | planet 4: owner -1, surface 50/0/0; fleet 0/6: fe 0 |
+| F | deep space unload | fleet 7 Freighter at (1200,1230) with 50 kT ironium and 50 colonists: unload all ironium and all colonists | fleet 0/7: fe 0, col 50; 0x02d for the 50 ironium, then 0x165 (colonists refused); no salvage object |
+| G1 | loading every colonist | player 0 planet 11 (P 870, growing) and planet 12 (P 50); fleet 8 empty Freighter at planet 12 loads all colonists | fleet 0/8: col 50; planet 12: owner -1, pop 0; 0x02c (50 colonists), then at growth 0x040 for planet 12 (planet 11 before it grew) |
+| G2 | emptying the homeworld | player 0 homeworld 17 set to P 50 with no starbase; player 0 planet 16 (P 870, growing); fleet 9 empty Freighter at 17 loads all colonists | fleet 0/9: col 50; planet 17: owner -1, pop 0; planet 17 homeworld mark True, player record names 17; planet 17 homeworld mark True, player record names 17 (year 2) |
+| H1 | colonize failure | fleet 10 Colonizer with 25 colonists at (1100,1230), task colonize | fleet 0/10: col 25, task 0; 0x051 (not orbiting a planet), then 0x04e |
+| H2 | colonize failure | fleet 11 Colonizer with no colonists at unowned planet 22, task colonize | fleet 0/11: col 0, task 0; planet 22: owner -1; 0x053 (no colonists), then 0x04e |
+| I | homeworld mark (T-41) | fleet 12 Freighter unloads 100 colonists on player 1's homeworld 8 (P 10, no starbase); player 1 keeps other planets | planet 8: owner 0; planet 8 homeworld mark True, player record names 8 |
+
+### TK202: mines never go negative; bombing messages for several fleets; player 1 energy 26 (Neutron Shield)
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000, 17000, 11500, 9800, 6000, 5200, 3700.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| M0 | mines floor | one Lady1 bomber at player 1 planet 0: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 0: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| M2 | mines floor | one Lady1 bomber at player 1 planet 2: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 2: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| M3 | mines floor | one Lady1 bomber at player 1 planet 3: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 3: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| M9 | mines floor | one Lady1 bomber at player 1 planet 9: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 9: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| M13 | mines floor | one Lady1 bomber at player 1 planet 13: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 13: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| M14 | mines floor | one Lady1 bomber at player 1 planet 14: P 870, mines 1, factories 20, defenses 20 (Neutron Shield, 20 counted): I = 1, T = 41 | planet 14: owner 1, pop 997; factories 20 or 19 (19 w.p. 20/41), defenses the same, independently; mines 0 only when both stay at 20 (p 0.262), else 1; never 2 |
+| D20 | several fleets | two Lady1 fleets at player 1 planet 20, as M: I = 3, A = 6, M = 3 | planet 20: owner 1, pop 994; factories 19 or 18 (18 w.p. 19/41), defenses the same; mines 0 only when both are 19 (p 0.288), else 1; player 0 gets 0x16f and player 1 0x179 (several installations, defenses stopped a share) |
+| D22 | several fleets | two Lady1 fleets at player 1 planet 22, as M: I = 3, A = 6, M = 3 | planet 22: owner 1, pop 994; factories 19 or 18 (18 w.p. 19/41), defenses the same; mines 0 only when both are 19 (p 0.288), else 1; player 0 gets 0x16f and player 1 0x179 (several installations, defenses stopped a share) |
+| U21 | several fleets | two Lady1 fleets at player 1 planet 21: P 870, mines 1, no factories or defenses | planet 21: owner 1, pop 988, mines 0; 0x169 to player 0, 0x173 to player 1 (colonists and one installation) |
+| U23 | several fleets | two Lady1 fleets at player 1 planet 23: P 870, mines 10, no factories or defenses | planet 23: owner 1, pop 988, mines 6; 0x16a to player 0, 0x174 to player 1 (colonists and several installations) |
+
+### TK203: tech learned from scrapping at a starbase; player 1 tech 0 in every field
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000, 17000, 11500, 9800, 6000, 5200, 3700.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| S0 | scrap tech | player 0 Scout (Long Hump 6: propulsion 3) scraps at player 1 planet 0 with an Orbital Fort (P 87) | attempt 1: 1/2 to pass, then up to 6 field draws until propulsion comes up: gain w.p. 1/2 x (1 - (5/6)^6) = 0.333; a gain sends player 1 0x13d (field propulsion) instead of 0x141 |
+| S2 | scrap tech | player 0 Scout (Long Hump 6: propulsion 3) scraps at player 1 planet 2 with an Orbital Fort (P 87) | attempt 2, made only when S0 gained nothing (else no draws and 0x141): 1/2 to pass, then up to 6 field draws until propulsion comes up: gain w.p. 1/2 x (1 - (5/6)^6) = 0.333; a gain sends player 1 0x13d (field propulsion) instead of 0x141 |
+| S3 | scrap tech | the same at player 1 planet 3 with no starbase (control) | 0x140 to player 1, no tech attempt |
+| Y | scrap tech | player 1 tech at the end of the year | per stream: propulsion 0 or 1 (1 w.p. 0.555), never 2; every other field 0; the fleet owner (player 0) never gains |
+
