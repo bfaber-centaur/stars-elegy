@@ -360,7 +360,51 @@ def build():
     return s
 
 
+H500B = 6
+HEAD2 = HEAD.replace('# GT-001', '# GT-002') + \
+    'design 0 6 Super Freighter, 1 Long Hump 6, 2 Super Fuel Tank, 5 Tritanium, empty = Heavy 500b\n'
+
+
+def build2():
+    """GT-002, after GT-001-H2 missed: a design lost entirely (pct 100) is subtracted twice from the
+    fleet's design count, and the fleet is deleted when the count is exactly 0 (stars-decomp
+    fleet-gates-merge.md 2.5, reconciled). Count = designs - 2 x lost designs; written before GT-002."""
+    s = Spec()
+    s.cases = []
+    for cid, mix, deleted in (('H3', ((H500, 1), (DD, 1), (FR, 1)), False),
+                              ('H4', ((H500, 1), (H500B, 1), (DD, 1), (FR, 1)), True),
+                              ('H5', ((H500, 1), (H500B, 1), (DD, 1)), False),
+                              ('H6', ((H500, 1), (H500B, 1)), True),
+                              ('H7', ((H500, 1), (DD, 1)), True)):
+        A = s.planet(0, 1); B = s.planet(0, 7, near=XY[A], d=100)
+        f = s.gate(0, A, B, ','.join('%d:%d' % m for m in mix))
+        k, j = len(mix), sum(1 for d, n in mix if d in (H500, H500B))
+        names = ' + '.join(['500 kT'] * j + [D0[d][0] for d, n in mix if d not in (H500, H500B)])
+        if deleted:
+            why = 'every design lost' if j == k else 'count %d - 2 x %d = 0' % (k, j)
+            exp, chk = 'fleet gone (message 0xe7): %s' % why, dict(kind='gone', owner=0, id=f, msg=0xe7)
+        else:
+            keep = {d: n for d, n in mix if d not in (H500, H500B)}
+            exp = 'at planet %d with only the %s (count %d - 2 x %d = %d)' % (B, ', '.join(D0[d][0] for d in keep), k, j, k - 2 * j)
+            chk = dict(kind='fleet', owner=0, id=f, at=XY[B], designs=keep)
+        s.case(cid, 'O-61', '%s in one fleet, 100/250 gate %d to any/any %d (100 ly)' % (names, A, B), exp,
+               'deleted only when every design is lost' if not deleted or j < k else '', chk)
+    for c in s.cases:
+        c['id'] = c['id'].replace('GT-001', 'GT-002')
+    return s
+
+
 def main():
+    if sys.argv[1:2] == ['--two']:
+        s = build2()
+        if sys.argv[2:] == ['--list']:
+            for c in s.cases:
+                print('| %s | %s | %s | %s | %s |' % (c['id'], c['pred'], c['what'], c['expect'], c['alt']))
+            return
+        out = sys.argv[2]
+        open(os.path.join(out, 'gt002.spec'), 'w').write(HEAD2 + ''.join(s.planets) + '\n'.join(s.lines) + '\n')
+        json.dump(s.cases, open(os.path.join(out, 'cases2.json'), 'w'), indent=1)
+        return
     s = build()
     if sys.argv[1:] == ['--list']:
         print('| Case | Prediction | Setup | Predicted | Rules out |\n|---|---|---|---|---|')

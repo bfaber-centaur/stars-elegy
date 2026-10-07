@@ -58,3 +58,15 @@ python3 experiments/gt/check.py OUTDIR/cases.json OUT
 | GT-001-N4 | O-67 | 3 x Super Freighter (202 kT) through Stargate 100/any, 300 ly to any/any: danger 25% | at planet 149; each lost with 8%; survivors 125/100% |  |
 | GT-001-N5 | O-67 | 3 x Laser DD (41 kT) through Stargate any/800, 905 ly to any/any: danger 3% | at planet 257; each lost with 1%; survivors 15/100% |  |
 | GT-001-N6 | O-67 | 3 x Super Freighter (202 kT) through Stargate any/any, 901 ly to any/any: danger 0% | at planet 243, undamaged |  |
+
+## GT-002 (after GT-001-H2 missed; predictions written before GT-002)
+
+`python3 experiments/gt/gen.py --two OUTDIR` writes gt002.spec and cases2.json.
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| GT-002-H3 | O-61 | 500 kT + Laser DD + Small Freighter in one fleet, 100/250 gate 0 to any/any 8 (100 ly) | at planet 8 with only the Laser DD, Small Freighter (count 3 - 2 x 1 = 1) | deleted only when every design is lost |
+| GT-002-H4 | O-61 | 500 kT + 500 kT + Laser DD + Small Freighter in one fleet, 100/250 gate 193 to any/any 222 (100 ly) | fleet gone (message 0xe7): count 4 - 2 x 2 = 0 | deleted only when every design is lost |
+| GT-002-H5 | O-61 | 500 kT + 500 kT + Laser DD in one fleet, 100/250 gate 98 to any/any 91 (100 ly) | at planet 91 with only the Laser DD (count 3 - 2 x 2 = -1) | deleted only when every design is lost |
+| GT-002-H6 | O-61 | 500 kT + 500 kT in one fleet, 100/250 gate 3 to any/any 27 (100 ly) | fleet gone (message 0xe7): every design lost |  |
+| GT-002-H7 | O-61 | 500 kT + Laser DD in one fleet, 100/250 gate 196 to any/any 190 (100 ly) | fleet gone (message 0xe7): count 2 - 2 x 1 = 0 | deleted only when every design is lost |
