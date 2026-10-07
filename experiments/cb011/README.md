@@ -60,3 +60,17 @@ stars-decomp 4a8c82b:
   rounded down, at least one step more than before; if destroyed, planet
   19 has no starbase after the turn.
 - Every recorded hit replays through `combat.py check` (4a8c82b).
+
+## CB-016 and reruns (predictions committed before the runs)
+
+CB-015 T1 was inconclusive: player 0's frigates destroyed the visitors
+before they came within the station's range. CB-016 (`cb016.spec`)
+repeats Q-3 at planet 18 so that only the station can target ships:
+3 player-0 Laser Destroyers whose plan is primary starbase, no
+secondary, enemies (an aggressor that never fires at ships) and 5
+player-1 Laser Frigates attacking enemies. Prediction (Q-3): the Laser
+Station fires at player 1's frigates when they come within its range.
+
+CB-012 (plan 0 everyone) is also rerun with two other pinned seeds
+(`cycles=fixed 30000`, `fixed 40000`) because Q-2 depends on stale
+memory: prediction, usually no battle at S1.

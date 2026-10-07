@@ -68,6 +68,16 @@ specs = {
               + fleet(0, 0, 18, '0:5', 1) + fleet(1, 0, 18, '1:5', 1) +
               '# T2 planet 19, bare Orbital Fort: P1 frigates attack it\n'
               + fleet(1, 1, 19, '1:10', 1)),
+    # Q-3 retry: neither player-0 plan targets ships; only the station can fire at them
+    'cb016': (TECH + 'relation 0 1 2\nrelation 1 0 2\n' + DESIGNS.replace(
+                  'design 0 0 Frigate, 1 Long Hump 6, empty, 2 Laser, empty = Laser Frigate',
+                  'design 0 0 Destroyer, 1 Long Hump 6, 1 Laser, 1 Laser, empty, 2 Tritanium, empty, empty = Laser DD') +
+              PLANETS +
+              'plan 0 0 5 2 0 1 = Station Starbase Only\n'
+              'plan 0 2 5 2 0 1 = Starbase Only\n'
+              'plan 1 1 5 1 0 1 = Max Any\n'
+              '# U1 planet 18, Laser Station: 3 P0 Laser Destroyers (starbase only) start a battle with P1 frigates\n'
+              + fleet(0, 0, 18, '0:3', 2) + fleet(1, 0, 18, '1:5', 1)),
 }
 for k, v in specs.items():
     open(f'{k}.spec', 'w').write(v)
