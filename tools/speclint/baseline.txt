@@ -4,7 +4,6 @@ docs/COMBAT.md	uncited	CONFIRMED without a case ID: 3. **The procedure** (BINARY
 docs/COMBAT.md	uncited	CONFIRMED without a case ID: least one beam weapon or torpedo; bombs do not count). CONFIRMED:
 docs/COMPONENTS.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/COMPONENTS.md	uncited	CONFIRMED without a case ID: - **BET and exempt items** (BINARY-ONLY reading, CONFIRMED outcome). The
-docs/COVERAGE.md	missing-file	RACES.md does not exist
 docs/COVERAGE.md	pr-ref	cites PR #44: owns them: research and terraforming, random events (CONFIRMED in #44),
 docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
 docs/COVERAGE.md	pr-ref	cites PR #44: | Random events: meteors, climate change, new minerals, Trader arrival | `KERNEL.md` (#...
@@ -31,8 +30,9 @@ docs/KERNEL.md	uncited	CONFIRMED without a case ID: temperature, radiation) on t
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: this year **whether or not the condition is enabled** (CONFIRMED for
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: thousands; capital ships: C ≥ the threshold (CONFIRMED for capital
 docs/KERNEL.md	uncited	CONFIRMED without a case ID: year index is below 10 (CONFIRMED, S3: no change at index 5).
-docs/OBJECTS.md	untagged	section "Visibility" has no status tag
-docs/ORACLE.md	pr-ref	cites PR #44: (stars-elegy #44), so a sweep for random outcomes such as jump odds has
+docs/OBJECTS.md	missing-file	PRODUCTION-LAUNCH.md does not exist
+docs/OBJECTS.md	missing-section	docs/KERNEL.md has no section "Mystery Trader appearance"
+docs/OBJECTS.md	missing-section	docs/ORDERS.md has no section "Waypoint upkeep"
 docs/ORDERS.md	pr-ref	cites PR #21: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	pr-ref	cites PR #45: stars-elegy #45 / apparatus #21). The strip above removes only parts the
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
@@ -40,6 +40,8 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: CONFIRMED (measured 2026-10-
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: both fleets unchanged (CONFIRMED, FO — a target 195 ly away did nothing). The
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: ship-less fleet). CONFIRMED (FO: 32000+767 → 32767; 32000+768 and
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilutes the damage. CONFIRMED over seven cases
+docs/PARITY.md	missing-file	AI.md does not exist
+docs/PARITY.md	missing-file	AI.md does not exist
 docs/PARITY.md	missing-section	docs/KERNEL.md has no section "Remote mining"
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
@@ -58,14 +60,17 @@ docs/PARITY.md	pr-ref	cites PR #8: T-1..T-35, PR #8) were committed before every
 docs/SCANNING.md	uncited	CONFIRMED without a case ID: - **No scanner (CONFIRMED by every SC run that removed one).** A planet
 docs/SCANNING.md	uncited	CONFIRMED without a case ID: - Another known player is identified by name only (CONFIRMED, SC corpus).
 docs/TAKEOVER.md	pr-ref	cites PR #34: unowned with no minerals. stars-elegy #34 described a retry in the load
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Computer players (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Leftover advantage points (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Names (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Second planet: PP and IT (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starbases (CONFIRMED except where noted)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting ships (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: ### Starting tech (CONFIRMED)
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **AR** (CONFIRMED): no mines, factories or defenses and no planetary
-docs/UNIVERSE.md	uncited	CONFIRMED without a case ID: **Part upgrades** (CONFIRMED for the cases run): in every starting design,
-docs/UNIVERSE.md	uncited	MEASURED without a case ID: Research starts at 15% of resources for human players (MEASURED in every
-docs/UNIVERSE.md	untagged	section "Space objects at the start" has no status tag
+docs/ai/automitron.md	missing-file	AI.md does not exist
+docs/ai/automitron.md	missing-file	AI.md does not exist
+docs/ai/automitron.md	missing-file	AI.md does not exist
+docs/ai/automitron.md	missing-file	AI.md does not exist
+docs/ai/automitron.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
+docs/ai/turindrone.md	missing-file	AI.md does not exist
