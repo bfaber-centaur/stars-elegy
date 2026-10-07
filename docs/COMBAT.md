@@ -101,14 +101,23 @@ BINARY-ONLY otherwise). Validation of the fields is in `ORDERS.md`
 - A definition whose number is beyond the next free one (above the
   current count) is refused. The order is dropped and the plans are
   unchanged (BINARY-ONLY).
+- Deleting plan `k` moves every later plan down by one number. Every
+  fleet of that player whose plan number is `k` or higher has it lowered
+  by one. So a fleet on a later plan keeps the same plan, and a fleet on
+  the deleted plan moves to the plan just before it, `k − 1` (BP-1: with
+  plans 0..6 and fleets on 3, 5, 2 and 6, deleting plan 3 left six plans
+  and the fleets on 2, 4, 2 and 5, the later plans keeping their fields).
+  The client
+  asks for confirmation first when some fleet uses plan `k`. It never
+  offers to delete plan 0.
 
 **Order validation** (BINARY-ONLY unless marked; Elegy's choices for
 values only crafted orders can carry are marked "Elegy").
 
 - **Plan limit.** The host holds at most 16 plans, because the plan
   number in an order has room only for 0..15. The client stops at 15
-  (MEASURED, BP-L in the BP-1..BP-2 client runs). Elegy enforces the host's 16; the 15 is a client
-  limit.
+  (MEASURED, BP-L in the BP-1..BP-2 client runs). Elegy enforces the
+  host's 16; the 15 is a client limit.
 - **Fields the host checks.** The host refuses a tactic above 6 and a
   primary or secondary target above 8. So 6 and 8, one past the legal
   sets (tactics 0..5, target types 0..7), get through. Elegy refuses
@@ -130,15 +139,6 @@ values only crafted orders can carry are marked "Elegy").
   The host stores the name the order carries with no length or content
   check. Its plan record has room for 31 characters, so a longer crafted
   name overruns it. Elegy refuses a name longer than 31 characters.
-- Deleting plan `k` moves every later plan down by one number. Every
-  fleet of that player whose plan number is `k` or higher has it lowered
-  by one. So a fleet on a later plan keeps the same plan, and a fleet on
-  the deleted plan moves to the plan just before it, `k − 1` (BP-1: with
-  plans 0..6 and fleets on 3, 5, 2 and 6, deleting plan 3 left six plans
-  and the fleets on 2, 4, 2 and 5, the later plans keeping their fields).
-  The client
-  asks for confirmation first when some fleet uses plan `k`. It never
-  offers to delete plan 0.
 
 ## Where battles happen in the turn (CONFIRMED in part; see each rule)
 
