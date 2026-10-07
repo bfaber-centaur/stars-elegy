@@ -8,7 +8,7 @@ for an implementer working only from this public repository. It describes
 what a player is told, not how any file encodes it.
 
 `PARITY.md`, section "Scanning", holds the experiment records (SC-001 to
-SC-033). This file restates them as rules and adds rules that so far come
+SC-034). This file restates them as rules and adds rules that so far come
 only from white-box analysis of the original program (private
 `stars-decomp`, promoted here as behavior only). Part statistics (each
 scanner's normal and penetrating range, each part's cloak points) belong in
@@ -178,9 +178,11 @@ co-location rule above.
    each part's cloak points times the stack count (components table).
    Cloaking devices carry points, and so do some other parts. CONFIRMED by
    designer readouts (CS-003-D) for Enigma Pulsar (20), Alien Miner (60),
-   Mega Poly Shell (40) and Multi Contained Munition (20); BINARY-ONLY for
-   Depleted Neutronium, Chameleon Scanner, Shadow Shield, Langston Shell,
-   Orbital Adjuster and Multi Cargo Pod. Super Stealth (SS) players add 300
+   Mega Poly Shell (40) and Multi Contained Munition (20), and by detection
+   edges for Langston Shell (20 per shell, SC-034: one shell on a Small
+   Freighter is 10%, five on a Super Freighter 50%); BINARY-ONLY for
+   Depleted Neutronium, Chameleon Scanner, Shadow Shield, Orbital Adjuster
+   and Multi Cargo Pod. Super Stealth (SS) players add 300
    points to every design (CONFIRMED, SC-030: a plain SS freighter is 75%,
    seen at d² 5625 and not at 5626 by a 100 ly scanner).
 2. The fleet's points are mass-weighted:
@@ -479,7 +481,7 @@ picks the nearest visible enemy fleet it can attack within
    hit or a battle's size limit; and after a planet is lost.
 7. The Langston Shell built-in scanner; cloak points of the non-device
    parts not yet confirmed (Depleted Neutronium, Chameleon Scanner, Shadow
-   Shield, Langston Shell, Orbital Adjuster, Multi Cargo Pod); Improved
+   Shield, Orbital Adjuster, Multi Cargo Pod); Improved
    Starbases (ISB) starbase cloak bonus.
 8. Four or more tachyon detectors on one design.
 9. Design disclosure after SD mine hits and PP packet catches.
@@ -501,7 +503,7 @@ an Elegy view with an oracle view (MEASURED, SC-027, SC-031).
 
 ## Sources
 
-- Oracle: SC-001..SC-033 (`PARITY.md`, "Scanning", including "Round 4"; `experiments/sc/`;
+- Oracle: SC-001..SC-034 (`PARITY.md`, "Scanning", including "Round 4"; `experiments/sc/`;
   `ORACLE.md`, "Scanning experiments"). Raw evidence: private
   `stars-oracle-apparatus`, `evidence/sc/`.
 - White-box reading: private `stars-decomp` (scanning notes and the
