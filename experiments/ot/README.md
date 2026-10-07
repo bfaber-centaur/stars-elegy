@@ -26,3 +26,19 @@ OT-5 also checks two breeding rules:
 - Fleet C (full, orbiting player 1's planet 4) breeds 15. None fits, and none goes to the planet. There is no message.
 
 The race check (step 2a) and other BINARY-ONLY items need no run (`KERNEL.md`).
+
+## Round 2: OT-6 (KERNEL gaps K1 and K3)
+
+Committed after OT-1..5 ran and before OT-6 ran. Player 0 is Alternate
+Reality, player 1 is War Monger, and both are at tech 26. The run uses
+the same two cycles values.
+
+| Case | Setup | Predicted (binary reading) | Rules out |
+|---|---|---|---|
+| OT-6-1 | AR freighter, 22 kT colonists, moves 20 ly | 22 kT kept: the loss `⌊33·3/100⌋` is 0, and there is no message 0x0c1 | loss of at least 1, or a message for a zero loss |
+| OT-6-2 | 23 kT, moves 20 ly | 22 kT, message 0x0c1 for 1 kT | |
+| OT-6-3 | 100 kT, waypoint 1 on its own position at warp 5 | 97 kT with 0x0c1: no distance test before the loss | "not moving" when the destination is the fleet's own position |
+| OT-6-4 | 100 kT, no fuel, waypoint 1 50 ly away at warp 5 | 97 kT with 0x0c1, and the fleet does not move | loss only when the fleet actually covers distance |
+| OT-6-5 | 100 kT, chasing fleet 6 | 97 kT, lost once (pass 0, before the chase is deferred) | no loss for chasers, or a loss per pass |
+| OT-6-7 | 100 kT, waypoint 1 at warp 0 | 100 kT, no message | |
+| OT-6-P | Each player owns one "BMC" (7 Big Mutha Cannons: beam 1785, speed code 5 without War Monger) and one "DIS" (9 Disruptors: beam 1899, speed code 5) | Power: BMC `1785 + ⌊1785·1/10⌋` = 1963 (escort) for both players, because the speed code has no War Monger bonus; DIS 2088 (capital). Score records: player 1 has U/E/C = 1/1/1; player 0 has U/E/C = 8/1/1 | War Monger +2 in the score's speed code (player 1 BMC = 2320, capital: E/C 0/2); no speed term (DIS 1899, escort: E/C 2/0) |
