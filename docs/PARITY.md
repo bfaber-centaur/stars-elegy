@@ -3224,12 +3224,89 @@ chance 0.555), never 2 and never another field; the gaining scrap sent
 Player 1's leftover research reached energy 1 only in the runs without the
 gain (level costs rise with levels held).
 
+### Round 4 (TK-301 to TK-306)
+
+Status: MEASURED, 2026-10-07. The rest of `TAKEOVER.md`'s open list that
+legal host-file orders reach. Predictions in `experiments/tk/gen4.py` and
+`experiments/tk/README.md` "Round 4" were committed before the runs; raw
+files in private `stars-oracle-apparatus` `evidence/tk4/`. TK-303 and
+TK-304 ran on copies of the Combat Lab base with random events on (and,
+for TK-304, slower tech).
+
+**Laser Battery and Planetary Shield (CONFIRMED, TK-301, TK-302).** Player
+1 at energy 10 and 16. On planet 13 (1000 after growth, 100 defenses, 40
+counted) 20 Cherry left 811 and 852 and destroyed every defense; on planet
+2, 20 Smart left 858 and 874 with the defenses kept. 600 troops against 500
+with 20 defenses: strength 469 and 434, so the defender kept 31 and 66
+(grown to 35 and 75). All as predicted.
+
+**Load exactly (CONFIRMED, TK-301, TK-302).** 30 colonists from a 100
+planet (fleet 30, planet 70 then growth); 40 ironium asked with 25 there
+(fleet 25, surface 0); 300 asked with 500 there and a 210 kT hold (fleet
+210, surface 290).
+
+**Ancient artifacts (CONFIRMED, TK-303, TK-304, TK-306; amounts MEASURED,
+six cycle settings for colonies, three for owned planets).** A colony on an
+unowned artifact planet sent 0x05e to the new owner with a field 0–5 (all
+six seen) and 122–272 points with 2,500 colonists, 53–196 with 500; the
+artifact was gone. TK-304 with slower tech gave identical fields and points
+in every setting: no halving. TK-303's owned-planet cases (A1, A4, A5) were
+void: Combat Lab had set only the file flag, which the host ignores on a
+planet with an installations block, so every owned planet lost its
+artifact unseen. After the fix TK-306 held all 12 checks: a capture gave
+0x05e to the captor, a defender that beat off 10 troops got 0x05e itself
+(392 points, enough to raise construction 3 → 4 that year), and an
+untouched owned planet and an own-planet unload kept the artifact with no
+message. The TK-303 prediction for A4 (no 0x05e when the defender holds)
+contradicted the binary reading it cited; TK-306 C2 follows the reading
+and held.
+
+**Mystery Trader parts from scrapping (MEASURED, TK-305, 12 cycle
+settings).** A 12-design Hush-a-Boom fleet scrapped at each of player 1's
+three starbases (player 1 at tech 0). First starbase: the Hush-a-Boom
+(0x13c, player 1's part bit set) in 5 settings, a level in 5 (0x13d:
+electronics, propulsion, construction, biotechnology twice), nothing in 2;
+the other two starbases always sent 0x141. The electronics level also sent
+0x157 (new planetary scanner). Predicted: an attempt passes half the
+time, and a passing attempt gives the part with chance 0.215. Observed
+10 of 12 first attempts passed and 5 of 10 gains were the part, both above
+the model (TK-203 also gained more often than predicted: 7 of 12 first
+attempts against 0.33). Open.
+
+### Round 5: manual cargo transfers (TK-501, TK-502)
+
+Status: MEASURED, 2026-10-07, one run each (cycles 20000). The transfers
+were given in the original client through client automation
+(client-orders, added to `docs/ORACLE.md` by the combat oracle lane): one pinned year from a Combat Lab start
+made player 0's turn, the client gave the orders, and a second pinned year
+ran them. Predictions (`experiments/tk/gen5.py`, TK-401 to TK-412 in
+`experiments/tk/manual-transfers.md`) were committed before the runs; raw
+files, order files and screenshots are in private `stars-oracle-apparatus`
+`evidence/tk5/`.
+
+| Case | Transfer | Predicted | Observed |
+|---|---|---|---|
+| TK-401 | 30 colonists to an enemy planet of 100 | defender keeps 67 (77 after growth); 0x000 / 0x003 | as predicted |
+| TK-402 | 200 colonists to an enemy planet of 100 | captured with 109 (125); 0x00c / 0x007 | as predicted |
+| TK-403 | 200 by hand and 50 by an unload task, same planet | one fight of 250: 159 (182) | as predicted; 0x007 names 250 colonists |
+| TK-404 | 30 colonists to an unowned planet | lost, planet unowned, 0x002 | as predicted |
+| TK-405 | 100 ironium to an enemy planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+| TK-410 | 30 colonists to the enemy homeworld (starbase) | lost; 0x058 | as predicted |
+| TK-411 | 200 colonists to a friend's planet | captured as an enemy's | as predicted |
+| TK-412 | 100 ironium to a friend's planet | surface +100; 0x042 / 0x044 | surface +100, **no message** |
+
+The planets were resolved in the order of the client's order records
+(fleets 7, 6, 5, 2, 1), and the unload task's drop joined the manual drop
+at its planet. These agree with the XF-1 observation of the combat oracle
+lane (colonists lost with 0x058 at a foreign homeworld and 0x002 at an
+unowned planet; minerals added), which had no committed prediction.
+
 ### Not tested
 
-Ancient artifacts; colonists given to a foreign planet by a manual cargo
-transfer; the year's full draw order through the random stream; Laser
-Battery and Planetary Shield against bombs and troops; scrapping Mystery
-Trader parts at a starbase.
+Cargo given by hand to another player's fleet (0x042–0x04d); the year's
+full draw order through the random stream (owned by the KERNEL
+experiments); Alternate Reality `k = 0` in a contested drop (not reachable
+with legal orders).
 
 ## Universe objects
 

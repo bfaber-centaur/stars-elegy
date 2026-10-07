@@ -18,6 +18,9 @@ if [ ! -f "$out/FleetLab.class" ] || [ ! -f "$out/CombatLab.class" ] || [ ! -f "
   mkdir -p "$cache"
   [ -d "$src" ] || git clone -q https://github.com/stars-4x/starsapi.git "$src"
   git -C "$src" checkout -q "$rev"
+  # Accept the artifact bit (bit 6 of the seventh installations byte) that the host writes on owned planets.
+  sed -i 's/(installationsBytes\[6\] & 0x7E)/(installationsBytes[6] \& 0x3E)/' \
+    "$src/src/main/java/org/starsautohost/starsapi/block/PartialPlanetBlock.java"
   rm -rf "$out"; mkdir -p "$out/org/starsautohost/starsapi/items"
   javac -nowarn -encoding ISO-8859-1 -d "$out" \
     $(find "$src/src/main/java/org/starsautohost/starsapi" -name '*.java' -not -path '*/tools/*') \
