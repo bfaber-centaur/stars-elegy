@@ -58,8 +58,12 @@ One year, in order:
    population **after** growth (see Production); research uses this year's
    resources.
 5. Space objects move again; fleets refuel.
-6. Battles; then waypoint tasks that act after movement (unload, remote
-   mining, drops, load).
+6. Battles (`COMBAT.md`); then waypoint tasks that act after movement:
+   unload (including remote mining), colonist drops, a **second research
+   level-up check**, then load. The second check raises every field whose
+   accumulated research now covers its next level. Research gained from a
+   battle therefore becomes a level in the same year (CONFIRMED, CB-018,
+   CB-021); the step-4 level-ups have already run by then.
 7. Mine sweeping, ship repair, automatic and remote terraforming.
 8. The year advances; scores are computed; files are written.
 
