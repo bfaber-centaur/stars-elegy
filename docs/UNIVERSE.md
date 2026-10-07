@@ -275,9 +275,9 @@ design 0 is an empty Orbital Fort.
 | defenses | `+(L + 5)/10` |
 
 AR homeworlds get no mines, factories or defenses after the spend, so an
-AR race's mines, factories or defenses spend adds nothing (BINARY-ONLY: no
-UG race was AR with those spends; the built-in AR computer players spend
-on minerals). Its minerals and concentrations spends apply as usual.
+AR race's mines, factories or defenses spend adds nothing: no
+installations and surface minerals unchanged (CONFIRMED, RD-7: spends 2,
+3 and 4). Its minerals and concentrations spends apply as usual.
 
 A race's points, the replacement of illegal races and the Random race are
 in `RACES.md`. Every race in the UG corpus had at least 50.
@@ -422,4 +422,3 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
    likely).
 4. Seed-dependent planet counts beyond one seed per size and density,
    including tiny and small packed games that fall below `N`.
-5. An AR race file with a mines, factories or defenses spend.

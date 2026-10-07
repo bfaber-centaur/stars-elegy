@@ -259,10 +259,14 @@ Every year, before fleets move, each player's race is checked:
    **punished** if its points are negative, or if the scoring repairs
    something (by now only the habitat, or growth 0) that newly sets the
    tampered flag (RD-P1..P4, P8, P10). A race at exactly 0 is left alone
-   (RD-P9). Growth 0 reaching this check is BINARY-ONLY.
+   (RD-P9). Growth 0 reaching this check is punished: growth becomes 1,
+   the race is marked tampered and the player gets the penalty message
+   (CONFIRMED, RD-P11).
 3. **Penalty.** The player gets message "Your race definition has been
    tampered with…", and every other player a "Hacked race discovered…"
-   message (BINARY-ONLY: the RD base game had one player). The race is
+   message (CONFIRMED, RD-P12, a six-player game: all four other human players
+   got it; whether a computer player is told is not observable, since its
+   player file carries no messages). The race is
    marked tampered. Then:
    - colonists per resource rise by 100 at a time until the race has at
      least 500 points or reaches 2500;
@@ -355,11 +359,8 @@ stream, only these distributions and the 0..50 target.
 
 ## Open experiments
 
-1. Growth 0 in a running game (predicted: reset to 1 and punished).
-2. Penalty messages to other players (needs a multi-player base).
-3. A second year after a punished race (predicted: no change).
-4. Out-of-range axis values other than a centre (e.g. `hi > 100`) at
+1. A second year after a punished race (predicted: no change).
+2. Out-of-range axis values other than a centre (e.g. `hi > 100`) at
    creation and in a running game.
-5. An AR race with a mines, factories or defenses spend (`UNIVERSE.md`).
-6. The 251-step fallback of the Random race (needs a race that cannot
+3. The 251-step fallback of the Random race (needs a race that cannot
    reach 0..50).
