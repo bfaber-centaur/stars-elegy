@@ -1067,6 +1067,120 @@ Evidence: private `bfaber-centaur/stars-oracle-apparatus`,
 model and a SHA-256 manifest). Tooling: `scripts/oracle/edit-turn` with
 the `hst-edit` keys `field=` and `conc=` added for this corpus.
 
+### KX-003 — scores, victory conditions, slower tech, Claim Adjuster, Super Stealth
+
+Status: PREDICTED. Predictions committed before any case ran.
+
+Question: how does the original score a player and test the victory
+conditions, which a playable game needs and `KERNEL.md` does not describe;
+and do the remaining BINARY-ONLY research and terraforming rules (slower
+tech, Claim Adjuster, Super Stealth research stealing) hold?
+
+Method: Combat Lab two-player starts (game 82222, `experiments/kx003/*.spec`
+built with `tools/fleetlab/combatlab`), generated with
+`tools/fleetlab/pinned-turn`. Game options and victory conditions are set
+in the game record of `CB.XY` with the new `hst-edit xy` command; the
+edited `CB.XY` goes in the run's base directory. Both races: JOAT (except
+S3), centre 50 and range 15–85 on every axis, growth 15%, every research
+cost normal. Population is in units of 100 colonists. Scores are read from
+the score block (type 45) in each player's `.M` file, which `hst-edit
+dump` now prints as hex. Predictions come from a script implementing
+`KERNEL.md` growth and resources plus the score rule below (private
+evidence, `tools/`).
+
+#### Score rule under test (from the binary reading)
+
+Computed per player once a year, after production and growth:
+
+- **Planets:** each owned planet scores `min(6, ceil(colonists/100000))` (`ceil(pop/1000)` in units of 100).
+- **Starbases:** 3 for each owned starbase whose hull has dock capacity
+  (an Orbital Fort scores 0; a Space Station scores 3).
+- **Resources:** `trunc(R/30)`, R = the year's resources over all owned
+  planets.
+- **Tech:** per field at level L: L for L ≤ 3, `2L − 3` for 4–6,
+  `3(L − 3)` for 7–9, `4L − 18` for 10 and above.
+- **Ships:** every ship in the player's fleets is unarmed (power 0),
+  an escort (power below 2000) or a capital ship (2000 and above). With N
+  owned planets, U unarmed, E escorts and C capital ships:
+  `trunc(min(N, U)/2) + 2·min(N, E) + trunc(8·N·C/(N + C))` (last term 0
+  when C = 0).
+- **Power of a design:** beams `(range + 3)·damage·count/4` (÷3 for
+  sappers), multiplied by the capacitor factor (each capacitor multiplies
+  1000 by `(100 + pct)/100`; if not 1000, `beam·min(255, f/10)/100`), then
+  `beam + beam·(speed − 4)/10` with the COMBAT.md battle speed; torpedoes
+  and missiles `(range − 2)·damage·count/2`; bombs
+  `(kill% in tenths + installations killed)·count·2`. The sum.
+
+Victory conditions (game record bytes `0x14 + i`, bit 7 enabled, low
+7 bits v): 0 owns `(v + 4)·5`% of all planets, counted as
+`round(total·pct/100)`; 1/2 tech level `v + 8` in `v + 2` fields;
+3 score `(v + 1)·1000`; 4 lead `(v + 2)·10`% over second place;
+5 resources `(v + 1)·10` thousand; 6 capital ships `(v + 1)·10`;
+7 highest score after `(v + 3)·10` years; 8 the number needed; 9 minimum
+years `(v + 3)·10`. The yearly record holds a flag per condition met,
+whether or not the condition is enabled: 0x40 planets, 0x80 tech, 0x100
+score, 0x200 lead, 0x400 resources, 0x800 capital ships, 0x1000 highest
+score; low 5 bits the player, 0x20 always set. Rank is 1 + the number of
+strictly higher scores.
+
+#### Predictions
+
+S1 (`kx3s1.spec`; victory bytes `80 81 81 00 80 00 00 00 01 00`:
+planets 20% enabled, tech level 9 in 3 fields enabled, score 1000 off,
+lead 20% enabled, resources 10k off, capital ships 10 **off**, highest
+score off, 1 needed, 30 minimum years). Player 0: tech 26 everywhere,
+homeworld 250 with a Space Station, planets of 871 (Orbital Fort), 870
+(Space Station), 5300 and 7100, 7 unarmed scouts, 2 Omega4 (4 Omega
+torpedoes, power 1896, escort), 1 Mini Bomber with 2 Cherry bombs (140,
+escort), 10 Omega5 (5 torpedoes, 2370, capital). Player 1: tech 3, 4, 6,
+7, 9, 10; homeworld 250 with an Orbital Fort, planets of 999, 1 and 3000,
+5 X-Ray scouts (escort), 1 unarmed scout.
+
+| Player | Planets | Starbases | Resources | Tech | Ships | Score | Flags word | Rank |
+|---|---|---|---|---|---|---:|---|---:|
+| 0 | 1+2+1+6+6 = 16 | 2 → 6 | 1552 → 51 | 6·86 = 516 | 2 + 6 + 26 = 34 | **623** | `0x0ae0` (planets 5 ≥ 5, tech, lead, capital ships though disabled) | 1 |
+| 1 | 1+2+1+4 = 8 | 0 | 498 → 16 | 69 (level sum 39) | 0 + 8 = 8 | **101** | `0x0021` (4 planets < 5; 4 would pass with truncation) | 2 |
+
+Populations after growth: 287, 1001, 1000, 5739, 7412 and 287, 1148, 1,
+3450. No victory: the 30-year minimum is not reached. Player 1's 498
+research goes to energy (cost 600), no level.
+
+S2 (`kx3s2.spec`, slower tech: game record byte `0x10` = `0x82`; two
+years). Rule under test: the stored accumulation S is half-scale; each
+year `L = 2S + research`, a level costs twice the normal cost, and what
+is left is stored as `ceil(L/2)`. Both players at level 3 in every field,
+researching energy with all resources (no queue).
+
+| Player | Year | Research | Energy level | Stored | Normal-speed result |
+|---|---|---:|---:|---:|---|
+| 0 (planet 3510) | 2401 | 435 | 3 | 218 (`ceil(435/2)`) | level 4, 45 |
+| 0 | 2402 | 487 | 4 | 72 (`436 + 487 − 780 = 143`) | |
+| 1 (planet 9010) | 2401 | 953 | 4 | 87 (`953 − 780 = 173`) | level 5, 33 |
+| 1 | 2402 | 972 | 5 | 43 (`174 + 972 − 1060 = 86`) | |
+
+If S were not doubled, player 0 would stay at level 3 in 2402 (`218 + 487
+< 780`).
+
+S3 (`kx3s3.spec`, player 0 Claim Adjuster, player 1 Super Stealth, both
+tech 3; player 0 researches weapons, player 1 energy). JOAT → CA is known
+legal; JOAT → SS is checked for message 0x117.
+
+- Claim Adjuster (rule under test: after production each CA planet's
+  axes move in one step to the full reachable value, `orig ± t` toward the
+  centre, here t = 3 from the ±3 parts): planet 0 60/42/56 (original the
+  same) → **57/45/53**; planet 1 58/50/50 (original 60) → **57/50/50**;
+  no Terraform items built, no resources spent. The original value can
+  drift one click toward the centre at random (a 1-in-10 roll per planet
+  and year, then a population-weighted roll); if it does on an axis,
+  that axis ends one click further.
+- Super Stealth (rule under test: after all players research, an SS
+  player gains, per field, `trunc(trunc(spent/players)/2)` where spent
+  is every player's research in that field, its own included, when that
+  is more than 1; message 0x159): player 0 spends 403 on weapons (level 4,
+  13 left), player 1 spends 107 on energy. Player 1 ends with energy
+  **133** (107 + 26) and weapons **100**. Excluding its own research
+  would give energy 107.
+
 ## Fleet Movement
 
 Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
