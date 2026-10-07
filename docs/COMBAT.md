@@ -374,6 +374,12 @@ consistent with every replayed record):
      A player found out here keeps its tokens: they still fire in step 6
      and move next round. Nobody stays out: the check starts again from
      the players with live tokens every round.
+   - This only shows when a player found out still has a target that is
+     alive. While every attack set is symmetric (A names B exactly when
+     B names A), a player found out can only name players with no live
+     tokens, so it has nothing to fire at. Retaliation makes the sets
+     symmetric; only a player that joins through friends (step 8 of the
+     procedure) can name a player that does not name it back.
 6. Firing (below).
 
 ### Moves per round (CONFIRMED, CB-000..CB-008; P-7)
@@ -405,6 +411,15 @@ Inside a phase, tokens go in **descending jittered weight**:
 - Every move the token is given counts, including one where it stays on
   its square (BINARY-ONLY). The counter is lowered before the square is
   chosen, so the result of the move does not matter.
+  - A lone tactic-0 token almost never stays put. Its own square scores
+    `+2` for itself and `−1` for being current, a net `+1`, and the
+    squares farthest from any single enemy always form a run of at least
+    two along the board edge. So with one enemy position it keeps moving
+    along the edge (round 4: in 6 records every disengage move changed
+    square). A stay
+    needs the neighbouring squares to score at least 1 worse than its
+    own, which takes enemies in two different directions (three or more
+    players) or neighbouring squares crowded by its own player's tokens.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
   hits do not count). It keeps firing until it leaves.
@@ -532,6 +547,9 @@ initiative present:
     (BINARY-ONLY). It is checked again before each token acts, so kills
     earlier in the round count. Once only one player has live tokens,
     no further token fires in this round and the battle ends after it.
+    This changes nothing that can be observed: that player has no live
+    enemy to fire at, and the next round would end the battle before
+    anything is recorded.
   - Tokens of a player that round step 5 found out still act; they fire
     at whatever their own attack set allows.
 - A token fires each of its weapon slots whose weapon initiative equals
@@ -796,6 +814,13 @@ and one-mover battles replay square by square from these rules
 
 ## After the battle
 
+### Battle record (BINARY-ONLY)
+
+The battle record goes to every player in the battle's player list `P`
+(the players with tokens on the board) and to no one else. A player that
+was present only as an observer gets no record. MEASURED (round 4): an
+observer's `.M` file held no record of the battle.
+
 ### Salvage (CONFIRMED, CB-001 B1; CB-011..013 S6/S7, Q-13)
 
 Per kill event, per mineral: a third of the destroyed ships' design
@@ -812,6 +837,12 @@ cargo. The share is computed as follows (BINARY-ONLY):
   loses `F · Σ lost ships·fuel capacity / Σ ships before·fuel capacity`
   (truncated), with `F` the fleet's fuel (BINARY-ONLY). Fuel capacity is
   the design's: hull fuel plus fuel tanks and similar parts.
+  - `F` is the fuel the fleet holds when the battle is fought: after this
+    year's movement and refuelling, including what fuel transports and
+    fuel generators added that year (`KERNEL.md`, "Turn order", steps 3
+    to 6). CONFIRMED (CB-023): Fuel Transports raised a fleet from 600 to
+    1000 before its battle, and the share of 1000 matched the observed
+    207.
 - Each kill event takes its share from what the fleet holds at that
   moment, so a fleet hit several times loses a share each time.
 - Only minerals become salvage. The lost ships' share of fuel and
@@ -967,8 +998,9 @@ Not yet tested:
 - salvage at more than one point; dump cargo, at a planet and in deep
   space;
 - the fuel share lost with destroyed ships;
-- step 5 removing a player whose tokens can still fire, and a
-  disengaging token that stays on its square;
+- step 5 removing a player whose tokens can still fire (needs a player
+  that joins through friends; at least 5 players), and a disengaging
+  token that stays on its square (needs 3 or more players or crowding);
 - War Monger and cargo in the speed code.
 
 The dampener mass question (19 vs 23) is closed: 19 is the game's value
