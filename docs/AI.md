@@ -75,8 +75,8 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
   file keeps, it has no memory between years: the original writes a
   private computer-player memory block into the history file each year
   but never reads it back on this path, so every turn starts from an
-  empty one (BINARY-ONLY; consistent with 61 years of captured history
-  files, AI-10). Elegy keeps no private computer-player state across
+  empty one (CONFIRMED, AI-10: replacing or editing that block before a
+  year left the computer player's orders and memory output unchanged). Elegy keeps no private computer-player state across
   years.
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
@@ -118,7 +118,14 @@ as never used, and the armada parameters below are the personality's own.
     2442), so Macinti did not create slot 4 in 2445–2460 although it
     could build the design every year (Scanning lane's Macinti reading;
     the Macinti check matches AIX in 61 of 61 years only when this is
-    modelled). Details in docs/ai/macinti.md (planned).
+    modelled). MEASURED by an edit test (AI-13): with only Cybertron's
+    slot-3 creation year moved from 2442 to 2428, Macinti created slot 4
+    (a Cruiser) in 2449 in both random streams tried, while Cybertron's
+    own orders were unchanged. In AIX the leaked year decides Macinti's
+    slot-4 rule in 16 of 61 Macinti player-years (2445–2460). Because all
+    players share one random stream, the change then spread to other
+    computer players' orders in later years. Details in docs/ai/macinti.md
+    (planned).
   - Robotoid's slots 12 and 13 test the previous slot's age without a
     presence check (docs/ai/robotoid.md §2). Robotoid is often the first
     computer player in a run, as in AIX, where this never mattered.
