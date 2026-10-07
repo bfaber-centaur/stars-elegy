@@ -197,12 +197,104 @@ order wins. The replay order is drawn from the game's generator, so the
 outcome of a same-year conflict is not fixed; it depends on the draw.
 Tests of conflict resolution should pin the generator (`ORACLE.md`).
 
+## Fleet operations
+
+How much moves when a player loads or unloads cargo, merges or splits
+fleets, or transfers cargo between two of their own fleets, and when in the
+turn it happens. Amounts are integer. Unload and colonist-drop **amounts**
+onto planets are specified in `TAKEOVER.md`; this section covers the fleet
+side and the clamps, and does not duplicate them.
+
+### Cargo amounts and clamps
+
+BINARY-ONLY.
+
+A fleet holds four cargo kinds — three minerals and colonists — in one cargo
+hold, and fuel in a separate tank. Every load, unload or transfer clamps the
+amount moved:
+
+- **Taking from a hold** moves at most what the hold contains; a hold never
+  goes negative.
+- **Putting into a fleet** moves at most the destination's free space:
+  minerals and colonists against the free **cargo hold**, fuel against the
+  free **fuel tank**. The two capacities are independent — a full cargo hold
+  does not stop a fuel transfer, and vice versa.
+- A transfer is therefore the minimum of what the source has, what the order
+  asks, and the destination's free capacity; any shortfall simply stays at
+  the source.
+
+Colonists load subject to a fleet condition the host checks (not every hull
+can carry them); the exact condition is read but not yet pinned, so an
+implementation should treat "this fleet may carry colonists" as a property of
+the fleet rather than assume every fleet qualifies.
+
+### Transfer between the player's own fleets
+
+BINARY-ONLY.
+
+A direct cargo transfer between two of the submitting player's fleets at the
+same location applies at order time and is **owner-checked**: both fleets
+must belong to the submitter, or the order is rejected. (Giving cargo to
+another player's fleet is the deferred cross-owner path above, not this
+operation.) When it applies, the two fleets' cargo of each kind and their
+fuel are pooled and shared out **in proportion to each fleet's capacity**, so
+nothing is lost while the combined capacity holds; accumulated ship damage is
+likewise shared across the combined ships.
+
+### Merge
+
+BINARY-ONLY.
+
+Merging fleets requires every named fleet to belong to the submitter and to
+be at one location. The ships of the merged fleets **add together per design**
+(a per-design stack is capped at 32766 ships), their cargo and fuel are pooled
+and redistributed by capacity as above, and their damage is combined weighted
+by ship count. The fleets emptied by the merge are removed.
+
+### Split
+
+BINARY-ONLY.
+
+A split creates a new fleet from part of an existing one. The new fleet
+carries exactly the ships named in the order, and **inherits the source
+fleet's battle plan and its full waypoint list** (so the detached ships keep
+following the same orders until changed). The source's cargo and fuel are
+then divided between the two fleets in proportion to capacity. "Split all"
+is the same operation taken to the limit: one new single-ship fleet per ship.
+
+### Turn placement
+
+BINARY-ONLY.
+
+All of the above — loads and unloads ordered directly, transfers, merges and
+splits — apply while each player's orders are replayed, before any movement
+(`KERNEL.md`, turn order step 1). The load and unload **tasks attached to
+waypoints** are distinct: they run at the pre-movement and post-movement
+waypoint phases (`KERNEL.md`, steps 2 and 6), and their planet-side amounts
+are in `TAKEOVER.md`. Cross-owner cargo given at order time is deferred to
+those later phases as described under Cross-owner cargo.
+
 ## Open experiments
 
 These rules are read from the original program and not yet measured in the
 original game. Each is a numbered prediction with the discriminating
 observation that would confirm it; the proposed oracle corpus prefix is
 **OX** (orders).
+
+- **OX load-clamp.** Load more of a mineral than a near-full fleet's free
+  hold; confirm it gains only its remaining capacity, with the rest left at
+  the source, and that a fuel transfer into the same fleet is unaffected by
+  the full cargo hold. Confirms "Cargo amounts and clamps".
+- **OX merge.** Merge two partly loaded co-located fleets; confirm ship
+  counts sum per design and cargo and fuel are pooled with nothing lost while
+  capacity holds. Confirms "Merge".
+- **OX split.** Split some ships off a loaded fleet; confirm the new fleet
+  has exactly the ordered ships, a capacity-proportional share of the cargo,
+  and the source's battle plan and waypoints. Confirms "Split".
+- **OX transfer-owner.** Attempt a direct fleet-to-fleet transfer between two
+  players' co-located fleets; confirm it does not apply in place but takes
+  the deferred cross-owner path. Confirms "Transfer between the player's own
+  fleets".
 
 - **OX file-acceptance.** Build order files one year below and one year above
   the host year, and with a mismatched game stamp; confirm the orders are
