@@ -78,7 +78,7 @@ def limit_b(ctl=False):
     return s
 
 
-def starbases():
+def starbases(ctl=False):
     # SL-11 and SL-12. Player 0 JOAT + Improved Starbases; player 1 AR + Improved Starbases.
     s = TECH + 'relation 0 1 2\nrelation 1 0 2\nlrt 0 0x0008\nlrt 1 0x0008\nprt 1 8\n'
     s += f'design 0 0 {SCOUT}\ndesign 0 1 {MINER}\ndesign 1 0 {SCOUT}\ndesign 1 1 {MINER}\n'
@@ -86,19 +86,24 @@ def starbases():
           f'sbdesign 0 2 {STATION} = Station B\nsbdesign 0 3 Orbital Fort = Fort\n')
     s += f'sbdesign 1 0 {STATION} = Station\nsbdesign 1 1 Death Star = Death Star\nsbdesign 1 2 Ultra Station = Ultra\n'
     s += owned(17, 0, 0) + 'queue 17 17:1:2,0:2:2\n'                      # Station -> Dock
-    s += owned(15, 0, 1) + 'queue 15 16:1:2,0:2:2\n'                      # Dock -> Station
+    if ctl:  # Dock -> Station rerun with three times the resources (the first run reached 88%)
+        s += owned(15, 0, 1, pop=3000).replace('factories=100', 'factories=300') + 'queue 15 16:1:2,0:2:2\n'
+    else:
+        s += owned(15, 0, 1) + 'queue 15 16:1:2,0:2:2\n'                  # Dock -> Station
     s += owned(11, 0, 0) + 'queue 11 18:1:2,0:2:2\n'                      # Station -> Station B
-    s += owned(12, 0, 0, extra=' sbdmg=200') + 'queue 12 18:1:2,0:2:2\n'  # damaged Station -> Station B
+    s += owned(12, 0, 0, extra=' sbdmg=200') + ('' if ctl else 'queue 12 18:1:2,0:2:2\n')  # damaged Station -> Station B
     s += owned(19, 0, 3) + 'queue 19 0:1:2\n'                             # Fort builds a Scout
     s += owned(18, 0, 1) + 'queue 18 1:1:2\n'                             # Dock builds a 574 kT Mini-Miner (SL-11b)
     s += owned(8, 1, 1) + 'queue 8 18:1:2,0:2:2\n'                        # Death Star -> Ultra Station
-    s += owned(4, 1, 0, extra=' mines=0') + 'queue 4 1:1:2\n'             # AR Mini-Miner (SL-11a)
+    s += owned(4, 1, 0, extra=' mines=0') + ('' if ctl else 'queue 4 1:1:2\n')  # AR Mini-Miner (SL-11a)
     s += 'fleet 0 0 at 1020 1230 ships 0:1 fuel 50\nfleet 1 0 at 1300 1230 ships 0:1 fuel 50\n'
     return s
 
 
 SPECS = {'sl-routes': routes(), 'sl-limit-a': limit_a(), 'sl-limit-a-ctl': limit_a(True),
-         'sl-limit-b': limit_b(), 'sl-limit-b-ctl': limit_b(True), 'sl-starbases': starbases()}
+         'sl-limit-b': limit_b(), 'sl-limit-b-ctl': limit_b(True), 'sl-starbases': starbases(),
+         # controls: no build at planets 4 and 12 (mining and repair baselines), richer planet 15
+         'sl-starbases-ctl': starbases(True)}
 
 if __name__ == '__main__':
     for name, spec in SPECS.items():
