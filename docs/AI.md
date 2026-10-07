@@ -4,16 +4,16 @@ This file specifies how the original J-RC3 computer players decide their
 orders, at the level of behavior: given the game state a computer player
 can see, which orders it writes. It covers what all six personalities
 share. Each personality's own turn (fleets, ship designs, colonizing,
-war) gets its own file under `docs/ai/`:
+war) gets its own file under docs/ai/:
 
 | Type (definition file) | Personality | PRT | File |
 |---|---|---|---|
-| 1 | Robotoid | HE | `docs/ai/robotoid.md` (planned) |
-| 2 | Turindrone | SS | `docs/ai/turindrone.md` (planned) |
-| 3 | Automitron | IS | `docs/ai/automitron.md` (planned) |
-| 4 | Rototill | CA | `docs/ai/rototill.md` (planned) |
-| 5 | Cybertron | PP | `docs/ai/cybertron.md` (planned) |
-| 6 | Macinti | AR | `docs/ai/macinti.md` (planned) |
+| 1 | Robotoid | HE | docs/ai/robotoid.md (planned) |
+| 2 | Turindrone | SS | docs/ai/turindrone.md (planned) |
+| 3 | Automitron | IS | docs/ai/automitron.md (planned) |
+| 4 | Rototill | CA | docs/ai/rototill.md (planned) |
+| 5 | Cybertron | PP | docs/ai/cybertron.md (planned) |
+| 6 | Macinti | AR | docs/ai/macinti.md (planned) |
 
 Elegy reproduces these personalities (project decision). Related specs:
 game creation and the starting setup of computer players are in
@@ -45,7 +45,7 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 
 - Before the host generates a year, it runs each computer player in
   player order. A computer player acts only through ordinary orders: the
-  same order records a human's client writes (MEASURED: design changes,
+  same order records a human's client writes (seen in the AI-1 capture: design changes,
   production queues, research, waypoint add/change, cargo, split/merge,
   planet packet/route settings). The host then ingests them like any
   player's orders (`ORDERS.md`).
@@ -58,7 +58,7 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - It plans from that player's file as the previous generation wrote it.
   A change made to the host's state between generations (for example a
   tech level edited in the host file) shows in its orders only one year
-  later, once the player file carries it (MEASURED, `ORACLE.md`).
+  later, once the player file carries it (seen in the computer-player oracle runs).
 - A computer player whose "dormant" flag is set writes an empty order set
   (the flag's meaning is not yet settled).
 - **Random numbers.** Computer players draw from the host's single
@@ -77,7 +77,7 @@ shuffled order, made once per turn: start from its planets in planet-id
 order, then for `i = 0 .. n−2`: `j = i + Random(n − i)`, swap `i` and `j`.
 In a tutorial game there is no shuffle.
 
-## 3. Built-in races (CONFIRMED for 23 of 24; SS harder BINARY-ONLY)
+## 3. Built-in races (CONFIRMED, AI-0, for 23 of 24; SS harder BINARY-ONLY)
 
 A definition-file line `# TYPE LEVEL` makes a computer player: TYPE 1–6
 as in the table above, LEVEL 1–4 = easy, standard, harder, expert; 0 for
@@ -174,7 +174,7 @@ the research order is written only if the field changes.
 
 Robotoid, Turindrone, Automitron, Rototill and Cybertron maintain their
 starbase designs every year, before their own work. Macinti has its own
-starbase rules (`docs/ai/macinti.md`).
+starbase rules (docs/ai/macinti.md).
 
 **Slots and families.** Starbase design slots 0–9 form two families of
 Space Stations, A = (0, 2, 4) and B = (5, 7, 9), and two of Orbital
@@ -298,7 +298,7 @@ After its own work, every computer player runs these steps, in order.
 
 1. Keep fleets moving (fleet rules: personality files).
 2. **Starbases for hubs** (not Macinti; in a tutorial game only before
-   year index 31). Cybertron uses its own rule (`docs/ai/cybertron.md`).
+   year index 31). Cybertron uses its own rule (docs/ai/cybertron.md).
    The others: every own planet with no starbase, population ≥ 8,000, not
    marked by the personality's own pass, that is a hub (§6), gets the
    current starbase design (slot 0, or 5 when slot 5 is newer) ×1 appended
@@ -416,7 +416,7 @@ scraps at least one starting fleet at its homeworld.
   before 200, 100 after) orbiting an own planet is scrapped when that
   planet has a starbase, else with chance 1/5 per year.
 - **Macinti (MEASURED, AI-5)** scraps its early fleets and repeatedly
-  builds and scraps its first colonizer; `docs/ai/macinti.md`.
+  builds and scraps its first colonizer; docs/ai/macinti.md.
 - The other personalities' scrap rules: their files.
 
 ## 9. Internal-only effects (BINARY-ONLY)
@@ -521,7 +521,7 @@ formula, to be published with the personality stage that needs it).
   slots 2–5 + 2 × ships in slots 6–7`. It is "too weak" when `strength <
   P` (the personality's armada potency). Turindrone calls the same rule
   for its bomber check, where slots 2–7 are not its warships (see
-  `docs/ai/turindrone.md`): LEGACY BUG, reproduced as written.
+  docs/ai/turindrone.md): LEGACY BUG, reproduced as written.
 
 **Nearest colonizable planet.** Candidates are unowned planets that no
 other own fleet is already heading to (its waypoint 1 is that planet:
