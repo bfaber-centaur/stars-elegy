@@ -891,7 +891,7 @@ What the client did, at 1152x864:
   lay 80 mines per year."). The host laid an 80-mine field at the
   fleet's deep-space position that year, with message 0x0c3.
 
-- **Fleet orders** (FO-1, 2026-10-07). The fleet view has more panels:
+- **Fleet orders** (FC-1, 2026-10-07; FO-01..07 hold host-side fleet operations). The fleet view has more panels:
   - The fleet name panel has Rename (144, 156). It opens "Rename Fleet" with the name selected; type and Return.
   - Fleet Composition lists the designs. It has Split (232, 364), Split All (296, 364) and Merge (358, 364). Split is disabled for a one-ship fleet.
   - "Other Fleets Here" has a combo (297, 412) listing the other fleets at the same place by fleet number. Its rows are about 17 px apart from y 431. Below it are Goto (232, 473), which selects that fleet, Merge (295, 473) and Cargo (358, 473).

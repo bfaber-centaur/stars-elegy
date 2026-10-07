@@ -1,58 +1,208 @@
-# FO: fleet orders given through the original client
+# FO: fleet operations corpus (FO-01 to FO-05)
 
-These are fleet orders written by the original client (`tools/fleetlab/client-orders`), followed by one pinned host year (`tools/fleetlab/pinned-turn`, cycles 20000). This is a tooling check: each order is given in the client, and the host's result is read back. Raw files are in the private apparatus, `evidence/fo/`. Those are the client's order files, screenshots and game files.
+Oracle round on the "Fleet operations" rules of `docs/ORDERS.md`
+(stars-elegy #40, all BINARY-ONLY; private derivation and predictions
+OR-14..19 in stars-decomp #12). Only what waypoint tasks written into the
+host file can set up is tested here; nothing uses a crafted order (.X) file.
 
 ## Setup
 
-`fo1.spec` on the Combat Lab base. Player 0 has two designs, Hauler (Medium Freighter) and Looker (Scout). Fleet 0 is one Hauler at its homeworld (planet 17). Fleets 1 to 4 sit at the deep-space point (1100, 1230), so no fleet refuels there:
+- Combat Lab (CB, game id 82222, two JOAT players), one pinned generation
+  per run (`tools/fleetlab/pinned-turn`, cycles 20000). Player 0 tech 26,
+  research 0% for both. Specs and predictions: `gen.py`; checker:
+  `check.py`.
+- Freighter = Medium Freighter + Long Hump 6 (cargo 210 kT, fuel 450 mg),
+  player 0 design 11. Colonizer = Colony Ship + Long Hump 6 + Colonization
+  Module (cargo 25, fuel 200), design 12. Player 1's freighter is its CB
+  design 3 (Medium Freighter, Long Hump 6, Rhino Scanner, Crobmnium).
+- Fleets in deep space sit at spots more than 30 ly from every planet.
+  Own planets have no starbase, no mines and no factories, so their surface
+  minerals change only by the case.
+- New CombatLab spec syntax: `target fleet OWNER ID` makes waypoint 0
+  target a fleet (id `number | owner << 9`, type 0x12); `to X Y fleet OWNER
+  ID warp W` adds a fleet-targeted waypoint; tasks `merge` (4) and
+  `transfer K` (9, recipient as the K-th other player).
+- A tooling smoke run before the predictions showed the encodings work: a
+  merge into a fleet-targeted waypoint 0, a fleet-to-fleet "load all" of
+  Ir and fuel, and a transfer to player 1 (which received a fleet of a
+  copied design in a free slot) all applied.
 
-| Fleet | Ships | Fuel | Cargo |
+## Not tested here (waiting on the serial decision)
+
+These need an order file the registered host accepts:
+
+- split and split-all (ORDERS "Split"; OR-18);
+- the direct "transfer to fleet" order between own fleets, its owner check
+  and the capacity-proportional sharing (ORDERS "Transfer between the
+  player's own fleets"; OR-19);
+- direct merges (order 0x25) and their co-location check;
+- order-time placement of direct loads, unloads and transfers (ORDERS
+  "Turn placement", replay step).
+
+Also not tested: steal mode (a robber-baron scanner loading from another
+player's fleet), the "fleet may carry colonists" condition on a fleet
+that fails it, and transfers to an AI player.
+
+## Predictions (written before the runs)
+
+Sources: "ORDERS" is the public rule in #40; "decomp §..." is the
+stars-decomp reading (orders-misc §3, fleet-gates-merge §3-4) where ORDERS
+says nothing about the detail. Cargo in kT, colonists in kT (100s),
+populations in 100s; growth 15% (`grow`).
+
+### FO01: transport loads from an own planet: clamps, kinds in order, actions 3/5/6/8/9, fuel
+
+| Case | Source | Setup | Predicted |
 |---|---|---|---|
-| 1 | 3 Hauler, 2 Looker | 300 | none |
-| 2 | 2 Hauler | 400 | 40/30/20 |
-| 3 | 1 Hauler | 100 | none |
-| 4 | 1 Looker | 20 | none |
+| A | ORDERS clamp | own planet 0 surface 500/500/500; empty Freighter in orbit loads all Ir: capped by the free hold | fleet 0/0: fe 210, bo 0, ge 0; planet 0: surface 290/500/500 |
+| B | decomp §3.1 order | planet 1 surface 150/150/0; load all Ir and all Bo: Ir first (150), Bo gets the rest (60) | fleet 0/1: fe 150, bo 60; planet 1: surface 0/90/0 |
+| C | ORDERS clamp | planet 2 surface 0/0/500; Freighter holding 50 Ir loads exactly 300 Ge: gets 160 | fleet 0/2: fe 50, ge 160; planet 2: surface 0/0/340 |
+| D | ORDERS colonists | planet 3 P=87; Freighter loads exactly 30 colonists before growth: fleet 30, planet grows from 57 | fleet 0/3: col 30; planet 3: pop 65 |
+| E | decomp §3.1 fuel | planet 4 (no starbase) surface 100/0/0; Freighter fuel 200 loads all fuel and all Ir: no fuel from a planet, Ir 100 | fleet 0/4: fe 100, fuel 200 |
+| F | decomp §3.1 a=5 | planet 5 surface 500/0/0; fill to 50% Ir: 105 (half of 210) | fleet 0/5: fe 105 |
+| G | decomp §3.1 a=8 | planet 6 surface 500/0/0; set amount Ir to 80: loads 80 | fleet 0/6: fe 80 |
+| H | decomp §3.1 a=9 | planet 7 surface 300/0/0; set waypoint Ir to 100: loads 200, planet keeps 100 | fleet 0/7: fe 200; planet 7: surface 100/0/0 |
+| I | decomp §3.1 a=6 | planet 9 surface 100/0/0, wait for 100% Ir, second waypoint planet 14: loads 100 and stays at planet 9 | fleet 0/8: fe 100, x 1208, y 1297 |
+| J | decomp §3.1 a=5 / turn placement | control for I: planet 11 surface 100/0/0, fill to 100% Ir, second waypoint planet 12 (35 ly): loads 100 before movement and arrives at planet 12 with it | fleet 0/9: fe 100, x 1245, y 1158 |
+| K | turn placement | Freighter 20 ly from own planet 13 (surface 300/0/0) arrives with load all Ir: loads after movement, 210 | fleet 0/10: fe 210, x 1249, y 1354; planet 13: surface 90/0/0 |
 
-One pinned year gives the `CB.M1` that is opened in the client.
+### FO02: transport between two of player 0's fleets (waypoint 0 targets the other fleet)
 
-## FO-1 (`fo1.cmds`), 2026-10-07
-
-These are the orders the client wrote, in order (`combatlab dump`):
-
-1. Rename fleet 4 "Picket".
-2. Cargo between fleet 1 and fleet 3: 50 mg of fuel to fleet 3.
-3. Cargo between fleet 1 and fleet 2: 10 kT of ironium and 30 mg of fuel to fleet 1.
-4. Split fleet 1: one Hauler and one Looker go to the new fleet 5.
-5. Merge fleet 4 into fleet 1.
-6. Move one Hauler from fleet 2 to fleet 1.
-
-The host year after it:
-
-| Fleet | Ships | Fuel | Cargo |
+| Case | Source | Setup | Predicted |
 |---|---|---|---|
-| 1 | 3 Hauler, 2 Looker | 389 | 22/15/10 |
-| 2 | 1 Hauler | 185 | 15/15/10 |
-| 3 | 1 Hauler | 150 | none |
-| 5 | 1 Hauler, 1 Looker | 96 | 3/0/0 |
+| L | ORDERS clamp | X (0/0/100 Ge, free 110) loads all Ir and all Bo from Y (150/60): X gets 110 Ir, 0 Bo | fleet 0/1: fe 110, bo 0, ge 100; fleet 0/0: fe 40, bo 60 |
+| M | ORDERS clamp (hold and tank separate) | X full hold (210 Ir), fuel 200, loads all Ir and all fuel from Y (50 Ir, fuel 450): no Ir, fuel capped by the free tank (250) | fleet 0/3: fe 210, fuel 450; fleet 0/2: fe 50, fuel 200 |
+| N | ORDERS clamp (shortfall stays) | X (200 Ir) unloads all Ir to Y (100 Ir, free 110): Y 210, X keeps 90 | fleet 0/5: fe 90; fleet 0/4: fe 210 |
+| O | ORDERS clamp (fuel) | X fuel 400 unloads exactly 300 fuel to Y (fuel 300, free 150): Y 450, X 250 | fleet 0/7: fuel 250; fleet 0/6: fuel 450 |
+| P | decomp §3.1 (own fleet) | X (50 colonists) unloads all colonists to Y: Y 50, X 0 | fleet 0/9: col 0; fleet 0/8: col 50 |
+| Q | decomp §3.1 a=7 | X (fuel 200, one waypoint) "load optimal" fuel: unloads all its fuel to Y (fuel 100): Y 300, X 0 | fleet 0/11: fuel 0; fleet 0/10: fuel 300 |
+| R | turn placement / follow | X loads all Ir from Y (100 Ir); Y leaves for a point 30 ly away: X loads before movement, then follows Y (one fleet-targeted waypoint) to Y's destination | fleet 0/13: fe 100, x 1010, y 1310; fleet 0/12: fe 0, x 1010, y 1310 |
+| S | turn placement | X arrives (30 ly) at stationary Y, its second waypoint targeting Y, and unloads all Ir (100) to Y after movement | fleet 0/15: fe 0, x 1010, y 1325; fleet 0/14: fe 100 |
+| U | turn placement | X arrives (30 ly) at stationary Y, its second waypoint targeting Y, and loads all Ir (100) from Y after movement | fleet 0/17: fe 100, x 1010, y 1370; fleet 0/16: fe 0 |
 
-Fleet 4 is gone.
+### FO03: Merge with Fleet waypoint task (deep space, stationary unless stated)
 
-Every order was applied. The split and the exchange shared fuel and cargo by capacity, rounding down:
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | ORDERS merge | X (2 Freighters, 100 Ir, fuel 300) merges into Y (3 Freighters, 50 Bo, fuel 400): Y keeps its id, 5 ships, 100/50, fuel 700; X removed | fleet 0/0: ships 11:5, fe 100, bo 50, fuel 700; fleet 0/1 gone |
+| B | ORDERS merge (per design) | X (1 Colonizer, 20 colonists, fuel 150) merges into Y (1 Freighter, fuel 100): Y has both designs, 20 colonists, fuel 250 | fleet 0/2: ships 11:1,12:1, col 20, fuel 250; fleet 0/3 gone |
+| C | ORDERS merge (damage) | X 10 Freighters 100 units on 50%, Y 10 Freighters 200 units on 20%: D = 5 + 2, units (500+400)/7 = 128 on ceil(700/20) = 35%, then repair 10 -> 118/35 | fleet 0/4: ships 11:20, dmg 11: 118/35% |
+| D | ORDERS merge (damage) | X 10 Freighters 100 units on 50% into undamaged Y 10 Freighters: 100 units on 25%, then repair -> 90/25 (if an undamaged stack counts as one damaged ship: 83 on 30% -> 73/30) | fleet 0/6: ships 11:20, dmg 11: 90/25% |
+| E | ORDERS merge (cap) | X 1000 Freighters into Y 32000 Freighters: 32766 (per-design cap) | fleet 0/8: ships 11:32766; fleet 0/9 gone |
+| F | decomp §3.5 (no distance check) | X (1 Freighter, 30 Ir) at (1205, 1235) targets Y (1 Freighter) at least 100 ly away with merge: merged anyway (the task has no position test) | fleet 0/10: ships 11:2, fe 30, x 1010, y 1235; fleet 0/11 gone |
+| G | turn placement | X merges into Y before movement; Y then leaves for a point 30 ly away: Y arrives with 2 ships | fleet 0/12: ships 11:2, fe 40, x 1010, y 1310; fleet 0/13 gone |
+| H | turn placement | X arrives (30 ly) at stationary Y, its second waypoint targeting Y with merge: merged after movement | fleet 0/14: ships 11:2, fe 40, x 1010, y 1325; fleet 0/15 gone |
 
-- Fleet 1 had 280 mg of fuel and fuel capacity 1450. The split took ships with capacity 500, so it took 280 × 500/1450 = 96 mg, leaving 184.
-- Fleet 1 had 10 kT of ironium and cargo capacity 630. The split took one Hauler (cargo 210), so it took 10 × 210/630 = 3 kT.
-- The merge added fleet 4's 20 mg.
-- The exchange took half of fleet 2's fuel (370) and cargo (30/30/20) with the one Hauler that moved.
+### FO04: cargo, merge and fleet transfer toward player 1; player 1 is neutral toward player 0, player 0 an enemy toward player 1
 
-## Exploration (same day, at the homeworld)
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | decomp §3.1 relation | X (50 Ir) unloads all Ir to player 1's freighter Z: Z gets 50 | fleet 0/0: fe 0; fleet 1/0: fe 50 |
+| B | decomp §3.1 (0x155) | X (30 colonists) unloads all colonists to player 1's freighter Z: refused, X keeps 30 | fleet 0/1: col 30; fleet 1/1: col 0 |
+| C | decomp §3.1 (no steal) | X (no scanner) loads all Ir from player 1's freighter Z (100 Ir): nothing moves | fleet 0/2: fe 0; fleet 1/2: fe 100 |
+| D | ORDERS merge (owner) | X merges into player 1's freighter Z: refused, both unchanged | fleet 0/3: ships 11:2, fe 20; fleet 1/3: ships 3:1 |
+| E | decomp §3.3 | X (2 Freighters, 100 Ir, fuel 300) transfers to player 1: X removed; player 1 gets a fleet there with 2 ships of a copied Freighter design, 100 Ir, fuel 300 | fleet 0/4 gone; player 1 fleet at 1010,1190: n 2, fe 100, fuel 300, hull Medium Freighter |
+| F | decomp §3.3 | X (1 Freighter, 10 colonists) transfers to player 1: refused (carries colonists) | fleet 0/5: ships 11:1, col 10; no player 1 fleet at 1010,1235 |
 
-These orders were given at the homeworld, then the host year was run:
+### FO05: cargo, merge and fleet transfer toward player 1; player 1 is an enemy toward player 0, player 0 neutral toward player 1
 
-- split one Hauler and one Looker off a mixed fleet;
-- move a fleet's only ship into another fleet with the two-fleet Merge, which emptied it;
-- Merge Fleets with one other fleet;
-- 1 kT of fleet-to-fleet cargo;
-- a rename;
-- Split All.
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | decomp §3.1 relation | X (50 Ir) unloads all Ir to player 1's freighter Z: nothing moves (relation 2 toward the giver) | fleet 0/0: fe 50; fleet 1/0: fe 0 |
+| B | decomp §3.1 (0x155) | X (30 colonists) unloads all colonists to player 1's freighter Z: refused, X keeps 30 | fleet 0/1: col 30; fleet 1/1: col 0 |
+| C | decomp §3.1 (no steal) | X (no scanner) loads all Ir from player 1's freighter Z (100 Ir): nothing moves | fleet 0/2: fe 0; fleet 1/2: fe 100 |
+| D | ORDERS merge (owner) | X merges into player 1's freighter Z: refused, both unchanged | fleet 0/3: ships 11:2, fe 20; fleet 1/3: ships 3:1 |
+| E | decomp §3.3 | X (2 Freighters, 100 Ir, fuel 300) transfers to player 1: refused, X unchanged | fleet 0/4: ships 11:2, fe 100; no player 1 fleet at 1010,1190 |
+| F | decomp §3.3 | X (1 Freighter, 10 colonists) transfers to player 1: refused (carries colonists) | fleet 0/5: ships 11:1, col 10; no player 1 fleet at 1010,1235 |
 
-The host applied all of them, and the name was stored in the host file. Within the turn, Split All's new fleets took numbers 2 and 3. Those were freed earlier in the turn by the emptied fleet and the merge, and the host gave the same numbers. Fuel can't be checked at the homeworld, because its starbase refuels every fleet.
+
+## Follow-up predictions (FO-06; written after FO-01..05 ran, before FO-06)
+
+FO-03 C (both stacks damaged) and E (32000 + 1000 ships) missed; see "Results". FO-06 tests the candidate rule read off them.
+
+### FO06: follow-up: merge damage when both or one stack is damaged; ship counts near 32767
+
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | FO-03 follow-up | X 10 at 100 units on 50% into Y 30 at 200 on 20%: D 5 + 6, units 1700/40 = 42 on 28%, repair -> 32/28 (sum/sumD would give 154 -> 144) | fleet 0/0: ships 11:40, dmg 11: 32/28% |
+| B | FO-03 follow-up | X 4 at 300 units on 100% into Y 6 at 100 on 50%: D 4 + 3, units 1500/10 = 150 on 70%, repair -> 140/70 | fleet 0/2: ships 11:10, dmg 11: 140/70% |
+| C | FO-03 follow-up | undamaged X 10 into Y 10 at 100 units on 50% (FO-03 D reversed): units kept, 25%, repair -> 90/25 | fleet 0/4: ships 11:20, dmg 11: 90/25% |
+| D | FO-03 follow-up | X 6 at 100 units on 50% into undamaged Y 14: units kept, ceil(300/20) = 15%, repair -> 90/15 | fleet 0/6: ships 11:20, dmg 11: 90/15% |
+| E | FO-03 follow-up | X 766 Freighters into Y 32000: 32766 ships | fleet 0/8: ships 11:32766 |
+| F | FO-03 follow-up | X 767 Freighters into Y 32000: 32767 ships | fleet 0/10: ships 11:32767 |
+| G | FO-03 follow-up | X 768 Freighters into Y 32000: over 32767: the slot empties | fleet 0/12: ships  |
+
+
+## Follow-up prediction (FO-07; written after FO-06 ran, before FO-07)
+
+### FO07: follow-up: rounding of merged damage units
+
+| Case | Source | Setup | Predicted |
+|---|---|---|---|
+| A | FO-06 follow-up | X 2 at 101 units on 50% into Y 2 at 100 on 50%: units 201/4 = 50.25, rounded up 51 (nearest: 50), 50%; repair -> 41/50 | fleet 0/0: ships 11:4, dmg 11: 41/50% |
+
+
+## Results
+
+Run 2026-10-07, one pinned generation each (cycles 20000). Checked with
+`python3 experiments/fo/check.py RUNDIR` (pinned-turn output directories
+named by run). Raw files, dumps and the checker output are in
+stars-oracle-apparatus `evidence/fo/`.
+
+**81 checks: 76 OK, 5 MISS.** FO-01, FO-02, FO-04 and FO-05 held in every
+check. The misses are all in FO-03 (merge) and FO-06 A; FO-06 and FO-07
+were added after them to pin the rule.
+
+| Run | Case | Predicted | Observed |
+|---|---|---|---|
+| FO-03 | C, both stacks damaged | 118 units on 35% | **35 units** on 35% |
+| FO-03 | E, 32000 + 1000 ships | 32766 | **no ships**: the fleet record stayed, with fuel 400 and an empty ship mask |
+| FO-03 | F, merge target 195 ly away (two checks) | merged | **refused**: both fleets unchanged, the orderer's task cleared to none |
+| FO-06 | A, 1700/40 = 42.5 | 42 → 32 after repair | **43** → 33 |
+
+What the misses and the follow-ups show:
+
+- **Merged damage.** With only one stack damaged, the damaged ships keep
+  their damage units and the percentage becomes `ceil(100·D/n)` over all
+  `n` ships (FO-03 D, FO-06 C and D, both directions). With both stacks
+  damaged, units = `Σ D·units / n`, **rounded up**, over all `n` ships of
+  the slot, not over the damaged ones (FO-03 C 900/20 = 45; FO-06 A
+  1700/40 → 43; FO-06 B 1500/10 = 150; FO-07 201/4 = 50.25 → 51), with
+  `D = max(1, pct·count/100)` per stack and the same percentage rule.
+  Repair (10 units for a fleet stationary in deep space) then applies as
+  usual.
+- **Ship counts.** No clamp on a merge by waypoint task: 32000 + 766 =
+  32766 and 32000 + 767 = 32767 were kept; 32000 + 768 and 32000 + 1000
+  left the merged fleet with no ships at all (cargo and fuel stayed).
+- **Distance.** A merge task whose target fleet was 195 ly away did
+  nothing and the task was cleared. In this setup waypoint 0 sat at the
+  orderer's own position and targeted the far fleet, a state the game's
+  own interface does not create; arriving merges (FO-03 H) worked.
+
+Everything else held as predicted, including:
+
+- loads capped by the free hold (and by what the source has), cargo kinds
+  loaded in the order Ir, Bo, Ge, colonists, so Ir filled the hold before
+  Bo (FO-01 B, FO-02 L);
+- the fuel tank clamped separately from the hold: a full hold still took
+  250 mg of fuel (FO-02 M); no fuel from a planet (FO-01 E);
+- unloads into a fleet capped by its free space, the rest staying aboard
+  (FO-02 N: 200 → Y gets 110, X keeps 90; fuel FO-02 O);
+- "load optimal" fuel with one waypoint gave away all fuel (FO-02 Q);
+- fill to %, set amount, set waypoint and wait-for-% amounts; a fleet
+  waiting for 100% did not leave, the "fill to" control did (FO-01 F–J);
+- loading before movement (FO-01 J, FO-02 R) and after arrival (FO-01 K,
+  FO-02 S and U); a fleet whose only waypoint targeted a departing fleet
+  loaded first and then followed it to its destination (FO-02 R);
+- merge: ship counts per design, cargo and fuel pooled, target keeps its
+  id, orderer removed; before movement the merged ships left with the
+  target, and an arriving fleet merged after movement (FO-03 A, B, G, H);
+- another player's fleet: minerals given when the receiver's relation
+  toward the giver is not "enemy" and refused when it is, whatever the
+  giver's relation; colonists refused; loading from it without a
+  cargo-stealing scanner did nothing; merging into it was refused
+  (FO-04, FO-05 A–D);
+- transfer fleet: accepted when the recipient is not an enemy toward the
+  giver (it received the fleet under a free design slot holding a copy of
+  the design, with cargo and fuel), refused when it is, and refused for a
+  fleet carrying colonists (FO-04, FO-05 E–F).
