@@ -247,3 +247,19 @@ temperature −5), each with its own scrap, mining and bombing outcome.
 Each of those runs is matched against every k from 2 to 150, and a run
 whose climate change and other values match one k confirms the order with
 a visible event.
+
+### Batch 3 results
+
+All 11 streams of known tick came out exactly as predicted:
+
+- player 1's propulsion gain, with 0x13d when it gained and 0x141 when it
+  did not;
+- every mining gain;
+- planet 13's factories, mines and population after bombing.
+
+Each of the other 12 runs matched the predicted order at some k. Cycles
+2100 and 2060 both reached k = 35. Both showed planet 10's radiation going
+35 → 28, the predicted climate change, with every other value matching.
+Neither alternative order matches either of those runs at any k. With
+mining before the scrap draws, all 11 known streams would differ; with
+bombing before the events, 3 would.

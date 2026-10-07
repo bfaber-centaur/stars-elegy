@@ -296,18 +296,63 @@ the checks on later waypoints that `MESSAGES.md` places at P8a.
 
 ### Random draws
 
-Any step that draws from the generator moves every later draw. Read from
-the program, the steps that can draw are the shuffle in step 1, the movement gates and minefield
-hits (3), the Trader's and wormholes' movement (3, 5), salvage and packet
-decay with detonations (3a), breeding in transit (3b), production (4), the
-random events (4c), battles, bombing and ground combat (2, 6), Trader
-rewards (6b), Claim Adjuster drift (7), the estimates (7a) and the option
-bits (8). MEASURED (KX-004, KX-005): in quiet states with no fleets in
-motion, battles or drops, the random events (KX-004) and the Claim
-Adjuster drift with events off (KX-005) both began at draw 4 of the
-year's stream. Those four draws are the two-player shuffle (2) and the
-two homeworlds' germanium mining (2). CONFIRMED (KB-1C): with 17 mining
-draws, the events began at draw 19.
+Any step that draws from the generator moves every later draw, so an
+implementation that wants the original's streams must draw in this order.
+Each item is tagged with how its place in the sequence is known.
+
+1. **Player shuffle** (step 1): one draw per player, `Random(n − i)`.
+   CONFIRMED (KX-004, KB-1C, KB-3A).
+2. **Before movement** (step 2), in the order the tasks run:
+   - A scrap at a planet with a starbase makes a tech attempt for the
+     planet's owner, as in `COMBAT.md` "Tech from battle": `rand(100)`,
+     and nothing more below 50. Otherwise up to 13 `rand(13)` Trader tries,
+     each with a second `rand(100)` only when that item has a chance and
+     the player lacks it. Then up to 6 `rand(6)` field tries. A player who
+     has already gained a tech this year makes no draws. CONFIRMED (KB-3A:
+     before mining).
+   - Colonist drops are resolved by planet, in the order of each planet's
+     first queued drop (`TAKEOVER.md`). A capture makes one tech attempt,
+     against the old owner's levels. A planet with an ancient artifact
+     adds `rand(6)` then `rand(301)`. Colonization draws nothing except
+     those artifact draws. BINARY-ONLY.
+3. **Movement** (steps 3–3b): the movement gates, minefield hits, the
+   Trader's and wormholes' movement, salvage and packet decay with
+   detonations, and breeding in transit. BINARY-ONLY as a place in the
+   sequence; their rules carry their own tags.
+4. **Production** (step 4). Mining makes one `Random(100)` per mineral
+   whose output has a non-zero remainder, planets in id order, ironium,
+   boranium, then germanium. CONFIRMED (KB-1C, KB-3A).
+5. **Random events** (step 4c): comet strike, climate change, new
+   minerals, then the Mystery Trader's appearance (this file's "Random
+   events"). CONFIRMED after mining (KB-1C, KB-3A) and before bombing
+   (KB-3A).
+6. **After movement** (step 6):
+   - battles (`COMBAT.md`);
+   - bombing passes, in fleet order. Each pass draws, in order:
+     factories `rand(T)`, defenses `rand(T)`, population `rand(1000)`,
+     each only when its remainder is non-zero. Retro bombs draw nothing.
+     CONFIRMED after the events (KB-3A);
+   - Trader rewards (step 6b);
+   - colonist drops after movement, as in item 2, with the same tech
+     attempt and artifact draws.
+   Battles, rewards and drops are BINARY-ONLY as places in the sequence.
+7. **Year end**: Claim Adjuster drift (step 7), the estimates of other
+   players' planets (7a) and the option bits (8). BINARY-ONLY, except
+   that with events off the drift began right after mining (KX-005,
+   below).
+
+MEASURED (KX-004, KX-005): in quiet states with no fleets in motion,
+battles or drops, the random events (KX-004) and the Claim Adjuster drift
+with events off (KX-005) both began at draw 4 of the year's stream. Those
+four draws are the two-player shuffle (2) and the two homeworlds'
+germanium mining (2). CONFIRMED (KB-1C): with 17 mining draws, the events
+began at draw 19. CONFIRMED (KB-3A, `PARITY.md` "KB batch 3"): a scrap
+tech attempt, five mining draws, the events and one bombing pass in one
+year matched the replay in all 11 streams whose start is known. The 12
+other streams each matched at some start, and two of them showed a
+climate change exactly where this order puts it. With mining before the
+scrap attempt, all 11 streams of known start would differ; with bombing
+before the events, 3 of them and both climate streams would.
 
 ### Orders still unpinned
 

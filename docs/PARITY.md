@@ -179,19 +179,24 @@ population-capacity purposes.
   preserved PG-003 `.HST` files (apparatus `evidence/pg003/`) for
   2408–2436; it matches the carry of the same rule every year (values in
   `KERNEL.md`).
-- Exact handling of `excessPop` / growth carry when habitability or crowding
-  introduces additional fractional modifiers.
-- Whether growth carry persists across ordinary gameplay changes to effective
-  growth rate.
-- Exact order of operations between:
-  - habitability modifier
-  - racial growth rate
-  - crowding modifier
-  - growth carry / integer truncation
-- Exact behavior at 100% capacity.
-- Exact overcrowding death curve between 100% and 400%.
-- Lifecycle of `excessPop` across migration, colonization, ownership changes,
-  hostile-world deaths, and other population-changing mechanics.
+- ~~Carry handling with habitability and crowding modifiers.~~ Resolved:
+  CONFIRMED in `KERNEL.md` "Population growth" (KX-002 H3–H6, P1–P3,
+  G1–G3; KB-1A).
+- ~~Whether the carry persists across changes to the effective growth
+  rate.~~ Resolved: the carry is a per-planet byte. Each year's rule adds
+  that year's remainder to it, whatever `g` is (`KERNEL.md`; KX-002
+  vectors start from a non-zero carry).
+- ~~Order of operations: habitability, growth rate, crowding, carry.~~
+  Resolved: `g = G·hab`, then crowding, then `t`, `q`, `r` and the carry
+  (`KERNEL.md` "Population growth", CONFIRMED).
+- ~~Behavior at 100% capacity.~~ Resolved: from `max` to `max + 10` the
+  population and carry are frozen (KX-002 G2, KB-1A planet 13).
+- ~~Overcrowding death curve.~~ Resolved: `g = 4·max(−300, trunc(c/−10) +
+  99)` (KX-002 G1), CONFIRMED.
+- ~~Lifecycle of `excessPop`.~~ Resolved for the cases that change it: an
+  emptied or captured planet keeps its carry (`TAKEOVER.md`, T-27), and
+  hostile deaths use it (KX-002 H5, H6). Growth and deaths run only on
+  owned planets with population.
 
 ### Measured behavior — PG-002, first crowded turn
 
@@ -1792,6 +1797,38 @@ host repaired it before production: message 0x117, gravity centre forced
 to the midpoint of low and high (50), and both planets were then
 terraformed in gravity. An immune axis needs centre, low and high all at
 −1 (`docs/ORACLE.md`); the rerun used that.
+
+### KB batch 3 — the year-wide random draw order
+
+Status: CONFIRMED. Predictions were committed before the runs
+(stars-elegy `75900b5`). `experiments/kb/` has the spec and the table.
+The replay tool is private, and the raw evidence is in apparatus
+`evidence/kb/`. Rule: `KERNEL.md` "Random draws".
+
+Question: in one year with a tech attempt from scrapping at a starbase,
+mining, the random events and a bombing pass, do the draws follow the
+program's order? That order is the shuffle, the scrap attempt, mining,
+the events, then bombing.
+
+Setup (KB-3A): events on, year 2400. Player 0 scraps a Scout with a Long
+Hump 6 at player 1's Orbital Fort planet; player 1 is at tech 0. Mining
+makes five draws. Player 0's one-LBU-17 bomber orbits player 1's planet
+13, with 45 factories, 25 mines, no defenses and 1,012 population after
+growth.
+
+| Streams | Observation | Result |
+|---|---|---|
+| 11 of known tick | Player 1's propulsion gain (with 0x13d, else 0x141), every mining gain, and planet 13's factories, mines and population all as replayed | CONFIRMED in 11 of 11 |
+| 12 of unknown tick | Each matched the predicted order at some k (`trunc(k·54.925)`). 2100 and 2060 both showed planet 10's radiation 35 → 28, the climate change predicted at k = 35, with every other value matching. Under either alternative order no k matches them | CONFIRMED, with a visible event |
+
+Alternatives ruled out: mining before the scrap attempt (11 of 11
+known-tick streams differ), and bombing before the events (3 of 11 differ,
+and neither climate stream matches).
+
+Interpretation: the scrap tech attempt draws before mining, and bombing
+draws after the events. Capture and artifact draws, battles, Trader
+rewards and the movement-phase draws keep the places read from the
+program (BINARY-ONLY).
 
 ## Fleet Movement
 
