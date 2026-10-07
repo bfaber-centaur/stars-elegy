@@ -75,7 +75,9 @@ the same five plans:
 | 4 | Chicken | 0 disengage | 1 any | 0 none | neutrals and enemies | no |
 
 Starting fleets use plan 0 (`UNIVERSE.md`). A ship built into a new fleet
-also gets plan 0 (MEASURED, CB-047-ctl, 2 runs; BINARY-ONLY in general).
+also gets plan 0 (MEASURED: CB-047-ctl, 2 runs, and over 40 new fleets in
+the round-7 ship-launch runs, `PARITY.md` "Round 7"; BINARY-ONLY in
+general).
 Ships split off keep their source fleet's plan (`ORDERS.md`).
 
 **LEGACY BUG (BINARY-ONLY): a stale "Default" attack-who.** Plan 0 is
@@ -403,8 +405,15 @@ armor, it does not trust a stored value):
   freighters" matches 4 or 7. "Unarmed" matches 5, 6 or 7. "Fuel
   transports" matches 6. "Freighters" matches 7. "Starbase" matches
   starbases. "Any" matches all.
-- **Tactic and targets**: armed tokens take tactic, primary and secondary
-  from the fleet's plan. Unarmed tokens use tactic 0 (disengage).
+- **Tactic and targets**: primary and secondary come from the fleet's
+  plan. Only an armed token (class 3) takes the plan's tactic; every
+  other class (bomber, unarmed, fuel transport, freighter) uses tactic 0
+  (disengage), whatever the plan says. A token with no weapons also has
+  its primary target set to none, so it scores against its secondary.
+  MEASURED (CB-049, 6 streams): an unarmed Medium Freighter stack under
+  a plan with tactic 3, primary any, secondary none is recorded with
+  tactic 0, primary none, secondary none, and its moves replay with those
+  values. BINARY-ONLY for the other classes.
 - **Speed code**:
 
   `w − 4 + jets + 2·overthrusters + Multi Function Pods
@@ -544,9 +553,13 @@ jitter separates them.
     moved: the Runner went to (9,9) and stayed there for six moves.
 - "Disengage if challenged" (tactic 1) becomes tactic 0 with a fresh
   counter of 7 the first time the stack takes armor damage (shield-only
-  hits do not count). It keeps firing until it leaves.
+  hits do not count). It keeps firing until it leaves. CONFIRMED (CB-049,
+  6 streams): the tactic-1 Shield DD stack switched at its first armor
+  damage, its action records show the fresh counter from then on, and
+  every later move replays as tactic 0. Without the switch,
+  5 of the 6 replays fail. A starbase never switches (BINARY-ONLY).
 
-### Choosing a square (CONFIRMED by exact replay for tactics 0 and 5; one mover for tactics 3 and 4, CB-012, CB-019, CB-020, CB-021)
+### Choosing a square (CONFIRMED by exact replay, CB-041, CB-042, CB-044, CB-046, CB-049; one mover CB-012, CB-019, CB-020, CB-021)
 
 For each single-square move, the token computes a **radius** and possibly
 a **goal**:
@@ -608,13 +621,36 @@ with every tie draw in place:
   Laser Frigates, 2,032 moves and about 7,800 tie draws.
 - CB-044 (2 streams): two players, 255 one-ship Laser Frigates, 1,611
   moves and about 8,700 tie draws.
+- CB-049 (6 streams): seven moving stacks on tactics 1 to 4 (one
+  becoming 0 under fire, one unarmed on 0), primary types that match
+  some enemies and none, weapons of ranges 1, 3 and 4 on one design,
+  sappers, capacitors, deflectors and shields; 133 moves and 579 tie
+  draws.
 
-Not covered by these replays: tactics 1 to 4 with more than one mover,
-target-type mismatches (every token targeted "any"), tokens with weapons
-of different ranges, and capacitors, deflectors or sappers in the
-estimate. Those parts stay BINARY-ONLY.
+To check that CB-049 exercises a rule, the replay was rerun with that
+rule removed or changed, and counted how many of the 6 streams still
+replay. These broke at least one stream, so each is CONFIRMED by it:
 
-### Square score (CONFIRMED by replay for tactics 0 and 5; see "Choosing a square")
+| changed rule | streams still replaying |
+|---|---|
+| no `rand(100)` draws inside the torpedo estimate | 0 |
+| tactics 3 and 4 scored like tactic 2, or like tactic 5 | 0 |
+| every enemy counted as matching the target type | 0 |
+| no out-of-reach division | 0 |
+| tactic 1 never switching to 0 | 1 |
+| reach using the longest range for tactics 3 and 5 | 2 |
+| no out-of-reach floor | 3 |
+| no sapper cap | 3 |
+| no capacitor or deflector | 4 |
+| the range-3 exception counting sapper ranges | 5 |
+| no range-3 / shielded-enemy exception at all | 5 |
+
+Not exercised by any replay: the fallback from the primary to the
+secondary target type (every secondary in CB-049 was "none", so falling
+back changed nothing) and the torpedo shield term below (the replays
+pass without it). Those two stay BINARY-ONLY.
+
+### Square score (CONFIRMED by replay, CB-041..CB-049; see "Choosing a square")
 
 The score of square `q` for token `T` is computed as follows:
 
@@ -679,11 +715,14 @@ subtracts 1 when `q` is its current square.
 **Cap.** Without "ignore range", the total is at most `B`'s toughness:
 `(armor + shields)·ships`, less its existing damage (at least 1).
 
-The replays exercised the beam estimate with dropoff and the out-of-reach
-floor, the torpedo estimate against an unshielded target, the cap with
-shields, the sum and maximum over many enemies of two other players, and
-the tactic-0 own-token and current-square terms. The torpedo shield term
-(step 3) and the tactic 3/4 row are BINARY-ONLY.
+The replays exercised every step above except one: the beam estimate
+with capacitor, dropoff, deflector, sapper cap and the out-of-reach
+division and floor; the torpedo estimate, including its random hits
+(see "Random draws in a battle"); the cap with shields; the sum and
+maximum over many enemies of two other players; the target-type test on
+`give`; every row of the tactic table; and the tactic-0 own-token and
+current-square terms. The torpedo shield term (torpedo step 3) is
+BINARY-ONLY: no replay depends on it.
 
 ## Firing (CONFIRMED by replay: CB-001..CB-021, every hit record)
 
@@ -874,6 +913,14 @@ Per salvo, while torpedoes remain:
      saw on an unshielded target, one per missed shot (7 for the Alpha
      Torpedo, 12 and 11 for the missiles). They are hit records, not
      miss records.
+   - A torpedo hit record carries the miss records' flag 0x80 exactly
+     when it does no armor damage, which means 0 hits. On a
+     shielded target an all-miss salvo therefore writes two 0x80
+     records on that target: the miss record first, then the 0-hit hit
+     record. CONFIRMED (CB-049): reading the first as the hit record
+     drops the misses' shield damage, which is what made one later
+     cycles-7000 hit look wrong; read in this order, every CB-049 hit
+     replays.
 5. **One kill per torpedo**: hits kill at most `n` ships, and any
    damage left after that limit is lost. CONFIRMED (CB-009 K1, Q-8): 202
    Jihads killed 202 ships per salvo with armor for 272.
@@ -955,7 +1002,8 @@ What a battle draws, in order. All draws are uniform.
    estimate simulates `ships × count × 200` torpedoes, which is exactly
    200 for one ship with one torpedo in the slot. Then the estimate makes
    200 `rand(100)` draws, so it is random, and it shifts later draws
-   (BINARY-ONLY quirk). The expected value `200·p/100` is the natural
+   (CONFIRMED quirk, CB-049: the replays fail in all 6 streams without
+   these draws). The expected value `200·p/100` is the natural
    deterministic replacement. It differs from the original only in that
    one case.
 5. **After the battle:** tech-learning attempts (below); salvage with no
@@ -1079,8 +1127,9 @@ A tech attempt, for one player:
 With no trader items in play and exactly one field behind, the chance is
 `½ · (1 − (5/6)^6) ≈ 0.33` per attempt.
 
-**Mystery Trader chances** (BINARY-ONLY; consistent with CB-046 per
-stream, below). Every item's chance is 0 when the battle starts. Each
+**Mystery Trader chances** (CONFIRMED, CB-048: 20 streams and a 12-stream
+control, `PARITY.md` "Round 7"; consistent with CB-046 per stream,
+below). Every item's chance is 0 when the battle starts. Each
 time a hit destroys at least one ship of a token, every slot of that
 token's design that holds a Mystery Trader part adds the slot's part count
 to that item's chance, up to 25 (`c = min(25, c + count)`). So the chance
@@ -1190,13 +1239,18 @@ Trader item; the chances were small and the replay predicts no gain in
 every stream). The one CB-042 hit per stream that did not replay was a
 checker defect (it reused an earlier shot's carried amount), not a rule.
 
+Round 7 (CB-048, CB-049) confirmed Mystery Trader items from battle
+(10 of 20 streams gained, the one-fleet control 1 of 12, and the replay
+named exactly the gaining streams and items) and the movement rules for
+tactics 1 to 4 with mixed designs (every move in 6 streams). The one
+CB-049 hit that did not replay was again a checker defect (record
+pairing; see "Torpedoes and missiles").
+
 Not yet tested:
 
-- a nonzero Mystery Trader chance actually giving an item. A setup that
-  reaches 25 on several items (for example many one-ship fleets of a
-  Mini Morph carrying five Mystery Trader part types) gives about a
-  third per stream, and the replay can name the gaining streams from the
-  battle record;
+- the fallback from the primary to a secondary target type that is not
+  "none", in movement;
+- the torpedo estimate's shield term;
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
 - salvage at more than one point;
