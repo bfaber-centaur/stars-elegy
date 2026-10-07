@@ -646,7 +646,7 @@ Side observation: the bombing message's installation count is `f + d +
 rest` with a negative rest kept (LEGACY BUG, `MESSAGES.md`).
 
 
-# Round 4: TK-301 to TK-305
+# Round 4: TK-301 to TK-306
 
 Round 4 closes what legal orders can reach on TAKEOVER.md's open list:
 Laser Battery and Planetary Shield against bombs and troops, the "load
@@ -654,8 +654,9 @@ exactly" action, ancient artifacts (random events on, and with slower
 tech), and Mystery Trader parts scrapped at a starbase. Specs and
 predictions are written by `gen4.py`; the predictions below were committed
 before any of these runs. Colonists given to a foreign planet by a manual
-cargo transfer need crafted order files and wait on the serial decision;
-the year's full draw order went to the owner of `KERNEL.md`'s turn order.
+cargo transfer need a client order; their predictions (TK-401 to TK-410)
+are in `manual-transfers.md` and wait on client automation. The year's
+full draw order went to the owner of `KERNEL.md`'s turn order.
 
 ## Round 4 setup
 
@@ -740,3 +741,33 @@ Game CB, 1 year(s). Cycles 20000, 30000, 50000, 10000, 12000, 15000, 17000, 1150
 | S3 | scrap MT | a fleet of 12 Hush-a-Boom bombers (12 designs, 2 Hush-a-Boom each) scraps at player 1 planet 3 with an Orbital Fort |  |
 | Y | scrap MT | player 1 at the end of the year | one gain at most per stream. Each attempt: 1/2 to pass; then 13 rand(13) picks, each giving Hush-a-Boom with chance 24% when it names Hush-a-Boom (P(part) = 1 - (1 - 0.24/13)^13 = 0.215); otherwise a level in a field the bombers needed (construction, propulsion, weapons, electronics or biotech), never energy. The first attempt that passes gains (P = 0.875 per stream). A part gain sends 0x13c and sets player 1's Hush-a-Boom bit; a level sends 0x13d |
 
+TK-306 was added after TK-303's owned-planet cases turned out void (see
+results). Its predictions were committed before its runs.
+
+### TK306: ancient artifacts on owned planets, random events on
+
+Game CB, 1 year(s). Cycles 20000, 30000, 50000. Base: random events on.
+
+| Case | Rule | Setup | Predicted |
+|---|---|---|---|
+| C1 | artifact | Freighter (100) captures player 1 planet 14 (P 10, artifact) before movement | planet 14: owner 0, artifact False; 0x05e to player 0 (the new owner): planet 14, a field 0-5, points 100-400 |
+| C2 | artifact | Freighter (10) unloads on player 1 planet 3 (P 100, artifact): the defender holds | planet 3: owner 1, artifact False; 0x05e to player 1 (the defender): planet 3, points 100-400; nothing to player 0 |
+| C3 | artifact | player 1 planet 9 (P 87, artifact), no fleet | planet 9: owner 1, artifact True; no 0x05e; flag kept |
+| C4 | artifact | player 0 planet 11 (P 100, artifact): a player 0 Freighter unloads 10 colonists onto it | planet 11: owner 0, artifact True; no 0x05e; flag kept (inferred: unloading on one's own planet is not a landing) |
+
+## Round 4 results
+
+`python3 experiments/tk/check4.py RUNDIR` prints the checks and the
+artifact and scrap messages per setting (`check2.parse` now accepts the
+dump's bare `artifact` and `artbit` tokens). Raw files are in apparatus
+`evidence/tk4/`. The three tk305 runs at cycles 20000, 30000 and 50000 and
+tk304 at 15000 were re-dumped after the host had run, because the dump
+step hit a Combat Lab rebuild; the host files are unchanged.
+
+| Run | Result |
+|---|---|
+| TK-301, TK-302 | All 18 checks held: bombs 811/852 (Cherry) and 858/874 (Smart), defender keeps 31/66 (grown 35/75), load exactly 30 colonists, 25 and 210 ironium |
+| TK-303 | A2, A3 held in all six settings: 0x05e to player 0, fields 0–5 all seen, points 122–272 (A2) and 53–196 (A3). A1, A4, A5 void: owned planets lost the artifact because Combat Lab set only the file flag (the host reads the installations bit on owned planets). A4's prediction (no 0x05e) also contradicted the binary reading |
+| TK-304 | Same fields and points as TK-303 in every setting: slower tech does not halve them |
+| TK-305 | First starbase: Hush-a-Boom part 5, level 5, nothing 2 of 12; second and third starbases 0x141 always. Above the model's rates (part 0.215 of passing attempts, pass 0.5); open |
+| TK-306 | All 12 checks held in three settings: capture gives 0x05e to the captor, a defender that holds gets 0x05e, an untouched owned planet and an own-planet unload keep the artifact |
