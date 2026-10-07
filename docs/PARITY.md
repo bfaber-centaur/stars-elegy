@@ -3641,7 +3641,8 @@ In the host file a wormhole has two player masks, the **known** mask
   carry the level count. The rest of the layout is not decoded.
 - **Not tested:**
   - stability names (O-45, report text);
-  - computer-player planets trading (O-53);
+  - computer-player planets trading (O-53; since measured, see "Computer
+    players: stage 1");
   - the 25th-redraw ship LEGACY BUG, which is too rare to reach by
     sampling streams;
   - Trader appearance (KX-004).
@@ -4202,3 +4203,79 @@ stays BINARY-ONLY.
 
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
+
+## Computer players: stage 1 (AI-1..AI-5, O-53)
+
+Question: do the computer players' yearly research choices, starbase
+designs and early fleet scrapping follow the rules read from the binary, at
+every level, and do computer planets trade with the Mystery Trader as
+predicted? Predictions were committed before the runs (private
+`stars-decomp` AI-1..AI-5 and O-53). Raw evidence is in the private
+`stars-oracle-apparatus` `evidence/ai/stage1` and `evidence/ai/ap/round2`.
+
+Method: pinned years (`pinned-turn` with `PINNED_CAPTURE`, cycles 20000) on
+small maps with a human player and one computer player of each type. The
+host writes each computer player's orders before it generates the year, and
+the capture keeps them. Each player-year is compared with the prediction.
+
+- **CONFIRMED: research choices (AI-1) and starbase designs (AI-2) at Easy,
+  Standard and Harder.** Easy and Standard games of 25 years and a Harder
+  game of 55 years (so past year index 50, where the starbase design family
+  changes). They agree on 150, 150 and 330 player-years. Earlier Expert runs
+  agreed on 384 and 320 player-years.
+- **MEASURED: Robotoid scraps its scout fleets early (AI-3).** While the
+  year index is at most 20, every Robotoid fleet holding its first ship
+  design is scrapped. This agreed in 105 of 105 player-years over the three
+  levels.
+- **MEASURED: Macinti's early scrapping and colonizer loop (AI-5).** It
+  agreed in 104 of 105 player-years over the three levels.
+  - While the year index is below 11, Macinti scraps fleets holding its first
+    or third ship design.
+  - While no seventh ship design exists, it also scraps an idle colonizer
+    fleet at a planet, which, with a new colonizer each year, gives a
+    build-and-scrap loop.
+  - The loop ended in 2400 (Easy), 2413 (Standard) and 2407 (Expert). In each
+    case it ended in the year the player created its seventh design, and a
+    design created in that year's orders already counts.
+  - The one difference (Harder, 2400) also appeared in an earlier Expert game:
+    the player first moved its colony ship into another fleet in the same
+    orders. That fleet was not scrapped until the next year. So the
+    scrapping pass sees fleets after that year's ship transfers. This is
+    INFERRED from two cases.
+- **UNKNOWN: Robotoid scrapping an idle colonizer with no target (AI-4).**
+  The setups did not test it. A computer player plans from its own player
+  file, which reflects the previous year. So editing the host file to give
+  every planet away did not remove the targets that year: the colonizers flew
+  to the now-owned planets and came back. A test needs the change to be a
+  year old, or the player's own file edited too.
+- **CONFIRMED: computer planets trade with a waiting Mystery Trader (O-53).**
+  - Setup: four computer planets near the Trader's end point, each with a
+    starbase, one at each of Standard, Harder and Expert (two Expert).
+    Surface minerals were 3,600 kT, or 6,000 kT on one Expert planet.
+  - The Harder planet (3,600 ≥ 3,500) and the 6,000 kT Expert planet traded
+    for the research item. Each player gained six tech levels, given to the
+    lowest fields (0,0,1,0,0,0 → 2,1,1,1,1,1). Each planet paid its level's
+    threshold: 3,500 or 5,000 kT, germanium first, then boranium, then
+    ironium.
+  - The Standard planet and the 3,600 kT Expert planet (below 5,000) did not
+    trade.
+  - No messages reached the computer players. There was no second trade the
+    next year.
+  - The result was the same with a human fleet waiting at the Trader's end
+    point.
+- **Oracle note: removing fleets breaks computer orders.** A host file built
+  without a computer player's fleets made the host reject that player's
+  order file ("appears to be corrupt") and stop, since the orders named
+  fleets that no longer existed. Keep the computer players' fleets when
+  building such setups.
+- **Turindrone and Automitron production and fleet passes (AP-004, AP-005).**
+  Seven predictions held, about these behaviors:
+  - which ship designs get rebuilt while none of their ships is alive;
+  - scrapping a long-lived scout;
+  - the Turindrone's colony-ship and privateer production on an empty queue;
+  - the Automitron's production only above 150,000 colonists;
+  - scrapping a fleet that has run out of fuel.
+
+  One miss: the Automitron changed its scout's second waypoint to a new
+  planet, where the prediction left a two-waypoint fleet alone. This went to
+  the objects lane.
