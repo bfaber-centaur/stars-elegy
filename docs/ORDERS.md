@@ -129,6 +129,30 @@ BINARY-ONLY.
   reflect the components that survived the strip. (This is the same
   "strip parts the owner lacks" behavior noted for existing designs in
   `PARITY.md`/`ORACLE.md`.)
+- **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,
+  stars-elegy #45 / apparatus #21). The strip above removes only parts the
+  player's **research tech** cannot reach. A part the player could only have
+  obtained from the Mystery Trader is **not** stripped when the player owns
+  no Mystery Trader items: the design is accepted and stored with the part
+  intact, and the part functions. In the pinned oracle turn a design
+  carrying Anti Matter Torpedoes was kept for a player whose Mystery-Trader
+  mask was empty, and those torpedoes fired, with every hit reproduced.
+  LEGACY BUG — the host recognises the unearned part while reading the
+  design (it is the same part the user interface hides from that player),
+  but the strip acts only on *insufficient research tech*; a part flagged
+  merely "not available to this owner" passes through as long as the hull
+  slot accepts its category and count. The same path keeps any component a
+  design names that the owner's race or Mystery-Trader status does not
+  entitle it to, not only Mystery Trader parts.
+
+  **Chosen rule for an independent implementation.** On reading a design,
+  validate every named component against what the owner has actually
+  acquired — research tech, racial entitlement, and Mystery-Trader items —
+  and drop (or reject) any component the owner is not entitled to, not only
+  components above researched tech. Treat the original's keep-behavior as an
+  isolated LEGACY BUG, reproduced (if ever wanted) behind a single named
+  switch rather than in the normal design-read path. This follows the same
+  "choose and state a rule" approach used for the Ownership gap above.
 - **Battle-plan fields.** A battle-plan definition with a tactic or primary
   target outside its legal set is rejected; a legal one is stored.
 
