@@ -138,7 +138,7 @@ def sc002(pxy):
     return g
 
 
-def pen_run(pxy, part, cid, setup=None, design=None, deep=False):
+def pen_run(pxy, part, cid, setup=None, design=None, deep=False, strict=False):
     """X-2: a planet at the penetrating edge, one just past it, orbiting targets at both."""
     g = base(pxy)
     if setup:
@@ -163,6 +163,8 @@ def pen_run(pxy, part, cid, setup=None, design=None, deep=False):
                 for ex, ey in reps(dout):
                     W = (pb[0] + ex, pb[1] + ey)
                     if not (1000 < W[0] < 1400 and 1000 < W[1] < 1400) or W in pxy or W == V:
+                        continue
+                    if strict and inside(W, pa, int(1.5 * Pn) ** 2):
                         continue
                     # margin: nearest other planet distance from the pen edge, either viewer
                     m = min(abs((q[0] - X[0]) ** 2 + (q[1] - X[1]) ** 2 - Pn * Pn)
@@ -322,10 +324,11 @@ def rb_run(pxy):
     return g
 
 
-def wm_ca_run(pxy, prt, cid, contact=True):
+def wm_ca_run(pxy, prt, cid, contact=True, lrt=0):
     """S-20: War Monger (full designs) or Claim Adjuster (hab ranges) viewer."""
     g = base(pxy)
     g.prt[0] = prt
+    g.lrt[0] = lrt
     g.hab[1] = [40, 60, 45, 25, 35, 20, 55, 85, 70]   # narrower than the default (legal)
     T = targets(g)
     v = sf(g, 0, 0, 'Rhino Scanner', 'Rhino')
@@ -363,6 +366,20 @@ def nas_ship_run(pxy, cid):
     return g
 
 
+def builtin_sweep(pxy, cid, part, elec, dists):
+    """S-10: JOAT Scout built-in scanner combined with a scanner part, deep-space range."""
+    g = base(pxy)
+    g.tech[0][4] = elec
+    T = targets(g)
+    v = g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (1, part), (0, '')], 'Scout ' + part.split()[0])
+    P = Placer(g)
+    C = P.take((1010, 1010))
+    g.fleet(0, [(v, 1)], *C, 'G', tag='viewer %s at elec %d' % (v.name, elec))
+    for d2 in dists:
+        single(g, P, C, 'G', '%s-%d' % (cid, d2), [(T['plain'], 1)], d2, ['S-10', 'S-2'])
+    return g
+
+
 RUNS = {
     'sc001': sc001,
     'sc001f': sc001f,
@@ -388,6 +405,12 @@ RUNS = {
     'sc020': lambda p: pen_run(p, None, 'SC020', setup=joat10, deep=True,
                                design=lambda g: g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (0, ''), (0, '')], 'Bare Scout')),
     'sc021': lambda p: pen_run(p, None, 'SC021', setup=joat10, deep=True,
+                               design=lambda g: g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (1, 'Elephant Scanner'), (0, '')], 'Elephant Scout')),
+    # round 3
+    'sc015l': lambda p: wm_ca_run(p, 2, 'SC015L', lrt=0x1b80),
+    'sc022': lambda p: builtin_sweep(p, 'SC022', 'Possum Scanner', 10,
+                                     (40000, 40001, 42025, 45796, 45797)),
+    'sc023': lambda p: pen_run(p, None, 'SC023', strict=True, setup=lambda g: g.tech[0].__setitem__(4, 16),
                                design=lambda g: g.design(0, 0, 'Scout', [(1, 'Quick Jump 5'), (1, 'Elephant Scanner'), (0, '')], 'Elephant Scout')),
 }
 

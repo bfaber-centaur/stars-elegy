@@ -113,6 +113,21 @@ shows up as message 0x117 and degraded race stats in the generated year
 | SC-020 | S-10 | JOAT, electronics 10: a Scout with no scanner part scans 200/100 (planet at d² 10000 reported, 10001 not; deep space 200 seen, √40001 not). |
 | SC-021 | S-10, S-2 | JOAT, electronics 10: Scout + Elephant combines 200/100 with 300/200 to 313/203 (planet at d² 41209 reported, 41210 not; deep space 313 seen, where the larger part alone would give 300). |
 
+## Round 3 (predictions committed before the runs)
+
+SC-021 turned out to be a setup artifact, not a scanning result: its
+player 0 had electronics 10, and the Elephant Scanner (electronics 16)
+was gone from the design in the generated 2401 files (`Scout, 1 Quick
+Jump 5, empty, empty`, mass 18 → 12). The viewer then behaved as a bare
+Scout (planets within 100 ly reported, nothing beyond). Round 3 keeps
+every part within the owner's tech.
+
+| Run | Tests | Content |
+|---|---|---|
+| SC-015L | S-20 (WM) | SC-015 with player 0 also taking five cheap LRTs (No Ram Scoop, Cheap Engines, Only Basic Remote Mining, Low Starting Population, Bleeding Edge Tech) so the War Monger race stays within budget. Same predictions as SC-015. |
+| SC-022 | S-10, S-2 | JOAT electronics 10, Scout + Possum (150): ⁴√(200⁴ + 150⁴) = 214. Deep-space freighters at d² 40000 (200), 40001, 42025 (205), 45796 (214) seen, 45797 unseen. Taking the larger scanner alone would stop at 200. |
+| SC-023 | S-10, S-2, S-5 | JOAT electronics 16, Scout + Elephant: 369/217. Planet at d² 47089 (217) reported, next one past it not; freighter orbiting the edge planet seen (the larger part alone gives pen 200). |
+
 ## Results
 
 (after the runs)

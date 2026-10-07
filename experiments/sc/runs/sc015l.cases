@@ -1,0 +1,4 @@
+# case	viewer	object	expected	claims	alternatives that predict otherwise	note
+SC015L-plain	0	fleet 1/0	3	S-20	-	d2=900
+SC015L-st35	0	fleet 1/1	3	S-20	-	d2=900
+SC015L-us85-out	0	fleet 1/2	0	S-20	-	d2=2025
