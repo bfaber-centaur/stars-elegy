@@ -450,9 +450,10 @@ time** inside the item's normal unit loop:
    and so on) skips the partial charge and goes straight to alchemy.
 3. If `k = s`, retry the unit (it now completes). Otherwise the unit keeps
    the percentage from step 2, unchanged by the minerals just bought; if
-   resources remain, they become a Mineral Alchemy ×1 item at the largest
-   whole percentage they pay for (`max(trunc((r + 1)·100/rate) − 1,
-   trunc(r·100/rate))`, charging `trunc(rate·pct/100)`), inserted at the
+   resources `r` remain, they become a Mineral Alchemy ×1 item at
+   `pct = max(trunc((r + 1)·100/rate) − 1, trunc(r·100/rate))` (the same
+   partial-percentage formula as any item; it is not always the largest
+   percentage that fits), charging `trunc(rate·pct/100)`, inserted at the
    queue front; the queue stops. The prefix and the item (with its reduced
    count) stay.
 4. If every unit completes, the item and its prefix are removed and the

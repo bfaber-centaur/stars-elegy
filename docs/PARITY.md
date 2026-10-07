@@ -528,8 +528,11 @@ Model under test (behavioral summary of the decomp reading):
   cost component (cost − already spent) is available.
 - Otherwise the item gets a partial percentage. Per component with
   available `a` (including what is already spent) and cost `c`:
-  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`, i.e. the largest whole
-  percentage whose truncated cost does not exceed `a`; the item's
+  `p = max(floor((a+1)·100/c) − 1, floor(a·100/c))`. The formula is the
+  rule. It is close to "the largest whole percentage whose truncated cost
+  does not exceed `a`" but not equal to it: when `c` does not divide
+  `(a+1)·100` it can be one lower (`c = 9`, `a = 4`: 54, where 55 would
+  still cost only 4; KX-001 M4 observed 54). The item's
   percentage is the minimum over components. Every component is then
   charged up to `floor(c·p/100)`. The amount already spent on a partial
   unit is `floor(c·pct/100)`.
@@ -638,8 +641,9 @@ Result:
 - Every predicted quantity matched in all 15 cases, both repeats and the
   pilot. The corpus confirms, for this race and planet:
   - research tax first, truncating; leftover-only box skips it (C08);
-  - partial percentage = largest whole percent whose truncated cost fits,
-    minimum over cost components, all components charged to it (C01, C08,
+  - partial percentage = `max(floor((a+1)·100/c) − 1, floor(a·100/c))`
+    per component (not always the largest percentage that fits; see
+    the model above), minimum over cost components, all components charged to it (C01, C08,
     C12); spent amount of a carried partial = `floor(cost × pct / 100)`
     (C01 year 2, C11);
   - a zero-resource partial records a percentage with nothing spent (C11:
@@ -803,6 +807,18 @@ Result:
   points formula are not measured).
 - Nothing contradicted the white-box reading. Nothing here draws random
   numbers.
+
+Follow-up A5 (predicted and committed before it ran): does an Auto
+Alchemy prefix stay in the queue after the auto item it serves builds
+everything it can? Binary reading: an auto item whose count (capped by
+operable installations) is used up returns "done for this year", which
+moves to the next item without removing anything; only a non-auto item
+that completes removes its prefix. Case A5: pop 9000 (R 900), minerals
+100/100/0, queue Auto Alchemy, Auto Factories ×2, Mine ×2. Predicted:
+factories 2, mines 2; minerals 108/108/0; queue Auto Alchemy ×1, Auto
+Factories ×2 (prefix kept); research 70; alchemy (8), factories, mines and
+"completed its orders" messages. If the prefix were removed with the auto
+item's year, the queue would be Auto Factories ×2 alone.
 
 Not covered: terraforming costs (Total Terraforming, Claim Adjuster),
 packets, scanners, starbase and ship costs, the tamper check's points
