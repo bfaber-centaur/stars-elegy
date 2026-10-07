@@ -804,8 +804,8 @@ python3 experiments/fm2/check.py OUT
   Station = ...`) whenever a spec adds starbase designs.
 - JOAT with IFE plus NRSE, CE, OBRM, LSP and BET (`lrt 0x1b81`) is legal
   (no message 0x117).
-- Parts restricted to a PRT or LRT (Anti-matter Generator, Super-Fuel
-  Xport) stayed in player 0's designs and worked.
+- A part restricted to another PRT (the Anti-matter Generator, IT only)
+  stayed in a JOAT design and worked.
 
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
