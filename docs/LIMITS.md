@@ -186,9 +186,22 @@ Remove takes from the selected row and drops it at 0 (LQ-2). Click amounts
 are 1, 10 (shift), 100 (ctrl) and, read from the client, 1020 (ctrl+shift), each clipped by the
 limits in "Production queue" above.
 
-**Chosen rule for an independent implementation.** Keep the matching rule
-above, but keep the old item's percentage rather than the submitted one, so
-a client cannot add progress. For a legal client the two are the same.
+**Chosen rule for an independent implementation.** A submitted item with a
+nonzero percentage keeps it only if the old queue has an item not yet
+matched with the same item id, the same kind and **exactly that
+percentage**; that old item is then used up. Otherwise the percentage
+becomes 0. Items are taken in queue order, as above.
+
+A legal client only sends percentages it read from the planet's current
+queue (an item it kept or moved, or one whose count it changed or merged
+into) and sends new items at 0. So every percentage it sends has its own
+old item, and this rule gives the original's result for every such queue:
+LQ-1, LQ-2 (the 20% Factory pairs with the old 20%, not the removed 49%),
+LQ-4, LQ-5b, LQ-6 and LQ-7. It never creates progress. It differs from
+the original only when the sent percentage is not in the old queue, which
+a legal client cannot produce: LQ-3 edited the host file so the client
+showed 49% where the host held 20%. The original kept 49%; the chosen rule
+gives 0.
 
 ## Setting orders
 
