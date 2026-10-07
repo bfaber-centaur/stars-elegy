@@ -664,6 +664,54 @@ experiments/sc/check.py RUN CB.XY OUT/after.dump
 - Visibility did not depend on the random stream: SC-001 generated with
   cycles 20000 and 30000 gave different bytes and identical views.
 
+### Takeover experiments (observed 2026-10-07, TK-001..TK-007)
+
+```sh
+python3 experiments/tk/gen.py                 # writes experiments/tk/tkNNN.spec
+tools/fleetlab/combatlab build CB.HST experiments/tk/tk001.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT [CYCLES]
+grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
+```
+
+- CombatLab keys added for this corpus:
+  - `fleet … task TASK` sets the task of waypoint 0, and
+    `to X Y [planet N] warp W [task TASK]` adds a waypoint with its own
+    task. TASK is `colonize`, `scrap`, `mine`, `unload` (all colonists) or
+    `transport A:V,A:V,A:V,A:V,A:V` (Ir, Bo, Ge, colonists, fuel; action
+    nibble and value; `-` for none).
+  - `planetset N mines= factories= defenses= excess= fe= bo= ge=
+    scanner=ID conc=I,B,G env=G,T,R orig=G,T,R` sets planet fields after
+    any `planet` line (`orig` marks the planet terraformed).
+  - `combatlab dump` prints each fleet's waypoints (`wp … task= orders=`)
+    and a `pdetail` line per planet: concentrations, environment,
+    original environment, surface minerals, population, growth carry,
+    installations and scanner id.
+- `hst-edit edit … env=G,T,R orig=G,T,R` does the same environment edit
+  on a PG001-style file; `dump` prints `orig=` for terraformed planets.
+- The game used all of these as given: waypoint-0 tasks ran before
+  movement, waypoint-1 tasks on arrival, and edited carry bytes,
+  installations, scanner ids and environments took effect.
+- A planet made with `planet N owner P` has no production queue. With no
+  queue its resources all went to research even at research 0%: player 1
+  rose from energy 3 to 5 in one TK-001 year, which changed its
+  defenses' coverage. Keep the number of such planets small, or expect
+  tech gains.
+- Design parts above the owner's tech were removed in the generated year
+  (as in SC-021): player 0 at tech 3 lost its Cherry, Smart, Peerless,
+  LBU-17 and LBU-32 bombs. Put the attacker at tech 26.
+- Populations above 0 with no mines, factories, defenses or carry are
+  written without an installations section; `pdetail` then shows no
+  `excess=` field.
+- Counting random streams: with no battle in the year, the host files
+  differed byte-wise between every pair of cycle settings, even settings
+  whose random outcomes were all identical. Count streams by the vector of
+  random outcomes (TK-007 puts 18 independent draws in one year): 14
+  settings gave 7 streams.
+- The `.M` event block (type 12) carries one record per message; ids 0x135
+  (drop refused by a starbase) and 0x55 (unload at an unowned planet)
+  appeared with the fleet and planet numbers next to them. The rest of the
+  record layout is not decoded.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
