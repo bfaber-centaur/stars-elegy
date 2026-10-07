@@ -2174,12 +2174,13 @@ races of UG16..UG21 (all with the same research settings as PG000.R1):
 | IT | 0/0/5/5/0/0 |
 | PP | 4/0/0/0/0/0 |
 | JOAT | 3/3/3/3/3/3 |
-| SS (PG000.R1) | 0/0/1/0/5/0 |
+| SS (PG000.R1) | 0/0/0/0/5/0 |
 
-Computer races start with their own settings on top (for example CA
-3/3/3/3/3/6 and AR 1/0/1/0/0/0 in UG21). Starting designs and fleets
+Computer races start with their own settings on top (for example SS
+0/0/1/0/5/0, CA 3/3/3/3/3/6 and AR 1/0/1/0/0/0 in UG21). Starting designs and fleets
 per PRT matched the model in UG16..UG21; examples from UG21: WM with
-construction 0 has only a Yakimora-engined scout and a colony ship; SD
+construction 0 has only a scout (Quick Jump 5, Bat Scanner, Yakimora Light
+Phaser) and a colony ship; SD
 has two Mini Mine Layers; IT a Destroyer and a Privateer; JOAT six
 designs and six fleets.
 
