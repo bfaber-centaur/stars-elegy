@@ -4487,7 +4487,7 @@ stays BINARY-ONLY.
 Not predicted, observed: player 0's Est. Range for the three designs (561,
 166, 175 l.y.).
 
-## Computer players (AI-0..AI-17)
+## Computer players (AI-0..AI-18)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -4526,6 +4526,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-15 | Rototill production: at most one Colony Ship a year, on the lowest-id own planet with a starbase and 100,000 colonists, when none is alive or alive + 1 < U (`docs/ai/rototill.md` §2) | MEASURED: 3 colony ships queued as predicted (AIX 2444, 2446; AI02 2414), 108 qualifying planet-years and 70 other planet-years with none; the alive + 1 < U branch never reached (U ≤ 2) |
 | AI-16 | Rototill colony ships: invasion unload or route cut in pass 1; load 2,500 colonists and colonize the nearest seen planet habitable after terraforming, or a wormhole, in pass 2; empty ones go home (`docs/ai/rototill.md` §3) | MEASURED: 98 idle colony-ship years (4 colonize, 2 wormhole, 92 no target), 1 unload, 1 cut, 1 move home, colonist loads in 166 of 166 years; ignoring habitability breaks 89 rows |
 | AI-17 | Rototill scouts move to the nearest never-seen planet (in neither turn file nor history file) not targeted by another own fleet, 5% wormhole when orbiting (`docs/ai/rototill.md` §3) | MEASURED: 75 of 75 scout moves; counting history-only planets as never seen breaks 31; fallbacks not exercised |
+| AI-18 | Cross-player leak of armada parameters (`AI.md` §1 "State leaking between computer players"): Cybertron's armada stay-or-leave test reads values only Robotoid, Turindrone, Automitron and Macinti set | MEASURED (prediction committed before the runs): for AIX 2453–2460, with the earlier computer players' captured orders submitted but their turns not run (values 0), every Cybertron armada idle at an own planet left home, 11 of 11 armada-years; with Automitron's values all stayed. Skipping a turn alone does not move them. Skipping Robotoid's turn shifted 17–19 of Cybertron's random-dependent order lines (shared random stream) |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

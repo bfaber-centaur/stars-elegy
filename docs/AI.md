@@ -138,7 +138,21 @@ as never used, and the armada parameters below are the personality's own.
   never read). So Cybertron uses the values left by the last of those
   computer players that ran before it in the same run, or all 0 when none
   did. In AIX, Automitron runs just before Cybertron, so the values
-  happened to match Cybertron's own formulas.
+  happened to match Cybertron's own formulas. MEASURED by an edit test
+  (AI-18): when Robotoid, Turindrone and Automitron submitted their
+  captured orders without their computer-player turns running, the
+  values stayed 0. Every Cybertron armada idle at an own planet then left
+  home (11 of 11 armada-years in AIX 2453–2460), where with Automitron's
+  values all stayed. In AIX the values decide this in 9 of 61 Cybertron
+  player-years (2452–2460, 16 armada-years).
+
+All computer players in one host run also draw from one shared random
+stream, in player order. So any change to an earlier computer player's
+turn shifts the draws of every later one (MEASURED, AI-18: skipping
+Robotoid's turn alone changed 17 to 19 of Cybertron's random-dependent
+order lines). With the switch off, Elegy still runs the computer players
+on one shared stream in player order; only the two leaks above are
+removed.
 
 ## 2. Own-planet order (BINARY-ONLY)
 
