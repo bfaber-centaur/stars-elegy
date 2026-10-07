@@ -413,24 +413,57 @@ success count toward the PP player's ideal, within the PP player's
 terraform range around the original value (immune axis: half the count
 toward the nearer extreme).
 
-## Stargates (CONFIRMED, OB-021, OB-022, except Jump Gates, friends' gates and range refusal)
+## Stargates (CONFIRMED, OB-021, OB-022, except where marked BINARY-ONLY)
 
-A fleet uses gates when its next waypoint's warp is the gate setting.
+A fleet uses gates when its next waypoint's warp is the gate setting
+(waypoint warp 11). Routing that picks gates on its own uses the same
+rules: a new ship's route (`PRODUCTION-LAUNCH.md`, "Routing", stars-elegy
+#57) and the route task (`ORDERS.md`, "Waypoint upkeep", stars-elegy #51)
+choose warp 11 only when both ends are gated and the jump is safe.
+
+Gate types (stats in `COMPONENTS.md`, `safe_mass`/`safe_range` of the
+seven orbital stargates; "any" is `null` there):
+
+| Gate | Mass limit | Range | Refused beyond (`5×`) |
+|---|---|---|---|
+| Stargate 100/250 | 100 kT | 250 ly | 500 kT, 1250 ly |
+| Stargate any/300 | any | 300 ly | 1500 ly |
+| Stargate 150/600 | 150 kT | 600 ly | 750 kT, 3000 ly |
+| Stargate 300/500 | 300 kT | 500 ly | 1500 kT, 2500 ly |
+| Stargate 100/any | 100 kT | any | 500 kT |
+| Stargate any/800 | any | 800 ly | 4000 ly |
+| Stargate any/any | any | any | never |
+
+"Any" range counts as 8000 ly in the danger formula, so it never refuses
+and never adds danger on a real map. Between 1× and 5× a limit the jump
+goes ahead with losses (Danger, below); exactly 5× means `pct = 100`, so
+everything of that design is lost (BINARY-ONLY at the boundary).
 
 - **Source:** the gate on the starbase of the planet the fleet is at, owned
-  by the fleet owner or a friend. Without one, every ship in the fleet
+  by the fleet owner or a friend. "Friend" is the gate owner's relation
+  toward the fleet owner; the fleet owner's own view of the gate owner does
+  not matter, so a one-sided friendship lets only the befriended player
+  through (BINARY-ONLY; an enemy's gate refused in OB-021-I). Without one, every ship in the fleet
   must carry a Jump Gate, and the destination gate's limits then stand for
   both ends.
 - **Destination:** a planet at the waypoint with a gate owned by the fleet
-  owner or a friend. A Jump Gate does not replace a missing destination
-  gate.
+  owner or a friend (same direction as the source). A Jump Gate does not
+  replace a missing destination gate (BINARY-ONLY). A waypoint in deep
+  space, or on anything not at a planet's exact position, is refused.
+- **Refusal order** (BINARY-ONLY): source gate (or Jump Gate on every
+  ship), then destination planet, destination gate, destination owner,
+  colonists from a planet not the fleet owner's, the cargo unload, then
+  range and mass design by design. Only the first failure is reported to
+  the fleet owner. A refused fleet stays where it is with its waypoints.
 - **Cargo:** unless the fleet owner is Interstellar Traveler or uses a
   Jump Gate, all ironium, boranium, germanium and colonists are unloaded
   onto the source planet before the jump is checked, so a jump refused for
   range or mass still empties the hold (LEGACY BUG, MEASURED in OB-021: a
   refused freighter's 100 kT still unloaded; IT kept its cargo in OB-022).
-  Carrying colonists from a planet the fleet owner does not own blocks the
-  jump.
+  Carrying colonists from a planet the fleet owner does not own (a
+  friend's gate) blocks the jump before anything is unloaded; minerals
+  alone are unloaded onto the friend's planet, and both players are told
+  (BINARY-ONLY).
 - **Limits:** range `R` from the source gate only ("any" counts as 8000);
   mass limits `Ms`, `Md` from both gates, compared with each ship's design
   mass. Distance `d` = truncated distance. Refused, with no losses: `d >
@@ -448,8 +481,19 @@ A fleet uses gates when its next waypoint's warp is the gate setting.
   every design is lost, the fleet is gone. Vectors (OB-021): 5 Laser
   Destroyers at 13% took 65/500 each; a refused ship over 5× a mass limit
   did not move and took no damage.
-- Gate travel uses no fuel and crosses no minefields. Landing on a
-  wormhole transits it.
+- Gate travel uses no fuel and crosses no minefields.
+- **The rest of the year** (BINARY-ONLY): a fleet that jumped (even with
+  `pct = 0`) is not repaired that year. It counts as having moved; a
+  refused fleet counts as stationary. Cheap Engines' engine failure never
+  applies to a gate order. Other players' fleets chasing it stop at its
+  departure point; the owner's own chasers follow it (as for wormholes).
+- **What others see** (BINARY-ONLY): only the fleet owner (and, for an
+  unload, the source planet's owner) gets messages. The destination gate's
+  owner is not told. Another player scanning the fleet after the jump
+  sees it at the destination with warp 0 and no heading, since only
+  ordinary movement records heading and warp.
+- A gate jump never reaches a wormhole: the destination is always a
+  planet and wormholes are never placed exactly on one (Placement).
 
 ## Wormholes
 
@@ -740,7 +784,12 @@ and nowhere beyond it).
    waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
    (needs crafted orders); OB-010-S under the stops-then-decay order.
-5. Stargates: Jump Gates, friend-owned gates, refusal for range.
+5. Stargates (predictions O-54..O-67 in the private objects reading):
+   Jump Gates from deep space and their limits; a real source gate
+   winning over a Jump Gate; one-sided friendship at either end; minerals
+   and colonists at a friend's gate; refusal for range and the exact-5×
+   total loss; no repair after a jump; what other players see; chasers;
+   Cheap Engines on gate orders; each gate type's limits.
 6. Wormholes: stability names in the report (O-45, UI).
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
