@@ -210,6 +210,11 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
 - **Only penetrating range reveals planets (CONFIRMED, SC-003..SC-008).** A
   planet is reported when `d² ≤ P²` from a viewer's fleet or planet.
   Normal range alone never reports a planet, at any distance.
+- **Penetration needs `P > 0` (BINARY-ONLY rule; its consequence is
+  CONFIRMED, SC-002 `SC002-blind-orbit`).** A fleet or planet with `P = 0`
+  reveals no planets at all, even the planet it orbits at `d² = 0`. The only
+  report a `P = 0` fleet gets of its orbited planet is the orbit report
+  below (position only when it has no scanner).
 - **Orbiting (CONFIRMED, SC-002, SC-014).** A planet orbited by one of the
   viewer's fleets is reported: position only if that fleet has no scanner,
   a normal report if it has any scanner (Bat Scanner included), a detailed
@@ -231,23 +236,56 @@ empty, 17% with 31 kT of cargo, 10% with 70 kT; 130 mg of fuel leaves it at
 | Report | Contents |
 |---|---|
 | Own planet | everything |
-| Position only | position and name |
+| Position only | position, name, owner, whether it is a homeworld, whether it has a starbase, and that starbase's design (partial) |
 | Normal | owner, environment (current and original), mineral concentrations, whether it is a homeworld, has a starbase (and its design, see Disclosure) or an artifact, was terraformed; for an owned planet, estimated population and defense coverage |
 | Detailed | normal, plus surface minerals |
 
 (BINARY-ONLY for the field list; CONFIRMED for which planets get which
 report in SC-001..SC-023.)
 
+**Starbases in every report (BINARY-ONLY).** The starbase rule above is the
+only thing that hides a starbase. Every report of a planet, including the
+position-only report from a scannerless fleet in orbit, says whether it has
+a starbase and sends that starbase's design (partially). The orbiting fleet
+makes the planet's owner a known player. The SC orbit cases used unowned
+planets, so this is untested.
+
 **Population estimate (BINARY-ONLY; a private check found all 131
-estimates in the preserved single-player games inside this range).** Once a year, after growth, each owned planet gets one estimate,
-shared by every viewer that year:
+estimates in the preserved single-player games inside this range).** Once a
+year each planet with population gets one estimate, shared by every viewer
+that year. The estimates are drawn after battles, production, mine
+sweeping, repair, terraforming and the duplicate-serial penalty, and before
+the year advances and knowledge is computed. So every battle draw of the
+year comes before them, and the Space Demon detection draws come after.
+Planets are processed in id order:
 
 `estimate = 400 × max(1, min(4090, trunc((u + rand(trunc(u/4)) − trunc(u/8)) / 4)))`
 
 where `u` is the population in units of 100 colonists. That is the true
 population within about −12.5%..+12.5%, rounded down to a multiple of 400.
-An uninhabited planet shows none. AR planets report an estimate of 0. A coarse
-defense coverage estimate (16 steps) accompanies it.
+
+- `rand(0)` (when `u < 4`) still consumes one draw from the generator and
+  yields 0. Every planet with population draws exactly once.
+- A planet with no population draws nothing. An AR-owned planet draws
+  nothing.
+An uninhabited planet shows none. AR planets report an estimate of 0.
+
+**Defense coverage estimate (BINARY-ONLY).** Computed at the same time,
+with no random draw:
+
+1. A planet with no defenses gets 0 ("none").
+2. Otherwise take the best planetary defense the owner's current tech
+   allows (its coverage `v` per defense, in tenths of a percent;
+   components table) and `n` = the planet's defenses, capped at the number
+   the planet can operate.
+3. `s = (1 − v/1000)ⁿ`, the share of a bomb's kill that gets through, in
+   floating point.
+4. `k = trunc(100·s + 0.5)`.
+5. `estimate = max(1, min(15, trunc((104 − k)/6)))`.
+
+If the owner has no defense type available, `s = 1` and the estimate is 1.
+Each step is about 6% of coverage. How the client words a step is
+unknown.
 
 **Old reports (BINARY-ONLY; a client feature).** A player's client keeps
 the best report of each planet it has ever received, with the year of the
@@ -281,7 +319,7 @@ this history.
 
 | Sighting | Revealed |
 |---|---|
-| Normal | owner, position, ship designs and counts, direction of travel and warp (not the destination), total mass |
+| Normal | owner, position, ship designs and counts, heading and warp (not the destination), total mass |
 | With cargo (Pick Pocket or Robber Baron at the same position) | normal, plus ironium, boranium and germanium carried |
 | Own | everything |
 
@@ -292,6 +330,18 @@ this history.
   colonists, without fuel (BINARY-ONLY here; a private check matched every
   partial fleet in the CB combat corpus, not yet recorded in `PARITY.md`).
 - BINARY-ONLY: colonists and fuel are never shown to another player.
+- **Heading (BINARY-ONLY).**
+  - A fleet that moved this year shows a heading vector and the warp of
+    its next waypoint.
+  - The vector is the next waypoint minus the fleet's position just
+    before it moved. For a chaser this uses the target's position at that
+    step, and the last movement step of the year wins.
+  - While either component has magnitude ≥ 128, both are halved,
+    truncating toward zero. The result fits in −127..127.
+  - It is not reduced by a gcd. Vector: a move from (1000, 1000) toward
+    (1300, 1100) shows (75, 25), after two halvings.
+  - A fleet that did not move this year shows no heading and no warp.
+  - Fleets travelling by stargate were not read.
 
 ### Designs
 
@@ -352,6 +402,10 @@ picks the nearest visible enemy fleet it can attack within
 9. Design disclosure after battle, SD mine hits and PP packet catches.
 10. Three or more players, and scanners on moving fleets mid-year (all SC
     runs were stationary).
+11. A scannerless fleet orbiting an owned planet with a starbase: starbase,
+    owner and design in the position-only report.
+12. Heading vectors of moving enemy fleets (halving, chasers, gates) and the
+    defense coverage estimate.
 
 ## Sources
 
