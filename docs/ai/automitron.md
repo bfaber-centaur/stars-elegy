@@ -20,6 +20,8 @@ counts, "empty" and "replaced").
   year-2401 game, one stream each (apparatus `evidence/ai/ap/`): the
   production threshold, a mine-layer draw, and the fuel scrap of fleet
   rule 1. Marked below.
+- **MEASURED** (AI-23): the fleet pass, every own fleet in AIX's 61
+  years (264 of 264 fleet-years).
 - **BINARY-ONLY**: everything else here.
 
 ## Order of the turn (BINARY-ONLY)
@@ -127,54 +129,88 @@ The steps run in order.
 
 The personality's own pass never queues scouts or destroyers.
 
-## Fleet pass (BINARY-ONLY)
+## Fleet pass (MEASURED, AI-23)
 
-### Classification
+AI-23 replays this pass for every own fleet in AIX's 61 Automitron years.
+All 264 fleet-years agree: waypoints, the waypoint-1 warp, colonist loads
+and merges. The planet list, the scout targeting and the colonize marks
+are Turindrone's (`docs/ai/turindrone.md`, "Fleet pass"). Rules marked
+"not exercised" stay BINARY-ONLY.
 
-The shared **attack** rule (`AI.md`) puts fleets on the attack list. The
-shared **transport** rule picks out freighter-type fleets: freighter
-hulls, Privateer, Rogue and Galleon. Then each colonizer's target is
-checked again, under the same rules as Turindrone's, including the
-invasion of a non-AR planet without a starbase by a fleet carrying
-colonists.
+### Merges
+
+From year index 31, fleets at the same spot merge by the shared merge
+rule for slot 14. From year index 51 they also merge for slots 2, 3 and
+9–12, and for slot 6 (Privateers), before the slot-14 merge (AIX: 2
+merged away).
+
+### Planet notes
+
+These are Turindrone's notes, with one difference. The **invasion
+value** of another player's planet is only a yes/no flag, set when its
+planet value is above 0. There is no mining score.
+
+### Classification and target check
+
+The shared **attack** rule (`AI.md` §11) builds the attack list. Other
+players' fleets form the foreign list. Then targets are checked:
+- A non-transport fleet with colony ships whose target is another
+  player's planet without an invasion value has its route cut and its
+  task cleared.
+- A **transport** fleet has its target checked too. That includes
+  Automitron's colony ships, which are Medium Freighters. When the target
+  is another player's planet or unknown to the AI, a fleet carrying
+  colonists invades if the planet has an invasion value and is not AR.
+  Unlike Turindrone, there is no starbase test and no move toward a
+  starbase. The unload task goes on waypoint 0 when waypoint 0 names that
+  planet. Otherwise the route is cut and the task cleared. AIX: 1
+  invasion.
 
 ### Orders by contents
 
-The first rule that matches the fleet applies.
+Each own fleet gets the first rule that matches.
 
 1. **Fleets with two or more waypoints.** If the Scout design's engine is
    not a ramscoop (it comes before Radiating Hydro-Ram Scoop in the engine
    list) and the fleet has less than 2 mg of fuel, the fleet is scrapped.
    This applies to every fleet, not only scouts. Otherwise the fleet is
-   left as it is (MEASURED, AP-004: the two-waypoint Scout fleet at 0 mg
-   got a scrap task; AP-005: with fuel it kept its route. Its second
+   left alone (MEASURED, AP-004: the two-waypoint Scout fleet at 0 mg got
+   a scrap task; AP-005: with fuel it kept its route. Its second
    waypoint's warp was re-picked 6 → 5 in both runs by the shared core's
    whole-year arrival slowdown after this pass, not by this rule; `AI.md`,
-   AI-11).
-2. **Privateers** (slot 6), with one waypoint and no task, get the
-   lay-mines task with both parameters 5.
+   AI-11. AIX, AI-23: a colony ship with 0 mg of fuel, in deep space on its
+   way to colonize, got the scrap task on waypoint 0, which settles the
+   non-scout case; 158 fleets were left alone).
+2. **Privateers** (slot 6) with one waypoint and no task get the
+   lay-mines task with both parameters 5 (AIX: 3).
 3. **Colonizers** (slot 1):
-   - if slot 1 is not a Medium Freighter design, the fleet is scrapped;
-   - not carrying colonists and not over an own planet with population
-     ≥ 20,000: if the design's engine is better than Quick Jump 5, it goes
+   - if slot 1 is not a Medium Freighter design, the fleet is scrapped
+     (AIX: 1);
+   - **No colonists**, and not over an own planet with at least 20,000
+     colonists. Over an own planet with a starbase, the fleet waits.
+     Elsewhere, if the design's engine is better than Quick Jump 5, it goes
      to the nearest own starbase; otherwise, or if there is none, it is
-     scrapped;
-   - otherwise, over an own planet, it loads 150 kT of colonists, then
-     colonizes the nearest colonizable planet if there is one.
+     scrapped (not exercised);
+   - **Otherwise**, over an own planet, it loads 150 kT of colonists, then
+     colonizes the nearest colonizable planet if there is one. AIX: 10
+     colonize orders, 9 with the load.
 
-   There is no wormhole or closest-planet fallback.
-4. **Bombers** (slots 2, 3). Over an own planet with a starbase, a group
+   There is no wormhole or invasion-drop fallback.
+4. **Transports** act as hub freighters (`AI.md` §11). The source is the
+   hub that lists them, else the first own planet with a starbase in
+   planet-id order (not the shuffled order). If the player has no planet
+   with a starbase, the fleet pass stops there, and later fleets get no
+   orders this year. AIX: 31 freighter years: 12 planet targets, 16
+   salvage, 3 none.
+5. **Bombers** (slots 2, 3). Over an own planet with a starbase, a group
    waits while it has fewer than 2 of each bomber design, or fewer than 3
    of each battleship design (slots 9 and 10). Then it picks a target as
-   Turindrone's bombers do.
-5. **Scouts** (slot 0). If the engine is not a ramscoop and the fleet has
-   less than 2 mg of fuel, the scout is scrapped. Otherwise the shared
+   Turindrone's bombers do (not exercised).
+6. **Scouts** (slot 0). If the engine is not a ramscoop and the fleet has
+   less than 2 mg of fuel, the scout is scrapped. Otherwise Turindrone's
    scout targeting applies. In AP-003 the starting Scout went to a planet
-   at warp 6 in 2400, and to another in 2401.
-6. **Transports** act as freighters for their hub (`AI.md` §6), or the
-   first own planet with a starbase. If the player has no planet with a
-   starbase, the fleet pass stops there, and later fleets get no orders
-   this year. Turindrone's Rogue and Galleon rule has the same stop.
+   at warp 6 in 2400, and to another in 2401. AIX: 25 scout orders, one
+   to a wormhole.
 
 ## Elegy
 
@@ -185,10 +221,7 @@ reproduces it behind a named legacy switch.
 
 ## Open experiments
 
-1. Long captures for production and fleet rules. These include the first
-   colonizer after T = 10, the freighter counts and the Privateer odds.
-2. The fuel scrap of fleet rule 1. It needs a non-scout fleet with two
-   waypoints and under 2 mg of fuel.
-3. Levels other than expert, as for Turindrone.
-4. The shared helpers this file names need their rules in `AI.md`, as for
-   Turindrone.
+1. Long captures for production rules. These include the first colonizer
+   after T = 10, the freighter counts and the Privateer odds. Fleet rules
+   AI-23 never exercised: empty colony ships, bombers, the freighter stop.
+2. Levels other than expert, as for Turindrone.
