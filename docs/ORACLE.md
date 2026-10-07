@@ -696,6 +696,35 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   148 years, no event). To sample random outcomes, choose cycles values
   that reach different ticks.
 
+- In the round-5 starts, 20000 and 25000 always gave the same stream,
+  and so did 30000, 35000, 40000 and 45000: twelve values from 5000 to
+  50000 gave 8 streams. On CB-041, 6000, 7000, 9000 and 14000 added new
+  streams; 11000 repeated 10000, 18000 repeated 14000, and 22000 and
+  27000 repeated 20000.
+
+### Production queues and Mystery Trader parts (observed 2026-10-07, CL-TOOL)
+
+CombatLab `queue N ITEMS|none` replaces planet N's production queue in
+the host file, and `mt P HEX` sets the Mystery Trader items player P owns
+(a 16-bit mask; `combatlab dump` prints it as `mt=`). Queue items use
+hst-edit's layout, `ID:COUNT[:PCT]:KIND`, with kind 2 for a ship design
+and kind 1 for a planetary item. Designs may name Mystery Trader parts
+like any other part (StarsAPI names, e.g. `Anti Matter Torpedo`,
+`Multi Cargo Pod`, `Mini Morph`).
+
+One turn on the Combat Lab base (`experiments/cltool`, cycles 20000):
+
+- `queue 8 1:2:2` (two of player 1's design 1, a bare Scout): the
+  homeworld built both that year, as one new fleet, and the queue was
+  empty afterwards.
+- Player 0 owned no Mystery Trader items (`mt=0000`). Its Anti Matter
+  Torpedo Destroyer and a Mini Morph with Multi Cargo Pods, a Multi
+  Function Pod, a Mega Poly Shell and a Langston Shell were both kept by
+  the turn. The torpedoes fired, and the stars-decomp checker replayed
+  all 10 hits. Parts the owner lacks the tech for are still stripped
+  (SC-021); hidden Mystery Trader parts are not.
+- `mt 1 0x0003` survived the turn unchanged.
+
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 
 ```sh
@@ -741,8 +770,10 @@ grep 'after/CB.HST pdetail' OUT/after.dump    # per-planet result
     `transport A:V,A:V,A:V,A:V,A:V` (Ir, Bo, Ge, colonists, fuel; action
     nibble and value; `-` for none).
   - `planetset N mines= factories= defenses= excess= fe= bo= ge=
-    scanner=ID conc=I,B,G env=G,T,R orig=G,T,R` sets planet fields after
-    any `planet` line (`orig` marks the planet terraformed).
+    scanner=ID conc=I,B,G env=G,T,R orig=G,T,R sbdmg=U` sets planet fields
+    after any `planet` line (`orig` marks the planet terraformed; `sbdmg`
+    sets the starbase's damage to U/500 of its armor and needs a
+    starbase).
   - `combatlab dump` prints each fleet's waypoints (`wp … task= orders=`)
     and a `pdetail` line per planet: concentrations, environment,
     original environment, surface minerals, population, growth carry,
@@ -807,6 +838,47 @@ python3 experiments/tk/check2.py RUNDIR       # RUNDIR/tk1NN/run*/after.dump vs 
 - Claim Adjuster owners terraform their planets to the best their tech
   allows at the end of the year, so a CA new owner hides the capture-time
   revert of the environment.
+
+### Fleet operations experiments (observed 2026-10-07, FO-01..FO-07)
+
+```sh
+python3 experiments/fo/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fo01.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT 20000
+python3 experiments/fo/check.py RUNDIR    # RUNDIR/fo01/after.dump ...
+```
+
+- New spec syntax: `target fleet OWNER ID` points waypoint 0 at a fleet
+  (id `number | owner << 9`, target type 0x12); `to X Y fleet OWNER ID warp
+  W` adds a fleet-targeted waypoint; `task merge` (task 4) and `task
+  transfer K` (task 9, one word: the K-th player other than the owner).
+  All three were accepted by the host as written.
+- After the task ran (or was refused), the host had rewritten waypoint 0
+  to deep space or the planet. The stars-decomp reading keeps a
+  fleet-targeted waypoint 0 at turn start only for transport and merge.
+- `combatlab dump` prints an empty `ships=` for a fleet record that has no
+  ships (seen after a merge above 32767 ships).
+- Relations are per direction: `relation 1 0 2` is player 1's view of
+  player 0. Cross-player cargo and fleet transfers depend on the
+  receiver's view.
+
+### Movement round 2 (observed 2026-10-07, FM-101..FM-105)
+
+```sh
+python3 experiments/fm2/gen.py OUTDIR
+tools/fleetlab/combatlab build CB.HST OUTDIR/fm101.spec start.HST
+tools/fleetlab/pinned-turn start.HST BASEDIR OUT/fm101/run 20000
+python3 experiments/fm2/check.py OUT
+```
+
+- `combatlab build` replaces all of a player's starbase designs with the
+  spec's. A homeworld whose starbase design is not restated keeps
+  pointing at a missing design, so restate design 0 (`sbdesign P 0 Space
+  Station = ...`) whenever a spec adds starbase designs.
+- JOAT with IFE plus NRSE, CE, OBRM, LSP and BET (`lrt 0x1b81`) is legal
+  (no message 0x117).
+- A part restricted to another PRT (the Anti-matter Generator, IT only)
+  stayed in a JOAT design and worked.
 
 ### Universe objects experiments (observed 2026-10-07, OB-001..OB-017)
 
@@ -897,6 +969,28 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   The race file must be copied into the games directory with the
   definition; `new-game` copies its extra arguments there. Copy it to a
   path outside the games directory first, because the reset deletes it.
+- More than one race file can follow the definition (`new-game DEF OUT
+  CYCLES a.r1 b.r1 …`); the definition names them by file name, one per
+  human player (UG16..UG21, up to six race files with ten computer
+  players).
+- A run can fail silently, with no new files: once, right after the
+  oracle reset, while the fleetlab tools were being rebuilt. Rerunning the
+  same definition worked. Check that `OUT/raw` has the `.HST` before
+  trusting a run.
+- **Race files** (`tools/fleetlab/racelab`, observed 2026-10-07, UG):
+  `racelab dump FILE.R1…` prints name, PRT, LRTs, growth, habitability,
+  the economy stats, the leftover-points spend, whether the checksum is
+  right, and the advantage points left. `racelab edit IN OUT prt=N
+  lrt=0xNNNN spend=N growth=N name=S plural=S` writes a new race file with a
+  recomputed checksum. PRT numbers run 0 HE, 1 SS, 2 WM, 3 CA, 4 IS, 5 SD,
+  6 PP, 7 IT, 8 AR, 9 JOAT; spend 0 surface minerals, 1 concentrations,
+  2 mines, 3 factories, 4 defenses.
+- The points come from StarsAPI's race calculator, compiled into the
+  fleetlab build. It agreed with every in-game legality result so far:
+  PG000.R1 changed to WM scores −12, and the game penalized that race
+  (message 0x117); PP (−37) and IT (−57) score below 0 as well and were
+  not used. Keep crafted races at 0 or above; with more than 50 points
+  left the homeworld gets the full 50-point spend.
 
 ### Component displays (observed 2026-10-07, CS-001)
 
@@ -917,6 +1011,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   homeworld's 10 defenses' coverage for the best defense the tech allows.
 - CS-002: designs using engines the race may not build (HE-only, IFE,
   NRSE) were kept at tech 26; parts above the owner's tech are not.
+- CS-003: a Combat Lab player's designs are read in the designer after
+  one generation: copy the run's `raw/after/CB.*` into the games
+  directory, open `cb.m1`, dismiss "Note: 2 years of data read" with
+  Return, then F4. The designer opens on "Existing Designs"; click the
+  combo (730, 212) twice and step with Down as for hulls. The panel shows
+  mass, max fuel, armor, shields, cloak/jam, initiative/moves and, when
+  the design has any scanning part, "Scanner Range" normal / penetrating.
+- Battle records (`combatlab dump` hit lines): torpedo and missile hits
+  carry flag 0x04, missile hits also 0x08. Records with 0x80 added left
+  the target unchanged; against the unshielded targets of CS-003-C2 there
+  was one for each shot that missed. The CS-003 checker skips them.
 
 ## Known fragility
 

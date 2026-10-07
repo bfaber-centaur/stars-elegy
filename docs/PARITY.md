@@ -1681,14 +1681,167 @@ agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
 - Minefields, stargates, wormholes, and movement
   that interacts with other players were deliberately not tested.
 
+### Round 2 (FM-101 to FM-105)
+
+Status: MEASURED, 2026-10-07. Tests the KERNEL.md movement and fuel rules
+that FM-001..004 did not reach. Combat Lab (two JOAT players, tech 26),
+pinned generations; FM-104 runs two years. Predictions were committed
+before the runs, mostly computed by `experiments/fm2/model.py` (KERNEL.md
+as code). Every case and value is in `experiments/fm2/README.md`; raw
+evidence is in stars-oracle-apparatus `evidence/fm2/`. 54 of 56 checks
+held.
+
+**CONFIRMED:**
+
+- Improved Fuel Efficiency: factor `f − trunc(15f/100)`, both in the cost
+  of a move and in the range of a fleet short of fuel (two discriminating
+  cases).
+- Cheap Engines: 2 of 40 fleets at warp 7 did not move (they kept their
+  fuel and waypoint); none of 20 at warp 6 (MEASURED, one sample).
+- Warp 10 on engines not rated for it: 11 of 100 ships lost, and 5 of 50
+  in a fleet whose other 50 ships had a rated engine (MEASURED, one
+  sample each). Fuel leaves with the lost ships in proportion:
+  `30000 − trunc(30000·11/100)` before the survivors pay for the move.
+- Ram scoops with two engines per ship: `k` scales with the engine
+  count (192 at warp 4, 80 at warp 2, Radiating Hydro-Ram Scoop).
+- Anti-matter generator +50 and Super-Fuel Xport +200 per ship per year,
+  moving or not, capped at the tank.
+- Refuelling: at a friend's Space Dock and Space Station, but not at a
+  friend's Orbital Fort, an enemy's Space Dock or the player's own Orbital
+  Fort. The planet owner's relation toward the fleet's owner decides.
+- A fleet laying mines at waypoint 0 does not move. A transport task that
+  finished before movement does not hold the fleet (it moved on).
+- A fleet that cannot afford its whole leg but keeps fuel keeps its warp.
+- Designs with equal engine factors take cargo in design order.
+- A chaser of a stationary fleet follows the ordinary fuel rules
+  (fuel-limited, ram scoop, top-up).
+- Fleets of player 0 move before player 1's, whatever their numbers (a
+  mutual chase).
+- Rounding toward smaller coordinates is half away from zero.
+- Radiating Hydro-Ram Scoop colonist losses (JOAT radiation 15–85):
+  18 of 100, 1 of 3, none when stationary.
+- Waypoint chains over two years: no carry-over after a waypoint; a first
+  waypoint at the fleet's own position uses up the year; a fleet that ran
+  dry crawls at warp 1 the next year and its scoop gives 1 mg.
+
+**Contradicted:**
+
+- **Fuel unloaded onto a planet** by a waypoint "unload all" is not lost:
+  nothing moved and the fleet kept its fuel (the task was cleared).
+  KERNEL.md says it is lost; a direct cargo order is not tested.
+- **A design whose engine slot is not full** (a Large Freighter with one
+  of its two engines) moved its whole warp-5 distance and emptied its
+  tank. The range estimate overflows 32 bits (99999 × 1000 × 134 wraps),
+  so the fleet moves `fuel·1000/25748` ly at most, here 25, then pays
+  16750 mg it does not have. Three more cases (200, 50 and 500 mg: 7, 1
+  and 19 ly) followed that rule (FM-105, predicted before the run).
+  Probably only reachable with edited designs (LEGACY BUG candidate).
+
+## Fleet Operations
+
+Status: MEASURED, 2026-10-07 (FO-01 to FO-07). Tests the "Fleet
+operations" rules of `ORDERS.md` (stars-elegy #40) that can be set up with
+waypoint tasks in the host file. Predictions were committed before each
+batch of runs. Specs, predictions and the checker are in
+`experiments/fo/` (`gen.py`, `check.py`); every case and value is in
+`experiments/fo/README.md`. Raw evidence is in stars-oracle-apparatus
+`evidence/fo/`.
+
+### Method
+
+Combat Lab (CB, two JOAT players), one pinned generation per run. Fleets
+are Medium Freighters with Long Hump 6 (cargo 210 kT, fuel 450 mg) in deep
+space or at own planets without a starbase. CombatLab can now point
+waypoint 0 at a fleet and write the merge and transfer-fleet tasks
+(`ORACLE.md`).
+
+### Transport amounts and clamps (CONFIRMED)
+
+- A load takes at most the free cargo hold and what the source has. The
+  four cargo kinds are handled in order Ir, Bo, Ge, colonists, so "load
+  all" of Ir and Bo from 150/150 into an empty 210 kT hold took 150 Ir
+  and 60 Bo.
+- Fuel is clamped by the free fuel tank, independently: a fleet with a
+  full hold took 250 mg into its 200/450 tank. An own planet without a
+  starbase gave no fuel to a "load all" fuel order.
+- An unload into another fleet is capped by that fleet's free space; the
+  rest stays aboard (200 kT offered to a fleet with 110 kT free: 110
+  moved, 90 kept). The same holds for fuel.
+- Action amounts, loading from an own planet: fill to 50% loads half the
+  hold (105); set amount to 80 loads 80; set waypoint to 100 leaves 100
+  on the planet; wait for 100% keeps the fleet at the planet while unmet,
+  where fill to 100% lets it leave. "Load optimal" fuel with a single
+  waypoint gives all of the fleet's fuel to the target fleet.
+- Colonists loaded from an own planet before growth (87 → 57, then
+  growth).
+
+### Turn placement (CONFIRMED)
+
+Waypoint loads and merges at the starting waypoint happen before
+movement: the loaded cargo and merged ships leave with the fleet. Tasks at
+an arrival waypoint run after movement (load from a planet, load from or
+unload into a fleet, merge). A fleet whose only waypoint targets another
+of its owner's fleets loaded from it before movement and then followed it
+to the target's destination.
+
+### Another player's fleet (CONFIRMED)
+
+Minerals unloaded into another player's fleet moved when the receiver's
+relation toward the giver was neutral, and nothing moved when it was
+enemy; the giver's own relation did not matter. Colonists were refused in
+both cases. A fleet without a cargo-stealing scanner loaded nothing from
+another player's fleet, and a merge into another player's fleet was
+refused.
+
+### Transfer fleet task (CONFIRMED)
+
+Giving a fleet to another player worked when the recipient's relation
+toward the giver was not enemy: the recipient got a fleet at the same
+place with the same ships, cargo and fuel, under a free design slot that
+holds a copy of the design (it was not matched to the recipient's existing
+Medium Freighter design, which differs in parts). It was refused when the
+recipient was an enemy toward the giver, and for a fleet carrying
+colonists.
+
+### Merge with Fleet task
+
+- **Ships, cargo, fuel (CONFIRMED).** The ordering fleet joins the target,
+  which keeps its id; ship counts add per design; cargo and fuel add up.
+- **Damage (MEASURED).** Per design slot, with `D = max(1, pct·count/100)`
+  damaged ships in each damaged stack and `n` ships after the merge, the
+  new percentage is `ceil(100·ΣD/n)`. When only one of the two stacks is
+  damaged, its damage units are kept. When both are, the units become
+  `ceil(Σ D·units / n)`: divided by **all** ships of the slot, not by the
+  damaged ones, which dilutes the damage (10 ships at 100 units on 50%
+  plus 10 at 200 on 20% gave 45 units on 35%). Seen in seven cases; the
+  year's repair then applied normally.
+- **No ship-count cap (MEASURED).** 32000 + 767 ships gave 32767;
+  32000 + 768 and 32000 + 1000 left a fleet with **no ships** (its cargo
+  and fuel kept). This contradicts the 32766 cap in `ORDERS.md` for the
+  waypoint task; the cap may still apply to the direct merge order, which
+  is not tested.
+- **Distance.** A merge task whose waypoint 0 sat at the orderer's own
+  position but targeted a fleet 195 ly away was refused and cleared. The
+  interface does not create that state, so this says only that the task
+  is not applied from a distance.
+
+### Not tested (waiting on the serial decision)
+
+Split, the direct transfer between own fleets (and its capacity-based
+sharing), direct merges, and the order-time placement of direct cargo
+orders need an order file accepted by the registered host. Also not
+tested: steal mode, a fleet that may not carry colonists, transfers to an
+AI player.
+
 ## Combat
 
 Status: MEASURED (round 1 CB-000 to CB-008, round 2 CB-009 to CB-019,
-round 3 CB-020 to CB-022, 2026-10-07; cloud oracle). Predictions from the
-private binary reading (stars-decomp `docs/combat-predictions.md`:
-P-1..P-29 at 8cad60f for round 1, Q-1..Q-14 at 4a8c82b for round 2,
-R-8..R-10 at 134256d for round 3) were committed before every
-run (`experiments/cbNNN/README.md`).
+round 3 CB-020 to CB-022, round 4 CB-023 to CB-034, round 5 CB-035 to CB-041, 2026-10-07; cloud
+oracle). Predictions from the private binary reading (stars-decomp
+`docs/combat-predictions.md`: P-1..P-29 at 8cad60f for round 1, Q-1..Q-14
+at 4a8c82b for round 2, R-8..R-10 at 134256d for round 3; round 4 from the
+BINARY-ONLY rules in `docs/COMBAT.md` and stars-decomp 385b473) were
+committed before every run (`experiments/cbNNN/README.md`).
 Rules marked CONFIRMED agree with both that reading and the oracle;
 CONTRADICTED means the oracle disagrees with the prediction as stated.
 This section states behavior only.
@@ -1963,6 +2116,170 @@ checker (stars-decomp 134256d) with no mismatches.
   other than "enemies" does not act as written: the outcome depends on
   what the game handled earlier in the same turn.
 
+### Round 4 (CB-023 to CB-031)
+
+Every run was pinned. Setups with a random element ran at twelve cycle
+counts (5000 to 50000), which gave twelve distinct battle records each;
+the others ran at two or three. Every hit replayed with the stars-decomp
+checker (385b473) with no mismatches. CB-031 used a new three-player
+game built with `tools/fleetlab/new-game` (`experiments/cb031/cb3p.def`).
+Planet-side starbase damage was set with the new `planetset sbdmg` key.
+
+- **Fuel lost with destroyed ships (CB-023, CONFIRMED by fuel capacity).**
+  Two Fuel Transports (fuel capacity 750 each) died out of a fleet with
+  three Small Freighters (130 each). The fleet kept
+  `F − ⌊F·Σ lost capacity / Σ capacity⌋` = 1000 − ⌊1000·1500/1890⌋ = 207,
+  in both seeds. The committed number (124) **missed** because it assumed
+  the fleet's start fuel, 600: each Fuel Transport adds 200 fuel per turn,
+  and that happens **before** battles (the no-battle control went
+  600 → 1000). A share by ship count would have left 400.
+- **Repair (CB-024, CONFIRMED, 28 of 28 values).** With and without
+  Inner Strength: moved, deep space, other player's planet, own planet
+  without a starbase, own planet with an Orbital Fort, docked at a Space
+  Station, and a Fuel Transport in the fleet. IS doubles every rate except
+  the Fuel Transport's 25. Starbases repair 50, or 75 with IS.
+- **Dump cargo (CB-025, CONFIRMED).** A battle plan with "dump cargo"
+  drops the whole cargo at setup: in deep space a salvage object with
+  exactly the cargo (no quarter lost, and nothing destroyed); at a planet,
+  the full amount onto its surface. Speed codes matched COMBAT.md: 0 for
+  the dumping Freighters, 1 for the loaded one that did not dump.
+- **Range-0 beams (CB-026, CONFIRMED).** A station with Blackjacks (range
+  0) first fired at distance 1, and every hit delivered full damage (no
+  dropoff at distance 1).
+- **Starbase target score (CB-027, CONFIRMED).** A Hunter with one
+  Colloidal Phaser and "any" as its primary target had a Bare Station and a
+  Fuel Transport in reach for 8 shots (2 seeds), with the station's damage
+  at most 97/500. Every shot went to the station: its score uses its plain
+  cost (a halved cost would have chosen the Fuel Transport).
+- **Disengage (CB-025, CB-028, CONFIRMED in part).** A disengaging token
+  leaves on its 8th move, which may be in round 7 (one move a round) or
+  round 14 (speed 0, moves in even rounds only). Each move record carries a
+  counter that counts down from 7 to 0. Every disengage move in 6 records
+  changed square, so whether a move that keeps a token on its square
+  counts is **not tested**.
+- **Wiped-out participant, two players (CB-029, CONFIRMED 12/12).** All of
+  player 0's ships died while destroying a weapons-10 design; player 0
+  (weapons 3, research 0%) stayed at 3 in all twelve streams.
+- **Three-player battles (CB-031-n3, CONFIRMED).** The record holds three
+  players (mask 0x7). Player 0 was wiped out in every stream and still
+  reached weapons 4 in 5 of 12 streams: with three players every
+  participant attempts. Start squares: player 0 (4,1), player 1 (8,8),
+  player 2 (1,8), as in the COMBAT.md table, in all twelve streams.
+- **Observer attempt (CB-031-obs, LEGACY BUG, CONFIRMED 12/12).** Player 0
+  had a fleet at a battle between players 1 and 2, and a weapons-10 design
+  was destroyed. Player 0 stayed at weapons 3 in all twelve streams; the
+  intended observer rule would give it an attempt. The battle record went
+  to players 1 and 2 only; player 0's file had none.
+- **Movement order (CB-030, CONFIRMED in 2 streams).** Two Heavy (mass 165)
+  and two Light (mass 23) stacks per side: inside every movement phase both
+  Heavy tokens moved before any Light token, and the order between the two
+  Heavy tokens varied.
+- **Not tested:** the firing live-token recheck and "step 5 only ends the
+  battle". In these battles attack sets are symmetric (every player that
+  can attack another is attacked back), so a player whose last token dies
+  has no attacker left. A discriminating setup needs four or more players
+  with one-sided attack sets, or a plan-0 setup like CB-022.
+
+### Round 4b (CB-032 to CB-034)
+
+Setups from the Combat decomp pass after round 4 (stars-elegy #38,
+stars-decomp #17); predictions committed before the runs. Each ran at six
+cycle counts (8000 to 50000), giving six distinct records; every hit
+replayed with the checker. CB-033 used a new five-player game
+(`experiments/cb033/cb5p.def`).
+
+- **Out players still fire, friends join (CB-033, CONFIRMED 6/6).** Five
+  players in deep space. Player 0 (one Laser Frigate) and player 1 (four
+  Phaser Destroyers) name each other. Player 2 (one Phaser Frigate)
+  attacks nobody and considers player 0 a friend. Players 3 and 4 name
+  each other. In every stream:
+  - The record holds five players (mask 0x1f), and player 2 has a token,
+    so it joined through its friend. Start squares: (4,1), (6,8), (1,4),
+    (8,4), (2,8) for players 0 to 4, as in the COMBAT.md table for five.
+  - Player 1 destroyed player 0's frigate in round 2 with one shot, and
+    never fired again; it never fired at player 2.
+  - Player 2 fired at player 1 in rounds 0 to 15, 13 times after player 0
+    was gone. So a player found out at step 5 (player 2 names only player
+    1, which names only the dead player 0) keeps firing.
+  - Players 3 and 4 fired only at each other, and the battle ran all 16
+    rounds.
+- **Stay-put disengage (CB-032, CONTRADICTED as predicted; rule still not
+  tested).** Three players: players 0 and 2 (two Laser Destroyers each)
+  name player 1, whose only token is an unarmed Freighter starting at
+  (8,8). The prediction was a first move to (9,9) and six stays there.
+  In all six streams the Freighter changed square on every one of its 8
+  moves (it reached (9,9) only once, in one stream), often moving towards
+  the Destroyers, and left in round 7. No move kept it on its square, so
+  whether such a move counts is still open. No shots were fired. The
+  Combat decomp pass traced this to the out-of-reach damage estimate,
+  which is flat at distance 2 or more for these Laser stacks (#38).
+- **Stay-put disengage (CB-034, CONFIRMED 6/6).** CB-032's geometry, with
+  12 Delta Torpedo Destroyers per enemy stack whose target types (armed
+  ships, then starbases) the Runner does not match. The enemies never
+  moved or fired. In every stream the Runner moved to (9,9), stayed there
+  on moves 2 to 7 (each a move record to (9,9), counter 6 … 1) and left
+  on its 8th move, in round 7. A move that keeps a disengaging token on
+  its square counts.
+
+### Round 5 (CB-035 to CB-041)
+
+The plan-0 X (Elegy's open question A6) and the observable open
+experiments of `docs/COMBAT.md` (#38). Predictions were committed before
+each batch (50e3a52; b74b693 and 313c796 for setups added after the
+first runs). Pinned runs at six to twenty cycle counts; streams are
+counted by distinct battle record. Every hit replayed with the checker,
+0 mismatches. CB-035 to CB-037 use a 16-player game
+(`experiments/cb035/cb16p.def`).
+
+- **Plan-0 X at the first location (CB-035).** Player 0's armed station,
+  plan 0 "player 1", with player 1 and 13 other players' Frigates in
+  orbit, as the first location of the turn:
+  - No battle in 36 of 36 runs (12 cycle counts, and 6 each with extra
+    stationary or moving fleets elsewhere). X was never one of the 16
+    players. Its exact value is not observable this way.
+  - Control, a lone player-0 fleet first: X = 0 and the station fired, 6
+    of 6.
+  - **X from the previous location, CONFIRMED for a nonzero player.**
+    After a battle-less location whose last fleet was player 3's, the
+    station's "player 1" went into player 3's set: player 3, whose own
+    plan attacks nobody, attacked player 1 at player 0's planet (players
+    {0, 1, 3}, 6 of 6). Player 1 fired back, as retaliation says. After a
+    location with a battle, X = 0 (6 of 6).
+- **Start squares, CONFIRMED (CB-036, 2 streams).** `n` = 4: (1,1),
+  (8,8), (1,8), (8,1). `n` = 6: (1,4), (8,5), (2,8), (7,1), (6,8), (3,1).
+  An uninvolved starbase owner in a two-player battle at its planet takes
+  (1,4), and the two fighters, at ranks 1 and 2, take (8,5) and (4,1): the
+  flattened-table rule past row `n`.
+- **Observer LEGACY BUG for players 1 to 3, CONFIRMED (CB-037, 8 streams
+  per setup).** Observers 1, 2 and 3 in deep space, with weapons 3 and no
+  research: player 1 never gained (1 AND 0b1110 = 0), player 2 gained in
+  2 streams and player 3 in 3. A player with no fleet there never gained.
+  At a planet whose owner (player 1, fighting) has no starbase, observer 3
+  gained in 3 of 8 streams; in the same streams in deep space it never
+  did (3 AND 0b1000 = 0).
+- **Speed code (CB-038, 2 streams).** War Monger adds 2, CONFIRMED on six
+  stacks. A stack's cargo share is **divided over its ships**: a
+  two-freighter stack carrying 1 kT kept mass 69 and code 2, where one
+  freighter with 1 kT had mass 70 and code 1. The battle record's token
+  mass is this per-ship mass. (MISSED: the prediction added the share
+  once.)
+- **Token cap is 255 (CB-039, 2 streams).** Two players with 140 one-ship
+  fleets each: 255 tokens, player 0 127 and player 1 128 (MISSED: 256,
+  129/127). The same fleets sat out in both streams (player 0's fleets 1
+  to 13, player 1's fleets 0 to 11) and survived untouched.
+- **Salvage past 30000 kT, CONFIRMED (CB-040, 2 streams).** 16 Super
+  Freighters with 48000 kT of ironium destroyed in deep space left two
+  objects at the battle point: 30000 ironium (exactly 3000 steps) and
+  6098 ironium + 50 germanium. Nothing was lost; the germanium went to the
+  second object.
+- **AR starbase destroyed (CB-041).** The planet is left uninhabited
+  (owner none, population 0), CONFIRMED in 17 of 17 streams where an AR
+  Orbital Fort died; a JOAT owner keeps it. The no-attempt rule was not
+  discriminated: a **JOAT** owner at its own planet with ten Freighters
+  left, after losing its Fort and destroying propulsion-9 Destroyers,
+  never gained in 8 streams (about 4% at the expected 1/3), and gained in
+  1 of 4 streams where its Fort survived. Open.
+
 ### Resolved reconciliation
 
 - Energy Dampener frigate token mass: the battle record shows 19 (CB-002
@@ -1973,9 +2290,9 @@ checker (stars-decomp 134256d) with no mismatches.
 
 ### Not tested
 
-Stack movement order by weight (P-9), queued ships lost with a starbase
-(P-25), the "moved" repair rate, starbase repair, salvage at more than one
-point (E-8), three or more players, minefields. Bombing and invasion: see
+Queued ships lost with a starbase (P-25), salvage at more than one point
+(E-8), the firing live-token recheck (no observable effect), Mystery
+Trader items from battle, the AR no-attempt rule (CB-041), minefields. Bombing and invasion: see
 "Planet Takeover".
 
 ## Scanning
@@ -2705,7 +3022,7 @@ path and other rewards (O-32, O-33, O-37, O-38), minefield hit odds, damage
 and shrink (O-14, O-15), detonation of heavy and speed-bump fields, and
 stargates.
 
-## Components (CS-001, CS-002)
+## Components (CS-001, CS-002, CS-003)
 
 Question: does the part, hull and planetary-item table read from the binary
 (private `stars-decomp` `tools/components.py`), with its cost and race
@@ -2755,6 +3072,80 @@ rules, match the original game? Result: `data/components.json` and
   Interspace-10, Galaxy Scoop for an SS race without LRTs) were kept in
   the designs at tech 26 and used as given.
 
+### The remaining BINARY-ONLY columns (CS-003, CONFIRMED 2026-10-07)
+
+CS-003 aimed at the 63 rows CS-001/CS-002 left with a BINARY-ONLY column.
+80 cases in 6 Combat Lab runs (`experiments/cs003`, predictions committed
+first): 77 matched, 3 could not tell the two readings apart and were
+re-run as CS-003-C2, which matched. No case contradicted the table.
+Every row of `data/components.json` is now CONFIRMED.
+
+- **Warp-10 rating** (CS-003-W): 6 fleets of 10 Small Freighters per
+  engine at warp 10. The 5 rated engines lost 0 of 300 ships; each of the
+  11 others lost ships, 58 of 660 in all (8.8%; per engine 1 to 10 of 60).
+  Losses per 10-ship fleet: 0 in 28 fleets, 1 in 21, 2 in 15, 3 in 1,
+  4 in 1, close to independent 1-in-10 draws per ship (KERNEL.md).
+- **Battle warp**: already shown by CB-000. Each engine's scout (mass
+  under 70) showed moves `(battle_warp − 4 + 2)/4` (plus one step for the
+  Enigma Pulsar), which identifies the warp for all 16 engines.
+- **Fuel transports** (CS-003-W): stationary fleets with no fuel ended
+  the year with 200 mg (one Fuel Transport), 600 (three), 200 (one
+  Super-Fuel Xport, not more for the bigger hull) and 0 (a Medium
+  Freighter control).
+- **Sweeping** (CS-003-S): one Scout per plain beam at the centre of an
+  enemy field with no planets swept exactly `damage × range²` after the
+  2% decay, for all 16 plain beams and the Multi Contained Munition (1260).
+  Blackjack, Bludgeon and Blunderbuss (range 0) swept nothing, which rules
+  out the gatling reading (range 4).
+- **Range-0 beams are beams** (CS-003-C): each hit an unarmed, unshielded
+  Orbital Fort (armor 100) for armor damage (Blackjack: 450/500 = 90 on
+  the first hit; Bludgeon and Blunderbuss destroyed it with one hit). A
+  sapper would have done nothing.
+- **Mine laying** (CS-003-S): a Super Mine Layer with two Mine Dispenser
+  40 laid 160 ("this year only"), as the Mini Mine Layer control did.
+- **Torpedoes and missiles** (CS-003-C, C2): each hit record on an
+  unshielded target replayed with the COMBAT.md damage rule. The 8
+  torpedoes did `d`, the 4 capital missiles `2d`. One Alpha Torpedo hit
+  did 4, not 5: the two halves `d/2` are each truncated (CS-003-C2,
+  700-armor target: 3 units per hit). Missile hit records carry flag
+  0x08 in addition to the torpedo flag 0x04 (0x0c); torpedo records
+  carry 0x04 only.
+- **Open for the combat lane (record format, not behavior):** every
+  torpedo shot that missed an **unshielded** target still left a record
+  with flag 0x80 and no change (CS-003-C2: 7 for the Alpha Torpedo, 12
+  and 11 for the missiles, one per missed shot). COMBAT.md "Torpedoes and
+  missiles" step 3 says misses are recorded only against a target with
+  shields. Both may hold if a salvo with no hit is recorded differently
+  from the misses of a salvo that hits; not tested.
+- **Designer** (CS-003-D): four Enigma Pulsars on a Battleship showed
+  cloak 40% (20 points each; 21 would show 42%) and moves 2¼; Midget
+  Miners with 0, 1 and 2 Alien Miners moved 1, 1¼, 1¼, and with an
+  Enigma Pulsar and an Alien Miner 2¼, so the two parts share one
+  `(n + 1)/2` term. Mega Poly Shell on a Medium Freighter showed scanner
+  80/40, Multi Contained Munition on a Cruiser 150/75. Cloak and jam
+  percentages matched SCANNING.md and COMBAT.md (2 Alien Miners: 52%/51%).
+  For one design with no cargo these readouts also show the cloak points
+  of Enigma Pulsar (20), Alien Miner (60), Mega Poly Shell (40) and Multi
+  Contained Munition (20), which SCANNING.md "Fleet cloak" lists as
+  BINARY-ONLY, and the Alien Miner term of COMBAT.md's speed code.
+- **Bombs** (CS-003-B, environment 50/50/50, no defenses):
+  - one LBU-17, LBU-32, LBU-74 or Hush-a-Boom on P' = 10 killed exactly 1
+    (no minimum of 2 or more; a minimum of 1 unit would act the same,
+    since a bomb with a kill rate always kills at least 1);
+  - one Smart, Neutron, Enriched Neutron, Peerless or Annihilator bomb on
+    P' = 1 with 20 mines and 20 factories left all three unchanged (no
+    minimum, no installation kills);
+  - one Retro Bomb on P' = 10 killed nobody and destroyed nothing;
+  - one Multi Contained Munition on P' = 1000 killed 20 (2%) and took
+    mines 10 → 5. T-18 had shown its minimum of 3 units.
+- **Colonizing** (CS-003-B): a Colony Ship with an Orbital Construction
+  Module colonized an unowned planet (JOAT race), as one with a
+  Colonization Module did; an empty Colony Ship did not.
+- **Remote mining** (CS-003-B): two Orbital Adjusters on a Midget Miner
+  mined nothing; two Robo-Midget Miners (rate 5 each) at concentrations
+  100 added 10 kT of each mineral (KERNEL.md "Remote mining", MEASURED
+  for this one case).
+
 ### StarsAPI comparison (private)
 
 StarsAPI's `UNEDITED.MOD` agrees with the binary table on every item:
@@ -2785,3 +3176,153 @@ it carries the expected registration credential; a file without it is
 silently skipped, and a missing credential is distinct from the anti-tamper
 cheater check. The credential value is not recorded in this public
 repository. Raw files are kept in private apparatus.
+
+## Universe generation
+
+Status: MEASURED (UG01 to UG21, 2026-10-07; cloud oracle). Predictions
+UG-1..UG-9 from the private binary reading (stars-decomp
+`docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
+whole predicted game per case were committed before the runs
+(`experiments/ug/README.md`; stars-decomp 1327269, apparatus 80e6c1b).
+CONFIRMED below means every case that tested the rule agreed, field by
+field; the case ids say which. This section states behavior only.
+
+### Method
+
+- Each game is built from a game definition file with
+  `tools/fleetlab/new-game` (`docs/ORACLE.md` "New games from a definition
+  file"); the new `.HST` is read with `combatlab dump` and
+  `experiments/ug/homeworlds.py`.
+- UG01..UG15: the SS race file PG000.R1 and computer players, every size
+  and density, 2 to 16 players, the max-minerals, BBS, clumping and
+  no-random-events options. UG16..UG21: legal WM, SD, IT, JOAT and PP
+  races made from PG000.R1 by changing only the primary trait and the
+  leftover-points spend (`tools/fleetlab/racelab`), with 2 to 16 players.
+- The private model was compared on planet positions, name ids, every
+  planet's environment, concentrations and artifact flag, owners,
+  homeworlds, starting tech, designs, fleets, logos, wormholes and the
+  option word. All 21 games and a rerun of UG01 matched with 0
+  mismatches.
+- Raw files, dumps and checks: private `stars-oracle-apparatus`,
+  `evidence/ug/`.
+
+### Determinism and seeds (CONFIRMED)
+
+- A definition file that gives a seed produces the same game every time.
+  UG01 built at two DOSBox speeds (cycles 20000 and 30000) decoded
+  identically apart from the game id. The game id is the only difference,
+  and since the files are encrypted with it, compare decoded dumps, not
+  raw bytes.
+- Seeds that are equal modulo 4096 gave the same game in both pairs run:
+  seed 57 and seed 12345 (UG11 vs the first OB new game, huge), seed 4107
+  and seed 11 (UG14 vs OB-006's large game). Seeds 0 and 64 also gave
+  identical games (UG12, UG13). The binary reading says only the low 12
+  bits are used, as two 6-bit halves, and a seed whose halves are equal
+  behaves like the one with the upper half bumped by one; that explains
+  the 0/64 pair, the only such pair run.
+- Without a seed the game comes from the startup clock (not tested here).
+
+### Planet counts (MEASURED)
+
+Planets per game, by size and density:
+
+| size | sparse | normal | dense | packed |
+|---|---|---|---|---|
+| tiny | 24 (UG01) | 32 (UG08, UG12, UG13, UG19) | | |
+| small | 96 (UG06, UG18) | 128 (UG02) | 160 (UG09) | |
+| medium | | 288 (UG07, UG16, UG20) | 360 (UG03) | 540 (UG10) |
+| large | | 512 (UG14, UG17) | | 912 (UG04, clumped) |
+| huge | | 800 (UG11, UG21) | 940 (UG05) | 940 (UG15) |
+
+With W the galaxy width (400, 800, 1200, 1600, 2000 ly from tiny to
+huge), the normal-density counts are W²/5000, sparse 3/4 of that, dense
+5/4 and medium packed 15/8. Large packed and huge dense or packed come
+near the generator's limit of 999 candidates, and the binary reading says
+their count then depends on the seed (a too-close pass removes a variable
+number). Only one seed per size and density was run, so treat those three
+cells as single observations. Huge dense and huge packed gave the
+identical game at the same seed (UG05, UG15).
+
+### Options (CONFIRMED)
+
+- **Maximum minerals** (UG02, UG09): every planet's concentrations are
+  100/100/100, except the homeworlds.
+- **BBS** (UG03, UG09, UG21) raises
+  concentrations below 40 by 5, homeworld surface minerals by 1/4, and
+  multiplies homeworld population by (growth% × k + 5)/5, k = 2 for HE and
+  1 otherwise. PG000.R1 (SS, 10%) starts with 750 colonists instead of
+  250 (UG03); IT, 4/5 of that, with 600 (UG21).
+- **No random events** (UG08, UG09): no wormholes and no artifacts.
+  UG19 (tiny, events on) also had no wormholes; no artifact appeared in
+  any game of this corpus.
+- **Clumping** (UG04, UG10) and player positions 0–3 (all games) moved
+  planets and homeworlds as the model predicted.
+
+### Starting tech by PRT (CONFIRMED)
+
+Energy/weapons/propulsion/construction/electronics/biotech for the human
+races of UG16..UG21 (all with the same research settings as PG000.R1):
+
+| PRT | tech |
+|---|---|
+| WM | 1/6/1/0/0/0 |
+| SD | 0/0/2/0/0/2 |
+| IT | 0/0/5/5/0/0 |
+| PP | 4/0/0/0/0/0 |
+| JOAT | 3/3/3/3/3/3 |
+| SS (PG000.R1) | 0/0/0/0/5/0 |
+
+Computer races start with their own settings on top (for example SS
+0/0/1/0/5/0, CA 3/3/3/3/3/6 and AR 1/0/1/0/0/0 in UG21). Starting designs and fleets
+per PRT matched the model in UG16..UG21; examples from UG21: WM with
+construction 0 has only a scout (Quick Jump 5, Bat Scanner, Yakimora Light
+Phaser) and a colony ship; SD
+has two Mini Mine Layers; IT a Destroyer and a Privateer; JOAT six
+designs and six fleets.
+
+### Starting planets (CONFIRMED)
+
+- Homeworld installations are 10 mines, 10 factories and 10 defenses
+  before leftover-point spends. AR homeworlds have no installations;
+  their starbase design 1 is a Space Station and design 0 an empty
+  Orbital Fort.
+- **IT and PP second planet.** On a map larger than tiny, an IT or PP
+  player starts with a second planet holding 2/5 of the homeworld's
+  starting population, 10 mines and 4 factories; the homeworld keeps
+  4/5 (IT and PP in UG16, UG17, UG18, UG20, UG21; computer PP in UG03).
+  On a tiny map there is no second planet and the homeworld keeps the
+  full population (UG19). IT starbases carry a Stargate 100/250 and an
+  Orbital Fort gate design exists; PP's carry a Mass Driver 5.
+- **Leftover advantage points.** With L = min(50, points left), all of
+  this corpus's races had L = 50. The spend selected in the race file
+  added, on the homeworld:
+  - mines: +25 (10 → 35; WM UG16, PP UG20);
+  - factories: +10 (10 → 20; SD UG16);
+  - defenses: +5 (10 → 15; IT UG16);
+  - surface minerals: +500 kT, +250 on the smallest of the three and +125
+    on each other (JOAT UG16: 423/253/234 → 548/378/484);
+  - mineral concentrations: +25 on the lowest and +13 on all three (JOAT
+    UG20: 53/30/82 → 66/68/95, with the 30 the floored value below).
+  Computer races of harder and expert levels also showed the
+  concentration and surface boosts (UG17, UG21).
+
+### Shared homeworld minerals (LEGACY BUG, MEASURED)
+
+In every game with two or more players (UG16..UG21 checked directly;
+up to 16 players in UG21), all homeworlds start, before spends, with:
+
+- the **same surface minerals**, one draw for the whole game; and
+- the **same concentrations: those of planet 0** (the first planet in
+  the planet list), each raised to at least 30, not the homeworld's own.
+
+Examples: UG16, planet 0 has 15/70/90, and the WM, SD, IT and JOAT
+homeworlds all have 30/70/90 with surface 423/253/234 (JOAT's minerals
+spend gives it 548/378/484). UG21, planet 0 has 47/37/29; the eight
+homeworlds without a concentration spend all have 47/37/30, and the ten
+without a minerals spend all have 438/262/450.
+
+Interpretation: the binary reading attributes this to the homeworld
+setup reading the first planet's record instead of the homeworld's. It
+is deterministic and observable, so it is recorded as LEGACY BUG; it
+makes every start mineral-identical, which may be what players have
+long seen as "fair starts". Elegy can reproduce it as one isolated rule.
