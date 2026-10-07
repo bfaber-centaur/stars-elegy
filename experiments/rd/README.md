@@ -188,3 +188,18 @@ midpoint 62). One pinned year. Prediction: centre back to 62 and the
 tampered flag set, but **no message and no other change**: colonists per
 resource, growth and research costs stay as they were, although the race
 is negative.
+
+### Round 3 follow-up: RD-P21 (committed before the run)
+
+RD-P19's second year sent message 0x117 again although the race was
+already marked tampered, had 1042 points and was not changed (prediction:
+no message). Candidate: the penalty message goes to a human player every
+year while the race carries the tampered flag, whether or not anything is
+repaired. RW08's three human races carry the flag from creation (positive
+points, nothing left to repair).
+
+RD-P21: RW08 (`evidence/rd/rw08`), one pinned year. If the candidate
+holds: 0x117 to players 0, 1 and 2, races unchanged. If 0x117 needs a
+punishment or a repair that year: no 0x117, races unchanged. The
+candidate is the prediction. RD-P19 year 3 is run alongside: the
+candidate predicts 0x117 again, race unchanged.
