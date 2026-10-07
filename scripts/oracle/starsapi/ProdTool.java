@@ -8,6 +8,7 @@ import org.starsautohost.starsapi.encryption.Decryptor;
 // Used to set up oracle experiments (docs/ORACLE.md, "Setting up a state").
 //   dump FILE...                         planet/queue/player/event state
 //   edit IN OUT key=value...             edit planet P (default 7) and player 0
+//   xy IN.XY OUT.XY OFF:HEX...            set game-record bytes (options, victory conditions)
 // keys: planet=N fe= bo= ge= pop= excess= mines= factories= defenses=
 //       leftover=0|1 researchPct=N queue=SPEC (SPEC: id:count:pct:kind,... ; kind 1=planetary item, 2=design; "none" removes)
 //       starbase=0|1 (planet's has-starbase flag; 1 keeps the existing design slot)
@@ -26,6 +27,7 @@ public class ProdTool {
   public static void main(String[] a) throws Exception {
     if (a[0].equals("dump")) { for (int i=1;i<a.length;i++) dump(a[i]); }
     else if (a[0].equals("edit")) edit(a);
+    else if (a[0].equals("xy")) xy(a);
     else if (a[0].equals("roundtrip")) { List<Block> bl=new Decryptor().readFile(a[1]); for (Block b: bl) if (b instanceof PartialPlanetBlock) b.encode(); new Decryptor().writeBlocks(a[2], bl, false); }
   }
 
@@ -56,11 +58,24 @@ public class ProdTool {
         StringBuilder lv=new StringBuilder(), acc=new StringBuilder();
         for (int i=0;i<6;i++){ lv.append(i==0?"":",").append(d[0x1a-B+i]); acc.append(i==0?"":",").append(le32(d,0x20-B+4*i)); }
         System.out.printf("%s player=%d researchPct=%d field=%d next=%d resRes=%d levels=%s accum=%s%n", n, p.playerNumber, d[0x38-B], d[0x39-B]&15, (d[0x39-B]>>4)&15, le32(d,0x3a-B), lv, acc);
-        StringBuilder st=new StringBuilder(); for (int i=0;i<7;i++) st.append(i==0?"":",").append(d[0x36+i]&0xff);
+        StringBuilder st=new StringBuilder(); for (int i=0;i<14;i++) st.append(i==0?"":",").append(d[0x36+i]&0xff);
         System.out.printf("%s race player=%d prt=%d lrt=%08x stats=%s growth=%d hab=%d,%d,%d/%d,%d,%d/%d,%d,%d%n", n, p.playerNumber, d[0x44]&0xff, le32(d,0x46)&0xffffffffL, st, d[0x11], d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15],d[16]);
       }
+      else if (b.typeId == 7) { System.out.printf("%s game %s%n", n, hex(b.getDecryptedData(), Math.min(32, b.size))); }
+      else if (b.typeId == 45) { System.out.printf("%s scores %s%n", n, hex(b.getDecryptedData(), b.size)); }
       else if (b.typeId == 12) { System.out.printf("%s events %s%n", n, hex(b.getDecryptedData(), b.size)); }
     }
+  }
+
+  // xy IN.XY OUT.XY OFF:HEX...: set bytes of the game record (.XY planets block
+  // data; OFF hex). 0x10 game options (bit 1 slower tech), 0x14+I victory condition I
+  // (bit 7 enabled, low 7 bits the value).
+  static void xy(String[] a) throws Exception {
+    List<Block> bl = new Decryptor().readFile(a[1]);
+    for (Block b: bl) if (b.typeId == 7) { byte[] d=b.getDecryptedData();
+      for (int i=3;i<a.length;i++){ String[] f=a[i].split(":"); d[Integer.parseInt(f[0],16)]=(byte)Integer.parseInt(f[1],16); }
+      b.setDecryptedData(d, b.size); }
+    new Decryptor().writeBlocks(a[2], bl, false);
   }
 
   static void edit(String[] a) throws Exception {
@@ -83,6 +98,7 @@ public class ProdTool {
         if (kv.containsKey("field")) { String[] f=kv.get("field").split(","); d[0x39-8]=(byte)((Integer.parseInt(f[1])<<4)|Integer.parseInt(f[0])); ch=true; }
         if (kv.containsKey("mt")) { int v=Integer.parseInt(kv.get("mt"),16); d[0x4a]=(byte)v; d[0x4b]=(byte)(v>>8); ch=true; }
         if (kv.containsKey("hab")) { String[] h=kv.get("hab").split(","); for (int k=0;k<9;k++) d[8+k]=(byte)Integer.parseInt(h[k]); ch=true; }
+        if (kv.containsKey("growth")) { d[0x11]=(byte)Integer.parseInt(kv.get("growth")); ch=true; }
         if (ch) p.encode();
       }
       out.add(b);
