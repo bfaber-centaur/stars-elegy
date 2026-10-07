@@ -33,6 +33,24 @@
 #                          the fleet panel's Next / Prev buttons
 #   fleet plan K           set the selected fleet's battle plan to item K
 #   fleet xfer             open Cargo Transfer with what the fleet orbits
+#   fleet rename NAME      Rename the selected fleet
+#   fleet split            Split: Ship Transfer with a new fleet (then ships, ships ok)
+#   fleet splitall         Split All (one fleet per ship; the first ship stays)
+#   fleet merge I...       Merge Fleets: Unselect All, select rows I... of its
+#                          list (every fleet at the place, the selected one
+#                          included, by fleet number; name the selected fleet's
+#                          row too), then OK. The dialog opens with some rows
+#                          already selected (all of them with two same-design
+#                          fleets), so a bare toggle is not reliable
+#   fleet other I          select item I of "Other Fleets Here" (the other fleets
+#                          at the selected fleet's place, by fleet number)
+#   fleet goto             that panel's Goto: select the other fleet
+#   fleet exchange         that panel's Merge: Ship Transfer with the other fleet
+#   fleet cargo            that panel's Cargo: Cargo Transfer with the other fleet
+#                          (then xfer ITEM N, xfer ok)
+#   ships ROW N            Ship Transfer: N ships of design row ROW from the
+#                          selected fleet to the other side (N < 0 the reverse)
+#   ships ok | ships cancel
 #   xfer ITEM N            ITEM fuel|ir|bo|ge|col; N > 0 moves N from the
 #                          fleet to the other side, N < 0 the reverse
 #   xfer ok | xfer cancel  close the Cargo Transfer dialog
@@ -43,6 +61,26 @@
 #                          6 lay mine field, 7 patrol, 8 route, 9 transfer)
 #   wp transport ITEM ACTION [N]
 #                          transport order for one cargo item (see below)
+#   design open            Commands > Ship Design (F4), existing ship designs
+#   design select I        item I of the design list
+#   design copy            Copy Selected Design (opens the editor)
+#   design edit            Edit Selected Design (disabled for a design that ships
+#                          or a starbase use; enabled for one only queued)
+#   design ships | design starbases
+#                          the Ships / Starbases radio (which designs are listed)
+#   design part ROW X Y    drag the component in visible row ROW (0-3) of
+#                          the editor's list onto the slot at X,Y
+#   design scroll N        scroll the component list down N rows
+#   design category I      component list filter I (0 all, 1 armor, 2 beam
+#                          weapons, 3 bombs, 4 electrical, 5 engines,
+#                          6 mechanical, 7 mine layers, 8 mining robots,
+#                          9 scanners, 10 shields, 11 torpedoes, 12 weapons);
+#                          the list follows the player's tech
+#   design name NAME       the design's name
+#   design ok | done | cancel
+#                          editor OK; list Done (or editor Cancel)
+#   design delete [yes]    Delete Selected Design; "yes" answers the alert
+#                          shown when ships use it (they are destroyed)
 #   queue open             Production > Change for the selected planet
 #   queue select R         select queue row R (0 = "Top of the Queue");
 #                          Add inserts after the selected row
@@ -57,6 +95,7 @@
 #   research next I        "Next field" item I (0 same, 1..6 fields, 7 lowest)
 #   research done          Done
 #   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
+#   drag X1 Y1 X2 Y2       raw left-button drag (scripts/oracle/drag)
 #   shot NAME              extra screenshot
 set -euo pipefail
 [[ $# -ge 3 ]] || { echo "usage: client-orders DIR OUTDIR CMDS [MFILE] [GAME]" >&2; exit 2; }
@@ -94,7 +133,7 @@ fleetplan() {
 	pause
 }
 
-# Cargo Transfer dialog (fleet panel Xfer): rows fuel/ir/bo/ge/col; the
+# Cargo Transfer dialog (fleet panel Xfer, or Cargo with another fleet): rows fuel/ir/bo/ge/col; the
 # arrows at x 585 move fleet -> other side, x 567 the reverse. A click
 # moves 1 (kT or mg), shift-click 10, ctrl-click 100, each capped by what
 # is there and what fits.
@@ -106,12 +145,14 @@ xfer() {
 	nclick "$x" "$y" "$n"
 }
 # nclick X Y N: press the button at X,Y for N units, where a click is 1,
-# shift-click 10 and ctrl-click 100 (Cargo Transfer arrows, Production Add
+# shift-click 10, ctrl-click 100 and ctrl+shift-click 1000 (Ship Transfer) (Cargo Transfer arrows, Production Add
 # and Remove)
 nclick() {
 	local x="$1" y="$2" n="$3"
 	((n == 0)) && return
 	"$O/click" "$x" "$y"; n=$((n - 1))     # positions the cursor; counts 1
+	((n >= 1000)) && xdotool keydown ctrl keydown shift click --repeat $((n / 1000)) --delay 150 1 keyup shift keyup ctrl
+	n=$((n % 1000))
 	((n >= 100)) && xdotool keydown ctrl click --repeat $((n / 100)) --delay 150 1 keyup ctrl
 	((n % 100 >= 10)) && xdotool keydown shift click --repeat $((n % 100 / 10)) --delay 150 1 keyup shift
 	((n % 10 > 0)) && xdotool click --repeat $((n % 10)) --delay 150 1
@@ -164,6 +205,21 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"fleet prev") "$O/click" 144 108; pause ;;
 	"fleet plan") fleetplan "$b" ;;
 	"fleet xfer") "$O/click" 161 213; pause 1.5 ;;
+	"fleet rename") "$O/click" 144 156; pause 1; "$O/type" "$b${rest:+ $rest}"; "$O/key" Return; pause ;;
+	"fleet split") "$O/click" 232 364; pause 1.2 ;;
+	"fleet splitall") "$O/click" 296 364; pause 1.2 ;;
+	"fleet merge")
+		"$O/click" 358 364; pause 1.2
+		"$O/click" 698 452; pause 0.4     # Unselect All
+		for r in $b $rest; do "$O/click" 450 $((352 + 13 * r)); pause 0.4; done
+		shot merge-list; "$O/click" 698 356; pause ;;
+	"fleet other") "$O/click" 297 412; pause 0.6; "$O/click" 280 $((431 + 50 * b / 3)); pause 0.6 ;;
+	"fleet goto") "$O/click" 232 473; pause ;;
+	"fleet exchange") "$O/click" 295 473; pause 1.2 ;;
+	"fleet cargo") "$O/click" 358 473; pause 1.2 ;;
+	"ships ok") "$O/click" 627 555; pause ;;
+	"ships cancel") "$O/click" 705 555; pause ;;
+	ships\ *) if ((b < 0)); then nclick 567 $((340 + 20 * a)) $((-b)); else nclick 585 $((340 + 20 * a)) "$b"; fi ;;
 	"xfer ok") "$O/click" 627 555; pause ;;
 	"xfer cancel") "$O/click" 705 555; pause ;;
 	xfer\ *) xfer "$a" "$b" ;;
@@ -178,6 +234,19 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 		"$O/click" 160 467; pause 0.6; "$O/click" 40 $((486 + 16 * b)); pause 0.5
 		"$O/click" 123 490; pause 0.6; "$O/click" 40 $((508 + 14 * wact)); pause 0.5
 		if [[ -n "$wn" ]]; then "$O/click" 152 490; "$O/key" Home shift+End; "$O/type" "$wn"; "$O/key" Tab; pause 0.4; fi ;;
+	"design open") "$O/key" F4; pause 1.5 ;;
+	"design select") "$O/click" 848 212; pause 0.6; "$O/click" 700 $((229 + 14 * b)); pause 0.6 ;;
+	"design copy") "$O/click" 369 393; pause 1.5 ;;
+	"design edit") "$O/click" 369 457; pause 1.5 ;;
+	"design ships") "$O/click" 302 219; pause 1 ;;
+	"design starbases") "$O/click" 302 240; pause 1 ;;
+	"design part") read -r px py <<< "$rest"; "$O/drag" 320 $((260 + 66 * b)) "$px" "$py"; pause ;;
+	"design scroll") rclick 518 483 "$b" ;;
+	"design category") "$O/click" 518 212; pause 0.6; "$O/click" 330 $((229 + 13 * b)); pause 0.6 ;;
+	"design name") "$O/click" 736 212; "$O/key" Home shift+End; "$O/type" "$b${rest:+ $rest}"; pause 0.4 ;;
+	"design ok") "$O/click" 688 670; pause 1.2 ;;
+	"design done" | "design cancel") "$O/click" 765 670; pause 1.2 ;;
+	"design delete") "$O/click" 369 425; pause 1; if [[ "$b" == yes ]]; then shot alert; "$O/key" alt+y; pause; fi ;;
 	"queue open") "$O/click" 231 332; pause 1.5 ;;
 	"queue select") "$O/click" 790 $((181 + 16 * b)); pause 0.4 ;;
 	"queue add") "$O/click" 300 $((181 + 16 * b)); nclick 575 244 "${rest:-1}" ;;
@@ -193,6 +262,7 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	"research next") "$O/click" 835 379; pause 0.6; "$O/click" 780 $((395 + 13 * b)); pause 0.4 ;;
 	"research done") "$O/click" 742 580; pause ;;
 	key\ *) "$O/key" $a $b $rest; pause ;;
+	drag\ *) read -r dx2 dy2 <<< "$rest"; "$O/drag" "$a" "$b" "$dx2" "$dy2"; pause ;;
 	click\ *) "$O/click" "$a" "$b"; pause ;;
 	wait\ *) sleep "$a" ;;
 	shot\ *) ;;

@@ -217,6 +217,7 @@ scripts/oracle/wait-for REF.png X Y [TIMEOUT]  # waits until REF appears at X,Y
 scripts/oracle/key alt+f Down Return  # xdotool keysyms, sent in order
 scripts/oracle/type 'text'            # literal text, no Return
 scripts/oracle/click X Y [BUTTON] [--double]   # guest coordinates from a screenshot
+scripts/oracle/drag X1 Y1 X2 Y2       # left-button drag, same homing as click
 scripts/oracle/register [SERIAL_FILE] # type the serial ($STARS_SERIAL by default) into the first-run dialog
 scripts/oracle/bootstrap [DIR]        # fresh machine → registered snapshot (see Durable setup)
 scripts/oracle/turn GAME.M1           # open a game, press F9 once, exit Stars!
@@ -856,6 +857,57 @@ What the client did, at 1152x864:
   - Scrap at a foreign homeworld removed the fleet, gave its cargo and
     scrap minerals to that planet, and sent message 0x05a.
   Commands: `wp select K`, `wp task T`, `wp transport ITEM ACTION [N]`.
+
+- **Designs** (DS-1, 2026-10-07). F4 opens the Ship & Starbase Designer
+  on "Existing Designs". The design list (848, 212) has rows every 14 px
+  from y 229: the newest design was listed first in one session, and
+  Hauler before MD40 Frigate in another. The buttons are Copy Selected
+  Design (369, 393), Delete Selected Design (369, 425) and Done
+  (765, 670). Edit is disabled for a design that ships use.
+  - Copy opens the editor with the copy named "NAME (2)". The name box
+    is at (736, 212).
+  - The component list on the left has 4 visible rows, 66 px apart from
+    y 260 (x 320). Its filter list (518, 212) has rows every 13 px from
+    y 229: All, Armor, Beam Weapons, Bombs, Electrical, Engines,
+    Mechanical, Mine Layers, Mining Robots, Scanners, Shields,
+    Torpedoes, Weapons. The list follows the player's tech, so pick a
+    filter first.
+  - A part is placed by dragging it onto a slot (`scripts/oracle/drag`).
+    The Medium Freighter's slots are at (583, 355) engine, (775, 355)
+    shield/armor and (838, 355) scanner/elect/mech.
+  - The editor has OK (688, 670) and Cancel (765, 670).
+  - Deleting a design that ships use asks "You currently have N Xs. If
+    you delete this design, these ships will be destroyed" (Yes is
+    `alt+y`).
+  - The client wrote two design records for one new design: the plain
+    copy, then the edited one. A delete is a 2-byte design record.
+  - The host stored the new design (Bat Scanner included) in ship slot 0.
+    Deleting the in-use Hauler destroyed all three Haulers that year.
+  Commands: `design open`, `design select I`, `design copy`,
+  `design category I`, `design part ROW X Y`, `design scroll N`,
+  `design name NAME`, `design ok`, `design done`, `design delete [yes]`.
+- **Lay mines** (ML-1). Waypoint task 6, Lay Mine Field, adds a duration
+  list ("indefinitely" by default) and the fleet's rate ("This fleet can
+  lay 80 mines per year."). The host laid an 80-mine field at the
+  fleet's deep-space position that year, with message 0x0c3.
+
+- **Fleet orders** (FC-1, 2026-10-07; FO-01..07 hold host-side fleet operations). The fleet view has more panels:
+  - The fleet name panel has Rename (144, 156). It opens "Rename Fleet" with the name selected; type and Return.
+  - Fleet Composition lists the designs. It has Split (232, 364), Split All (296, 364) and Merge (358, 364). Split is disabled for a one-ship fleet.
+  - "Other Fleets Here" has a combo (297, 412) listing the other fleets at the same place by fleet number. Its rows are about 17 px apart from y 431. Below it are Goto (232, 473), which selects that fleet, Merge (295, 473) and Cargo (358, 473).
+  - Split and the other-fleet Merge open "Ship Transfer": one row per design every 20 px from y 340, with the arrows at x 585 (to the right-hand fleet) and x 567 (to the left). OK is at (627, 555) and Cancel at (705, 555). Split's right-hand side is a new fleet, "Fleet #N" with the lowest free number.
+  - The composition Merge opens "Merge Fleets": every fleet at the place, the selected one included, by fleet number, with rows 13 px apart from y 352 (x 450). The dialog opened with rows already selected (both, with two fleets of one design), and a click toggles a row, so `fleet merge` presses Unselect All first. OK is at (698, 356), Select All at (698, 423) and Unselect All at (698, 452).
+  - Cargo opens Cargo Transfer with the other fleet, laid out like the planet one; its fuel row works too.
+  - Next and Prev don't follow fleet numbers. From fleet 0 at the homeworld, Next went to the highest-numbered fleet, then to fleet 1. Use Goto in "Other Fleets Here" instead.
+  - What the client wrote (`combatlab dump`):
+    - split: a 2-byte record naming the fleet, then a move-ships record;
+    - move-ships: fleet, other fleet, a mask of designs, and one signed count per design, as the change to the first fleet;
+    - merge: the kept fleet, then the merged fleets;
+    - fleet-to-fleet cargo: the cargo record with the other fleet;
+    - rename: the fleet and its new name.
+  - A fleet emptied by a move needs no record of its own. Split All is one split and one move-ships record per new fleet. Within one turn the client reused the numbers that a merge or empty freed.
+  - The host applied every record. Split and the exchange shared fuel and cargo by capacity, rounding down: 280 mg × 500/1450 → 96, and 10 kT × 210/630 → 3.
+  - Commands: `fleet rename NAME`, `fleet split`, `fleet splitall`, `fleet merge I...`, `fleet other I`, `fleet goto`, `fleet exchange`, `fleet cargo`, `ships ROW N`, `ships ok`, `ships cancel`.
 
 ### Scanning experiments (observed 2026-10-07, SC-001..SC-023)
 

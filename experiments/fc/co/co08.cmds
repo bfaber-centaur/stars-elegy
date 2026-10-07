@@ -1,0 +1,7 @@
+# CO-08: edit design Queued (only queued): drag Bat Scanner (row 2 of the All list) into its scanner slot.
+design open
+design select 2
+design edit
+design part 2 775 355
+design ok
+design done

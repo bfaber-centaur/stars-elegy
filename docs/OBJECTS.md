@@ -66,8 +66,8 @@ These steps slot into `KERNEL.md`'s turn order.
    (OB-002-F). A stop's mine loss is taken during step 4 from the field's
    count at that moment, and decay then counts the planets inside the field
    as the stops left it (CONFIRMED, MF-4: every MF run's final count fit
-   exactly). This replaces an earlier reading of OB-010-S as decay before
-   the hit's loss; OB-010-S is to be re-checked under this order.
+   exactly; OB-010-S fits it too: no-hit settings 3000 → 2940 → 2840 after
+   sweeping, hit settings −50 during movement, then decay and sweep, 2791).
 6. Production: packets are launched. At the end, random events may spawn a
    Mystery Trader.
 7. Packets launched this year fly half a year (and may hit). Wormholes
@@ -141,13 +141,15 @@ fields of each kind.
   numbered 0..511 (MEASURED, MF-11: with 511 fields a layer in open space
   made field 511; with 512 it made none, the owner got a message and the
   mines were lost; a layer inside an existing field merged normally). The
-  binary reading predicted 511, and refines to this: the last number, 511,
-  is given only when no other space object sorts after that player's
-  minefields (objects sort by kind, minefields first, then by owner and
-  number), so a higher-numbered player's minefield or any packet, salvage,
-  wormhole or Mystery Trader holds the player to 511 (BINARY-ONLY; LEGACY
-  BUG candidate, to be checked). Elegy's plain rule is 512; the 511 case
-  goes behind a switch if it is confirmed. The universe holds at most 4050
+  last number, 511, is given only when no other space object sorts after
+  that player's minefields (objects sort by kind, minefields first, then
+  by owner and number), so a higher-numbered player's minefield or any
+  packet, salvage, wormhole or Mystery Trader holds the player to 511
+  (MEASURED, MF-13: a player-1 field elsewhere, or a salvage object, gave
+  no field and the message; player 1's 511 fields with a player-0 field
+  sorting before them made field 511). LEGACY BUG. **Chosen rule for
+  Elegy:** a plain limit of 512; the 511 case is reproduced only behind a
+  switch. The universe holds at most 4050
   space objects of all kinds (BINARY-ONLY). A lay that needs a new field
   when there is no room creates nothing: the owner gets a message and
   those mines are lost. A lay that merges needs no room.
@@ -204,10 +206,10 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   - The same chain numbered A < B < C: A moved first and reached B's start
     in its first 17-ly step. **B then never moved at all**: a chaser that
     lands on a target that has not moved yet ends that target's movement
-    for the year (MEASURED, 6 of 6; LEGACY BUG). It is a movement rule
-    rather than a minefield rule and belongs with `KERNEL.md` "Chasing
-    another fleet"; the binary mechanism is not yet read. Elegy reproduces
-    it behind a switch.
+    for the year (MEASURED, MF-02, 6 of 6; LEGACY BUG). It is a movement
+    rule rather than a minefield rule: `KERNEL.md` "Chain freeze" gives the
+    mechanism (one "finished moving" mark shared by "has moved" and "a
+    chaser landed on it") and Elegy's switch.
 - **Cloak** plays no part in hits (CONFIRMED, MF-1: cloaked fleets were
   stopped at 29.1 per mille, uncloaked ones at 36.1) or in detonation,
   laying or sweeping (BINARY-ONLY). It matters for minefields only through what a Space
@@ -293,7 +295,9 @@ enemy's five Medium Freighters 100 each, the layer nothing; the field went
   orders that are not re-checked under `ORDERS.md` "Ownership". **Chosen
   rule for an independent implementation:** accept the setting only from
   the field's owner, only when that owner is SD, and only for a standard
-  field. That is exactly what an unmodified client can produce.
+  field. That is exactly what an unmodified client can produce. The rule
+  follows the client's offer, not what can detonate: every kind detonates
+  once set (MF-7, MF-8, above).
 
 ### Sweeping (CONFIRMED, OB-001, OB-007, OB-008, OB-010-S)
 
@@ -559,12 +563,10 @@ and nowhere beyond it).
 2. Wormhole jump odds over many streams; what a jump does to fleets heading
    for the wormhole.
 3. Mystery Trader spawn, path, part and ship rewards.
-4. Minefields (MF-1..MF-12 done; see PARITY "Minefield lane"): whether
-   the 512th field is refused when another space object sorts after the
-   player's minefields; the mechanism of the chaser that freezes its
-   waiting target; the 4050-object limit; SS and SD safe-warp bonuses;
+4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the
+   4050-object limit; SS and SD safe-warp bonuses;
    fleets jumping through a gate inside a field; the detonate-order gap
-   (needs crafted orders); OB-010-S under the stops-then-decay order.
+   (needs crafted orders).
 5. Stargates: every rule above.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
