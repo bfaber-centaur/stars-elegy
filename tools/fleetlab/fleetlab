@@ -4,6 +4,7 @@
 # ${FLEETLAB_CACHE:-$HOME/.cache/fleetlab}, outside the repository.
 #   tools/fleetlab/fleetlab dump FILE...
 #   tools/fleetlab/fleetlab build BASE.HST SPEC OUT.HST
+# CombatLab and RaceLab use the same build (tools/fleetlab/combatlab, racelab).
 set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 rev=194732ce0d018b8ca818e5d732d0b14c01739768
@@ -11,15 +12,17 @@ cache=${FLEETLAB_CACHE:-$HOME/.cache/fleetlab}
 src=$cache/starsapi
 out=$cache/build
 main=${FLEETLAB_MAIN:-FleetLab}
-if [ ! -f "$out/FleetLab.class" ] || [ ! -f "$out/CombatLab.class" ] || \
-   [ "$here/FleetLab.java" -nt "$out/FleetLab.class" ] || [ "$here/CombatLab.java" -nt "$out/CombatLab.class" ]; then
+if [ ! -f "$out/FleetLab.class" ] || [ ! -f "$out/CombatLab.class" ] || [ ! -f "$out/RaceLab.class" ] || \
+   [ "$here/FleetLab.java" -nt "$out/FleetLab.class" ] || [ "$here/CombatLab.java" -nt "$out/CombatLab.class" ] || \
+   [ "$here/RaceLab.java" -nt "$out/RaceLab.class" ]; then
   mkdir -p "$cache"
   [ -d "$src" ] || git clone -q https://github.com/stars-4x/starsapi.git "$src"
   git -C "$src" checkout -q "$rev"
   rm -rf "$out"; mkdir -p "$out/org/starsautohost/starsapi/items"
   javac -nowarn -encoding ISO-8859-1 -d "$out" \
     $(find "$src/src/main/java/org/starsautohost/starsapi" -name '*.java' -not -path '*/tools/*') \
-    "$here/FleetLab.java" "$here/CombatLab.java" 2>&1 | grep -v '^Note:\|^Picked up' >&2 || true
+    "$src"/src/main/java/org/starsautohost/racebuilder/craigstars/*.java \
+    "$here/FleetLab.java" "$here/CombatLab.java" "$here/RaceLab.java" 2>&1 | grep -v '^Note:\|^Picked up' >&2 || true
   cp "$src"/src/main/java/org/starsautohost/starsapi/items/*.MOD \
      "$src"/src/main/java/org/starsautohost/starsapi/items/*.properties \
      "$out/org/starsautohost/starsapi/items/"
