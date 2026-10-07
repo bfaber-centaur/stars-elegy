@@ -593,3 +593,242 @@ prediction model and a SHA-256 manifest are in the private
 `bfaber-centaur/stars-oracle-apparatus` repository under `evidence/pq001/`.
 Tooling to repeat a case: `scripts/oracle/edit-turn` with
 `scripts/oracle/hst-edit` (docs/ORACLE.md, "Setting up a state").
+
+## Fleet Movement
+
+Status: MEASURED (four one-turn oracle batches, FM-001 to FM-004, plus the
+FM-000 pilot; 224 fleets). Run on 2026-10-07 with the cloud oracle. FM-004
+tested predictions made from the private binary reading (stars-decomp)
+before the turn was run; all 55 matched (see "Binary-model check" below).
+Rules marked CONFIRMED below agree with both the binary reading and the
+oracle.
+
+### Method
+
+The starting states are synthetic. `tools/fleetlab` (StarsAPI, pinned)
+rewrites PG001's 2407 `.HST`: every player-0 fleet is replaced by fleets with
+chosen position, ships, cargo, fuel and waypoints, three scout designs with
+other engines are cloned from the Quick Jump 5 scout, and propulsion tech is
+set to 7 so those engines are within tech. Stars! loaded the edited files and
+generated 2407 → 2408 with no visible complaint. One `turn PG001.M1` per
+batch; the 2408 `.HST`/`.M1` are decoded with `fleetlab dump`.
+
+- Race: PG001's (SS, no LRTs). Universe: tiny, one player. All test fleets
+  sit in deep space away from the homeworld (two target planets).
+- Positions, fuel and waypoints come from the decoded files; event ids
+  from the `.M1` (block type 12). Texts read in the UI: 78 "… has completed
+  its assigned orders."; 139 "… has run out of fuel. The fleet's speed has
+  been decreased to Warp 1."; 243 "…'s ram scoops have produced N mg of fuel
+  from interstellar hydrogen."
+- Engine fuel tables and part masses used below are StarsAPI's
+  (`UNEDITED.MOD`): DOCUMENTED, not read from the binary. Quick Jump 5,
+  warp 1–10: 0, 25, 100, 100, 100, 180, 500, 800, 900, 1080.
+- FM-001 was run twice from the same file; decoded fleets and events were
+  identical. FM-002 and FM-003 were run once. Restarted oracle runs reuse
+  nearly the same RNG draws, so the repeat shows reproducibility, not
+  independence. No movement here is expected to use the RNG (no LRT, no
+  cheater flag).
+- FM-000's scout (prop tech 0) and FM-001 fleet 0 (prop tech 7) ended
+  identically: (1225,1200), 3 mg.
+
+Predictions were committed before each run (`experiments/fm00N/README.md`
+and `predictions.tsv`, commits `90037e5`, `4a56c40`, `bc0ed91`, `28fd54f`). Observed
+values per fleet: `experiments/fm00N/results.tsv`. Raw files, dumps and
+message screenshots: private `stars-oracle-apparatus`, `evidence/fm000/` to
+`evidence/fm004/`.
+
+### Ordinary waypoints (deep space or planet)
+
+`experiments/fmcheck.py` reproduces position and fuel for all 115 fleets
+with ordinary waypoints using the rules below. Several details (the rounding
+constant, the arrival test, the charged distance, the empty-tank case) were
+chosen after seeing earlier batches; FM-002/003 then tested them with
+discriminating cases. They describe this corpus, not a binary reading.
+
+- **Distance (MEASURED).** A fleet that does not arrive moves warp² ly along
+  the straight line to its waypoint (warp 1–10 on Quick Jump 5; warps 6 and
+  9 on three other engines).
+- **End point of a partial move (MEASURED, 8 fleets in all four
+  quadrants plus 1 planet target).** Each coordinate is rounded to the
+  nearest integer. Truncation toward zero and floor were each contradicted
+  by at least two fleets. No exact .5 case was produced (straight lines
+  between integer points at warp² distance cannot give one).
+- **Arrival (MEASURED).** At warp 5 fleets arrived exactly on the target at
+  25.02, 25.30, 25.50, 25.61 (two directions), 25.71 and 25.96 ly, and
+  stopped short at 26.00 and 26.02 ly. "Arrive when less than 1 ly would
+  remain" (floor(d) ≤ warp²) fits; "rounded end point equals the target"
+  and "d ≤ warp² + 0.5" were each contradicted.
+- **Fuel (MEASURED, interpretation in brackets).** Used fuel fits
+  `floor((M·D + C) / 20000)` with one rounding per fleet:
+  - `M` = Σ over ships of mass × engine table value at the warp, cargo
+    included (freighter at 0/1/35/70 kt);
+  - `D` = warp² for a partial move; for an arrival, ceil(d) capped at warp²
+    (FD: six diagonal arrivals rejected the exact and the truncated
+    distance; FA: arrivals at 25.30 and 25.96 ly were charged 25);
+  - `C` in [18000, 18040) (K: eleven threshold points). [C = 18000 is the
+    same as truncating to tenths of a mg and rounding up.]
+  - Seven QJ5 scouts used 41 mg, not 7 × 6 = 42: no per-ship rounding. A
+    fleet of 3 QJ5 + 1 AD8 scouts used 74, not 75 (per-design rounding).
+  - One mixed fleet (QJ5 freighter + AD8 scout, 70 kt cargo in the
+    freighter) used 132 mg: the cargo was charged at the freighter's
+    engine. Only this one split was observed.
+  - Superseded by FM-004 (CONFIRMED): rounding is per ship design, not per
+    fleet; see "Binary-model check". The fleet-level formula above
+    reproduces FM-001..003 but fails four mixed fleets in FM-004.
+- **Not enough fuel (MEASURED; distance refined by FM-004).** A fleet that cannot pay for its move
+  moves `floor(fuel × 20000 / M)` ly along the line (position rounded as
+  above; two diagonal cases confirm the distance is truncated before
+  placing), ends with 0 mg, gets event 139, and the warp of its waypoint is
+  set to 1 (FM-004: to the fastest free warp, which is 1 for these
+  engines). A fleet with 0 mg does not move at all at warps 2 and 6, even
+  at warp 2 where the rounded cost of the move would be 0. With exactly the
+  fuel the move costs, it moves the full distance.
+- **Free speed and ram scoops (MEASURED).** At warp 1 (table value 0 on
+  every engine tested) fleets move 1 ly, use no fuel, and gain 1 mg per
+  ship (5 ships: 5 mg), capped at capacity (event 243), with an empty or
+  partly full tank, on QJ5 and AD8 scouts and a QJ5 freighter. A full tank
+  gains nothing. No gain at warp 2 (0 mg charged after rounding) or for a
+  fleet without waypoints. FM-004 measured engines free above warp 1; see
+  "Binary-model check".
+- **Waypoint chaining (MEASURED, 5 fleets).** A fleet that reaches waypoint
+  1 stops there for the year, whatever movement is left and whatever warp
+  waypoint 2 has. A first waypoint at the fleet's own position also uses up
+  the year (no movement, no fuel). Event 78 is only sent when no waypoint
+  remains.
+- **Planet target (MEASURED, 2).** In range: ends on the planet and orbits
+  it (position object = planet). Out of range: partial move as above.
+
+### Fleet targets (chasing)
+
+MEASURED; the interpretations are candidates for the decomp reading, not
+established rules.
+
+- **Target with ordinary orders (5 pairs, both id orders).** The chaser
+  moves toward the target's end-of-year position, in a straight line from
+  its own start (perpendicular case: C1 → (1353,1171), C2 → (1117,1321),
+  as predicted for "aim at the final position"). A chaser that reaches it
+  arrives (event 78, waypoints cleared).
+- **Chains (A chases B, B chases Z, Z moves; all six id orders, one of
+  them twice, plus Z without orders).** B stays put for the year (no move, no fuel, keeps its orders,
+  no event) whenever A's turn comes before B's (ids ABZ, AZB, ZAB, and with
+  Z stationary); A then goes to B's unchanged position. When B's turn comes
+  first (BAZ, BZA, ZBA), B reaches Z and A reaches B, all at Z's end point.
+  [Candidate: a chaser moves its target first if that target has not moved
+  yet, and a target that is itself chasing is not moved that way and loses
+  the year.]
+- **Two fleets chasing each other (10 cases).** They neither swap places
+  nor meet at the midpoint or in proportion to speed. Distances moved (low
+  id, high id) for gap/warps: 20/4,4 → 12,8; 16/3,3 → 8,8; 20/4,3 → 14,6;
+  20/3,4 → 8,12; 10/4,1 → 9,1; 30/5,3 → 22,8; 6/1,1 → 1,1; 40/3,3 → 9,9;
+  60/5,5 → 25,25; a 20 ly diagonal at 4,4 met at (+6,+9) from the low id.
+  [Candidate that fits all ten, fitted to FM-001/002 and then adjusted after
+  FM-003: the year runs in 5 sub-steps; in each, low id first, a fleet moves
+  ceil(warp²/5) ly toward the other's current position, never more than
+  warp² in total, its position rounded to integers, stopping when it reaches
+  the other. The same sub-step scheme does not reproduce ordinary moves or
+  the C1/C2 chases, so it is at most a special case for mutual targets.]
+
+### Binary-model check (FM-004)
+
+Status: CONFIRMED for every rule in this subsection (stars-decomp reading of
+fleet movement, predictions computed from it and committed before the run;
+55 of 55 fleets matched position, fuel, waypoint warp, orbit, waypoints left
+and events, `experiments/fm004/compare.py`). The FM-001..003 description
+above failed 37 of the 55. The decomp model also reproduces all 169
+FM-001..003 fleets, chases included, without fitted constants (checked by
+re-running its checker on this corpus). One run, one race (SS, no LRT);
+the Fuel Mizer, Settler's Delight and Radiating Hydro-Ram Scoop scouts were
+FleetLab clones (Fuel Mizer and Settler's Delight normally need IFE and the
+HE race type).
+
+Below, `f` is an engine's fuel-table value at the warp (StarsAPI's tables
+agree with the binary's), `m` a ship's mass in kT, `n` a ship count.
+
+- **Fuel for `d` ly.** Ship stacks (one per design in the fleet) are taken
+  in ascending `f`; each stack carries cargo up to its cargo capacity
+  before the next stack takes any (so cargo rides on the cheapest engine
+  first). Each stack with `f > 0` costs `floor(f·d·(n·m + cargo carried) /
+  2000)` tenths of a mg; the fleet pays `ceil(Σ tenths / 10)` mg. `d` is
+  warp² for a partial move and ceil(distance) for an arrival.
+  - MS: QJ5+LH6 scouts at warp 2 paid 0 mg (one fleet-level rounding: 1);
+    QJ5+FM at warp 5 paid 3 (4); 2 LH6+DLL7 at warp 5 paid 9 (10);
+    QJ5+SD at warp 8 paid 60 (61).
+  - CA: a QJ5 freighter + LH6 freighter fleet carrying 70 kt paid 30 mg at
+    warp 6 (cargo at the LH6 engine; at the QJ5 engine it would be 40);
+    with 100 kt, 40 mg (70 kt at LH6, 30 kt at QJ5).
+- **Range on the fuel left.** `R = floor(fuel·1000 / floor(T/10))` ly, where
+  `T` is the tenths-of-mg cost of 1000 ly from the line above. When a move
+  needs more than the fleet has (and the fleet could not pay for the whole
+  leg), it moves `R` ly, the tank is set to 0. LR: six fleets where this
+  differs from `floor(fuel·20000/M)` each moved the 1 ly further that `R`
+  predicts.
+- **Warp after running dry.** The waypoint's warp becomes one less than
+  the lowest warp at which the whole leg (from the fleet's position at the
+  start of the year) would cost fuel, with
+  event 139 (whose text names that warp). Observed: Fuel Mizer 7 or 9 → 4;
+  Settler's Delight 8 or 10 → 6; Hydro-Ram 8 → 6; QJ5/LH6/DLL7/AD8 → 1. A
+  Fuel Mizer with 0 mg at warp 7 did not move and dropped to 4; with a
+  2-ly leg, to 5 (2 ly at warp 5 costs 0 mg, so warp 6 is the first that
+  costs fuel).
+- **Fuel gained at a free warp.** A moving fleet whose engine is free at
+  its warp gains `Σ n · e · k · d'` mg, capped at capacity (event 243):
+  `e` engines per ship; `k` = 1, 3, 6 or 10 when 1, 2, 3 or 4 consecutive
+  warps starting at the current one are free; `d'` = the distance moved,
+  or ceil(distance) − 1 on the arriving year. Observed: Fuel Mizer warps
+  1–4: +10, +24, +27, +16; Settler's Delight warps 1–6: +10, +40, +90,
+  +96, +75, +36, and none at 7; Hydro-Ram 4 and 6 as Settler's Delight;
+  3 Fuel Mizers at warp 2: +72; QJ5 + Fuel Mizer at warp 2: +24 (the QJ5
+  stack's 0.9-tenth cost rounded to 0); arrivals at 10 ly and at
+  (7,7) on Settler's Delight warp 4: +54 and +48; at 3 ly on Fuel Mizer
+  warp 2: +12; QJ5 and AD8 at warp 1: +1. Not gained in the year a fleet
+  runs dry. Any engine qualifies, not only ram scoops.
+- **Top-up on an affordable leg.** If the fleet had fuel for the whole leg
+  when the year began and the rounded per-year charge leaves less than the
+  rest of the leg costs, the tank is raised to that cost (never above
+  capacity). QJ5 scout, warp 9, 126 ly, 102 mg: 37 mg after the year
+  (102 − 66 = 36 raised to 37); with 101 mg (not enough for the leg) it
+  ended at 35. QJ5 freighter with 70 kt, warp 6, 143 ly: 98 (97 raised).
+- **Starbase refuelling.** After moving, a fleet at its own planet with a
+  dock-capable starbase (PG001's homeworld starbase) has its tank set to
+  capacity: stationary at 50 mg → 300, 10 → 130 (freighter), and 400
+  (over capacity) → 300; arriving there → 300. A fleet arriving at a planet
+  without a starbase was not refuelled; one leaving the homeworld was not.
+  A fleet in deep space keeps 400 mg in a 300 mg tank.
+- **Orbit.** A deep-space waypoint placed exactly on a planet's
+  coordinates puts the fleet in orbit of that planet (and refuels it at
+  the homeworld).
+
+### What the corpus distinguishes
+
+- rounding of partial moves: round-to-nearest vs truncation vs floor;
+- arrival test: within 1 ly vs rounded end point vs warp² + 0.5;
+- fuel: one rounding per fleet vs per ship vs per design; the rounding
+  constant to 40 units of 20000; exact vs truncated vs rounded-up distance
+  on arrival; capping at warp² beyond it; cargo in the mass; cargo at the
+  carrying ship's engine (one case);
+- fuel-limited moves: distance truncated before placing; empty tank never
+  moves at a paid warp; warp reset to 1;
+- ram-scoop gain: per ship, capped, only while moving at warp 1 here;
+- waypoint chaining: stop at each waypoint, zero-length leg uses the year;
+- chases: end-of-year target position, the chain freeze, mutual-chase
+  distances;
+- FM-004: per-design vs per-fleet fuel rounding; which stack carries cargo;
+  the two range formulas; warp after running dry for engines free above
+  warp 1; fuel gain by warp, ship count, cap and arrival year; top-up vs
+  none; starbase refuelling; orbit by exact coordinates.
+
+### Open
+
+- IFE and other LRTs (the binary reading has IFE cut engine fuel by 15%
+  and Cheap Engines fail at warp 7–10 at random), warp-10 ship losses
+  (random in the binary reading), fuel transports and anti-matter
+  generators, and fuel transfer orders: not tested.
+- The chase candidates above are now explained by the binary reading
+  (white-box: chasers move after the other fleets in steps of about a fifth
+  of warp² while their target has not moved; a chaser landing on a target
+  that is itself chasing stops it for the year). The oracle side has only
+  the FM-001..003 cases.
+- Whether chain freezing and the mutual-chase scheme hold for three-way
+  cycles and in the next year.
+- Minefields, stargates, wormholes, and movement
+  that interacts with other players were deliberately not tested.

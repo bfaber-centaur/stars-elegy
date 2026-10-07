@@ -1,0 +1,49 @@
+id	group	desc	start	waypoints	ships	mass	fuel0	pred
+0	CH	ABZ: A chases B warp 9	(1200, 1012)	wpf 1 1215 1012 9	0:1	18	300	see README
+1	CH	ABZ: B chases Z warp 9	(1215, 1012)	wpf 2 1225 1012 9	0:1	18	300	see README
+2	CH	ABZ: Z +60x warp 5	(1225, 1012)	wp 1285 1012 5	0:1	18	300	see README
+3	CH	AZB: A chases B warp 9	(1200, 1027)	wpf 5 1215 1027 9	0:1	18	300	see README
+4	CH	AZB: Z +60x warp 5	(1225, 1027)	wp 1285 1027 5	0:1	18	300	see README
+5	CH	AZB: B chases Z warp 9	(1215, 1027)	wpf 4 1225 1027 9	0:1	18	300	see README
+6	CH	BAZ: B chases Z warp 9	(1215, 1042)	wpf 8 1225 1042 9	0:1	18	300	see README
+7	CH	BAZ: A chases B warp 9	(1200, 1042)	wpf 6 1215 1042 9	0:1	18	300	see README
+8	CH	BAZ: Z +60x warp 5	(1225, 1042)	wp 1285 1042 5	0:1	18	300	see README
+9	CH	BZA: B chases Z warp 9	(1215, 1057)	wpf 10 1225 1057 9	0:1	18	300	see README
+10	CH	BZA: Z +60x warp 5	(1225, 1057)	wp 1285 1057 5	0:1	18	300	see README
+11	CH	BZA: A chases B warp 9	(1200, 1057)	wpf 9 1215 1057 9	0:1	18	300	see README
+12	CH	ZAB: Z +60x warp 5	(1225, 1072)	wp 1285 1072 5	0:1	18	300	see README
+13	CH	ZAB: A chases B warp 9	(1200, 1072)	wpf 14 1215 1072 9	0:1	18	300	see README
+14	CH	ZAB: B chases Z warp 9	(1215, 1072)	wpf 12 1225 1072 9	0:1	18	300	see README
+15	CH	ZBA: Z +60x warp 5	(1225, 1087)	wp 1285 1087 5	0:1	18	300	see README
+16	CH	ZBA: B chases Z warp 9	(1215, 1087)	wpf 15 1225 1087 9	0:1	18	300	see README
+17	CH	ZBA: A chases B warp 9	(1200, 1087)	wpf 16 1215 1087 9	0:1	18	300	see README
+18	CH	S: A chases B warp 9	(1200, 1102)	wpf 19 1215 1102 9	0:1	18	300	see README
+19	CH	S: B chases stationary Z warp 9	(1215, 1102)	wpf 20 1225 1102 9	0:1	18	300	see README
+20	CH	S: Z stationary (no waypoint)	(1225, 1102)		0:1	18	300	see README
+21	MU	low id warp 1, gap 6	(1150, 1300)	wpf 22 1156 1300 1	0:1	18	300	4 steps trunc(w2/4): low +0, high -0; 5 steps ceil(w2/5): low +3, high -3; 4 steps exact: low +1, high -1
+22	MU	high id warp 1	(1156, 1300)	wpf 21 1150 1300 1	0:1	18	300	4 steps trunc(w2/4): low +0, high -0; 5 steps ceil(w2/5): low +3, high -3; 4 steps exact: low +1, high -1
+23	MU	low id warp 3, gap 40	(1150, 1312)	wpf 24 1190 1312 3	0:1	18	300	4 steps trunc(w2/4): low +8, high -8; 5 steps ceil(w2/5): low +10, high -10; 4 steps exact: low +9, high -9
+24	MU	high id warp 3	(1190, 1312)	wpf 23 1150 1312 3	0:1	18	300	4 steps trunc(w2/4): low +8, high -8; 5 steps ceil(w2/5): low +10, high -10; 4 steps exact: low +9, high -9
+25	MU	low id warp 5, gap 60	(1150, 1324)	wpf 26 1210 1324 5	0:1	18	300	4 steps trunc(w2/4): low +24, high -24; 5 steps ceil(w2/5): low +25, high -25; 4 steps exact: low +25, high -25
+26	MU	high id warp 5	(1210, 1324)	wpf 25 1150 1324 5	0:1	18	300	4 steps trunc(w2/4): low +24, high -24; 5 steps ceil(w2/5): low +25, high -25; 4 steps exact: low +25, high -25
+27	MU	low id warp 3, gap 20	(1150, 1336)	wpf 28 1170 1336 3	0:1	18	300	4 steps trunc(w2/4): low +8, high -12; 5 steps ceil(w2/5): low +8, high -12; 4 steps exact: low +8, high -12
+28	MU	high id warp 4	(1170, 1336)	wpf 27 1150 1336 4	0:1	18	300	4 steps trunc(w2/4): low +8, high -12; 5 steps ceil(w2/5): low +8, high -12; 4 steps exact: low +8, high -12
+29	MU	low id warp 4, gap 10	(1150, 1348)	wpf 30 1160 1348 4	0:1	18	300	4 steps trunc(w2/4): low +10, high -0; 5 steps ceil(w2/5): low +8, high -2; 4 steps exact: low +9.5, high -0.5
+30	MU	high id warp 1	(1160, 1348)	wpf 29 1150 1348 1	0:1	18	300	4 steps trunc(w2/4): low +10, high -0; 5 steps ceil(w2/5): low +8, high -2; 4 steps exact: low +9.5, high -0.5
+31	MU	low id warp 5, gap 30	(1150, 1360)	wpf 32 1180 1360 5	0:1	18	300	4 steps trunc(w2/4): low +24, high -6; 5 steps ceil(w2/5): low +22, high -8; 4 steps exact: low +23.25, high -6.75
+32	MU	high id warp 3	(1180, 1360)	wpf 31 1150 1360 3	0:1	18	300	4 steps trunc(w2/4): low +24, high -6; 5 steps ceil(w2/5): low +22, high -8; 4 steps exact: low +23.25, high -6.75
+33	MU	diagonal low id warp 4	(1300, 1300)	wpf 34 1312 1316 4	0:1	18	300	see README
+34	MU	diagonal high id warp 4	(1312, 1316)	wpf 33 1300 1300 4	0:1	18	300	see README
+35	FG	QJ5 scout fuel 100, warp 1	(1010, 1300)	wp 1060 1300 1	0:1	18	100	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+36	FG	QJ5 scout fuel 0, warp 1 (repeats FM-002 N27)	(1010, 1309)	wp 1060 1309 1	0:1	18	0	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+37	FG	QJ5 scout fuel 100, no waypoint	(1010, 1318)		0:1	18	100	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+38	FG	QJ5 scout fuel 0, no waypoint	(1010, 1327)		0:1	18	0	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+39	FG	QJ5 scout fuel 100, warp 2	(1010, 1336)	wp 1060 1336 2	0:1	18	100	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+40	FG	AD8 scout fuel 100, warp 1	(1010, 1345)	wp 1060 1345 1	5:1	31	100	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+41	FG	QJ5 freighter fuel 50, warp 1	(1010, 1354)	wp 1060 1354 1	1:1	31	50	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+42	FG	5 QJ5 scouts fuel 0, warp 1	(1010, 1363)	wp 1060 1363 1	0:5	90	0	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+43	FG	QJ5 scout fuel 299, warp 1	(1010, 1372)	wp 1060 1372 1	0:1	18	299	FM-002 N27: fuel 0 at warp 1 moved 1 ly and gained 1 mg (msg 243)
+44	FA	warp 5 arrive (+7,+25) d=25.962, freighter 70kt Ir	(1080, 1215)	wp 1087 1240 5	1:1	101	130	arrive; fuel at ceil(d)=26: 14, at min(d,25): 13
+45	FA	warp 5 arrive (+24,+8) d=25.298, freighter 70kt Ir	(1110, 1215)	wp 1134 1223 5	1:1	101	130	arrive; fuel at ceil(d)=26: 14, at min(d,25): 13
+46	FA	warp 5 arrive (+25,+0) d=25.000, freighter 70kt Ir	(1140, 1215)	wp 1165 1215 5	1:1	101	130	arrive; fuel at ceil(d)=25: 13, at min(d,25): 13
+47	K	r=1960: warp 6 arrive +2x, freighter 30kt Ir	(1350, 1100)	wp 1352 1100 6	1:1	61	130	m*e*d=21960: fuel 1 if C<18040 (C=18000: tenths rule) else 2

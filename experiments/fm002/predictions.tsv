@@ -1,0 +1,47 @@
+id	group	desc	start	waypoints	ships	mass	fuel0	pred
+0	K	r=1800: warp 5 arrive +11x, freighter 7kt Ir	(1350, 1010)	wp 1361 1010 5	1:1	38	130	m*e*d=41800 r=1800: fuel used 2 if C<18200 else 3
+1	K	r=1900: warp 5 arrive +3x, freighter 42kt Ir	(1350, 1017)	wp 1353 1017 5	1:1	73	130	m*e*d=21900 r=1900: fuel used 1 if C<18100 else 2
+2	K	r=2000: warp 5 arrive +5x, freighter 13kt Ir	(1350, 1024)	wp 1355 1024 5	1:1	44	130	m*e*d=22000 r=2000: fuel used 1 if C<18000 else 2
+3	K	r=2100: warp 5 arrive +23x, DLL7 scout	(1350, 1031)	wp 1373 1031 5	4:1	27	300	m*e*d=62100 r=2100: fuel used 3 if C<17900 else 4
+4	K	r=2200: warp 5 arrive +6x, freighter 6kt Ir	(1350, 1038)	wp 1356 1038 5	1:1	37	130	m*e*d=22200 r=2200: fuel used 1 if C<17800 else 2
+5	K	r=2400: warp 5 arrive +7x, freighter 1kt Ir	(1350, 1045)	wp 1357 1045 5	1:1	32	130	m*e*d=22400 r=2400: fuel used 1 if C<17600 else 2
+6	K	r=2500: warp 5 arrive +5x, freighter 14kt Ir	(1350, 1052)	wp 1355 1052 5	1:1	45	130	m*e*d=22500 r=2500: fuel used 1 if C<17500 else 2
+7	K	r=2600: warp 5 arrive +6x, freighter 40kt Ir	(1350, 1059)	wp 1356 1059 5	1:1	71	130	m*e*d=42600 r=2600: fuel used 2 if C<17400 else 3
+8	K	r=2700: warp 5 arrive +7x, freighter 30kt Ir	(1350, 1066)	wp 1357 1066 5	1:1	61	130	m*e*d=42700 r=2700: fuel used 2 if C<17300 else 3
+9	K	r=2800: warp 5 arrive +6x, freighter 7kt Ir	(1350, 1073)	wp 1356 1073 5	1:1	38	130	m*e*d=22800 r=2800: fuel used 1 if C<17200 else 2
+10	FD	warp 5 arrive (+2,+2) d=2.828, freighter 70kt Ir	(1010, 1010)	wp 1012 1012 5	1:1	101	130	arrive; m*e*d=28567.1; float d: 2; floor d: 1; ceil d: 2
+11	FD	warp 5 arrive (+4,+2) d=4.472, freighter 70kt Ir	(1040, 1010)	wp 1044 1012 5	1:1	101	130	arrive; m*e*d=45168.6; float d: 3; floor d: 2; ceil d: 3
+12	FD	warp 5 arrive (+6,+2) d=6.325, freighter 70kt Ir	(1070, 1010)	wp 1076 1012 5	1:1	101	130	arrive; m*e*d=63878.0; float d: 4; floor d: 3; ceil d: 4
+13	FD	warp 5 arrive (+1,+3) d=3.162, freighter 37kt Ir	(1100, 1010)	wp 1101 1013 5	1:1	68	130	arrive; m*e*d=21503.5; float d: 1; floor d: 1; ceil d: 2
+14	FD	warp 5 arrive (+1,+5) d=5.099, freighter 50kt Ir	(1130, 1010)	wp 1131 1015 5	1:1	81	130	arrive; m*e*d=41302.1; float d: 2; floor d: 2; ceil d: 3
+15	FD	warp 5 arrive (+1,+7) d=7.071, freighter 56kt Ir	(1160, 1010)	wp 1161 1017 5	1:1	87	130	arrive; m*e*d=61518.3; float d: 3; floor d: 3; ceil d: 4
+16	A	warp 5 to (+16,+20) d=25.612	(1200, 1015)	wp 1216 1035 5	0:1	18	300	round-end==target: arrive; remaining<1: arrive; d<=w2+0.5: stop
+17	A	warp 5 to (+25,+6) d=25.710	(1235, 1015)	wp 1260 1021 5	0:1	18	300	round-end==target: stop (1259, 1021); remaining<1: arrive; d<=w2+0.5: stop
+18	A	warp 5 to (+25,+5) d=25.495	(1270, 1015)	wp 1295 1020 5	0:1	18	300	round-end==target: arrive; remaining<1: arrive; d<=w2+0.5: arrive
+19	A	warp 5 to (+26,+1) d=26.019	(1305, 1010)	wp 1331 1011 5	0:1	18	300	round-end==target: stop (1330, 1011); remaining<1: stop; d<=w2+0.5: stop
+20	A	warp 5 to (+7,+25) d=25.962	(1200, 1050)	wp 1207 1075 5	0:1	18	300	round-end==target: stop (1207, 1074); remaining<1: arrive; d<=w2+0.5: stop
+21	A	warp 5 to (-16,-20) d=25.612	(1260, 1080)	wp 1244 1060 5	0:1	18	300	round-end==target: arrive; remaining<1: arrive; d<=w2+0.5: stop
+22	A	warp 1 to (+1,+1) d=1.414	(1290, 1060)	wp 1291 1061 1	0:1	18	300	round-end==target: arrive; remaining<1: arrive; d<=w2+0.5: arrive
+23	A	warp 2 to (+4,+2) d=4.472	(1305, 1060)	wp 1309 1062 2	0:1	18	300	round-end==target: arrive; remaining<1: arrive; d<=w2+0.5: arrive
+24	N	fuel 6 (FM-001 cost of 36 ly)	(1010, 1200)	wp 1110 1200 6	0:1	18	6	FM-001 rule: floor(limit) 36.00 ly -> (1046,1200); float limit 36.00 ly -> (1046,1200)
+25	N	fuel 5, toward (60,80)	(1020, 1215)	wp 1080 1295 6	0:1	18	5	FM-001 rule: floor(limit) 30.00 ly -> (1038,1239); float limit 30.86 ly -> (1039,1240)
+26	N	fuel 3, toward (60,80)	(1050, 1215)	wp 1110 1295 6	0:1	18	3	FM-001 rule: floor(limit) 18.00 ly -> (1061,1229); float limit 18.52 ly -> (1061,1230)
+27	N	fuel 0, warp 1	(1010, 1235)	wp 1110 1235 1	0:1	18	0	FM-001 rule: floor(limit) 1.00 ly -> (1011,1235); float limit 1.00 ly -> (1011,1235); or no move (fuel 0)
+28	N	fuel 0, warp 2	(1010, 1245)	wp 1110 1245 2	0:1	18	0	FM-001 rule: floor(limit) 0.00 ly -> (1010,1245); float limit 0.00 ly -> (1010,1245); or no move (fuel 0)
+29	N	fuel 1, warp 6 arrive +5x	(1010, 1255)	wp 1015 1255 6	0:1	18	1	FM-001 rule: floor(limit) 5.00 ly -> (1015,1255); float limit 5.00 ly -> (1015,1255)
+30	N	5 scouts, fuel 10, warp 6	(1010, 1265)	wp 1110 1265 6	0:5	90	10	FM-001 rule: floor(limit) 12.00 ly -> (1022,1265); float limit 12.35 ly -> (1022,1265)
+31	N	fuel 2, warp 6	(1010, 1275)	wp 1110 1275 6	0:1	18	2	FM-001 rule: floor(limit) 12.00 ly -> (1022,1275); float limit 12.35 ly -> (1022,1275)
+32	X	3 QJ5 scouts + 1 AD8 scout	(1180, 1290)	wp 1280 1290 7	0:3,5:1	85	1200	per-stack 75, one rounding 74
+33	X	QJ5 freighter + AD8 scout	(1180, 1303)	wp 1280 1303 7	1:1,5:1	62	430	per-stack 46, one rounding 46
+34	X	QJ5 freighter + AD8 scout, 70kt Ir	(1180, 1311)	wp 1280 1311 7	1:1,5:1	132	430	per-stack 46, one rounding 46; cargo on QJ5 freighter: 132, on AD8 scout: 63
+35	O	C1 (low id) chases T1 at warp 5 from 50 ly west	(1340, 1150)	wpf 36 1390 1150 5	0:1	18	300	see README
+36	O	T1 target, +y warp 9	(1390, 1150)	wp 1390 1250 9	0:1	18	300	see README
+37	O	T2 target, +y warp 9	(1080, 1300)	wp 1080 1390 9	0:1	18	300	see README
+38	O	C2 (high id) chases T2 at warp 5 from 50 ly east	(1130, 1300)	wpf 37 1080 1300 5	0:1	18	300	see README
+39	O	E (low id) warp 4, mutual chase with F, 20 ly apart	(1150, 1392)	wpf 40 1170 1392 4	0:1	18	300	see README
+40	O	F (high id) warp 3, mutual chase with E	(1170, 1392)	wpf 39 1150 1392 3	0:1	18	300	see README
+41	O	T3 target, -x warp 5, head-on toward C3	(1080, 1250)	wp 1045 1250 5	0:1	18	300	see README
+42	O	C3 warp 5 chases T3, 40 ly apart head-on	(1040, 1250)	wpf 41 1080 1250 5	0:1	18	300	see README
+43	O	A (low id) warp 9 chases B	(1200, 1240)	wpf 44 1215 1240 9	0:1	18	300	see README
+44	O	B warp 9 chases Z	(1215, 1240)	wpf 45 1225 1240 9	0:1	18	300	see README
+45	O	Z target, +x warp 5	(1225, 1240)	wp 1285 1240 5	0:1	18	300	see README

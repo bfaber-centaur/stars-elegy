@@ -1,0 +1,1415 @@
+[
+{
+"group": "LR",
+"desc": "1x Scout/LH6 warp 6 fuel 3",
+"start": [
+1010,
+1010
+],
+"wps": [
+[
+"wp",
+1110,
+1010,
+6
+]
+],
+"ships": {
+"3": 1
+},
+"fuel": 3,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "1x Scout/DLL7 warp 7 fuel 4",
+"start": [
+1010,
+1016
+],
+"wps": [
+[
+"wp",
+1110,
+1016,
+7
+]
+],
+"ships": {
+"4": 1
+},
+"fuel": 4,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "1x Scout/LH6 warp 8 fuel 25",
+"start": [
+1010,
+1022
+],
+"wps": [
+[
+"wp",
+1110,
+1022,
+8
+]
+],
+"ships": {
+"3": 1
+},
+"fuel": 25,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "3x Scout/AD8 warp 8 fuel 31",
+"start": [
+1010,
+1028
+],
+"wps": [
+[
+"wp",
+1110,
+1028,
+8
+]
+],
+"ships": {
+"5": 3
+},
+"fuel": 31,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "1x SmallFreighter/LH6 warp 6 fuel 7 cargo 10 Ir",
+"start": [
+1010,
+1034
+],
+"wps": [
+[
+"wp",
+1110,
+1034,
+6
+]
+],
+"ships": {
+"9": 1
+},
+"fuel": 7,
+"cargo": [
+10,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "1x Scout/SD warp 10 fuel 23",
+"start": [
+1010,
+1046
+],
+"wps": [
+[
+"wp",
+1110,
+1046,
+10
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 23,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "LR",
+"desc": "control: QJ5 scout warp 9 fuel 10",
+"start": [
+1010,
+1052
+],
+"wps": [
+[
+"wp",
+1110,
+1052,
+9
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 10,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "FM scout warp 7 fuel 5",
+"start": [
+1010,
+1058
+],
+"wps": [
+[
+"wp",
+1110,
+1058,
+7
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 5,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "FM scout warp 9 fuel 10",
+"start": [
+1010,
+1064
+],
+"wps": [
+[
+"wp",
+1110,
+1064,
+9
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 10,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "SD scout warp 8 fuel 10",
+"start": [
+1010,
+1070
+],
+"wps": [
+[
+"wp",
+1110,
+1070,
+8
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 10,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "RHRS scout warp 8 fuel 10",
+"start": [
+1010,
+1076
+],
+"wps": [
+[
+"wp",
+1110,
+1076,
+8
+]
+],
+"ships": {
+"8": 1
+},
+"fuel": 10,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "FM scout warp 7 fuel 0",
+"start": [
+1010,
+1082
+],
+"wps": [
+[
+"wp",
+1110,
+1082,
+7
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 0,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "FM scout warp 7 fuel 0, leg 2 ly",
+"start": [
+1010,
+1088
+],
+"wps": [
+[
+"wp",
+1012,
+1088,
+7
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 0,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "QJ5 scout warp 7 fuel 0",
+"start": [
+1010,
+1094
+],
+"wps": [
+[
+"wp",
+1110,
+1094,
+7
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 0,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "WD",
+"desc": "FM scout warp 7 fuel 5, arrives at 20 ly",
+"start": [
+1010,
+1100
+],
+"wps": [
+[
+"wp",
+1030,
+1100,
+7
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 5,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 1",
+"start": [
+1010,
+1112
+],
+"wps": [
+[
+"wp",
+1110,
+1112,
+1
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 2",
+"start": [
+1010,
+1118
+],
+"wps": [
+[
+"wp",
+1110,
+1118,
+2
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 3",
+"start": [
+1010,
+1124
+],
+"wps": [
+[
+"wp",
+1110,
+1124,
+3
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 4",
+"start": [
+1010,
+1130
+],
+"wps": [
+[
+"wp",
+1110,
+1130,
+4
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 5",
+"start": [
+1010,
+1136
+],
+"wps": [
+[
+"wp",
+1110,
+1136,
+5
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 1",
+"start": [
+1010,
+1142
+],
+"wps": [
+[
+"wp",
+1110,
+1142,
+1
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 2",
+"start": [
+1010,
+1148
+],
+"wps": [
+[
+"wp",
+1110,
+1148,
+2
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 3",
+"start": [
+1010,
+1154
+],
+"wps": [
+[
+"wp",
+1110,
+1154,
+3
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 4",
+"start": [
+1010,
+1160
+],
+"wps": [
+[
+"wp",
+1110,
+1160,
+4
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 5",
+"start": [
+1010,
+1172
+],
+"wps": [
+[
+"wp",
+1110,
+1172,
+5
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 6",
+"start": [
+1010,
+1178
+],
+"wps": [
+[
+"wp",
+1110,
+1178,
+6
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 7",
+"start": [
+1010,
+1184
+],
+"wps": [
+[
+"wp",
+1110,
+1184,
+7
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "RHRS scout warp 4",
+"start": [
+1010,
+1190
+],
+"wps": [
+[
+"wp",
+1110,
+1190,
+4
+]
+],
+"ships": {
+"8": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "RHRS scout warp 6",
+"start": [
+1010,
+1196
+],
+"wps": [
+[
+"wp",
+1110,
+1196,
+6
+]
+],
+"ships": {
+"8": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "3 FM scouts warp 2",
+"start": [
+1010,
+1202
+],
+"wps": [
+[
+"wp",
+1110,
+1202,
+2
+]
+],
+"ships": {
+"7": 3
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "QJ5 scout + FM scout warp 2",
+"start": [
+1010,
+1208
+],
+"wps": [
+[
+"wp",
+1110,
+1208,
+2
+]
+],
+"ships": {
+"0": 1,
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 3 fuel 250 (cap)",
+"start": [
+1010,
+1214
+],
+"wps": [
+[
+"wp",
+1110,
+1214,
+3
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 250,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 4 arrives at 10 ly",
+"start": [
+1010,
+1220
+],
+"wps": [
+[
+"wp",
+1020,
+1220,
+4
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "SD scout warp 4 arrives at (7,7)",
+"start": [
+1010,
+1226
+],
+"wps": [
+[
+"wp",
+1017,
+1233,
+4
+]
+],
+"ships": {
+"6": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "FM scout warp 2 arrives at 3 ly",
+"start": [
+1010,
+1232
+],
+"wps": [
+[
+"wp",
+1013,
+1232,
+2
+]
+],
+"ships": {
+"7": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "control: QJ5 scout warp 1",
+"start": [
+1010,
+1238
+],
+"wps": [
+[
+"wp",
+1110,
+1238,
+1
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "RS",
+"desc": "control: AD8 scout warp 1",
+"start": [
+1010,
+1244
+],
+"wps": [
+[
+"wp",
+1110,
+1244,
+1
+]
+],
+"ships": {
+"5": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "MS",
+"desc": "1x Scout/QJ5 + 1x Scout/LH6 warp 2",
+"start": [
+1010,
+1250
+],
+"wps": [
+[
+"wp",
+1110,
+1250,
+2
+]
+],
+"ships": {
+"0": 1,
+"3": 1
+},
+"fuel": 600,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "MS",
+"desc": "1x Scout/QJ5 + 1x Scout/FM warp 5",
+"start": [
+1010,
+1256
+],
+"wps": [
+[
+"wp",
+1110,
+1256,
+5
+]
+],
+"ships": {
+"0": 1,
+"7": 1
+},
+"fuel": 600,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "MS",
+"desc": "2x Scout/LH6 + 1x Scout/DLL7 warp 5",
+"start": [
+1010,
+1262
+],
+"wps": [
+[
+"wp",
+1110,
+1262,
+5
+]
+],
+"ships": {
+"3": 2,
+"4": 1
+},
+"fuel": 900,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "MS",
+"desc": "1x Scout/QJ5 + 1x Scout/SD warp 8",
+"start": [
+1010,
+1268
+],
+"wps": [
+[
+"wp",
+1110,
+1268,
+8
+]
+],
+"ships": {
+"0": 1,
+"6": 1
+},
+"fuel": 600,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "CA",
+"desc": "QJ5 freighter + LH6 freighter, 70 kt Ir, warp 6",
+"start": [
+1010,
+1274
+],
+"wps": [
+[
+"wp",
+1110,
+1274,
+6
+]
+],
+"ships": {
+"1": 1,
+"9": 1
+},
+"fuel": 260,
+"cargo": [
+70,
+0,
+0,
+0
+]
+},
+{
+"group": "CA",
+"desc": "QJ5 freighter + LH6 freighter, 100 kt Ir, warp 6",
+"start": [
+1010,
+1280
+],
+"wps": [
+[
+"wp",
+1110,
+1280,
+6
+]
+],
+"ships": {
+"1": 1,
+"9": 1
+},
+"fuel": 260,
+"cargo": [
+100,
+0,
+0,
+0
+]
+},
+{
+"group": "TU",
+"desc": "QJ5 scout warp 9 fuel 102, leg 126",
+"start": [
+1010,
+1286
+],
+"wps": [
+[
+"wp",
+1136,
+1286,
+9
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 102,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "TU",
+"desc": "QJ5 scout warp 9 fuel 101, leg 126",
+"start": [
+1010,
+1292
+],
+"wps": [
+[
+"wp",
+1136,
+1292,
+9
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 101,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "TU",
+"desc": "QJ5 freighter 70 kt Ir warp 6 fuel 130, leg 143",
+"start": [
+1010,
+1304
+],
+"wps": [
+[
+"wp",
+1153,
+1304,
+6
+]
+],
+"ships": {
+"1": 1
+},
+"fuel": 130,
+"cargo": [
+70,
+0,
+0,
+0
+]
+},
+{
+"group": "DK",
+"desc": "QJ5 scout at planet 7, fuel 50, no orders",
+"start": [
+1113,
+1298
+],
+"wps": [],
+"ships": {
+"0": 1
+},
+"fuel": 50,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"planet": 7
+},
+{
+"group": "DK",
+"desc": "QJ5 scout at planet 7, fuel 400, no orders",
+"start": [
+1113,
+1298
+],
+"wps": [],
+"ships": {
+"0": 1
+},
+"fuel": 400,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"planet": 7
+},
+{
+"group": "DK",
+"desc": "QJ5 freighter at planet 7, fuel 10, no orders",
+"start": [
+1113,
+1298
+],
+"wps": [],
+"ships": {
+"1": 1
+},
+"fuel": 10,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"planet": 7
+},
+{
+"group": "DK",
+"desc": "QJ5 scout in deep space, fuel 400, no orders",
+"start": [
+1010,
+1310
+],
+"wps": [],
+"ships": {
+"0": 1
+},
+"fuel": 400,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "DK",
+"desc": "QJ5 scout arrives at planet 7 (planet waypoint), warp 5, fuel 100",
+"start": [
+1093,
+1298
+],
+"wps": [
+[
+"wpp",
+7,
+5
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "DK",
+"desc": "QJ5 scout leaves planet 7 east 50 ly, warp 5, fuel 100",
+"start": [
+1113,
+1298
+],
+"wps": [
+[
+"wp",
+1163,
+1298,
+5
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"planet": 7
+},
+{
+"group": "DK",
+"desc": "QJ5 scout arrives at planet 6 (no starbase), warp 5, fuel 100",
+"start": [
+1081,
+1283
+],
+"wps": [
+[
+"wpp",
+6,
+5
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+]
+},
+{
+"group": "OR",
+"desc": "QJ5 scout to deep-space waypoint on planet 7, warp 5, fuel 100",
+"start": [
+1113,
+1278
+],
+"wps": [
+[
+"wp",
+1113,
+1298,
+5
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"on_planet_ok": true
+},
+{
+"group": "OR",
+"desc": "QJ5 scout to deep-space waypoint on planet 12, warp 5, fuel 100",
+"start": [
+1173,
+1335
+],
+"wps": [
+[
+"wp",
+1153,
+1335,
+5
+]
+],
+"ships": {
+"0": 1
+},
+"fuel": 100,
+"cargo": [
+0,
+0,
+0,
+0
+],
+"on_planet_ok": true
+}
+]

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Generate one PG001 turn on the oracle from a FleetLab-built host file and
+# collect the raw result.
+#   tools/fleetlab/oracle-turn START.HST OUTDIR
+# Resets the run copy to the `registered` snapshot, installs START.HST as
+# PG001.HST, runs `scripts/oracle/turn PG001.M1`, and copies the start file,
+# every resulting PG001 file (and BACKUP/) and decoded dumps into OUTDIR.
+# OUTDIR holds registered-copy output: keep it out of this repository.
+set -euo pipefail
+[[ $# -eq 2 ]] || { echo "usage: oracle-turn START.HST OUTDIR" >&2; exit 2; }
+here="$(cd "$(dirname "$0")" && pwd)"
+oracle="$here/../../scripts/oracle"
+start="$1" out="$2"
+games="${ORACLE_HOME:-$HOME/.stars-oracle}/run/games/stars_games"
+mkdir -p "$out/raw/before" "$out/raw/after/BACKUP"
+"$oracle/stop" >/dev/null 2>&1 || true
+"$oracle/reset" registered
+cp "$games"/PG001.* "$out/raw/before/"
+chmod u+w "$games/PG001.HST"
+cp "$start" "$games/PG001.HST"
+cp "$start" "$out/raw/before/PG001.HST"
+"$oracle/start"
+"$oracle/wait-for" "${ORACLE_HOME:-$HOME/.stars-oracle}/refs/main-menu-open.png" 367 802 60
+"$oracle/turn" PG001.M1 | tee "$out/turn.log"
+"$oracle/stop"
+cp "$games"/PG001.* "$out/raw/after/"
+cp "$games"/BACKUP/PG001.* "$out/raw/after/BACKUP/" 2>/dev/null || true
+"$here/fleetlab" dump "$out/raw/before/PG001.HST" > "$out/before.dump"
+"$here/fleetlab" dump "$out/raw/after/PG001.HST" "$out/raw/after/PG001.M1" > "$out/after.dump"
+(cd "$out" && find raw -type f -print0 | sort -z | xargs -0 sha256sum > manifest.sha256)
+echo "oracle-turn: results in $out"
