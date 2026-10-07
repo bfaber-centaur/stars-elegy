@@ -1699,8 +1699,9 @@ replaces the old queue was not tested (no player in this game has one).
 - No habitability check: a colony ship colonized a red planet (T-31).
 - Colony ship minerals: the new colony received 18/6/17 kT from a tech-3
   colony ship and 4/1/5 from a tech-26 one (Long Hump 6 + Colonization
-  Module on a Colony Ship hull). The reading says ¾ of the fleet's
-  mineral cost; not checked against a cost table here.
+  Module on a Colony Ship hull). Both equal ¾ of the fleet's design cost
+  after miniaturization (25/9/23 and 6/2/7), truncated: `TAKEOVER.md`,
+  "Colonization" (CONFIRMED there, T-30).
 - **Contested colonization (asymmetric, LEGACY BUG candidate).** Two
   players' colony ships arriving at the same unowned planet: strengths
   as for troops. Player 0 25 vs player 1 12: player 0 got it with all 25.
@@ -1725,8 +1726,11 @@ Smart, Peerless, LBU-17 and LBU-32 bombs from player 0's ship designs
 Hush-a-Boom, Retro, Orbital Construction Module and Multi Contained
 Munition parts stayed and acted. At tech 26 nothing was removed. This
 agrees with the scanning corpus (SC-021: a scanner above the owner's
-tech was removed). That Hush-a-Boom and Retro stayed at tech 3 was not
-checked against their tech requirements.
+tech was removed). Hush-a-Boom and Retro are above tech 3 but stayed:
+the check removes only parts the owner lacks tech for, and skips
+race-restricted parts (Retro) and Mystery Trader parts (Hush-a-Boom, Multi
+Contained Munition): `TAKEOVER.md`, "Design parts dropped when the year is
+generated" (CONFIRMED in one setting there).
 
 ### Not tested
 

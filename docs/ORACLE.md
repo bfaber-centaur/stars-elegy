@@ -521,6 +521,12 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   generating; whether editing the `.HST` alone suffices was not tested.
 - Set mines to 0 to keep surface minerals fixed during the year; mining
   happens before production.
+- `dump` prints `scannerField` = planetary scanner index, 31 = none. The
+  game omits a planet's 8-byte installations block when growth carry,
+  mines, factories, defenses and the leftover-only box are all 0 and there
+  is no scanner. `dump` prints 31 for such a planet; before 2026-10-07 it
+  printed 16 (StarsAPI's zeroed default), which is the same game state
+  (TK-001..007: all 36 such records).
 - Race and starbase keys (added for KX-001): `prt=N` (0 HE … 4 IS … 8 AR,
   9 JOAT), `lrt=HEX` (the 32-bit lesser-trait word; bit 6 Mineral
   Alchemy, bit 31 "factories cost 1 kT less germanium"),
