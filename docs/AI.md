@@ -54,7 +54,10 @@ host's generator, uniform in `0..n−1` (see "Random numbers" below).
 - **What it sees.** Exactly that player's own view of the game (what its
   player file holds: its planets, fleets, designs, scanned reports) plus
   the planet history its history file keeps, not the true game state
-  (MEASURED, AI-4, AI-12):
+  (CONFIRMED, AI-12: predicted from the AIX fleet check, then held in two
+  edited AI oracle runs, where other players' owners recorded in the
+  history file led to scrapping and the same planets recorded as its own
+  led to colonizing them):
   - A planet the player file does not report keeps the owner the history
     last recorded, so a foreign planet seen earlier still counts as
     foreign.
