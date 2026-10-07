@@ -343,7 +343,11 @@ A fleet uses gates when its next waypoint's warp is the gate setting.
 
 ## Wormholes
 
-### Creation (MEASURED, OB-006)
+### Creation (CONFIRMED, OB-006, UG01–UG21)
+
+The UG new games (`UNIVERSE.md`) matched a white-box prediction of every
+wormhole's position and class exactly, at every size.
+
 
 Only in games with random events on; with them off there are none (tiny
 and huge, three seeds each). Pairs by universe size: `rand(v) + m` with
