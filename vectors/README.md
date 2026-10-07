@@ -24,6 +24,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `tk2` | TK-101..121 | 64 | planet takeover: bombing, invasion, what the new owner gets | `docs/TAKEOVER.md` |
 | `wt` | WT-001..005 | 31 | wormholes and the Mystery Trader | `docs/OBJECTS.md` |
 | `cs` | CS-003 W, B | 36 | warp 10 losses per engine, fuel generation, bombs, Orbital Construction Module, Orbital Adjuster | `docs/COMPONENTS.md` |
+| `ob` | OB-003..005, 009, 010, 021, 022 | 46 | packets caught by planets, the Mystery Trader meeting, wormhole and minefield travel, stargates (only the checks a vector kind covers) | `docs/OBJECTS.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
 
