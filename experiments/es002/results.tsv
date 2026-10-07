@@ -1,0 +1,84 @@
+case	item	observed	where
+F00-w1	fleet 0 wp 1 distance	84.86 Light Years	Fleet Waypoints tile, each waypoint selected
+F00-w1	fleet 0 wp 1 travel time	1 year	Fleet Waypoints tile, each waypoint selected
+F00-w1	fleet 0 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 distance	27.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 travel time	3 years	Fleet Waypoints tile, each waypoint selected
+F00-w2	fleet 0 wp 2 est fuel usage	4mg	Fleet Waypoints tile, each waypoint selected
+T00	fleet 0 report ETA	1y	Fleet report (F3 fleets), ETA column
+F01-w1	fleet 1 wp 1 distance	84.86 Light Years	Fleet Waypoints tile, each waypoint selected
+F01-w1	fleet 1 wp 1 travel time	Unload	Fleet Waypoints tile, each waypoint selected
+F01-w1	fleet 1 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T01	fleet 1 report ETA	Unload	Fleet report (F3 fleets), ETA column
+F02-w1	fleet 2 wp 1 distance	319.1 Light Years	Fleet Waypoints tile, each waypoint selected
+F02-w1	fleet 2 wp 1 travel time	Danger	Fleet Waypoints tile, each waypoint selected
+F02-w1	fleet 2 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T02	fleet 2 report ETA	Danger	Fleet report (F3 fleets), ETA column
+F03-w1	fleet 3 wp 1 distance	200.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F03-w1	fleet 3 wp 1 travel time	Danger	Fleet Waypoints tile, each waypoint selected
+F03-w1	fleet 3 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T03	fleet 3 report ETA	Danger	Fleet report (F3 fleets), ETA column
+F04-w1	fleet 4 wp 1 distance	96.61 Light Years	Fleet Waypoints tile, each waypoint selected
+F04-w1	fleet 4 wp 1 travel time	Never	Fleet Waypoints tile, each waypoint selected
+F04-w1	fleet 4 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T04	fleet 4 report ETA	Never	Fleet report (F3 fleets), ETA column
+F05-w1	fleet 5 wp 1 distance	138.22 Light Years	Fleet Waypoints tile, each waypoint selected
+F05-w1	fleet 5 wp 1 travel time	Uncertain	Fleet Waypoints tile, each waypoint selected
+F05-w1	fleet 5 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T05	fleet 5 report ETA	Uncertain	Fleet report (F3 fleets), ETA column
+F06-w1	fleet 6 wp 1 distance	40.71 Light Years	Fleet Waypoints tile, each waypoint selected
+F06-w1	fleet 6 wp 1 travel time	Never	Fleet Waypoints tile, each waypoint selected
+F06-w1	fleet 6 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T06	fleet 6 report ETA	Never	Fleet report (F3 fleets), ETA column
+F07-w1	fleet 7 wp 1 distance	100.66 Light Years	Fleet Waypoints tile, each waypoint selected
+F07-w1	fleet 7 wp 1 travel time	Uncertain	Fleet Waypoints tile, each waypoint selected
+F07-w1	fleet 7 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T07	fleet 7 report ETA	Uncertain	Fleet report (F3 fleets), ETA column
+F08-w1	fleet 8 wp 1 distance	17.12 Light Years	Fleet Waypoints tile, each waypoint selected
+F08-w1	fleet 8 wp 1 travel time	Never	Fleet Waypoints tile, each waypoint selected
+F08-w1	fleet 8 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T08	fleet 8 report ETA	Never	Fleet report (F3 fleets), ETA column
+F09-w1	fleet 9 wp 1 distance	25.32 Light Years	Fleet Waypoints tile, each waypoint selected
+F09-w1	fleet 9 wp 1 travel time	1 year	Fleet Waypoints tile, each waypoint selected
+F09-w1	fleet 9 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F09-w2	fleet 9 wp 2 distance	84.86 Light Years	Fleet Waypoints tile, each waypoint selected
+F09-w2	fleet 9 wp 2 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F09-w2	fleet 9 wp 2 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+T09	fleet 9 report ETA	1y	Fleet report (F3 fleets), ETA column
+F10-w1	fleet 10 wp 1 distance	20.2 Light Years	Fleet Waypoints tile, each waypoint selected
+F10-w1	fleet 10 wp 1 travel time	1 year	Fleet Waypoints tile, each waypoint selected
+F10-w1	fleet 10 wp 1 est fuel usage	2mg	Fleet Waypoints tile, each waypoint selected
+F10-w2	fleet 10 wp 2 distance	10.5 Light Years	Fleet Waypoints tile, each waypoint selected
+F10-w2	fleet 10 wp 2 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F10-w2	fleet 10 wp 2 est fuel usage	3mg	Fleet Waypoints tile, each waypoint selected
+F10-w3	fleet 10 wp 3 distance	3.16 Light Years	Fleet Waypoints tile, each waypoint selected
+F10-w3	fleet 10 wp 3 travel time	3 years	Fleet Waypoints tile, each waypoint selected
+F10-w3	fleet 10 wp 3 est fuel usage	3mg	Fleet Waypoints tile, each waypoint selected
+F10-w4	fleet 10 wp 4 distance	5.10 Light Years	Fleet Waypoints tile, each waypoint selected
+F10-w4	fleet 10 wp 4 travel time	4 years	Fleet Waypoints tile, each waypoint selected
+F10-w4	fleet 10 wp 4 est fuel usage	4mg	Fleet Waypoints tile, each waypoint selected
+T10	fleet 10 report ETA	1y	Fleet report (F3 fleets), ETA column
+F11-w1	fleet 11 wp 1 distance	3.0 Light Years	Fleet Waypoints tile, each waypoint selected
+F11-w1	fleet 11 wp 1 travel time	1 year	Fleet Waypoints tile, each waypoint selected
+F11-w1	fleet 11 wp 1 est fuel usage	0mg	Fleet Waypoints tile, each waypoint selected
+F11-w2	fleet 11 wp 2 distance	7.7 Light Years	Fleet Waypoints tile, each waypoint selected
+F11-w2	fleet 11 wp 2 travel time	2 years	Fleet Waypoints tile, each waypoint selected
+F11-w2	fleet 11 wp 2 est fuel usage	1mg	Fleet Waypoints tile, each waypoint selected
+T11	fleet 11 report ETA	1y	Fleet report (F3 fleets), ETA column
+P11-0	planet 11 item 0 (id 7 x1, 29%)	1 year	Production dialog, planet queue
+P11-1	planet 11 item 1 (id 2 x50, 0%)	Skipped	Production dialog, planet queue
+P11-2	planet 11 item 2 (id 1 x20, 0%)	1 - 6 years	Production dialog, planet queue
+P11-3	planet 11 item 3 (id 7 x5, 0%)	6 - 7 years	Production dialog, planet queue
+P18-0	planet 18 item 0 (id 0 x50, 0%)	Skipped	Production dialog, planet queue
+R1	player 0 field weapons level 4 -> resources needed	801	Research dialog (F5)
+R2	player 0 next year's projected research budget	261	Research dialog (F5)
+R3	player 0 estimated time to completion (GR)	7 years	Research dialog (F5)
+R4	player 0 annual resources from all planets	349	Research dialog (F5)
+S1	player 1 field weapons level 3 -> resources needed	595	Research dialog (F5), cb.m2; next field to research shows <Same field>
+S2	player 1 next year's projected research budget	38	Research dialog (F5), cb.m2
+S3	player 1 estimated time to completion	16 years	Research dialog (F5), cb.m2
+S4	player 1 annual resources from all planets	38	Research dialog (F5), cb.m2
+S5	player 1 energy (level 26) selected: resources needed	Maxed Out	Research dialog (F5), cb.m2, Energy radio selected; time to completion also "Maxed Out", header "Energy, Tech Level 27"
+K1	player 1 energy level after the year	26	host file after the year (combatlab dump: energy=26)
+K2	player 1 current field after the year	weapons (lowest, first in field order)	host file after the year (field=1; accum weapons=25, energy 0)
+K3	player 1 next-field choice after the year	same field	Research dialog (F5), cb.m2: Next field to research <Same field>

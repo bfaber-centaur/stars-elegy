@@ -3197,6 +3197,13 @@ nothing. The field lost 27% (2% + 25%) and nothing more for the hits:
   - the field lost 50 before its 2% decay: 3000 → 2950 → 2891. Decay
     first would give 2890.
   - The stopped fleet then swept 100, so the field ended at 2791.
+  - Re-checked against the MF-4 year order (stops during movement, then
+    decay counting planets inside the field as the stops left it, then
+    sweeping; no planet lies inside this field at 3000 or 2950): the three
+    no-hit settings ended at 2840 and the three hit settings at 2791, as
+    predicted (stars-elegy `experiments/mf/README.md`). The hit settings
+    have mine-hit messages (0xc6) at the stop point; the no-hit ones have
+    none. No contradiction with MF-4.
 - Hit odds per ly and shrink amounts for other field sizes (O-14, O-15)
   are not yet measured.
 
@@ -3388,7 +3395,7 @@ missed when a ship was lost. Details below.
   point, added as a new design. The traded fleet was removed.
 - A warp-9 Trader moved 81 ly in a year.
 
-### Minefield lane (MF-1..MF-12)
+### Minefield lane (MF-1..MF-13)
 
 Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
 BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
@@ -3517,6 +3524,15 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
   owner got "failed to lay mines this year due to technical difficulties"
   (0x17e). A layer inside an existing field merged normally in all three
   runs.
+- **Field 511 depends on object order (MEASURED, MF-13; LEGACY BUG
+  candidate).** With numbers 0..510 taken, field 511 was made only when no
+  universe object sorted after the owner's minefields. Objects sort by type
+  (minefields, packets and salvage, wormholes, the Mystery Trader), then
+  owner, then number. A player-1 field elsewhere (MF-13a) or a salvage
+  object (MF-13b) blocked player 0's 512th field: no field, message 0x17e,
+  mines lost. A player-0 field did not block player 1's 512th field, which
+  was made as number 511 (MF-13c). So the limit is 511 fields when anything
+  sorts after the owner's fields, and 512 otherwise (one run each).
 - **Laying order (CONFIRMED):** two layers of 160 in one 390-mine field
   merge one after the other, in fleet-number order. With the east layer
   first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
@@ -3525,6 +3541,110 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
 Not tested: the detonate-order validation gap (needs crafted orders), SS
 and SD safe-warp bonuses, fleets moving through gates in a field, and
 salvage from mine kills (OB-024).
+
+### Wormholes and Mystery Trader, round 2 (WT-001 to WT-005)
+
+Predictions O-43..O-53 come from the objects decomp lane. They were
+committed before the runs (`experiments/wt/README.md`). Deterministic
+runs were made at two cycles values; WT-004 ran over 16 streams. Raw
+evidence: stars-oracle-apparatus `evidence/wt/`.
+
+In the host file a wormhole has two player masks, the **known** mask
+(which players have the end on their map) and the **destination** mask
+(which players know where it leads).
+
+- **CONFIRMED: only transit reveals the destination (O-43, WT-001 A, G).**
+  - A player 0 fleet transited an end that both players already knew.
+    Player 0's bit went into the destination mask of both ends.
+  - Player 1 saw both ends of that pair in the same year and did not get
+    the bit. Neither did player 1 for a second, unknown pair it saw that
+    year: it got the known bit on both ends, and the destination mask
+    stayed 0.
+- **CONFIRMED: a jump keeps the destination (O-44, WT-004, 18 jumps in
+  16 streams).**
+  - Every jumped end kept player 0's destination bit and reset its years
+    to 0.
+  - 14 of the 18 jumped ends also lost the known bit. The other 4 landed
+    near a ship player 0 had just received from the Trader the same year,
+    were in player 0's file, and so were known again.
+  - Those 4 ends were 21, 27, 72 and 107 ly from the receiving fleet. That
+    is within the fleet's penetrating range (about 33 for an M.T. Scout
+    and 132 for an M.T. Lifeboat) but beyond R/4. An end 52 ly from an
+    M.T. Scout was not seen. These are MEASURED observations for the
+    scanning record; the scanning rule for a just-jumped end was not the
+    question here.
+  - All 302 ends that did not jump moved at most 12 ly on each axis, aged
+    one year and kept both masks.
+- **CONFIRMED: what transits (O-46, WT-001 B, C, D, E).**
+  - A fleet whose waypoint was the wormhole's position as a plain point
+    ended there, in normal space. A fleet whose waypoint was the wormhole
+    itself transited.
+  - The B2 wormhole was unknown to player 0 at the start of the year, and
+    the fleet still transited in that year. This fits OB-025/OB-027: an
+    unseen target turns into a plain position only at the end-of-year
+    waypoint check, after movement.
+  - A fleet whose straight move passed over an end did not transit.
+  - A warp-10 packet whose 100 ly move ended exactly on an end stayed
+    there, and so did a Trader whose 64 ly move ended on an end.
+- **MEASURED, contradicts O-47: a fleet aimed at the Trader goes to where
+  the Trader is after the Trader's move (WT-001 F1, WT-005, two streams
+  each).**
+  - The Trader moves before fleets. A fleet 30 ly west of the Trader's
+    start, aimed at the Trader at warp 6, flew its full 36 ly east to
+    (1206,1300), past the start (1200,1300).
+  - A fleet 50 ly east of the start flew 31 ly east to the Trader's end
+    point (1281,1300). It traded there and was consumed. The decomp
+    predicted that both fleets fly to the start-of-year position.
+  - A fleet flying onto the Trader's end point with a plain waypoint also
+    traded (WT-001 F2), as in OB-004.
+- **CONFIRMED: part rewards (O-48, WT-003 A).**
+  - Twelve Traders offering item bits 0–11 each gave player 0 (tech 26,
+    no parts) the part for that bit. After the year its Trader-item mask
+    was 0x0fff and its tech was unchanged.
+  - Every trade consumed the fleet.
+  - Messages: id 0x10b for ten parts, 0x10c for Mini Morph (bit 8), 0x10f
+    for the Genesis Device (bit 10).
+  - The bit-to-part map is in `experiments/wt/README.md` (WT-003 rows).
+- **CONFIRMED: a full design table (O-49, WT-003 B).** A player with all
+  16 design slots used traded for a ship. Its fleet was consumed, and it
+  got no ship and no new design. Message 0x150.
+- **CONFIRMED: ship gifts (O-49, O-51, WT-004 B, C; 30 meetings, 2 void).**
+  - Every ship gift was one of three designs:
+    - M.T. Lifeboat: a Nubian hull with 1 or 2 ships;
+    - M.T. Scout: a Mini Morph with Langston Shells, 1 to 4 ships;
+    - M.T. Probe: a Mini Morph with Mega Poly Shells, 1 to 4 ships.
+  - The design went into the player's first empty design slot. The new
+    fleet was at the trade point with full fuel. The Trader-item mask and
+    tech were unchanged.
+  - A player at tech 26 owning all twelve parts, offered item 0, got
+    nothing (message 0x10e) in 3 of 15 meetings and a ship in the other
+    12. The prediction was 1/5 nothing, else always a ship.
+  - Counts over 30 meetings: Lifeboat 5, Scout 11, Probe 11, nothing 3.
+    The predicted shares were 1/4, 3/8 and 3/8 of ships.
+- **CONFIRMED: a research step keeps accumulated research (O-50, WT-002
+  A).** A player with biotech 0 and 20 accumulated in biotech, all other
+  fields 26, traded for research. Biotech went to 1, its accumulated
+  research stayed 20, and the other fields stayed 26. Message 0x109.
+- **CONFIRMED: an owned offered part becomes research (O-52, WT-002 B).**
+  A player at tech 5 everywhere that owned the Anti Matter Torpedo traded
+  7,400 kT with a Trader offering it. It gained exactly 8 levels (3,2,1,0,0,2
+  and 1,3,2,0,0,2 in the two streams), and its item mask stayed 0x0040.
+- **MEASURED: the Trader's yearly warp bump.** 4 Traders, in about 80
+  Trader-years, changed warp 8 → 9 before moving, with message 0x130.
+  One of the 4 also got a new destination on the map's west edge (x
+  1020). The meetings staged for those Traders were void. This fits the
+  decomp's reading of 1/25 a year for the bump and then 1/3 for a new
+  destination.
+- **Message records.** In the player file's event block, a message record
+  starts with a little-endian word: the id in the low 9 bits and flags
+  above. 0x109 was written as `09 01` or `09 03`; the following bytes
+  carry the level count. The rest of the layout is not decoded.
+- **Not tested:**
+  - stability names (O-45, report text);
+  - computer-player planets trading (O-53);
+  - the 25th-redraw ship LEGACY BUG, which is too rare to reach by
+    sampling streams;
+  - Trader appearance (KX-004).
 
 ### Not tested
 
@@ -3952,7 +4072,7 @@ mismatches, and `races.py turn` gave 5 of 5 in each penalty year.
 Status: catalogue in `MESSAGES.md` (2026-10-07). All 387 message kinds are
 listed with trigger, recipient, slots, focus and phase. Rows are CONFIRMED
 against message records decoded from the oracle turn files of every corpus
-in the apparatus (166 kinds seen, `tools/fleetlab/events.py`), and the rest
+in the apparatus (189 kinds seen, `tools/fleetlab/events.py`), and the rest
 are BINARY-ONLY. Elegy writes its own message text from the slots (project
 rule); no original string is used.
 
@@ -3970,3 +4090,115 @@ earlier runs settled the binary reading's LEGACY BUG? candidates:
 - **MEASURED:** load-optimal fuel never takes on fuel.
   - With a fleet target it reports 0x03c/0x03d or hands over the surplus (MG-003).
   - With a planet target, every fuel action is skipped (MG-002, MG-004, MG-006). The binary reading explains this: fuel is handled only for fleet and deep-space targets (`TAKEOVER.md`).
+
+## Client estimates (ES-001)
+
+`docs/ESTIMATES.md` specifies the projections the original client shows:
+travel time, fuel use and range of fleets, leg distance, production
+completion, research estimates, population growth, value and optimal
+value, mining rate. The rules were read from the original program
+(private `stars-decomp` `docs/estimates.md`) and measured once.
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es001/gen.py`,
+cycles 20000). Player 0 had 9 fleets with two or three legs each (warp 0
+and warp 1 legs, a zero-length leg, a 25.495 ly leg, multi-year legs with
+a ram-scoop ship and a Fuel Transport, a route through its homeworld's
+Space Station, a fleet without the fuel for its first leg), one Scout per
+engine with a part-filled tank, 10 planets with production queues
+(resource-limited, germanium-limited, no germanium, automatic items, Auto
+Alchemy in the middle and at the end), planets of habitability −10% to
+100% including one above its maximum population, and research at 10% on
+weapons. Predictions were computed from the generated host file with
+`experiments/es001/estimates.py` and committed (503745c) before the
+client was opened. Raw evidence and screenshots: private
+`stars-oracle-apparatus` `evidence/es/es-001/`.
+
+### Result (CONFIRMED, 2026-10-07)
+
+`experiments/es001/check.py`: 149 of 149 readings matched.
+
+| Screen | Readings |
+|---|---:|
+| Fleet Waypoints tile: distance, travel time, est. fuel usage (and red) per waypoint | 63 |
+| Fleet Composition tile: Est. Range (every engine, three mixed fleets) | 23 |
+| Production tile: Completion of each queue item | 19 |
+| Planet report: Value (optimal value), Mining Rate | 20 |
+| Population popup | 10 |
+| Research dialog | 5 |
+| Fleet report: ETA column, red | 9 |
+| Not counted: queue colours, the planet report's resources "A / R" | |
+
+Discriminating cases that held:
+
+- A 25.495 ly leg at warp 5 is 1 year (`trunc(D) ≤ w²`), while its fuel is
+  priced as 2 years.
+- Fuel estimates priced year by year, the ram-scoop and Fuel Transport
+  credits (45 and 25 mg, against 114 and 103 for the whole leg at once),
+  and the running total restarting after a waypoint at the homeworld
+  (251, not 362).
+- The ideal warp for range: each engine's warp in `ESTIMATES.md`,
+  including the scoops' free-warp step down and warp 10 only for the five
+  named engines.
+- The production estimate's carried item (an alchemy item left over from
+  the real year), Auto Alchemy as the target ("As Needed") and as the last
+  item ("14 - ??? years"), automatic items blocked by germanium
+  ("Unknown") and a factory with no germanium ("Never").
+- Projected research budget (163) from the first estimated year of every
+  queue.
+
+Not exercised by ES-001 (ES-002 below): stargate legs, "Skipped", Generalized Research, a field at
+level 26, distances with a zero tens-of-hundredths digit (e.g. 20.05).
+
+## Client estimates follow-up (ES-002)
+
+### Question
+
+Do the five client estimates ES-001 left unmeasured behave as read:
+stargate legs, "Skipped", Generalized Research, a field at level 26 and
+distances whose hundredths have a leading zero?
+
+### Method
+
+One pinned Combat Lab generation 2400 → 2401 (`experiments/es002/gen.py`,
+cycles 20000). Player 0 (Generalized Research, a legal LRT set) had gates
+100/250 on three planets and Space Station gate 100/250 on a fourth, a
+150/600 gate on a fifth, and 12 fleets: scouts and freighters ordered
+through gates (usable, two gate legs in a row, cargo, beyond range, over
+the mass limit, to an own planet without a gate, from a planet without a
+gate, to deep space, to another player's planet, to an unowned planet),
+and two scouts on short non-gate legs chosen for distances like 20.02.
+Two queues held automatic items with nothing to do. Player 1 researched
+energy at level 25 with "next field" left at "same field" and enough
+resources stored to reach 26 during the year (`KERNEL.md` KX-005).
+Predictions were committed (0600161) before the client was opened, with
+`expect.tsv` for the host-side result. Raw evidence and screenshots:
+private `stars-oracle-apparatus` `evidence/es/es-002/`.
+
+### Result (2026-10-07)
+
+`experiments/es002/check.py`: 81 of 83 matched. Both misses are fleet 7
+(own gate → an unowned planet): its waypoint tile and report ETA showed
+"Uncertain", predicted "Never".
+
+Interpretation: the prediction model treated every unowned planet as
+reported to the viewer this year. That planet was not in player 0's
+2401 `.M1` (its reports list planets 0, 2, 4, 11, 15–19, 21), so the
+client's rule as read ("Never" only for an unowned planet reported this
+year) gives "Uncertain". `estimates.py` now takes the reported planets
+(`predict.py after.dump m1.dump` gives "Uncertain" for both). The
+"reported unowned planet → Never" branch itself was not exercised and
+stays BINARY-ONLY.
+
+| Item | Observed | Status |
+|---|---|---|
+| Stargate legs (11 fleets) | 1 year, cumulative after the gate; "Unload" with cargo; "Danger" beyond range and over the mass limit; "Never" without a gate at either end or in deep space; "Uncertain" for another player's or an unreported planet; fuel 0mg; warp box "Use Stargate" | CONFIRMED |
+| Distances | 319.01 → "319.1", 20.02 → "20.2", 10.05 → "10.5", 7.07 → "7.7" | CONFIRMED, LEGACY BUG (display) |
+| "Skipped" | Auto Defenses at the defense limit, Auto Mines at the mine limit: "Skipped" in grey; following items unaffected | CONFIRMED |
+| Planet report, queue of one skipped item | "--- Queue is Empty ---" | MEASURED |
+| Generalized Research | 801 needed, projected 261 → 7 years | CONFIRMED |
+| Level 26 (KX-005) | energy 26, current field weapons, next field `<Same field>`; weapons 595 needed, 16 years; energy "Maxed Out" (needed and time) | CONFIRMED |
+
+Not predicted, observed: player 0's Est. Range for the three designs (561,
+166, 175 l.y.).
