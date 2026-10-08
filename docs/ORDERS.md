@@ -462,7 +462,8 @@ foreign target.
 BINARY-ONLY.
 
 Players' order files are replayed one player at a time in a **random player
-order** each year (`KERNEL.md`, turn order step 1). When two players submit
+order** each year (`KERNEL.md` "Turn order", step 1 item 2, "Player
+order"). When two players submit
 orders that act on the same object in the same year, the later-replayed
 order wins. The replay order is drawn from the game's generator, so the
 outcome of a same-year conflict is not fixed; it depends on the draw.
