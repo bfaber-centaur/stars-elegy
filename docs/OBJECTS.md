@@ -478,6 +478,62 @@ success count toward the PP player's ideal, within the PP player's
 terraform range around the original value (immune axis: half the count
 toward the nearer extreme).
 
+## Salvage (BINARY-ONLY except where marked)
+
+Salvage is a packet-kind object with no warp and no destination. How
+much each event leaves, and where, is in `COMBAT.md` "Salvage" (battles
+and cargo dumped by a battle plan), "Hits on moving fleets" above (mine
+hits) and `TAKEOVER.md` (scrapping in deep space). None is ever placed
+exactly on a planet's position, and one object holds at most 30,000 kT,
+the overflow going into a new object at the same spot (CONFIRMED,
+CB-040).
+
+- **Owner.** A new salvage object belongs to the player whose ships or
+  cargo it came from: the owner of the destroyed ships (or of the fleet
+  dumping cargo) in a battle, the owner of the fleet hit by mines, the
+  owner of the scrapped fleet. Minerals added to an existing object do not
+  change its owner, whoever they came from; an overflow object belongs to
+  the owner of the addition that overflowed. The owner decides only the
+  object's place in the object list and its number (it shares the owner's
+  packet numbers, "Launch" above) and which player a viewer learns of
+  (below); it gives no rights over the salvage.
+- **Joining existing salvage.** A battle starts a fresh salvage object:
+  every loss and dump in that battle goes into it, whoever's ships they
+  were, and it never joins salvage already lying at that spot, from an
+  earlier year or not (CONFIRMED in part: one object per battle location,
+  CB-001 B1). A mine hit's minerals join the first salvage object (in
+  object order) lying exactly at the stop point, of any owner and age, or
+  make a new one. Scrapping in deep space always makes a new object. In
+  every case where minerals are added, the object's whole contents are
+  taken out and added back with the new ones under the 30,000 kT limit.
+- **Decay.** Once a year, with packets (step 5 of "Turn placement"), each
+  non-empty mineral loses `⌊m/10⌋`, at least 10 kT, and not below 0. An
+  object with nothing left is removed. An object skips the first decay
+  after it is made or added to: making or adding marks it, and the next
+  decay only clears the mark. So salvage from a mine hit or a deep-space
+  scrap keeps its full amount through the year it was made (fits T-34:
+  60/20/70 at the end of the scrap year), battle salvage through the next
+  year's decay, and a mine hit that adds to old salvage spares it one
+  decay. An overflow object made by the 30,000 kT limit is not marked
+  and decays the next time.
+- **Loading.** A fleet at the salvage's position may load its minerals
+  with a load task or a manual load, whoever owns the salvage and the
+  fleet; colonists and fuel cannot be loaded from it. The amount is the
+  usual load amount (`TAKEOVER.md` "Unload and load amounts"), capped by
+  what the salvage holds. Manual loads by several players during order
+  replay are taken in turn, and a player who finds it emptied first gets
+  the "another player emptied it" messages (`MESSAGES.md` 0x0db, 0x0dc).
+  An emptied object stays until the next decay removes it. Unloading
+  into salvage is accepted but only up to the object's stored size (kept
+  in 10 kT steps and refreshed only when it is made, added to or
+  decays): a few kT of rounding room plus whatever has been loaded out
+  since.
+- **Visibility.** Salvage is seen as a packet is (`SCANNING.md`, "Mineral
+  packets"): within a viewer's normal scanning range, with no exception
+  for its owner's own salvage, and a Packet Physics player sees every
+  salvage object in the universe. Seeing it makes its owner a known
+  player, as for packets. Salvage does not scan.
+
 ## Stargates (CONFIRMED, OB-021, OB-022, GT-001, GT-002, except where marked)
 
 A fleet uses gates when its next waypoint's warp is the gate setting
