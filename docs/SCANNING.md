@@ -371,7 +371,15 @@ behave (laying, decay, hits, jumps, packet flight). Evidence is in
 fleet's or planet's ranges.
 
 - **Minefields.**
-  - A player's own minefields are always known.
+  - A player's own minefields are always in that player's view.
+    Ownership does not mark a field as known, though. The field's stored
+    known set (`known_to` in the parity vectors) gains a player only by
+    that player's sight, the owner's included, or by a hit or sweep, under
+    the rules below (BINARY-ONLY). MEASURED: in MF-13a and MF-13c a lone
+    field at (1400,1400), beyond every scanner of both players, ended the
+    year with an empty known set. The clustered fields within scanner
+    range were known to both players. In MF-13c a field just laid by the
+    owner's fleet sitting inside it was known to its owner only.
   - Another player's minefield is seen when `d² ≤ P²`, or
     `d² ≤ ⌊R²/16⌋` (a quarter of normal range), or the viewing fleet is
     inside the field, whatever its distance to the centre (BINARY-ONLY:
