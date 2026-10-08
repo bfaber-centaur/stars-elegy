@@ -765,6 +765,12 @@ What it does. Such a fleet follows its leader for that year (`KERNEL.md`
 (MEASURED, AI-27), all 12 followers whose leader had a next waypoint
 moved, and none of the 7 whose leader had none moved. In the 6 cases
 where both fleets survived the year, they ended at the same position.
+Every follower in these runs started at its leader's position. One aimed
+at a leader elsewhere does not follow it: in FO-03-F a fleet aimed at an
+idle leader 195 ly away with a merge task stayed put, did not merge, got
+no 0x138, and got 0x04e with its task cleared (CONFIRMED). The reading
+is that the leader is first re-chosen at the follower's position
+(`KERNEL.md` "Turn order" step 1a.3, BINARY-ONLY).
 
 It does not persist. After the generation the follower has one waypoint
 at its own position, aimed at a planet or deep space, like any other
