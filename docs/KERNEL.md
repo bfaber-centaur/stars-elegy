@@ -1513,6 +1513,27 @@ ship designer lets a player save one is not established.
   fleet moves. CONFIRMED for mine laying (OB-014-D, OB-019: `OBJECTS.md`
   "Laying") and for transport (KB-4A T1: "wait for 50% ironium" at a
   planet with none held the fleet; T2: "unload all" unloaded and moved).
+- Loads with no usable source (BINARY-ONLY; the foreign-fleet case of the
+  same refusal is MEASURED, FO-04: nothing loaded, message 0x120). A load
+  action wants an amount for each cargo: "load all" wants whatever the
+  target holds; "load exactly", "fill to %", "wait for %" and "set amount
+  to" want the shortfall. A deep-space waypoint with no salvage holds
+  nothing. A planet whose owner is another player is a source only for a
+  fleet that can steal cargo; it is not a source for any other fleet.
+  - A load that wants nothing is satisfied. So "load all" in deep space,
+    or of a cargo the target has none of, is satisfied silently.
+  - A load that wants a positive amount from a target that is not a
+    source is unmet. In the load phase before movement the task stays and
+    the fleet does not move that year, with no message. In the load phase
+    after movement the task is cancelled, with "could not load" (0x123 in
+    deep space, 0x11f at a foreign planet). "Set amount to" more than the
+    target holds first also sends 0x121 (0x122 for colonists). The
+    after-movement phase runs that same year for every fleet, moved or
+    not, so such a task holds a fleet for at most one year. A fleet that
+    arrives there has the task cancelled on arrival.
+  - At your own planet, an unmet "wait for %" or "set amount to" is
+    neither refused nor cancelled, so it holds the fleet until it is met
+    (T1 above).
 - Warp 10 with an engine not rated for warp 10 (rated: Interspace-10,
   Enigma Pulsar, Trans-Star 10, Trans-Galactic Mizer Scoop, Galaxy Scoop):
   each ship is destroyed with probability 1/10 each year it moves
