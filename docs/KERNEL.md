@@ -728,8 +728,13 @@ mining, and no homeworld floor.
   planet at 15/82/45 with 100 own mines and an 8-point miner ended with
   boranium fraction 106, which two separate steps give; one step with 108
   mines gives 107. The order of the two steps is BINARY-ONLY (both give
-  the same result here). Another player's miners at an AR planet are
-  BINARY-ONLY.
+  the same result here). Another player's miners at an AR planet mine
+  nothing: an Alternate Reality fleet is skipped silently, and any other
+  fleet gets the "planet is inhabited" refusal as at any owned planet
+  (BINARY-ONLY; the refusal itself CONFIRMED, `MESSAGES.md` 0x076).
+- **Messages.** Remote mining that succeeds sends no message. Only the
+  refusals do: no mining modules (0x075), planet inhabited (0x076) and
+  deep space (0x077), each cancelling the task (`MESSAGES.md`).
 
 ## Research
 
@@ -1037,7 +1042,8 @@ BINARY-ONLY where marked):
   50/59/60).
 - **Cost.** 100 resources per unit, 70 with TT (CONFIRMED, T1, T2), half
   for Claim Adjuster (CONFIRMED, KX-005: a CA planet with 120 resources
-  and Terraform ×3 built two and left ×1 at 41%); no minerals.
+  and Terraform ×3 built two and left ×1 at 41%); no minerals. The halving
+  truncates, so a Claim Adjuster with TT pays 35 (BINARY-ONLY).
 - **Tech used.** Production uses the owner's tech before this year's
   research; the Claim Adjuster year-end step and Orbital Adjusters run
   after research and use the levels just reached (CONFIRMED, KX-005: both
@@ -1067,7 +1073,16 @@ BINARY-ONLY where marked):
     of `orig − reach` and `orig + reach` (clipped to 1–99) is farther from
     the owner's centre, provided it is farther than the current value
     (the lower end on a tie), and the axis is chosen by the same score
-    (60/60/60 → 62/60/60: gravity toward 71 scores 137 against 67).
+    (60/60/60 → 62/60/60 for a 50 (15–85) habitat: gravity toward 71
+    scores 137, temperature toward 67 scores 86, radiation toward 63
+    scores 67).
+  - An axis the **planet owner** is immune to is never moved, by a friend
+    or by anyone else: the immune test uses the planet owner's habitat
+    (BINARY-ONLY; the same test as for production, CONFIRMED there by
+    KB-2C).
+  - Several fleets at one planet act one after another in fleet order
+    (owner, then fleet number), each click choosing its axis from the
+    planet as the previous click left it (BINARY-ONLY).
   - The fleet owner gets a message per planet changed, the planet owner
     one too when its habitability changed.
 - **Claim Adjuster.** At the end of the year (after production and growth)
