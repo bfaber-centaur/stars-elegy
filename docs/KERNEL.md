@@ -1871,7 +1871,16 @@ questions raised by Elegy's implementation:
   rule for fleets following a fleet; mine laying after battles; the other
   movement gates sparing Alternate Reality colonists; the Radiating
   Hydro-Ram Scoop exemptions (immune radiation, low + high ≥ 170); the
-  `Random(3)` when Inner Strength breeding rounds to 0.
+  `Random(3)` when Inner Strength breeding rounds to 0; whether the chain
+  freeze and mutual chases hold for three-way cycles and into the next
+  year.
+- Terraforming and remote mining (answered for Elegy from the reading):
+  a hostile Orbital Adjuster at a planet whose owner is immune on an
+  axis; several adjuster fleets at one planet (fleet order, each click on
+  the previous result); the 35-resource unit for a Claim Adjuster with TT;
+  another player's miners at an Alternate Reality planet (nothing mined,
+  0x076 or silence); and no message from successful remote mining. Each
+  needs one targeted start with legal orders.
 - Maximum population: Hyper-Expansion with OBRM, and OBRM on an Alternate
   Reality starbase maximum.
 - Drops after movement: the capture tech attempt and artifact draws in
