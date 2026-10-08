@@ -1238,10 +1238,13 @@ and nowhere beyond it).
    (needs crafted orders).
 5. Stargates: gate losses in more streams.
 6. Wormholes: stability names in the report (O-45, UI).
-7. Salvage: everything but the 30,000 kT cap (CB-040) is BINARY-ONLY:
-   the owner of joined and overflow objects, which drops join existing
-   salvage, the decay rate and the "new" mark, loading by other players'
-   fleets, unloading into salvage, and visibility.
+7. Salvage: CONFIRMED are the 30,000 kT cap (CB-040) and, for battles,
+   one salvage object per battle location with its mineral amount
+   (CB-001 B1). Still BINARY-ONLY: the owner of joined and overflow
+   objects, whether a battle's object stays apart from older salvage at
+   the same spot, which other drops join existing salvage, the decay rate
+   and the "new" mark, loading by other players' fleets, unloading into
+   salvage, and visibility.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.

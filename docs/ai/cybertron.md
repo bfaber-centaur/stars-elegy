@@ -12,6 +12,9 @@ Status (cases in `../PARITY.md`, "Computer players"):
   the AIX corpus in every year, 2400–2460.
 - Starbase queueing is MEASURED (AI-20) and the fleet pass is MEASURED
   (AI-21): every own fleet's orders matched in every AIX year.
+- Packets (§6): warps, attack packet counts and scanner-shot
+  destinations (as a band) are MEASURED (AI-24); the draw bounds are
+  MEASURED for the oracle's arithmetic only.
 - Everything else is BINARY-ONLY unless marked.
 
 Notation: `y` = year index; `lvl` = AI level 0..3 (easy, standard,
@@ -20,7 +23,7 @@ design `k` alive; `age(k)` = `y` − creation year of design `k`. "Holds a
 design" means the slot is not empty. Every rule below that reads a
 slot's age first checks that the slot holds a design, so Cybertron is
 not affected by leaking design slots (`../AI.md` §1). It is affected by
-the leaking armada parameters (§1 step 3).
+the leaking armada parameters (§1 step 4).
 
 ## 1. Turn order
 
@@ -161,10 +164,15 @@ design (none if neither does).
 ### 4.1 Planet notes
 
 Every planet owned by another player gets the AI threat mark `min(6,
-population estimate/250 + 1)`, plus 1 if it has a starbase (the estimate
-as the player's report holds it). Each own planet with a starbase notes
-which minerals are low: below 10 kT under an Orbital Fort, else below
-1,000 kT (used by §6).
+e/250 + 1)`, plus 1 if it has a starbase, where `e` is the population
+estimate as Cybertron's report holds it, in units of 400 colonists (the
+estimate in colonists ÷ 400, `SCANNING.md` "What a planet report
+contains"). So the mark is 1 below 100,000 colonists, 2 from 100,000,
+and so on up to 6 from 500,000; a planet with no estimate counts as 0
+colonists. (BINARY-ONLY: the threat mark only affects armada targets,
+and no AIX armada ever picked one.) Each own planet with a starbase
+notes which minerals are low: below 10 kT under an Orbital Fort, else
+below 1,000 kT (used by §6).
 
 The fleet pass (§5) also makes per-planet notes (inbound colonists, no
 colonizable target here, no drop-off, guard present and weak). Those
@@ -239,12 +247,24 @@ fleets in the pass see them.
 - own fleets holding slot 14–15 ships count as guard fleets;
 - other own fleets: those with slot-0 ships count as scout fleets
   (with their slot-0 ships totalled); armed ones (ships of slots 4–13)
-  go on the attack list and count as Destroyer fleets or group fleets.
-  Which of the two depends on the warship-group ageing earlier in the
-  turn, not on the fleet's designs: while only group 6–9 was aged out
-  this turn, every armed fleet counts as a Destroyer fleet (LEGACY BUG,
-  BINARY-ONLY). A group fleet marks the planet it heads to (or orbits),
-  when another player owns it, as targeted.
+  go on the attack list and count as Destroyer fleets or group fleets,
+  by a test that does not look at the fleet's designs (LEGACY BUG,
+  BINARY-ONLY):
+  - when the last warship group aged out this turn (§3) is group 6–9
+    (group 6–9 aged out and group 10–13 did not), every armed fleet
+    counts as a Destroyer fleet;
+  - otherwise (no group aged out, or group 10–13 did), a fleet with two
+    or more waypoints whose waypoint 1 is a planet, or a fleet orbiting a
+    planet, counts as a group fleet; any other armed fleet (idle or bound
+    for deep space or a fleet, and not in orbit) counts as a Destroyer
+    fleet.
+
+  A group fleet marks its planet (waypoint 1's planet when that is a
+  planet, else the orbited planet), when another player owns it, as
+  targeted. In AIX no warship group ever aged out, so only the second
+  case occurred. These counts feed §4.2's "over 120 Destroyer fleets" and
+  "over 250 group fleets" tests, and each attack-fleet item §4.2 queues
+  adds one to the count of its kind (group, guard or Destroyer).
 
 **Pass B**, every own fleet, first rule that applies (idle = one
 waypoint):
@@ -333,33 +353,119 @@ Shared rules apply too: minefields are seen enlarged for the whole turn,
 and the warp re-pick keeps the starbase exception only for a planet
 exactly at waypoint 1 (`../AI.md` §11).
 
-## 6. Packets (BINARY-ONLY; warps MEASURED in AIX)
+## 6. Packets (BINARY-ONLY unless marked; AI-24)
 
-Own planets with a starbase, in the shuffled order, each try at most one
-of these. Items go to the front of the queue. `w` = the planet's mass
-driver rating + 3.
+Own planets with a starbase at the start of the step, in the shuffled
+order of `../AI.md` §2; a planet without one is skipped and draws nothing.
+Each planet tries supply, then attack, then the scanner shot, and does at
+most one of them. Items go to the front of the queue. `r` = the warp
+rating of the best mass driver on the planet's starbase, `w = r + 3`
+(the pair bonus below never applies to `w`).
+
+**Packet marks.** A planet can carry a packet mark. All marks are clear
+at the start of the step: the memory that would carry them, and the
+original's skip-a-year and keep-shooting flags, is empty every turn
+(`../AI.md` §1, AI-10), so marks act only within the turn. A marked planet
+is not a supply or attack target. A successful attack marks its target.
+A scanner shot tests and sets the mark of the planet whose id is one
+higher than its destination (LEGACY BUG, MEASURED, AI-24); for the
+highest-numbered planet that mark belongs to no planet.
 
 - **Supply** (the starbase is an Orbital Fort, the planet has over 700
   kT of a mineral and at least 70 resources): up to 7 packets of that
-  mineral to the nearest own starbase planet that is low on it (§4.1),
-  within `3.5·k²` ly, `k` = the lower driver rating of the two (+1 for a
-  planet with two drivers of its best warp). *Not exercised.*
+  mineral to the nearest own unmarked starbase planet that is low on it
+  (§4.1), within `3.5·k²` ly, `k` = the lower driver rating of the two
+  (+1 for a planet with two drivers of its best warp). No draws, and it
+  marks nothing. *Not exercised.*
 - **Attack** (expert and harder always; standard when `Random(3) == 0`;
   easy never): with `M` = the planet's available minerals less queued
-  costs, less 210, over 150: the nearest other player's planet (not AR)
-  with a known non-zero population, whose starbase is fully known or
-  absent, within `2.5·w²` ly, that the budget can kill. Kill mass `=
-  16000·min(1000, 4(pop + 25)) / ((w² − c²)(95 − d))`, `c` = the
-  target's catch warp, `d` = its defense coverage, scaled by
+  costs, less 210, over 150: the nearest other player's unmarked planet
+  (not AR) with a known non-zero population, whose starbase is fully known
+  or absent, within `2.5·w²` ly, that the budget can kill. Kill mass `=
+  16000·min(1000, 4(pop + 25)) / ((w² − c²)(95 − d))`, where `pop` is the
+  population estimate as the report holds it, in units of 400 colonists
+  (the estimate ÷ 400, `SCANNING.md`), `c` = the target's catch warp and
+  `d` = its defense coverage estimate as the report holds it; scaled by
   `q^(distance/w²)` (`q` = 0.875 with two drivers of the best warp, else
   0.75). Packets of 70 kT, each of the mineral with the most left, at
-  warp `w` (MEASURED: AIX warps and packet counts, 16 of 16).
-- **Scanner shot**: a random edge direction (`Random(7)`), a random slide
-  along the edge and a random inset; the nearest planet to that point
-  that is not Cybertron's and lies beyond `w²` ly gets one packet of the
-  most plentiful mineral when at least 170 kT of it is available, at
-  warp `w` (MEASURED: 118 of 118 warps; destinations inside the predicted
-  band).
+  warp `w`, aimed at the target, which is then marked (MEASURED: AIX
+  warps and packet counts, 16 of 16). The level test's `Random(3)` is the
+  attack's only draw. No target, or `M` too small: the scanner shot.
+- **Scanner shot**, below.
+
+### Scanner shot (AI-24)
+
+`W` = the galaxy width (`UNIVERSE.md`). Positions here are relative to
+the map's corner (1000, 1000), so both coordinates run from 0 to `W`;
+`(x, y)` is the shooting planet's position. Integer arithmetic.
+
+1. **Direction.** `r7 = Random(7)`; `dir = r7`, except `dir = 1` when
+   `r7 = 0`. (The original avoids repeating last year's direction, and with
+   the empty memory that reads as 0.) So `dir` is 1..6, and 1 is twice as
+   likely as the others.
+2. **Edge point.** From `(x, y)` straight to the map edge:
+
+   | `dir` | Heading | Edge point |
+   |---|---|---|
+   | 1 | +x, −y | `(x + y, 0)` when `W − x > y`, else `(W, y − (W − x))` |
+   | 2 | −y | `(x, 0)` |
+   | 3 | −x, −y | `(x − y, 0)` when `y < x`, else `(0, y − x)` |
+   | 4 | −x | `(0, y)` |
+   | 5 | −x, +y | `(0, y + x)` when `W − x > y`, else `(x − (W − y), W)` |
+   | 6 | +y | `(x, W)` |
+
+   (The original also has `dir` 0, `(W, y)`, and 7, the +x +y diagonal;
+   neither can occur with the empty memory.)
+3. **Slide.** `j = Random(3W/10) − 3W/20` (draw bounds: see below). On an
+   edge `x = 0` or `x = W` (tested first, so a corner counts here): `y +=
+   j`; if `y > W` the excess `e = y − W` and `y = W`; if `y < 0`, `e = −y`
+   and `y = 0`; else `e = 0`; then `x` moves `e` inward (`x = e` on the
+   `x = 0` edge, `x = W − e` on the `x = W` edge). Otherwise (on `y = 0`
+   or `y = W`) the same with `x` and `y` exchanged. So a slide past a
+   corner continues along the next edge.
+4. **Inset.** `k = Random(w²)`. The first of these that holds: `y = 0` →
+   `y = k`; `y = W` → `y = W − k`; `x = 0` → `x = k`; `x = W` → `x = W −
+   k`.
+5. **Destination.** The planet nearest that point, over every planet in
+   the galaxy, by `dx² + dy²` (ties to the lower id). No shot, and no
+   change at all, when Cybertron owns it in its own view, or when it is
+   nearer the shooting planet than `w²` ly (`d² < w⁴`; exactly `w²` ly
+   passes). For `w` 14 or more (driver rating 11 or more) the distance
+   test passes every planet, because the original's `w⁴` overflows (LEGACY
+   BUG, BINARY-ONLY; AIX's ratings were 5 and 7).
+6. **Shot.** The shooting planet's packet destination becomes that planet,
+   at warp `w`, whether or not a packet is built. Then, when the planet
+   whose id is one higher has no packet mark and the mineral with the
+   most left after the queue's costs (`../AI.md` §7 available amounts;
+   ties go to ironium, then boranium) has at least 170 kT left, one
+   packet of that mineral goes to the front of the queue and the
+   higher-id planet is marked.
+
+The three draws (`Random(7)`, `Random(3W/10)`, `Random(w²)`) are all made
+whenever a planet reaches the scanner shot, including when step 5 then
+finds no target. So a planet draws nothing (supply), `Random(3)` only
+(a standard-level attack), or, in order, `Random(3)` at standard level
+only, then `Random(7)`, `Random(3W/10)` and `Random(w²)` (scanner shot).
+
+**Draw bounds.** The original computes `3W/10` and `3W/20` as truncated
+floating-point products, `0.3·W` and `0.15·W`. In the oracle's DOSBox
+these are exactly `3W/10` and `3W/20` for every galaxy size (120 and 60
+up to 600 and 300; MEASURED, AI-24, by running the same floating-point
+instructions in that DOSBox, not a game run). On a real x87 FPU at its
+default 64-bit precision, each product would truncate to one less (239
+and 119 for `W` = 800); which precision the original ran at on real
+hardware is UNRESOLVED. Elegy follows the oracle.
+
+MEASURED (AI-24), AIX, 2400–2460: 118 of 118 scanner warps were `w`; 118
+of 118 destinations were reachable from the recorded direction by some
+slide and inset (the band covers about 6 of 128 planets on average;
+neighbouring directions reach the observed planet in only 12 and 19
+cases); no destination was Cybertron's own planet; directions were only
+1..6, with many 1s; 85 of 85 scanner packets marked the planet one id
+higher, and every mark was explained by such a packet or an attack target
+(105 of 105). The individual draws were not reproduced (the random stream
+offset at this step is unknown), so the slide and inset values are
+BINARY-ONLY within that band.
 
 ## Open experiments
 
@@ -369,6 +475,11 @@ driver rating + 3.
 - The packet rules' remembered cooldowns between years never act, since
   the memory is empty each turn (`../AI.md` §1); the attack-budget and
   kill-mass formulas need a check with known minerals.
+- The scanner shot's individual draws: replaying them needs the random
+  stream's position at the packet step (all earlier computer players'
+  turns and Cybertron's own earlier draws). The slide and inset rules are
+  checked only as a band (AI-24); the `w ≥ 14` overflow and the draw
+  bounds on real hardware are untested.
 - List 35's position in the list table was read but never built.
 
 ## What a faithful planner still depends on

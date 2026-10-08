@@ -732,9 +732,10 @@ mining, and no homeworld floor.
   nothing: an Alternate Reality fleet is skipped silently, and any other
   fleet gets the "planet is inhabited" refusal as at any owned planet
   (BINARY-ONLY; the refusal itself CONFIRMED, `MESSAGES.md` 0x076).
-- **Messages.** Remote mining that succeeds sends no message. Only the
-  refusals do: no mining modules (0x075), planet inhabited (0x076) and
-  deep space (0x077), each cancelling the task (`MESSAGES.md`).
+- **Messages.** Remote mining that succeeds sends no message
+  (BINARY-ONLY). Only the refusals do, each cancelling the task: no
+  mining modules (0x075, CONFIRMED, CS-003), planet inhabited (0x076,
+  CONFIRMED, TK-111) and deep space (0x077, BINARY-ONLY) (`MESSAGES.md`).
 
 ## Research
 
