@@ -3227,7 +3227,7 @@ defense estimate applies the operable cap SCANNING.md states.
 
 ### Design knowledge across years (SC-037, MEASURED)
 
-Read from the AIX computer-player corpus (`PARITY.md` "Computer players (AI-0..AI-26)",
+Read from the AIX computer-player corpus (`PARITY.md` "Computer players (AI-0..AI-27)",
 "Corpora"): six computer viewers' turn and history files after each of 61
 generations, 2400–2460. No experiment was set up for it.
 
@@ -3259,7 +3259,7 @@ generations, 2400–2460. No experiment was set up for it.
 Question: when a player sees a space object, how much of the host's
 record of it reaches the player's turn file, and does any of it stay in
 the player's history file? Read from existing evidence (`PARITY.md`
-"Computer players (AI-0..AI-26)", "Corpora": OB, MF and AIX); no
+"Computer players (AI-0..AI-27)", "Corpora": OB, MF and AIX); no
 experiment was set up for it. Raw comparison: private
 `stars-oracle-apparatus` `evidence/sc/sc038`.
 
@@ -5309,7 +5309,7 @@ private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
   the fleet alone; the change is the shared core's whole-year arrival
   slowdown (`AI.md`, AI-11). Extra queue lines in both runs were the shared automation's.
 
-## Computer players (AI-0..AI-26)
+## Computer players (AI-0..AI-27)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -5366,6 +5366,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-24 | Cybertron packets each year (`docs/ai/cybertron.md` §6): attack and scanner-shot warps `w`, attack packet counts, scanner-shot destinations from the edge-point, slide and inset rule, and packet marks on the planet one id above a scanner shot's destination; draw bounds `Random(3W/10)` and `3W/20` | MEASURED: AIX 2400–2460, 118 of 118 scanner warps and 16 of 16 attack warps and packet counts; 118 of 118 scanner destinations reachable from the recorded direction (the band covers about 6 of 128 planets; the neighbouring directions reach only 12 and 19); none was Cybertron's own; directions only 1..6; 85 of 85 scanner packets marked the planet one id higher, and 105 of 105 marks are explained. The individual draws were not replayed (stream position unknown). Draw bounds: the same floating-point instructions run in the oracle's DOSBox give exactly 0.3·W and 0.15·W for all five galaxy sizes at both 64- and 53-bit precision settings (not a game run); real x87 hardware is UNRESOLVED |
 | AI-25 | Robotoid's lay-mines waypoint keeps duration 5 (indefinitely) and its second field 5 from year to year (`docs/ai/robotoid.md` §4) | MEASURED: AIX, Robotoid fleets 5 and 6 held the task with both fields 5 in 20 and 10 consecutive host files (2441–2460, 2441–2450), 30 fleet-years, never changed; every other computer player's lay-mines waypoint carried the same values. Raw reading: private `stars-oracle-apparatus` `evidence/ai/aix/laymines` |
 | AI-26 | Hub freighter cargo orders (`AI.md` §11 "Hub freighters" step 3): per mineral on waypoint 1, by mineral mode, target and the target's scarce mineral against the free hold | MEASURED: 213 of 213 Robotoid freighters whose target agrees (AI-12) in AIX: source 75 (unload all), mode 0 19 (load all), mode 2 90 (scarce only), mode 1 scarce-only 14 (one with 768 ≥ 700 free, the rest with a full hold), mode 1 fill 66/33 15 (11 at its own planets, 4 at another player's); 6 salvage targets not compared; colonist orders seen: none or unload all. Mode 1 at an unowned planet never occurred. Rototill and Cybertron freighters not compared. Evidence: apparatus `evidence/ai/hubcargo` |
+| AI-27 | Waypoint 0 aimed at a fleet (`ORDERS.md` "Waypoint 0 aimed at a fleet"): a fleet whose last order that year sets waypoint 0 to another fleet follows it for the year and comes back with one waypoint at its own position | MEASURED: AIX, 19 such fleets written by the computer players in 11 years. 12 of 12 with a leader that had a next waypoint moved, and 0 of 7 without one did; 6 of 6 pairs that both survived ended at the same position; 18 of 18 surviving followers came back with one waypoint aimed at a planet (5) or deep space (13), none at a fleet. Messages are not seen (computer players' turn files carry none). The human client was not tested. Evidence: apparatus `evidence/ai/wp0fleet` |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the
