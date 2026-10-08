@@ -747,6 +747,35 @@ intercept is chosen later (see "Patrol task"). The phase placement is
 BINARY-ONLY; the kept task in transit and the mid-space route no-op are the
 measured behaviour (WU-ROUTE).
 
+### Waypoint 0 aimed at a fleet
+
+How it arises. Only an order does it: a waypoint-0 change that names
+another fleet, which leaves the fleet with that one waypoint. The order
+format carries it and the host acts on it. The original computer players
+write it when they send a fleet to another fleet already at its position
+(MEASURED, AI-27: 19 fleets in AIX). Whether the human client's waypoint
+editor writes it is NOT RUN. Reaching another fleet does not start a
+follow (BINARY-ONLY). When a fleet reaches a waypoint 1 aimed at a fleet
+with a transport or merge task, that waypoint becomes waypoint 0 so the
+task can act there. It is gone again when the year's files are written,
+as below (BINARY-ONLY).
+
+What it does. Such a fleet follows its leader for that year (`KERNEL.md`
+"Turn order" step 1a.3; messages 0x137 and 0x138, `MESSAGES.md`). In AIX
+(MEASURED, AI-27), all 12 followers whose leader had a next waypoint
+moved, and none of the 7 whose leader had none moved. In the 6 cases
+where both fleets survived the year, they ended at the same position.
+
+It does not persist. After the generation the follower has one waypoint
+at its own position, aimed at a planet or deep space, like any other
+fleet ("Waypoint 0 and a task still in progress"). MEASURED, AI-27: 18
+of 18 surviving followers, none still aimed at a fleet. FO-04's
+host-edited followers came back the same way (`fo/fo04`). Following
+therefore lasts one year per order, and the player must give the order
+again each year. The host also turns any waypoint 0 still aimed at a
+fleet into the planet or deep space there when it writes each player's
+file (BINARY-ONLY).
+
 ### Targets that moved, died or were captured
 
 A waypoint can name a fleet (or a moving universe object) as its target
