@@ -1529,6 +1529,15 @@ ship designer lets a player save one is not established.
   - "Set amount to" more than the target holds is unmet. After movement
     it also sends 0x121 (0x122 for colonists) each year while it waits
     (BINARY-ONLY).
+  - "Set amount to" tests only what the target holds, never the free
+    hold (BINARY-ONLY). When the target holds at least `v − cargo`, the
+    load is satisfied even if the hold cannot take it all: the fleet
+    loads what fits, the task ends and the fleet moves, with no 0x121 or
+    0x122. For example, a 210 kT hold with "set amount to 300" at a
+    planet holding 1000 loads 210 and moves on. Unlike "wait for", a full
+    hold does not release it: when the target holds less than
+    `v − cargo`, the task stays unmet, with 0x121 (0x122) each year,
+    even if the hold is full, until the target holds `v − cargo`.
   - At your own planet nothing cancels these, so an unmet "wait for" or
     "set amount to" holds the fleet until it is met.
 - Loads with no usable source (BINARY-ONLY, except the foreign-fleet case:
