@@ -8,7 +8,7 @@ for an implementer working only from this public repository. It describes
 what a player is told, not how any file encodes it.
 
 `PARITY.md`, section "Scanning", holds the experiment records (SC-001 to
-SC-034). This file restates them as rules and adds rules that so far come
+SC-037). This file restates them as rules and adds rules that so far come
 only from white-box analysis of the original program (private
 `stars-decomp`, promoted here as behavior only). Part statistics (each
 scanner's normal and penetrating range, each part's cloak points) belong in
@@ -479,6 +479,21 @@ fleet's or planet's ranges.
   (starbases) to a PP player whose packet that starbase caught.
 - A planet report without its starbase (starbase cloak) reveals no
   starbase design.
+- What later years keep (MEASURED, SC-037, computer players' files only):
+  - A year's report holds another player's design only in a year when
+    some of its ships or starbases are seen, or fought in a battle with the
+    viewer. Full knowledge lasts only for the year it is disclosed (or
+    every year for a War Monger viewer). A design seen again later is
+    partial again unless a battle discloses it again that year.
+  - The player's history keeps every design it has learned, partial or
+    full, after its ships are no longer seen. Each year it merges in that
+    year's report, keeping the higher level, so full knowledge never
+    decays back to partial there. A newer sighting of a different design
+    in the same slot replaced a partial record once.
+  - UNRESOLVED: whether a different design sighted in the same slot
+    replaces a full record; whether a design its owner deleted is ever
+    dropped; and whether a human player's history file, which the client
+    writes, behaves the same.
 
 ### Players
 
