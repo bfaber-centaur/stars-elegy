@@ -465,9 +465,11 @@ What a player's file records about a space object it sees this year
 (MEASURED, SC-038 in `PARITY.md`: every foreign object record in the
 oracle player files of OB-001..OB-031 and MF-1..MF-15 was compared with
 the host's own record of that object: 3,198 minefields, 23 packets, 18
-salvage piles, 24 Mystery Trader records and 118 wormholes). A sighting reveals the whole object, the
-same as the host holds it, except the per-player "known" and "seen"
-markers, which carry only the viewer's own entry.
+salvage piles, 24 Mystery Trader records and 118 wormholes). A
+sighting reveals the whole object, the same as the host holds it, except
+the per-player "known" and "seen" markers, which carry only the viewer's
+own entry. A wormhole's record of which players know where it leads is
+not one of these: it comes whole (below).
 
 | Object | Revealed |
 |---|---|
@@ -475,13 +477,32 @@ markers, which carry only the viewer's own entry.
 | Mineral packet | owner, position, destination planet, warp, ironium, boranium and germanium carried, its decay state and whether it has moved |
 | Salvage | owner, position, ironium, boranium and germanium |
 | Mystery Trader | position, destination, warp, which players it has already served, and the item it carries |
-| Wormhole | position, stability, years since it last jumped, and which wormhole is its other end; whether this viewer knows it |
+| Wormhole | position, stability class (0, 1 or 2; not the displayed jump chance), years since it last jumped, the id of its other end, and which players know where it leads; whether this viewer knows it |
 
 - Nothing was hidden for distance: minefields seen at a quarter of
   normal range (OB-018) showed their exact mine count and kind, and
   every Trader record compared showed the item and the served players.
-- Knowing which wormhole is the other end does not reveal that end's
-  position; that end is reported only when it is seen itself.
+- **Wormhole records carry more than the game shows** (MEASURED, SC-038
+  follow-up: 345 wormhole records in the OB, WT, MF and SC player
+  files). The partner's id was in every one, including 163 whose viewer
+  had never travelled through, 23 of them in files without the partner
+  end. The record of which players know where the wormhole leads was the
+  host's whole record, not only the viewer's entry: 27 showed another
+  player's entry while the viewer's own was clear. The game shows
+  neither: the wormhole report says "Unknown" and the map draws no link
+  unless the viewer's own entry is set and the partner end is seen this
+  year (`OBJECTS.md` "Travel", "Destination knowledge"; the display is
+  BINARY-ONLY). The partner id does not reveal the partner's position;
+  that end is reported only when it is seen itself.
+- The stability field is the end's class and its years since the last
+  jump, the same word the host holds (MEASURED, SC-038); the stability
+  name the report shows is computed from them (`OBJECTS.md`
+  "Stability", BINARY-ONLY).
+- The computer players' wormhole choice (`AI.md` §11 "Shared fleet
+  rules") reads only the player's own entry of the "knows where it
+  leads" record and the jump chance, and orders a move to the wormhole
+  itself; it does not use the partner id (BINARY-ONLY). UNRESOLVED:
+  whether any other computer-player rule reads it.
 - **Seen this year only.** A year's report holds only the objects seen
   that year (the rules under "Space objects" above). In computer
   players' history files nothing about an object carries over after it

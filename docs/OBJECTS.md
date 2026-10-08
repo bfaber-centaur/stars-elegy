@@ -853,7 +853,9 @@ yearly jump chance `pct` (above), by name: 0 Rock Solid, 1 Stable, 2 Mostly
 Stable, 3 Average, 4 Slightly Volatile, 5 Volatile, 6 Extremely Volatile.
 So it is not fixed: an end grows more volatile as its years rise, and a
 jump (years back to 0) makes it stable again. A class-2 end at 0 years
-reads Rock Solid, like class 0.
+reads Rock Solid, like class 0. A player's file holds the end's class
+and years, not the chance (MEASURED, SC-038); the name is computed from
+them.
 
 ### Placement badness (CONFIRMED at creation, UG01–UG21)
 
@@ -929,7 +931,11 @@ report and map display BINARY-ONLY).** Besides knowing where an end is
 (scanning, `SCANNING.md`), each end records which players know where it
 leads. That record is set only by transit, for the fleet's owner, on both
 the entry and the exit end; the exit end also becomes known. Seeing both
-ends, however long, never reveals that they are a pair. The record is
+ends, however long, never shows that they are a pair: the report and map
+use only the viewer's own entry. The player's file does carry each end's
+partner id and every player's entry whatever the viewer has done
+(MEASURED, SC-038; `SCANNING.md` "Space objects"), so only the display
+hides the pairing. The record is
 never cleared, even by a jump: after its partner jumps, a player who once
 transited still sees the destination, at the partner's new position, but
 only while the partner end itself is seen that year. The wormhole report

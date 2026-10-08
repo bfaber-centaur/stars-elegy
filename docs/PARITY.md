@@ -3273,6 +3273,14 @@ AIX computer players' files after each of 61 generations (366 files).
   wormhole records the "known" word differed 2 times.
   The objects came from OB-001..OB-031 (and an OB setup probe) and
   MF-1..MF-15; the per-kind run lists are in the raw comparison.
+- **Wormhole records (follow-up, adding the WT runs: 364 turn files,
+  345 wormhole records).** The partner id, the class-and-years word and
+  the whole "knows where it leads" record equalled the host's in all 345:
+  163 records named the partner although the viewer had never travelled
+  through (23 of them in files without the partner end), and 27 showed
+  another player's entry while the viewer's own was clear. Class 3
+  appeared only where a WT start file wrote it. Raw comparison:
+  `wormholes.py` and `wormholes.txt` in the same evidence directory.
 - **History file: no objects.** None of the 366 AIX history files held
   an object record.
 - Not examined: a human player's history file, which the client writes.
