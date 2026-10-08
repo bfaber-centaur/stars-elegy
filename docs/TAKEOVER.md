@@ -314,7 +314,11 @@ holds (planet surface minerals, or the planet's population for colonists):
 | set waypoint to `v` | either | `A − v`: load the excess, or unload the shortfall |
 
 Unload actions run in the first unload phase that reaches them and are then
-cleared, so they happen once; load actions persist until satisfied.
+cleared, so they happen once. Load actions persist until satisfied, or
+until the load phase after movement cancels a load from a target that is
+not a source. Short "load exactly" and "fill to" loads are satisfied, as
+`KERNEL.md` "Other movement rules" says ("Which loads are unmet", "Loads
+with no usable source").
 
 "Load exactly" vectors (TK-301, TK-302, before movement): 30 colonists
 from a 100 planet leave 70, which then grows; 40 ironium asked with 25 on
