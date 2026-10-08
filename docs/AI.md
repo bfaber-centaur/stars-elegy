@@ -730,7 +730,7 @@ the fleet orbits an own planet and the year index is below 120, a
 wormhole may be preferred: wormholes within twice the candidate's
 distance (any distance when there is no candidate) score
 `(7 − its movement class)·10` when known to the player, else 90 when
-nearer than the candidate or 50 otherwise; the best (ties: nearer) is
+no farther than the candidate or 50 otherwise; the best (ties: nearer) is
 taken if `Random(100)` is below its score. (LEGACY BUG: the distance test
 overflows for wormholes about 182 ly or more away, which then count as
 near.)
