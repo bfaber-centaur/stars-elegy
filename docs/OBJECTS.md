@@ -1221,7 +1221,10 @@ and nowhere beyond it).
 
 1. Packets: the 32,760 kT and 16,300 kT limits; the PP terraforming
    draws and permanent changes as rates; whether a PP packet discloses the
-   catcher's starbase design (needs a control, OB-029-D2).
+   catcher's starbase design (needs a control, OB-029-D2); the PP
+   terraforming axis order and per-axis limits, and for an immune axis the
+   50 boundary, the halved count and the whole-planet gate (all
+   BINARY-ONLY).
 2. Wormhole jump odds as a measured rate (one stream so far).
 3. Mystery Trader: leaving with 1/2 at an edge (0 of 4 lone arrivals
    left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
@@ -1235,6 +1238,10 @@ and nowhere beyond it).
    (needs crafted orders).
 5. Stargates: gate losses in more streams.
 6. Wormholes: stability names in the report (O-45, UI).
+7. Salvage: everything but the 30,000 kT cap (CB-040) is BINARY-ONLY:
+   the owner of joined and overflow objects, which drops join existing
+   salvage, the decay rate and the "new" mark, loading by other players'
+   fleets, unloading into salvage, and visibility.
 
 Random outcomes must be compared with the full outcome set. Repeated oracle
 runs at one generator setting are not independent samples.

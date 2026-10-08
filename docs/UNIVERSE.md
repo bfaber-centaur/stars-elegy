@@ -438,3 +438,6 @@ On a map larger than tiny, a PP or IT player also owns a second planet:
    race-wide "75% extra fields start at 3" combined with JOAT (start 4).
 3. Seed-dependent planet counts as distributions (the model's sampled
    ranges and rates above).
+4. The PP/IT second planet: whether a success on exactly the 100th
+   environment redraw is also replaced by the homeworld's environment
+   (BINARY-ONLY).
