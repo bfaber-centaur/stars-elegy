@@ -286,8 +286,7 @@ def thing(d):
     if t == 'packet':
         c = [int(v) for v in d['cargo'].split('/')]
         # Salvage is a packet-type object whose stored packet-warp field (warp - 4)
-        # is 0; the destination is not read (BINARY-ONLY: Objects decomp reading, OBJECTS.md
-        # line pending).
+        # is 0; the destination is not read (BINARY-ONLY: OBJECTS.md "Salvage").
         if int(d['warp']) == 4:
             return {'kind': 'salvage', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'minerals': c}
         return {'kind': 'packet', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'destination_planet': int(d['dest']),

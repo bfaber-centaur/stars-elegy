@@ -152,10 +152,19 @@ def build(ev, out):
                     o = ok[c['id']]
                 per[stream] = [dict(x, year=1) for x in e]
                 per_case[c['id']] = (per, held and o, void)
-        for c in r.cases:
+        for tn, c in enumerate(r.cases):
             per, held, void = per_case[c['id']]
             if not per:
                 continue
+            chk = c['check'] if isinstance(c['check'], list) else [c['check']]
+            meets = any(x and x[0] in ('trader', 'mt', 'techgain', 'gift') for x in chk)
+            if trader_of(r.rid, tn, c['id']) is not None or meets:
+                # a Trader encounter: where the Trader ends, and so which fleet it
+                # meets, depends on its 1/25 warp rise (OBJECTS.md "Movement"); the
+                # oracle streams where it rose are void (WT-003, WT-004), but each
+                # remaining stream is still one draw
+                per = {st: [dict(x, sample=True) if x['kind'] != 'sample' else x for x in xs]
+                       for st, xs in per.items()}
             cs = B.case(c['id'], rule_of(c), c['what'], per, held, set())
             cs['prediction'] = c['prediction']
             if void:

@@ -4903,7 +4903,7 @@ private. The behavior it confirmed is recorded here.
   file" and no game is created. Three corpus files first had bad checksums.
   They were rewritten with `racelab edit` (only the checksum changed) and
   RD-4 was run with them.
-- **Random races.** The wizard's Random race (RD-4 k..m; RD-5, RD-6) became
+- **Random races.** The wizard's Random race (RD-4 k..n; RD-5, RD-6) became
   a generated race with a computer name. A Random race named Zorgon kept its
   name. Generated races scored:
   - 21, 21, 44 and 23 (RD-4);

@@ -107,6 +107,34 @@ def sample(check, target, got, constraint):
             'constraint': constraint}
 
 
+# Wormhole views the jiggle can decide. Every wormhole end in ob011, ob017,
+# ob018 and ob020 is class 0 with no year since its jump, so it cannot jump
+# (OBJECTS.md jump chance) and only the jiggle (at most 12 per axis, 17 ly)
+# moves it. That keeps every other view at least 17 ly clear of the scanner
+# bound that decides it (range, penetrating range, or a quarter of range for
+# a cloaked Small Freighter view, SCANNING.md). OB-018-SCAN wormhole 2 sits
+# 0..17 ly from the freighters, against a bound of 12.5.
+JIGGLE_DECIDED = {('OB-018-SCAN', 2)}
+
+
+def drawn(kind, e, cid):
+    """Whether the original's own draws decide this expectation (OBJECTS.md):
+    a wormhole's position after its jiggle, where that can move it across a
+    scanner bound (JIGGLE_DECIDED); whether a fleet crossing a field is hit, and so the fleet and the
+    field's mines; a Trader's warp rise (1/25 a year) and its stay-or-leave
+    draw on arrival, and so where it ends and which fleet it meets."""
+    k = e['kind']
+    if k == 'view' and e['subject']['kind'] == 'wormhole':
+        return (cid, e['subject']['id']) in JIGGLE_DECIDED
+    if kind in ('minehit', 'minehit2'):
+        return k in ('fleet', 'fleet_gone', 'minefield')
+    if kind == 'traderend':
+        return k == 'trader'
+    if kind in ('mtpart', 'tradertwo'):
+        return k in ('fleet', 'fleet_gone', 'trader', 'player')
+    return False
+
+
 def observe(c, A, Bf, run, M):
     """-> list of expectations for one case (without year)."""
     k = c['check']
@@ -306,7 +334,8 @@ def build(ev, out):
                     cid, exps = c['id'], observe(c, A, Bf, r, M)
                 if not exps:
                     continue
-                exps = [dict(e, year=year) for e in exps]
+                exps = [dict(e, year=year, sample=True) if drawn(c['check'][0], e, cid) else dict(e, year=year)
+                        for e in exps]
                 p, h, obs_only = per.get(cid, ({}, True, False))
                 p.setdefault(stream, []).extend(exps)
                 st_held = held.get(c['id'])
