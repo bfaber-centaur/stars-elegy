@@ -344,7 +344,9 @@ After laying, every fleet and then every starbase sweeps.
   mixed item 40 kT of each (PP: 25), times the item count, at most 32,760
   per mineral (the cap BINARY-ONLY). Measured spend from the surface: 110 kT
   per 100 kT item (Interstellar Traveler 120, PP 70) and 44 kT of each per
-  mixed item (PP 25) (MEASURED, OB-028, OB-029).
+  mixed item (PP 25) (MEASURED, OB-028, OB-029). An Interstellar Traveler
+  mixed item launches 40 kT of each and spends 48 kT of each (BINARY-ONLY:
+  the item's cost; not measured).
 - Packet warp `W`: the planet's packet-speed setting; if below 5 or above
   `Dw + 3`, it becomes `Dw + t` (OB-028-B: 11 with a Mass Driver 7 → 7;
   unset → `Dw + t`, OB-028-C, D).
@@ -355,6 +357,22 @@ After laying, every fleet and then every starbase sweeps.
   warp, destination and class merges into the first while it is under
   16,300 kT (OB-028-B, E: two items, one 200 kT packet; the 16,300 kT limit
   BINARY-ONLY).
+- **Merge details (BINARY-ONLY).** The new minerals join any packet of the
+  same owner lying exactly at the launching planet with the same warp,
+  destination and class; the minerals it carries do not matter, so a mixed
+  item merges into an ironium packet and the packet then carries all three.
+  The limit is tested on the existing packet before the new minerals are
+  added: it takes them while the sum over its three minerals of
+  `⌈m/10⌉` is below 1,630 (so 16,290 kT of one mineral still takes more,
+  16,291 does not). A merged mineral that would pass 32,767 kT becomes
+  32,760. Otherwise a new packet is made.
+- **Numbering (BINARY-ONLY).** A new packet takes its owner's lowest
+  unused packet number, from 0. Packets use the same numbering rule as
+  minefields ("Limits" above, MEASURED there by MF-11 and MF-13): numbers
+  0..510, and 511 only when no other space object sorts after the owner's
+  packets; the universe holds at most 4050 objects. With no number or no
+  room, the item still counts as built (its minerals are spent and the
+  launch message is sent) but no packet appears.
 
 ### Flight and decay (CONFIRMED, OB-003, OB-028; marked parts BINARY-ONLY)
 
@@ -374,6 +392,17 @@ After laying, every fleet and then every starbase sweeps.
   unowned planet). On a later arrival it decays for the share of the
   year it flew, but the minimum still applies (CONFIRMED, OB-003-C: a
   class-1 100 kT packet arriving with 5% of a year left lost 10).
+- **Rounding (BINARY-ONLY; fits OB-003, OB-023, OB-028).** All in
+  integers. The year's share is a whole percent `p`: 100 for a full year,
+  50 for a launch year without arrival, and on arrival
+  `p = round(trunc(d)·100/m)` (halves rounded up), with `d` the distance
+  to the destination at the start of the move and `m` the year's move,
+  clamped to 0..100 and then halved (rounding down) in the launch year.
+  The rate `r` is 10, 25 or 50 (PP: 5, 12, 25). Each non-empty mineral
+  `m` loses `min(m, max(minimum, ⌊m·r·p/10000⌋))` with minimum 10 (PP 5).
+  A packet with nothing left is removed. So a share is not a real-valued
+  fraction: OB-028-G's 70% launch-year arrival is `p = 35`, and 500 kT
+  at class 3 loses `⌊500·50·35/10000⌋ = 87`.
 
 ### Impact (CONFIRMED, OB-003, OB-009; marked parts BINARY-ONLY)
 
