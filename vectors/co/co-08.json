@@ -1298,11 +1298,13 @@
       {
        "id": 6,
        "count": 1,
-       "percent": 38
+       "percent": 38,
+       "kind": 2
       },
       {
        "id": 8,
-       "count": 1
+       "count": 1,
+       "kind": 2
       }
      ],
      "year": 1

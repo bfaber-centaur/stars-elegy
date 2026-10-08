@@ -4529,8 +4529,8 @@ refilled with fuel, as any fleet over a starbase that can refuel is.
 
 Packet limits (32,760 and 16,300 kT), PP terraforming as rates and the
 design-known rule, wormhole jump odds to a measured rate (O-28), Mystery
-Trader leaving with 1/2 and ship counts after year index 100, Harder
-computer players' planets.
+Trader leaving with 1/2 and ship counts after year index 100. (Harder
+computer players' planets were later traded in O-53.)
 
 ## Components (CS-001, CS-002, CS-003)
 

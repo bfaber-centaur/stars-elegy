@@ -986,7 +986,8 @@
      "equals": [
       {
        "id": 1,
-       "count": 100
+       "count": 100,
+       "kind": 1
       }
      ]
     },

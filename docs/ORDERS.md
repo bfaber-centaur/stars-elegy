@@ -238,9 +238,11 @@ BINARY-ONLY.
   deleted ships shared a fleet with survivors, their fuel and cargo are shared
   out exactly as a ship **move** does it: the leaving ships take
   `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with
-  the survivors with no clamp to the survivors' tank (CO-07c: a 500 mg fleet of
-  capacity 950 losing a 900-capacity design kept `500 − floor(500·900÷950) = 27`
-  mg; 100 kT of iron shared the same way left 0). Client-reachable (the original
+  the survivors, with no clamp to the survivors' tank (CO-07: a 500 mg /
+  capacity-950 fleet losing a 900-capacity design kept `500 − floor(500·900÷950)
+  = 27` mg of fuel; CO-07c: the same fleet at 300 mg kept 16, where a clamp to
+  the survivor's 50-mg tank would give 50, and 100 kT of iron shared the same
+  way left 0). Client-reachable (the original
   client deletes an in-use design with its alert, DS-1). No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
@@ -356,10 +358,29 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   relation (enemy) check, so a gift to an enemy's fleet or planet is allowed
   here. (The *waypoint* task that transfers a fleet to another player's fleet
   is the path that refuses an enemy — see "Transfer fleet".)
-- **Two passes, in place.** Within step 1 the host runs all **debits first**
-  and then all **credits**, so same-step transfers draw from pre-transfer
-  stocks. A manual gift is credited to the destination at this time, **not**
-  after movement, and there is **no** queued-gift step for manual orders.
+- **Credited in place at step 1.** The original credits a manual gift to the
+  destination as the order is replayed (step 1), **not** after movement, with
+  **no** queued-gift step for manual orders (MEASURED, TK-406/407/409); each
+  transfer record's debit and credit are applied together in place. Whether the
+  host orders all debits before all credits across records is **not**
+  established, so that ordering is not asserted here. Elegy's orders layer
+  credits each gift in place during replay, matching the original.
+- **A recipient whose orders replay after the giver's can use the gift the same
+  year (order-dependent, nondeterministic).** The gift is credited in place
+  during the giver's replay, and the `.X` replay runs in a **random player
+  order** drawn from the game's random stream at the start of each year (its
+  first draws — `KERNEL.md`). Because that stream is seeded when the host
+  process starts rather than recorded in the order files, no legal order can
+  pin it. A recipient whose own orders replay *after* the giver's therefore
+  acts on the already-credited fleet and may unload or pass the gifted cargo on
+  that same year; a recipient that replays *first* cannot. Which way it falls
+  is a per-turn random draw, so an implementation
+  must not rely on it either way. The in-place credit is MEASURED
+  (TK-406/407/409); this same-year-use consequence is inferred from it together
+  with the random replay order and is BINARY-ONLY. (The queued cross-owner
+  paths — colonist drops and the deferred transfer queue — run in fixed later
+  phases and do **not** depend on replay order; only the in-place manual gift
+  does.)
 - **Colonists** onto a planet the giver does not own are a **drop**, resolved
   in the first drop step **before** movement (CONFIRMED, TK-501) —
   colonisation or invasion under the takeover/objects rules — not in the
@@ -372,6 +393,29 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   and the **giver keeps the cargo** — nothing is debited. BINARY-ONLY for the
   same-turn-removal case (read from the order-time object lookup; the in-place
   step-1 timing is MEASURED, TK-406/407/409).
+- **Receiver removed *after* the credit, same turn.** This is the reverse of
+  the missing-endpoint case: the receiving fleet still exists when the gift is
+  credited, and a **later** order in the same replay removes it (its owner
+  merges it away, or deletes the design its ships are built from). The in-place
+  credit is a plain cargo write with **no record that the cargo was a gift**, so
+  after it lands the gifted cargo is **indistinguishable from the fleet's own
+  cargo**. Its fate is therefore whatever the fleet-removal order does to that
+  fleet's cargo generally:
+    - a **merge** pools it into the surviving fleet. A direct Merge Fleets order
+      was measured adding **fuel** (FC-1); that its cargo pools the same way is
+      read from the merge path, not separately measured — **BINARY-ONLY**.
+    - a **design delete** shares the cargo out exactly as a ship move does: the
+      deleted ships carry off `floor(amount × deleted capacity ÷ fleet
+      capacity)`, **lost with them even when other ships survive**, and only the
+      remainder stays with the survivors. **MEASURED** (CO-07c: a fleet's 100 kT
+      of iron left entirely with the deleted ships, the surviving ship having no
+      hold; CO-07 showed the same proportional share-out for fuel, 500 → 27). If
+      no ship survives, all of it is lost.
+  The outcome is identical to what the order does to native cargo (see "Design
+  delete effect" and "Merge"). There is **no** gift-specific refund to the giver
+  and **no** gift-specific loss. The no-provenance property of the in-place
+  credit is BINARY-ONLY (read from the credit branch, which writes cargo and
+  nothing else).
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
@@ -681,6 +725,27 @@ flag:
   orders are complete. CONFIRMED (a fleet run onto its only waypoint ended
   idle with the completion message).
 
+### Waypoint 0 and a task still in progress
+
+Each turn after movement the host rewrites **waypoint 0** to the fleet's current
+position, with target type **planet** when the fleet is orbiting one and **deep
+space** otherwise. The waypoint's **task is kept**: a fleet caught partway along
+a leg carries its current task on waypoint 0 at warp 0 (its current position is
+not a destination). MEASURED (WU-ROUTE): a routing fleet caught mid-leg came
+back with waypoint 0 at its current position, target deep space, warp 0, and the
+**route** task still set.
+
+The post-movement waypoint phase does examine waypoint 0's task, but a task only
+acts where its conditions are met. The **route** task re-routes a fleet only at
+one of its **own** planets that has a route set, so at a mid-space position it
+does nothing and the fleet simply continues its leg, re-routing on arrival (see
+"Route task"). Tasks that hold a fleet in place rather than let it travel — a
+load/unload transport task and lay-mines — keep it stationary, so they do not
+arise "in transit". A **patrol** task is not resolved in this phase at all; its
+intercept is chosen later (see "Patrol task"). The phase placement is
+BINARY-ONLY; the kept task in transit and the mid-space route no-op are the
+measured behaviour (WU-ROUTE).
+
 ### Targets that moved, died or were captured
 
 A waypoint can name a fleet (or a moving universe object) as its target
@@ -714,6 +779,22 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   position for the turn; wormholes move after fleets (objects decomp, stars-
   elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
   position as of this same upkeep pass.
+- **A target that is another player's fleet is saved as a plain waypoint in the
+  owner's view.** Through the turn the waypoint tracks the enemy fleet like any
+  other moving target (its coordinates follow the enemy's position), but when
+  the owner's file is written the target is recorded as a **deep-space** waypoint
+  at the fleet's last-seen position rather than as a live fleet target: the
+  owner's saved game carries no persistent handle to another player's fleet. An
+  **own-fleet** target is kept as a fleet target — the owner can always see and
+  name its own fleet — which is why the follower waypoints below retain their
+  type (WU-FOLLOW). This is the same retargeting applied when the player's file
+  is written that sends a target which drops
+  out of scan range to its last-seen position (messages `0x28`/`0x29`/`0x2a`).
+  Observed in the written player file, BINARY-ONLY; seen in WU-A, where a fleet
+  whose waypoint named an enemy fleet came back as a space waypoint at that
+  fleet's position. It is **not** caused by the waypoint's warp. Whether the
+  saved coordinates are the enemy's current position (still in view) or its
+  last-seen position (out of view) is not pinned here.
 
 ### Following another fleet (leader linkage)
 
@@ -769,7 +850,7 @@ planet 17 was re-routed through the gate — it arrived at planet 8 the same yea
 be a gate jump) and its regenerated waypoint read warp 11 (the gate code,
 GT-004). A direct warp-11 control fleet naming the same gated destination jumped
 identically. **Both planets must belong to the fleet's owner** for the shared
-routing check (`FCanFleetUseStargates`): a friend's gate does not count. (A
+routing check: a friend's gate does not count. (A
 non-IT fleet carrying cargo may change the choice, since the no-cargo condition
 and the gate's mass/range limits then apply; not separately measured here.) One
 observation left open: both fleets' fuel read 100 before and 50 after the jump,
@@ -802,6 +883,16 @@ CONFIRMED:
   this at warp 10.
 - The intercept is written as a fleet-targeted waypoint at the enemy's
   position; the patrol fleet does not move the turn it acquires the target.
+- **When acquisition happens:** the intercept is chosen at the **end** of turn
+  generation, as each player's file is written — after movement, after battles,
+  and after production — not in the after-movement waypoint-task phase (a patrol
+  task is not resolved there) and not at a mid-turn waypoint check. So it reads
+  **post-battle** positions and survivors, and considers only fleets **visible
+  to the patrolling player** (an enemy outside that player's scanners is not a
+  candidate even inside the engage radius). The waypoint is then flown the
+  following turn, which is why the patrol fleet does not move the turn it
+  acquires a target. Placement is BINARY-ONLY (seen when the player's file is written);
+  the which-enemy, tie and warp rules above are the measured part.
 
 Elegy reproduces this: nearest enemy within the ~50 ly radius, ties by fleet
 order, intercept warp `min(10, range/5)`.

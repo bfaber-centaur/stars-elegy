@@ -429,6 +429,7 @@ type Expectation struct {
 	Y           *int            `json:"y,omitempty"`
 	Equals      json.RawMessage `json:"equals,omitempty"`
 	Tolerance   any             `json:"tolerance,omitempty"` // ly for a packet, or {field: amount}
+	Sample      bool            `json:"sample,omitempty"`    // one stream's outcome of random draws, not a fixed result
 	MessageID   *int            `json:"message_id,omitempty"`
 	Present     *bool           `json:"present,omitempty"`
 	ObservedNew []int           `json:"observed_new,omitempty"`
@@ -587,6 +588,19 @@ func (v *Vector) Check() []error {
 			if (e.Kind == "planet" && (e.ID == nil || !known(planets, *e.ID))) ||
 				(e.Kind == "production_queue" && (e.Planet == nil || !known(planets, *e.Planet))) {
 				bad("%s: planet not in the initial state", c.ID)
+			}
+			if e.Kind == "production_queue" && e.Equals != nil {
+				var items []QueueItem
+				d := json.NewDecoder(bytes.NewReader(e.Equals))
+				d.DisallowUnknownFields()
+				if err := d.Decode(&items); err != nil {
+					bad("%s: production_queue items: %v", c.ID, err)
+				}
+				for _, it := range items {
+					if it.Kind == nil || (*it.Kind != 1 && *it.Kind != 2) {
+						bad("%s: production_queue item %d without kind 1 or 2", c.ID, it.ID)
+					}
+				}
 			}
 			if e.Equals == nil && (e.Kind == "fleet" || e.Kind == "planet" || e.Kind == "player" ||
 				e.Kind == "design" || e.Kind == "wormhole" || e.Kind == "trader" || e.Kind == "production_queue" ||

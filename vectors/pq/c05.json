@@ -982,11 +982,13 @@
       {
        "id": 11,
        "count": 1,
-       "percent": 50
+       "percent": 50,
+       "kind": 1
       },
       {
        "id": 3,
-       "count": 1
+       "count": 1,
+       "kind": 1
       }
      ]
     },

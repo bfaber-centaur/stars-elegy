@@ -445,7 +445,17 @@ After laying, every fleet and then every starbase sweeps.
   mixed item 40 kT of each (PP: 25), times the item count, at most 32,760
   per mineral (the cap BINARY-ONLY). Measured spend from the surface: 110 kT
   per 100 kT item (Interstellar Traveler 120, PP 70) and 44 kT of each per
-  mixed item (PP 25) (MEASURED, OB-028, OB-029).
+  mixed item (PP 25) (MEASURED, OB-028, OB-029). An Interstellar Traveler
+  mixed item launches 40 kT of each and spends 48 kT of each (BINARY-ONLY:
+  the item's cost; not measured).
+- **The settings (BINARY-ONLY).** The planet's packet destination and
+  speed are stored as the owner sends them; the host only checks that the
+  planet is the sender's (`LIMITS.md`). The speed is stored as given in its
+  field (warps 4..19) and resolved at launch by the rule below. A
+  destination is a planet number, or none; nothing checks that the planet
+  exists, and launching toward a number past the last planet reads past
+  the planet table (no measured behaviour; Elegy needs a chosen rule, such
+  as treating it as no destination).
 - Packet warp `W`: the planet's packet-speed setting; if below 5 or above
   `Dw + 3`, it becomes `Dw + t` (OB-028-B: 11 with a Mass Driver 7 → 7;
   unset → `Dw + t`, OB-028-C, D).
@@ -456,6 +466,28 @@ After laying, every fleet and then every starbase sweeps.
   warp, destination and class merges into the first while it is under
   16,300 kT (OB-028-B, E: two items, one 200 kT packet; the 16,300 kT limit
   BINARY-ONLY).
+- **Merge details (BINARY-ONLY).** The new minerals join any packet of the
+  same owner lying exactly at the launching planet with the same warp,
+  destination and class; the minerals it carries do not matter, so a mixed
+  item merges into an ironium packet and the packet then carries all three.
+  The limit is tested on the existing packet before the new minerals are
+  added: it takes them while the sum over its three minerals of
+  `⌈m/10⌉` is below 1,630 (so 16,290 kT of one mineral still takes more,
+  16,291 does not). A merged mineral that would pass 32,767 kT becomes
+  32,760. Otherwise a new packet is made.
+- **Numbering (BINARY-ONLY).** A new packet takes its owner's lowest
+  unused packet number, from 0. Packets use the same numbering rule as
+  minefields ("Limits" above, MEASURED there by MF-11 and MF-13): numbers
+  0..510, and 511 only when no other space object sorts after the owner's
+  packets; the universe holds at most 4050 objects. Packets and salvage
+  are one kind of object, so a player's packets and its own salvage share
+  one pool of numbers: its salvage does not sort after its packets, it
+  uses up numbers in the same pool. What sorts after them is any packet
+  or salvage of a higher-numbered player, every wormhole and the Mystery
+  Trader. Minefields of any owner and lower-numbered players' packets and
+  salvage sort before and never withhold 511. With no number or no
+  room, the item still counts as built (its minerals are spent and the
+  launch message is sent) but no packet appears.
 
 ### Flight and decay (CONFIRMED, OB-003, OB-028; marked parts BINARY-ONLY)
 
@@ -475,6 +507,17 @@ After laying, every fleet and then every starbase sweeps.
   unowned planet). On a later arrival it decays for the share of the
   year it flew, but the minimum still applies (CONFIRMED, OB-003-C: a
   class-1 100 kT packet arriving with 5% of a year left lost 10).
+- **Rounding (BINARY-ONLY; fits OB-003, OB-023, OB-028).** All in
+  integers. The year's share is a whole percent `p`: 100 for a full year,
+  50 for a launch year without arrival, and on arrival
+  `p = round(trunc(d)·100/m)` (halves rounded up), with `d` the distance
+  to the destination at the start of the move and `m` the year's move,
+  clamped to 0..100 and then halved (rounding down) in the launch year.
+  The rate `r` is 10, 25 or 50 (PP: 5, 12, 25). Each non-empty mineral
+  `m` loses `min(m, max(minimum, ⌊m·r·p/10000⌋))` with minimum 10 (PP 5).
+  A packet with nothing left is removed. So a share is not a real-valued
+  fraction: OB-028-G's 70% launch-year arrival is `p = 35`, and 500 kT
+  at class 3 loses `⌊500·50·35/10000⌋ = 87`.
 
 ### Impact (CONFIRMED, OB-003, OB-009; marked parts BINARY-ONLY)
 
@@ -621,6 +664,43 @@ gate type matched in GT-001 N1–N6 (one stream).
   one of three identical ships was lost, the fleet's fuel went 100 → 67
   (MEASURED, OB-021). A design with `pct = 100` is lost entirely; if
   every design is lost, the fleet is gone.
+- **Order of designs and draws (BINARY-ONLY).** Every design's `pct` is
+  worked out first, in design-number order (the owner's design slots),
+  before any draw; a refusal stops there and nothing is drawn. Then the
+  designs are taken in design-number order again, whatever order their
+  ships joined the fleet in. A design with `pct = 0` is skipped: no draws
+  and no damage. A design with `pct = 100` is removed with no draws. For
+  `0 < pct < 100` with `k = ⌊pct/3⌋ > 0` (never for IT), each ship of the
+  design in turn draws `rand(100)`, and `rand(100) < k` destroys it. When a
+  ship is destroyed while the design still counts damaged ships (`D > 0`,
+  below), `rand(500) < u` follows, and if it holds `D` drops by one. No
+  other draws are made.
+- **Damage (BINARY-ONLY; fits OB-021, GT-001).** For a design with `n`
+  ships before the jump, armor `A` and old stack damage `(p₀, u)`
+  (`COMBAT.md` conventions): damaged ships `D = max(1, ⌊p₀·n/100⌋)`, old
+  damage per damaged ship `Dm = max(1, ⌊u·A/500⌋)` (both 0 when the stack
+  was undamaged), and new damage `Nw = max(1, ⌊pct·A/100⌋)`. With `s`
+  ships left after the draws: if `D > 0` and `Nw + Dm ≥ A`, `D` more ships
+  are destroyed (`s − D` left). If ships are left, `avg = ⌊(Nw·s + Dm·D)/s⌋`
+  and the stack becomes `p = 100` with `u = max(1, ⌊avg·500/A⌋)`. `D` is
+  not lowered by that extra destruction, so destroyed damaged ships still
+  add their old damage to the average (the LEGACY BUG candidate above).
+  So the old damage counted is that of the `D` damaged ships, not of every
+  ship of the design. When `D` is larger than `s`, the ship count goes
+  negative and the fleet record is corrupt (BINARY-ONLY; no case reaches
+  it, so Elegy needs a chosen rule there).
+- **Fuel and cargo after losses (BINARY-ONLY; fits OB-021).** When any
+  ship is lost, including a design lost entirely, the lost ships take
+  `⌊fuel·L/T⌋` of the fleet's fuel, with `L` the fuel capacity (hull plus
+  tanks) of the lost ships and `T` that of every ship before the jump. The
+  fleet keeps the rest, so its fuel in effect rounds up: OB-021's 100 with
+  one of three lost keeps `100 − 33 = 67`, and two of three lost would
+  keep `100 − 66 = 34`. Cargo still aboard (IT, Jump Gate) is lost the same
+  way by cargo capacity: `⌊C·Lc/Tc⌋` in total, split as `⌊c·lost/C⌋` per
+  item, then any remainder 1 kT at a time over ironium, boranium,
+  germanium and colonists in that order, in one pass over the items still
+  holding cargo. It is the same proportional rule as for ships lost in
+  battle. With no ship lost, fuel and cargo are unchanged.
 - **Mixed fleets (LEGACY BUG, MEASURED GT-001 H2, GT-002):** each design
   lost entirely (`pct = 100`) counts twice against the fleet's number of
   designs, and a design wiped out by the loss rolls (`pct < 100`) counts
@@ -682,7 +762,9 @@ Each end separately, in list order:
   jump reset the years and kept the class.
 - **Jiggle:** years +1; up to 100 tries of `(x + rand(25) − 12, y + rand(25)
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
-  is rejected. The class never changes.
+  is skipped: it uses up a try but is not scored. The class never changes.
+- Both kinds of move choose among their tries with the creation badness
+  (Placement, "During movement" below).
 
 ### Stability (BINARY-ONLY)
 
@@ -696,7 +778,10 @@ reads Rock Solid, like class 0.
 ### Placement badness (CONFIRMED at creation, UG01–UG21)
 
 A try is rejected outright when outside the galaxy or exactly on another
-object, planet or fleet. Otherwise its badness combines: within 10 ly of
+object, planet or fleet. Outside the galaxy means `x` or `y` below `1000` or
+above `1000 + W`, where `W = 400 × (size + 1)` is the galaxy width (tiny
+400 to huge 2000); a coordinate equal to `1000 + W` is inside (BINARY-ONLY:
+no run placed an end on that line). Otherwise its badness combines: within 10 ly of
 an edge; near its partner (`d²` < 25, 100, 900, 4900, worst first); near
 another wormhole (< 16, 64, 225, 900); near a planet (< 25, 100, 400, 784).
 The first try with no badness wins, else the least bad. In effect ends
@@ -716,6 +801,30 @@ when every one of the 100 tries was rejected. The partner's bands apply
 only to the partner; when the first end of a pair is placed it has no
 partner yet. A try is never outside the galaxy, since positions are drawn
 as `1000 + rand(W)` on each axis.
+
+**What counts as an object.** The exact-position rejection checks every
+object in the object list (such as minefield centres, packets, Mystery Traders and
+other wormhole ends; the end being placed is skipped), every planet and
+every fleet. The distance bands look only at wormhole ends and planets:
+fleets, minefields, packets and Traders add no badness short of sitting
+exactly on the try (BINARY-ONLY for fleets, minefields, packets and
+Traders; the wormhole and planet terms are CONFIRMED at creation).
+
+**During movement (BINARY-ONLY except where tagged).** A jump and a
+jiggle use the same badness as creation, with the same partner, wormhole
+and planet bands and the same objects. Each try draws `x` first, then `y`:
+a jump draws `1000 + rand(W)` twice, a jiggle `rand(25)` twice (the ±12
+bound is CONFIRMED, the draw order is not). The end is moved to each try
+before it is scored, and a try equal to the old position is skipped
+without a score but still uses up one of the 100. The first try with
+badness 0 ends the search. Otherwise the end takes the first try with the
+lowest badness, and a rejected try (15) beats no try at all: if every
+scored try was rejected, the end moves to the first of them, even outside
+the galaxy or onto another object. It does not stay where it was. A
+jiggle can only be rejected for being outside the galaxy or on an exact
+object, so every try failing would in practice need an end in a corner with
+all of its inside cells occupied; no run has come close (UNRESOLVED whether the
+original then shows the end outside the galaxy; LEGACY BUG candidate).
 
 ### Travel (CONFIRMED, OB-005 C, D)
 
@@ -776,9 +885,16 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
 - Item offered: research or a ship with probability `r/10`, `r` = 5 before
   year index 100, 3 before 250, 2 after, +1 below warp 10, −1 above; then
   ship with 1/6, else research. Otherwise one of 13 bits, uniformly: the
-  twelve parts of the bit table in "Encounters" below, or bit 12, a ship gift;
-  rerolled once for four of the parts, and three of those turn into research with 1/2 before
-  year index 120, 150 or 180.
+  twelve parts of the bit table in "Encounters" below, or bit 12, a ship gift.
+  - **Reroll.** A first draw of bit 6 (Anti Matter Torpedo), 7 (Multi
+    Contained Munition), 10 (Genesis Device) or 11 (Jump Gate) is replaced
+    by a second `1 << rand(13)`. The second draw stands even if it is one of
+    those four again; there is no third.
+  - **Conversion.** Only a second draw can convert. If it is bit 7 before
+    year index 120, bit 10 before 150, or bit 11 before 180, a `rand(2)` is
+    drawn and 1 turns the item into research (so 1/2). Bit 6 is rerolled
+    but never converted. No `rand(2)` is drawn in any other case.
+  - BINARY-ONLY: no KX-004 run drew one of the four bits.
 
 ### Movement (BINARY-ONLY except where noted; not part of KX-004)
 
@@ -787,6 +903,37 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   destination. On arrival it leaves the galaxy if another Trader exists or
   with 1/2; otherwise it stays at the edge, takes warp `max(6, warp − 2) +
   1` and a new destination, and does not move further that year.
+- **Draws in a year (BINARY-ONLY).** Only at warp 12 or below: `rand(25)`;
+  0 raises the warp (every player is told), and only then `rand(3)`, where
+  0 draws a new destination. So a new destination in flight comes only in
+  a year whose warp rose. The Trader then moves at the new warp. On
+  arrival: with another Trader present it is removed with no draw;
+  otherwise `rand(2)`, where 0 removes it and 1 keeps it and draws the new
+  destination. Traders move one at a time in object-list order, and a
+  removed Trader leaves the list at once. So "another Trader" means one
+  still in the galaxy at that moment, anywhere, including one that has
+  not moved yet this year; a Trader removed earlier in the same year does
+  not count. When two arrive in one year, the first is removed with no
+  draw and the second, now alone, draws.
+- **New destination (CONFIRMED in part).** Drawn the same way after a
+  warp rise and after arrival: `rand(2)` picks the side (0 the high edge
+  `1380 + 400·size`, 1 the low edge `1020`); then the free coordinate
+  `1020 + rand(361 + 400·size)`; then `rand(2)` picks the axis (0: the
+  destination's `x` is the edge value and `y` the free one; 1: the
+  reverse, note the opposite sense to the appearance draw in `KERNEL.md`).
+  So it can be any of the four edges, wherever the Trader is and wherever
+  it was heading. CONFIRMED that it is not tied to the old axis: OB-023's
+  Trader arrived on the `x = 1380` edge at (1380, 1300) and got (1098,
+  1380), on a `y` edge. The draw order is BINARY-ONLY.
+- **Each year's step (BINARY-ONLY in detail; shared with packets).** With
+  `d` the exact distance to the destination and `m` the year's move: if
+  `trunc(d) ≤ m` it arrives. Otherwise, when `d > 0.0001`, each axis moves
+  by `trunc(Δ·m/d + h)`, with `Δ` the destination's coordinate minus the
+  current one, `h = +0.5` when `Δ > 0`, else `−0.5`: rounding half away
+  from zero, `m/d` computed once for both axes. If that step lands exactly
+  on the destination, it counts as an arrival that year. The packet flights
+  of OB-003 and OB-028 and the Trader's 81 ly at warp 9 (OB-023) agree
+  with it.
   CONFIRMED (OB-023, OB-026, OB-031): a warp-9 Trader moved 81 ly; one
   arriving while another existed was removed; the only Trader stayed, warp
   8 → 7, with a new destination on an edge; a lone warp-6 Trader stayed
@@ -876,7 +1023,10 @@ with random events off (an inserted Trader traded).
       message gives `L`. Each level, in turn: with 3/4 a uniformly random
       field (the lowest field instead if that one is at 26), with 1/4 the
       lowest field (first in field order on ties); the loop stops early
-      once the lowest field is at 26. Each step raises that field by
+      once the lowest field is at 26. Draws per level: `rand(4)`; 0–2 then
+      `rand(6)` for the field (fields in the order energy, weapons,
+      propulsion, construction, electronics, biotech), 3 no further draw
+      (BINARY-ONLY; the field odds are MEASURED as above). Each step raises that field by
       exactly one level and leaves its accumulated research unchanged.
       CONFIRMED: a tech-3 player trading 5,000 kT gained 6 levels.
   - a ship (CONFIRMED, WT-003 B, WT-004 B, C: 27 gifts, Lifeboat 5,
@@ -894,14 +1044,44 @@ with random events off (an inserted Trader traded).
         Multi Cargo Pod, Jump Gate, Anti Matter Torpedo ×2 in two slots.
       - Probe: as the Scout, with Mega Poly Shell ×3 in place of the
         Langston Shells.
+    - **Slot layout (MEASURED, WT-004: 27 gift designs).** The loadouts
+      above are in the hull's slot order (`data/components.json`), one
+      entry per slot, and "in two slots" or "in three slots" means
+      consecutive slots. Every slot of the hull is filled to its maximum,
+      the engines in the first slot. The gift copies a fixed design, so
+      the layout never varies (BINARY-ONLY).
     - Count: 2 with 1/3, else 1. After year index 100, unless the game has
       a single human player, add `rand(⌊year index/100⌋ + 1)`. Cap at 5.
       For the Scout and the Probe, then add `rand(count + 1)`. So 1–10
       ships.
     - A design the player already has that matches is reused; otherwise
-      the design goes into the player's first empty design slot. It keeps
-      its Trader parts although the player's part word does not gain them.
-      The new fleet appears at the trade point with full fuel.
+      the design goes into the player's first empty design slot, in slot
+      order 1 to 16 (CONFIRMED, WT-004). It keeps its Trader parts although
+      the player's part word does not gain them. The new fleet appears at
+      the trade point with full fuel.
+    - **Matching (BINARY-ONLY).** Only a design that came from an earlier
+      Trader gift and is still in use can match: the gift marks the
+      designs it creates, and a player's own design with the same parts
+      never matches. It matches when the hull, the number of slots and
+      every slot's count are equal, and every non-empty slot holds the same
+      part. The name is not compared. A reused design is not rewritten.
+    - **Draw order (BINARY-ONLY).** Computer players draw nothing. Then the
+      design `rand(4)` (`rand(3)` after year index 100), then for a
+      non-zero result `rand(2)` (0 Scout, 1 Probe). The count draws come
+      only when a slot is found and the player has fewer than 512 fleets:
+      `rand(3)`, then `rand(⌊year index/100⌋ + 1)` when that applies, then
+      `rand(count + 1)` for a Scout or Probe.
+    - **The new fleet (BINARY-ONLY).** It takes the player's lowest unused
+      fleet number, battle plan 0 (the player's first plan), one waypoint
+      at the trade point, and is marked as not having moved this year.
+      Consumed fleets, the traded fleet and any consumed earlier that
+      year included, still hold their numbers then: they stay in the
+      fleet list until all the meetings are over. So the gift fleet never
+      takes the number of a fleet consumed that year. It
+      orbits whatever planet the traded fleet orbited, if any. If it lands
+      later in the fleet list it is offered to the Trader like any fleet,
+      but it carries no minerals, so it never trades and, not having
+      moved, gets no message.
     - With no free design slot, or 512 fleets already, there is no ship
       (the player is told the design records could not be stored) and the
       fleet is still consumed.
@@ -915,8 +1095,12 @@ Only Harder and Expert computer players take part, and only a planet with
 a starbase, within 100 ly of the Trader, whose owner this Trader has not
 served. The planet needs Ir + Bo + Ge on its surface of at least 5,000 kT
 (3,500 for Harder). (TP measured Expert Turindrone and Automitron
-homeworlds within 100 ly; the Harder threshold, the 100 ly edge and the
-other levels are BINARY-ONLY.)
+homeworlds within 100 ly. O-53 CONFIRMED the Harder rule: a Harder
+planet with 3,600 kT traded and paid 3,500 kT. A Standard planet and an
+Expert planet with 3,600 kT did not trade, which fits but does not
+separate "Standard never trades" from "Standard needs 5,000 kT"; the
+exclusion of Standard and Easy players is BINARY-ONLY. The exact edge at
+3,500 kT is NOT RUN, and the 100 ly edge is BINARY-ONLY.)
 
 - **Part item.** If the owner lacks the part, it gains it. If it owns it,
   a random part it lacks is drawn, with up to 50 redraws; bit 12 counts as
@@ -927,9 +1111,20 @@ other levels are BINARY-ONLY.)
   150 or more, nothing happens and the Trader stays available to it
   (CONFIRMED, TP-002-B). Otherwise the lowest field gains a level, six
   times, at no research cost (CONFIRMED, TP-001-B: 10,10,10,13,10,10 →
-  12,11,11,13,11,11). The price is 5,000 kT (3,500 for Harder).
+  12,11,11,13,11,11). The price is 5,000 kT (3,500 for Harder; CONFIRMED,
+  O-53).
 - The price is taken from germanium first, then boranium, then ironium
   (CONFIRMED, TP-001-B). The owner is marked served. No message is sent.
+- **Order and range (BINARY-ONLY).** For each Trader, its fleets come
+  first, then the planets in planet-number order (numbered in `x` order at
+  creation, `UNIVERSE.md`). The scan stops at the first planet more than 100 ly east of
+  the Trader in `x`. A planet trades when `d² ≤ 10,000`, so exactly 100 ly
+  is in range.
+- **A ship item (BINARY-ONLY).** For planets a ship offer is not
+  research: it is handled as part bit 12. An owner that lacks the bit gains
+  it, and the price is all the surface minerals; an owner that has it
+  rerolls as for a part it owns. Only item 0, or no unowned bit found in
+  50 rerolls, leads to the research branch.
 
 Human players' planets never trade (CONFIRMED, TP-001-C, TP-002-C).
 
@@ -950,8 +1145,9 @@ and nowhere beyond it).
 2. Wormhole jump odds as a measured rate (one stream so far).
 3. Mystery Trader: leaving with 1/2 at an edge (0 of 4 lone arrivals
    left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
-   the part reroll and late-year conversion at appearance; Harder computer
-   players' planets (3,500 kT) and the 100 ly edge.
+   the part reroll and late-year conversion at appearance; the trade's
+   exact 3,500 kT edge for Harder players, its 100 ly edge, and whether
+   Standard and Easy players' planets never trade.
 4. Minefields (MF-1..MF-15 done; see PARITY "Minefield lane"): the
    4050-object limit; SS and SD safe-warp bonuses; steep (not due-north)
    legs and diagonal stop points;

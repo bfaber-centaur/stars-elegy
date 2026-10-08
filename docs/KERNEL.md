@@ -73,11 +73,15 @@ order shown. "Fleet order" means by owner, then by fleet number
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
    The permutation itself is BINARY-ONLY. With orders a client can save,
-   it has no observable effect: each player's orders edit only that
-   player's own objects, and every effect on another player's object
-   (cargo gifts, drops, fleet transfers) is queued to a fixed later step.
-   Only crafted order files that act on another player's object could
-   show it (`ORDERS.md`, "Conflicts between players").
+   it is observable only through a cargo gift to another player's fleet or
+   planet: that gift is credited **in place** during the giver's replay
+   (MEASURED — fleets TK-406/407/409, planets TK-405/412), not queued, so a
+   recipient whose own orders replay after the giver's can act on a gifted
+   fleet's cargo, or load a planet's gifted minerals, that same year. Every
+   other effect on another player's object (colonist drops, the deferred
+   transfer queue) is queued to a fixed later step and does not depend on
+   the order. See `ORDERS.md`, "Conflicts between players", and the gift
+   rules in `TAKEOVER.md`.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`
@@ -806,11 +810,13 @@ stolen 23 and 88 stored as 12 and 44).
   that the level makes available: a part the race may use (race-restricted
   parts and Mystery Trader parts the player does not own are skipped)
   whose requirement in that field equals the new level **and** whose other
-  five requirements are already met. CONFIRMED (KX-005 R1: energy 9 → 10
-  announced Bear Neutrino Barrier, Laser Battery and Temp Terraform ±11,
-  not Battle Nexus, which also needs electronics 19; a GR weapons 0 → 1
-  announced Radiation Terraform ±3). So a part is normally announced
-  when its last missing requirement is reached (follows from the rule).
+  five requirements are already met. That the check is **not** limited to
+  the leveled field is MEASURED (KX-005 R1: energy 9 → 10 announced Bear
+  Neutrino Barrier, Laser Battery and Temp Terraform ±11, but not Battle
+  Nexus, which also needs electronics 19; a GR weapons 0 → 1 announced
+  Radiation Terraform ±3); the check of all six fields is BINARY-ONLY
+  beyond that case (`MESSAGES.md`). So a part is normally announced when
+  its last missing requirement is reached.
 - Super Stealth: after every player's research, an SS player gains, per
   field, `s = trunc(trunc(spent/players)/2)` when `s > 1`, where `spent` is
   every player's research in that field this year, its own included, and
@@ -880,6 +886,8 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
 | Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
+| Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); resources BINARY-ONLY |
+| Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED except IT (OB-028, OB-029); IT and resources BINARY-ONLY |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -964,6 +972,35 @@ Additional rules (CONFIRMED by KB-2A unless marked):
 - A planet with 0 resources builds nothing and sends no messages
   (BINARY-ONLY; an owned planet with population has at least 1 resource,
   so only the duplicate-serial ×4/5 cut of a 1-resource planet reaches it).
+
+### Packet items (BINARY-ONLY except where marked)
+
+What a packet item launches, and the packet it makes, are in `OBJECTS.md`
+"Launch". In the queue:
+
+- **Unit loop.** A packet item goes through the same unit loop as any
+  other item, with the costs above: a unit short of minerals or resources
+  is partly built to the lowest component's percentage and, for a regular
+  item, stops the queue; an Auto Alchemy prefix buys missing minerals for
+  it as for any item. Only whole units launch: the units completed this
+  year leave together as one launch (`OBJECTS.md`, the merge rule), and a
+  partial unit stays in the queue as a percentage.
+- **No driver or no destination.** When production reaches a regular
+  packet item (any of the four) on a planet without a mass driver or
+  without a packet destination, the whole item is removed, whatever its
+  count, and the owner gets the "packet order cancelled" message; a queue
+  left empty then gets the "completed its orders" message (MEASURED,
+  OB-028-F: one item, no destination, those two messages in that order,
+  no packet, minerals unchanged). See also "Additional rules" above.
+- **Auto Mineral Packets.** It builds Mixed Mineral Packets. Like the
+  other auto items its count is never used up: each year it builds up to
+  its count (at most 1000) and stays in the queue with the same count. A
+  unit short of any mineral is skipped with nothing spent unless an Auto
+  Alchemy prefix stands before it, as for other auto items; a unit short
+  only of resources leaves a hidden Mixed Mineral Packet ×1 at that
+  percentage at the queue front, and the queue stops (the PQ-001 auto
+  rules). On a planet without a mass driver or destination it builds
+  nothing, sends no message and stays in the queue.
 
 ### Terraforming
 

@@ -982,7 +982,8 @@
       {
        "id": 7,
        "count": 10,
-       "percent": 59
+       "percent": 59,
+       "kind": 1
       }
      ]
     },

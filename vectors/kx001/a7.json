@@ -979,12 +979,14 @@
      "equals": [
       {
        "id": 1,
-       "count": 2
+       "count": 2,
+       "kind": 1
       },
       {
        "id": 8,
        "count": 1,
-       "percent": 39
+       "percent": 39,
+       "kind": 1
       }
      ],
      "year": 1

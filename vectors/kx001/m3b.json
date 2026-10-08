@@ -989,7 +989,8 @@
       {
        "id": 8,
        "count": 4,
-       "percent": 24
+       "percent": 24,
+       "kind": 1
       }
      ],
      "year": 1

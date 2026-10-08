@@ -229,7 +229,7 @@ unconstrained by that case.
 | `no_fleet_at` | no fleet of `owner` at (`x`, `y`) | |
 | `no_new_fleets` | `owner` gained no fleet | |
 | `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
-| `production_queue` | planet `planet` | the queue as `{id, count, percent}` items (`percent` omitted when 0) |
+| `production_queue` | planet `planet` | the queue as `{id, count, percent, kind}` items (`percent` omitted when 0; `kind` 1 planetary item, 2 design, as in "Queue items") |
 | `design`, `starbase_design` | design `owner`/`slot` | `hull`, `slots`, `mass` |
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
 | `battle_plan` | plan `owner`/`slot` | `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo` |
@@ -240,8 +240,18 @@ unconstrained by that case.
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
 
 `tolerance` as an object (`{"surface_minerals": 1}`) allows that much
-difference in the named field. Kernel vectors use it for surface minerals,
-because mining's +1 remainder is random (`KERNEL.md`).
+difference in the named field. Kernel and combat vectors use it for surface
+minerals, because mining's +1 remainder is random (`KERNEL.md`). Combat
+vectors give it only to planets where a mining draw can happen that year:
+owned with mines at the start of the year, or orbited by a remote miner.
+Minerals from battle debris stay exact.
+
+`sample: true` marks an expectation that random draws decided and that only
+one stream observed. It is what the original did with that stream's draws,
+not a fixed result: compare it exactly only when you replay the same draws,
+and otherwise treat it as one sample of what the rule allows. Single-stream
+combat vectors flag what the year's battle draws decide (see "Combat
+vectors").
 
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
@@ -303,6 +313,31 @@ tag follows it. Rounds from CB-009 on ran under pinned random streams, so the
 same start gave the same record within a stream; CB-001..008 were not
 pinned. A battle's token list is often identical in every stream while its
 actions differ, which is why `battle` and `battle_actions` are separate.
+
+Every battle draws (movement ties, each round's jitter, torpedo hits:
+`docs/COMBAT.md` "Random draws in a battle"). In a single-stream `cb`
+vector these expectations carry `sample: true`: `battle_actions`, the
+`fleet` and `fleet_gone` of every fleet that fought, `salvage_at` a battle's
+position, and a battle planet's `starbase`, `defenses` and
+`surface_minerals` (split from the planet's other fields, which stay exact).
+The `battle` token lists and everything away from the battles stay exact,
+apart from the mining tolerance above. In a several-stream `cb` vector the
+`fleet` and `fleet_gone` of every fleet that fought carry `sample: true` as
+well: which fleets die in a battle, and how hurt the survivors are, depends
+on the draws even where the few streams run agreed (CB-036, CB-039,
+CB-042..044 list hundreds of destroyed fleets).
+
+A `sample` battle record is still an exact check of the damage rules. Given
+the recorded moves and shots, every hit is deterministic: replay the
+actions in order, each shot from the recorded token at the recorded target
+(as the exact replays in `docs/COMBAT.md` "Choosing a square" do, with the
+shots taken from the record),
+and every hit's `kills`, `shield_damage` and `armor_damage`, and the
+shields carried between rounds, must come out exactly as recorded. CB-007
+and CB-008 (Regenerating Shields), CB-010 (Q-7, leftover beam damage) and
+CB-016 (Q-3, the station firing) check their CONFIRMED rules this way, and
+their `verdict` says so. In a several-stream vector, what
+differed between streams is listed per stream as usual.
 
 ### New-game vectors
 
