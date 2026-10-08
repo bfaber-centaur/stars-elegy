@@ -735,6 +735,33 @@ taken if `Random(100)` is below its score. (LEGACY BUG: the distance test
 overflows for wormholes about 182 ly or more away, which then count as
 near.)
 
+*Wormhole distance arithmetic (LEGACY BUG, BINARY-ONLY).* The
+candidate's squared distance `D` is exact: a 32-bit integer, or
+99,999,999 when there is no candidate. For each wormhole end, the squared
+distance `w` comes from 16-bit integers:
+
+1. `ax = |fleet x − end x|` and `ay = |fleet y − end y|`, from the integer
+   map coordinates. Nothing is truncated, because the coordinates and
+   differences fit a signed 16-bit value.
+2. Keep the low 16 bits of each square, then add the two values modulo
+   65,536: `u = (ax·ax + ay·ay) mod 65,536`.
+3. Read `u` as a signed 16-bit value: `w = u` when `u < 32,768`, else
+   `w = u − 65,536`. This is a wrap, not a saturation.
+
+Every later test uses `w`, signed, against 32-bit values:
+
+- The end is considered only if `w ≤ 4·D`.
+- A second test, `w ≤ 46,656` (216²), always passes, because `w` never
+  exceeds 32,767.
+- The score of an end the player does not know is 90 if `w ≤ D`, else
+  50.
+- Among equal scores the smaller `w` wins.
+
+So a true squared distance from 32,768 to 65,535 (about 182 to 255 ly)
+gives a negative `w`. That end passes both distance tests, scores 90 when
+unknown, and wins ties against any correctly measured end. Larger
+distances wrap again: at exactly 256 ly in x, `w` = 0.
+
 **Colonize order.** Move order to the planet, task colonize, warp = the
 fleet's ideal warp. **Wormhole order**: move order to the wormhole, no
 task.
