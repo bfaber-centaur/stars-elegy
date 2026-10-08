@@ -238,9 +238,11 @@ BINARY-ONLY.
   deleted ships shared a fleet with survivors, their fuel and cargo are shared
   out exactly as a ship **move** does it: the leaving ships take
   `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with
-  the survivors with no clamp to the survivors' tank (CO-07c: a 500 mg fleet of
-  capacity 950 losing a 900-capacity design kept `500 − floor(500·900÷950) = 27`
-  mg; 100 kT of iron shared the same way left 0). Client-reachable (the original
+  the survivors, with no clamp to the survivors' tank (CO-07: a 500 mg /
+  capacity-950 fleet losing a 900-capacity design kept `500 − floor(500·900÷950)
+  = 27` mg of fuel; CO-07c: the same fleet at 300 mg kept 16, where a clamp to
+  the survivor's 50-mg tank would give 50, and 100 kT of iron shared the same
+  way left 0). Client-reachable (the original
   client deletes an in-use design with its alert, DS-1). No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
@@ -383,20 +385,22 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   credit is a plain cargo write with **no record that the cargo was a gift**, so
   after it lands the gifted cargo is **indistinguishable from the fleet's own
   cargo**. Its fate is therefore whatever the fleet-removal order does to that
-  fleet's cargo generally: a **merge** pools it into the surviving fleet, and a
-  **design delete** shares it out exactly as a ship move does — the deleted
-  ships carry off their proportional share
-  `floor(amount × deleted capacity ÷ fleet capacity)`, which is **lost with
-  them even when other ships survive**, and only the **remainder** stays with
-  the survivors (CO-07c: a 500 mg / capacity-950 fleet losing a 900-capacity
-  design keeps `500 − floor(500·900÷950) = 27` and the deleted ships take the
-  other 473 away); if no ship survives, all of it is lost — the same outcome as
-  for native cargo (see "Design delete effect", MEASURED CO-07/CO-07c, and
-  "Merge"). There is **no** gift-specific refund to the giver and **no**
-  gift-specific loss. The
-  no-provenance property of the in-place credit is BINARY-ONLY (read from the
-  credit branch, which writes cargo and nothing else); the disposition on
-  removal is the MEASURED fleet-removal behaviour it inherits.
+  fleet's cargo generally:
+    - a **merge** pools it into the surviving fleet. A direct Merge Fleets order
+      was measured adding **fuel** (FC-1); that its cargo pools the same way is
+      read from the merge path, not separately measured — **BINARY-ONLY**.
+    - a **design delete** shares the cargo out exactly as a ship move does: the
+      deleted ships carry off `floor(amount × deleted capacity ÷ fleet
+      capacity)`, **lost with them even when other ships survive**, and only the
+      remainder stays with the survivors. **MEASURED** (CO-07c: a fleet's 100 kT
+      of iron left entirely with the deleted ships, the surviving ship having no
+      hold; CO-07 showed the same proportional share-out for fuel, 500 → 27). If
+      no ship survives, all of it is lost.
+  The outcome is identical to what the order does to native cargo (see "Design
+  delete effect" and "Merge"). There is **no** gift-specific refund to the giver
+  and **no** gift-specific loss. The no-provenance property of the in-place
+  credit is BINARY-ONLY (read from the credit branch, which writes cargo and
+  nothing else).
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
