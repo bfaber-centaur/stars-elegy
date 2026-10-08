@@ -334,7 +334,13 @@ apart from the mining tolerance above. In a several-stream `cb` vector the
 `fleet` and `fleet_gone` of every fleet that fought carry `sample: true` as
 well: which fleets die in a battle, and how hurt the survivors are, depends
 on the draws even where the few streams run agreed (CB-036, CB-039,
-CB-042..044 list hundreds of destroyed fleets).
+CB-042..044 list hundreds of destroyed fleets). So does a `salvage_at`
+whose amount is visibly decided by which ships the battle caught: CB-009's
+at (1060, 1230), where fleeing Small Freighters were caught 2 stacks of 4
+in both streams by different moves (`tools/vectors/build_cb.py`
+`DRAWN_SALVAGE`). Other several-stream salvage stays exact until a case is
+shown to depend on the draws; in CB-009's other battles every enemy ship
+died in both streams.
 
 A `sample` battle record is still an exact check of the damage rules. Given
 the recorded moves and shots, every hit is deterministic: replay the

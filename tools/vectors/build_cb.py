@@ -218,9 +218,16 @@ def mining_planets(st):
 
 
 BATTLE_PLANET_FIELDS = ('starbase', 'defenses', 'surface_minerals')
+# Salvage at a battle place that agreed across a setup's streams but is
+# still decided by the battle's draws, so it is a sample, not a rule:
+# CB-009 K2 (1060,1230): the Small Freighters flee and the Laser Frigates
+# catch some stacks; which ones depends on the battle's movement draws (the
+# two streams moved differently and both caught 2 of 4), and the salvage is
+# the caught stacks' share (OBJECTS.md "Salvage").
+DRAWN_SALVAGE = {('cb009', 1060, 1230)}
 
 
-def mark_samples(exps, battles, single=True):
+def mark_samples(exps, battles, single=True, setup=None):
     """Flag what the year's battle draws decide (COMBAT.md "Random draws in
     a battle"). The fleets that fought are flagged in every vector: which
     ones die or how hurt they are depends on the draws even when a few
@@ -235,6 +242,8 @@ def mark_samples(exps, battles, single=True):
     for e in exps:
         k = e['kind']
         if k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in fleets:
+            e = dict(e, sample=True)
+        elif k == 'salvage_at' and (setup, e['x'], e['y']) in DRAWN_SALVAGE:
             e = dict(e, sample=True)
         elif not single:
             pass
@@ -305,7 +314,7 @@ def build(ev, out):
                 for e in exps:
                     if e['kind'] == 'planet' and 'surface_minerals' in e['equals'] and e['id'] in mined:
                         e['tolerance'] = {'surface_minerals': 1}  # mining's random +1 remainder (KERNEL.md)
-                exps = mark_samples(exps, bs.values(), single=len(runs) == 1)
+                exps = mark_samples(exps, bs.values(), single=len(runs) == 1, setup=setup)
                 sn = stream_name(r)
                 per[sn if sn not in per else sn + ' (' + r.split('/')[-3] + ')'] = exps
             held, tag, verdict = VERDICT[setup]
