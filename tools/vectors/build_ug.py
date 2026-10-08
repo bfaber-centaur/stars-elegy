@@ -42,7 +42,7 @@ def definition(path):
 # docs/AI.md section 3: the fixed race of each computer type x level. A
 # definition-file type or level of 0 is drawn by the generator, and the
 # host file keeps only the race, so the drawn pair is read back by matching
-# the race against this table (every row differs from the others).
+# the race against this table; ai_table fails if two rows share a race.
 AI_TYPES = {'HE': 1, 'SS': 2, 'IS': 3, 'CA': 4, 'PP': 5, 'AR': 6}
 AI_LEVELS = ['easy', 'standard', 'harder', 'expert']
 
@@ -54,12 +54,23 @@ def ai_table():
         if len(f) == 13 and f[0] in AI_TYPES and f[1] in AI_LEVELS:
             fac = tuple(int(x) for x in f[7].split('/'))
             mine = tuple(int(x) for x in f[8].split('/'))
-            rows[(f[2], frozenset(f[3].split()), int(f[4].rstrip('%')), int(f[6]), fac, mine)] = (f[0], f[1])
+            hab = tuple(x.strip() for x in f[5].split('/'))
+            key = (f[2], frozenset(f[3].split()), int(f[4].rstrip('%')), hab, int(f[6]), fac, mine)
+            if key in rows:
+                raise ValueError('AI.md rows %s and %s share a race' % (rows[key], (f[0], f[1])))
+            rows[key] = (f[0], f[1])
     return rows
 
 
+def hab_text(r):
+    """[center, low, high] -> AI.md's habitat cell: 'imm' or 'low-high'."""
+    return 'imm' if r[0] == 255 else '%d-%d' % (r[1], r[2])
+
+
 def drawn_computer(race, table):
-    key = (race['prt'], frozenset(race['lrt']), race['growth_percent'], race['colonists_per_resource'],
+    h = race['habitability']
+    key = (race['prt'], frozenset(race['lrt']), race['growth_percent'],
+           (hab_text(h['gravity']), hab_text(h['temperature']), hab_text(h['radiation'])), race['colonists_per_resource'],
            (race['factory']['output'], race['factory']['cost'], race['factory']['per_10k']),
            (race['mine']['output'], race['mine']['cost'], race['mine']['per_10k']))
     hit = table.get(key)
