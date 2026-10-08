@@ -60,10 +60,11 @@ public class RaceLab {
         int lrt = Util.read16(d, 0x46) & 0x3fff;
         StringBuilder st = new StringBuilder();
         for (int i = 0; i < 16; i++) st.append(i == 0 ? "" : ",").append(d[0x36 + i] & 0xff);
-        System.out.printf("%s name=%s/%s prt=%s lrt=%#x growth=%d hab=%d,%d,%d/%d,%d,%d/%d,%d,%d stats=%s checksum=%s points=%d%n",
-            f, p.nameSingular, p.namePlural, PRTS[d[0x44]], lrt, d[0x11],
+        int traits = (d[0x48] & 0xff) | (d[0x49] & 0xff) << 8;
+        System.out.printf("%s name=%s/%s prt=%s lrt=%#x growth=%d hab=%d,%d,%d/%d,%d,%d/%d,%d,%d stats=%s traits=%04x checksum=%s points=%d%n",
+            f, p.nameSingular, p.namePlural, d[0x44] < PRTS.length ? PRTS[d[0x44]] : String.valueOf(d[0x44]), lrt, d[0x11],
             d[8] & 0xff, d[9] & 0xff, d[10] & 0xff, d[11] & 0xff, d[12] & 0xff, d[13] & 0xff,
-            d[14] & 0xff, d[15] & 0xff, d[16] & 0xff, st,
+            d[14] & 0xff, d[15] & 0xff, d[16] & 0xff, st, traits,
             sum == ((FileFooterBlock) bl.get(2)).checksum ? "ok" : "BAD", points(d));
     }
 

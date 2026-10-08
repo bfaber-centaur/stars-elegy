@@ -227,3 +227,69 @@ def build_kx004(ev, out):
         n += 1
         print('KX-004-%s: %d streams, %d expectations' % (s, len(streams), len(vec['cases'][0]['expect'])))
     print('kx004: %d vectors' % n)
+
+
+KX5_PARITY = 'docs/PARITY.md "KX-005 — research, tech progression and terraforming"'
+KX5_RULE = {'R': 'KERNEL Research', 'T': 'KERNEL Terraforming'}
+# run: (title, held, tag, verdict). PARITY "KX-005" Results.
+KX5 = {
+    'R1': ('Generalized Research and part announcements', True, 'CONFIRMED',
+           'as predicted for both players: stored research, levels, the GR level-up message and exactly the '
+           'predicted part announcements (no Battle Nexus)'),
+    'R2': ('Generalized Research under slower tech', True, 'CONFIRMED', 'as predicted (499/150 x5; 2018), no messages'),
+    'R3': ('reaching level 26 with "same field"', False, 'MEASURED',
+           'energy 26 and research moved to weapons with 15 stored, as predicted; miss: the stored next-field choice '
+           'stayed "same field", not "lowest" (KERNEL.md states the observed rule)'),
+    'T0': ('terraforming, Orbital Adjusters (neutral) and Claim Adjuster drift', False, 'MEASURED',
+           'production, Auto Min/Max, Claim Adjuster cost, Orbital Adjusters and every drift replay as predicted in all '
+           '15 streams; setup miss: both players reached energy 5 during the year, so the year-end Claim Adjuster step '
+           'and the adjusters used Temp reach 7 (50/53/57, not 50/57/57); recomputed, every planet matches'),
+    'T1': ('Orbital Adjusters of a friend', False, 'MEASURED',
+           'friendly adjusters improved all three planets, the starbase planet included; 60/58/60 (the reach after '
+           'research), predicted 58/60/60 with the start-of-year reach; drift as replayed'),
+    'T2': ('Orbital Adjusters of an enemy', False, 'MEASURED',
+           'as the neutral run (62/60/60, nothing at the starbase planet) and the drift as replayed; the same energy-5 '
+           'setup miss as T0'),
+}
+# Claim Adjuster drift (KERNEL.md "Terraforming") is drawn per CA planet: in a
+# single-stream run the CA planets' environments and the drift message are samples.
+CA_DRIFT_MSG = 0x15c
+
+
+def kx5_samples(vec, ca):
+    out = []
+    for e in vec['cases'][0]['expect']:
+        if e['kind'] == 'planet' and e['id'] in ca and \
+                any(f in e['equals'] for f in ('environment', 'original_environment')):
+            env = {f: v for f, v in e['equals'].items() if f in ('environment', 'original_environment')}
+            rest = {f: v for f, v in e['equals'].items() if f not in env}
+            if rest:
+                out.append(dict(e, equals=rest))
+            e = dict({k: v for k, v in e.items() if k != 'tolerance'}, equals=env, sample=True)
+        elif e['kind'] == 'message' and e['message_id'] == CA_DRIFT_MSG:
+            e = dict(e, sample=True)
+        out.append(e)
+    vec['cases'][0]['expect'] = out
+
+
+def build_kx005(ev, out):
+    os.makedirs(out, exist_ok=True)
+    raw = os.path.join(ev, 'raw')
+    for run, (title, held, tag, verdict) in KX5.items():
+        rd = os.path.join(raw, run)
+        streams = {'cycles ' + c[1:]: [os.path.join(rd, c)] for c in sorted(os.listdir(rd), key=lambda c: -int(c[1:]))
+                   if re.fullmatch(r'c\d+', c)}
+        vec = chained('KX-005-' + run, 'KX-005 %s: %s' % (run, title), streams,
+                      (held, tag, verdict, '', KX5_RULE[run[0]]))
+        if run[0] == 'T' and len(streams) == 1:
+            st = vec['initial_state']
+            ca = {p['id'] for p in st['planets'] if p.get('owner') == 1}
+            kx5_samples(vec, ca)
+        vec['source'] = {'experiment': 'experiments/kx005', 'spec_rules': 'docs/KERNEL.md "%s"' % KX5_RULE[run[0]][7:],
+                         'parity': KX5_PARITY,
+                         'raw_evidence': 'stars-oracle-apparatus evidence/kx005/raw/%s (private)' % run}
+        with open(os.path.join(out, run.lower() + '.json'), 'w') as f:
+            B.json.dump(vec, f, indent=1)
+            f.write('\n')
+        print('KX-005-%s: %d streams, %d expectations, %d samples' % (
+            run, len(streams), len(vec['cases'][0]['expect']), sum(1 for e in vec['cases'][0]['expect'] if e.get('sample'))))
