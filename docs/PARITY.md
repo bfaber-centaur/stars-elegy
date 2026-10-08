@@ -4167,7 +4167,7 @@ stars-oracle-apparatus `evidence/gt/`.
   point, added as a new design. The traded fleet was removed.
 - A warp-9 Trader moved 81 ly in a year.
 
-### Minefield lane (MF-1..MF-15)
+### Minefield lane (MF-1..MF-13)
 
 Status: MEASURED, 2026-10-07. Tests the minefield rules OBJECTS.md marks
 BINARY-ONLY (stars-decomp MF-1..MF-12). Predictions were committed before
