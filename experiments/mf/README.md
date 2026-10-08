@@ -246,6 +246,40 @@ the field and sweep 100; one stop → 2950 → 2891 → 2791. A fleet that ends
 outside the field does not sweep it (2940).
 Decay before the stop's loss would give 2890 before sweeping.
 
+### MF-14 and MF-15: questions from the Elegy minefield implementation (committed before these runs)
+
+From the stars-decomp reading of the hit routine (private
+`fleet-gates-merge.md` §5, `objects.md` §2.3), checked against the public
+`docs/OBJECTS.md` text where they differ. One pinned year at cycles 20000.
+
+- MF-14: when some ships of a fleet are destroyed by a hit, the destroyed
+  ships' capacity share of cargo and fuel goes with them (the sharing of a
+  ship move between fleets), and then the minerals still in the fleet, the
+  survivors' included, are dropped as salvage at the stop point. The public
+  text said the destroyed ships' minerals become salvage.
+- MF-15: the path is cut against each field through the foot of the
+  perpendicular from the field's centre, computed in whole ly. On a leg
+  with no east-west component the foot is taken at the fleet's start, so
+  a due-north or due-south leg is checked only when it starts inside a
+  field, and then over the first `trunc(sqrt(count - d^2))` ly from the
+  start (`d` = distance from start to centre) whatever the direction.
+  LEGACY BUG candidate.
+
+#### MF-14: partial loss to a standard field: which cargo is lost and which becomes salvage (mutual enemies)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-14-A | MF-14 | 12 player-1 fleets of 4 Small Freighters (armor 25, cargo 70) and 1 Privateer with two Superlatanium (armor 3150, cargo 250), each carrying 100/100/100 kT minerals and 50 kT colonists, warp 9, 81-ly legs east inside a player-0 standard field (15 per mille per ly) | each stopped fleet: the Small Freighters are destroyed, the Privateer survives (dmg 15/100%); the fleet keeps 0/0/0 minerals and 24 kT colonists; a salvage object at the stop point holds 47/47/48 kT (the survivors' minerals); the destroyed ships' share 53/53/52/26 is gone | the fleet keeps 47/47/48/24 and the salvage holds the destroyed share 53/53/52 |
+| MF-14-B | MF-14 | fuel of each stopped fleet (fuel capacity 4 x 130 + 650) | F - floor(F x 520 / 1170), F = the fuel of an unstopped twin (both are charged for the full leg) | fuel kept in full, or shared by ship count |
+
+#### MF-15: due-north and due-south legs through a heavy field (mutual enemies)
+
+| Case | Prediction | Setup | Predicted | Rules out |
+|---|---|---|---|---|
+| MF-15-A | MF-15 | 8 player-1 Tanks starting 3 ly outside a player-0 heavy field of 10,000 (radius 100) and flying 81 ly due north into it at warp 9 (about 78 ly inside, 30 per mille per ly) | none stopped: on a leg with no east-west component the path is cut at the start point, which lies outside the field | stops as on an east leg (about 90% each) |
+| MF-15-B | MF-15 | 8 Tanks starting 90 ly from the centre (inside, south side) and flying 81 ly due south, out of the field after about 10 ly | checked from the start for trunc(sqrt(10000 - 8100)) = 43 ly whatever the direction: stops up to 42 ly out, about 73% stopped | checked over the first 10 ly only (about 26% stopped, every stop within 10 ly) |
+| MF-15-C | MF-15 | control: 8 Tanks starting 3 ly outside and flying 81 ly due east into the field | stopped at the heavy rate (about 90% each) |  |
+
 ## Results
 
 Evidence: stars-oracle-apparatus `evidence/mf/` (54335b2), one directory
@@ -288,3 +322,16 @@ per run with `check.txt`. Summary in `docs/PARITY.md` "Minefield lane".
 
 Field counts in every run fit: stops shrink the field during movement,
 then decay (planets counted in the shrunken field), then sweeping.
+
+### MF-14 and MF-15 results
+
+Evidence: stars-oracle-apparatus `evidence/mf/mf14`, `evidence/mf/mf15`
+(one pinned year each, cycles 20000), with `check.txt`.
+
+| Case | Result | Observed |
+|---|---|---|
+| MF-14-A | HELD | 11 of 12 stopped; each kept the Privateer (15/500) with 0/0/0 minerals and 24 kT colonists, and a 47/47/48 salvage lay at its stop point |
+| MF-14-B | HELD | stopped fleets 176 mg, the unstopped fleet 316 (316 − ⌊316·520/1170⌋ = 176) |
+| MF-15-A | HELD | due-north legs entering from 3 ly outside: 0 of 8 stopped |
+| MF-15-B | HELD | due-south legs from 90 ly out: 6 of 8 stopped, at 2, 9, 10, 18, 19, 31 ly (true edge 10–13 ly; rule 43) |
+| MF-15-C | OBSERVED | east-leg controls: 8 of 8 stopped, at 12–49 ly |
