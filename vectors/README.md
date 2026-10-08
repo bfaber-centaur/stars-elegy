@@ -44,6 +44,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `cs` | CS-003 W, B, S, C, C2, D | 80 | warp 10 losses, fuel generation, bombs, colonizing, Orbital Adjuster, minefield sweeping and laying, torpedo hits, designer readouts | `docs/COMPONENTS.md` |
 | `es` | ES-001, ES-002 | 153 | client estimates: waypoint distance, travel time and fuel, range, report ETA, production completion, research, population, value, mining rate | `docs/ESTIMATES.md` |
 | `ob` | OB-001..005, 007..031 | 174 | minefields, packets, the Mystery Trader, wormholes, scanning, stargates | `docs/OBJECTS.md`, `docs/SCANNING.md` |
+| `rw` | RD-1..RD-7, RW08 | 48 | race design at game creation: race files in, races and starting planets out (leftover points, illegal and malformed races, Random races, AR spends) (`new_game` vectors) | `docs/RACES.md`, PARITY "Race design" |
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
@@ -370,6 +371,13 @@ generated starting game. Values that only the original's random stream
 decides, such as planet positions, appear as samples or counts, not as exact
 expectations.
 
+In the `rw` vectors a human player's `race` in `new_game.races` is the race
+*file* the game was built from (decoded with `tools/fleetlab/racelab dump`),
+with `random: true` for a wizard Random race. Case `-R` gives each human
+player's race as the new game recorded it: illegal races replaced, malformed
+fields repaired, Random races generated (those expectations are samples).
+Computer players' races are as recorded, as in `ug`.
+
 ### Not vectors
 
 Static part data (CS-001, CS-002 readouts) is in `data/components.json`,
@@ -389,6 +397,8 @@ python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
 python3 tools/vectors/build.py sl  ../stars-oracle-apparatus/evidence/sl   # also cb7, tk3
 python3 tools/vectors/build.py mf  ../stars-oracle-apparatus/evidence/mf
 python3 tools/vectors/build.py rp  ../stars-oracle-apparatus/evidence/rd
+python3 tools/vectors/build.py rw  ../stars-oracle-apparatus/evidence/rd
+python3 tools/vectors/build.py kx005 ../stars-oracle-apparatus/evidence/kx005
 python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
 python3 tools/vectors/build.py xf  ../stars-oracle-apparatus/evidence/xf    # also bp, tk5, wu
 go test ./internal/vectors
@@ -413,5 +423,5 @@ go test ./internal/vectors
 - RD-P19 years 2 and 3 (`rp19-y2`, `rp19-y3`): their start files are the
   previous year's output, not a separate edit; the year-1 vector covers the
   edit and PARITY "Race design" Round 3 records the later years.
-- RD-1..RD-7 and RW (new games: they wait for the `new_game` form). Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
+- Universe generation (`ug`), objects (`ob`), `pg`, `pq` and `cs`:
   being converted by their own lane.

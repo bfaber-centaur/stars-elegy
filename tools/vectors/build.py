@@ -538,7 +538,7 @@ if __name__ == '__main__':
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         kx = __import__('build_kx')
         kx.build(corpus, ev, out) if corpus in ('kx001', 'kx002') else getattr(kx, 'build_' + corpus)(ev, out)
-    elif corpus in ('cb', 'sc', 'mf', 'rp', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
+    elif corpus in ('cb', 'sc', 'mf', 'rp', 'rw', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
     elif corpus in ('xf', 'bp', 'tk5', 'wu', 'fc', 'co'):
