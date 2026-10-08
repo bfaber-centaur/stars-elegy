@@ -478,8 +478,8 @@ markers, which carry only the viewer's own entry.
 | Wormhole | position, stability, years since it last jumped, and which wormhole is its other end; whether this viewer knows it |
 
 - Nothing was hidden for distance: minefields seen at a quarter of
-  normal range (OB-018) showed their exact mine count and kind, and every Trader
-  record compared showed the item and the served players.
+  normal range (OB-018) showed their exact mine count and kind, and
+  every Trader record compared showed the item and the served players.
 - Knowing which wormhole is the other end does not reveal that end's
   position; that end is reported only when it is seen itself.
 - **Seen this year only.** A year's report holds only the objects seen

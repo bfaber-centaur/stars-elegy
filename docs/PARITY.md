@@ -3267,9 +3267,10 @@ AIX computer players' files after each of 61 generations (366 files).
 - **Turn file: the whole record.** 3,381 records compared: minefields
   3,198, mineral packets 23, salvage 18, Mystery Trader 24, wormholes
   118. Every one had a host record of the same object, and every one
-  equalled it except the per-player "known" and "seen" markers
-  (minefields, 513 records) and the "known" marker (wormholes, 2
-  records), which held only the viewer's own entry of the host's value.
+  equalled it except the per-player markers, which held only the
+  viewer's own entry of the host's value: in minefield records the
+  "known" word differed 513 times and the "seen" word 513 times; in
+  wormhole records the "known" word differed 2 times.
   The objects came from OB-001..OB-031 (and an OB setup probe) and
   MF-1..MF-15; the per-kind run lists are in the raw comparison.
 - **History file: no objects.** None of the 366 AIX history files held
@@ -5314,9 +5315,14 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
   type at easy, standard and harder; 2400–2424, 2400–2424 and 2400–2454.
 - **UG**: the universe-generation corpus's computer players (73 players).
 - **OB**, **MF**: the universe-objects and minefield runs (OB-001..OB-031,
-  MF-1..MF-15; "Universe objects"), each one pinned year in the Combat
-  Lab universe with two JOAT players. Their after-year files are also
-  read as a corpus of object sightings (SC-038).
+  MF-1..MF-15; "Universe objects"). Most are one pinned year in the
+  Combat Lab universe with two JOAT players and the objects written into
+  the start file. Exceptions, as each case says: wormhole creation
+  (OB-006) used new games built from definition files; some runs span
+  more than one year (OB-019, OB-025 and OB-027 three); and some
+  cases give a player another race, such as a Space Demolition or
+  Packet Physics owner. Their after-year files are also read as a
+  corpus of object sightings (SC-038).
 
 ### Cases
 
