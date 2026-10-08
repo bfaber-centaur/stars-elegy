@@ -358,7 +358,16 @@ is paid by a field (MF-4). In `gt`, the fleets whose survivors a gate's
 loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's
-size is a draw, so OB-029's `environment` expectations are samples. In
+size is a draw, so OB-029's `environment` expectations are samples.
+In `ob` and `wt`, these are samples too, because the original draws them
+(OBJECTS.md):
+- whether a player sees a wormhole, since a wormhole's position after its
+  jiggle is drawn;
+- the fleet and field of a mine-hit case, since each hit is drawn;
+- a Trader's end position, since an arriving lone Trader leaves on a draw;
+- the outcome of a Trader encounter (the meeting fleet, the Trader, the
+  player's parts), since the Trader's 1/25 warp rise can carry it past the
+  meeting point. In
 the single-stream `kx005` runs (T1, T2) the Claim Adjuster planets'
 environments and the drift message 0x15c are samples: each planet's drift
 is drawn.

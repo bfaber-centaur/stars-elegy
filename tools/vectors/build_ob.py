@@ -107,6 +107,24 @@ def sample(check, target, got, constraint):
             'constraint': constraint}
 
 
+def drawn(kind, e):
+    """Whether the original's own draws decide this expectation (OBJECTS.md):
+    a wormhole's position after its jiggle, and so whether a scanner sees
+    it; whether a fleet crossing a field is hit, and so the fleet and the
+    field's mines; a Trader's warp rise (1/25 a year) and its stay-or-leave
+    draw on arrival, and so where it ends and which fleet it meets."""
+    k = e['kind']
+    if k == 'view' and e['subject']['kind'] == 'wormhole':
+        return True
+    if kind in ('minehit', 'minehit2'):
+        return k in ('fleet', 'fleet_gone', 'minefield')
+    if kind == 'traderend':
+        return k == 'trader'
+    if kind in ('mtpart', 'tradertwo'):
+        return k in ('fleet', 'fleet_gone', 'trader', 'player')
+    return False
+
+
 def observe(c, A, Bf, run, M):
     """-> list of expectations for one case (without year)."""
     k = c['check']
@@ -306,7 +324,8 @@ def build(ev, out):
                     cid, exps = c['id'], observe(c, A, Bf, r, M)
                 if not exps:
                     continue
-                exps = [dict(e, year=year) for e in exps]
+                exps = [dict(e, year=year, sample=True) if drawn(c['check'][0], e) else dict(e, year=year)
+                        for e in exps]
                 p, h, obs_only = per.get(cid, ({}, True, False))
                 p.setdefault(stream, []).extend(exps)
                 st_held = held.get(c['id'])

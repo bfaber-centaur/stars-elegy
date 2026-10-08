@@ -1281,7 +1281,8 @@
      "equals": {
       "known": true
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     }
    ],
    "prediction": "in player 1's file (decomp: known or in range)"
@@ -1304,7 +1305,8 @@
      "equals": {
       "known": true
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     }
    ],
    "prediction": "in player 1's file"
@@ -1327,7 +1329,8 @@
      "equals": {
       "known": false
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "view",
@@ -1339,7 +1342,8 @@
      "equals": {
       "known": false
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     }
    ],
    "prediction": "absent"
