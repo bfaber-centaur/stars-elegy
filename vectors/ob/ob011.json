@@ -1629,8 +1629,7 @@
      "equals": {
       "known": true
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1642,8 +1641,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1655,8 +1653,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1668,8 +1665,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",

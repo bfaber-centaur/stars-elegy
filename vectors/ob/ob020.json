@@ -1260,8 +1260,7 @@
      "equals": {
       "known": true
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     }
    ],
    "prediction": "seen (known: full R)"
@@ -1284,8 +1283,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     }
    ],
    "prediction": "not seen (R/4)"
@@ -1308,8 +1306,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     }
    ],
    "prediction": "not seen"
@@ -1332,8 +1329,7 @@
      "equals": {
       "known": true
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1345,8 +1341,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1358,8 +1353,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1371,8 +1365,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1384,8 +1377,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     },
     {
      "kind": "view",
@@ -1397,8 +1389,7 @@
      "equals": {
       "known": false
      },
-     "year": 1,
-     "sample": true
+     "year": 1
     }
    ]
   }

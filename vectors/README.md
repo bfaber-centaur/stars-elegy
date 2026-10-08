@@ -361,8 +361,9 @@ ids that only some of those fleets got. In `ob`, a PP terraforming step's
 size is a draw, so OB-029's `environment` expectations are samples.
 In `ob` and `wt`, these are samples too, because the original draws them
 (OBJECTS.md):
-- whether a player sees a wormhole, since a wormhole's position after its
-  jiggle is drawn;
+- whether a player sees a wormhole, where the drawn jiggle (at most 17 ly
+  for these wormholes, none of which can jump) can carry it across the
+  scanner bound: only OB-018-SCAN wormhole 2;
 - the fleet and field of a mine-hit case, since each hit is drawn;
 - a Trader's end position, since an arriving lone Trader leaves on a draw;
 - the outcome of a Trader encounter (the meeting fleet, the Trader, the
@@ -458,8 +459,7 @@ comment below after a rebuild.
 - New games: UG01..UG30, RD-1..RD-7 and RW08 cases B..E (planet counts,
   starting planets, wormholes, stored victory conditions), plus RD-5-R and
   RD-6-R (Random races).
-- Objects: OB-004-D, OB-005-A/B, OB-007-D, OB-010-S, OB-017-A..C,
-  OB-020-A..C and SCAN, OB-023-T, OB-024-A..C, OB-025 (all nine),
+- Objects: OB-004-D, OB-005-A/B, OB-007-D, OB-010-S, OB-023-T, OB-024-A..C, OB-025 (all nine),
   OB-026-A..D, OB-027-A/B, OB-029-D2, OB-030-T.
 - Mystery Trader: WT-001-E, WT-001-F2, WT-002-B, WT-003-A00..A11, A and B,
   WT-004-A..C, WT-005-A.
