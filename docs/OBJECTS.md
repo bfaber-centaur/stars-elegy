@@ -581,7 +581,7 @@ Each end separately, in list order:
   jump reset the years and kept the class.
 - **Jiggle:** years +1; up to 100 tries of `(x + rand(25) − 12, y + rand(25)
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
-  is rejected. The class never changes.
+  is skipped: it uses up a try but is not scored. The class never changes.
 - Both kinds of move choose among their tries with the creation badness
   (Placement, "During movement" below).
 
@@ -728,7 +728,12 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   a year whose warp rose. The Trader then moves at the new warp. On
   arrival: with another Trader present it is removed with no draw;
   otherwise `rand(2)`, where 0 removes it and 1 keeps it and draws the new
-  destination.
+  destination. Traders move one at a time in object-list order, and a
+  removed Trader leaves the list at once. So "another Trader" means one
+  still in the galaxy at that moment, anywhere, including one that has
+  not moved yet this year; a Trader removed earlier in the same year does
+  not count. When two arrive in one year, the first is removed with no
+  draw and the second, now alone, draws.
 - **New destination (CONFIRMED in part).** Drawn the same way after a
   warp rise and after arrival: `rand(2)` picks the side (0 the high edge
   `1380 + 400·size`, 1 the low edge `1020`); then the free coordinate
@@ -858,6 +863,12 @@ with random events off (an inserted Trader traded).
         Multi Cargo Pod, Jump Gate, Anti Matter Torpedo ×2 in two slots.
       - Probe: as the Scout, with Mega Poly Shell ×3 in place of the
         Langston Shells.
+    - **Slot layout (MEASURED, WT-004: 27 gift designs).** The loadouts
+      above are in the hull's slot order (`data/components.json`), one
+      entry per slot, and "in two slots" or "in three slots" means
+      consecutive slots. Every slot of the hull is filled to its maximum,
+      the engines in the first slot. The gift copies a fixed design, so
+      the layout never varies (BINARY-ONLY).
     - Count: 2 with 1/3, else 1. After year index 100, unless the game has
       a single human player, add `rand(⌊year index/100⌋ + 1)`. Cap at 5.
       For the Scout and the Probe, then add `rand(count + 1)`. So 1–10
@@ -881,7 +892,11 @@ with random events off (an inserted Trader traded).
       `rand(count + 1)` for a Scout or Probe.
     - **The new fleet (BINARY-ONLY).** It takes the player's lowest unused
       fleet number, battle plan 0 (the player's first plan), one waypoint
-      at the trade point, and is marked as not having moved this year. It
+      at the trade point, and is marked as not having moved this year.
+      Consumed fleets, the traded fleet and any consumed earlier that
+      year included, still hold their numbers then: they stay in the
+      fleet list until all the meetings are over. So the gift fleet never
+      takes the number of a fleet consumed that year. It
       orbits whatever planet the traded fleet orbited, if any. If it lands
       later in the fleet list it is offered to the Trader like any fleet,
       but it carries no minerals, so it never trades and, not having
