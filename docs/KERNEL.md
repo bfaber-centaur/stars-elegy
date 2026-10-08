@@ -85,8 +85,9 @@ order shown. "Fleet order" means by owner, then by fleet number
    the new targets can differ (BINARY-ONLY; `ORDERS.md` "Targets that
    moved, died or were captured"). Every other known effect on another
    player's object (colonist drops, the deferred transfer queue) is queued
-   to a fixed later step and does not depend on the order. See `ORDERS.md`, "Conflicts between players", and the gift
-   rules in `TAKEOVER.md`.
+   to a fixed later step and does not depend on the order. See
+   `ORDERS.md`, "Conflicts between players", and the gift rules in
+   `TAKEOVER.md`.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`

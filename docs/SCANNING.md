@@ -459,6 +459,44 @@ fleet's or planet's ranges.
     (heading 0, 0 and warp 0).
   - Fleets travelling by stargate were not read.
 
+### Space objects
+
+What a player's file records about a space object it sees this year
+(MEASURED, SC-038 in `PARITY.md`: every foreign object record in the
+oracle player files of OB-001..OB-031 and MF-1..MF-15 was compared with
+the host's own record of that object: 3,198 minefields, 23 packets, 18
+salvage piles, 24 Mystery Trader records and 118 wormholes). A sighting reveals the whole object, the
+same as the host holds it, except the per-player "known" and "seen"
+markers, which carry only the viewer's own entry.
+
+| Object | Revealed |
+|---|---|
+| Minefield | owner and field number, centre, mine count (so the radius, `√count`), kind (standard, heavy, speed bump), the detonate setting; whether this viewer knows it |
+| Mineral packet | owner, position, destination planet, warp, ironium, boranium and germanium carried, its decay state and whether it has moved |
+| Salvage | owner, position, ironium, boranium and germanium |
+| Mystery Trader | position, destination, warp, which players it has already served, and the item it carries |
+| Wormhole | position, stability, years since it last jumped, and which wormhole is its other end; whether this viewer knows it |
+
+- Nothing was hidden for distance: minefields seen at a quarter of
+  normal range (OB-018) showed their exact mine count and kind, and every Trader
+  record compared showed the item and the served players.
+- Knowing which wormhole is the other end does not reveal that end's
+  position; that end is reported only when it is seen itself.
+- **Seen this year only.** A year's report holds only the objects seen
+  that year (the rules under "Space objects" above). In computer
+  players' history files nothing about an object carries over after it
+  leaves view: 366 AIX history files held no object records at all
+  (MEASURED, AIX corpus, SC-038). What does carry over is the host's own
+  "known" marker for minefields and wormholes, which widens later
+  sighting ranges (above). UNRESOLVED: a human player's history file,
+  which the client writes.
+- A player's own packets in flight are not always in its own report.
+  MEASURED once (OB-017 D–F, neither player PP): packets beyond every
+  scanner were missing from both files, one of player 0's own in player
+  0's file and two of player 1's own in player 1's. This fits the
+  reading that the owner sees its packets only by the ordinary scanner
+  rule (BINARY-ONLY), PP players excepted.
+
 ### Designs
 
 - A seen ship or starbase reveals its design **partially**: hull and mass
