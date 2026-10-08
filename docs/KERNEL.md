@@ -73,14 +73,19 @@ order shown. "Fleet order" means by owner, then by fleet number
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
    The permutation itself is BINARY-ONLY. With orders a client can save,
-   it is observable only through a cargo gift to another player's fleet or
-   planet: that gift is credited **in place** during the giver's replay
-   (MEASURED — fleets TK-406/407/409, planets TK-405/412), not queued, so a
-   recipient whose own orders replay after the giver's can act on a gifted
-   fleet's cargo, or load a planet's gifted minerals, that same year. Every
-   other effect on another player's object (colonist drops, the deferred
-   transfer queue) is queued to a fixed later step and does not depend on
-   the order. See `ORDERS.md`, "Conflicts between players", and the gift
+   it is observable in two known ways. The first is a cargo gift to another
+   player's fleet or planet: that gift is credited **in place** during the
+   giver's replay (MEASURED — fleets TK-406/407/409, planets TK-405/412),
+   not queued, so a recipient whose own orders replay after the giver's can
+   act on a gifted fleet's cargo, or load a planet's gifted minerals, that
+   same year. The second is a waypoint aimed at another player's fleet that
+   its owner merges away the same year: the waypoint is retargeted by one
+   of two routines depending on which player replays first, only one of
+   which draws random numbers, and with several or no fleets at that spot
+   the new targets can differ (BINARY-ONLY; `ORDERS.md` "Targets that
+   moved, died or were captured"). Every other known effect on another
+   player's object (colonist drops, the deferred transfer queue) is queued
+   to a fixed later step and does not depend on the order. See `ORDERS.md`, "Conflicts between players", and the gift
    rules in `TAKEOVER.md`.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
