@@ -157,7 +157,7 @@ def state(hst, xy, game, xy_path=None):
         if s.startswith('xy planet'):
             d = kv(s)
             pos[int(s.split()[2])] = (int(d['x']), int(d['y']))
-    planets, sb = {}, {}
+    planets, sb, pk = {}, {}, {}
     owners, idx = [], {'ship': 0, 'sb': 0}
     fleet = None
     for s in hst:
@@ -213,6 +213,15 @@ def state(hst, xy, game, xy_path=None):
             n = int(s.split()[1])
             sb[n] = dict(design=int(d['design']) if d.get('starbase') == 'true' else None,
                          damage=int(d.get('sbdmg', 0)))
+            # Mass-driver settings, in the planet's starbase bytes 2-3: destination
+            # planet + 1 in 10 bits (0 = none), packet warp - 4 in bits 2-5 of byte 3.
+            m = re.search(r'sbbytes=(\d+) (\d+) (\d+) (\d+)', s)
+            b2, b3 = (int(m.group(3)), int(m.group(4))) if m else (0, 0)
+            dest = b2 | (b3 & 3) << 8
+            if dest or b3 >> 2 & 0xf:
+                pk[n] = {'packet_warp': (b3 >> 2 & 0xf) + 4}
+                if dest:
+                    pk[n]['packet_destination'] = dest - 1
         elif s.startswith('pdetail '):
             n = int(s.split()[1])
             p = {'id': n, 'x': pos[n][0], 'y': pos[n][1], 'owner': int(d['owner'])}
@@ -261,6 +270,7 @@ def state(hst, xy, game, xy_path=None):
         if not s.startswith(('  wp ', 'fleet ', '  fleetname ')):
             fleet = None
     for n, p in planets.items():
+        p.update(pk.get(n, {}))
         if n in sb:
             p['starbase'] = sb[n]
     st['planets'] = [planets[n] for n in sorted(planets)]

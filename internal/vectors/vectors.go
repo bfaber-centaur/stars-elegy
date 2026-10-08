@@ -271,7 +271,9 @@ type Planet struct {
 	Defenses            *int      `json:"defenses,omitempty"`
 	PlanetaryScanner    *int      `json:"planetary_scanner,omitempty"`
 	LeftoverToResearch  *bool     `json:"leftover_to_research,omitempty"`
-	RouteTo             *int      `json:"route_to,omitempty"` // the planet's route destination
+	RouteTo             *int      `json:"route_to,omitempty"`           // the planet's route destination
+	PacketDestination   *int      `json:"packet_destination,omitempty"` // the mass driver's target planet
+	PacketWarp          *int      `json:"packet_warp,omitempty"`        // the mass driver's packet speed setting
 	Starbase            *Starbase `json:"starbase,omitempty"`
 }
 
