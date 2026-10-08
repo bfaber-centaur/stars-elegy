@@ -549,6 +549,43 @@ gate type matched in GT-001 N1–N6 (one stream).
   one of three identical ships was lost, the fleet's fuel went 100 → 67
   (MEASURED, OB-021). A design with `pct = 100` is lost entirely; if
   every design is lost, the fleet is gone.
+- **Order of designs and draws (BINARY-ONLY).** Every design's `pct` is
+  worked out first, in design-number order (the owner's design slots),
+  before any draw; a refusal stops there and nothing is drawn. Then the
+  designs are taken in design-number order again, whatever order their
+  ships joined the fleet in. A design with `pct = 0` is skipped: no draws
+  and no damage. A design with `pct = 100` is removed with no draws. For
+  `0 < pct < 100` with `k = ⌊pct/3⌋ > 0` (never for IT), each ship of the
+  design in turn draws `rand(100)`, and `rand(100) < k` destroys it. When a
+  ship is destroyed while the design still counts damaged ships (`D > 0`,
+  below), `rand(500) < u` follows, and if it holds `D` drops by one. No
+  other draws are made.
+- **Damage (BINARY-ONLY; fits OB-021, GT-001).** For a design with `n`
+  ships before the jump, armor `A` and old stack damage `(p₀, u)`
+  (`COMBAT.md` conventions): damaged ships `D = max(1, ⌊p₀·n/100⌋)`, old
+  damage per damaged ship `Dm = max(1, ⌊u·A/500⌋)` (both 0 when the stack
+  was undamaged), and new damage `Nw = max(1, ⌊pct·A/100⌋)`. With `s`
+  ships left after the draws: if `D > 0` and `Nw + Dm ≥ A`, `D` more ships
+  are destroyed (`s − D` left). If ships are left, `avg = ⌊(Nw·s + Dm·D)/s⌋`
+  and the stack becomes `p = 100` with `u = max(1, ⌊avg·500/A⌋)`. `D` is
+  not lowered by that extra destruction, so destroyed damaged ships still
+  add their old damage to the average (the LEGACY BUG candidate above).
+  So the old damage counted is that of the `D` damaged ships, not of every
+  ship of the design. When `D` is larger than `s`, the ship count goes
+  negative and the fleet record is corrupt (BINARY-ONLY; no case reaches
+  it, so Elegy needs a chosen rule there).
+- **Fuel and cargo after losses (BINARY-ONLY; fits OB-021).** When any
+  ship is lost, including a design lost entirely, the lost ships take
+  `⌊fuel·L/T⌋` of the fleet's fuel, with `L` the fuel capacity (hull plus
+  tanks) of the lost ships and `T` that of every ship before the jump. The
+  fleet keeps the rest, so its fuel in effect rounds up: OB-021's 100 with
+  one of three lost keeps `100 − 33 = 67`, and two of three lost would
+  keep `100 − 66 = 34`. Cargo still aboard (IT, Jump Gate) is lost the same
+  way by cargo capacity: `⌊C·Lc/Tc⌋` in total, split as `⌊c·lost/C⌋` per
+  item, then any remainder 1 kT at a time over ironium, boranium,
+  germanium and colonists in that order, in one pass over the items still
+  holding cargo. It is the same proportional rule as for ships lost in
+  battle. With no ship lost, fuel and cargo are unchanged.
 - **Mixed fleets (LEGACY BUG, MEASURED GT-001 H2, GT-002):** each design
   lost entirely (`pct = 100`) counts twice against the fleet's number of
   designs, and a design wiped out by the loss rolls (`pct < 100`) counts
