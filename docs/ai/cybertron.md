@@ -381,13 +381,25 @@ highest-numbered planet that mark belongs to no planet.
   easy never): with `M` = the planet's available minerals less queued
   costs, less 210, over 150: the nearest other player's unmarked planet
   (not AR) with a known non-zero population, whose starbase is fully known
-  or absent, within `2.5·w²` ly, that the budget can kill. Kill mass `=
-  16000·min(1000, 4(pop + 25)) / ((w² − c²)(95 − d))`, where `pop` is the
-  population estimate as the report holds it, in units of 400 colonists
-  (the estimate ÷ 400, `SCANNING.md`), `c` = the target's catch warp and
-  `d` = its defense coverage estimate as the report holds it; scaled by
-  `q^(distance/w²)` (`q` = 0.875 with two drivers of the best warp, else
-  0.75). Packets of 70 kT, each of the mineral with the most left, at
+  or absent, within `2.5·w²` ly, that the budget can kill. Kill mass
+  `need = 16000·min(1000, 4(pop + 25)) / ((w² − c²)(95 − d))`
+  (truncated), where `pop` is the population estimate as the report holds
+  it, in units of 400 colonists (the estimate ÷ 400, `SCANNING.md`), `c`
+  = the target's catch warp and `d` = its defense coverage estimate as the
+  report holds it. With `f = q^(D/w²)`, `D` = the distance in ly and `q`
+  = 0.875 with two drivers of the best warp, else 0.75 (so `f ≤ 1`, the
+  share of the mass that arrives):
+  - the budget is `C = min(M, 70·((R/2 − 5)/5))`, `R` = the planet's
+    available resources (integer division), and a target qualifies when
+    `need ≤ trunc(C·f)` (BINARY-ONLY);
+  - the mass sent is `A = trunc(min(need, M) / f)`, divided by `f`, so
+    more than the kill mass leaves the planet to cover the loss in
+    flight, as `⌈A/70⌉` packets (MEASURED, AI-24: dividing gives AIX's
+    packet count in 16 of 16 attacks, each with `M` above the kill mass;
+    e.g. need 284 at `f` = 0.75^0.807 gives 358 kT, 6 packets, as
+    observed, where multiplying would give 225 kT, 4 packets).
+
+  Packets of 70 kT, each of the mineral with the most left, at
   warp `w`, aimed at the target, which is then marked (MEASURED: AIX
   warps and packet counts, 16 of 16). The level test's `Random(3)` is the
   attack's only draw. No target, or `M` too small: the scanner shot.
