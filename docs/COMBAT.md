@@ -1216,16 +1216,20 @@ token's design that holds a Mystery Trader part adds the slot's part count
 to that item's chance, up to 25 (`c = min(25, c + count)`). So the chance
 counts kill events, not ships killed, and a design reaches 25 only after
 several kill events or with many parts. The hull never counts, so the
-Mystery Trader hulls never get a chance in battle. The item indices `k`:
+Mini Morph never gets a chance in battle. The item indices `k` are the
+bits of the Trader part word (`OBJECTS.md` "Encounters"), and a success
+at `k` gives bit `k` (CONFIRMED, CB-048: the gains were bits 0, 1, 2 and
+9, each a part on the destroyed design, and the replay named the bit in
+every gaining stream):
 
 | `k` | item | `k` | item |
 |---|---|---|---|
 | 0 | Multi Cargo Pod | 7 | Multi Contained Munition |
-| 1 | Multi Function Pod | 8 | (a hull: never in battle) |
+| 1 | Multi Function Pod | 8 | Mini Morph (a hull: never a chance) |
 | 2 | Langston Shell | 9 | Enigma Pulsar |
-| 3 | Mega Poly Shell | 10 | (a hull: never in battle) |
+| 3 | Mega Poly Shell | 10 | Genesis Device (a planetary item, on no ship: never a chance) |
 | 4 | Alien Miner | 11 | Jump Gate |
-| 5 | Hush-a-Boom | 12 | (a hull: never in battle) |
+| 5 | Hush-a-Boom | 12 | no item (the ship-gift bit: never a chance) |
 | 6 | Anti Matter Torpedo | | |
 
 With chances `c_k`, one attempt gains an item with probability about

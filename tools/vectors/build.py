@@ -63,7 +63,13 @@ def last_section(lines):
 
 
 def kv(s):
-    return dict(m.groups() for m in re.finditer(r'(\w+)=(\S+)', s))
+    d = dict(m.groups() for m in re.finditer(r'(\w+)=(\S+)', s))
+    # A player line carries `mt=` twice: first the Mystery Trader word as a
+    # number, later its two bytes in file order (low byte first). Keep the number.
+    m = re.search(r' mt=([0-9a-f]+)', s)
+    if m:
+        d['mt'] = m.group(1)
+    return d
 
 
 def mask_players(m, n=16):
