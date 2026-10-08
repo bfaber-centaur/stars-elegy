@@ -232,7 +232,15 @@ Rules with draws were checked as sets of allowed outcomes. Branches marked
     when the fleet holds more than 6 scouts, 1 in 5 (`Random(5) == 0`)
     moves to a random nearby planet (`../AI.md` §11, radius 105) other
     than its current one. Otherwise, if waypoint 0 has no task, it gets
-    the task *lay mines* (with parameters 5 and 5, meaning not yet read).
+    the task *lay mines* with duration *indefinitely* (the order's
+    duration field is 5, the value a client "indefinitely" order carries;
+    `OBJECTS.md` "Laying", CONFIRMED in OB-019). MEASURED (AI-25,
+    AIX): Robotoid's two laying fleets kept the task, duration still 5, in
+    20 and 10 consecutive yearly host files, 30 fleet-years in all; the
+    host never cleared it (`PARITY.md` AI-25). The order also carries a
+    second field, also 5. The laying rules in `OBJECTS.md` use only the
+    duration; what the second field means is UNRESOLVED. Write it as 5
+    for parity of the order bytes.
     After a move, or when waypoint 0 already had a task, the fleet goes
     on to the colonizer rule above.
 
