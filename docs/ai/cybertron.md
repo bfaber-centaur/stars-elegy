@@ -370,3 +370,25 @@ driver rating + 3.
   the memory is empty each turn (`../AI.md` §1); the attack-budget and
   kill-mass formulas need a check with known minerals.
 - List 35's position in the list table was read but never built.
+
+## What a faithful planner still depends on
+
+The rules above are enough to write the planner. To check one against
+the AIX captures, the turn engine also has to carry out every kind of
+order Cybertron gives:
+- ship design create and delete;
+- merges and splits by design slot;
+- scrapping;
+- the colonize, lay-mines and transport (load and unload, including
+  unloading at another player's planet as an invasion) tasks;
+- ship, starbase and mineral-packet production items placed at the
+  front of the queue;
+- planet automation (`../AI.md` §7).
+
+Two inputs come from shared state and need a decision before a check:
+- **Armada parameters.** Under clean per-player state they read as 0
+  (§1 step 4), so AIX's 2452–2460 armada orders match only with the
+  legacy switch on.
+- **Random draws.** All computer players draw from one stream in player
+  order. A Cybertron check needs the earlier computer players' turns to
+  run as well, or the AIX random-dependent lines will not line up (AI-18).
