@@ -73,14 +73,15 @@ order shown. "Fleet order" means by owner, then by fleet number
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
    The permutation itself is BINARY-ONLY. With orders a client can save,
-   it is observable only through a cargo gift to another player's fleet:
-   that gift is credited **in place** during the giver's replay (MEASURED,
-   TK-406/407/409), not queued, so a recipient whose own orders replay
-   after the giver's can act on the gifted cargo that same year. Every
+   it is observable only through a cargo gift to another player's fleet or
+   planet: that gift is credited **in place** during the giver's replay
+   (MEASURED — fleets TK-406/407/409, planets TK-405/412), not queued, so a
+   recipient whose own orders replay after the giver's can act on a gifted
+   fleet's cargo, or load a planet's gifted minerals, that same year. Every
    other effect on another player's object (colonist drops, the deferred
    transfer queue) is queued to a fixed later step and does not depend on
-   the order. See `ORDERS.md`, "Conflicts between players" and the gift
-   rules.
+   the order. See `ORDERS.md`, "Conflicts between players", and the gift
+   rules in `TAKEOVER.md`.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`
@@ -809,11 +810,13 @@ stolen 23 and 88 stored as 12 and 44).
   that the level makes available: a part the race may use (race-restricted
   parts and Mystery Trader parts the player does not own are skipped)
   whose requirement in that field equals the new level **and** whose other
-  five requirements are already met. CONFIRMED (KX-005 R1: energy 9 → 10
-  announced Bear Neutrino Barrier, Laser Battery and Temp Terraform ±11,
-  not Battle Nexus, which also needs electronics 19; a GR weapons 0 → 1
-  announced Radiation Terraform ±3). So a part is normally announced
-  when its last missing requirement is reached (follows from the rule).
+  five requirements are already met. That the check is **not** limited to
+  the leveled field is MEASURED (KX-005 R1: energy 9 → 10 announced Bear
+  Neutrino Barrier, Laser Battery and Temp Terraform ±11, but not Battle
+  Nexus, which also needs electronics 19; a GR weapons 0 → 1 announced
+  Radiation Terraform ±3); the check of all six fields is BINARY-ONLY
+  beyond that case (`MESSAGES.md`). So a part is normally announced when
+  its last missing requirement is reached.
 - Super Stealth: after every player's research, an SS player gains, per
   field, `s = trunc(trunc(spent/players)/2)` when `s > 1`, where `spent` is
   every player's research in that field this year, its own included, and
