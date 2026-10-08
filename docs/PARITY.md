@@ -5319,7 +5319,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
   Combat Lab universe with two JOAT players and the objects written into
   the start file. Exceptions, as each case says: wormhole creation
   (OB-006) used new games built from definition files; some runs span
-  more than one year (OB-019 two, OB-025 and OB-027 three); and some
+  more than one year (OB-019, OB-025 and OB-027 three); and some
   cases give a player another race, such as a Space Demolition or
   Packet Physics owner. Their after-year files are also read as a
   corpus of object sightings (SC-038).
