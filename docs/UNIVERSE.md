@@ -262,6 +262,16 @@ planet).
 **BBS option** (CONFIRMED, UG03, UG09, UG21): homeworld population ×
 `(growth% · k + 5)/5`, `k = 2` for HE and 1 otherwise.
 
+**Order of the population steps** (MEASURED, UG03-C, UG21-C). Population
+is counted in units of 100 colonists, and each step truncates to a whole
+unit before the next: first an expert computer player's +10%
+("Computer players" below), then the BBS factor, then the PP/IT split
+with the second planet ("Second planet" below). UG03-C player 2 (expert
+PP, LSP, growth 19%, BBS): 175 → 192 → `⌊192·24/5⌋ = 921` → homeworld
+`⌊921·4/5⌋ = 736`, second planet `⌊921·2/5⌋ = 368`. UG21-C player 9
+(expert CA, LSP, growth 15%, BBS): 175 → 192 → `192·20/5 = 768`. Applying
+the BBS factor before the +10% gives 739 and 770 instead.
+
 **AR** (CONFIRMED, UG01..UG15 computer players): no mines, factories or defenses and no planetary
 scanner. Starbase design 1 (a Space Station) orbits the homeworld, and
 design 0 is an empty Orbital Fort.

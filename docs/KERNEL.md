@@ -1604,7 +1604,11 @@ brackets): planets owned `(v + 4)·5`% [60], tech level `v + 8` [22] in
 `(v + 2)·10`% [100], resources `(v + 1)·10` thousand [100], capital ships
 `(v + 1)·10` [100], highest score after `(v + 3)·10` years [100], the
 number of conditions needed [1], and the minimum years `(v + 3)·10` [30].
-Each of the first seven is on or off. Tests, per player and year:
+Each of the first seven is on or off. A new game stores the value of
+every condition that is off as 0, which reads as that condition's lowest
+setting (planets 20%, score 1000, ...); for the tech condition both the
+level and the field count are stored as 0. Conditions that are on keep
+the value they were given (MEASURED, UG01-E..UG30-E). Tests, per player and year:
 
 - Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
   S1: 24 planets at 20% need 5; 5 met, 4 did not). The rounding is to the
