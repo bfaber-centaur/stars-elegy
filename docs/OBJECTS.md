@@ -641,8 +641,8 @@ lowest badness, and a rejected try (15) beats no try at all: if every
 scored try was rejected, the end moves to the first of them, even outside
 the galaxy or onto another object. It does not stay where it was. A
 jiggle can only be rejected for being outside the galaxy or on an exact
-object, so every try failing needs an end in a corner with all of its
-inside cells occupied; no run has come close (UNRESOLVED whether the
+object, so every try failing would in practice need an end in a corner with
+all of its inside cells occupied; no run has come close (UNRESOLVED whether the
 original then shows the end outside the galaxy; LEGACY BUG candidate).
 
 ### Travel (CONFIRMED, OB-005 C, D)
@@ -704,9 +704,16 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
 - Item offered: research or a ship with probability `r/10`, `r` = 5 before
   year index 100, 3 before 250, 2 after, +1 below warp 10, −1 above; then
   ship with 1/6, else research. Otherwise one of 13 bits, uniformly: the
-  twelve parts of the bit table in "Encounters" below, or bit 12, a ship gift;
-  rerolled once for four of the parts, and three of those turn into research with 1/2 before
-  year index 120, 150 or 180.
+  twelve parts of the bit table in "Encounters" below, or bit 12, a ship gift.
+  - **Reroll.** A first draw of bit 6 (Anti Matter Torpedo), 7 (Multi
+    Contained Munition), 10 (Genesis Device) or 11 (Jump Gate) is replaced
+    by a second `1 << rand(13)`. The second draw stands even if it is one of
+    those four again; there is no third.
+  - **Conversion.** Only a second draw can convert. If it is bit 7 before
+    year index 120, bit 10 before 150, or bit 11 before 180, a `rand(2)` is
+    drawn and 1 turns the item into research (so 1/2). Bit 6 is rerolled
+    but never converted. No `rand(2)` is drawn in any other case.
+  - BINARY-ONLY: no KX-004 run drew one of the four bits.
 
 ### Movement (BINARY-ONLY except where noted; not part of KX-004)
 
@@ -715,6 +722,32 @@ late-year conversion to research stay BINARY-ONLY: no run drew them.
   destination. On arrival it leaves the galaxy if another Trader exists or
   with 1/2; otherwise it stays at the edge, takes warp `max(6, warp − 2) +
   1` and a new destination, and does not move further that year.
+- **Draws in a year (BINARY-ONLY).** Only at warp 12 or below: `rand(25)`;
+  0 raises the warp (every player is told), and only then `rand(3)`, where
+  0 draws a new destination. So a new destination in flight comes only in
+  a year whose warp rose. The Trader then moves at the new warp. On
+  arrival: with another Trader present it is removed with no draw;
+  otherwise `rand(2)`, where 0 removes it and 1 keeps it and draws the new
+  destination.
+- **New destination (CONFIRMED in part).** Drawn the same way after a
+  warp rise and after arrival: `rand(2)` picks the side (0 the high edge
+  `1380 + 400·size`, 1 the low edge `1020`); then the free coordinate
+  `1020 + rand(361 + 400·size)`; then `rand(2)` picks the axis (0: the
+  destination's `x` is the edge value and `y` the free one; 1: the
+  reverse, note the opposite sense to the appearance draw in `KERNEL.md`).
+  So it can be any of the four edges, wherever the Trader is and wherever
+  it was heading. CONFIRMED that it is not tied to the old axis: OB-023's
+  Trader arrived on the `x = 1380` edge at (1380, 1300) and got (1098,
+  1380), on a `y` edge. The draw order is BINARY-ONLY.
+- **Each year's step (BINARY-ONLY in detail; shared with packets).** With
+  `d` the exact distance to the destination and `m` the year's move: if
+  `trunc(d) ≤ m` it arrives. Otherwise, when `d > 0.0001`, each axis moves
+  by `trunc(Δ·m/d + h)`, with `Δ` the destination's coordinate minus the
+  current one, `h = +0.5` when `Δ > 0`, else `−0.5`: rounding half away
+  from zero, `m/d` computed once for both axes. If that step lands exactly
+  on the destination, it counts as an arrival that year. The packet flights
+  of OB-003 and OB-028 and the Trader's 81 ly at warp 9 (OB-023) agree
+  with it.
   CONFIRMED (OB-023, OB-026, OB-031): a warp-9 Trader moved 81 ly; one
   arriving while another existed was removed; the only Trader stayed, warp
   8 → 7, with a new destination on an edge; a lone warp-6 Trader stayed
@@ -804,7 +837,10 @@ with random events off (an inserted Trader traded).
       message gives `L`. Each level, in turn: with 3/4 a uniformly random
       field (the lowest field instead if that one is at 26), with 1/4 the
       lowest field (first in field order on ties); the loop stops early
-      once the lowest field is at 26. Each step raises that field by
+      once the lowest field is at 26. Draws per level: `rand(4)`; 0–2 then
+      `rand(6)` for the field (fields in the order energy, weapons,
+      propulsion, construction, electronics, biotech), 3 no further draw
+      (BINARY-ONLY; the field odds are MEASURED as above). Each step raises that field by
       exactly one level and leaves its accumulated research unchanged.
       CONFIRMED: a tech-3 player trading 5,000 kT gained 6 levels.
   - a ship (CONFIRMED, WT-003 B, WT-004 B, C: 27 gifts, Lifeboat 5,
@@ -827,9 +863,29 @@ with random events off (an inserted Trader traded).
       For the Scout and the Probe, then add `rand(count + 1)`. So 1–10
       ships.
     - A design the player already has that matches is reused; otherwise
-      the design goes into the player's first empty design slot. It keeps
-      its Trader parts although the player's part word does not gain them.
-      The new fleet appears at the trade point with full fuel.
+      the design goes into the player's first empty design slot, in slot
+      order 1 to 16 (CONFIRMED, WT-004). It keeps its Trader parts although
+      the player's part word does not gain them. The new fleet appears at
+      the trade point with full fuel.
+    - **Matching (BINARY-ONLY).** Only a design that came from an earlier
+      Trader gift and is still in use can match: the gift marks the
+      designs it creates, and a player's own design with the same parts
+      never matches. It matches when the hull, the number of slots and
+      every slot's count are equal, and every non-empty slot holds the same
+      part. The name is not compared. A reused design is not rewritten.
+    - **Draw order (BINARY-ONLY).** Computer players draw nothing. Then the
+      design `rand(4)` (`rand(3)` after year index 100), then for a
+      non-zero result `rand(2)` (0 Scout, 1 Probe). The count draws come
+      only when a slot is found and the player has fewer than 512 fleets:
+      `rand(3)`, then `rand(⌊year index/100⌋ + 1)` when that applies, then
+      `rand(count + 1)` for a Scout or Probe.
+    - **The new fleet (BINARY-ONLY).** It takes the player's lowest unused
+      fleet number, battle plan 0 (the player's first plan), one waypoint
+      at the trade point, and is marked as not having moved this year. It
+      orbits whatever planet the traded fleet orbited, if any. If it lands
+      later in the fleet list it is offered to the Trader like any fleet,
+      but it carries no minerals, so it never trades and, not having
+      moved, gets no message.
     - With no free design slot, or 512 fleets already, there is no ship
       (the player is told the design records could not be stored) and the
       fleet is still consumed.
@@ -863,6 +919,16 @@ exclusion of Standard and Easy players is BINARY-ONLY. The exact edge at
   O-53).
 - The price is taken from germanium first, then boranium, then ironium
   (CONFIRMED, TP-001-B). The owner is marked served. No message is sent.
+- **Order and range (BINARY-ONLY).** For each Trader, its fleets come
+  first, then the planets in planet-number order (numbered in `x` order at
+  creation, `UNIVERSE.md`). The scan stops at the first planet more than 100 ly east of
+  the Trader in `x`. A planet trades when `d² ≤ 10,000`, so exactly 100 ly
+  is in range.
+- **A ship item (BINARY-ONLY).** For planets a ship offer is not
+  research: it is handled as part bit 12. An owner that lacks the bit gains
+  it, and the price is all the surface minerals; an owner that has it
+  rerolls as for a part it owns. Only item 0, or no unowned bit found in
+  50 rerolls, leads to the research branch.
 
 Human players' planets never trade (CONFIRMED, TP-001-C, TP-002-C).
 
