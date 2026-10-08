@@ -366,13 +366,15 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   established, so that ordering is not asserted here. Elegy's orders layer
   credits each gift in place during replay, matching the original.
 - **A recipient whose orders replay after the giver's can use the gift the same
-  year (order-dependent, nondeterministic).** Because the gift is credited in
-  place during the giver's replay and the `.X` replay runs in a **random player
-  order** (a fresh per-turn permutation seeded from the host process, not a
-  function of the order files — `KERNEL.md`), a recipient whose own orders
-  replay *after* the giver's acts on the already-credited fleet and may unload
-  or pass the gifted cargo on that same year; a recipient that replays *first*
-  cannot. Which way it falls is a per-turn random draw, so an implementation
+  year (order-dependent, nondeterministic).** The gift is credited in place
+  during the giver's replay, and the `.X` replay runs in a **random player
+  order** drawn from the game's random stream at the start of each year (its
+  first draws — `KERNEL.md`). Because that stream is seeded when the host
+  process starts rather than recorded in the order files, no legal order can
+  pin it. A recipient whose own orders replay *after* the giver's therefore
+  acts on the already-credited fleet and may unload or pass the gifted cargo on
+  that same year; a recipient that replays *first* cannot. Which way it falls
+  is a per-turn random draw, so an implementation
   must not rely on it either way. The in-place credit is MEASURED
   (TK-406/407/409); this same-year-use consequence is inferred from it together
   with the random replay order and is BINARY-ONLY. (The queued cross-owner
@@ -785,9 +787,10 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   owner's saved game carries no persistent handle to another player's fleet. An
   **own-fleet** target is kept as a fleet target — the owner can always see and
   name its own fleet — which is why the follower waypoints below retain their
-  type (WU-FOLLOW). This is the same file-write retargeting that sends a target which drops
+  type (WU-FOLLOW). This is the same retargeting applied when the player's file
+  is written that sends a target which drops
   out of scan range to its last-seen position (messages `0x28`/`0x29`/`0x2a`).
-  Read from the file-write path, BINARY-ONLY; observed in WU-A, where a fleet
+  Observed in the written player file, BINARY-ONLY; seen in WU-A, where a fleet
   whose waypoint named an enemy fleet came back as a space waypoint at that
   fleet's position. It is **not** caused by the waypoint's warp. Whether the
   saved coordinates are the enemy's current position (still in view) or its
@@ -888,7 +891,7 @@ CONFIRMED:
   to the patrolling player** (an enemy outside that player's scanners is not a
   candidate even inside the engage radius). The waypoint is then flown the
   following turn, which is why the patrol fleet does not move the turn it
-  acquires a target. Placement is BINARY-ONLY (read from the file-write path);
+  acquires a target. Placement is BINARY-ONLY (seen when the player's file is written);
   the which-enemy, tie and warp rules above are the measured part.
 
 Elegy reproduces this: nearest enemy within the ~50 ly radius, ties by fleet

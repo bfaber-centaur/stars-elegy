@@ -73,11 +73,14 @@ order shown. "Fleet order" means by owner, then by fleet number
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
    The permutation itself is BINARY-ONLY. With orders a client can save,
-   it has no observable effect: each player's orders edit only that
-   player's own objects, and every effect on another player's object
-   (cargo gifts, drops, fleet transfers) is queued to a fixed later step.
-   Only crafted order files that act on another player's object could
-   show it (`ORDERS.md`, "Conflicts between players").
+   it is observable only through a cargo gift to another player's fleet:
+   that gift is credited **in place** during the giver's replay (MEASURED,
+   TK-406/407/409), not queued, so a recipient whose own orders replay
+   after the giver's can act on the gifted cargo that same year. Every
+   other effect on another player's object (colonist drops, the deferred
+   transfer queue) is queued to a fixed later step and does not depend on
+   the order. See `ORDERS.md`, "Conflicts between players" and the gift
+   rules.
 3. Each player's order file, in that order, is accepted or skipped,
    validated and applied: direct cargo moves, transfers, merges, splits,
    waypoint and production changes, research settings. Owner: `ORDERS.md`
