@@ -17,6 +17,10 @@ PARITY = 'docs/PARITY.md "Combat"'
 # setup: (prediction_held, tag, verdict). Tag CONFIRMED = the advance
 # prediction held; MEASURED = it missed, was inconclusive or there was none;
 # LEGACY BUG = the setup shows a documented defect.
+# Single-stream cases whose CONFIRMED rule lives in sample battle_actions:
+# the rule is checked by replaying the recorded shots (vectors/README.md
+# "Combat vectors").
+REPLAY = '; checked by replaying the recorded shots'
 VERDICT = {
     'cb001': (True, 'CONFIRMED', 'token values, start squares, salvo counts and damage spread as predicted; B1 salvage (round 1, unpinned)'),
     'cb002': (False, 'MEASURED', 'weapon results as predicted; C9/C10 contradicted: a lone starbase does not start a battle (round 1, unpinned)'),
@@ -24,16 +28,16 @@ VERDICT = {
     'cb004': (False, 'MEASURED', 'S2 contradicted: a starbase does not start a battle (round 1, unpinned)'),
     'cb005': (False, 'MEASURED', 'contradicted: an unarmed station appears as a token (round 1, unpinned)'),
     'cb006': (False, 'MEASURED', 'contradicted: a lone starbase does not start a battle (round 1, unpinned)'),
-    'cb007': (True, 'CONFIRMED', 'Regenerating Shields as predicted (round 1, unpinned)'),
-    'cb008': (True, 'CONFIRMED', 'Regenerating Shields as predicted (round 1, unpinned)'),
+    'cb007': (True, 'CONFIRMED', 'Regenerating Shields as predicted (round 1, unpinned)' + REPLAY),
+    'cb008': (True, 'CONFIRMED', 'Regenerating Shields as predicted (round 1, unpinned)' + REPLAY),
     'cb009': (True, 'CONFIRMED', 'deterministic deep-space cases K1..K8 as predicted'),
-    'cb010': (True, 'CONFIRMED', 'leftover beam damage carried to the next stack (Q-7)'),
+    'cb010': (True, 'CONFIRMED', 'leftover beam damage carried to the next stack (Q-7)' + REPLAY),
     'cb011': (True, 'CONFIRMED', 'S1 battle with plan "enemies"; S2-S7 as predicted (Q-1, Q-4, Q-13)'),
     'cb012': (False, 'MEASURED', 'Q-2 contradicted: plan 0 "everyone" gave a battle at S1 in every stream'),
     'cb013': (True, 'CONFIRMED', 'S1 battle with plan "player 1" (Q-1)'),
     'cb014': (True, 'CONFIRMED', 'no battle with plan "nobody"'),
     'cb015': (True, 'MEASURED', 'T1 inconclusive (visitors died before station range), T2 as predicted'),
-    'cb016': (True, 'CONFIRMED', 'the station fired at the frigates (Q-3)'),
+    'cb016': (True, 'CONFIRMED', 'the station fired at the frigates (Q-3)' + REPLAY),
     'cb017': (True, 'CONFIRMED', 'repair between turns (Q-12); only the first year is a vector here'),
     'cb018': (True, 'MEASURED', 'tech from battle (Q-11), measured over 14 streams'),
     'cb018-control': (True, 'MEASURED', 'control for CB-018: research without a battle'),
@@ -201,6 +205,18 @@ def diff(st0, st1, full=False):
     return ex
 
 
+def mining_planets(st):
+    """Planets where a mining draw can happen this year: owned with mines,
+    or orbited by a fleet carrying a remote miner."""
+    out = {p['id'] for p in st['planets'] if p.get('owner', -1) >= 0 and p.get('mines', 0) > 0}
+    miners = {(d['owner'], d['slot']) for d in st['designs']
+              if any(sl and 'Miner' in sl['part'] for sl in d['slots'])}
+    for f in st['fleets']:
+        if f.get('orbiting') is not None and any((f['owner'], s['design']) in miners for s in f['ships']):
+            out.add(f['orbiting'])
+    return out
+
+
 BATTLE_PLANET_FIELDS = ('starbase', 'defenses', 'surface_minerals')
 
 
@@ -279,8 +295,9 @@ def build(ev, out):
                 if not exps:
                     exps = [{'kind': 'no_battle'}]
                 exps = [dict(e, year=1) for e in exps + diff(st0, st1)]
+                mined = mining_planets(st0)
                 for e in exps:
-                    if e['kind'] == 'planet' and 'surface_minerals' in e['equals']:
+                    if e['kind'] == 'planet' and 'surface_minerals' in e['equals'] and e['id'] in mined:
                         e['tolerance'] = {'surface_minerals': 1}  # mining's random +1 remainder (KERNEL.md)
                 if len(runs) == 1:
                     exps = mark_samples(exps, bs.values())

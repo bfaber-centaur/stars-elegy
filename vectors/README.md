@@ -241,7 +241,10 @@ unconstrained by that case.
 
 `tolerance` as an object (`{"surface_minerals": 1}`) allows that much
 difference in the named field. Kernel and combat vectors use it for surface
-minerals, because mining's +1 remainder is random (`KERNEL.md`).
+minerals, because mining's +1 remainder is random (`KERNEL.md`). Combat
+vectors give it only to planets where a mining draw can happen that year:
+owned with mines at the start of the year, or orbited by a remote miner.
+Minerals from battle debris stay exact.
 
 `sample: true` marks an expectation that random draws decided and that only
 one stream observed. It is what the original did with that stream's draws,
@@ -318,7 +321,18 @@ vector these expectations carry `sample: true`: `battle_actions`, the
 position, and a battle planet's `starbase`, `defenses` and
 `surface_minerals` (split from the planet's other fields, which stay exact).
 The `battle` token lists and everything away from the battles stay exact,
-apart from the mining tolerance above. In a several-stream vector, what
+apart from the mining tolerance above.
+
+A `sample` battle record is still an exact check of the damage rules. Given
+the recorded moves and shots, every hit is deterministic: replay the
+actions in order, each shot from the recorded token at the recorded target
+(as the exact replays in `docs/COMBAT.md` "Choosing a square" do, with the
+shots taken from the record),
+and every hit's `kills`, `shield_damage` and `armor_damage`, and the
+shields carried between rounds, must come out exactly as recorded. CB-007
+and CB-008 (Regenerating Shields), CB-010 (Q-7, leftover beam damage) and
+CB-016 (Q-3, the station firing) check their CONFIRMED rules this way, and
+their `verdict` says so. In a several-stream vector, what
 differed between streams is listed per stream as usual.
 
 ### New-game vectors
