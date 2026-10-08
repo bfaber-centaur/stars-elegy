@@ -987,11 +987,13 @@
       {
        "id": 7,
        "count": 3,
-       "percent": 74
+       "percent": 74,
+       "kind": 1
       },
       {
        "id": 8,
-       "count": 5
+       "count": 5,
+       "kind": 1
       }
      ]
     },

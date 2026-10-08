@@ -329,6 +329,22 @@ def norm_planet(got):
     return out
 
 
+def add_queue_kinds(e, after_dump):
+    """Checker queue output is (id, count) pairs; take each item's kind
+    (planetary item or design) from the after-turn dump the checker read."""
+    for s in open(after_dump):
+        m = re.search(r' queue planet=%d n=\d+ items=(\S*)' % e['planet'], s)
+        if m:
+            items = [queue_item(i.split(':')) for i in m.group(1).split(',') if i]
+            if [(i['id'], i['count']) for i in items] != [(i['id'], i['count']) for i in e['equals']]:
+                raise SystemExit('%s: planet %d queue differs from the check' % (after_dump, e['planet']))
+            for a, b in zip(e['equals'], items):
+                a['kind'] = b['kind']
+            return
+    if e['equals']:
+        raise SystemExit('%s: no queue for planet %d' % (after_dump, e['planet']))
+
+
 def expectation(kind, args, year, res, want, got):
     """One recorded check -> one public expectation of what the original did."""
     e = {'year': year}
@@ -491,7 +507,10 @@ def build(corpus, ev, out):
             for rd in rdirs:
                 for (ccid, kind, args, year, res, want, got) in checks[(r.name, rd)]:
                     if ccid == cid:
-                        per.setdefault(rd.replace('run-', 'cycles '), []).append(expectation(kind, args, year, res, want, got))
+                        e = expectation(kind, args, year, res, want, got)
+                        if e['kind'] == 'production_queue':
+                            add_queue_kinds(e, os.path.join(ev, r.name, rd, 'after.dump'))
+                        per.setdefault(rd.replace('run-', 'cycles '), []).append(e)
                         held = held and res == 'OK'
             if per:
                 vec['cases'].append(case('%s-%s' % (rid, cid), rule, text, per, held, c['legacy']))

@@ -984,7 +984,8 @@
      "equals": [
       {
        "id": 12,
-       "count": 1
+       "count": 1,
+       "kind": 1
       }
      ],
      "year": 1

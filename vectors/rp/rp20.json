@@ -3516,23 +3516,28 @@
       {
        "id": 0,
        "count": 1,
-       "percent": 96
+       "percent": 96,
+       "kind": 2
       },
       {
        "id": 0,
-       "count": 1
+       "count": 1,
+       "kind": 2
       },
       {
        "id": 0,
-       "count": 1
+       "count": 1,
+       "kind": 2
       },
       {
        "id": 0,
-       "count": 1
+       "count": 1,
+       "kind": 2
       },
       {
        "id": 0,
-       "count": 1
+       "count": 1,
+       "kind": 2
       }
      ],
      "year": 1
