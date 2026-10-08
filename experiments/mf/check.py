@@ -213,6 +213,57 @@ def main():
             notes.append('tiny fields above 100: %s' % ['(%s,%s) %s num %s' % (t['x'], t['y'], t['count'], t['num'])
                                                        for t in big])
             verdict = 'HELD' if any(int(t['count']) == 250 for t in big) else 'CONTRADICTED'
+        elif kind == 'vert':
+            tag, lim = chk[1], chk[2]
+            stops, ends = [], []
+            for f in run.fleets:
+                if f['tag'] != tag:
+                    continue
+                a = fleets.get((1, f['id']))
+                off = abs(int(a['x']) - f['x']) + abs(int(a['y']) - f['y'])
+                ends.append(off)
+                if a['dmg']:
+                    stops.append(off)
+            notes.append('%d/%d stopped, stop offsets %s; end offsets %s' % (len(stops), len(ends), sorted(stops),
+                                                                              ends))
+            if lim == 0:
+                verdict = 'HELD' if not stops else 'CONTRADICTED'
+            elif lim is not None:
+                if any(o >= lim for o in stops):
+                    verdict = 'CONTRADICTED'
+                elif any(o > 13 for o in stops):
+                    verdict = 'HELD'
+        elif kind in ('salv', 'salvfuel'):
+            salv = [t for t in things if t['type'] == 'packet' and t.get('bit15') == '1']
+            fuel_free = sorted(set(int(fleets[(1, f['id'])]['fuel']) for f in run.fleets
+                                   if (1, f['id']) in fleets and not fleets[(1, f['id'])]['dmg']))
+            ok, any_stop = True, False
+            for f in run.fleets:
+                a = fleets.get((1, f['id']))
+                if a is None:
+                    notes.append('fleet %d gone' % f['id'])
+                    ok = False
+                    continue
+                if not a['dmg']:
+                    continue
+                any_stop = True
+                here = [t['cargo'] for t in salv if int(t['x']) == int(a['x']) and int(t['y']) == int(a['y'])]
+                notes.append('fleet %d stopped at %s,%s ships %s dmg %s cargo %s fuel %s; salvage there %s' % (
+                    f['id'], a['x'], a['y'], a['ships'], a['dmg'], a['cargo'], a['fuel'], here))
+                if kind == 'salv':
+                    want_cargo = '0/0/0/%d' % gen.MF14_KEPT[3]
+                    want_salv = '%d/%d/%d' % gen.MF14_KEPT[:3]
+                    if a['cargo'] != want_cargo or here != [want_salv] or a['ships'] != '%d:1' % gen.PRIV:
+                        ok = False
+                else:
+                    fl = int(a['fuel'])
+                    if not any(fl == F - F * 520 // 1170 for F in fuel_free):
+                        ok = False
+            notes.append('unstopped fuel values %s' % fuel_free)
+            if kind == 'salvfuel' and not fuel_free:
+                verdict = 'OBSERVED'
+            elif any_stop:
+                verdict = 'HELD' if ok else 'CONTRADICTED'
         print('%s %s (%s): %s' % (c['id'], verdict, c['pred'], c['expect']))
         for n in notes:
             print('    ' + n)

@@ -26,7 +26,7 @@ Model used for the predicted numbers (behavior level):
   field with the smallest d^2 - count at the stop point; it loses
   max(10, count/20), or max(50, count/100) when count/20 > 50.
 """
-import importlib.util, os, sys
+import importlib.util, math, os, sys
 
 _spec = importlib.util.spec_from_file_location(
     'obgen', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ob', 'gen.py'))
@@ -433,6 +433,78 @@ for rid, owner, extra, title in (
                'no new field; "failed to lay" message (0x17e) for that layer',
                'field 511 made (as in MF-11a)', ('limit', True, owner))
 
+
+# ------------------------------------------------------------------ MF-14, MF-15: questions from the Elegy minefield implementation
+# stars-decomp fleet-gates-merge.md §5 (salvage after a partial loss; the path cut of a due-north/south
+# leg). Committed before the runs.
+SMALLF, PRIV = 7, 8
+CARGO_DESIGNS = ('design 1 7 Small Freighter, 1 Trans-Galactic Drive, empty, empty = Small Freighter\n'
+                 'design 1 8 Privateer, 1 Trans-Galactic Drive, 2 Superlatanium, empty, empty, empty = Armored Privateer\n')
+CAP = {SMALLF: 70, PRIV: 250}
+
+
+def lost_share(cargo, lost_cap, cap):
+    """Cargo that leaves with lost ships: floor(total * lost/cap) split per type by floor, remainder one kT
+    per type in type order (stars-decomp: the same sharing as a ship move between fleets)."""
+    tot = sum(cargo)
+    move = tot * lost_cap // cap
+    out = [c * move // tot for c in cargo]
+    left = move - sum(out)
+    for i, c in enumerate(cargo):
+        if left <= 0:
+            break
+        if c - out[i] > 0:
+            out[i] += 1
+            left -= 1
+    return out
+
+
+MF14_CARGO = (100, 100, 100, 50)
+MF14_LOST = lost_share(MF14_CARGO, 4 * CAP[SMALLF], 4 * CAP[SMALLF] + CAP[PRIV])
+MF14_KEPT = tuple(c - l for c, l in zip(MF14_CARGO, MF14_LOST))
+
+r = run('MF-14', 'partial loss to a standard field: which cargo is lost and which becomes salvage (mutual enemies)',
+        extra=CARGO_DESIGNS)
+r.field(0, C[0], C[1], BIG, kind='std')
+for y in rows(12, 1134, 1266):
+    r.fleet(1, 1160, y, [(SMALLF, 4), (PRIV, 1)], to=(1241, y), fuel=600, tag='cargo')
+    r.lines[-1] = r.lines[-1].replace(' to ', ' cargo %d %d %d %d to ' % MF14_CARGO, 1)
+r.case('A', 'MF-14', '12 player-1 fleets of 4 Small Freighters (armor 25, cargo 70) and 1 Privateer with two '
+       'Superlatanium (armor 3150, cargo 250), each carrying %d/%d/%d kT minerals and %d kT colonists, warp 9, '
+       '81-ly legs east inside a player-0 standard field (15 per mille per ly)' % MF14_CARGO,
+       'each stopped fleet: the Small Freighters are destroyed, the Privateer survives (dmg %d/100%%); the fleet '
+       'keeps 0/0/0 minerals and %d kT colonists; a salvage object at the stop point holds %d/%d/%d kT (the '
+       "survivors' minerals); the destroyed ships' share %d/%d/%d/%d is gone"
+       % ((word(100, 3150), MF14_KEPT[3]) + MF14_KEPT[:3] + tuple(MF14_LOST)),
+       "the fleet keeps %d/%d/%d/%d and the salvage holds the destroyed share %d/%d/%d"
+       % (MF14_KEPT + tuple(MF14_LOST[:3])), ('salv',))
+r.case('B', 'MF-14', 'fuel of each stopped fleet (fuel capacity 4 x 130 + 650)',
+       'F - floor(F x 520 / 1170), F = the fuel of an unstopped twin (both are charged for the full leg)',
+       'fuel kept in full, or shared by ship count', ('salvfuel',))
+
+r = run('MF-15', 'due-north and due-south legs through a heavy field (mutual enemies)')
+F15 = 10000                                   # radius 100; the 50,000 field would fill the universe
+r.field(0, C[0], C[1], F15, kind='heavy')
+for dx in (-60, -40, -20, 0, 20, 40, 60, -50):
+    y0 = C[1] - int(math.ceil(math.sqrt(F15 - dx * dx))) - 3
+    r.fleet(1, C[0] + dx, y0, [(TANK, 1)], to=(C[0] + dx, y0 + 81), tag='v-in')
+for dx in (-60, -40, -20, 0, 20, 40, 60, -50):
+    y0 = C[1] - int(round(math.sqrt(90 * 90 - dx * dx)))
+    r.fleet(1, C[0] + dx, y0, [(TANK, 1)], to=(C[0] + dx, y0 - 81), tag='v-out')
+for dy in (-60, -40, -20, 0, 20, 40, 60, -50):
+    x0 = C[0] - int(math.ceil(math.sqrt(F15 - dy * dy))) - 3
+    r.fleet(1, x0, C[1] + dy, [(TANK, 1)], to=(x0 + 81, C[1] + dy), tag='h-in')
+r.case('A', 'MF-15', '8 player-1 Tanks starting 3 ly outside a player-0 heavy field of 10,000 (radius 100) and '
+       'flying 81 ly due north into it at warp 9 (about 78 ly inside, 30 per mille per ly)',
+       'none stopped: on a leg with no east-west component the path is cut at the start point, which lies '
+       'outside the field', 'stops as on an east leg (about 90% each)', ('vert', 'v-in', 0))
+r.case('B', 'MF-15', '8 Tanks starting 90 ly from the centre (inside, south side) and flying 81 ly due south, '
+       'out of the field after about 10 ly',
+       'checked from the start for trunc(sqrt(10000 - 8100)) = 43 ly whatever the direction: stops up to 42 ly '
+       'out, about 73% stopped', 'checked over the first 10 ly only (about 26% stopped, every stop within 10 ly)',
+       ('vert', 'v-out', 43))
+r.case('C', 'MF-15', 'control: 8 Tanks starting 3 ly outside and flying 81 ly due east into the field',
+       'stopped at the heavy rate (about 90% each)', '', ('vert', 'h-in', None))
 
 def main():
     if sys.argv[1:] == ['--list']:
