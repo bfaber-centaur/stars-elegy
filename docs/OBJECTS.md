@@ -98,7 +98,9 @@ fields of each kind.
   task is "lay mines" also lays, at its end-of-year position, **half** the
   amount (CONFIRMED, OB-014-C: 80 from a layer rated 160). The halving uses
   the moving test, so an SD fleet that moved for any reason lays half
-  (BINARY-ONLY beyond that case).
+  (BINARY-ONLY beyond that case). Each kind's amount is halved on its own.
+  Every amount is a multiple of 10 (the rule below), so the half is exact
+  and needs no rounding (BINARY-ONLY).
 - Amount per year, per kind: for each ship, the sum of its dispensers of
   that kind (count × rating), doubled on the Mini Mine Layer and Super Mine
   Layer hulls; summed over ships. Each Multi Contained Munition adds 40
@@ -120,7 +122,10 @@ fields of each kind.
   at the fleet. CONFIRMED (OB-002-G): a 390 field 10 ly west of the layer,
   plus 160, became 550 centred 2 ly east of the old centre. The 999,999
   cap is CONFIRMED (MF-10): a field holding 1,050,000 after decay made the
-  layer start a new 160 field; one holding 999,500 merged.
+  layer start a new 160 field; one holding 999,500 merged. "Contains"
+  means `d² ≤ N`. When two of the owner's fields of that kind are equally
+  near, the first in object order takes the mines, which is the lower field
+  number (BINARY-ONLY).
 - **Duration.** The task carries a duration: "this year only" lays once and
   ends the task (CONFIRMED, OB-002-N); "indefinitely" never ends
   (CONFIRMED, OB-019); a duration of `k` years lays `k` times, one per
@@ -152,7 +157,9 @@ fields of each kind.
   switch. The universe holds at most 4050
   space objects of all kinds (BINARY-ONLY). A lay that needs a new field
   when there is no room creates nothing: the owner gets a message and
-  those mines are lost. A lay that merges needs no room.
+  those mines are lost. A lay that merges needs no room. A new field takes
+  the lowest number not in use among the owner's minefields of all three
+  kinds (BINARY-ONLY; MF-11 and MF-13 measured only the last number).
 
 ### Decay (CONFIRMED, OB-002, OB-014-A, OB-015, OB-016, MF-4)
 
@@ -219,10 +226,12 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   is at or below the safe warp, or when the fleet was already at its
   waypoint.
 - The path from the fleet's position toward its next waypoint is cut by
-  each field into an entry and exit distance (whole ly, entry not below 0,
-  exit not beyond this year's travel; a tangent path does not count).
-  Overlapping stretches of one kind merge. Stretches are visited in order
-  of entry across all kinds. For each whole ly of a stretch, one draw:
+  each field into an entry and exit distance in whole ly. Entry is not
+  below 0, exit is not beyond this year's travel, and a tangent path does
+  not count. The exact arithmetic, including a LEGACY BUG on due-north and
+  due-south legs, is under "Arithmetic details" below. Overlapping
+  stretches of one kind merge. Stretches are visited in order of entry
+  across all kinds. For each whole ly of a stretch, one draw:
   `rand(1000) < (e − safe)·h` is a hit, with `h` = 3 (standard), 10
   (heavy), 35 (speed bump) per mille. CONFIRMED as rates (MF-1): heavy at
   warp 9 gave 32.3 per mille over 2137 draws (predicted 30), standard 15.9
@@ -244,10 +253,22 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   `D/2`; the result is added to existing damage and spread evenly. A design
   whose average exceeds its armor is destroyed. CONFIRMED: five Laser
   Destroyers each took half their armor (OB-010-S, OB-002-M).
-- Destroyed ships' share of cargo is lost; their minerals become salvage
-  at the stop point (none at a planet's exact position). A fleet with no
-  minerals that loses ships drops `rand(10)` kT of each mineral as salvage
-  (MEASURED, OB-024: 0–9 kT of each in five fleets; LEGACY BUG candidate).
+- **Cargo when ships are destroyed (MEASURED, MF-14; LEGACY BUG
+  candidate).** The destroyed ships take their share of cargo and fuel,
+  shared as a ship move between fleets (`ORDERS.md` "Split": by capacity,
+  rounded down), and that share is lost. Then every mineral still in the
+  fleet, the survivors' included, is dropped as salvage at the stop point;
+  colonists and fuel stay aboard. MF-14: four 70-kT freighters and a
+  250-kT Privateer carrying 100/100/100 kT and 50 kT of colonists lost
+  53/53/52/26 with the freighters and dropped the other 47/47/48 as
+  salvage, leaving the Privateer with 24 kT of colonists. When the whole
+  fleet is destroyed, all its minerals become salvage. No salvage is made
+  at a planet's exact position; the minerals then stay aboard
+  (BINARY-ONLY). A fleet with no minerals left drops `rand(10)` kT of each
+  mineral as salvage (MEASURED, OB-024: 0–9 kT of each in five fleets;
+  LEGACY BUG candidate). **Implementing:** Elegy reproduces the survivors'
+  salvage behind a named legacy switch, like the other deterministic
+  legacy bugs.
 - **Mines lost to the hit:** one field of the kind that stopped the fleet
   pays. It loses `max(10, ⌊N/20⌋)`, or `max(50, ⌊N/100⌋)` when
   `⌊N/20⌋ > 50`. CONFIRMED for 400 (−20), 3000 (−50) and 6000 (−60) before
@@ -273,7 +294,8 @@ usual rate). The owner's own fleets are never stopped (MF-6).
 A field set to detonate goes off each year before decay: every fleet inside it, of any owner including the
 field's owner, takes hit damage as above, except the owner's own Mini Mine
 Layer and Super Mine Layer hulls. No stop, no salvage, at most one
-detonation per fleet per year. The field then decays with the extra 25%.
+detonation per fleet per year. A destroyed ship's share of cargo and fuel
+is lost as for a hit, and the survivors keep the rest (BINARY-ONLY). The field then decays with the extra 25%.
 OB-002-M: the owner's five Laser Destroyers took half their armor, the
 enemy's five Medium Freighters 100 each, the layer nothing; the field went
 1000 → 730.
@@ -298,6 +320,85 @@ enemy's five Medium Freighters 100 each, the layer nothing; the field went
   field. That is exactly what an unmodified client can produce. The rule
   follows the client's offer, not what can detonate: every kind detonates
   once set (MF-7, MF-8, above).
+
+### Arithmetic details (BINARY-ONLY except where marked)
+
+Read from the original program for the Elegy implementation. Where these
+differ from an exact-geometry reading, the original is stated.
+
+**Path cut.** For each field that can hit the fleet: `(sx, sy)` is the
+fleet's position, `(dx, dy)` the vector to waypoint 1, `(cx, cy)` the
+field's centre, `N` its count, and `L` the whole ly the fleet travels in
+this movement step. All divisions truncate toward zero.
+
+1. The foot of the perpendicular from the centre onto the leg, in whole
+   ly: `fx = (cx·dx² + sx·dy² + (cy − sy)·dx·dy) / (dx² + dy²)`, then
+   `fy = sy + (fx − sx)·dy / dx`. When `dx = 0`, `fy = sy` (LEGACY BUG,
+   below). When `|dx·dy|`, `dx²` or `dy²` is 500,001 or more, `fx` is
+   computed in floating point and then truncated.
+2. `p² = (fx − cx)² + (fy − cy)²`. There is no cut when `p² ≥ N`.
+3. `h` = the distance from the start to the foot, truncated, and negative
+   when the foot lies behind the start. "Behind" is compared along x, or
+   along y on a leg with `dx = 0`. `w = trunc(√(N − p²))`.
+4. Entry `= max(0, h − w)`, exit `= min(L, h + w)`. The field counts only
+   when exit > 0 and entry < L.
+
+On an east-west leg the foot is exact, so entry is the exact entry rounded
+up and exit the exact exit rounded down. The MF corpora are east legs
+(MF-1, MF-3: CONFIRMED as rates). On other legs the truncated foot can
+move entry and exit by more than 1 ly. That is BINARY-ONLY, apart from
+due north and south.
+
+**Due-north and due-south legs (LEGACY BUG, MEASURED, MF-15).** With
+`dx = 0`, the foot is the fleet's start. So a fleet that starts outside a
+field and flies straight north or south into it is never checked. A fleet
+that starts inside is checked from the start for `trunc(√(N − d²))` ly,
+where `d` is its distance from the centre, in whichever direction it
+flies. MF-15, heavy field of 10,000: none of 8 Tanks flying north into
+the field from 3 ly outside was stopped. 8 Tanks starting 90 ly from the
+centre and flying south out of the field (outside after 10–13 ly) were
+stopped at 2, 9, 10, 18, 19 and 31 ly, inside the 43 ly the rule gives.
+**Implementing:** Elegy reproduces this behind a named legacy switch, like
+the other deterministic legacy bugs. With the switch off, the exact foot
+is Elegy's choice, not the original's.
+
+**Stretches.** Per kind, up to 8 stretches are kept, sorted by entry, and
+a ninth disjoint one is dropped. A new stretch merges with an existing one
+when they overlap or touch, and also when it ends exactly 1 ly before the
+existing one starts. Stretches are visited by smallest entry across the
+three kinds; on equal entry, standard comes first, then heavy, then speed
+bump. A stretch of a kind whose safe warp is not below the effective warp
+is passed with no draws. A stretch from entry `a` to exit `b` makes the
+draws `k = 0 .. b − a − 1`, and a hit at draw `k` stops the fleet `a + k`
+ly from its start (stop offsets MEASURED: OB-010-S, MF-15).
+
+**Stop point.** Each coordinate is the start plus that coordinate's
+offset to waypoint 1, times `a + k`, divided by the leg length to
+waypoint 1 rounded to the nearest ly. The product is rounded to the
+nearest ly. On east legs this is exact (MF corpora). The salvage and the
+paying field use this point.
+
+**Damage on top of existing damage.** A design's damage is stored as the
+percentage of its ships damaged and the damage per damaged ship, in units
+of 1/500 of its armor. With `n` ships, armor `A`, and the hit damage `D`
+from the hit rules:
+- existing damage `X = ⌊⌊pct·n/100⌋ · A · units / 500⌋` (the count of
+  damaged ships rounds down);
+- `total = X + D − min(⌊D/2⌋, shield · n)`, where `shield` is the design's
+  shield value per ship;
+- `avg = ⌊total / n⌋`.
+
+The design is destroyed when `avg > A`. Otherwise every ship counts as
+damaged (100%), with `⌊avg·500/A⌋` units and at least 1 unit. CONFIRMED
+for prior damage on all ships: MF-8, 5 Tanks at 250/500 went to 265/500.
+
+**Several detonating fields.** Fields detonate one at a time in object
+order, each just before its own decay, and "inside" uses that field's
+count before its decay. The first detonating field whose area contains a
+fleet marks it, and later detonating fields skip it that year. This holds
+even when the first field did it no damage: for example, a fleet of the
+first field owner's own minelayer hulls, or a speed-bump field. So an
+enemy's later detonation misses that fleet.
 
 ### Sweeping (CONFIRMED, OB-001, OB-007, OB-008, OB-010-S)
 
@@ -851,8 +952,9 @@ and nowhere beyond it).
    left); ship counts after year index 100; the 25th-redraw LEGACY BUG;
    the part reroll and late-year conversion at appearance; Harder computer
    players' planets (3,500 kT) and the 100 ly edge.
-4. Minefields (MF-1..MF-13 done; see PARITY "Minefield lane"): the
-   4050-object limit; SS and SD safe-warp bonuses;
+4. Minefields (MF-1..MF-15 done; see PARITY "Minefield lane"): the
+   4050-object limit; SS and SD safe-warp bonuses; steep (not due-north)
+   legs and diagonal stop points;
    fleets jumping through a gate inside a field; the detonate-order gap
    (needs crafted orders).
 5. Stargates: gate losses in more streams.

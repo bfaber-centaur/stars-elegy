@@ -322,3 +322,16 @@ per run with `check.txt`. Summary in `docs/PARITY.md` "Minefield lane".
 
 Field counts in every run fit: stops shrink the field during movement,
 then decay (planets counted in the shrunken field), then sweeping.
+
+### MF-14 and MF-15 results
+
+Evidence: stars-oracle-apparatus `evidence/mf/mf14`, `evidence/mf/mf15`
+(one pinned year each, cycles 20000), with `check.txt`.
+
+| Case | Result | Observed |
+|---|---|---|
+| MF-14-A | HELD | 11 of 12 stopped; each kept the Privateer (15/500) with 0/0/0 minerals and 24 kT colonists, and a 47/47/48 salvage lay at its stop point |
+| MF-14-B | HELD | stopped fleets 176 mg, the unstopped fleet 316 (316 − ⌊316·520/1170⌋ = 176) |
+| MF-15-A | HELD | due-north legs entering from 3 ly outside: 0 of 8 stopped |
+| MF-15-B | HELD | due-south legs from 90 ly out: 6 of 8 stopped, at 2, 9, 10, 18, 19, 31 ly (true edge 10–13 ly; rule 43) |
+| MF-15-C | OBSERVED | east-leg controls: 8 of 8 stopped, at 12–49 ly |
