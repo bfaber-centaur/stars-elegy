@@ -364,8 +364,23 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   transfer record's debit and credit are applied together in place. Whether the
   host orders all debits before all credits across records is **not**
   established, so that ordering is not asserted here. Elegy's orders layer
-  performs the debit and credit in two passes — an implementation detail of the
-  Elegy orders layer, not a measured Stars! rule.
+  credits each gift in place during replay, matching the original.
+- **A recipient whose orders replay after the giver's can use the gift the same
+  year (order-dependent, nondeterministic).** The gift is credited in place
+  during the giver's replay, and the `.X` replay runs in a **random player
+  order** drawn from the game's random stream at the start of each year (its
+  first draws — `KERNEL.md`). Because that stream is seeded when the host
+  process starts rather than recorded in the order files, no legal order can
+  pin it. A recipient whose own orders replay *after* the giver's therefore
+  acts on the already-credited fleet and may unload or pass the gifted cargo on
+  that same year; a recipient that replays *first* cannot. Which way it falls
+  is a per-turn random draw, so an implementation
+  must not rely on it either way. The in-place credit is MEASURED
+  (TK-406/407/409); this same-year-use consequence is inferred from it together
+  with the random replay order and is BINARY-ONLY. (The queued cross-owner
+  paths — colonist drops and the deferred transfer queue — run in fixed later
+  phases and do **not** depend on replay order; only the in-place manual gift
+  does.)
 - **Colonists** onto a planet the giver does not own are a **drop**, resolved
   in the first drop step **before** movement (CONFIRMED, TK-501) —
   colonisation or invasion under the takeover/objects rules — not in the
@@ -710,6 +725,27 @@ flag:
   orders are complete. CONFIRMED (a fleet run onto its only waypoint ended
   idle with the completion message).
 
+### Waypoint 0 and a task still in progress
+
+Each turn after movement the host rewrites **waypoint 0** to the fleet's current
+position, with target type **planet** when the fleet is orbiting one and **deep
+space** otherwise. The waypoint's **task is kept**: a fleet caught partway along
+a leg carries its current task on waypoint 0 at warp 0 (its current position is
+not a destination). MEASURED (WU-ROUTE): a routing fleet caught mid-leg came
+back with waypoint 0 at its current position, target deep space, warp 0, and the
+**route** task still set.
+
+The post-movement waypoint phase does examine waypoint 0's task, but a task only
+acts where its conditions are met. The **route** task re-routes a fleet only at
+one of its **own** planets that has a route set, so at a mid-space position it
+does nothing and the fleet simply continues its leg, re-routing on arrival (see
+"Route task"). Tasks that hold a fleet in place rather than let it travel — a
+load/unload transport task and lay-mines — keep it stationary, so they do not
+arise "in transit". A **patrol** task is not resolved in this phase at all; its
+intercept is chosen later (see "Patrol task"). The phase placement is
+BINARY-ONLY; the kept task in transit and the mid-space route no-op are the
+measured behaviour (WU-ROUTE).
+
 ### Targets that moved, died or were captured
 
 A waypoint can name a fleet (or a moving universe object) as its target
@@ -743,6 +779,22 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   position for the turn; wormholes move after fleets (objects decomp, stars-
   elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
   position as of this same upkeep pass.
+- **A target that is another player's fleet is saved as a plain waypoint in the
+  owner's view.** Through the turn the waypoint tracks the enemy fleet like any
+  other moving target (its coordinates follow the enemy's position), but when
+  the owner's file is written the target is recorded as a **deep-space** waypoint
+  at the fleet's last-seen position rather than as a live fleet target: the
+  owner's saved game carries no persistent handle to another player's fleet. An
+  **own-fleet** target is kept as a fleet target — the owner can always see and
+  name its own fleet — which is why the follower waypoints below retain their
+  type (WU-FOLLOW). This is the same retargeting applied when the player's file
+  is written that sends a target which drops
+  out of scan range to its last-seen position (messages `0x28`/`0x29`/`0x2a`).
+  Observed in the written player file, BINARY-ONLY; seen in WU-A, where a fleet
+  whose waypoint named an enemy fleet came back as a space waypoint at that
+  fleet's position. It is **not** caused by the waypoint's warp. Whether the
+  saved coordinates are the enemy's current position (still in view) or its
+  last-seen position (out of view) is not pinned here.
 
 ### Following another fleet (leader linkage)
 
@@ -831,6 +883,16 @@ CONFIRMED:
   this at warp 10.
 - The intercept is written as a fleet-targeted waypoint at the enemy's
   position; the patrol fleet does not move the turn it acquires the target.
+- **When acquisition happens:** the intercept is chosen at the **end** of turn
+  generation, as each player's file is written — after movement, after battles,
+  and after production — not in the after-movement waypoint-task phase (a patrol
+  task is not resolved there) and not at a mid-turn waypoint check. So it reads
+  **post-battle** positions and survivors, and considers only fleets **visible
+  to the patrolling player** (an enemy outside that player's scanners is not a
+  candidate even inside the engage radius). The waypoint is then flown the
+  following turn, which is why the patrol fleet does not move the turn it
+  acquires a target. Placement is BINARY-ONLY (seen when the player's file is written);
+  the which-enemy, tie and warp rules above are the measured part.
 
 Elegy reproduces this: nearest enemy within the ~50 ly radius, ties by fleet
 order, intercept warp `min(10, range/5)`.
