@@ -3219,6 +3219,35 @@ defense estimate applies the operable cap SCANNING.md states.
   y 920 and the game put it at y 1000, inside the bound. SC-033 repeated
   the case from the centre.
 
+### Design knowledge across years (SC-037, MEASURED)
+
+Read from the AIX computer-player corpus (`PARITY.md` "Computer players (AI-0..AI-24)",
+"Corpora"): six computer viewers' turn and history files after each of 61
+generations, 2400–2460. No experiment was set up for it.
+
+- **Turn file: this year's sightings only.** Another player's design is
+  in a viewer's turn file only in a year when that viewer sees one of its
+  ships or starbases, or met it in a battle. 2,599 of 2,625 foreign design
+  records matched a fleet or starbase in the same file; the other 26 were
+  all full records, consistent with designs disclosed by a battle in which
+  the ships died. A design sighted again later is partial again unless it
+  was disclosed again that year: 431 records went from full to partial in a
+  later turn file, every one with the same hull.
+- **History file: kept, never downgraded.** The history file after year
+  `y + 1` held exactly the history file after year `y` plus the turn file
+  of year `y`, each design at the higher of the two levels: 2,320 of
+  2,320 turn-file records. Over 4,364 year-to-year comparisons no design
+  left the history file and no full record became partial; 2,219 records
+  (305 of them full) stayed while that year's turn file did not show the
+  design. Once, a history record took a new hull (starbase slot, partial
+  both times) the year after the turn file showed a different design in
+  that slot.
+- Not observed: a full history record replaced by a different design in
+  the same slot, and whether a design its owner deleted is ever removed.
+  These were computer players' history files, which the host writes; a
+  human player's history file is written by the client and was not
+  examined.
+
 ### Not tested
 
 SD detection of cloaked fleets (S-21, random), AR planet scanners (S-11),
