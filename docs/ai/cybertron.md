@@ -395,8 +395,8 @@ highest-numbered planet that mark belongs to no planet.
   - the mass sent is `A = trunc(min(need, M) / f)`, divided by `f`, so
     more than the kill mass leaves the planet to cover the loss in
     flight, as `⌈A/70⌉` packets (MEASURED, AI-24: dividing gives AIX's
-    packet count in 16 of 16 attacks, each with `M` above the kill mass;
-    e.g. need 284 at `f` = 0.75^0.807 gives 358 kT, 6 packets, as
+    packet count in 16 of 16 attacks, assuming `M` is at least the kill
+    mass (`M` not reconstructed); e.g. need 284 at `f` = 0.75^0.807 gives 358 kT, 6 packets, as
     observed, where multiplying would give 225 kT, 4 packets).
 
   Packets of 70 kT, each of the mineral with the most left, at
