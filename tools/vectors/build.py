@@ -285,6 +285,11 @@ def thing(d):
                 'offer': 'research' if item == 0 else ', '.join(MT_ITEMS[b] for b in mask_players(item, 13))}
     if t == 'packet':
         c = [int(v) for v in d['cargo'].split('/')]
+        # Salvage is a packet-type object whose stored packet-warp field (warp - 4)
+        # is 0; the destination is not read (BINARY-ONLY: Objects decomp reading, OBJECTS.md
+        # line pending).
+        if int(d['warp']) == 4:
+            return {'kind': 'salvage', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'minerals': c}
         return {'kind': 'packet', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'destination_planet': int(d['dest']),
                 'warp': int(d['warp']), 'minerals': c, 'decay_class': int(d['class'])}
     if t == 'minefield':
