@@ -2191,6 +2191,12 @@ waypoint 0 at a fleet and write the merge and transfer-fleet tasks
   on the planet; wait for 100% keeps the fleet at the planet while unmet,
   where fill to 100% lets it leave. "Load optimal" fuel with a single
   waypoint gives all of the fleet's fuel to the target fleet.
+- Transport task after a short or refused load (rereading FO-01, FO-04
+  and TK-302: apparatus `evidence/kb/holds`). Short fill to 100% (100 of
+  210, FO-01-J) and short load exactly (25 of 40, TK-302) ended the task.
+  Wait for 100% (FO-01-I) kept it. A load from another player's fleet
+  (FO-04) loaded nothing, sent 0x120 and ended the task in the same
+  generation.
 - Colonists loaded from an own planet before growth (87 → 57, then
   growth).
 
