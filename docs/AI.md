@@ -865,9 +865,27 @@ hub, or the player's first planet with a starbase):
    - salvage within 200 ly (LEGACY BUG: the box test misses the absolute
      value, so far salvage up or right qualifies); salvage exactly here
      is loaded at once.
-3. Move order to the best: task transport; at the source unload all
-   minerals, elsewhere load all; mode 1 or 2 limits the load to the
-   scarce mineral (or, at owned targets, fills 66 % scarce, 33 % others).
+3. Move order to the best: task transport. The Ir, Bo and Ge orders
+   (MEASURED, AI-26, except the mode 1 unowned case, BINARY-ONLY):
+   - at the source: unload all of each;
+   - elsewhere in mode 0: load all of each;
+   - elsewhere in mode 2: load all of the scarce mineral, no order for
+     the other two;
+   - elsewhere in mode 1: the same as mode 2 when the target holds at
+     least as much of the scarce mineral as the fleet's free hold
+     (measured before any salvage pickup at the fleet's position). If
+     not, at a planet owned by any player (its own or another player's),
+     "fill to 66 %" for the scarce mineral and "fill to 33 %" for each
+     of the others. At an unowned planet, load all of each.
+
+   "Fill to `v` %" is a percent of the fleet's whole cargo hold: it wants
+   `v` % of the hold minus what of that mineral is aboard (the
+   subtraction is BINARY-ONLY), and the minerals load in the order Ir,
+   Bo, Ge until the hold is full
+   (KERNEL.md "Other movement rules", "Which loads are unmet"; PARITY
+   FO-01: fill to 50 % of an empty 210 kT hold loaded 105). This step
+   writes no colonist or fuel order; colonist orders come only from the
+   personality rules below.
    Personality colonist rules: Turindrone carries 100,000 colonists from
    a crowded source to smaller own planets; Robotoid moves part of the
    source's population to small own colonies and carries 10,000–30,000
