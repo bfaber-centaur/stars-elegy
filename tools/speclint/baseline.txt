@@ -67,6 +67,7 @@ docs/ORDERS.md	uncited	CONFIRMED without a case ID: the damaged ones, which dilu
 docs/ORDERS.md	uncited	CONFIRMED without a case ID: the transfer is refused. CONFIRMED (a gift to a recipient whose relation to
 docs/ORDERS.md	uncited	MEASURED without a case ID: - A **patrol** waypoint never repeats, even with repeat orders on. MEASURED
 docs/ORDERS.md	uncited	MEASURED without a case ID: if it has changed hands (been captured). MEASURED for a **planet target**
+docs/ORDERS.md	uncited	MEASURED without a case ID: not a destination). MEASURED (WU-ROUTE): a routing fleet caught mid-leg came
 docs/PARITY.md	pr-ref	cites PR #10: `docs/objects-predictions.md`, PR #10) were restated per case and
 docs/PARITY.md	pr-ref	cites PR #15: `docs/universe-gen.md`, `docs/universe-gen-predictions.md`, PR #15) and a
 docs/PARITY.md	pr-ref	cites PR #17: stars-decomp #17); predictions committed before the runs. Each ran at six
