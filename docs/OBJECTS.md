@@ -347,6 +347,14 @@ After laying, every fleet and then every starbase sweeps.
   mixed item (PP 25) (MEASURED, OB-028, OB-029). An Interstellar Traveler
   mixed item launches 40 kT of each and spends 48 kT of each (BINARY-ONLY:
   the item's cost; not measured).
+- **The settings (BINARY-ONLY).** The planet's packet destination and
+  speed are stored as the owner sends them; the host only checks that the
+  planet is the sender's (`LIMITS.md`). The speed is stored as given in its
+  field (warps 4..19) and resolved at launch by the rule below. A
+  destination is a planet number, or none; nothing checks that the planet
+  exists, and launching toward a number past the last planet reads past
+  the planet table (no measured behaviour; Elegy needs a chosen rule, such
+  as treating it as no destination).
 - Packet warp `W`: the planet's packet-speed setting; if below 5 or above
   `Dw + 3`, it becomes `Dw + t` (OB-028-B: 11 with a Mass Driver 7 → 7;
   unset → `Dw + t`, OB-028-C, D).
@@ -370,7 +378,13 @@ After laying, every fleet and then every starbase sweeps.
   unused packet number, from 0. Packets use the same numbering rule as
   minefields ("Limits" above, MEASURED there by MF-11 and MF-13): numbers
   0..510, and 511 only when no other space object sorts after the owner's
-  packets; the universe holds at most 4050 objects. With no number or no
+  packets; the universe holds at most 4050 objects. Packets and salvage
+  are one kind of object, so a player's packets and its own salvage share
+  one pool of numbers: its salvage does not sort after its packets, it
+  uses up numbers in the same pool. What sorts after them is any packet
+  or salvage of a higher-numbered player, every wormhole and the Mystery
+  Trader. Minefields of any owner and lower-numbered players' packets and
+  salvage sort before and never withhold 511. With no number or no
   room, the item still counts as built (its minerals are spent and the
   launch message is sent) but no packet appears.
 

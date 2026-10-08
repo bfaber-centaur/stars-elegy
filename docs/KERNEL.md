@@ -886,6 +886,8 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
 | Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
+| Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); resources BINARY-ONLY |
+| Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED except IT (OB-028, OB-029); IT and resources BINARY-ONLY |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -970,6 +972,35 @@ Additional rules (CONFIRMED by KB-2A unless marked):
 - A planet with 0 resources builds nothing and sends no messages
   (BINARY-ONLY; an owned planet with population has at least 1 resource,
   so only the duplicate-serial ×4/5 cut of a 1-resource planet reaches it).
+
+### Packet items (BINARY-ONLY except where marked)
+
+What a packet item launches, and the packet it makes, are in `OBJECTS.md`
+"Launch". In the queue:
+
+- **Unit loop.** A packet item goes through the same unit loop as any
+  other item, with the costs above: a unit short of minerals or resources
+  is partly built to the lowest component's percentage and, for a regular
+  item, stops the queue; an Auto Alchemy prefix buys missing minerals for
+  it as for any item. Only whole units launch: the units completed this
+  year leave together as one launch (`OBJECTS.md`, the merge rule), and a
+  partial unit stays in the queue as a percentage.
+- **No driver or no destination.** When production reaches a regular
+  packet item (any of the four) on a planet without a mass driver or
+  without a packet destination, the whole item is removed, whatever its
+  count, and the owner gets the "packet order cancelled" message; a queue
+  left empty then gets the "completed its orders" message (MEASURED,
+  OB-028-F: one item, no destination, those two messages in that order,
+  no packet, minerals unchanged). See also "Additional rules" above.
+- **Auto Mineral Packets.** It builds Mixed Mineral Packets. Like the
+  other auto items its count is never used up: each year it builds up to
+  its count (at most 1000) and stays in the queue with the same count. A
+  unit short of any mineral is skipped with nothing spent unless an Auto
+  Alchemy prefix stands before it, as for other auto items; a unit short
+  only of resources leaves a hidden Mixed Mineral Packet ×1 at that
+  percentage at the queue front, and the queue stops (the PQ-001 auto
+  rules). On a planet without a mass driver or destination it builds
+  nothing, sends no message and stays in the queue.
 
 ### Terraforming
 
