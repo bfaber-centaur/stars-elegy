@@ -699,8 +699,16 @@ currently do, is negative (MEASURED for Rototill, AI-16: ignoring the
 test, using present habitability, or dropping history-only planets each
 breaks the Rototill replay).
 The nearest candidate to the fleet wins. Robotoid and Macinti recompute
-the marks for every fleet; the others compute them once per turn, so a
-planet chosen earlier in the same turn is not excluded for them. Then, if
+the marks for every fleet, so a colonize order given earlier in the turn
+already excludes its planet. The others compute the marks once per turn;
+the search itself never marks the planet it returns, so the personality
+marks each chosen planet itself, and later fleets that turn skip it:
+Rototill (`docs/ai/rototill.md` §3 pass 2, BINARY-ONLY: AI-16's replay
+includes the mark, but no variant without it was tested), Cybertron
+(`docs/ai/cybertron.md` §5, MEASURED, AI-21: without the mark 184
+fleet-years differ) and Turindrone (`docs/ai/turindrone.md` "Fleet pass",
+MEASURED, AI-22: dropping it breaks 8). A wormhole choice marks nothing
+(BINARY-ONLY). Then, if
 the fleet orbits an own planet and the year index is below 120, a
 wormhole may be preferred: wormholes within twice the candidate's
 distance (any distance when there is no candidate) score

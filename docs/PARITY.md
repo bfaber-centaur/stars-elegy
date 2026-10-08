@@ -1616,8 +1616,9 @@ player 1 as a friend, so no battle.
 
 Hostile adjusters: gravity's reachable ends are 49 and 71; 71 is farther
 from the centre 50, and its average habitability loss per click (score
-137) beats temperature's and radiation's (67), so both clicks go to
-gravity. Friendly: gravity toward 50 (score 111) beats the others.
+137) beats temperature's (86, toward 67) and radiation's (67, toward 63),
+so both clicks go to gravity (`KERNEL.md` "Terraforming", Orbital
+Adjusters). Friendly: gravity toward 50 (score 111) beats the others.
 
 Claim Adjuster drift, replayed from each startup tick at draw offset 4
 (the offset at which KX-004's events began; it is one value for every run
@@ -5236,7 +5237,7 @@ private `stars-oracle-apparatus`, `evidence/ai/ap/` (AP-001, AP-002) and
   the fleet alone; the change is the shared core's whole-year arrival
   slowdown (`AI.md`, AI-11). Extra queue lines in both runs were the shared automation's.
 
-## Computer players (AI-0..AI-23)
+## Computer players (AI-0..AI-24)
 
 `docs/AI.md` specifies the original computer players' shared rules. They
 were read from the original program (private `stars-decomp` `docs/ai.md`)
@@ -5281,6 +5282,7 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 | AI-21 | Cybertron fleet orders each year: merges, waypoints, cargo, scrap and battle plan per own fleet, with the planet view of `AI.md` §1 and the inherited armada parameters (`docs/ai/cybertron.md` §5) | MEASURED: 2,064 of 2,064 own fleet-years (AIX), 4 of them as sets of allowed outcomes (buddy joins); 356 cargo, 174 waypoint-add and 278 waypoint-change records reproduced. Deliberately wrong variants each fail: keeping the fleet pass's planet notes (64 fleet-years differ), no planet history (22), no in-turn cargo effect (20), zero armada parameters (13). The zero-parameter case was also run on the oracle: every idle armada left home (11 of 11 armada-years). Obsolete fleets, minelayers, invasions and armada departures never occurred |
 | AI-22 | Turindrone fleet orders each year: merges, waypoint-0 task and waypoint-1 target and task per own fleet, with the planet view of `AI.md` §1 and scout targeting (`docs/ai/turindrone.md` "Fleet pass") | MEASURED: every own Turindrone fleet in AIX's 61 years agrees, 689 of 689 fleet-years (618 fully determined, 71 as outcome sets from random gates), including one scout wormhole jump. Discriminating misreadings break rows: every planet known 54, ignoring the history file 73, Robotoid's per-task colonize marks 23, no unload-or-clear step 17, unarmed-fleet test dropped 58. Bombers never occurred, so the armada parameters were not exercised |
 | AI-23 | Automitron fleet orders each year, rule order: multi-waypoint fuel scrap, Privateers, colonizers, transports, bombers, scouts (`docs/ai/automitron.md` "Fleet pass") | MEASURED: every own Automitron fleet in AIX's 61 years agrees, 264 of 264 fleet-years (251 fully determined, 13 as outcome sets), including one scout wormhole jump and one colony ship scrapped at 0 mg of fuel. Every planet known breaks 20 rows, ignoring the history file 62. Bombers never occurred |
+| AI-24 | Cybertron packets each year (`docs/ai/cybertron.md` §6): attack and scanner-shot warps `w`, attack packet counts, scanner-shot destinations from the edge-point, slide and inset rule, and packet marks on the planet one id above a scanner shot's destination; draw bounds `Random(3W/10)` and `3W/20` | MEASURED: AIX 2400–2460, 118 of 118 scanner warps and 16 of 16 attack warps and packet counts; 118 of 118 scanner destinations reachable from the recorded direction (the band covers about 6 of 128 planets; the neighbouring directions reach only 12 and 19); none was Cybertron's own; directions only 1..6; 85 of 85 scanner packets marked the planet one id higher, and 105 of 105 marks are explained. The individual draws were not replayed (stream position unknown). Draw bounds: the same floating-point instructions run in the oracle's DOSBox give exactly 0.3·W and 0.15·W for all five galaxy sizes at both 64- and 53-bit precision settings (not a game run); real x87 hardware is UNRESOLVED |
 
 In 2400 every expert type except Rototill scrapped at least one starting
 fleet at its homeworld (waypoint-0 scrap order; the fleets were gone the

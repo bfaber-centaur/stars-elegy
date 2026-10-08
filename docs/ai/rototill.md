@@ -122,7 +122,8 @@ in 2456.
        colonizable planet"; Rototill uses habitability marks). The
        wormhole alternative applies only when the Colony Ship's engine
        is later in the list than Quick Jump 5. The chosen planet is
-       marked so later fleets this turn skip it.
+       marked so later fleets this turn skip it (BINARY-ONLY; `../AI.md`
+       §11).
      - Planet → colonize order; wormhole → wormhole order; neither → no
        order.
 
