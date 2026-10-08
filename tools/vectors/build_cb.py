@@ -187,7 +187,7 @@ def diff(st0, st1, full=False):
     for q in st1['production_queues']:
         if q0.get(q['planet']) != q['items']:
             ex.append({'kind': 'production_queue', 'planet': q['planet'],
-                       'equals': [{k: v for k, v in i.items() if k != 'kind'} for i in q['items']]})
+                       'equals': q['items']})
     ident = lambda o: (o['kind'], o.get('owner'), o['id'])
     o0 = {ident(o): o for o in st0['objects']}
     o1 = {ident(o): o for o in st1['objects']}
@@ -220,19 +220,25 @@ def mining_planets(st):
 BATTLE_PLANET_FIELDS = ('starbase', 'defenses', 'surface_minerals')
 
 
-def mark_samples(exps, battles):
-    """In a single-stream vector, flag what the year's battle draws decide
-    (COMBAT.md "Random draws in a battle"): the actions, the fleets that
-    fought, salvage where a battle was, and a battle planet's starbase,
-    defenses and minerals. One stream gives one sample of each."""
+def mark_samples(exps, battles, single=True):
+    """Flag what the year's battle draws decide (COMBAT.md "Random draws in
+    a battle"). The fleets that fought are flagged in every vector: which
+    ones die or how hurt they are depends on the draws even when a few
+    streams agreed. In a single-stream vector the actions, salvage where a
+    battle was, and a battle planet's starbase, defenses and minerals are
+    flagged too; several streams already list those per stream where they
+    differed."""
     fleets = {(t['owner'], t['fleet']) for b in battles for t in b['tokens'] if 'fleet' in t}
     places = {(b['x'], b['y']) for b in battles}
     planets = {b['planet'] for b in battles if b.get('planet') is not None}
     out = []
     for e in exps:
         k = e['kind']
-        if (k == 'battle_actions' or (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in fleets)
-                or (k == 'salvage_at' and (e['x'], e['y']) in places)):
+        if k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in fleets:
+            e = dict(e, sample=True)
+        elif not single:
+            pass
+        elif k == 'battle_actions' or (k == 'salvage_at' and (e['x'], e['y']) in places):
             e = dict(e, sample=True)
         elif k == 'planet' and e['id'] in planets and any(f in e['equals'] for f in BATTLE_PLANET_FIELDS):
             drawn = {f: v for f, v in e['equals'].items() if f in BATTLE_PLANET_FIELDS}
@@ -299,8 +305,7 @@ def build(ev, out):
                 for e in exps:
                     if e['kind'] == 'planet' and 'surface_minerals' in e['equals'] and e['id'] in mined:
                         e['tolerance'] = {'surface_minerals': 1}  # mining's random +1 remainder (KERNEL.md)
-                if len(runs) == 1:
-                    exps = mark_samples(exps, bs.values())
+                exps = mark_samples(exps, bs.values(), single=len(runs) == 1)
                 sn = stream_name(r)
                 per[sn if sn not in per else sn + ' (' + r.split('/')[-3] + ')'] = exps
             held, tag, verdict = VERDICT[setup]

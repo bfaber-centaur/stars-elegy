@@ -1039,20 +1039,24 @@
       {
        "id": 11,
        "count": 1,
-       "percent": 58
+       "percent": 58,
+       "kind": 1
       },
       {
        "id": 3,
-       "count": 1
+       "count": 1,
+       "kind": 1
       },
       {
        "id": 7,
        "count": 5,
-       "percent": 24
+       "percent": 24,
+       "kind": 1
       },
       {
        "id": 8,
-       "count": 2
+       "count": 2,
+       "kind": 1
       }
      ],
      "year": 1

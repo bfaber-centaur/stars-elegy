@@ -229,7 +229,7 @@ unconstrained by that case.
 | `no_fleet_at` | no fleet of `owner` at (`x`, `y`) | |
 | `no_new_fleets` | `owner` gained no fleet | |
 | `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
-| `production_queue` | planet `planet` | the queue as `{id, count, percent}` items (`percent` omitted when 0) |
+| `production_queue` | planet `planet` | the queue as `{id, count, percent, kind}` items (`percent` omitted when 0; `kind` 1 planetary item, 2 design, as in "Queue items") |
 | `design`, `starbase_design` | design `owner`/`slot` | `hull`, `slots`, `mass` |
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
 | `battle_plan` | plan `owner`/`slot` | `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo` |
@@ -321,7 +321,11 @@ vector these expectations carry `sample: true`: `battle_actions`, the
 position, and a battle planet's `starbase`, `defenses` and
 `surface_minerals` (split from the planet's other fields, which stay exact).
 The `battle` token lists and everything away from the battles stay exact,
-apart from the mining tolerance above.
+apart from the mining tolerance above. In a several-stream `cb` vector the
+`fleet` and `fleet_gone` of every fleet that fought carry `sample: true` as
+well: which fleets die in a battle, and how hurt the survivors are, depends
+on the draws even where the few streams run agreed (CB-036, CB-039,
+CB-042..044 list hundreds of destroyed fleets).
 
 A `sample` battle record is still an exact check of the damage rules. Given
 the recorded moves and shots, every hit is deterministic: replay the

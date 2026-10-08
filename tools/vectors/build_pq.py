@@ -83,7 +83,7 @@ def observe(year, adir, mined):
     out = [
         {'year': year, 'kind': 'planet', 'id': PLANET, 'equals': eq},
         {'year': year, 'kind': 'production_queue', 'planet': PLANET,
-         'equals': [{k: v for k, v in B.queue_item(i).items() if k != 'kind'} for i in queue]},
+         'equals': [B.queue_item(i) for i in queue]},
         {'year': year, 'kind': 'player', 'id': PLAYER, 'equals': {
             'tech': {B.TECH[i]: int(player[B.DUMP_TECH[i]]) for i in range(6)},
             'research_accumulated': dict(zip(B.TECH, (int(x) for x in player['accum'].split(','))))}},

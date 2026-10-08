@@ -984,7 +984,8 @@
       {
        "id": 7,
        "count": 570,
-       "percent": 9
+       "percent": 9,
+       "kind": 1
       }
      ],
      "year": 1
