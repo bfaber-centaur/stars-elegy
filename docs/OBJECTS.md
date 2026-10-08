@@ -370,7 +370,13 @@ After laying, every fleet and then every starbase sweeps.
   unused packet number, from 0. Packets use the same numbering rule as
   minefields ("Limits" above, MEASURED there by MF-11 and MF-13): numbers
   0..510, and 511 only when no other space object sorts after the owner's
-  packets; the universe holds at most 4050 objects. With no number or no
+  packets; the universe holds at most 4050 objects. Packets and salvage
+  are one kind of object, so a player's packets and its own salvage share
+  one pool of numbers: its salvage does not sort after its packets, it
+  uses up numbers in the same pool. What sorts after them is any packet
+  or salvage of a higher-numbered player, every wormhole and the Mystery
+  Trader. Minefields of any owner and lower-numbered players' packets and
+  salvage sort before and never withhold 511. With no number or no
   room, the item still counts as built (its minerals are spent and the
   launch message is sent) but no packet appears.
 
