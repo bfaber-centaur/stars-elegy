@@ -12,6 +12,10 @@ import build as B
 
 SKIP = {'sc015', 'sc021', 'tools'}
 PARITY = 'docs/PARITY.md "Scanning"'
+# Cases whose setup the original did not keep, so the expectation tests no rule.
+# PARITY.md "SC-028-T75-out": the fleet placed at y 920 was put at y 1000,
+# inside the cloak bound; SC-033 repeats the case.
+EXCLUDE = {'SC028-T75-out'}
 OLD = re.compile(r'^(OK|MISS|MISMATCH)\s+(\S+)\s+viewer (\d+) (planet|fleet) (\S+)\s+expected (\S+) got (\S+)\s*(.*)$')
 NEW = re.compile(r'^(OK|MISS|MISMATCH)\s+(SC\S+)\s+(\w+)\s+(\(.*?\))\s+expected (.*?)\s+got (.*?)\s{2,}(.*)$')
 DESIGNS = re.compile(r'^(OK|MISS|MISMATCH)\s+player (\d+) foreign (designs|sbdesigns) partial/full: model \((\d+), (\d+)\) observed \((\d+), (\d+)\)')
@@ -156,6 +160,8 @@ def build(ev, out):
                'years': 1, 'random': 'single_stream' if len(runs) == 1 else 'several_streams',
                'streams': len(runs), 'initial_state': st, 'cases': []}
         for cid, c in per.items():
+            if cid in EXCLUDE:
+                continue
             cs = B.case(cid, ('SCANNING ' + c['rule']).strip(), c['setup'], c['streams'], c['held'], set())
             if c['pred'] is NOPRED:
                 cs['tag'] = 'MEASURED'

@@ -27,8 +27,7 @@ DRAWN = {'mf01', 'mf02', 'mf03h', 'mf03s', 'mf04', 'mf04b', 'mf04d', 'mf05b', 'm
 # PARITY records MF-14 and MF-15 as MEASURED: one pinned year each.
 MEASURED_ONLY = {'mf14', 'mf15'}
 NOTES = {'mf13b': 'the object at 1400,1400 is salvage: a packet-type object with packet-warp field 0 is salvage '
-                  'whatever its destination, and its loss of 10% is salvage decay (BINARY-ONLY: Objects decomp reading, '
-                  'OBJECTS.md line pending)'}
+                  'whatever its destination, and its loss of 10% is salvage decay (BINARY-ONLY: OBJECTS.md "Salvage")'}
 HAND_NOTE = ('held: every value compared by hand with the predictions committed before the run '
              '(stars-oracle-apparatus evidence/mf/README.md verdict note)')
 
