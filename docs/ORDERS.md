@@ -238,9 +238,11 @@ BINARY-ONLY.
   deleted ships shared a fleet with survivors, their fuel and cargo are shared
   out exactly as a ship **move** does it: the leaving ships take
   `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with
-  the survivors with no clamp to the survivors' tank (CO-07c: a 500 mg fleet of
-  capacity 950 losing a 900-capacity design kept `500 − floor(500·900÷950) = 27`
-  mg; 100 kT of iron shared the same way left 0). Client-reachable (the original
+  the survivors, with no clamp to the survivors' tank (CO-07: a 500 mg /
+  capacity-950 fleet losing a 900-capacity design kept `500 − floor(500·900÷950)
+  = 27` mg of fuel; CO-07c: the same fleet at 300 mg kept 16, where a clamp to
+  the survivor's 50-mg tank would give 50, and 100 kT of iron shared the same
+  way left 0). Client-reachable (the original
   client deletes an in-use design with its alert, DS-1). No serial needed.
 - **Design read, four malformed cases (elegy implementation Q12).** The four
   malformed inputs a design read can meet all resolve to **drop-and-keep**, not
@@ -356,10 +358,14 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   relation (enemy) check, so a gift to an enemy's fleet or planet is allowed
   here. (The *waypoint* task that transfers a fleet to another player's fleet
   is the path that refuses an enemy — see "Transfer fleet".)
-- **Two passes, in place.** Within step 1 the host runs all **debits first**
-  and then all **credits**, so same-step transfers draw from pre-transfer
-  stocks. A manual gift is credited to the destination at this time, **not**
-  after movement, and there is **no** queued-gift step for manual orders.
+- **Credited in place at step 1.** The original credits a manual gift to the
+  destination as the order is replayed (step 1), **not** after movement, with
+  **no** queued-gift step for manual orders (MEASURED, TK-406/407/409); each
+  transfer record's debit and credit are applied together in place. Whether the
+  host orders all debits before all credits across records is **not**
+  established, so that ordering is not asserted here. Elegy's orders layer
+  performs the debit and credit in two passes — an implementation detail of the
+  Elegy orders layer, not a measured Stars! rule.
 - **Colonists** onto a planet the giver does not own are a **drop**, resolved
   in the first drop step **before** movement (CONFIRMED, TK-501) —
   colonisation or invasion under the takeover/objects rules — not in the
@@ -372,6 +378,29 @@ transfer is also resolved at step 1 (not deferred), under these rules:
   and the **giver keeps the cargo** — nothing is debited. BINARY-ONLY for the
   same-turn-removal case (read from the order-time object lookup; the in-place
   step-1 timing is MEASURED, TK-406/407/409).
+- **Receiver removed *after* the credit, same turn.** This is the reverse of
+  the missing-endpoint case: the receiving fleet still exists when the gift is
+  credited, and a **later** order in the same replay removes it (its owner
+  merges it away, or deletes the design its ships are built from). The in-place
+  credit is a plain cargo write with **no record that the cargo was a gift**, so
+  after it lands the gifted cargo is **indistinguishable from the fleet's own
+  cargo**. Its fate is therefore whatever the fleet-removal order does to that
+  fleet's cargo generally:
+    - a **merge** pools it into the surviving fleet. A direct Merge Fleets order
+      was measured adding **fuel** (FC-1); that its cargo pools the same way is
+      read from the merge path, not separately measured — **BINARY-ONLY**.
+    - a **design delete** shares the cargo out exactly as a ship move does: the
+      deleted ships carry off `floor(amount × deleted capacity ÷ fleet
+      capacity)`, **lost with them even when other ships survive**, and only the
+      remainder stays with the survivors. **MEASURED** (CO-07c: a fleet's 100 kT
+      of iron left entirely with the deleted ships, the surviving ship having no
+      hold; CO-07 showed the same proportional share-out for fuel, 500 → 27). If
+      no ship survives, all of it is lost.
+  The outcome is identical to what the order does to native cargo (see "Design
+  delete effect" and "Merge"). There is **no** gift-specific refund to the giver
+  and **no** gift-specific loss. The no-provenance property of the in-place
+  credit is BINARY-ONLY (read from the credit branch, which writes cargo and
+  nothing else).
 - **Receiver short of room.** A receiver without capacity takes **what fits**;
   the giver is sent message `0x0dd` and the remainder is **lost** (it is not
   returned to the giver).
