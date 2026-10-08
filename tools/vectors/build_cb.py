@@ -192,7 +192,7 @@ def diff(st0, st1, full=False):
     o0 = {ident(o): o for o in st0['objects']}
     o1 = {ident(o): o for o in st1['objects']}
     for o in st1['objects']:
-        if o['kind'] == 'packet' and o['destination_planet'] == 1023:
+        if o['kind'] == 'salvage':
             ex.append({'kind': 'salvage_at', 'x': o['x'], 'y': o['y'], 'equals': {'minerals': o['minerals']}})
         elif o['kind'] == 'minefield' and o0.get(ident(o)) != o:
             ex.append({'kind': 'minefield', 'owner': o['owner'], 'id': o['id'],
@@ -200,7 +200,7 @@ def diff(st0, st1, full=False):
         elif o0.get(ident(o)) != o:
             ex.append({'kind': 'object', 'equals': o})
     for k, o in o0.items():
-        if k not in o1 and not (o['kind'] == 'packet' and o['destination_planet'] == 1023):
+        if k not in o1 and not (o['kind'] == 'salvage'):
             ex.append({'kind': 'object_gone', 'subject': {'kind': o['kind'], 'owner': o.get('owner'), 'id': o['id']}})
     return ex
 

@@ -24,11 +24,11 @@ HAND_HELD = {'mf07', 'mf07f', 'mf07sd'}
 # single-stream run the fields' mine counts are too (every stop is paid by a
 # field, MF-4).
 DRAWN = {'mf01', 'mf02', 'mf03h', 'mf03s', 'mf04', 'mf04b', 'mf04d', 'mf05b', 'mf09h', 'mf09s', 'mf14', 'mf15'}
-# MF-13b's object at 1400,1400 is the setup's salvage stand-in (experiments/mf/gen.py),
-# written as a packet with destination field 0; salvage the host makes carries 1023.
-NOTES = {'mf13b': 'the object at 1400,1400 was written by the setup as a stand-in for salvage (destination '
-                  'field 0, warp 4); over the year it did not move and lost 10% of each mineral; whether the host '
-                  'classed it as salvage or as a packet is UNRESOLVED, so it is not a packet movement or decay check'}
+# PARITY records MF-14 and MF-15 as MEASURED: one pinned year each.
+MEASURED_ONLY = {'mf14', 'mf15'}
+NOTES = {'mf13b': 'the object at 1400,1400 is salvage: a packet-type object with packet-warp field 0 is salvage '
+                  'whatever its destination, and its loss of 10% is salvage decay (BINARY-ONLY: Objects decomp reading, '
+                  'OBJECTS.md line pending)'}
 HAND_NOTE = ('held: every value compared by hand with the predictions committed before the run '
              '(stars-oracle-apparatus evidence/mf/README.md verdict note)')
 
@@ -74,7 +74,7 @@ def build(ev, out):
         res = [l.split()[1] for l in lines if l.startswith('MF-')]
         rules = sorted(set(re.findall(r'\((MF-\d+)\)', ' '.join(lines))))
         held = 'CONTRADICTED' not in res
-        tag = 'CONFIRMED' if all(r == 'HELD' for r in res) else 'MEASURED'
+        tag = 'CONFIRMED' if all(r == 'HELD' for r in res) and name not in MEASURED_ONLY else 'MEASURED'
         streams = {}
         for r in runs:
             m = re.search(r'-c(\d+)$', r)

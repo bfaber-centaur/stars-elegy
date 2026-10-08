@@ -115,7 +115,12 @@ file, so nothing in it is a default you have to guess.
 - A planet with a route has `route_to`, the destination planet.
 - `objects`: wormhole ends (partner, stability class, years since the last
   jump, players who know it, players who know where it leads), Mystery
-  Traders (destination, warp, players met), mineral packets, minefields.
+  Traders (destination, warp, players met), mineral packets, salvage
+  (`kind: "salvage"`: owner, number, position, minerals), minefields.
+  Packets and salvage are one kind of object in the game's files; one whose
+  stored packet warp is 0 (warp 4) is salvage whatever its destination
+  (BINARY-ONLY: Objects decomp reading). Changed or new salvage after a year
+  is written as `salvage_at`.
 
 Without an `orders` block, the orders a case tests are the fleets'
 waypoints and tasks and the other standing orders in this state; no other
