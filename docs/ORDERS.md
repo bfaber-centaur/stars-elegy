@@ -798,7 +798,7 @@ planet 17 was re-routed through the gate — it arrived at planet 8 the same yea
 be a gate jump) and its regenerated waypoint read warp 11 (the gate code,
 GT-004). A direct warp-11 control fleet naming the same gated destination jumped
 identically. **Both planets must belong to the fleet's owner** for the shared
-routing check (`FCanFleetUseStargates`): a friend's gate does not count. (A
+routing check: a friend's gate does not count. (A
 non-IT fleet carrying cargo may change the choice, since the no-cargo condition
 and the gate's mass/range limits then apply; not separately measured here.) One
 observation left open: both fleets' fuel read 100 before and 50 after the jump,
