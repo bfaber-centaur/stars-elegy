@@ -110,7 +110,11 @@ order shown. "Fleet order" means by owner, then by fleet number
    waypoint 1, carrying its own waypoint-0 task onto it. Up to 8 passes
    resolve chains of followers. A follower whose leader no longer exists
    gets message 0x138 (`MESSAGES.md`, CONFIRMED fo/fo04) and stops
-   following. The copying rule is BINARY-ONLY. This is separate from
+   following. Before this, a leader that is not at the follower's
+   position is replaced by a fleet of the same owner that is (possibly
+   the follower itself, which then follows nothing; BINARY-ONLY). The
+   outcome, no move, no merge and no 0x138, is CONFIRMED (FO-03-F,
+   `fo/fo03`). The copying rule is BINARY-ONLY. This is separate from
    chasing, where waypoint 1 is aimed at a fleet (this file's "Chasing
    another fleet"). Then the **waypoint check**
    runs: coordinates are clamped to the galaxy and waypoints aimed at a
