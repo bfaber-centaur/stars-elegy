@@ -778,11 +778,21 @@ alliances" is on, skipping fleets owned by computer players):
   own starbase planet nearest to here.
 - Elsewhere and strong: unowned planet → launch; own planet without
   starbase → load a fifth of its population if it has more than 100,000,
-  then launch; another player's planet → invade if the troops suffice
-  (needed = estimated population × 400 / (100 − defense %) against the
-  colonists carried: need < carried/5, or need < 200 with > 350 carried,
-  or need < 10 with > 150), dropping `min(max(carried/2, 5·need/4),
-  carried, 30000)`; no move that turn.
+  then launch; another player's planet → invade if the troops suffice,
+  else do nothing this turn (BINARY-ONLY). With `g` the planet's
+  population estimate and `e` its defense coverage estimate, as the
+  player's report holds them (`SCANNING.md` "What a planet report
+  contains"; `g` in units of 400 colonists, `e` 0..15), and `c` the
+  armada's colonist cargo in kT (units of 100 colonists):
+  - defense % `= ⌊(e + 1)·18/4⌋` (4 for `e` = 0, 72 for 15);
+  - `need = ⌊g·400 / (100 − defense %)⌋`, in colonists;
+  - invade when `need < ⌊c/5⌋`, or `need < 200` and `c > 350`, or
+    `need < 10` and `c > 150`;
+  - drop `min(max(⌊c/2⌋, ⌊5·need/4⌋), c, 30000)` kT of colonists.
+  The tests and the drop use `need` (colonists) and `c` (kT) as plain
+  numbers, with no conversion between them, as read. UNRESOLVED: whether
+  the game really behaves this way (a probable unit slip) until an oracle
+  check of an armada invasion exists. No move that turn.
 - *Launch target*: the best-scoring planet other than here among those
   with an AI threat mark (§ personality files), score = threat + 7, 5, 4,
   3, 2 or 1 for within 50, 100, 150, 200, 300 or 500 ly; a planet already
