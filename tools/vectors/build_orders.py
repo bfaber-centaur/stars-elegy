@@ -262,13 +262,33 @@ WU += [
     ('wuWARP40', 'WU-WARP40', 'patrol range 40', False, 'intercept warp 8' + NOPRED),
     ('wuWARP90', 'WU-WARP90', 'patrol range 90', False, 'intercept warp 10' + NOPRED),
 ]
+# Second WU round (ORDERS.md "WU captured target", "WU route stargate", patrol
+# no-repeat): MEASURED, one run each.
+WU += [
+    ('wuCAP', 'WU-CAP', 'captured target: a colonist drop takes an undefended planet that another fleet names', True,
+     'the drop invaded (planet 8 to player 0, before movement); the other fleet\'s waypoint still named planet 8'),
+    ('wuRSG2', 'WU-RSG2', 'route task between two own gated planets, with a warp-11 control', True,
+     'both fleets jumped to planet 8 (161 ly, beyond warp 10); the route fleet\'s regenerated waypoint reads warp 11; '
+     'both fleets\' fuel went 100 to 50 (recorded, not interpreted)'),
+    ('wuPNR', 'WU-PNR', 'patrol with repeat on, and a repeat control at its own position', True,
+     'the patrol fleet kept its patrol task, station and single waypoint under repeat orders; the control kept its '
+     'one plain waypoint'),
+]
+# runs whose result is a fleet that did not change
+WU_KEEP = {'WU-PNR': [(0, 50), (0, 51)]}
 
 def one(rundir, vid, title, held, verdict, x_orders=True, focus=None):
     bdir = os.path.join(rundir, 'raw', 'before')
     g = [f for f in os.listdir(bdir) if f.endswith('.HST')][0][:-4]
     st0 = B.state(B.dump(os.path.join(bdir, g + '.HST')), B.dump(os.path.join(bdir, g + '.XY')), g,
                   os.path.join(bdir, g + '.XY'))
-    _, exps = K.observe(st0, os.path.join(rundir, 'raw', 'after'), g, 1, full=True)
+    st1, exps = K.observe(st0, os.path.join(rundir, 'raw', 'after'), g, 1, full=True)
+    for fo, fid in WU_KEEP.get(vid, ()):
+        # a result that is "nothing changed": list the fleet's after-year state
+        if not any(e['kind'] in ('fleet', 'fleet_gone') and (e['owner'], e['id']) == (fo, fid) for e in exps):
+            f = next(f for f in st1['fleets'] if (f['owner'], f['id']) == (fo, fid))
+            exps.append({'kind': 'fleet', 'owner': fo, 'id': fid, 'year': 1, 'equals': {
+                k: f[k] for k in ('x', 'y', 'waypoints', 'repeat_orders') if k in f}})
     if focus:
         (fo, fid), mp = focus
         exps = [e for e in exps if e['kind'] in ('fleet', 'fleet_gone') and (e['owner'], e['id']) == (fo, fid)

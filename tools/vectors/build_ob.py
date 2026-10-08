@@ -219,8 +219,12 @@ def observe(c, A, Bf, run, M):
         ok, got = C.evaluate6(k, A, Bf)
         return [sample('designs_known', [k[1] - 1, k[2]], got, c['expect'])]
     if kind == 'arpacket':
+        # both planets are owned by an Alternate Reality race, which mines without mines:
+        # the mining remainder is a draw (KERNEL.md "Mining"), so the minerals get the
+        # 1 kT mining tolerance
         return [{'kind': 'planet', 'id': n, 'equals': {'population': int(planets[n]['pop']),
-                                                       'surface_minerals': surface(planets[n])}} for n in (k[1], k[2])]
+                                                       'surface_minerals': surface(planets[n])},
+                 'tolerance': {'surface_minerals': 1}} for n in (k[1], k[2])]
     if kind == 'tradertwo':
         out = [fleet(fleets, o, f) for o, f in k[1]]
         out += [{'kind': 'trader', 'id': int(t['num']), 'equals': {'x': int(t['x']), 'y': int(t['y'])}}

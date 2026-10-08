@@ -27,6 +27,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `kx001`, `kx002` | KX-001, KX-002 cases | 38 | planet economy: production, Auto Alchemy, growth, research, mining (one year from an edited PG001 file) | `docs/KERNEL.md` |
 | `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
 | `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
+| `kx005` | KX-005 R1..R3, T0..T2 | 6 | research (Generalized Research under slower tech, GR-fed level-ups, part announcements, level 26) and terraforming (ties, Auto Min/Max, Claim Adjuster cost and drift, Orbital Adjusters); T0 in 15 streams | `docs/KERNEL.md` "Research", "Terraforming" |
 | `mf` | MF-01..15 | 25 | minefields: hits, sweeping, decay, detonation, speed bumps, laying at the 511-object limit, salvage after a partial loss, due-north and due-south legs | `docs/OBJECTS.md` "Minefields" |
 | `gt` | GT-001..004 | 4 | stargates: limits, danger and loss rolls, friends, refusal order, what makes a gate (MEASURED, one pinned year each) | `docs/OBJECTS.md` "Stargates" |
 | `rp` | RD-P1..P21 | 21 | turn-time race penalty and repairs; P13..P21 (Round 3, MEASURED) add silent clamps, clamp before the check, habitat repairs, no second punishment and a computer player's repair | `docs/KERNEL.md` (race budget), PARITY "Turn-time penalty", "Race design" Round 3 |
@@ -39,7 +40,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `tk5` | TK-501, TK-502 | 2 | manual cargo transfers to other players' and unowned planets (TK-401..412) | `docs/TAKEOVER.md`, `docs/ORDERS.md` "Cross-owner cargo" |
 | `fc` | FC-1 | 1 | fleet orders from the client: rename, cargo between own fleets, split, merge, ship moves | `docs/ORDERS.md` "Fleet operations" |
 | `co` | CO-01..08 | 18 | split, Split All, ship moves, own-fleet cargo, merge damage, the 32765 ship cap, deleting and editing designs in use | `docs/ORDERS.md` "Fleet operations" |
-| `wu` | WU-A..WU-WARP90 | 28 | waypoint upkeep, repeat, followers, route and transfer tasks, patrol target choice | `docs/ORDERS.md` |
+| `wu` | WU-A..WU-PNR | 31 | waypoint upkeep, repeat, followers, route and transfer tasks, patrol target choice, a captured target, a route through a stargate, patrol under repeat | `docs/ORDERS.md` |
 | `cs` | CS-003 W, B, S, C, C2, D | 80 | warp 10 losses, fuel generation, bombs, colonizing, Orbital Adjuster, minefield sweeping and laying, torpedo hits, designer readouts | `docs/COMPONENTS.md` |
 | `es` | ES-001, ES-002 | 153 | client estimates: waypoint distance, travel time and fuel, range, report ETA, production completion, research, population, value, mining rate | `docs/ESTIMATES.md` |
 | `ob` | OB-001..005, 007..031 | 174 | minefields, packets, the Mystery Trader, wormholes, scanning, stargates | `docs/OBJECTS.md`, `docs/SCANNING.md` |
@@ -250,7 +251,8 @@ difference in the named field. Kernel and combat vectors use it for surface
 minerals, because mining's +1 remainder is random (`KERNEL.md`). Combat
 vectors give it only to planets where a mining draw can happen that year:
 owned with mines at the start of the year, or orbited by a remote miner.
-Minerals from battle debris stay exact.
+Minerals from battle debris stay exact. OB-030-A gives it to its two
+Alternate Reality planets, which mine without mines.
 
 `sample: true` marks an expectation that random draws decided and that only
 one stream observed. It is what the original did with that stream's draws,
@@ -355,7 +357,10 @@ is paid by a field (MF-4). In `gt`, the fleets whose survivors a gate's
 loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's
-size is a draw, so OB-029's `environment` expectations are samples.
+size is a draw, so OB-029's `environment` expectations are samples. In
+the single-stream `kx005` runs (T1, T2) the Claim Adjuster planets'
+environments and the drift message 0x15c are samples: each planet's drift
+is drawn.
 
 ### New-game vectors
 
@@ -402,7 +407,7 @@ go test ./internal/vectors
 - KX-001 M3 (the prediction was void: the race edit tripped the tamper
   check), KX-001 Z1/Z1h (the original crashed: no year was generated; see
   PARITY "KX-001 Z"), KX-004 E0/E1 (the long runs that made the start
-  states), KX-005 (not merged yet).
+  states).
 - BP-2 (new games made one after another in one client session), and the
   battle-plan exploration files with no host year.
 - RD-P19 years 2 and 3 (`rp19-y2`, `rp19-y3`): their start files are the
