@@ -118,7 +118,8 @@ file, so nothing in it is a default you have to guess.
 - A planet whose mass-driver settings are not the default has
   `packet_warp` (the packet speed setting, 4..19) and, when a destination
   is set, `packet_destination` (the target planet). Absent means no
-  destination and warp 4.
+  destination and warp 4, a setting below 5 that counts as unset: the
+  launch uses `Dw + t` (`docs/OBJECTS.md` "Launch", OB-028-C, D).
 - `objects`: wormhole ends (partner, stability class, years since the last
   jump, players who know it, players who know where it leads), Mystery
   Traders (destination, warp, players met), mineral packets, salvage
