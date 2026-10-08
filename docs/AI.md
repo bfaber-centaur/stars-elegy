@@ -356,6 +356,23 @@ race can build. There are 45 classes, 0–44. Parts are named as in
 9, 10, 11, 17 and 19 are used by starbases; the rest by ship designs
 (personality files).
 
+**Mystery Trader items (BINARY-ONLY).** "The race can build" is one test
+for parts and hulls, for starbase and ship designs alike: the race's
+traits allow the item (`COMPONENTS.md` "Who can build what"), each of the
+player's six tech levels meets the item's requirement, and, for a
+Mystery Trader item, the player owns it. Ownership alone is not enough:
+Trader items have tech requirements like any other part
+(`data/components.json`). So a computer player that owns a Trader part
+takes it, ahead of the rest of the class's list, once its tech meets the
+part's requirements; a Trader part it does not own is never taken. The
+hull test is the same, so an owned Trader hull would count, but Mini
+Morph is the only Trader hull and no design rule of Robotoid, Rototill
+or Cybertron names it: their ship designs use Privateer, Meta Morph,
+Frigate, Destroyer, Cruiser, Battleship, B-52 Bomber and Nubian hulls,
+Rototill creates no ship designs, and starbases use Space Station and
+Orbital Fort. No oracle run has had a computer player design with a
+Trader item.
+
 | Class | Parts, in order of preference |
 |---|---|
 | 0 | Anti Matter Torpedo, Omega Torpedo, Upsilon Torpedo, Rho Torpedo, Epsilon Torpedo, Delta Torpedo, Beta Torpedo, Alpha Torpedo |
