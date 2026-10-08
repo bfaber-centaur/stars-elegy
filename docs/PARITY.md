@@ -3248,6 +3248,34 @@ generations, 2400–2460. No experiment was set up for it.
   human player's history file is written by the client and was not
   examined.
 
+### Space objects in player files (SC-038, MEASURED)
+
+Question: when a player sees a space object, how much of the host's
+record of it reaches the player's turn file, and does any of it stay in
+the player's history file? Read from existing evidence (`PARITY.md`
+"Computer players (AI-0..AI-24)", "Corpora": OB, MF and AIX); no
+experiment was set up for it. Raw comparison: private
+`stars-oracle-apparatus` `evidence/sc/sc038`.
+
+Method: every object record in a turn file after the year that the
+viewer does not own (wormholes and the Mystery Trader always count) was
+compared byte for byte with the host file's record of the same object.
+Turn files: both players' files of every OB and MF run (135 host files,
+270 turn files; the SC runs hold no objects). History files: the six
+AIX computer players' files after each of 61 generations (366 files).
+
+- **Turn file: the whole record.** 3,381 records compared: minefields
+  3,198, mineral packets 23, salvage 18, Mystery Trader 24, wormholes
+  118. Every one had a host record of the same object, and every one
+  equalled it except the per-player "known" and "seen" markers
+  (minefields, 513 records) and the "known" marker (wormholes, 2
+  records), which held only the viewer's own entry of the host's value.
+  The objects came from OB-001..OB-031 (and an OB setup probe) and
+  MF-1..MF-15; the per-kind run lists are in the raw comparison.
+- **History file: no objects.** None of the 366 AIX history files held
+  an object record.
+- Not examined: a human player's history file, which the client writes.
+
 ### Not tested
 
 SD detection of cloaked fleets (S-21, random), AR planet scanners (S-11),
@@ -5285,6 +5313,10 @@ use). Raw captures: private `stars-oracle-apparatus` `evidence/ai/`.
 - **AI02, AI03, AI04**: the stage-1 games, one computer player of each
   type at easy, standard and harder; 2400–2424, 2400–2424 and 2400–2454.
 - **UG**: the universe-generation corpus's computer players (73 players).
+- **OB**, **MF**: the universe-objects and minefield runs (OB-001..OB-031,
+  MF-1..MF-15; "Universe objects"), each one pinned year in the Combat
+  Lab universe with two JOAT players. Their after-year files are also
+  read as a corpus of object sightings (SC-038).
 
 ### Cases
 

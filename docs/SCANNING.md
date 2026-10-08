@@ -462,10 +462,10 @@ fleet's or planet's ranges.
 ### Space objects
 
 What a player's file records about a space object it sees this year
-(MEASURED: every foreign object record in the oracle player files of
-OB-001..OB-031 and MF-1..MF-15 was compared with the host's own record of that object:
-3,198 minefields, 23 packets, 18 salvage piles, 24 Mystery Trader
-records and 118 wormholes). A sighting reveals the whole object, the
+(MEASURED, SC-038 in `PARITY.md`: every foreign object record in the
+oracle player files of OB-001..OB-031 and MF-1..MF-15 was compared with
+the host's own record of that object: 3,198 minefields, 23 packets, 18
+salvage piles, 24 Mystery Trader records and 118 wormholes). A sighting reveals the whole object, the
 same as the host holds it, except the per-player "known" and "seen"
 markers, which carry only the viewer's own entry.
 
@@ -483,10 +483,10 @@ markers, which carry only the viewer's own entry.
 - Knowing which wormhole is the other end does not reveal that end's
   position; that end is reported only when it is seen itself.
 - **Seen this year only.** A year's report holds only the objects seen
-  that year (the rules under "Space objects" above); nothing about an
-  object carries over in the player's files after it leaves view. In
-  AIX, 366 computer-player history files held no object records at all
-  (MEASURED, AI-12 corpus). What does carry over is the host's own
+  that year (the rules under "Space objects" above). In computer
+  players' history files nothing about an object carries over after it
+  leaves view: 366 AIX history files held no object records at all
+  (MEASURED, AIX corpus, SC-038). What does carry over is the host's own
   "known" marker for minefields and wormholes, which widens later
   sighting ranges (above). UNRESOLVED: a human player's history file,
   which the client writes.
