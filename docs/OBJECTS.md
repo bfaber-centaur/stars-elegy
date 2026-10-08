@@ -582,6 +582,8 @@ Each end separately, in list order:
 - **Jiggle:** years +1; up to 100 tries of `(x + rand(25) − 12, y + rand(25)
   − 12)` (CONFIRMED: at most 12 per axis). A try equal to the old position
   is rejected. The class never changes.
+- Both kinds of move choose among their tries with the creation badness
+  (Placement, "During movement" below).
 
 ### Stability (BINARY-ONLY)
 
@@ -595,7 +597,10 @@ reads Rock Solid, like class 0.
 ### Placement badness (CONFIRMED at creation, UG01–UG21)
 
 A try is rejected outright when outside the galaxy or exactly on another
-object, planet or fleet. Otherwise its badness combines: within 10 ly of
+object, planet or fleet. Outside the galaxy means `x` or `y` below `1000` or
+above `1000 + W`, where `W = 400 × (size + 1)` is the galaxy width (tiny
+400 to huge 2000); a coordinate equal to `1000 + W` is inside (BINARY-ONLY:
+no run placed an end on that line). Otherwise its badness combines: within 10 ly of
 an edge; near its partner (`d²` < 25, 100, 900, 4900, worst first); near
 another wormhole (< 16, 64, 225, 900); near a planet (< 25, 100, 400, 784).
 The first try with no badness wins, else the least bad. In effect ends
@@ -615,6 +620,30 @@ when every one of the 100 tries was rejected. The partner's bands apply
 only to the partner; when the first end of a pair is placed it has no
 partner yet. A try is never outside the galaxy, since positions are drawn
 as `1000 + rand(W)` on each axis.
+
+**What counts as an object.** The exact-position rejection checks every
+object in the object list (such as minefield centres, packets, Mystery Traders and
+other wormhole ends; the end being placed is skipped), every planet and
+every fleet. The distance bands look only at wormhole ends and planets:
+fleets, minefields, packets and Traders add no badness short of sitting
+exactly on the try (BINARY-ONLY for fleets, minefields, packets and
+Traders; the wormhole and planet terms are CONFIRMED at creation).
+
+**During movement (BINARY-ONLY except where tagged).** A jump and a
+jiggle use the same badness as creation, with the same partner, wormhole
+and planet bands and the same objects. Each try draws `x` first, then `y`:
+a jump draws `1000 + rand(W)` twice, a jiggle `rand(25)` twice (the ±12
+bound is CONFIRMED, the draw order is not). The end is moved to each try
+before it is scored, and a try equal to the old position is skipped
+without a score but still uses up one of the 100. The first try with
+badness 0 ends the search. Otherwise the end takes the first try with the
+lowest badness, and a rejected try (15) beats no try at all: if every
+scored try was rejected, the end moves to the first of them, even outside
+the galaxy or onto another object. It does not stay where it was. A
+jiggle can only be rejected for being outside the galaxy or on an exact
+object, so every try failing needs an end in a corner with all of its
+inside cells occupied; no run has come close (UNRESOLVED whether the
+original then shows the end outside the galaxy; LEGACY BUG candidate).
 
 ### Travel (CONFIRMED, OB-005 C, D)
 
