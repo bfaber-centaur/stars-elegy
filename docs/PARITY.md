@@ -4310,9 +4310,43 @@ Fields were set to detonate by HST edit; owners were not SD unless stated.
   first: (1301,1252) 710; with the north layer first: (1382,1051) 710. A
   single weighted merge would give (+2,+2) in both.
 
+#### Questions from the Elegy implementation (MF-14, MF-15)
+
+Status: MEASURED, 2026-10-08. Two runs for questions the Elegy minefield
+implementation raised (`OBJECTS.md` "Arithmetic details"). Predictions from
+the stars-decomp reading were committed before the runs
+(`experiments/mf/README.md`, e3f59ce). One pinned year each, cycles 20000.
+Raw evidence: private `stars-oracle-apparatus` `evidence/mf/mf14`,
+`evidence/mf/mf15`. Both held.
+
+- **MF-14, cargo after a partial loss (MEASURED; LEGACY BUG candidate).**
+  12 player-1 fleets, each of 4 Small Freighters (armor 25, cargo 70) and
+  one armored Privateer (armor 3150, cargo 250), carrying 100/100/100 kT
+  of minerals and 50 kT of colonists, crossed a standard field at warp 9.
+  The 11 stopped fleets each lost the 4 freighters and kept the Privateer
+  at 15/500. Each was left with 0/0/0 minerals and 24 kT of colonists, and
+  a salvage object at its stop point held 47/47/48 kT. So the destroyed
+  ships' capacity share (53/53/52/26: ⌊350·280/530⌋ = 184 kT, split by
+  type rounding down, the 2-kT remainder to iron and boranium) was lost,
+  and the survivors' minerals became salvage. Fuel was 176 against the
+  unstopped fleet's 316: 316 − ⌊316·520/1170⌋, the ship-move sharing of
+  `ORDERS.md` "Split". The earlier wording, "their minerals become
+  salvage", is replaced.
+- **MF-15, due-north and due-south legs (MEASURED; LEGACY BUG).** A heavy
+  field of 10,000 (radius 100):
+  - 8 Tanks starting 3 ly outside and flying 81 ly due north into the
+    field: none stopped (about 78 ly inside; an east leg is stopped about
+    90% of the time).
+  - 8 Tanks starting 90 ly from the centre and flying due south, out of the
+    field after 10–13 ly: 6 stopped, at 2, 9, 10, 18, 19 and 31 ly. Three
+    of those stops lie outside the field. The original checks such a leg
+    for its first ⌊√(10000 − 90²)⌋ = 43 ly from the start whatever the
+    direction.
+  - 8 east-leg controls entering from outside: 8 stopped.
+
 Not tested: the detonate-order validation gap (needs crafted orders), SS
-and SD safe-warp bonuses, fleets moving through gates in a field, and
-salvage from mine kills (OB-024).
+and SD safe-warp bonuses, fleets moving through gates in a field, steep
+but not due-north legs, and the stop-point rounding on diagonal legs.
 
 ### Wormholes and Mystery Trader, round 2 (WT-001 to WT-005)
 
