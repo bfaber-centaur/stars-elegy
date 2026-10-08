@@ -262,13 +262,14 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   250-kT Privateer carrying 100/100/100 kT and 50 kT of colonists lost
   53/53/52/26 with the freighters and dropped the other 47/47/48 as
   salvage, leaving the Privateer with 24 kT of colonists. When the whole
-  fleet is destroyed, all its minerals become salvage. No salvage is made
+  fleet is destroyed, all its minerals become salvage (BINARY-ONLY; MF-14
+  saw only partial losses). No salvage is made
   at a planet's exact position; the minerals then stay aboard
   (BINARY-ONLY). A fleet with no minerals left drops `rand(10)` kT of each
   mineral as salvage (MEASURED, OB-024: 0–9 kT of each in five fleets;
-  LEGACY BUG candidate). **Implementing:** Elegy reproduces the survivors'
-  salvage behind a named legacy switch, like the other deterministic
-  legacy bugs.
+  LEGACY BUG candidate). **Implementing:** while this stays a LEGACY BUG
+  candidate, Elegy reproduces the measured survivors' salvage behind a
+  named legacy switch.
 - **Mines lost to the hit:** one field of the kind that stopped the fleet
   pays. It loses `max(10, ⌊N/20⌋)`, or `max(50, ⌊N/100⌋)` when
   `⌊N/20⌋ > 50`. CONFIRMED for 400 (−20), 3000 (−50) and 6000 (−60) before
