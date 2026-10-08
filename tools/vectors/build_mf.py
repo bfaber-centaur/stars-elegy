@@ -17,6 +17,18 @@ import build_kx as K
 # observations without comparing them. MF-07sd's design learning is not in
 # check.txt: player 1's designs 2 and 4 appear in full in player 0's file.
 HAND_HELD = {'mf07', 'mf07f', 'mf07sd'}
+# Runs whose fleets cross a field at a speed with a stop chance (OBJECTS.md
+# "Minefields": each ly travelled in a field is a draw). Where a fleet stops,
+# what it carries and its damage, and the salvage where it stopped, are those
+# draws: the moving fleets and salvage are samples in every stream. In a
+# single-stream run the fields' mine counts are too (every stop is paid by a
+# field, MF-4).
+DRAWN = {'mf01', 'mf02', 'mf03h', 'mf03s', 'mf04', 'mf04b', 'mf04d', 'mf05b', 'mf09h', 'mf09s', 'mf14', 'mf15'}
+# MF-13b's object at 1400,1400 is the setup's salvage stand-in (experiments/mf/gen.py),
+# written as a packet with destination field 0; salvage the host makes carries 1023.
+NOTES = {'mf13b': 'the object at 1400,1400 was written by the setup as a stand-in for salvage (destination '
+                  'field 0, warp 4); over the year it did not move and lost 10% of each mineral; whether the host '
+                  'classed it as salvage or as a packet is UNRESOLVED, so it is not a packet movement or decay check'}
 HAND_NOTE = ('held: every value compared by hand with the predictions committed before the run '
              '(stars-oracle-apparatus evidence/mf/README.md verdict note)')
 
@@ -24,6 +36,24 @@ HAND_NOTE = ('held: every value compared by hand with the predictions committed 
 def start_of(d):
     p = os.path.join(d, 'start.HST')
     return p if os.path.exists(p) else os.path.join(d, 'raw', 'before', 'CB.HST')
+
+
+def mark_drawn(case, st0, single):
+    moved = set()
+    f0 = {(f['owner'], f['id']): f for f in st0['fleets']}
+    for e in case['expect']:
+        if e['kind'] == 'fleet' and ('x' in e['equals'] or 'y' in e['equals']):
+            moved.add((e['owner'], e['id']))
+        elif e['kind'] == 'fleet_gone':
+            moved.add((e['owner'], e['id']))
+    out = []
+    for e in case['expect']:
+        k = e['kind']
+        if (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in moved) or k == 'salvage_at' or \
+                (single and k == 'minefield'):
+            e = dict(e, sample=True)
+        out.append(e)
+    case['expect'] = out
 
 
 def build(ev, out):
@@ -51,6 +81,10 @@ def build(ev, out):
             streams['cycles ' + (m.group(1) if m else '20000')] = [os.path.join(ev, r)]
         vid = 'MF-' + name[2:]
         vec = K.chained(vid, 'MF %s' % name[2:], streams, (held, tag, ' | '.join(lines), '', 'OBJECTS ' + ', '.join(rules)))
+        if name in DRAWN:
+            mark_drawn(vec['cases'][0], vec['initial_state'], len(streams) == 1)
+        if name in NOTES:
+            vec['cases'][0]['verdict'] += ' | ' + NOTES[name]
         vec['source'] = {'experiment': 'experiments/mf', 'spec_rules': 'docs/OBJECTS.md "Minefields"',
                          'parity': 'docs/PARITY.md "Minefield lane (MF-1..MF-13)"',
                          'raw_evidence': 'stars-oracle-apparatus evidence/mf/{%s} (private)' % ','.join(runs)}

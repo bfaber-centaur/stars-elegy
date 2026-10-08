@@ -6,7 +6,7 @@ case whose expectations are each year's observed changes (build_kx.observe:
 battles, host-file changes, message ids, score records). The verdict is the
 setup's result from PARITY.md, or the check lines of experiments/gt/check.py.
 """
-import os, re
+import json, os, re
 import build as B
 import build_kx as K
 
@@ -97,20 +97,76 @@ def build(corpus, ev, out):
                                                              len(vec['cases'][0]['expect'])))
 
 
+GT_PARITY = {
+    'gt001': 'docs/PARITY.md "Stargates, round 2 (GT-001, GT-002)"',
+    'gt002': 'docs/PARITY.md "Stargates, round 2 (GT-001, GT-002)"',
+    'gt003': 'docs/PARITY.md "Round 6: the rest of OBJECTS.md\'s BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001, TP-002)"',
+    'gt004': 'docs/PARITY.md "GT-004: what makes a gate (MEASURED, one year)"',
+}
+# check.py marks every GT-004 case MISSED on fuel alone: the cases wrote fuel 100
+# for "no fuel used", and the fleets ended over Space Stations that refill to 280
+# (experiments/gt/README.md "GT-004 result"). Every other predicted field held.
+GT_HELD = {'gt004': 'G1-G3 jumped and G4 stayed with only 0xe2, as predicted; '
+                    'check.py reported MISSED on fuel alone (the fleets ended over Space Stations, refilled to 280)'}
+CHECK = re.compile(r'^(GT-\S+) (.+?) (HELD|MISSED|MISS|OBSERVED|CONTRADICTED):? ?(.*)$')
+
+
+def gt_drawn(sd):
+    """Fleets whose survivors a gate loss roll decided (OBJECTS.md "Stargates":
+    each ship is lost with the danger's chance). A case whose check gives a ship
+    range, the O-65 cases that only some fleets complete, and the GT-003 roll
+    cases."""
+    cases = json.load(open([os.path.join(sd, f) for f in os.listdir(sd) if re.fullmatch(r'cases\d*\.json', f)][0]))
+    fleets, ids = set(), set()
+    for c in cases:
+        ch = c.get('check', {})
+        if isinstance(ch.get('ships'), list) or ch.get('kind') == 'ce' or c['pred'].endswith('roll'):
+            ids.add(c['id'])
+            for f in ch.get('ids', [ch.get('id')]):
+                fleets.add((ch['owner'], f))
+    return fleets, ids
+
+
 def build_gt(ev, out):
     for run in sorted(d for d in os.listdir(ev) if re.fullmatch(r'gt\d+', d)):
         sd = os.path.join(ev, run)
-        lines = [l.strip() for l in open(os.path.join(sd, 'check.txt'))
-                 if re.match(r'^GT-\S+ \S+ (HELD|MISSED|MISS|OBSERVED|CONTRADICTED)', l)]
-        res = [l.split()[2].rstrip(':') for l in lines]
-        rules = sorted(set(l.split()[1] for l in lines), key=lambda r: int(re.sub(r'\D', '', r) or 0))
-        held = all(r in ('HELD', 'OBSERVED') for r in res)
-        tag = 'CONFIRMED' if all(r == 'HELD' for r in res) else 'MEASURED'
+        lines = [CHECK.match(l.strip()) for l in open(os.path.join(sd, 'check.txt'))]
+        lines = [m for m in lines if m]
+        res = [m.group(3) for m in lines]
+        rules = []
+        for m in lines:
+            if m.group(2) not in rules:
+                rules.append(m.group(2))
+        if run in GT_HELD:
+            held, verdict = True, GT_HELD[run]
+        else:
+            held = all(r in ('HELD', 'OBSERVED') for r in res)
+            verdict = ' | '.join(m.group(0) for m in lines)
+        # One pinned stream per run: MEASURED (PARITY tags the rounds per rule).
+        tag = 'MEASURED'
         vid = 'GT-' + run[2:]
-        vec = K.chained(vid, 'stargates %s' % vid, {'run': [sd]}, (held, tag, ' | '.join(lines), '',
+        vec = K.chained(vid, 'stargates %s' % vid, {'run': [sd]}, (held, tag, verdict, '',
                                                                    'OBJECTS ' + ', '.join(rules)))
+        fleets, ids = gt_drawn(sd)
+        # A message is drawn when the roll cases disagree on it and no other case has it.
+        drawn_sets, kept_msgs = [], set()
+        for m in lines:
+            got = {int(x, 16) for mm in re.findall(r'(?:msgs|[1-9]\d* of \d+ with message) ([0-9a-fx,]+)', m.group(4))
+                   for x in mm.split(',')}
+            if m.group(1) in ids:
+                drawn_sets.append(got)
+            else:
+                kept_msgs |= got
+        drawn_msgs = set().union(*drawn_sets) - set.intersection(*drawn_sets) - kept_msgs if drawn_sets else set()
+        exps = []
+        for e in vec['cases'][0]['expect']:
+            if (e['kind'] in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in fleets) or \
+                    (e['kind'] == 'message' and e['player'] == 0 and e['message_id'] in drawn_msgs):
+                e = dict(e, sample=True)
+            exps.append(e)
+        vec['cases'][0]['expect'] = exps
         vec['source'] = {'experiment': 'experiments/gt', 'spec_rules': 'docs/OBJECTS.md "Stargates"',
-                         'parity': 'docs/PARITY.md "Stargates"',
+                         'parity': GT_PARITY[run],
                          'raw_evidence': 'stars-oracle-apparatus evidence/gt/%s (private)' % run}
         write(out, run, vec)
-        print('%s: %s, %d expectations' % (vid, tag, len(vec['cases'][0]['expect'])))
+        print('%s: %s, %d expectations, %d samples' % (vid, tag, len(exps), sum(1 for e in exps if e.get('sample'))))

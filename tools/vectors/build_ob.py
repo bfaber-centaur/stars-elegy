@@ -36,6 +36,10 @@ PARITY = {
     'OB-021': 'docs/PARITY.md "Stargates (CONFIRMED, OB-021, OB-022)"',
     'OB-022': 'docs/PARITY.md "Stargates (CONFIRMED, OB-021, OB-022)"',
 }
+ROUND6 = 'docs/PARITY.md "Round 6: the rest of OBJECTS.md\'s BINARY-ONLY rules (OB-028..OB-031, GT-003, TP-001, TP-002)"'
+PARITY.update({r: ROUND6 for r in ('OB-028', 'OB-029', 'OB-030', 'OB-031')})
+# PARITY records round 6 as MEASURED: one pinned year each (OB-031 in three streams).
+MEASURED_ONLY = {'OB-028', 'OB-029', 'OB-030', 'OB-031'}
 PLANET_KEYS = {'pop': 'population', 'owner': 'owner', 'defenses': 'defenses', 'mines': 'mines',
                'factories': 'factories'}
 SCAN = {'scan'}
@@ -193,6 +197,45 @@ def observe(c, A, Bf, run, M):
             'mystery_trader_items': [B.MT_ITEMS[i] for i in B.mask_players(int(players[owner]['mt'], 16), 13)],
             'tech_levels_gained': C.techsum(players[owner]) - C.techsum(Bf[3][owner])},
             'exactly one new Mystery Trader part and no tech')]
+    if kind == 'launch':
+        ps = [t for t in things if t['type'] == 'packet' and int(t['owner']) == k[1] and int(t['dest']) == k[2]]
+        return [{'kind': 'object', 'equals': B.thing(t)} for t in ps] or \
+            [sample('no_packet', [k[1], k[2]], [], 'one packet of player %d aimed at planet %d' % (k[1], k[2]))]
+    if kind == 'nolaunch':
+        ok, got = C.evaluate6(k, A, Bf)
+        ids = sorted({int(re.search(r'id=(0x[0-9a-f]+)', m).group(1), 16) for m in got['msgs']})
+        return [{'kind': 'planet', 'id': k[2], 'equals': {'surface_minerals': surface(planets[k[2]])}},
+                sample('no_packet', [k[1], k[2]], got['packets'], 'no packet of player %d within 30 ly of planet %d'
+                       % (k[1], k[2]))] + \
+            [{'kind': 'message', 'player': k[1], 'message_id': i, 'present': True} for i in ids]
+    if kind == 'ppterra':
+        # The size of the step is a draw (1 to 10 points, OBJECTS.md "Packets").
+        p = planets[k[1]]
+        return [{'kind': 'planet', 'id': k[1], 'equals': {'surface_minerals': surface(p)}},
+                {'kind': 'planet', 'id': k[1], 'equals': {
+                    'environment': [int(x) for x in p['env'].split('/')],
+                    'original_environment': [int(x) for x in p['orig'].split('/')]}, 'sample': True}]
+    if kind == 'designknown':
+        ok, got = C.evaluate6(k, A, Bf)
+        return [sample('designs_known', [k[1] - 1, k[2]], got, c['expect'])]
+    if kind == 'arpacket':
+        return [{'kind': 'planet', 'id': n, 'equals': {'population': int(planets[n]['pop']),
+                                                       'surface_minerals': surface(planets[n])}} for n in (k[1], k[2])]
+    if kind == 'tradertwo':
+        out = [fleet(fleets, o, f) for o, f in k[1]]
+        out += [{'kind': 'trader', 'id': int(t['num']), 'equals': {'x': int(t['x']), 'y': int(t['y'])}}
+                for t in things if t['type'] == 'trader']
+        out += [{'kind': 'player', 'id': o, 'equals': {'mystery_trader_items': [
+            B.MT_ITEMS[i] for i in B.mask_players(int(players[o]['mt'], 16), 13)]}} for o in (0, 1)]
+        return out
+    if kind == 'traderend6':
+        ts = [t for t in things if t['type'] == 'trader' and int(t['num']) == k[1]]
+        if not ts:
+            return [sample('trader_gone', [k[1]], 'gone', c['expect'])]
+        t = B.thing(ts[0])
+        return [{'kind': 'trader', 'id': k[1], 'equals': {'x': t['x'], 'y': t['y'], 'warp': t['warp']}},
+                sample('trader_course', [k[1]], {'destination': t['destination']},
+                       'a new destination on the map edge')]
     if kind in ('mtship', 'worm', 'wormage', 'wormjump', 'wormfollow', 'wormlost'):
         ok, got = C.evaluate(c, A, Bf, run, M)
         return [sample(kind, [x for x in k[1:] if not isinstance(x, list)] if kind != 'wormjump' else k[1],
@@ -239,6 +282,7 @@ def build(ev, out):
             A, Bf = C.load(after), C.load(after.replace('after.dump', 'before.dump'), 'before')
             M = C.load(after, 'after', 'CB.M%d' % (r.scan['viewer'] + 1)) if r.scan else C.load(after, 'after', 'CB.M2')
             C.M_ALL[1], C.M_ALL[2] = C.load(after, 'after', 'CB.M1'), C.load(after, 'after', 'CB.M2')
+            C.DUMP['after'] = after
             held = held_of(os.path.join(ev, d, 'check.txt'))
             for c in r.cases:
                 if c.get('year', 1) != year:
@@ -285,6 +329,8 @@ def build(ev, out):
             else:
                 cs = B.case(cid, c['pred'], c['what'], p, held and not obs_only, set())
                 cs['prediction'] = c['expect']
+            if r.rid in MEASURED_ONLY:
+                cs['tag'] = 'MEASURED'
             vec['cases'].append(cs)
         with open(os.path.join(out, name + '.json'), 'w') as f:
             B.json.dump(vec, f, indent=1)
