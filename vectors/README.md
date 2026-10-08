@@ -378,6 +378,13 @@ player's race as the new game recorded it: illegal races replaced, malformed
 fields repaired, Random races generated (those expectations are samples).
 Computer players' races are as recorded, as in `ug`.
 
+A computer player is `computer: {race, level}` as the definition file gave
+it, where 0 means random. When either is 0, `computer.drawn` gives the
+type (1..6) and level (1 easy .. 4 expert) the generator drew. The host file
+keeps only the race, so `drawn` is the `docs/AI.md` section 3 row that the
+recorded race matches; every row differs from the others. The `wormholes`
+sample counts wormhole ends, two per pair.
+
 ### Not vectors
 
 Static part data (CS-001, CS-002 readouts) is in `data/components.json`,

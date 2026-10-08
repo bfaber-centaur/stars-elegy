@@ -39,6 +39,33 @@ def definition(path):
             'victory_condition_lines': victory}, players
 
 
+# docs/AI.md section 3: the fixed race of each computer type x level. A
+# definition-file type or level of 0 is drawn by the generator, and the
+# host file keeps only the race, so the drawn pair is read back by matching
+# the race against this table (every row differs from the others).
+AI_TYPES = {'HE': 1, 'SS': 2, 'IS': 3, 'CA': 4, 'PP': 5, 'AR': 6}
+AI_LEVELS = ['easy', 'standard', 'harder', 'expert']
+
+
+def ai_table():
+    rows = {}
+    for line in open(os.path.join(B.ROOT, 'docs', 'AI.md'), encoding='utf-8'):
+        f = [x.strip() for x in line.strip().strip('|').split('|')]
+        if len(f) == 13 and f[0] in AI_TYPES and f[1] in AI_LEVELS:
+            fac = tuple(int(x) for x in f[7].split('/'))
+            mine = tuple(int(x) for x in f[8].split('/'))
+            rows[(f[2], frozenset(f[3].split()), int(f[4].rstrip('%')), int(f[6]), fac, mine)] = (f[0], f[1])
+    return rows
+
+
+def drawn_computer(race, table):
+    key = (race['prt'], frozenset(race['lrt']), race['growth_percent'], race['colonists_per_resource'],
+           (race['factory']['output'], race['factory']['cost'], race['factory']['per_10k']),
+           (race['mine']['output'], race['mine']['cost'], race['mine']['per_10k']))
+    hit = table.get(key)
+    return {'type': AI_TYPES[hit[0]], 'level': AI_LEVELS.index(hit[1]) + 1} if hit else None
+
+
 NO_INSTALLATIONS = ' excess=0 mines=0 factories=0 defenses=0 scanner=31 leftover=false'
 
 
@@ -82,6 +109,11 @@ def build(ev, out):
             if races is None:
                 races = [dict(p, race=pl['race'], leftover_spend_code=spend.get(pl['id']))
                          for p, pl in zip(players, st['players'])]
+                table = ai_table()
+                for r in races:
+                    cp = r.get('computer')
+                    if cp and (cp['race'] == 0 or cp['level'] == 0):
+                        r['computer'] = dict(cp, drawn=drawn_computer(r['race'], table))
                 stored = B.game_settings(xy)
                 # the .def's victory lines are the input; the game record keeps no value for a disabled
                 # condition, so the stored conditions are an observation (case E), not a setting
@@ -105,8 +137,9 @@ def build(ev, out):
                                  'constraint': 'a disabled condition\'s value is stored as 0, which decodes as that condition\'s '
                                  'lowest value (tech level 8, score 1000, ...); enabled conditions keep the .def value'}]
             per['D'][stream] = [{'year': 0, 'kind': 'sample', 'check': 'wormholes', 'target': [],
-                                 'observed': worms, 'constraint': 'pairs by size (tiny 0-2, small 1-3, medium 1-5, '
-                                 'large 3-6, huge 4-8) when random events are on, none when off (OBJECTS.md "Creation")'}]
+                                 'observed': worms, 'constraint': 'wormhole ends (two per pair): pairs by size (tiny 0-2, '
+                                 'small 1-3, medium 1-5, large 3-6, huge 4-8) when random events are on, none when off '
+                                 '(OBJECTS.md "Creation")'}]
         vec = {'schema': B.SCHEMA, 'id': rid, 'title': '%s %s, %d players' % (settings['size'], settings['density'],
                                                                              len(players)),
                'source': {'experiment': 'experiments/ug', 'spec_rules': 'docs/UNIVERSE.md',
