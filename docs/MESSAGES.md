@@ -264,7 +264,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
   - Rules: `TAKEOVER.md` "Unload and load amounts".
   - 0x126 and the fuel-gain form of 0x02b were not seen.
 - Open: a hand-ordered colonist transfer that cannot be carried out in full looks as if it fails the whole order file, which would stop turn generation. Needs an oracle check.
-- 0x0dd, 0x0db and 0x0dc go to the owner of the object the order names as the source, which need not be the player who wrote the order.
+- 0x0dd, 0x0db and 0x0dc go to the owner of the object the order names as the source, which need not be the player who wrote the order. In a load from a packet or salvage, the order names the loading fleet as the source and the packet or salvage as the other side, so 0x0db and 0x0dc go to the loading fleet's owner, never to the salvage's owner (BINARY-ONLY).
 - Stealing tells only the thief; the victim gets no message from this step.
 
 ### Movement, gates, minefields and sweeping
