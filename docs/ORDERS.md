@@ -795,6 +795,43 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   fleet's position. It is **not** caused by the waypoint's warp. Whether the
   saved coordinates are the enemy's current position (still in view) or its
   last-seen position (out of view) is not pinned here.
+- **A fleet target merged away during order replay** (BINARY-ONLY; no
+  oracle run). Player B's orders aim a waypoint (index 1 or later) at
+  player A's fleet F. A's orders merge F into another of A's fleets Y at
+  the same spot (a merge order acts only on co-located fleets). The year's
+  replay order decides which of two paths runs:
+  - **A replayed first.** When F is removed, waypoints that already name
+    F are retargeted (next case). B's waypoint is then stored naming F's
+    id, which is no longer used. Before movement, the start-of-year
+    waypoint check finds the target gone and picks a fleet that has F's
+    owner (A) and stands exactly at the waypoint's coordinates (F's
+    position, which B's order carried). It prefers a fleet that B's
+    battle plan's primary target matches, with the greatest weight (ties
+    broken by `rand(2)`), else a uniformly random one. Every candidate
+    costs at least one draw (`rand(k)` for the `k`-th candidate, plus a
+    `rand(2)` for a candidate some waypoint already picked this year).
+    The waypoint then names the chosen fleet and takes its position.
+    With no such fleet the stale id stays, and the later "target gone"
+    rule above turns it into a plain waypoint at those coordinates.
+  - **B replayed first.** B's waypoint names F when A's merge removes F.
+    Removing a fleet retargets every waypoint that names it, any
+    player's, to what stands exactly at F's position: a fleet if one is
+    there (the replaying player's own fleets preferred, so normally Y),
+    else the planet there, else deep space. The coordinates are kept. The
+    start-of-year check then finds the new target in place and draws
+    nothing.
+  - **The outcome depends on the replay order.** Either way B normally
+    ends up chasing Y, but only the A-first path (the start-of-year
+    waypoint check) spends random draws; the B-first path (the retarget
+    done when a fleet is removed) draws nothing. So the rest of the year's
+    draws differ. With several of A's fleets at the spot,
+    the two paths can pick different fleets. Which fleet the second path
+    picks among several is not pinned. With no fleet left there, one path
+    keeps plain coordinates and the other can target the planet.
+  - The waypoint is not dropped and the order is not rejected. The
+    write-time rule above (WU-A) then saves B's target in B's next file
+    as a deep-space waypoint at the chased fleet's position. WU-A covers
+    only that saved form, not the retargeting during the year.
 
 ### Following another fleet (leader linkage)
 
