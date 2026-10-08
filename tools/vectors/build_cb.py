@@ -201,6 +201,35 @@ def diff(st0, st1, full=False):
     return ex
 
 
+BATTLE_PLANET_FIELDS = ('starbase', 'defenses', 'surface_minerals')
+
+
+def mark_samples(exps, battles):
+    """In a single-stream vector, flag what the year's battle draws decide
+    (COMBAT.md "Random draws in a battle"): the actions, the fleets that
+    fought, salvage where a battle was, and a battle planet's starbase,
+    defenses and minerals. One stream gives one sample of each."""
+    fleets = {(t['owner'], t['fleet']) for b in battles for t in b['tokens'] if 'fleet' in t}
+    places = {(b['x'], b['y']) for b in battles}
+    planets = {b['planet'] for b in battles if b.get('planet') is not None}
+    out = []
+    for e in exps:
+        k = e['kind']
+        if (k == 'battle_actions' or (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in fleets)
+                or (k == 'salvage_at' and (e['x'], e['y']) in places)):
+            e = dict(e, sample=True)
+        elif k == 'planet' and e['id'] in planets and any(f in e['equals'] for f in BATTLE_PLANET_FIELDS):
+            drawn = {f: v for f, v in e['equals'].items() if f in BATTLE_PLANET_FIELDS}
+            rest = {f: v for f, v in e['equals'].items() if f not in BATTLE_PLANET_FIELDS}
+            if rest:
+                out.append(dict({x: v for x, v in e.items() if x != 'tolerance'}, equals=rest))
+            e = dict(e, equals=drawn, sample=True)
+            if 'surface_minerals' not in drawn:
+                e.pop('tolerance', None)
+        out.append(e)
+    return out
+
+
 def build(ev, out):
     os.makedirs(out, exist_ok=True)
     root = os.path.dirname(ev.rstrip('/'))
@@ -250,6 +279,11 @@ def build(ev, out):
                 if not exps:
                     exps = [{'kind': 'no_battle'}]
                 exps = [dict(e, year=1) for e in exps + diff(st0, st1)]
+                for e in exps:
+                    if e['kind'] == 'planet' and 'surface_minerals' in e['equals']:
+                        e['tolerance'] = {'surface_minerals': 1}  # mining's random +1 remainder (KERNEL.md)
+                if len(runs) == 1:
+                    exps = mark_samples(exps, bs.values())
                 sn = stream_name(r)
                 per[sn if sn not in per else sn + ' (' + r.split('/')[-3] + ')'] = exps
             held, tag, verdict = VERDICT[setup]

@@ -240,8 +240,15 @@ unconstrained by that case.
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
 
 `tolerance` as an object (`{"surface_minerals": 1}`) allows that much
-difference in the named field. Kernel vectors use it for surface minerals,
-because mining's +1 remainder is random (`KERNEL.md`).
+difference in the named field. Kernel and combat vectors use it for surface
+minerals, because mining's +1 remainder is random (`KERNEL.md`).
+
+`sample: true` marks an expectation that random draws decided and that only
+one stream observed. It is what the original did with that stream's draws,
+not a fixed result: compare it exactly only when you replay the same draws,
+and otherwise treat it as one sample of what the rule allows. Single-stream
+combat vectors flag what the year's battle draws decide (see "Combat
+vectors").
 
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
@@ -303,6 +310,16 @@ tag follows it. Rounds from CB-009 on ran under pinned random streams, so the
 same start gave the same record within a stream; CB-001..008 were not
 pinned. A battle's token list is often identical in every stream while its
 actions differ, which is why `battle` and `battle_actions` are separate.
+
+Every battle draws (movement ties, each round's jitter, torpedo hits:
+`docs/COMBAT.md` "Random draws in a battle"). In a single-stream `cb`
+vector these expectations carry `sample: true`: `battle_actions`, the
+`fleet` and `fleet_gone` of every fleet that fought, `salvage_at` a battle's
+position, and a battle planet's `starbase`, `defenses` and
+`surface_minerals` (split from the planet's other fields, which stay exact).
+The `battle` token lists and everything away from the battles stay exact,
+apart from the mining tolerance above. In a several-stream vector, what
+differed between streams is listed per stream as usual.
 
 ### New-game vectors
 

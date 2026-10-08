@@ -429,6 +429,7 @@ type Expectation struct {
 	Y           *int            `json:"y,omitempty"`
 	Equals      json.RawMessage `json:"equals,omitempty"`
 	Tolerance   any             `json:"tolerance,omitempty"` // ly for a packet, or {field: amount}
+	Sample      bool            `json:"sample,omitempty"`    // one stream's outcome of random draws, not a fixed result
 	MessageID   *int            `json:"message_id,omitempty"`
 	Present     *bool           `json:"present,omitempty"`
 	ObservedNew []int           `json:"observed_new,omitempty"`
