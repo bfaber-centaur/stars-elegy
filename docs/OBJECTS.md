@@ -569,20 +569,43 @@ For each mineral, the uncaught share `u = ⌊m·(1000 − q)/1000⌋` works on
 one axis: ironium gravity, boranium temperature, germanium radiation
 (CONFIRMED, OB-029-T1..T3: 1000 kT of one mineral moved only its axis,
 by 3, 6 and 2, toward the PP player's ideal; the original values did not
-change). For each
-100 kT chunk (the last may be partial) one draw `rand(200) < min(chunk,
-100)` is a success; each success draws again and is also permanent with
-`rand(10) == 0`. The permanent count moves the planet's original value
-toward the PP player's ideal (capped there), or toward the nearer extreme
-for an axis the PP player is immune to. Then, if the PP player's
-terraforming tech could improve the planet, the current value moves by the
-success count toward the PP player's ideal, within the PP player's
-terraform range around the original value (immune axis: half the count
-toward the nearer extreme).
+change). The rest of this paragraph is BINARY-ONLY. The axes are handled
+one after another, ironium's first, then boranium's, then germanium's,
+and each axis finishes before the next axis's draws: all of its draws, then
+its permanent move, then its current-value move (the moves draw nothing).
+
+- **Draws.** For each 100 kT chunk of the axis's mineral (the last may be
+  partial) one draw `rand(200) < min(chunk, 100)` is a success; each
+  success draws again and is also permanent with `rand(10) == 0`.
+- **Permanent move.** The permanent count `k` moves the planet's original
+  value toward the PP player's ideal by at most `k`, never past the ideal;
+  an original value already at the ideal stays. For an axis the PP player
+  is immune to, the extremes are 1 and 99: an original value below 50 moves
+  `k` toward 1, one of 50 or more moves `k` toward 99 (so 50 counts as
+  nearer to 99), stopping at the extreme.
+- **Current move, ordinary axis.** With `n` successes (none: nothing
+  happens), the PP player's terraforming reach on the axis (its
+  terraforming tech, as for its own terraforming) is measured around the
+  original value as it stands after the permanent move, and only in the
+  improving direction: the limit is `original ± reach`, kept within 1..99
+  and never past the PP player's ideal, and it exists only when it lies
+  beyond the current value toward the ideal. The current value then moves
+  toward that limit by at most `n`, stopping at it; with no limit on this
+  axis it does not move. This test is effectively per axis.
+- **Current move, immune axis.** The move is `⌊n/2⌋` toward the extreme
+  chosen as above (from the original value after the permanent move: below
+  50 toward 1, else toward 99), stopping at the extreme. It is gated by the
+  whole planet: it happens only if, at that moment, some axis the PP player
+  is not immune to still has a limit as described above (an immune axis
+  never has one itself). With no such axis the immune axis does not move,
+  however many successes it drew.
 
 ## Salvage (BINARY-ONLY except where marked)
 
-Salvage is a packet-kind object with no warp and no destination. How
+Salvage is a packet-kind object with no warp and no destination. An
+object of that kind is salvage when its packet-warp field is 0 (the field
+stores warp − 4, so a record written with "warp 4" is salvage); the
+destination field is ignored (BINARY-ONLY). How
 much each event leaves, and where, is in `COMBAT.md` "Salvage" (battles
 and cargo dumped by a battle plan), "Hits on moving fleets" above (mine
 hits) and `TAKEOVER.md` (scrapping in deep space). None is ever placed
