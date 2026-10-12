@@ -873,13 +873,16 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     their type (WU-FOLLOW).
   - **The target is gone:** message 0x028, and the waypoint becomes deep
     space at its coordinates (the planet instead, if one stands exactly
-    there). MEASURED in RG-001 (WF-01..05).
+    there). MEASURED for the deep-space result with 0x028 in RG-001
+    (WF-01..05); the planet substitution is BINARY-ONLY.
   - **The target exists but the player does not see it:** message 0x029
     naming the planet if the target is orbiting one, else 0x02a. A target
     whose coordinates were frozen by a gate or wormhole jump also gets
     0x02a. The waypoint becomes deep space at its coordinates, which are
     the target's end-of-year position (the planet instead, if one stands
-    exactly there). MEASURED for 0x02a in RG-001 (WF-01..05).
+    exactly there). MEASURED only for 0x02a with a deep-space result, for
+    a target not at a planet, in RG-001 (WF-01..05); 0x029, the planet
+    substitution and the jump case are BINARY-ONLY.
   - Waypoint 0 is not handled by this rule.
   It is **not** caused by the waypoint's warp.
   **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY from
