@@ -433,21 +433,27 @@ not take it is not part of the design by then and adds nothing here (see
   f = Langston Shell 95, Mega Poly Shell 80, Alien Miner 70, Multi
   Function Pod 90, Jammer 10/20/30/50 → 90/80/70/50. Jammer = 0 with no
   such item, else min(95, 100 − (J + 50)/100). A starbase's jammer is
-  reduced by a quarter (`jam − jam/4`) (BINARY-ONLY).
+  reduced by a quarter (`jam − jam/4`), after the cap. CONFIRMED (CB-056,
+  2 streams): a Death Star with five Jammer 50s had jammer 72.
 - **Capacitor %**: `C = 1000`, `C = C·(100 + v)/100` per Energy Capacitor
   (v 10) or Flux Capacitor (20), at most 2550; capacitor % = C/10.
   The product runs over every item, so two Flux Capacitors in one slot
   count twice. CONFIRMED only for one Flux and one Energy Capacitor (in
-  different slots): 132% (CB-002 C4, the "Cap DD"). Several of one kind
-  is BINARY-ONLY: 2 Flux + 1 Energy would give 158%.
+  different slots): 132% (CB-002 C4, the "Cap DD"). The cap is CONFIRMED
+  (CB-056, 2 streams): a Death Star with six Flux Capacitors had 255%,
+  and its Heavy Blaster hit for 66 × 2.55 (298% without the cap).
+  2 Flux + 1 Energy would give 158% (BINARY-ONLY).
 - **Deflector %**: `D = 1000`, `D = D·90/100` per Beam Deflector;
   deflector % = D/10 (100 = none).
 - **Shields**: sum of shield values, + 50 per Fielded Kelarium, + 100 per
   Mega Poly Shell. Regenerating Shields (RS): × 7/5.
 - **Armor**: hull armor + armor parts, + 65 per Croby Sharmor and
   Langston Shell, + 50 per Multi Cargo Pod. RS: each armor part counts
-  half. CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
-  2 Tritanium → armor 250.
+  half; a shield part's own armor is not halved (Croby Sharmor; the
+  Langston Shell is not observed). CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
+  2 Tritanium → armor 250. CONFIRMED (CB-056, 2 streams): a Battleship
+  with 8 Croby Sharmor and 2 Tritanium had shields 672, and its damage
+  fits armor 2570 (2000 + 50 + 8 × 65), not 2306.
 - **Target class**:
   - 3 armed (any beam or torpedo);
   - 4 bomber;
@@ -982,7 +988,9 @@ drop, so in the generation that reads the design:
 **Gatling** (Gatling Gun, Mini Gun, Gatling Neutrino Cannon; CONFIRMED,
 CB-002, CB-003, CB-005; P-13):
 
-- One shot hits **every** eligible target in token order.
+- One shot hits **every** eligible target in token order. A starbase
+  among them does not end the shot, unlike a beam (CONFIRMED, CB-056, one
+  stream: the starbase was token 0 and three ships after it were hit).
 - Each target takes `ships × damage × count × capacitor/100 × that
   target's deflector/100`.
 - No range dropoff and no carry-over.
@@ -1106,7 +1114,10 @@ stack with per-ship shield `s`, stack shield `S = s·ships`:
 
 - `total = dp + extra + units·armor/500`.
 - If `total < armor`, `units = total·500/armor`, at least one step more
-  than before. CONFIRMED (CB-011..013 S5):
+  than before. That step can reach 500 without destroying the starbase
+  (MEASURED, CB-056, 2 streams: a Death Star with armor 61,500 at 499
+  took a Laser hit and was recorded at 500, then the next hit destroyed
+  it). CONFIRMED (CB-011..013 S5):
   - The unarmed Space Station has 400 shields and 500 armor. The first
     hit came at distance 1 (90% dropoff) for 90, then 100 per hit.
   - Shields took 90 + 100 + 100 + 100.

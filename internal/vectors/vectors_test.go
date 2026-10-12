@@ -170,11 +170,6 @@ func TestSalvageFresh(t *testing.T) {
 	}
 }
 
-// RG-002 player 0's default queue is the edited one (experiments/rg002:
-// Auto Factories 100, Auto Mines 100, Auto Defenses 20, Auto Min and Max
-// Terraform 5) at year 1's start and empty from year 2 on (the host
-// emptied it in year 1, PARITY "Representative game (RG-002)"); the
-// computer players' is empty throughout.
 // The client injects its default-queue record (block 46) into player 0's
 // first-year orders; RG-002 carries it as a default_queue order there only.
 func TestDefaultQueueOrder(t *testing.T) {
@@ -211,6 +206,11 @@ func TestDefaultQueueOrder(t *testing.T) {
 	}
 }
 
+// RG-002 player 0's default queue is the edited one (experiments/rg002:
+// Auto Factories 100, Auto Mines 100, Auto Defenses 20, Auto Min and Max
+// Terraform 5) at year 1's start and empty from year 2 on (the host
+// emptied it in year 1, PARITY "Representative game (RG-002)"); the
+// computer players' is empty throughout.
 func TestDefaultQueue(t *testing.T) {
 	want := []QueueItem{{ID: 1, Count: 100}, {ID: 0, Count: 100}, {ID: 2, Count: 20}, {ID: 4, Count: 5}, {ID: 5, Count: 5}}
 	for y := 1; y <= 6; y++ {

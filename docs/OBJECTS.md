@@ -253,6 +253,13 @@ usual rate). The owner's own fleets are never stopped (MF-6).
   `D/2`; the result is added to existing damage and spread evenly. A design
   whose average exceeds its armor is destroyed. CONFIRMED: five Laser
   Destroyers each took half their armor (OB-010-S, OB-002-M).
+  CONFIRMED (CB-056, 2 streams, 66 fleets): four-engine Battleships (armor
+  5000, shield 25) took 197/500 in a heavy field, 237 with Fuel Scoops;
+  mixed Battleship and Tank fleets in a standard field matched the
+  shortfall rule (157 and 15; 62 and 37). With Regenerating Shields the
+  shields and armor are the battle token values (`COMBAT.md` "Token
+  values": shields × 7/5, armor parts at half): the same fleet took 280
+  (MEASURED, CB-056, 23 fleets).
 - **Cargo when ships are destroyed (MEASURED, MF-14; LEGACY BUG
   candidate).** The destroyed ships take their share of cargo and fuel,
   shared as a ship move between fleets (`ORDERS.md` "Split": by capacity,

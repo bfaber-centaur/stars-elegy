@@ -3094,6 +3094,48 @@ Prediction from the decomp combat pass, restated in
   would have added a record on that stack (133 damage). The stack never
   moved and was first hit in round 3. Every hit replayed.
 
+### Round 10: late-game questions (CB-056)
+
+Lane D's predictions were pushed first (elegy 6bc9046, merged 71f70f9).
+Two pinned streams per start, every run after the predictions. REFUTED:
+Elegy's prediction did not hold. Details: `experiments/cb056/README.md`.
+
+- **A starbase's 500th damage step, REFUTED (2 of 2).** A Wall Star (armor
+  61,500) at 499/500 took a Laser hit worth far less than one unit. Its
+  record shows 500/500 and no kill, and the next hit destroyed it. So the
+  "at least one step more" rule can reach 500 without destroying the
+  starbase; destruction needs the total to reach the armor. Elegy
+  predicted destruction (A11). The refuting reading, "left at 499", did
+  not happen either.
+- **A gatling shot goes on past a starbase, CONFIRMED (one stream only).**
+  One shot from three Battleships (Gatling Neutrino Cannons, one Flux
+  Capacitor) hit the starbase (token 0) and then three ships later in
+  token order: 466, 576 and 518 for deflectors 81, 100 and 90. So a beam
+  stops at a starbase (CB-052), but a gatling shot does not. In the other
+  stream the ships were never in range. In the first setup the targets
+  were unarmed and disengaged off the board before the gatling stack
+  reached range.
+- **Regenerating Shields and Croby Sharmor, CONFIRMED (2 of 2).** A Croby
+  Battleship's token had shields 672. Its hits (8, 81, 154 units) fit
+  armor 2546–2581: 2570 fits (each Croby Sharmor's 65 kept whole;
+  Tritanium halved), while 2306 and the plain 2620 do not.
+- **Death Star token caps, CONFIRMED (2 of 2).** Five Jammer 50s gave
+  jammer 72 (the cap at 95, then a quarter off). Six Flux Capacitors gave
+  capacitor 255%: the record shows 255, and one Heavy Blaster hit for 168
+  at distance 0 (66 × 2.55), not 196. A Nexus Star with 16 Battle Nexus
+  had initiative 63 and computer 99.
+- **Repair at an Ultra Station or Death Star, CONFIRMED (2 of 2).**
+  Damaged fleets that did not fight or move went from 400/500 to 300; the
+  starbases themselves went from 300 to 250.
+- **Mine damage on four-engine Battleships, CONFIRMED (2 of 2).** Every
+  fleet hit matched: five Battleships 197, five Fuel Scoop Battleships
+  237, Battleship + Tank 157 and 15, Tank + Battleship 62 and 37 (66 hit
+  fleets in all).
+- **Mine damage with Regenerating Shields, REFUTED (2 of 2).** The same
+  five Battleships owned by an RS race took 280, not 197 (23 hit fleets).
+  280 is the battle token values: shields 25 × 7/5, armor parts at half
+  (armor 3500).
+
 ### Battle plans through the client (BP)
 
 The original client gave the orders (`tools/fleetlab/client-orders`), and
