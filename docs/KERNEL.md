@@ -197,7 +197,10 @@ grows on it the same year.
 Owner: this file's "Mining", "Resources and installation caps",
 "Research" and "Production".
 
-1. Mining on every planet.
+1. Mining on every planet. At a populated Alternate Reality planet the
+   owner's own remote miners mine here too, after the planet's own
+   mines and before any production (MEASURED, RG-002 restarts; this
+   file's "Remote mining").
 2. Per planet, in planet order: resources (including resources from ships
    scrapped there this year, and the duplicate-serial ×4/5), the research
    tax, then the production queue. Ships completed here become new fleets
@@ -766,12 +769,13 @@ population frozen at max; 2407 as PG with ironium concentration set to
 ### Remote mining
 
 A fleet with a remote-mining task that did not move this year mines the
-planet it orbits after production (turn order step 6c), with `m` = the
+planet it orbits after production (turn order step 6c), except an
+Alternate Reality owner's miners at its own AR planet (below), with `m` = the
 sum over its ships of each mining robot's rate, capped at 4,000 per
 fleet: Robo-Midget 5, Robo-Mini 4, Robo 12, Robo-Maxi 18, Robo-Super 27,
 Robo-Ultra 25, Alien 10. Output `amt = prod = conc·m` (the race's mine
 output is ignored), with the same random +1 and depletion as planetary
-mining, and no homeworld floor.
+mining, and no homeworld floor at an unowned planet.
 
 - **Unowned planets** (CONFIRMED, T-35: 24 robot points at 100/50/25 mined
   24/12/6 kT a year; CS-003-B: 10 robot points at 100 mined 10 kT; KB-1A:
@@ -788,7 +792,41 @@ mining, and no homeworld floor.
   planet at 15/82/45 with 100 own mines and an 8-point miner ended with
   boranium fraction 106, which two separate steps give; one step with 108
   mines gives 107. The order of the two steps is BINARY-ONLY (both give
-  the same result here). Another player's miners at an AR planet mine
+  the same result here).
+- **When an AR owner's own miners mine.** They mine in step 4.1, during
+  the planet's mining and before any production, not at step 6c.
+  MEASURED (`PARITY.md` "RG-002 restarts: an AR owner's own miners"): in
+  the RG-002 Y1 and Y4 restarts, the Macinti AR homeworld (planet 35,
+  fleet 6/1 with a 60-point miner) spent the miner's output in the same
+  year's production, and it ended both years at 0 ironium. Mining after
+  production would have left 36–38 kT and the planet one ship short.
+  KB-1B could not tell the timings apart, because its production did not
+  use the minerals. The details below are BINARY-ONLY:
+  - **Which planets.** Step 4.1 mines each populated AR planet, first
+    with its own `trunc(sqrt(P))` mines, then in separate steps with each
+    fleet of the same owner that orbits it, has a remote-mining task on
+    its current waypoint and has no further waypoint. Each such fleet
+    uses its own robot points, capped at 4,000, and the fleets go in
+    fleet order. This settles KB-1B's order of the two steps: the planet
+    first, then the miners.
+  - **Homeworld floor.** These steps apply the homeworld floor of 30, as
+    the planet's own mining does.
+  - **Movement.** There is no did-not-move test. The step runs after
+    movement on the fleet as it then stands, so a fleet that arrived
+    this year with the task and no further waypoint mines that year. A
+    fleet that left does not mine, and neither does a fleet still there
+    that has a further waypoint.
+  - **After step 4.1.** A fleet that mined here is skipped at step 6c,
+    and it keeps its task.
+  - **Draws.** Each step draws one `rand(100)` per mineral with a non-zero
+    remainder. They fall inside step 4.1's planet-by-planet pass: the
+    planet's three draws, then each of its miners' draws, in fleet
+    order.
+  - **Other remote mining.** Unowned planets are mined only at step 6c,
+    by fleets that did not move, in fleet order, after production,
+    research and random events and before colonist drops (T-35, KB-1A).
+    Another player's planet is never mined, including by an AR fleet at
+    a different AR player's planet. Another player's miners at an AR planet mine
   nothing: an Alternate Reality fleet is skipped silently, and any other
   fleet gets the "planet is inhabited" refusal as at any owned planet
   (BINARY-ONLY; the refusal itself CONFIRMED, `MESSAGES.md` 0x076).
