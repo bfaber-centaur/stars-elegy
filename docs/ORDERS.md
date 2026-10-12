@@ -831,6 +831,15 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   fleet's position. It is **not** caused by the waypoint's warp. Whether the
   saved coordinates are the enemy's current position (still in view) or its
   last-seen position (out of view) is not pinned here.
+  **Contradicted in part (WF, PARITY "Representative game (RG-001)",
+  MEASURED, one stream):** while the owner saw the target, both the host
+  file and the owner's `.M` file kept the waypoint as a fleet target at
+  the target's end-of-year position, for an enemy and for a friend, two
+  years running (RG-001 2434 shows the host-file half). Only a target out
+  of every scanner of the owner's was turned into deep space, in both
+  files, at the target's actual end-of-year position, with message
+  0x02a. A target that was gone became deep space at its last position,
+  with 0x028. How WU-A's target came to be out of view is not checked.
 - **A fleet target merged away during order replay** (BINARY-ONLY; no
   oracle run). Player B's orders aim a waypoint (index 1 or later) at
   player A's fleet F. A's orders merge F into another of A's fleets Y at

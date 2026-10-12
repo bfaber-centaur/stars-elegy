@@ -5607,3 +5607,43 @@ setup.
 - A value the three streams happened to agree on may still be drawn. An
   outcome that changed only in an alternative stream has no expectation to
   flag.
+
+### Mismatches shrunk to oracle cases
+
+Each case below was predicted before its runs, on the Combat Lab base
+(`experiments/<case>/README.md` has the predictions and the full
+results; raw evidence in private apparatus `evidence/<case>`).
+
+- **Fleet numbers after a fleet leaves (FN-01..05), CONFIRMED, 2 of 2
+  streams.** RG-001 2432: player 6's fleet 3 colonized and the year's new
+  fleets skipped number 3. A fleet removed before production, by a
+  waypoint-0 colonize, a colonize on arrival after movement, a waypoint-0
+  scrap or a waypoint-0 merge, keeps its number in use for that year's
+  production: two Scouts built beside fleets 1 and 2 became fleets 3 and
+  4 (control: 0 and 3). The next year's first new fleet took the freed
+  number 0 in all four variants. Not tested: a fleet destroyed in battle,
+  and merge or split orders replayed in step 1.
+- **A waypoint aimed at another player's fleet (WF-01..05), MEASURED, one
+  stream.** RG-001 2434: player 2's and player 5's waypoints kept naming
+  player 1's fleets in the host file. In the oracle:
+  - While the owner sees the target, the waypoint stays a fleet target,
+    at the target's end-of-year position, in the host file **and** in the
+    owner's `.M` file, for an enemy and for a friend, over two years.
+    This contradicts `ORDERS.md` ("saved as a plain waypoint in the
+    owner's view", WU-A), at least while the target is in view.
+  - The chaser moves toward the target's end-of-year position each year
+    (it moves after the target).
+  - A target scrapped before movement leaves deep space at its last
+    position in both files, with message 0x028.
+  - A target that no scanner of the owner's saw becomes deep space at its
+    **actual** end-of-year position in both files, not at the last
+    position the owner saw, with message 0x02a.
+- **Which tech prices a ship destroyed in a level-up year (CB-053), CONFIRMED,
+  2 of 2 streams.** Salvage from 24 Victims (Small Freighter, Long Hump 6,
+  Tritanium) killed in deep space while their owner raised its lowest
+  field from 5 to 6: without Bleeding Edge Technology the cost was the
+  one from before the level (salvage 108/0/90, as the control), whether
+  the level came from this year's research or from research already
+  stored at the start of the year. With BET it was the new cost
+  (90/0/78; BET control 102/0/84). This agrees with RG-001 2434 (player
+  1's Mini-Colony Ship) and with stars-elegy #141.
