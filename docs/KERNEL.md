@@ -117,7 +117,8 @@ order shown. "Fleet order" means by owner, then by fleet number
    `fo/fo03`). The copying rule is BINARY-ONLY. This is separate from
    chasing, where waypoint 1 is aimed at a fleet (this file's "Chasing
    another fleet"). Then the **waypoint check**
-   runs: coordinates are clamped to the galaxy and waypoints aimed at a
+   runs: each fleet's position and waypoint 0 are clamped to the galaxy
+   (later waypoints are not; BINARY-ONLY) and waypoints aimed at a
    fleet or object are moved to its current position (`ORDERS.md`
    "Waypoint upkeep"). Every fleet's "fought this year, no repair" mark is
    cleared before this (`COMBAT.md` "Repair").
