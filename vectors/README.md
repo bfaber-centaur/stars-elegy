@@ -94,7 +94,10 @@ file, so nothing in it is a default you have to guess.
   points spend (`UNIVERSE.md` "Leftover advantage points") and race stat 15 (PARITY "Turn-time penalty"). An out-of-range PRT is given
   as its stored number.
 - `planets`: position, owner (-1 none), `homeworld: true` for a planet whose
-  record carries the homeworld flag (absent otherwise), mineral concentrations, environment
+  record carries the homeworld flag (absent otherwise), mineral concentrations,
+  `concentration_fractions` (each concentration's depletion fraction in
+  1/256 of a point, ironium, boranium, germanium, 0–255, as the planet record
+  stores them; absent when all three are 0), environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
   mines, factories, defenses, planetary scanner, starbase (design slot and

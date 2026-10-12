@@ -235,6 +235,10 @@ def state(hst, xy, game, xy_path=None):
             if 'homeworld' in s.split():
                 p['homeworld'] = True
             p['concentrations'] = [int(x) for x in d['conc'].split('/')]
+            # Depletion fractions (1/256 of a concentration point, Fe/B/G), as the
+            # planet record stores them; all three 0 is the loader's default.
+            if any(int(x) for x in d.get('frac', '0/0/0').split('/')):
+                p['concentration_fractions'] = [int(x) for x in d['frac'].split('/')]
             p['environment'] = [int(x) for x in d['env'].split('/')]
             if 'orig' in d:
                 p['original_environment'] = [int(x) for x in d['orig'].split('/')]
@@ -502,6 +506,8 @@ CORPORA = {
 # "Capture", a draw) gave the attacker a level: the attacker's tech after the
 # year, read from the host file, so the draw's outcome is on record. TK-120-A:
 # no level gained (biotech stayed 0), so its environment is not a tech effect.
+# The tech is a sample: the attempt draws (50% fail roll first), so another
+# stream can gain a level.
 ATTACKER_TECH = {'TK-120-A': (0,)}
 
 
@@ -548,7 +554,7 @@ def build(corpus, ev, out):
                     st1 = state(dump(os.path.join(adir, game + '.HST')), dump(os.path.join(adir, game + '.XY')), game)
                     tech = next(q['tech'] for q in st1['players'] if q['id'] == p)
                     per.setdefault(rd.replace('run-', 'cycles '), []).append(
-                        {'year': r.years, 'kind': 'player', 'id': p, 'equals': {'tech': tech}})
+                        {'year': r.years, 'kind': 'player', 'id': p, 'equals': {'tech': tech}, 'sample': True})
             if per:
                 vec['cases'].append(case('%s-%s' % (rid, cid), rule, text, per, held, c['legacy']))
         with open(os.path.join(out, r.name + '.json'), 'w') as f:
