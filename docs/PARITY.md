@@ -195,7 +195,10 @@ population-capacity purposes.
   99)` (KX-002 G1), CONFIRMED.
 - ~~Lifecycle of `excessPop`.~~ Resolved for the cases that change it: an
   emptied or captured planet keeps its carry (`TAKEOVER.md`, T-27), and
-  hostile deaths use it (KX-002 H5, H6). Growth and deaths run only on
+  hostile deaths use it (KX-002 H5, H6). Exception: an emptied planet
+  with no mines and no factories loses it when the year's file is written
+  (BINARY-ONLY; MEASURED in RG-001 planets 50 and 87; `TAKEOVER.md`
+  "Capture: what a planet keeps"). Growth and deaths run only on
   owned planets with population.
 
 ### Measured behavior — PG-002, first crowded turn
