@@ -24,7 +24,7 @@ resources), no mines or factories, and 5000 kT of each mineral. The mines
 queued after the ship item measure the resources left (a mine costs 5).
 The public `fb1.spec` differs from the run's copy only in its comments.
 
-**Predictions** (private apparatus): pushed at 23:11:53Z, before the runs.
+**Predictions** (private apparatus): pushed at 23:11:52Z, before the runs started at 23:12:03Z.
 
 - Lane G's rule (`PRODUCTION-LAUNCH.md` as above), with the unit costs at
   tech 26 that Elegy computes: Gun Scout 5 resources and 2/5/2 kT; HE and

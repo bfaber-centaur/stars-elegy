@@ -60,7 +60,8 @@ and is seen like any fleet. It does not move until next year.
   Trader parts are CONFIRMED by prediction in FB-1,
   `experiments/fb/README.md`: an Inner Strength-only weapon, a Hyper
   Expansion-only engine and an unowned Multi Function Pod, each fully
-  researched, all gave 0x04f and no fleet). Each must be fully
+  researched, all gave 0x04f and no fleet; designs placed by state edit,
+  see FB-1). Each must be fully
   researched, allowed to the owner's race, and, for a Mystery Trader
   item, owned: the same rule as `COMPONENTS.md` "Who can build what". If
   any fails, the item builds nothing and the owner is told the plans were
@@ -95,7 +96,7 @@ rest of this paragraph is BINARY-ONLY except where FB-1 is cited:
   the item's next unit. CONFIRMED by prediction in FB-1 from 0%: the
   whole unit cost (resources and minerals) for a single unit, and one
   unit plus the progress on the next for an item of 3 with resources for
-  1 unit.
+  1 unit (designs placed by state edit; see FB-1).
 - **The queue.** An item whose units all completed is removed, and
   production goes on to the next item. An item with units left over is
   emptied: it builds nothing more, production stops at it for that year
@@ -105,7 +106,7 @@ rest of this paragraph is BINARY-ONLY except where FB-1 is cited:
   and the mines after it were built; an item of 3 was left as an empty
   ship item (count 0, its progress still shown) with nothing after it
   built, then dropped the next year with no message while the mines
-  after it were built.
+  after it were built (designs placed by state edit; see FB-1).
 
 ### The new fleet
 
@@ -312,7 +313,8 @@ Building a starbase design at a planet:
   the queue go as for ships. BINARY-ONLY, except: CONFIRMED by prediction
   in FB-1 for a Mass Driver 5 starbase (Packet Physics only) replacing an
   Orbital Fort from 0% (only 0x03e, the Fort kept, the replacement cost
-  spent); the packet settings kept are MEASURED in PD-1.
+  spent; designs placed by state edit, see FB-1); the packet settings
+  kept are MEASURED in PD-1.
 - The new starbase replaces the old one, if any. The owner is told in one
   of three forms, chosen by the new hull's dock (`MESSAGES.md` 0x0cd–0x0cf):
   no dock (Orbital Fort) says it can build no ships; a limited dock
