@@ -5508,3 +5508,57 @@ Status: MEASURED, 2026-10-07. Full record: `experiments/fc/README.md`
 
 The same file records the other client-order cases, among them CO-07 and
 CO-08 (deleting and editing designs in use).
+
+## Representative game (RG-001)
+
+Status: MEASURED (recorded, no predictions committed). Vector:
+`vectors/rg/rg001.json`. Raw evidence: private apparatus `evidence/rg001`.
+
+### Question
+
+Can Elegy run complete years of a real multi-player game and match the
+original field by field? Every earlier vector came from a small targeted
+setup.
+
+### Method
+
+- Start: year 2429 of the AIX computer-player game (`Computer players`
+  above): small universe, normal density, random events on, seven players.
+  Player 0 is an idle human race that never submits orders. Players 1-6
+  are expert Robotoid, Turindrone, Automitron, Rototill, Cybertron and
+  Macinti. At the start there are 97 fleets and 93 of 128 planets are
+  owned.
+- Each of six chained years (2429 to 2435) was generated twice at cycles
+  20000. The first generation let the computer players plan, and only
+  their order files were kept. The second generation used those files
+  supplied, so the host planned for no player and the year's draws started
+  at seeding (`ORACLE.md` "Computer players' orders supplied as files").
+  The second generation is the recorded year. It was repeated, and all six
+  repeats were byte-identical.
+- Every player's orders are in the vector's `orders` block (36 order
+  sets, 719 orders). `random_start` gives tick 164 for every year.
+- Each year was also generated from the same start and orders at cycles
+  3700 and 1490 (other streams). A field whose value differed in either
+  one is flagged `sample: true`, and so are the fleets that fought and the
+  battle actions (`vectors/README.md` "Combat vectors"). That gives 104
+  of 1553 expectations. Surface minerals carry the usual mining tolerance.
+
+### Observations
+
+- The 2430 battle's setup draws matched the tick-164 stream at draw 206
+  (stars-decomp `tools/starsrng.py`, 57 bits, unique).
+- 8 battles (1, 1, 1, 0, 2 and 3 in 2430..2435), colonizing, scrapping,
+  research, design changes, packets, wormholes and messages.
+- Supplying the orders changed no fleet in 2430 compared with the original
+  AIX generation of the same year. Planets differed only in surface
+  minerals, and the wormholes, three players' research and two queues
+  differed (interpretation: the computer players' planning moved the
+  stream).
+
+### Not covered
+
+- Player views (`view`) and the player files are not compared; the vector
+  holds host-file outcomes, battles, message ids and score records.
+- A value the three streams happened to agree on may still be drawn. An
+  outcome that changed only in an alternative stream has no expectation to
+  flag.

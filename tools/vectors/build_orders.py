@@ -46,9 +46,18 @@ def orders_of(xpath, nplayers):
             player = int(d['player'])
         elif s.startswith('order cargo '):
             kind = int(d['kind'], 16)
+            amounts = {CARGO_DUMP[k]: int(v) for k, v in d.items() if k in CARGO_DUMP}
+            if kind == 0x21:
+                # planet first, the player's own fleet second (computer players'
+                # unloads): amounts are into the planet, so out of the fleet
+                w = int(d['other'])
+                if w >> 9 != player:
+                    raise ValueError('planet-first cargo with another owner\'s fleet: not decoded: ' + s)
+                out.append({'kind': 'cargo', 'fleet': w & 0x1ff, 'with': {'kind': 'planet', 'id': int(d['fleet'])},
+                            'amounts': {k: -v for k, v in amounts.items()}})
+                continue
             other = other_of(kind, int(d['other']), player)
-            out.append({'kind': 'cargo', 'fleet': int(d['fleet']), 'with': other,
-                        'amounts': {CARGO_DUMP[k]: int(v) for k, v in d.items() if k in CARGO_DUMP}})
+            out.append({'kind': 'cargo', 'fleet': int(d['fleet']), 'with': other, 'amounts': amounts})
         elif s.startswith('order split '):
             out.append({'kind': 'split', 'fleet': int(d['fleet'])})
         elif s.startswith('order move-ships '):
@@ -86,15 +95,37 @@ def orders_of(xpath, nplayers):
                         'hull': hull, 'slots': sl})
         elif s.startswith('order design-delete '):
             out.append({'kind': 'design_delete', 'starbase': s.split()[2] == 'starbase', 'slot': int(d['slot'])})
-        elif s.startswith('order type=5 '):
-            # waypoint change: fleet word, waypoint index word, then the waypoint
-            # (x, y, target object, warp and task, target type, task order words)
+        elif s.startswith('order type=5 ') or s.startswith('order type=4 '):
+            # waypoint change (5) or insert before index (4): fleet word (id,
+            # owner in bits 9 and up),
+            # waypoint index word, then the waypoint (x, y, target object, warp
+            # and task, target type, task order words)
             r = [int(x) for x in s.split('raw=', 1)[1].split()]
             words = ['%04x' % u16(r, o) for o in range(12, len(r) - 1, 2)]
             wd = {'x': u16(r, 4), 'y': u16(r, 6), 'obj': u16(r, 8), 'warp': r[10] >> 4, 'task': r[10] & 15,
                   'type': '%02x' % r[11], 'orders': ','.join(words)}
-            out.append({'kind': 'waypoint_change', 'fleet': u16(r, 0) & 0x1ff, 'index': u16(r, 2),
-                        'waypoint': B.waypoint(wd, player, nplayers)})
+            # the target type's high nibble is dropped, as in the state's waypoints
+            if u16(r, 0) >> 9 != player or r[3]:
+                raise ValueError('waypoint order with high bits set: not decoded: ' + s)
+            out.append({'kind': 'waypoint_change' if s.startswith('order type=5 ') else 'waypoint_add',
+                        'fleet': u16(r, 0) & 0x1ff, 'index': r[2], 'waypoint': B.waypoint(wd, player, nplayers)})
+        elif s.startswith('order type=3 '):
+            # waypoint delete: fleet word, waypoint index, a zero byte
+            r = [int(x) for x in s.split('raw=', 1)[1].split()]
+            if u16(r, 0) >> 9 != player or len(r) != 4 or r[3]:
+                raise ValueError('waypoint delete not decoded: ' + s)
+            out.append({'kind': 'waypoint_delete', 'fleet': u16(r, 0) & 0x1ff, 'index': r[2]})
+        elif s.startswith('order type=35 '):
+            # planet settings: planet word; then bit 0 leftover to research,
+            # bits 1-10 packet destination + 1, bits 11-14 packet warp - 4,
+            # bit 15 and the next word's bits 0-8 route destination + 1
+            r = [int(x) for x in s.split('raw=', 1)[1].split()]
+            w1, w2 = u16(r, 2), u16(r, 4)
+            if u16(r, 0) >> 11 or w2 >> 9 or len(r) != 6:
+                raise ValueError('planet settings not decoded: ' + s)
+            pd, rd = (w1 >> 1) & 0x3ff, (w1 >> 15) | (w2 & 0x1ff) << 1
+            out.append({'kind': 'planet_settings', 'planet': u16(r, 0), 'leftover_to_research': bool(w1 & 1),
+                        'packet_destination': pd - 1, 'packet_warp': (w1 >> 11 & 15) + 4, 'route_to': rd - 1})
         elif s.startswith('order '):
             raise ValueError('order not decoded: ' + s.split(' raw=')[0])
     return player, out

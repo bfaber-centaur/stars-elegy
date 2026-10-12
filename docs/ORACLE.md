@@ -1407,6 +1407,28 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   is refused ("unable to load the race file"); put a race file first
   (observed once, 2026-10-07).
 
+### Computer players' orders supplied as files (RG-001, observed 2026-10-12)
+
+- Put each computer player's own `.Xn`, as captured from a generation,
+  into the games directory next to the start files and generate with
+  `pinned-turn`: the host uses the files and does not plan for those
+  players. The year's random stream then starts at seeding, as in a game
+  without computer players. Planning draws from the same stream, so in a
+  normal generation the year's draws begin wherever the computer players'
+  planning left the stream.
+- Evidence: 2429 of the AIX game (seven players) generated from its own
+  captured orders had the same fleets as the original generation; planets
+  differed only in surface minerals, and the wormholes, three players'
+  research and two queues differed. The 2430 battle's setup draws in the
+  supplied-orders run matched the tick-164 stream (cycles 20000) at draw
+  206, unique among all ticks and the first 2^20 offsets.
+- A planning generation from the same start and cycles wrote the same
+  order files byte for byte as the original AIX run (2429, six players).
+- Recording a chain this way takes two generations a year: one to let
+  the computer players plan (its result is discarded), one with their
+  files supplied. The apparatus `evidence/rg001/tools/rg-chain` does it and
+  repeats each supplied-orders year; all six repeats were byte-identical.
+
 ## Known fragility
 
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take

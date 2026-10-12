@@ -2,7 +2,7 @@
 """Build public parity vectors (vectors/<corpus>/<run>.json) from an oracle corpus.
 
   python3 tools/vectors/build.py CORPUS EVIDENCE_DIR [OUT_DIR]
-      CORPUS: fm2 | fo | tk2 | wt | cb | pq | pg | cs | ob | es | ug   (vectors/README.md lists the format)
+      CORPUS: fm2 | fo | tk2 | wt | cb | pq | pg | cs | ob | es | ug | rg   (vectors/README.md lists the format)
       EVIDENCE_DIR: the corpus's raw-evidence directory (private apparatus
       repository, e.g. stars-oracle-apparatus/evidence/fm2)
 
@@ -44,6 +44,7 @@ GAMES = {
     'RD07': dict(name='RD07'),
     'GT': dict(name='GT', size='medium'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
+    'AIX': dict(name='AIX', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
     'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal'),
 }
 
@@ -553,6 +554,9 @@ if __name__ == '__main__':
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         kx = __import__('build_kx')
         kx.build(corpus, ev, out) if corpus in ('kx001', 'kx002') else getattr(kx, 'build_' + corpus)(ev, out)
+    elif corpus.startswith('rg'):
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        __import__('build_rg').build(ev, out)
     elif corpus in ('cb', 'sc', 'mf', 'rp', 'rw', 'wt', 'pq', 'pg', 'cs', 'ob', 'es', 'ug'):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         __import__('build_' + corpus).build(ev, out)
