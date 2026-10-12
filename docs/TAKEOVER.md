@@ -449,6 +449,33 @@ starvation, a packet or an AR starbase loss) is emptied:
 - **lost**: owner, population, defenses (0), planetary scanner (none),
   production queue, starbase, mass-driver destination, and the
   "only leftover to research" setting.
+- **An emptied planet with no mines and no factories loses its carry at
+  the year boundary** (BINARY-ONLY; MEASURED in RG-001, 2 of 2 cases).
+  When the year's game file is written, an unowned planet's installations
+  record is written only when it has mines, factories or defenses, or a
+  planetary scanner. The record holds the carry, mines, factories,
+  defenses, scanner and the "only leftover to research" setting. Its
+  carry alone does not cause it to be written. An owned planet's record is
+  also written when its carry is non-zero or that setting is on.
+  - Emptying has already cleared the defenses and the scanner. So an
+    emptied planet with 0 mines and 0 factories is written without the
+    record. Reading the file back gives carry 0, no installations and no
+    scanner, as for a planet never owned.
+  - Nothing else is reset by this. The surface minerals, environment,
+    concentrations and mining depletion fractions are stored separately
+    and kept.
+  - Until the file is written, the planet in memory keeps its carry, so
+    only the round trip loses it. Growth reads the carry only after that
+    round trip, so a later colony there starts from carry 0.
+  - RG-001 (the original's own files):
+    - planet 50 (carry 34, 0 mines, 0 factories in the 2432 file) and
+      planet 87 (carry 40 in 2433) were emptied. Both were written without
+      the record in the next year's file (2433 and 2434). Planet 50's
+      later colony grew as with carry 0, by Elegy's comparison;
+    - planets 59, 37, 64 and 92, emptied with mines, kept their carry, and
+      it carried into the new colony.
+  - T-27 (above) measured only the branch with installations: mines 20
+    and factories 15, captured in the same year.
 - A Claim Adjuster owner's planet returns its current environment to its
   original values when emptied (CONFIRMED, TK-116: 50/50/50 back to
   55/47/52 when a JOAT attacker captured it). The game then stores no
