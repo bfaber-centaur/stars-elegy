@@ -5734,6 +5734,14 @@ results; raw evidence in private apparatus `evidence/<case>`).
   stored at the start of the year. With BET it was the new cost
   (90/0/78; BET control 102/0/84). This agrees with RG-001 2434 (player
   1's Mini-Colony Ship) and with `COMBAT.md` "Design cost".
+- **A dropped part's cost in the next year (CB-054), CONFIRMED, 2 of 2
+  streams.** The cost arm of the same question: 30 Small Freighters with
+  a Beam Deflector in the shield-or-armor slot, which the game drops when
+  it reads the design. Destroyed in the year the design was first read,
+  they left the salvage of the cost with the deflector (4/0/7 per ship,
+  as CB-009); destroyed in the next year, the salvage of the plain
+  freighter (4/0/5), the same as a design built without the part
+  (`COMBAT.md` "Parts the game drops from a design").
 - **Order of level-ups in one year (GR-ORDER), MEASURED, 2 of 2 streams.**
   A Generalized Research player with every field at 5 and several fields
   exactly at the cost of level 6, so that the first level raises the

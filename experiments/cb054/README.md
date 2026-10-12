@@ -47,3 +47,28 @@ salvage object holds the sum.
   `Deflector Hauler` without the Beam Deflector.
 - The kill events are random (samples); the salvage given the events is
   not.
+
+## Results
+
+Cycles 20000 and 30000 each gave one battle record per case, the same in
+all four cases of a stream: kill events of 7, 8 and 8 Victims at 20000,
+and 7, 7 and 7 at 30000.
+
+| case | salvage at 20000 | at 30000 | `c` that fits |
+|---|---|---|---|
+| `cb054-y1-defl` | 23/0/40 | 21/0/36 | 4/0/7 |
+| `cb054-y1-plain` | 23/0/29 | 21/0/27 | 4/0/5 |
+| `cb054-y2-defl` | **23/0/29** | **21/0/27** | **4/0/5** |
+| `cb054-y2-plain` | 23/0/29 | 21/0/27 | 4/0/5 |
+
+For example at 30000, `c` = 4/0/7 gives per event `trunc(7·7/3)` = 16
+germanium, 12 after the quarter lost, 36 for three events; 4/0/5 gives
+11, then 9, then 27.
+
+- **CONFIRMED (2 of 2 streams):** the year the game first reads the
+  design, the dropped Beam Deflector still counts in the salvage cost; in
+  the next year it does not, and the salvage equals the plain design's.
+  Every prediction held.
+- The `y2` cases had no battle in year 1, and their year-1 host files
+  already held `Deflector Hauler` without the part (mass 29).
+- Raw evidence: apparatus `evidence/cb054`.
