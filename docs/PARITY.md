@@ -6207,7 +6207,7 @@ queue".
 
 ## An empty transport task and 0x04e (ET-1)
 
-Status: CONFIRMED by prediction (elegy #193, 84af588; the numbers for the
+Status: CONFIRMED by prediction (elegy 84af588; the numbers for the
 exact start were pushed before the runs). Results:
 `experiments/et/README.md`. Raw evidence: private apparatus `evidence/et1`.
 
@@ -6216,7 +6216,7 @@ exact start were pushed before the runs). Results:
 | E | A freighter reaches its last waypoint, its own colony, with a transport task that has no action for any cargo | task cleared; 0x04e | CONFIRMED |
 | C | Control: the same with "unload all colonists" | 0x02e, then 0x04e; task cleared | CONFIRMED |
 | S | A stationary freighter with the empty transport task on its only waypoint | task cleared; 0x04e | CONFIRMED |
-| Order | Player 0's message order | S's 0x04e before the production messages; C's 0x02e, then E's 0x04e, then C's | MEASURED: E's message is sent in the after-movement transport pass, not at arrival |
+| Order (ET-1b: ET-1 plus a fleet N arriving with no task, whose 0x04e is sent at the end of movement) | Player 0's message order | S's and N's 0x04e, then the production messages, then C's 0x02e, E's 0x04e and C's 0x04e | CONFIRMED (prediction elegy 0a1c002): E's message is sent in the after-movement transport pass, not at arrival |
 
 ## Remote-mining refusals (RM)
 

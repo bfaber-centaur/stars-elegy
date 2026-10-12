@@ -26,16 +26,26 @@ So an empty transport task counts as a task that is done. It ends in the
 waypoint tasks, and its owner gets 0x04e. That holds for a fleet already
 there (S) and for one that has just arrived (E).
 
-**When the message is sent: MEASURED** (message order in player 0's
-file, two streams; this was not part of the prediction):
+**When the message is sent.** ET-1 showed the order in player 0's file
+(two streams), but it had no fleet whose message is sent at movement.
 
-- S's 0x04e comes first, before the production messages (0x03f).
-- After them comes C's unload message (0x02e), then E's 0x04e, then C's.
+- S's 0x04e came before the production messages (0x03f).
+- C's unload message (0x02e) came after them, then E's 0x04e, then C's.
 
-So E's message is sent in the same after-movement pass as C's unload, and
-not at movement. A message order sent at movement itself was not observed
-here. The reading, which is an inference, is that the pre-movement and
-after-movement transport passes end the task and send 0x04e (0x04e (a)),
-and that arrival sends nothing for a transport task (0x04e (b)).
+ET-1b repeats ET-1 with a bracket fleet N. N arrives at colony 12 with no
+task and no further waypoint, so its 0x04e is sent at the end of movement
+(0x04e (b)). Elegy #193 at 0a1c002 (the same engine code as 84af588)
+predicted the message order. The prediction and Elegy's numbers were
+pushed before the runs: computed and committed at 21:59:46Z, runs started
+21:59:55Z. Start: `et1b.spec`.
+
+| Observed, both streams | Prediction | Verdict |
+|---|---|---|
+| S 0x04e, N 0x04e, production 0x03f ×4, C 0x02e, E 0x04e, C 0x04e. Every task is cleared. Colonies 575/585/575. | S and N before the production messages; E and C after them and after C's unload | CONFIRMED |
+
+So the empty transport's 0x04e is not sent on arrival. It is sent later in
+the same year, in the after-movement transport pass, with the unloads.
+The task ends there, and so it is 0x04e (a). The arrival itself sends
+nothing for a transport task (0x04e (b)).
 
 Raw evidence: private apparatus, `evidence/et1`.
