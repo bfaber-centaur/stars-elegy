@@ -1171,8 +1171,8 @@ What a hit record shows for a token that the hit destroys:
 MEASURED in the combat corpora (CB-000 to CB-052, the first player's
 generated file of every run, apparatus 8d82607; distinct battle records
 counted once): 2,700 of 2,700 hits that destroyed a whole stack recorded
-the stack's damage before the hit (2,197 of them with damage), and 72 of
-72 hits that destroyed a starbase recorded 500 and 100.
+the stack's damage before the hit (2,197 of them with damage), and 44 of
+44 hits that destroyed a starbase recorded 500 and 100.
 
 ### Salvage (CONFIRMED, CB-001 B1; CB-011..013 S6/S7, Q-13)
 
