@@ -5592,6 +5592,43 @@ Status: MEASURED, 2026-10-07. Full record: `experiments/fc/README.md`
 The same file records the other client-order cases, among them CO-07 and
 CO-08 (deleting and editing designs in use).
 
+## Queued ships after deleting the starbase design (CO-07b)
+
+Status: MEASURED outcome, BINARY-ONLY mechanism, 2026-10-12. Raw
+evidence: private apparatus `evidence/fo/co07b` (the run of 2026-10-07).
+
+- **Contradiction.** `PRODUCTION-LAUNCH.md` "Can the planet build it" said
+  a ship item at a planet without a starbase builds nothing but its
+  resources are spent. Read together with CO-07b, that predicts 15 Fe
+  and 14 Ge spent at the homeworld, and research given only the 15%
+  tax. The original spent nothing.
+- **Observation (MEASURED, one run).** Player 0 deleted the starbase
+  design in use at its homeworld. The queue held 2 Freighters (the first
+  66% done) and then 1 Scout-hull design.
+  - After the year the planet had no starbase and no queue.
+  - Its minerals rose from 410/490/455 to 413/493/464, which is the
+    year's mining alone.
+  - Its research store in the current field went from 5 to 43. The
+    gain of 38 equals the year's resources, as with an empty queue.
+- **Candidates.**
+  - (a) Production skips a ship item at a starbase-less planet before
+    paying for it.
+  - (b) The delete itself strips the ship items, so production sees no
+    queue.
+- **Resolution: (b), BINARY-ONLY.** Removing a starbase because its design
+  was deleted happens at order time. It also removes every ship item
+  and every non-automatic packet item from that planet's queue, and
+  resets the progress of any starbase item left in it. A battle loss does
+  the same (CONFIRMED, CB-047, where a destroyed Station's queued
+  Destroyers were gone and its factories stayed).
+- **What stays.** The starbase check at build time and its "already spent"
+  rule are unchanged, and still BINARY-ONLY. In play they are reached only
+  by a hand-built queue at a planet without a starbase.
+- **Why the run can't tell (a) from (b) by the queue alone.** Under the
+  old rule the items would also have been removed, so the empty queue is
+  the same either way. The unspent minerals and the full research are
+  what tell them apart.
+
 ## Representative game (RG-001)
 
 Status: MEASURED (recorded, no predictions committed). Vector:
