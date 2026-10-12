@@ -101,6 +101,12 @@ file, so nothing in it is a default you have to guess.
   planet 8 starts without the flag while player 1's record names it, and
   the flag is back after the year. Absent when the record names no planet
   of the state.
+  `default_queue` is the production queue the player's new colonies start
+  with, as `{id, count, kind}` items (planetary items only, `kind` 1, as
+  in "Queue items"; `[]` when empty), and `default_leftover_to_research`
+  their default "only leftover to research". Both come from the player's
+  record in the host file; both or neither are present. Vectors built
+  before these fields existed omit them.
 - `planets`: position, owner (-1 none), `homeworld: true` for a planet whose
   record carries the homeworld flag (absent otherwise), mineral concentrations,
   `concentration_fractions` (each concentration's depletion fraction in
@@ -293,7 +299,7 @@ unconstrained by that case.
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
 | `battle_plan` | plan `owner`/`slot` | `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo` |
 | `battle_plan_gone` | plan `owner`/`slot` no longer exists | |
-| `player` | player `id` | `tech`, `research_accumulated`, `research_percent`, `research_field`, `relations`, `counts`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it) |
+| `player` | player `id` | `tech`, `research_accumulated`, `research_percent`, `research_field`, `relations`, `counts`, `default_queue`, `default_leftover_to_research`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it; the record counts the player's ships at the end of the year, so it is a sample whenever one of that player's fleets is) |
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |

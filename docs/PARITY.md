@@ -5956,6 +5956,15 @@ and salvage?
   `salvage` cargo partner (`vectors/README.md`).
 - 44 battles. The Robotoid player destroyed the homeworld's Space Station
   in 2465 and its freighter in 2466.
+- **Default queue cleared.** Player 0's default production queue (the
+  edited Auto items) was empty after recorded year 1 and stayed empty.
+  Player 0's year-1 order file, written by the client, held one waypoint
+  order and the client's save marker, with no queue order. Without a
+  player-0 order file it was kept: in the settling year, and in both RM
+  years (`experiments/rm`), which start from the same settled files.
+  The client's 2462 `.M1` file showed the edited default queue. Why the
+  host emptied it is UNKNOWN (one observation). The vectors carry it as
+  a year-1 `player` expectation (`default_queue: []`).
 
 ### Elegy
 

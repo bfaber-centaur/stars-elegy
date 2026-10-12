@@ -170,6 +170,49 @@ func TestSalvageFresh(t *testing.T) {
 	}
 }
 
+// RG-002 player 0's default queue is the edited one (experiments/rg002:
+// Auto Factories 100, Auto Mines 100, Auto Defenses 20, Auto Min and Max
+// Terraform 5) in every year's start; the computer players' is empty.
+func TestDefaultQueue(t *testing.T) {
+	want := []QueueItem{{ID: 1, Count: 100}, {ID: 0, Count: 100}, {ID: 2, Count: 20}, {ID: 4, Count: 5}, {ID: 5, Count: 5}}
+	for y := 1; y <= 6; y++ {
+		file := fmt.Sprintf("../../vectors/rg/rg002-y%d.json", y)
+		v, err := Load(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, p := range v.InitialState.Players {
+			if p.DefaultLeftover == nil || *p.DefaultLeftover {
+				t.Errorf("%s player %d: default_leftover_to_research %v, want false", file, p.ID, p.DefaultLeftover)
+			}
+			w := want
+			if p.ID != 0 {
+				w = nil
+			}
+			if len(p.DefaultQueue) != len(w) {
+				t.Errorf("%s player %d: default_queue %+v, want %+v", file, p.ID, p.DefaultQueue, w)
+				continue
+			}
+			for i, it := range p.DefaultQueue {
+				if it.ID != w[i].ID || it.Count != w[i].Count || it.Kind == nil || *it.Kind != 1 {
+					t.Errorf("%s player %d: default_queue[%d] = %+v, want %+v kind 1", file, p.ID, i, it, w[i])
+				}
+			}
+		}
+	}
+	one := 1
+	for _, p := range []Player{{ID: 0, DefaultQueue: []QueueItem{}}, {ID: 0, DefaultQueue: []QueueItem{{ID: 0, Count: 5, Kind: &one, Percent: 3}}, DefaultLeftover: new(bool)}} {
+		bad := Vector{ID: "x", InitialState: &State{Players: []Player{p}}}
+		found := false
+		for _, e := range bad.Check() {
+			found = found || strings.Contains(e.Error(), "default_")
+		}
+		if !found {
+			t.Errorf("Check accepts player %+v", p)
+		}
+	}
+}
+
 func TestRG001Artifact(t *testing.T) {
 	v, err := Load("../../vectors/rg/rg001-y1.json")
 	if err != nil {

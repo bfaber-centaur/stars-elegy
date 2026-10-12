@@ -150,6 +150,34 @@
      "ship_designs": 4,
      "starbase_designs": 4
     },
+    "default_queue": [
+     {
+      "id": 1,
+      "count": 100,
+      "kind": 1
+     },
+     {
+      "id": 0,
+      "count": 100,
+      "kind": 1
+     },
+     {
+      "id": 2,
+      "count": 20,
+      "kind": 1
+     },
+     {
+      "id": 4,
+      "count": 5,
+      "kind": 1
+     },
+     {
+      "id": 5,
+      "count": 5,
+      "kind": 1
+     }
+    ],
+    "default_leftover_to_research": false,
     "homeworld": 51
    },
    {
@@ -238,6 +266,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 71
    },
    {
@@ -326,6 +356,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 57
    },
    {
@@ -414,6 +446,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 7
    },
    {
@@ -503,6 +537,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 83
    },
    {
@@ -593,6 +629,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 86
    },
    {
@@ -684,6 +722,8 @@
      "starbase_designs": 10
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 35
    }
   ],
@@ -61751,7 +61791,8 @@
        "construction": 485,
        "electronics": 2397,
        "biotechnology": 409
-      }
+      },
+      "default_queue": []
      },
      "year": 1
     },

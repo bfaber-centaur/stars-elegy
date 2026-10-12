@@ -208,6 +208,14 @@ def state(hst, xy, game, xy_path=None):
             })
             if d.get('computer') == '1':
                 st['players'][-1]['computer'] = True
+            # The default production queue new colonies start with, and their
+            # default "only leftover to research" (the player record; planetary
+            # items only, as in a planet queue with kind 1).
+            if 'defqueue' in d:
+                st['players'][-1]['default_queue'] = [] if d['defqueue'] == 'none' else [
+                    {'id': int(i), 'count': int(c), 'kind': 1}
+                    for i, c in (x.split(':') for x in d['defqueue'].split(','))]
+                st['players'][-1]['default_leftover_to_research'] = d['defleftover'] == '1'
             # The planet the player's record names as its homeworld (KERNEL "Turn
             # order" step 3.6 re-marks it every year, whoever owns it). Kept only
             # when it names a planet of this file; see the check below.
