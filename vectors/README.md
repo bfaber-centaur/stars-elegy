@@ -48,7 +48,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
-| `rg` | RG-001, RG-001-Y1..Y6 | 12 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start`. RG-001 chains the six years; RG-001-Yk is year k alone, from the original's own files for the year before | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
+| `rg` | RG-001, RG-001-Y1..Y6, RG-002, RG-002-Y1..Y6 | 24 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start`. RG-001 chains the six years; RG-001-Yk is year k alone, from the original's own files for the year before | `docs/KERNEL.md`, PARITY "Representative game (RG-001)". RG-002 is the same kind from a **state-edited** AIX 2461 after one settling year (every edit in `experiments/rg002/README.md`), aimed at late-game economy: auto queue items, population over the maximum, low concentrations, slower tech with the lowest-field switch, remote mining, a hostile Orbital Adjuster, starbase replacement and salvage; PARITY "Representative game (RG-002)" |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
@@ -127,7 +127,9 @@ file, so nothing in it is a default you have to guess.
   `name` (when the player named the fleet),
   and the waypoints. A
   waypoint has a position, warp, target (`planet`, `fleet`, `space`,
-  `wormhole`, `trader`) and task. Waypoint 0 is where the fleet is now. Transport tasks list one order per cargo type:
+  `wormhole`, `trader`, or `packet_object`: a packet or salvage named by
+  its `owner` and `id` as in `objects`; computer players aim fleets at
+  salvage to pick it up, RG-002) and task. Waypoint 0 is where the fleet is now. Transport tasks list one order per cargo type:
   `load_all`, `unload_all`, `load_exactly`, `unload_exactly`,
   `fill_to_percent`, `wait_for_percent`,
   `load_optimal`, `set_amount_to`, `set_waypoint_to` with a value. A patrol
@@ -220,7 +222,7 @@ an order belong to the submitting player unless a field says otherwise.
 | `waypoint_add`, `waypoint_change` | `fleet`, `index`, `waypoint` (as in `fleets`) |
 | `waypoint_delete` | `fleet`, `index` |
 | `repeat_orders` | `fleet`, `on` |
-| `cargo` | `fleet`, `with` (`{kind: planet or fleet, id, owner}`), `amounts` per cargo type (kT; colonists in hundreds; fuel in mg), positive into the fleet and negative out of it. Computer players also write an unload with the planet first in the file; it is given here the same way, with negative amounts |
+| `cargo` | `fleet`, `with` (`{kind: planet, fleet or salvage, id, owner}`; salvage is named by its owner and number, as in `objects`), `amounts` per cargo type (kT; colonists in hundreds; fuel in mg), positive into the fleet and negative out of it. Computer players also write an unload with the planet first in the file; it is given here the same way, with negative amounts |
 | `split` | `fleet`: a new empty fleet beside it, which the next `move_ships` fills |
 | `move_ships` | `fleet`, `with` (`{kind: fleet, owner, id}`), `ships` (`{design, count}`), counts positive into `fleet` and negative out of it |
 | `merge` | `fleet`, `fleets` that join it |

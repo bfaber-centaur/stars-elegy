@@ -101,6 +101,10 @@ import org.starsautohost.starsapi.items.Items;
 //   route N DEST                    set planet N's route destination to planet DEST
 //                                   (stored as wRoute; a fleet with waypoint task "route"
 //                                   at N follows it). Owned full planet blocks only
+//   keepdesigns                     keep every player's existing ship and starbase
+//                                   designs; design/sbdesign lines then add or
+//                                   replace single slots. Without it a player's
+//                                   design lines replace that player's whole list
 //   keepfleets-ordered              keep the base's own fleets and add the spec's
 //                                   fleets alongside them (spec fleet ids must be
 //                                   free), emitting every fleet in owner/id order.
@@ -616,6 +620,7 @@ public class CombatLab {
         Map<Integer, Integer> routes = new HashMap<>(); // planet N -> route destination planet
         TreeMap<Integer, byte[]> things = new TreeMap<>(); // id -> 18-byte record
         boolean keepFleets = false;
+        boolean keepDesigns = false; // design lines replace or add single slots instead of the player's whole list
         Map<Integer, Map<String, String>> fleetSets = new HashMap<>(); // owner * 1024 + id -> KEY=V
         boolean keepFleetsOrdered = false; // keep the base's own fleets and add the spec's alongside, in owner/id order
         int lineNo = 0;
@@ -662,6 +667,7 @@ public class CombatLab {
                         break;
                     }
                     case "keepfleets": keepFleets = true; break;
+                    case "keepdesigns": keepDesigns = true; break;
                     case "fleetset": {
                         Map<String, String> kv = new LinkedHashMap<>();
                         for (int i = 3; i < t.length; i++) {
@@ -786,6 +792,16 @@ public class CombatLab {
         Map<Integer, Collection<DesignBlock>> ship = new TreeMap<>(), sbs = new TreeMap<>();
         for (PlayerBlock p : players) {
             int k = p.playerNumber;
+            if (keepDesigns) {
+                TreeMap<Integer, DesignBlock> sh = new TreeMap<>(), sb = new TreeMap<>();
+                for (DesignBlock d : oldShip.getOrDefault(k, List.of())) sh.put(d.designNumber, d);
+                for (DesignBlock d : oldSb.getOrDefault(k, List.of())) sb.put(d.designNumber, d);
+                sh.putAll(shipDesigns.getOrDefault(k, new TreeMap<>()));
+                sb.putAll(sbDesigns.getOrDefault(k, new TreeMap<>()));
+                ship.put(k, sh.values());
+                sbs.put(k, sb.values());
+                continue;
+            }
             ship.put(k, shipDesigns.containsKey(k) ? shipDesigns.get(k).values() : oldShip.getOrDefault(k, List.of()));
             sbs.put(k, sbDesigns.containsKey(k) ? sbDesigns.get(k).values() : oldSb.getOrDefault(k, List.of()));
         }

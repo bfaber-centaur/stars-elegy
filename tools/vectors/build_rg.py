@@ -39,6 +39,21 @@ RUNS = {
         setup='apparatus evidence/ai/aix year 2429 (seven players, 97 fleets); each year the computer players '
               'planned from the current files, then the year was generated with their order files supplied, so '
               'the host ran no computer player and the stream starts at seeding; player 0 submitted nothing'),
+    'rg002': dict(
+        id='RG-002', cycles=20000, start='a state-edited AIX 2461 (evidence/ai/aix year 2461) after one settling year',
+        title='representative late game: a state-edited AIX 2461 after one settling year, six expert computer '
+              'players and a JOAT player giving client orders, 2462 to 2468 chained with every player\'s orders',
+        setup='NOT an unedited played game. Start: apparatus evidence/ai/aix year 2461, edited (experiments/rg002 '
+              'lists every edit: player 0 made JOAT + ARM with energy 25 near level 26, 30% research, next field '
+              'lowest; slower tech on; three unowned planets given to player 0 with populations over and under '
+              'their maximum and low concentrations; player 0 homeworld at 150% of its maximum and concentration '
+              'below 30; auto items on player 0 queues; four player 0 remote miners on unowned planets; an Ultra '
+              'Station and an Orbital Fort on player 0 colonies; a Death Star on a Macinti planet; a second '
+              'Rototill Orbital Adjuster ship over a player 0 colony), then one year generated (2461 to 2462) '
+              'with no player 0 orders so every player\'s files show the edits. Each recorded year: player 0\'s '
+              'orders written by the original client, the computer players planned from the current files, then '
+              'the year was generated with every order file supplied, so the host ran no computer player and the '
+              'stream starts at seeding'),
 }
 IDENT = {
     'fleet': ('owner', 'id'), 'fleet_gone': ('owner', 'id'), 'planet': ('id',), 'player': ('id', 'seen_by'),
@@ -141,8 +156,9 @@ def build(ev, out):
                                  % len(alts), 'expect': exps})
         prev = st1
     vec = {'schema': B.SCHEMA, 'id': r['id'], 'title': r['title'],
-           'source': {'experiment': 'stars-oracle-apparatus evidence/%s (private); start from evidence/ai/aix' % run,
-                      'spec_rules': 'docs/KERNEL.md "Turn order"', 'parity': 'docs/PARITY.md "Representative game (RG-001)"',
+           'source': {'experiment': 'stars-oracle-apparatus evidence/%s (private); start from %s' % (
+                          run, r.get('start', 'evidence/ai/aix')),
+                      'spec_rules': 'docs/KERNEL.md "Turn order"', 'parity': 'docs/PARITY.md "Representative game (%s)"' % r['id'],
                       'raw_evidence': 'stars-oracle-apparatus evidence/%s (private)' % run},
            'years': len(ydirs), 'random': 'single_stream', 'streams': 1, 'initial_state': st0,
            'orders': orders,

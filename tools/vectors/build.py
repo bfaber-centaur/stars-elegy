@@ -98,6 +98,10 @@ def waypoint(d, owner, nplayers):
         wp['target'] = {'kind': 'planet', 'id': obj}
     elif t == 2:
         wp['target'] = {'kind': 'fleet', 'owner': obj >> 9, 'id': obj & 0x1ff}
+    elif t == 8 and obj >> 13 == 1:
+        # a packet-type object (a packet or salvage): object id 0x2000 |
+        # owner << 9 | number, the owner and number in `objects`
+        wp['target'] = {'kind': 'packet_object', 'owner': (obj >> 9) & 15, 'id': obj & 0x1ff}
     elif t == 8:
         wp['target'] = {'kind': {2: 'wormhole', 3: 'trader'}.get(obj >> 13, 'object'), 'id': obj & 0x1ff}
     else:

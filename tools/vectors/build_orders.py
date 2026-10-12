@@ -28,6 +28,13 @@ def u16(b, o):
 
 def other_of(kind, word, player):
     """The other side of a cargo or ship move (the kind byte's high nibble)."""
+    if kind == 0x82:
+        # a packet-type object (salvage, the only one cargo can move to or
+        # from): object id 0x2000 | owner << 9 | number, as in the host file's
+        # object records (computer players' pick-ups, AIX 2450 on)
+        if word >> 13 != 1:
+            raise ValueError('object word %04x is not a packet-type object: not decoded' % word)
+        return {'kind': 'salvage', 'owner': (word >> 9) & 15, 'id': word & 0x1ff}
     if kind & 15 != 2 or kind >> 4 not in OTHER:
         raise ValueError('kind %02x not decoded' % kind)
     if kind >> 4 == 2:
@@ -126,6 +133,8 @@ def orders_of(xpath, nplayers):
             pd, rd = (w1 >> 1) & 0x3ff, (w1 >> 15) | (w2 & 0x1ff) << 1
             out.append({'kind': 'planet_settings', 'planet': u16(r, 0), 'leftover_to_research': bool(w1 & 1),
                         'packet_destination': pd - 1, 'packet_warp': (w1 >> 11 & 15) + 4, 'route_to': rd - 1})
+        elif s.startswith('order type=46 '):
+            pass  # the client's save-and-submit marker (StarsAPI SAVE_AND_SUBMIT): not an order
         elif s.startswith('order '):
             raise ValueError('order not decoded: ' + s.split(' raw=')[0])
     return player, out
