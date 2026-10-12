@@ -6205,6 +6205,19 @@ queue".
   arriving ship got the new default's queue (empty, kept, or auto
   defenses 10). So the record is applied before colonization.
 
+## A transport task aimed at a packet (ET-2)
+
+Status: the own-packet result is MEASURED, and it contradicts every
+prediction pushed before the runs (elegy 0a1c002 and the `MESSAGES.md`
+0x11e wording). The other-player case is UNRESOLVED. Results:
+`experiments/et/README.md` "ET-2". Raw evidence: private apparatus
+`evidence/et2`. The fleets ran one pinned year in two streams, which agree.
+
+| Case | Setup | Observed | Result |
+|---|---|---|---|
+| P | A freighter reaches player 0's own packet (100 kT ironium) with "load all ironium" at its last waypoint | it loaded all 100 kT (0x02b at the packet object), then 0x04e; task cleared; no 0x11e; the packet remains, empty | MEASURED; contradicts `ORDERS.md` "Targets that moved, died or were captured" (its "Arrival" item) and `MESSAGES.md` 0x11e |
+| Q | The same aimed at player 1's packet | no message; it ended at (1400, 1300), player 0's packet's position before packets moved, 112 ly from its start at warp 9 (fuel 300 to 48); waypoint 1 still aims at player 1's packet with the transport task | UNRESOLVED |
+
 ## An empty transport task and 0x04e (ET-1)
 
 Status: CONFIRMED by prediction (elegy 84af588; the numbers for the

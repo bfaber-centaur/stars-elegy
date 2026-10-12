@@ -909,6 +909,12 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     task acts. A transport task loads minerals from salvage. Aimed at a
     packet (or any object other than salvage), a transport task is
     cancelled with 0x11e (`MESSAGES.md`).
+    **Contradicted for an own packet** (MEASURED, ET-2, `PARITY.md` "A
+    transport task aimed at a packet (ET-2)"): a fleet aimed at its own
+    packet with "load all ironium" loaded all of the packet's 100 kT
+    (0x02b, then 0x04e at its last waypoint), with no 0x11e. Aimed at
+    another player's packet, the fleet did not reach it and got no
+    message (UNRESOLVED, ET-2b).
   - **Packets and salvage alike.** The same rules hold for both. Only the
     packet moves, so only for a packet does tracking change the
     coordinates.
