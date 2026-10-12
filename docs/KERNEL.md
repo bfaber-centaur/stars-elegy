@@ -111,24 +111,33 @@ order shown. "Fleet order" means by owner, then by fleet number
    step does nothing in Elegy.
 2. Ship-design housekeeping: starbase designs are marked as starbases.
    Uncovered. No observable effect is known.
-3. **Following fleets.** A fleet whose only waypoint (waypoint 0) is
-   aimed at another fleet follows it. If the leader has a next waypoint,
-   or is itself a follower, the follower gets a copy of the leader's
-   waypoint 1, carrying its own waypoint-0 task onto it. Up to 8 passes
-   resolve chains of followers. A follower whose leader no longer exists
-   gets message 0x138 (`MESSAGES.md`, CONFIRMED fo/fo04) and stops
-   following. Before this, a leader that is not at the follower's
-   position is replaced by a fleet of the same owner that is (possibly
-   the follower itself, which then follows nothing; BINARY-ONLY). The
-   outcome, no move, no merge and no 0x138, is CONFIRMED (FO-03-F,
-   `fo/fo03`). The copying rule is BINARY-ONLY. This is separate from
-   chasing, where waypoint 1 is aimed at a fleet (this file's "Chasing
-   another fleet"). Then the **waypoint check**
-   runs: each fleet's position and waypoint 0 are clamped to the galaxy
-   (later waypoints are not; BINARY-ONLY) and waypoints aimed at a
-   fleet or object are moved to its current position (`ORDERS.md`
-   "Waypoint upkeep"). Every fleet's "fought this year, no repair" mark is
-   cleared before this (`COMBAT.md` "Repair").
+3. **Following fleets**, in three parts (order BINARY-ONLY).
+   - **Marking.** Every fleet's "fought this year, no repair" mark is
+     cleared (`COMBAT.md` "Repair"), and each fleet whose only waypoint
+     (waypoint 0) is aimed at another fleet is marked as a follower.
+   - **The waypoint check.** Each fleet's position and waypoint 0 are
+     clamped to the galaxy (later waypoints are not; BINARY-ONLY), and
+     waypoints aimed at a fleet or object are moved to its current
+     position (`ORDERS.md` "Waypoint upkeep"). For a follower this
+     includes waypoint 0: a leader that is gone or not at the
+     waypoint's coordinates is replaced by a fleet of the same owner
+     that is there (possibly the follower itself, which then follows
+     nothing; BINARY-ONLY; `ORDERS.md` "Targets that moved, died or were
+     captured", the "Waypoint 0, following" item). The
+     outcome, no move, no merge and no 0x138, is CONFIRMED (FO-03-F,
+     `fo/fo03`).
+   - **The follow step.** Each marked follower whose leader still
+     exists follows it. If the leader has a next waypoint, or is itself
+     a follower, the follower gets a copy of the leader's waypoint 1,
+     carrying its own waypoint-0 task onto it. Up to 8 passes resolve
+     chains of followers. A follower whose leader no longer exists gets
+     message 0x138 (`MESSAGES.md`, CONFIRMED fo/fo04) and stops
+     following. The copying rule is BINARY-ONLY.
+
+   This is separate from chasing, where waypoint 1 is aimed at a fleet
+   (this file's "Chasing another fleet"). **Corrected 2026-10-12:** this
+   step used to list the follow step first and the waypoint check after
+   it. The waypoint check runs between marking and following, as above.
 
 ### 2. Waypoint tasks before movement
 
