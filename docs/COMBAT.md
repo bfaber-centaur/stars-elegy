@@ -165,7 +165,13 @@ orbiting it.
 
 Locations are examined in the order of their first fleet, with fleets
 ordered by owner and then by fleet number. The order only matters for the
-random stream and for the plan-0 legacy bug below.
+random stream, the plan-0 legacy bug below, and the numbering of
+deep-space salvage made in different battles. MEASURED (CB-058, 6 runs;
+consistent with Elegy eaa474e):
+player 0's fleet 1 at one point and fleet 3 at another destroyed player
+1's fleets 4 and 2 there. The salvage at fleet 1's point was player 1's
+number 0 and the other number 1, so the order is not by the victims' lowest
+fleet. An order by ascending y would also fit this layout.
 
 ## Who fights (CONFIRMED in part; see each rule)
 
@@ -425,7 +431,9 @@ not take it is not part of the design by then and adds nothing here (see
 - **Weapon initiative** (per weapon slot): min(63, part initiative +
   token initiative).
 - **Weapon range**: the part's range; +1 on a starbase (reach only; see
-  Beams).
+  Beams). CONFIRMED (CB-058, 6 runs): a Death Star with 8 Heavy Blasters
+  (range 3) did not fire while the nearest enemy was 5 squares away, and
+  fired at one 4 away.
 - **Computer %**: start `c = 0`; for each Battle Computer (20), Battle
   Super Computer (30), Battle Nexus (50) and Multi Contained Munition (10)
   item: `c += (100 − c)·v/100`.
@@ -450,11 +458,19 @@ not take it is not part of the design by then and adds nothing here (see
 - **Armor**: hull armor + armor parts, + 65 per Croby Sharmor and
   Langston Shell, + 50 per Multi Cargo Pod. RS: each armor slot's
   total (count × the part's armor) is halved, rounding down, once per
-  slot, not per part (BINARY-ONLY; fits RG-002's year-6 battle record,
-  one stream: base 450 with 2 Organic Armor in one slot gives
-  450 + 350/2 = 625, inside the 625–626 the hits allow, while halving
-  each part gives 624). A shield part's own armor is not halved (Croby Sharmor; the
-  Langston Shell is not observed). The halved value is the design's
+  slot, not per part and not once for the design. MEASURED (CB-057,
+  oracle, 6 streams; consistent with Elegy 89cbc6a): a Destroyer (200) with one Organic Armor in its
+  general-purpose slot and one in its armor slot fits armor 372–374
+  (374 alone in the longest run), so 200 + 87 + 87, not 200 + 350/2 =
+  375; the same parts both in the armor slot fit 375–376. RG-002's year-6
+  record (one stream) fits too: base 450 with 2 Organic Armor in one slot
+  gives 450 + 350/2 = 625, inside the 625–626 the hits allow, while
+  halving each part gives 624. A shield part's own armor is not halved,
+  in any slot: the halving goes by the part's kind, not the slot's.
+  CONFIRMED for Croby Sharmor (CB-056) and the Langston Shell (CB-058,
+  6 runs). Every hit replays with a Rogue holding 3 Langston Shells in its
+  shield-or-armor slot at armor 450 + 195 = 645, not 547, and with a
+  Battleship holding 3 in its shield slot at 2195 (shields 525 each). The halved value is the design's
   armor itself, so mine and stargate damage use it too: MEASURED for
   mines (CB-056, 23 fleets; PARITY "Round 10: late-game questions
   (CB-056)"), BINARY-ONLY for stargates. CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
@@ -841,7 +857,15 @@ see "Design cost") × ships.
   AR `c − c/5`, then halved) applies only to what production charges;
   target choice does not use it.
 
-- Multiply by 100 if that is below 100000. Otherwise use 10^7.
+- Multiply by 100 if that is below 100000. Otherwise use 10^7
+  (BINARY-ONLY for the value). MEASURED (CB-057, oracle, 4 streams, 14
+  shots; consistent with Elegy 89cbc6a): stacks at and above 100,000
+  share one common capped cost, reached at or below 10,240,000. A beam
+  with both stacks in reach chose 10000 unarmed Destroyers (cost × ships
+  110,000, armor 2,000,000) over 16000 Omega Battleships (10,240,000,
+  armor 32,000,000) every time. Uncapped, the Battleships would win. Any
+  common cap gives the same choice, so this does not show that the cap
+  is 10^7.
 
 **Toughness.**
 
@@ -1022,7 +1046,12 @@ the salvo reaches. `N` is the number of torpedoes still unfired, and `p`
 uses that target's jammer. With `N ≤ 200`, each target therefore gets its
 own `N` draws.
 
-- if `p ≥ 100`, all hit;
+- if `p ≥ 100`, all hit, with no random draw. MEASURED (CB-057,
+  oracle, 6 streams; consistent with Elegy 89cbc6a): a starbase with computer 99 (16 Battle Nexus) fired 32
+  Delta Torpedoes (accuracy 60, so `p = 100`) at an unjammed shielded
+  stack; 24 salvos all hit (shield damage 416 = 32 × 26/2 each, no miss
+  record), and the battle replays from the pinned stream only when those
+  salvos draw nothing;
 - if `N > 200`, `H = N·p/100` exactly, with no random draw. CONFIRMED
   only for `N = 202` (CB-001: 90/125/103/72 hits; identical across
   reruns);
@@ -1065,7 +1094,10 @@ Per salvo, while torpedoes remain:
    `hits·d` is odd. CONFIRMED (CS-003-C2): one Alpha Torpedo hit
    (`d = 5`) did 4.
    - A hit record is written for every target the salvo reaches, even
-     with 0 hits. A 0-hit record changes nothing (CONFIRMED once, CB-049:
+     with 0 hits. CONFIRMED (CB-058, 6 runs): 268 missed one-torpedo
+     salvos (hit chance 1 against jammer 95) on an unshielded target each
+     wrote exactly one record, flagged 0x80, with no change. A 0-hit
+     record changes nothing (CONFIRMED once, CB-049:
      the 0-hit record after a miss record left the target as it was). This
      accounts for the no-change records with flag 0x80 that CS-003-C2
      saw on an unshielded target, one per missed shot (7 for the Alpha
@@ -1214,7 +1246,13 @@ the stack's damage before the hit (2,197 of them with damage), and 44 of
 
 Per kill event, per mineral: a third of the destroyed ships' design
 mineral cost (× ships), plus the destroyed ships' share of the fleet's
-cargo. The share is computed as follows (BINARY-ONLY):
+cargo. The share is computed as follows (CONFIRMED, CB-058, 6 runs: four
+Large Freighters with 1000/700/333 kT and 500 kT of colonists, killed
+one per kill event in deep space, left salvage of exactly 764/528/257,
+the sum of these shares plus a third of each hull, less a quarter per
+event; losing all cargo with the last ship would give 762/525/258. The
+per-event shares for every kill sequence were pushed before the run; the
+total is Elegy eaa474e applied after the run to the observed kill events):
 
 - If the whole fleet died, the share is all of the fleet's cargo.
 - Otherwise the cargo moved is `C · Σ lost ships·cargo capacity /

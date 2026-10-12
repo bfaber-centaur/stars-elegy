@@ -3136,6 +3136,69 @@ Elegy's prediction did not hold. Details: `experiments/cb056/README.md`.
   280 is the battle token values: shields 25 × 7/5, armor parts at half
   (armor 3500).
 
+### Round 11: lane D's questions after RG-002 (CB-057)
+
+Lane D's predictions were pushed first (elegy 89cbc6a). Two starts, six
+pinned streams each, every run after those predictions. The run designs
+add parts so that each answer can be read off the record. Elegy's numbers
+for those exact designs were first pushed after the runs began, so the
+results are MEASURED (oracle) and consistent with Elegy 89cbc6a, not
+CONFIRMED by prediction. The steward reran 89cbc6a on the exact run designs
+and got the same numbers, and the added parts do not enter the predicted
+quantities. Details: `experiments/cb057/README.md`.
+
+- **Regenerating Shields halve each armor slot, MEASURED (6 of 6).** A
+  Destroyer with one Organic Armor in its general-purpose slot and one in its
+  armor slot fits armor 372–374 (374 alone in the longest run), so
+  200 + 87 + 87. Halving the parts' total once would give 375. With both
+  parts in the armor slot it fits 375–376.
+- **A torpedo with hit chance 100 always hits and draws nothing, MEASURED
+  (6 of 6).** A starbase with computer 99 fired 32 Delta Torpedoes per round
+  at an unjammed, shielded stack. All 24 salvos read had shield damage 416
+  (32 hits) and no miss record. The battle replays from the pinned stream
+  only if these salvos draw nothing.
+- **Large stacks share one capped cost, MEASURED (4 of 6; 2 streams had no
+  informative shot).** A beam with both stacks in reach chose 10000 unarmed
+  Destroyers (cost × ships 110,000) over 16000 Omega Battleships
+  (10,240,000) in 14 of 14 shots. So both costs are capped to one common
+  value, reached at or below 10,240,000, and the lower toughness wins. Any
+  common cap gives this choice, so the cap's value of 10^7 stays
+  BINARY-ONLY.
+
+### Round 12: lane D's late combat questions (CB-058)
+
+Lane D's predictions were pushed first (elegy eaa474e), and so were
+Elegy's numbers for the exact run designs except Q4 (apparatus
+`evidence/cb058`).
+Four starts, six pinned cycles each. Details:
+`experiments/cb058/README.md`.
+
+- **A missed torpedo writes one 0-hit record, CONFIRMED (6 of 6).** 268
+  one-torpedo misses against a jammer-95 target with no shields each wrote
+  exactly one record, flagged 0x80, with no change.
+- **Cargo leaves with destroyed ships, by cargo capacity, CONFIRMED (6 of
+  6).** Four Large Freighters carrying 1000/700/333 kT, killed one at a
+  time, left salvage of 764/528/257. That is each kill's share plus a third
+  of the hull, less a quarter per event. Losing all cargo with the last ship
+  would give 762/525/258. The per-event shares were pushed before the run.
+  The total is eaa474e applied after the run to the observed kill events.
+- **Salvage numbering across two battles, MEASURED (6 of 6), consistent
+  with eaa474e.** The salvage
+  at the point of player 0's lower fleet was the victim's number 0, and the
+  other number 1, so the order is not by the victims' lowest fleet.
+  Ascending y would also fit. The numbers pushed before the run were for
+  other victims, so this is not CONFIRMED by prediction.
+- **The Langston Shell keeps its armor whole under Regenerating Shields,
+  in any slot, CONFIRMED (6 of 6).** The halving goes by the part's kind, not
+  the slot's. A Rogue with 3 Shells in its shield-or-armor slot replays
+  every hit at armor 645, not 547. The Battleship (2195) and the Organic
+  Armor control (712) replay too.
+- **A Death Star's reach is the part's range + 1, CONFIRMED (6 of 6).** With
+  Heavy Blasters (range 3) it held fire at 5 squares and fired at 4. Its
+  armor fits 1126–1500 (1500 consistent, MEASURED).
+- The token cap with three players and with a starbase was not rerun:
+  CB-042 and CB-043/CB-044 already measured it.
+
 ### Battle plans through the client (BP)
 
 The original client gave the orders (`tools/fleetlab/client-orders`), and
