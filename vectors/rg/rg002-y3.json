@@ -40438,7 +40438,8 @@
       }
      },
      "seen_by": 1,
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "player",
@@ -40483,7 +40484,8 @@
       }
      },
      "seen_by": 3,
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "player",

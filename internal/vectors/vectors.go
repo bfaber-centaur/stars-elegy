@@ -99,7 +99,7 @@ type Order struct {
 	Fleets []int   `json:"fleets,omitempty"`
 	// detonate
 	Minefield *int `json:"minefield,omitempty"`
-	// planet_settings
+	// planet_settings (and default_queue for LeftoverToResearch)
 	// (-1 for no route or no packet destination)
 	LeftoverToResearch *bool `json:"leftover_to_research,omitempty"`
 	RouteTo            *int  `json:"route_to,omitempty"`
@@ -113,6 +113,7 @@ type Order struct {
 var OrderFields = map[string][]string{
 	"production_queue":   {"planet", "items"},
 	"planet_settings":    {"planet"},
+	"default_queue":      {"items", "leftover_to_research"},
 	"research":           {"percent", "field"},
 	"battle_plan":        {"slot", "tactic", "primary", "secondary", "attack_who"},
 	"battle_plan_delete": {"slot"},
@@ -164,6 +165,8 @@ func (o *Order) has(f string) bool {
 		return o.Hull != ""
 	case "waypoint":
 		return o.Waypoint != nil
+	case "leftover_to_research":
+		return o.LeftoverToResearch != nil
 	case "on":
 		return o.On != nil
 	case "with":

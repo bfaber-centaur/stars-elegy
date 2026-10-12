@@ -197,8 +197,9 @@ Observed (one stream each; samples flagged in the vector):
   it over the player's default. That record is the client's own empty
   default template, written because it differed from the player's
   setting (rule BINARY-ONLY, `docs/ORDERS.md` "The player's default
-  queue"). The later files held no type 46 record. The vectors carry it as
-  a year-1 `player` expectation (`default_queue: []`).
+  queue"). The later files held no type 46 record. The vectors carry
+  the record as a year-1 `default_queue` order and the result as a
+  year-1 `player` expectation (`default_queue: []`).
 
 Elegy (main 79f3cdc), as of this PR:
 
