@@ -92,3 +92,21 @@ func TestPlayerHomeworld(t *testing.T) {
 		}
 	}
 }
+
+// RG-001's 2430 start: player 1 colonized planets 32, 77 and 81 that year,
+// and only 81 held an ancient artifact (the 0x05e research gift).
+func TestRG001Artifact(t *testing.T) {
+	v, err := Load("../../vectors/rg/rg001-y1.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	art := map[int]bool{}
+	for _, p := range v.InitialState.Planets {
+		if p.Artifact {
+			art[p.ID] = true
+		}
+	}
+	if !art[81] || art[32] || art[77] {
+		t.Errorf("artifacts on %v: want 81, not 32 or 77", art)
+	}
+}
