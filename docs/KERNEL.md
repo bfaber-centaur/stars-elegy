@@ -881,10 +881,15 @@ stolen 23 and 88 stored as 12 and 44).
     field, then the fields after it with their shares. A further pass
     then checks every field again in field order, which is when the
     fields before the current one are checked with their shares. After
-    that, a further pass follows only when the current field switched. A
-    level-up alone starts no new pass, but since a level only raises
-    costs, a repeat could not level anything more. Both outcomes above
-    follow from this.
+    that, a further pass follows whenever a level in the current field
+    applies the next-field choice. That includes "lowest field" picking
+    the current field again: its leftover is stored in the chosen field,
+    and that field is checked again in the next pass (BINARY-ONLY). So
+    energy can go 0 → 1 → 2 in one year with "lowest" choosing energy
+    each time. With the choice "same field", the current field keeps
+    levelling in place during its own turn. A level in any other field
+    starts no new pass. A repeat could not level anything more, since a
+    level only raises costs. Both outcomes above follow from this.
   - Players without Generalized Research go through the same passes
     (BINARY-ONLY). The only difference is that the current field receives
     the year's research at its turn and no other field receives a share.
