@@ -448,9 +448,16 @@ not take it is not part of the design by then and adds nothing here (see
 - **Shields**: sum of shield values, + 50 per Fielded Kelarium, + 100 per
   Mega Poly Shell. Regenerating Shields (RS): × 7/5.
 - **Armor**: hull armor + armor parts, + 65 per Croby Sharmor and
-  Langston Shell, + 50 per Multi Cargo Pod. RS: each armor part counts
-  half; a shield part's own armor is not halved (Croby Sharmor; the
-  Langston Shell is not observed). CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
+  Langston Shell, + 50 per Multi Cargo Pod. RS: each armor slot's
+  total (count × the part's armor) is halved, rounding down, once per
+  slot, not per part (BINARY-ONLY; fits RG-002's year-6 battle record,
+  one stream: base 450 with 2 Organic Armor in one slot gives
+  450 + 350/2 = 625, inside the 625–626 the hits allow, while halving
+  each part gives 624). A shield part's own armor is not halved (Croby Sharmor; the
+  Langston Shell is not observed). The halved value is the design's
+  armor itself, so mine and stargate damage use it too (CONFIRMED for
+  mines, CB-056, PARITY "Round 10: late-game questions (CB-056)"; BINARY-ONLY for
+  stargates). CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
   2 Tritanium → armor 250. CONFIRMED (CB-056, 2 streams): a Battleship
   with 8 Croby Sharmor and 2 Tritanium had shields 672, and its damage
   fits armor 2570 (2000 + 50 + 8 × 65), not 2306.
