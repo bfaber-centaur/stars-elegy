@@ -6087,8 +6087,9 @@ queue".
 
 ## Remote-mining refusals (RM)
 
-Status: CONFIRMED for RM-1a, RM-1b and RM-3; RM-2's task part CONFIRMED,
-its message part not observable. Predictions were pushed before the runs
+Status: CONFIRMED for RM-1a, RM-1b, RM-2 (task kept) and RM-3. RM-2's
+"no message" is CONFIRMED by RM-2h, which reran it with a human AR
+player. Predictions were pushed before the runs
 (`experiments/rm/PREDICTIONS.md`, bf9518f). Results:
 `experiments/rm/README.md`. Raw evidence: private apparatus
 `evidence/rm`. Rules: `KERNEL.md` "Remote mining".
@@ -6099,6 +6100,8 @@ its message part not observable. Predictions were pushed before the runs
 | RM-1b | The same at another player's planet | 0x075 (not 0x076), then 0x04e; task cleared | CONFIRMED |
 | RM-2 | AR remote miner at another player's planet, two years | task kept both years; the computer player's `.M` has no messages | task CONFIRMED; message not observable |
 | RM-3 | Remote miner in deep space | 0x077, then 0x04e; task cleared | CONFIRMED |
+| RM-2h | A human AR player's remote miner at another human player's colony (Combat Lab base, one year, two streams) | no message to either player; task kept; nothing mined | CONFIRMED (prediction: elegy f61e7c4, `engine/remotemining.go:56–59`) |
 
 The setup is RG-002's settled 2462 files with four fleets added (a
-start-state edit, not client orders). Each case was observed once.
+start-state edit, not client orders). Each case was observed once. RM-2h
+is a separate Combat Lab start (`experiments/rm/rm2h.spec`).

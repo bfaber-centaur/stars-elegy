@@ -43,3 +43,31 @@ Notes:
 
 Raw evidence is in the private apparatus `evidence/rm` (start file, both
 years, manifests).
+
+## RM-2h: RM-2 with a human Alternate Reality player
+
+RM-2 could not show whether the AR fleet's owner gets a message, because
+that owner was a computer player. RM-2h reruns it with two humans. The
+start is `rm2h.spec` on the Combat Lab base (sha256 653857de…5fcc5). Player
+1 is AR, and its remote miner sits at player 0's colony 15 (no starbase).
+One host year was run at cycles 20000 and 30000.
+
+**Prediction.** Elegy main f61e7c4188c627d990dd5a7cedd7288c3ce93b5b was
+fetched at 18:39:43Z, before the start was built (18:51:42Z) and before
+the runs (output at 18:52:00Z and 18:54:21Z). In `engine/remotemining.go`,
+lines 56–59 return no event for an AR fleet at another owner's planet and
+leave the task. No branch sends anything to the planet owner.
+
+| Observed (both streams) | Verdict |
+|---|---|
+| no message to player 1 (the fleet owner), none to player 0 (the planet owner); the remote-mining task is kept; planet 15's surface stays 0/0/0 | CONFIRMED |
+
+**Dropped control.** The first draft also had a JOAT miner at an AR colony
+with no starbase, expecting the CONFIRMED 0x076. Neither stream ever
+generated that start's year: the host stopped with "integer divide by
+0". A start holding only that AR colony did the same. This is the known
+divide by zero for an AR planet that is habitable for its owner and has
+no starbase (`PARITY.md` KX-001 Z1). It is reproduced here, not a new
+finding. The 0x076 refusal itself is already CONFIRMED (TK-111).
+
+Raw evidence: private apparatus, `evidence/rm/rm2h`.
