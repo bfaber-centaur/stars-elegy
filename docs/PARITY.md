@@ -1775,6 +1775,37 @@ Not covered (BINARY-ONLY in KERNEL): several unrated designs in one
 fleet, a Cheap Engines stall with a warp-10 stack, chasers, and the gate
 for players flagged as cheaters.
 
+### KX-007 — when a fleet number becomes free again
+
+Status: MEASURED for the corpus statistic below, 2026-10-12; CONFIRMED
+for colonizing from orbit and for scrapping. No new oracle run. Script,
+output and hashes are in apparatus `evidence/fleetnum`. Rule: `KERNEL.md`
+"Fleet numbers".
+
+Question: a fleet goes away during a generation. Can a fleet made later
+in the same generation take its number?
+
+Method: the host file before and after every generated year of the
+computer-player corpus (AIX, 2400–2460) and of the recorded RG-001 years.
+The model under test: each owner's new fleets take, in turn, the lowest
+numbers not held by any of that owner's fleets at the start of the year.
+
+| Observation | Count |
+|---|---|
+| Owner-years with new fleets | 216, the model held in all 216 |
+| Vanished fleets numbered below a new fleet of the same owner and year, number not reused that year | 135 of 135 |
+| of which colonized from orbit (before production) | 14 (RG-001 2432 is the same game year as AIX 2432) |
+| of which scrapped by a waypoint-0 scrap order (before production) | 8 |
+| of which other causes, not placed before production by this data | 113 |
+
+Interpretation: a fleet that colonizes from orbit or is scrapped keeps its
+number through the year's production. The number is taken again from the
+next year (for example, player 6's fleet 0, scrapped in the 2405
+generation, was a new fleet 0 in the 2406 one).
+
+Not covered: fleets deleted while orders are read (merge-fleets orders,
+moving all ships out of a fleet), and a transfer's recipient fleet.
+
 ### KB batch 1 — population, resources, mining, AR, remote mining
 
 Status: CONFIRMED, with one refinement (AR planets' own miners). Every case

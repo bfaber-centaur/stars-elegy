@@ -401,6 +401,42 @@ What stays BINARY-ONLY:
   file-only caches and bits (8.3, 8.4).** None of them changes game state
   an implementation can observe.
 
+### Fleet numbers
+
+A new fleet takes its owner's lowest number that no fleet of that owner
+holds at that moment (`PRODUCTION-LAUNCH.md` "The new fleet", CONFIRMED
+SL-02, for ships built in production). The recipient's fleet in a
+transfer to another player takes its number the same way (BINARY-ONLY).
+
+A fleet that goes away during the generation keeps holding its number
+until the year's files are written. Its number is free from the next
+year's generation. This applies to a fleet that:
+
+- colonizes, from orbit or on arrival;
+- is scrapped;
+- merges into another fleet through a merge waypoint task;
+- is given to another player (the giver's fleet);
+- loses all its ships in battle, to a minefield, to warp-10 losses or at
+  a stargate.
+
+So a colony ship that colonizes from orbit before production does not
+free its number for that year's new ships.
+
+- CONFIRMED for colonizing from orbit (14 cases) and for scrapping
+  (8 cases). In each case a fleet of the same owner was built that year
+  with a higher number, and the vanished fleet's number was not reused
+  until the next year (KX-007). RG-001 2432: player 6's fleet 3 colonized
+  planet 37 from orbit, and the three ships built at planet 35 became
+  fleets 4, 13 and 14.
+- The other causes in the list are BINARY-ONLY in this respect. They agree
+  with all 216 owner-years of KX-007, but none of them happens before
+  production, so the data cannot tell them apart.
+- A fleet deleted outright while its owner's orders are read frees its
+  number at once, for any fleet created later in the generation. That
+  happens when a merge-fleets order merges it away, or when an order moves
+  all its ships into another fleet (BINARY-ONLY: no observed case).
+- Unloading cargo, even all of it, never removes a fleet.
+
 ## Habitability
 
 Race: for each axis (gravity, temperature, radiation) a center `c`, a low
