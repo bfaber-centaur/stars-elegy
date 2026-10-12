@@ -90,3 +90,17 @@ Details:
   - With Regenerating Shields, 280 is (10000 − 5·35)/5 = 1965 on armor
     3500, using the battle token values: shields 25 × 7/5 = 35, and each
     armor part counted at half (2000 + 1500).
+
+## Galaxy clamp
+
+Noted later, from ET-2c (`experiments/et/README.md` "ET-2c"): this start's
+galaxy is 1000..1400 on each axis, and a fleet outside it is moved to the
+edge. The 16 fleets that entered the 20,000 standard field started at
+y = 1460..1542, outside it. In the after-files (both streams) they stand at
+y = 1400, at x = 1072..1125, short of their waypoints at y 1460..1542.
+So they crossed the field along its southern edge (the field is centred at
+(1100, 1500) with radius about 141 ly), not along the planned tracks.
+
+The Q6 damage values per hit do not depend on the track. The counts of
+fleets hit (11 of 16 and 9 of 16) were made on those clamped tracks, so
+they are not samples of the planned layout.
