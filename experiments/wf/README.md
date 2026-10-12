@@ -30,3 +30,25 @@ stars-oracle-apparatus `evidence/wf/`.
   position at the start of year 2 and the waypoint again ends at its
   end-of-year position: the host file's fleet target is used again, not a
   plain position.
+
+## Follow-ups (committed before their own runs)
+
+Added after the coordinator's question on the RG-001 diff: what happens
+when the target fleet is destroyed or out of sight. One year each, pinned
+at cycles 20000.
+
+- **WF-04 `wf-gone`.** Player 1's fleet 0 is scrapped in deep space at
+  waypoint 0 (step 2, before movement), so player 0's fleet 0 aims at a
+  fleet that is gone. Prediction (`ORDERS.md` "Target gone", CONFIRMED for
+  a fleet id that did not exist): the waypoint becomes deep space at
+  (1200,1230), fleet 0 flies 25 ly toward it, and nothing names player 1's
+  fleet 0 after the year. The own-fleet control is unchanged from WF-01.
+- **WF-05 `wf-unseen`.** Player 1's fleet 0 starts 150 ly from player 0's
+  only fleet and flies away; no scanner of player 0's reaches it. Open,
+  two candidates:
+  - **track:** the host file keeps the fleet target and its end-of-year
+    position (as in WF-01), and only the owner's file shows deep space;
+  - **lose:** the target is turned into deep space at the last position
+    player 0 saw (its start) in the host file too, with a lost-target
+    message (0x28–0x2a) in player 0's `.M` file.
+  Either way player 0's fleet 0 is recorded where it ends.

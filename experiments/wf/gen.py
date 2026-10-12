@@ -20,6 +20,16 @@ FLEETS = ('fleet 0 0 at 1100 1230 ships 1:1 fuel 300 to 1200 1230 fleet 1 0 warp
           'queue 17 none\nqueue 8 none\n')
 SPECS = {'wf-enemy': 'relation 0 1 2\nrelation 1 0 2\n' + FLEETS,
          'wf-friend': 'relation 0 1 1\nrelation 1 0 1\n' + FLEETS}
+# Follow-ups, added after the first runs and committed before their own runs.
+# WF-04: the target is scrapped in deep space at waypoint 0 (step 2, before movement).
+# WF-05: the target starts 150 ly away, beyond every scanner of player 0's
+# (Rhino 50 ly on the Scouts; planet 17 is over 250 ly away), and flies away.
+SPECS['wf-gone'] = 'relation 0 1 2\nrelation 1 0 2\n' + FLEETS.replace(
+    'fleet 1 0 at 1200 1230 ships 1:1 fuel 300 to 1200 1400 warp 5', 'fleet 1 0 at 1200 1230 ships 1:1 fuel 300 task scrap')
+SPECS['wf-unseen'] = ('relation 0 1 2\nrelation 1 0 2\n'
+                      'fleet 0 0 at 1050 1300 ships 1:1 fuel 300 to 1200 1300 fleet 1 0 warp 5\n'
+                      'fleet 1 0 at 1200 1300 ships 1:1 fuel 300 to 1250 1420 warp 5\n'
+                      'queue 17 none\nqueue 8 none\n')
 
 if __name__ == '__main__':
     for name, spec in SPECS.items():
