@@ -5596,10 +5596,11 @@ setup.
 - The 2430 battle's setup draws matched the tick-164 stream at draw 206
   (stars-decomp `tools/starsrng.py`, 57 bits, unique). The original AIX
   2430, generated with the computer players planning in the same process,
-  matched the same tick at draw 356. The other years' battles did not
-  check the tick: the tool could not decode the 2431-2433 and 2435
-  records, and the 2434 battles carry too few draws (several unrelated
-  ticks match far down their streams).
+  matched the same tick at draw 356. No other year checks the tick: the
+  2431, 2432 and 2435 battles give 3 draws (4.9 bits) and the search ran
+  out of memory, 2433 had no battle, and the 2434 battles give 14 and 20
+  bits, which thousands of streams match (apparatus
+  `evidence/rg001/tickcheck`).
 - 8 battles (1, 1, 1, 0, 2 and 3 in 2430..2435), colonizing, scrapping,
   research, design changes, packets, wormholes and messages.
 - Supplying the orders changed no fleet in 2430 compared with the original

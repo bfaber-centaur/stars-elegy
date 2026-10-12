@@ -265,7 +265,7 @@ unconstrained by that case.
 | `fleet_at` | a fleet of `owner` at (`x`, `y`) | as `fleet` |
 | `no_fleet_at` | no fleet of `owner` at (`x`, `y`) | |
 | `no_new_fleets` | `owner` gained no fleet | |
-| `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
+| `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, `homeworld` (the flag after the year; see below), ... |
 | `production_queue` | planet `planet` | the queue as `{id, count, percent, kind}` items (`percent` omitted when 0; `kind` 1 planetary item, 2 design, as in "Queue items") |
 | `design`, `starbase_design` | design `owner`/`slot` | `hull`, `slots`, `mass` |
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
@@ -275,6 +275,15 @@ unconstrained by that case.
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
+
+A `planet` expectation carries `homeworld` only when the flag changed in
+the year. One vector has it, WU-RSG2's planet 8 (MEASURED, one run,
+apparatus `evidence/wu/wuRSG2`). The setup gave planet 8 to player 0
+without the flag (`combatlab` "planet 8 owner 0"), while player 1's record
+still named planet 8 as its homeworld. After the year planet 8 had the
+flag again. This fits `KERNEL.md` "Turn order" step 3.6, where every
+mark is cleared and then set on each player's recorded homeworld,
+whoever owns the planet.
 
 `tolerance` as an object (`{"surface_minerals": 1}`) allows that much
 difference in the named field. Kernel and combat vectors use it for surface
