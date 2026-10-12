@@ -774,6 +774,11 @@ The command list is in the script's header. Order files carry the
 registration, so OUTDIR stays private. Getting a consistent `.M1` for a
 Combat Lab start: one `pinned-turn` year, then open `raw/after/cb.m1`.
 
+`CLIENT_INI=FILE` appends FILE's lines to the guest's `WINDOWS/STARS.INI`
+after the reset and before the client starts, for client settings the
+case needs (DQ-001). STARS.INI is registration-bearing: FILE, and the
+run copy, stay private.
+
 What the client did, at 1152x864:
 
 - Opening `cb.m1` shows "Note: N years of data read." (Return). The

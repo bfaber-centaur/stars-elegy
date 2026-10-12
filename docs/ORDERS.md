@@ -110,22 +110,31 @@ Each player has a default production queue (at most 12 items) and a default
 receives (`TAKEOVER.md`). The order file can carry one record (block type 46)
 holding the whole setting: the leftover flag, the item count and the items.
 The host copies the record over the player's stored setting, during turn
-generation only (BINARY-ONLY). The setting is unchanged in a year whose file
-has no such record, and in a year with no file.
+generation only. It does so before colonization that year, so a colony
+founded that year gets the new queue (CONFIRMED, DQ-001: a colony founded by
+an arriving ship got the record's queue in variants A and C, the kept
+default in B; its leftover setting was not observed). The setting is
+unchanged in a year whose file has no such record (CONFIRMED, DQ-001 B), and
+in a year with no file.
 
-**When the client writes the record** (BINARY-ONLY, except where marked).
-The client keeps its own default template among its settings, separate
-from the game. When it saves a non-computer player's order file, it compares
-the player's stored setting (the leftover flag, the count and the items)
-with that template. If they differ, it adds the record carrying the
-**template**. A client that has no default template saved has an empty one:
-no items and leftover off. So the first order file such a client writes for
-a player whose default is not empty resets that default to empty and the
-leftover flag to off, even though the player gave no production order.
-Later files carry no record, because the setting now matches. MEASURED
-(RG-002): year 1's client file held the record with no items, and the
-host's default queue became empty. The files for years 2 to 6 held no such
-record.
+**When the client writes the record** (CONFIRMED by DQ-001 where marked,
+otherwise BINARY-ONLY). The client keeps its own saved default template
+among its settings, separate from the game. When it saves a non-computer
+player's order file, it compares the player's stored setting (the leftover
+flag, the count and the items) with that template. If they differ, it adds
+the record carrying the **template** (CONFIRMED, DQ-001: a template of auto
+defenses 10 with leftover on gave that record and that default; a template
+equal to the default gave no record). A client that has no default template
+saved has an empty one: no items and leftover off (CONFIRMED, DQ-001 A: the
+empty record, and the default became empty). So the first order file such a
+client writes for a player whose default is not empty resets that default to
+empty and the leftover flag to off, even though the player gave no
+production order. Later files carry no record, because the setting now
+matches. That only a non-computer player's file gets the record, that a
+leftover-only difference is enough, and that the record is not written twice
+in a row in one session stay BINARY-ONLY. MEASURED (RG-002): year 1's client
+file held the record with no items, and the host's default queue became
+empty. The files for years 2 to 6 held no such record.
 
 ## Per-order validation
 
