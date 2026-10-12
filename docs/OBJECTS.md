@@ -641,6 +641,28 @@ CB-040).
   year's decay, and a mine hit that adds to old salvage spares it one
   decay. An overflow object made by the 30,000 kT limit is not marked
   and decays the next time.
+- **The mark is saved in the game file** (BINARY-ONLY; MEASURED, RG-001 and CB-040, in the
+  files below). The object's record keeps the mark as one bit of the word
+  that holds a packet's destination (bits 0–9) and warp − 4 (bits 10–13).
+  It is bit 14, which on a moving packet means "has moved". It is not
+  derived from a creation year: the record has none, and the game reads
+  the bit back as it was written. Whether salvage decays in a year
+  depends only on this bit:
+  - set: that year's decay clears it and takes nothing;
+  - clear: the object decays.
+
+  Salvage made after the year's decay is written with the bit set: battle
+  salvage and cargo dumped in battle. Salvage made or added to before the
+  decay is written with it clear, because that decay already cleared it:
+  mine hits on the move and deep-space scrapping.
+  - RG-001: the 2434 file holds battle salvage (owner 1, 3/3/3 kT at
+    1324, 1257) with the bit set. The 2435 file holds the same 3/3/3 with
+    the bit clear.
+  - CB-040: the battle's 30,000 kT object has the bit set and its
+    overflow object has it clear.
+
+  A loader that keeps objects between years needs this bit to reproduce
+  the skipped decay.
 - **Loading.** A fleet at the salvage's position may load its minerals
   with a load task or a manual load, whoever owns the salvage and the
   fleet; colonists and fuel cannot be loaded from it. The amount is the
