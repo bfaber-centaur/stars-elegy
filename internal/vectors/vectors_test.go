@@ -202,8 +202,12 @@ func TestDefaultQueue(t *testing.T) {
 			}
 		}
 	}
-	one := 1
-	for _, p := range []Player{{ID: 0, DefaultQueue: []QueueItem{}}, {ID: 0, DefaultQueue: []QueueItem{{ID: 0, Count: 5, Kind: &one, Percent: 3}}, DefaultLeftover: new(bool)}} {
+	one, two := 1, 2
+	for _, p := range []Player{
+		{ID: 0, DefaultQueue: []QueueItem{}},
+		{ID: 0, DefaultQueue: []QueueItem{{ID: 0, Count: 5, Kind: &one, Percent: 3}}, DefaultLeftover: new(bool)},
+		{ID: 0, DefaultQueue: []QueueItem{{ID: 0, Count: 5, Kind: &two}}, DefaultLeftover: new(bool)},
+	} {
 		bad := Vector{ID: "x", InitialState: &State{Players: []Player{p}}}
 		found := false
 		for _, e := range bad.Check() {
