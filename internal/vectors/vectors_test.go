@@ -3,6 +3,7 @@ package vectors
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -133,6 +134,39 @@ func TestKX004S11CometOriginal(t *testing.T) {
 		if got[k] != w {
 			t.Errorf("%s: environment, original = %q, want %q", k, got[k], w)
 		}
+	}
+}
+
+// Salvage carries its stored skip-decay mark: RG-001's 2434 battle salvage
+// at (1324, 1257) starts year 6 marked fresh; MF-13b's mine-hit salvage at
+// (1400, 1400) is not.
+func TestSalvageFresh(t *testing.T) {
+	for file, want := range map[string]bool{"rg/rg001-y6.json": true, "mf/mf13b.json": false} {
+		v, err := Load("../../vectors/" + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n := 0
+		for _, o := range v.InitialState.Objects {
+			if o.Kind != "salvage" {
+				continue
+			}
+			n++
+			if o.Fresh == nil || *o.Fresh != want {
+				t.Errorf("%s salvage %d at (%d, %d): fresh %v, want %v", file, o.ID, o.X, o.Y, o.Fresh, want)
+			}
+		}
+		if n != 1 {
+			t.Errorf("%s: %d salvage records, want 1", file, n)
+		}
+	}
+	bad := Vector{ID: "x", InitialState: &State{Objects: []Object{{Kind: "salvage"}}}}
+	found := false
+	for _, e := range bad.Check() {
+		found = found || strings.Contains(e.Error(), "fresh")
+	}
+	if !found {
+		t.Error("Check accepts salvage without fresh")
 	}
 }
 

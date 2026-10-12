@@ -324,7 +324,10 @@ def thing(d):
         # Salvage is a packet-type object whose stored packet-warp field (warp - 4)
         # is 0; the destination is not read (BINARY-ONLY: OBJECTS.md "Salvage").
         if int(d['warp']) == 4:
-            return {'kind': 'salvage', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'minerals': c}
+            # fresh: bit 14 of the destination/warp word, the skip-decay mark
+            # (OBJECTS.md "Salvage"; the dump's `moved`).
+            return {'kind': 'salvage', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'minerals': c,
+                    'fresh': d['moved'] == '1'}
         return {'kind': 'packet', 'owner': int(d['owner']), 'id': n, 'x': x, 'y': y, 'destination_planet': int(d['dest']),
                 'warp': int(d['warp']), 'minerals': c, 'decay_class': int(d['class'])}
     if t == 'minefield':
