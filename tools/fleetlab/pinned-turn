@@ -2,6 +2,7 @@
 # Generate one year of a game with the battle random number generator
 # pinned, and collect the raw result.
 #   tools/fleetlab/pinned-turn START.HST BASEDIR OUTDIR [CYCLES] [GAME]
+# PINNED_TIMEOUT (seconds, default 240) bounds the wait for the new year.
 # Like host-turn, but DOSBox runs with cycles=fixed CYCLES (default 20000)
 # and starts `stars.exe -g GAME.hst`, which generates the year and exits
 # with no UI input. Stars! seeds its RNG from the Windows tick count at
@@ -39,8 +40,10 @@ d:
 win /n stars.exe -g ${game,,}.hst"
 "$oracle/start" >/dev/null
 t0=$SECONDS
-until [[ "$(turn)" != "$before" ]]; do
-  ((SECONDS - t0 < 240)) || { echo "pinned-turn: turn did not advance" >&2; "$oracle/stop"; exit 1; }
+# While Stars! rewrites the file it is briefly missing and turn() is empty:
+# wait for a turn number that differs, not merely a different string.
+until now="$(turn 2>/dev/null || true)"; [[ -n "$now" && "$now" != "$before" ]]; do
+  ((SECONDS - t0 < ${PINNED_TIMEOUT:-240})) || { echo "pinned-turn: turn did not advance" >&2; "$oracle/stop"; exit 1; }
   sleep 1
 done
 sleep 5    # Stars! exits by itself after -g

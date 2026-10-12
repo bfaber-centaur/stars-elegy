@@ -1,0 +1,9 @@
+fleet first
+fleet next
+fleet next
+fleet next
+fleet next
+fleet next
+shot scout
+wp select 0
+wp task 5

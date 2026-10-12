@@ -682,6 +682,12 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   To sample a random outcome, compare record hashes and count streams,
   not runs.
 - A generation takes a few seconds after DOSBox starts.
+- A late-game year at low cycles takes longer (RG-002, 189 fleets, cycles
+  1490). Stars! rewrites the host file in place, so it is briefly missing;
+  `pinned-turn` waits for a readable turn number that differs from the
+  start before stopping the oracle. An earlier version took the missing
+  file for the new year and stopped DOSBox mid-write, leaving no host
+  file. `PINNED_TIMEOUT` (seconds, default 240) bounds the wait.
 - **Which stream a cycles value reaches** (KX-004, 2026-10-07). The
   startup tick is `trunc(k·54.925)` ms for a small integer k, about
   `k ≈ 70000/cycles`. Ticks identified by replaying random events: 35000

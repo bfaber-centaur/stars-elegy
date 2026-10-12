@@ -796,7 +796,7 @@ mining, and no homeworld floor.
   (BINARY-ONLY). Only the refusals do, each cancelling the task: no
   mining modules (0x075, CONFIRMED, CS-003), planet inhabited (0x076,
   CONFIRMED, TK-111) and deep space (0x077, BINARY-ONLY) (`MESSAGES.md`).
-- **Order of the checks** (BINARY-ONLY). Only a fleet that did not move
+- **Order of the checks** (BINARY-ONLY except where marked). Only a fleet that did not move
   this year is checked; a fleet that moved keeps its task with no
   message. The checks then run in this order, and the first that fails
   sends its message and stops:
@@ -807,14 +807,19 @@ mining, and no homeworld floor.
      - any other fleet → 0x076.
 
   So a fleet with no robots at a planet owned by a race other than
-  Alternate Reality gets 0x075, not 0x076. No oracle case has combined
-  two failing checks.
+  Alternate Reality gets 0x075, not 0x076 (CONFIRMED, RM-1a at the
+  owner's own planet and RM-1b at another player's planet, one stream
+  each; `experiments/rm`). The order of the deep-space check against the
+  others is not tested: RM-3's fleet failed only that one.
 - **What a refusal does to the task** (BINARY-ONLY except where marked).
   Each refusal clears the task. If the fleet has no waypoint after this
-  one, 0x04e follows (CONFIRMED for 0x076 by TK-111, `MESSAGES.md`). That
-  includes 0x077 for a fleet sitting in deep space; for 0x077 itself the
-  rule is BINARY-ONLY, with no oracle case.
-- **The skipped Alternate Reality fleet keeps its task** (BINARY-ONLY).
+  one, 0x04e follows (CONFIRMED for 0x076 by TK-111, `MESSAGES.md`; for
+  0x075 by RM-1a and RM-1b; for 0x077, a stationary fleet in deep space
+  with one waypoint, by RM-3).
+- **The skipped Alternate Reality fleet keeps its task** (CONFIRMED for
+  the task, RM-2: a computer AR miner at another player's planet still had
+  its remote-mining task after each of two years; the message part is
+  BINARY-ONLY, because a computer player's file has no message block).
   It gets no message, and its task is not cleared. It is checked again
   the next year and skipped again for as long as the planet stays owned.
   A successful remote mining also keeps the task.

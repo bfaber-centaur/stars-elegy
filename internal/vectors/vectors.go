@@ -240,8 +240,12 @@ type Player struct {
 	MysteryTraderItems  []string          `json:"mystery_trader_items"`
 	Computer            bool              `json:"computer,omitempty"`  // a computer player: the host plans its orders
 	Homeworld           *int              `json:"homeworld,omitempty"` // the planet the player's record names as its homeworld
-	Race                Race              `json:"race"`
-	Counts              struct {
+	// The default production queue new colonies start with (planetary items,
+	// kind 1) and their default "only leftover to research". Both or neither.
+	DefaultQueue    []QueueItem `json:"default_queue,omitempty"`
+	DefaultLeftover *bool       `json:"default_leftover_to_research,omitempty"`
+	Race            Race        `json:"race"`
+	Counts          struct {
 		ShipDesigns     int `json:"ship_designs"`
 		StarbaseDesigns int `json:"starbase_designs"`
 	} `json:"counts"`
@@ -559,6 +563,15 @@ func (v *Vector) Check() []error {
 		for _, p := range st.Players {
 			if p.Homeworld != nil && !planets[*p.Homeworld] {
 				bad("player %d: homeworld %d is not a planet of the state", p.ID, *p.Homeworld)
+			}
+			if (p.DefaultQueue != nil) != (p.DefaultLeftover != nil) || len(p.DefaultQueue) > 12 {
+				bad("player %d: default_queue %v, default_leftover_to_research %v (both or neither, at most 12 items)",
+					p.ID, p.DefaultQueue, p.DefaultLeftover)
+			}
+			for _, it := range p.DefaultQueue {
+				if it.Kind == nil || *it.Kind != 1 || it.ID < 0 || it.ID > 63 || it.Count < 0 || it.Count > 1023 || it.Percent != 0 {
+					bad("player %d: default_queue item %+v (planetary items: kind 1, id 0-63, count 0-1023)", p.ID, it)
+				}
 			}
 		}
 	}

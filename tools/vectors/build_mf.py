@@ -9,6 +9,7 @@ are kept in `verdict`.
 """
 import hashlib, os, re
 import build as B
+import build_cb as C
 import build_kx as K
 
 
@@ -51,7 +52,7 @@ def mark_drawn(case, st0, single):
         if (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in moved) or k in ('salvage_at', 'minefield'):
             e = dict(e, sample=True)
         out.append(e)
-    case['expect'] = out
+    case['expect'] = C.score_samples(out)
 
 
 def build(ev, out):

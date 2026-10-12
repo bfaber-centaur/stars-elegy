@@ -5901,3 +5901,110 @@ results; raw evidence in private apparatus `evidence/<case>`).
     cost. The runs record outcomes, not the mechanism.
   RG-001 2433 (player 3, electronics current, biotech before energy)
   fits the second.
+
+## Representative game (RG-002)
+
+Status: MEASURED (recorded, no predictions committed). Vector:
+`vectors/rg/rg002.json`. Write-up with every edit:
+`experiments/rg002/README.md`. Raw evidence: private apparatus
+`evidence/rg002`.
+
+### Question
+
+Can Elegy run late-game years in which the economy paths that RG-001
+never reached are exercised: auto queue items, population over the
+maximum, concentrations below 30, slower tech with the lowest-field
+switch, remote mining, a hostile Orbital Adjuster, starbase replacement
+and salvage?
+
+### Method
+
+- **RG-002 is not an unedited played game.** The start is AIX 2461, the
+  year after RG-001's source years, edited (`experiments/rg002/rg002.spec`,
+  plus player 0's next field set to lowest and the slower-tech game
+  option). One unrecorded settling year followed, so every player's `.M`
+  file shows the edited state before any computer player plans from it.
+- The edits are all to player 0 (the idle human slot), except a Death
+  Star for the Macinti player (AR) and a second Orbital Adjuster for the
+  Rototill player (CA) over a player-0 colony. Player 0 becomes JOAT +
+  ARM with three colonies taken from unowned planets, populations over
+  and under the maximum, low concentrations, auto items on every queue,
+  energy research one level short of 26, and remote-miner, scout and
+  freighter fleets.
+- Six chained years (2462 to 2468) recorded as RG-001 was, with real
+  player-0 orders written by the original client every year (a scrap in
+  deep space, an Auto Mineral Packets item with no driver, a research
+  budget change, a cleared remote-mining task, a queue change and a
+  research field change). All six repeats were byte-identical. Every
+  year was also generated at cycles 3700 and 1490: 764 of 2,610
+  expectations are `sample: true`.
+
+### Observations
+
+- Population over the maximum fell every year: the homeworld from 18,000
+  to 15,744 units (JOAT maximum 12,000), colony 92 from 800 to 772
+  (maximum 600 at habitability 3), colony 95 from 2,600 to 2,544
+  (maximum 2,400). Colony 100, under its maximum, grew.
+- Energy reached 26 in 2464. The field switched to biotechnology, the
+  lowest, which reached 6 in 2465.
+- The four remote miners raised their planets' surface minerals every
+  year. Once its task was cleared, planet 45 did not change.
+- A hostile Orbital Adjuster over a player-0 colony with an Orbital Fort
+  left the colony's environment unchanged for six years (one planet).
+- A queued replacement starbase of the same hull (a second Space Station
+  design) replaced the homeworld's Space Station in the settling year.
+  In separate one-year trials on the edited start, a queued Ultra Station
+  or Space Dock replacing a JOAT player's Space Station was removed from
+  the queue without a message, at construction 8 to 26 (UNRESOLVED;
+  `experiments/rg002/README.md`). A Death Star, an AR-only hull, was
+  removed in the same way.
+- Computer players aimed fleets at salvage and loaded from it. The vector
+  carries those orders with a `packet_object` waypoint target and a
+  `salvage` cargo partner (`vectors/README.md`).
+- 44 battles. The Robotoid player destroyed the homeworld's Space Station
+  in 2465 and its freighter in 2466.
+- **Default queue cleared.** Player 0's default production queue (the
+  edited Auto items) was empty after recorded year 1 and stayed empty.
+  Player 0's year-1 order file, written by the client, held one waypoint
+  order and the client's save marker, with no queue order. Without a
+  player-0 order file it was kept: in the settling year, and in both RM
+  years (`experiments/rm`), which start from the same settled files.
+  The client's 2462 `.M1` file showed the edited default queue. Why the
+  host emptied it is UNKNOWN (one observation). The vectors carry it as
+  a year-1 `player` expectation (`default_queue: []`).
+
+### Elegy
+
+At elegy main 79f3cdc every RG-002 case is skipped, because Elegy does
+not yet read salvage-targeted orders. Removing those orders locally,
+`rg002-y6` passes in all 8 seed variants. That run is not parity. Over
+the 8 seed variants of each year, statement coverage of `engine`,
+`terraform` and `objects` was 67.0% for RG-002 against 63.6% for RG-001.
+RG-002 newly reaches auto installation and auto terraform units, remote
+mining, starbase damage and loss, and raises research level cost and
+population growth to full or near-full coverage. It does not reach
+adjuster worsening or scrapping at a starbase.
+
+### Not covered
+
+- The adjuster's worsening clicks (its planet keeps a starbase), a scrap
+  at a starbase, and an IT player's packet costs.
+- The same limits as RG-001 on views and alternative streams.
+
+## Remote-mining refusals (RM)
+
+Status: CONFIRMED for RM-1a, RM-1b and RM-3; RM-2's task part CONFIRMED,
+its message part not observable. Predictions were pushed before the runs
+(`experiments/rm/PREDICTIONS.md`, bf9518f). Results:
+`experiments/rm/README.md`. Raw evidence: private apparatus
+`evidence/rm`. Rules: `KERNEL.md` "Remote mining".
+
+| Case | Setup | Observed | Result |
+|---|---|---|---|
+| RM-1a | JOAT scout without mining robots, remote-mining task, at its own colony | 0x075, then 0x04e; task cleared | CONFIRMED |
+| RM-1b | The same at another player's planet | 0x075 (not 0x076), then 0x04e; task cleared | CONFIRMED |
+| RM-2 | AR remote miner at another player's planet, two years | task kept both years; the computer player's `.M` has no messages | task CONFIRMED; message not observable |
+| RM-3 | Remote miner in deep space | 0x077, then 0x04e; task cleared | CONFIRMED |
+
+The setup is RG-002's settled 2462 files with four fleets added (a
+start-state edit, not client orders). Each case was observed once.
