@@ -1730,6 +1730,51 @@ the fuel limit and chase deferral, and only losses of at least 1 kT send a
 message. The score's power uses the design's own speed code with no race
 bonus.
 
+### KX-006 — warp-10 losses and Cheap Engines stalls, replayed
+
+Status: CONFIRMED by replay, 2026-10-12. No new oracle run: preserved
+runs were checked against every one of the year's possible random streams
+(one per startup tick). The replay tool is private, and the script, its
+output and the input hashes are in apparatus `evidence/rng/movedraws`.
+Rules: `KERNEL.md` "Other movement rules" and "Random draws" item 3.
+
+Question: what draw decides a warp-10 loss and a Cheap Engines stall,
+per ship or per fleet, and where do they sit in the year's draws?
+
+Model under test: after the two-player shuffle, fleets move in fleet
+order, and each makes its draws before the next fleet. Those are: a
+Cheap Engines fleet at warp 7–10, one `rand(10)` (0 = stall); at warp 10,
+one `rand(10)` per ship of an unrated stack (0 = lost); then its own
+minefield draws and, after a hit with no minerals aboard, three
+`rand(10)` salvage amounts.
+
+| Runs | Observed | Result |
+|---|---|---|
+| OB-024, cycles 20000 and 25000 | A (1 Laser DD), B (5) and C (1) all started their moves; B hit 19 ly out, salvage 4/5/0 | 2 of 16,256 streams match, including tick 164 (ORACLE.md's tick for 20000) |
+| OB-024, cycles 15000 | A lost before moving (0xe1); B hit 29 ly out, salvage 8/5/6 | 1 stream, tick 274 (ORACLE.md's tick for 15000) |
+| OB-024, cycles 30000 and 40000 | B lost one ship (0xdf); C lost before moving (0xe1); B hit 20 ly out, salvage 6/3/1 | 1 stream, tick 109 (ORACLE.md's tick for 30000) |
+| OB-024, cycles 60000 | as 30000, plus A hit 22 ly out, salvage 2/3/0 | 1 stream, tick 54 |
+| FM-101 F, cycles 20000 | 2 of 40 warp-7 Cheap Engines fleets stalled: the 18th and 32nd of the 40 in fleet order | 2 streams, including tick 164 |
+| FM-102 A–C, cycles 20000 | 11 of 100 and 5 of 50 unrated ships lost; a 50-ship rated fleet between them lost none | tick 164 matches only if the rated fleet draws nothing |
+
+Interpretation:
+
+- One `rand(10)` per unrated ship, 0 = lost; one per Cheap Engines fleet,
+  0 = stall. The rates measured before (FM round 2, CS-003-W) are what
+  this rule gives.
+- In OB-024 C's loss draw came after A's and B's moves, including B's
+  minefield and salvage draws. A's loss draw came first after the
+  shuffle. B's stop point was the field entry (13 ly) plus the index of
+  the hitting draw in all four distinct streams.
+- FM-101's warp-6 and slower fleets, numbered before the Cheap Engines
+  fleets, drew nothing.
+- The FM-102 row matches counts, not positions, and is the weakest of the
+  three.
+
+Not covered (BINARY-ONLY in KERNEL): several unrated designs in one
+fleet, a Cheap Engines stall with a warp-10 stack, chasers, and the gate
+for players flagged as cheaters.
+
 ### KB batch 1 — population, resources, mining, AR, remote mining
 
 Status: CONFIRMED, with one refinement (AR planets' own miners). Every case

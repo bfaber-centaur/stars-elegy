@@ -340,7 +340,15 @@ Each item is tagged with how its place in the sequence is known.
 3. **Movement** (steps 3–3b): the movement gates, minefield hits, the
    Trader's and wormholes' movement, salvage and packet decay with
    detonations, and breeding in transit. BINARY-ONLY as a place in the
-   sequence; their rules carry their own tags.
+   sequence; their rules carry their own tags. In the first pass of the
+   fleet moves, each fleet makes all of its draws before the next fleet
+   in fleet order: the Cheap Engines stall draw, then its warp-10 loss
+   draws, then its own minefield draws and any salvage draws ("Other
+   movement rules"; `OBJECTS.md`). A fleet chasing another fleet makes
+   its minefield draws in a later pass (BINARY-ONLY). CONFIRMED by
+   replay (KX-006): in OB-024 a fleet's loss draws came after the previous fleet's minefield and salvage draws, and
+   in FM-101 F the Cheap Engines draws were the first draws after the
+   shuffle, one per warp-7 fleet.
 4. **Production** (step 4). Mining makes one `Random(100)` per mineral
    whose output has a non-zero remainder, planets in id order, ironium,
    boranium, then germanium. CONFIRMED (KB-1C, KB-3A).
@@ -1567,9 +1575,29 @@ ship designer lets a player save one is not established.
   (MEASURED, FM round 2: 11 of 100 and 5 of 50 ships lost; fuel left with
   the lost ships in proportion; CS-003-W: 58 of 660, none of 300 with
   rated engines).
+  - **The draw.** At the start of the fleet's move, before the fuel limit
+    and any minefield, each ship of a stack whose design is not rated
+    draws `rand(10)`, and 0 loses that ship. A rated stack draws nothing.
+    One draw per ship and the value 0 are CONFIRMED by replay (KX-006:
+    OB-024, six runs; FM-102), and so is no draw for a fleet of rated
+    ships only (FM-102). Stacks are visited in design-slot order,
+    and the rating is read from the design's first slot (BINARY-ONLY: no
+    run had two unrated designs in one fleet). A fleet whose ships are
+    all lost is deleted (0xe1) and draws nothing more. A fleet that is
+    chasing another fleet draws only in the first movement pass
+    (BINARY-ONLY).
 - Cheap Engines: at warp 7 or more, a 1 in 10 chance each year that the
   fleet does not move (MEASURED, FM round 2: 2 of 40 fleets stopped at
   warp 7, 0 of 20 at warp 6).
+  - **The draw.** One `rand(10)` per fleet, and 0 stops it with message
+    0xf2. The fleet keeps its fuel and waypoints and makes no warp-10 loss
+    draws that year. It is drawn for a fleet whose waypoint 1 is at warp
+    7 to 10 and that passed the earlier no-move gates (BINARY-ONLY), not
+    for a stargate jump (CONFIRMED, PARITY "Stargates, round 2": 20
+    jumps, no 0xf2) and not at warp 6 or slower. CONFIRMED by replay
+    (KX-006, FM-101 F): one draw per warp-7 fleet, none for the slower fleets before them. That a
+    stalled fleet makes no loss draws, and the first-pass-only rule for
+    chasers, are BINARY-ONLY.
 - Improved Fuel Efficiency: engine factor `f − trunc(15f/100)`
   (CONFIRMED, KB-4A E: warp 6, 36 ly, 295 mg left, 294 without IFE; C at
   warp 9).
