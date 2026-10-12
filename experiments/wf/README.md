@@ -52,3 +52,42 @@ at cycles 20000.
     player 0 saw (its start) in the host file too, with a lost-target
     message (0x28–0x2a) in player 0's `.M` file.
   Either way player 0's fleet 0 is recorded where it ends.
+
+## Results
+
+One pinned stream (cycles 20000). Year 2 for `wf-enemy` and `wf-friend`
+ran on year 1's host file.
+
+| case | player 0's fleet 0, waypoint 1, host file | same waypoint in player 0's `.M1` | message to player 0 |
+|---|---|---|---|
+| `wf-enemy` year 1 | fleet 1/0 at (1200,1255), its end position | fleet 1/0 at (1200,1255) | none |
+| `wf-enemy` year 2 | fleet 1/0 at (1200,1280) | fleet 1/0 at (1200,1280) | none |
+| `wf-friend` years 1, 2 | as `wf-enemy` | as `wf-enemy` | none |
+| `wf-gone` | deep space at (1200,1230) | deep space at (1200,1230) | 0x028 (fleet 0, target 1/0) |
+| `wf-unseen` | deep space at (1210,1323) | deep space at (1210,1323) | 0x02a (fleet 0) |
+
+Player 0's own-fleet waypoint (fleet 1 → fleet 2) stayed a fleet target
+at fleet 2's end position in every case.
+
+- **WF-01 held, MEASURED:** while player 0 sees the target, the host file
+  keeps a waypoint aimed at another player's fleet as a fleet target,
+  with the target's end-of-year position, for an enemy and for a friend.
+  This is the RG-001 year 5 observation.
+- **WF-02 failed:** the owner's `.M1` also kept the fleet target while the
+  target was seen (player 1's fleet was in player 0's view in both
+  years). The `ORDERS.md` claim that the owner's file always saves it as
+  deep space (WU-A) does not hold in this form.
+- **WF-03:** year 2 kept chasing the fleet target. In both years fleet 0
+  moved 25 ly toward the target's **end-of-year** position, as a chaser
+  (it moves after the target, `KERNEL.md` "Chasing another fleet"), not
+  toward its start-of-year position as written in the prediction.
+- **WF-04 held:** a target gone before movement (scrapped) leaves deep
+  space at its last position, (1200,1230), in both files, with 0x028
+  naming fleet 0 and the target. Fleet 0 flew 25 ly toward that point.
+- **WF-05: neither candidate.** For a target no scanner of player 0's
+  saw, both files hold deep space at the target's **actual end-of-year
+  position** (1210,1323), not the last position player 0 saw, with
+  0x02a. So "lose", but at the current position.
+
+So the rewrite to deep space (Elegy's W5) happens only when the target is
+gone or out of the owner's sight, and then in the host file too.
