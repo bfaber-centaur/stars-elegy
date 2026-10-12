@@ -5871,6 +5871,14 @@ results; raw evidence in private apparatus `evidence/<case>`).
   as CB-009); destroyed in the next year, the salvage of the plain
   freighter (4/0/5), the same as a design built without the part
   (`COMBAT.md` "Parts the game drops from a design").
+- **A dropped part's cost in target choice (CB-055), CONFIRMED, 18 of 18
+  eligible battles.** Stacks of 15 Small Freighters with the misslotted
+  Beam Deflector (cost 8 the first year, 6 after) and 15 with a Fuel Tank
+  (cost 7), armor equal, against one range-3 beam frigate: the first shot
+  with both stacks in reach took the deflector stack in year 1 and the
+  Fuel Tank stack in year 2, in both fleet orders, across five streams. A
+  first round with a range-1 Laser and single ships could not decide it:
+  only one freighter was ever in reach (`experiments/cb055`).
 - **Order of level-ups in one year (GR-ORDER), MEASURED, 2 of 2 streams.**
   A Generalized Research player with every field at 5 and several fields
   exactly at the cost of level 6, so that the first level raises the
