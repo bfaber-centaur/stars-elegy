@@ -238,6 +238,12 @@ def state(hst, xy, game, xy_path=None):
             p = {'id': n, 'x': pos[n][0], 'y': pos[n][1], 'owner': int(d['owner'])}
             if 'homeworld' in s.split():
                 p['homeworld'] = True
+            # Ancient artifact: the host reads the file flag on a planet record
+            # without an installations block, and bit 6 of that block's seventh
+            # byte on one with it (PARITY TK-303, TK-306; the dump's
+            # `artifact` and `artbit`).
+            if ('artbit' if 'excess' in d else 'artifact') in s.split():
+                p['artifact'] = True
             p['concentrations'] = [int(x) for x in d['conc'].split('/')]
             # Depletion fractions (1/256 of a concentration point, Fe/B/G), as the
             # planet record stores them; all three 0 is the loader's default.

@@ -105,7 +105,12 @@ file, so nothing in it is a default you have to guess.
   record carries the homeworld flag (absent otherwise), mineral concentrations,
   `concentration_fractions` (each concentration's depletion fraction in
   1/256 of a point, ironium, boranium, germanium, 0–255, as the planet record
-  stores them; absent when all three are 0), environment
+  stores them; absent when all three are 0), `artifact: true` for a
+  planet holding an ancient artifact as the host reads it (the file flag
+  on a record without installations, the installations bit on one with
+  them; PARITY "Round 4 (TK-301 to TK-306)"; absent otherwise; start states only,
+  never in expectations; the research gift's field and points are random
+  draws, so outcomes that depend on them are samples), environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
   mines, factories, defenses, planetary scanner, starbase (design slot and

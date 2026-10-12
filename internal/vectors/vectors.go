@@ -281,6 +281,7 @@ type Planet struct {
 	Homeworld           bool      `json:"homeworld,omitempty"` // the planet record's homeworld flag
 	Concentrations      []int     `json:"concentrations"`
 	ConcFractions       []int     `json:"concentration_fractions,omitempty"` // depletion fractions, Fe/B/G, 0-255
+	Artifact            bool      `json:"artifact,omitempty"`                // an ancient artifact, as the host reads it
 	Environment         []int     `json:"environment"`
 	OriginalEnvironment []int     `json:"original_environment,omitempty"`
 	SurfaceMinerals     []int     `json:"surface_minerals,omitempty"`
