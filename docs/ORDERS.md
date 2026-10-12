@@ -127,6 +127,7 @@ Later files carry no record, because the setting now matches. MEASURED
 host's default queue became empty. The files for years 2 to 6 held no such
 record.
 
+## Per-order validation
 
 When a file is accepted, its orders are applied one at a time. Each order is
 validated on its own. The original's validation is **uneven** across kinds,
