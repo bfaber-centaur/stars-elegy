@@ -279,6 +279,7 @@ type Planet struct {
 	Owner               int       `json:"owner"`
 	Homeworld           bool      `json:"homeworld,omitempty"` // the planet record's homeworld flag
 	Concentrations      []int     `json:"concentrations"`
+	ConcFractions       []int     `json:"concentration_fractions,omitempty"` // depletion fractions, Fe/B/G, 0-255
 	Environment         []int     `json:"environment"`
 	OriginalEnvironment []int     `json:"original_environment,omitempty"`
 	SurfaceMinerals     []int     `json:"surface_minerals,omitempty"`
@@ -543,6 +544,9 @@ func (v *Vector) Check() []error {
 		}
 		for _, p := range st.Planets {
 			planets[p.ID] = true
+			if f := p.ConcFractions; f != nil && (len(f) != 3 || min(f[0], f[1], f[2]) < 0 || max(f[0], f[1], f[2]) > 255) {
+				bad("planet %d: concentration_fractions %v", p.ID, f)
+			}
 		}
 	}
 	known := func(m map[int]bool, id int) bool { return v.NewGame != nil || m[id] }

@@ -5632,7 +5632,13 @@ setup.
 ### Observations
 
 - The 2430 battle's setup draws matched the tick-164 stream at draw 206
-  (stars-decomp `tools/starsrng.py`, 57 bits, unique).
+  (stars-decomp `tools/starsrng.py`, 57 bits, unique). The original AIX
+  2430, generated with the computer players planning in the same process,
+  matched the same tick at draw 356. No other year checks the tick: the
+  2431, 2432 and 2435 battles give 3 draws (4.9 bits) and the search ran
+  out of memory, 2433 had no battle, and the 2434 battles give 14 and 20
+  bits, which 840,843 and 14,073 stream offsets match (apparatus
+  `evidence/rg001/tickcheck`).
 - 8 battles (1, 1, 1, 0, 2 and 3 in 2430..2435), colonizing, scrapping,
   research, design changes, packets, wormholes and messages.
 - Supplying the orders changed no fleet in 2430 compared with the original
@@ -5648,3 +5654,57 @@ setup.
 - A value the three streams happened to agree on may still be drawn. An
   outcome that changed only in an alternative stream has no expectation to
   flag.
+
+### Mismatches shrunk to oracle cases
+
+Each case below was predicted before its runs, on the Combat Lab base
+(`experiments/<case>/README.md` has the predictions and the full
+results; raw evidence in private apparatus `evidence/<case>`).
+
+- **Fleet numbers after a fleet leaves (FN-01..05), CONFIRMED, 2 of 2
+  streams.** RG-001 2432: player 6's fleet 3 colonized and the year's new
+  fleets skipped number 3. A fleet removed before production, by a
+  waypoint-0 colonize, a colonize on arrival after movement, a waypoint-0
+  scrap or a waypoint-0 merge, keeps its number in use for that year's
+  production: two Scouts built beside fleets 1 and 2 became fleets 3 and
+  4 (control: 0 and 3). The next year's first new fleet took the freed
+  number 0 in all four variants. Not tested: a fleet destroyed in battle,
+  and merge or split orders replayed in step 1.
+- **A waypoint aimed at another player's fleet (WF-01..05), MEASURED, one
+  stream.** RG-001 2434: player 2's and player 5's waypoints kept naming
+  player 1's fleets in the host file. In the oracle:
+  - While the owner sees the target, the waypoint stays a fleet target,
+    at the target's end-of-year position, in the host file **and** in the
+    owner's `.M` file, for an enemy and for a friend, over two years.
+    This contradicts `ORDERS.md` ("saved as a plain waypoint in the
+    owner's view", WU-A), at least while the target is in view.
+  - The chaser moves toward the target's end-of-year position each year
+    (it moves after the target).
+  - A target scrapped before movement leaves deep space at its last
+    position in both files, with message 0x028.
+  - A target that no scanner of the owner's saw becomes deep space at its
+    **actual** end-of-year position in both files, not at the last
+    position the owner saw, with message 0x02a.
+- **Which tech prices a ship destroyed in a level-up year (CB-053), CONFIRMED,
+  2 of 2 streams.** Salvage from 24 Victims (Small Freighter, Long Hump 6,
+  Tritanium) killed in deep space while their owner raised its lowest
+  field from 5 to 6: without Bleeding Edge Technology the cost was the
+  one from before the level (salvage 108/0/90, as the control), whether
+  the level came from this year's research or from research already
+  stored at the start of the year. With BET it was the new cost
+  (90/0/78; BET control 102/0/84). This agrees with RG-001 2434 (player
+  1's Mini-Colony Ship) and with `COMBAT.md` "Design cost".
+- **Order of level-ups in one year (GR-ORDER), MEASURED, 2 of 2 streams.**
+  A Generalized Research player with every field at 5 and several fields
+  exactly at the cost of level 6, so that the first level raises the
+  others' cost by 10 and only one can level:
+  - research already stored, none added that year: the first field from
+    energy to biotech levelled (weapons with propulsion current; energy
+    with construction current);
+  - each chosen field 6 short, reaching the cost with this year's 15%
+    share: the first field after the current one, going round, levelled
+    (construction with propulsion current; biotech with construction
+    current), and the other chosen fields ended 10 short of the new
+    cost. The runs record outcomes, not the mechanism.
+  RG-001 2433 (player 3, electronics current, biotech before energy)
+  fits the second.

@@ -169,9 +169,10 @@ def diff(st0, st1, full=False):
     p0 = {p['id']: p for p in st0['planets']}
     for p in st1['planets']:
         q = p0.get(p['id'], {})
-        ch = {k: v for k, v in p.items() if k not in ('id', 'x', 'y') and q.get(k) != v}
+        # Depletion fractions are start-state only for now (not compared).
+        ch = {k: v for k, v in p.items() if k not in ('id', 'x', 'y', 'concentration_fractions') and q.get(k) != v}
         for k in q:
-            if k not in p and k not in ('id', 'x', 'y'):
+            if k not in p and k not in ('id', 'x', 'y', 'concentration_fractions'):
                 ch[k] = None
         if ch:
             ex.append({'kind': 'planet', 'id': p['id'], 'equals': ch})

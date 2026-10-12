@@ -45,3 +45,29 @@ func TestOrderFields(t *testing.T) {
 		}
 	}
 }
+
+func TestConcentrationFractions(t *testing.T) {
+	for _, c := range []struct {
+		f    []int
+		errs int
+	}{
+		{nil, 0},
+		{[]int{0, 128, 255}, 0},
+		{[]int{1, 2}, 1},
+		{[]int{1, 2, 3, 4}, 1},
+		{[]int{-1, 0, 0}, 1},
+		{[]int{0, -1, 0}, 1},
+		{[]int{0, 0, -1}, 1},
+		{[]int{256, 0, 0}, 1},
+		{[]int{0, 256, 0}, 1},
+		{[]int{0, 0, 256}, 1},
+	} {
+		v := &Vector{Schema: Schema, ID: "T", Years: 1, Streams: 1,
+			InitialState: &State{Game: Game{Players: 1}, Players: []Player{{ID: 0}},
+				Planets: []Planet{{ID: 0, ConcFractions: c.f}}},
+			Cases: []Case{{ID: "T-1", Tag: "MEASURED", Expect: []Expectation{{Year: 1, Kind: "no_battle"}}}}}
+		if errs := v.Check(); len(errs) != c.errs {
+			t.Errorf("%v: want %d errors, got %v", c.f, c.errs, errs)
+		}
+	}
+}
