@@ -49,7 +49,7 @@ Pinned at cycles 20000 and 30000.
 
 Cycles 20000 and 30000 agreed.
 
-| case | levelled | stored after (Fe.. fields: energy, weapons, propulsion, construction, electronics, biotech) |
+| case | levelled | stored after (energy, weapons, propulsion, construction, electronics, biotech) |
 |---|---|---|
 | `gr-ctl-weapons` | weapons → 6 | 0,0,0,0,0,0 |
 | `gr-ctl-con` | construction → 6 | 0,0,0,0,0,0 |
@@ -81,3 +81,25 @@ Predictions:
   current field: construction and biotech.
 - In every case exactly one field levels; the others end at 850 with 10
   short. Stored values after the year are recorded.
+
+## Results of the follow-up
+
+Cycles 20000 and 30000 agreed; 35 resources went to research in both.
+
+| case | levelled | stored after (energy, weapons, propulsion, construction, electronics, biotech) |
+|---|---|---|
+| `gr-prop-flow` | **construction** → 6 | 6,850,18,0,6,850 |
+| `gr-con-flow` | **biotech** → 6 | 850,850,6,18,6,0 |
+
+- **MEASURED (2 of 2 streams):** with Generalized Research shares
+  arriving in the year, the field levelled first is the first one after
+  the current field, going round (propulsion current: construction before
+  biotech and weapons; construction current: biotech before energy and
+  weapons). Each field's share is added and checked in turn, so a field
+  that levels raises the cost before the next field is checked: the
+  others ended at 850, 10 short of 860.
+- Combined with the stored-research cases: a check with nothing added
+  goes from energy to biotech; the check made as the year's shares are
+  added goes cyclically from the field after the current one. RG-001
+  2433 (player 3, electronics current, biotech before energy) fits the
+  second.
