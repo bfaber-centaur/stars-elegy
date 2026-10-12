@@ -48,6 +48,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
+| `rg` | RG-001 | 6 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start` | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
@@ -66,6 +67,7 @@ decodes every file strictly, so `go test ./...` fails on a malformed vector.
  "streams": 1,
  "initial_state": {...},
  "orders": [...],                // optional: orders the players submitted
+ "random_start": [...],          // optional: where each year's random stream began
  "cases": [...]
 }
 ```
@@ -187,7 +189,7 @@ an order belong to the submitting player unless a field says otherwise.
 | kind | fields |
 |---|---|
 | `production_queue` | `planet`, `items` (`{id, count, percent, kind}` as in `production_queues`): the planet's whole new queue |
-| `planet_settings` | `planet`, `leftover_to_research`, `route_to` |
+| `planet_settings` | `planet`, `leftover_to_research`, `route_to`, `packet_destination`, `packet_warp`: the planet's whole settings (`-1`: no route, no packet destination; `packet_warp` as in `initial_state`) |
 | `research` | `percent`, `field`, `next_field` (a field, `same`, `lowest`, or the stored number) |
 | `battle_plan` | `slot`, `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo`: add the plan at `slot` or change it |
 | `battle_plan_delete` | `slot` |
@@ -197,13 +199,17 @@ an order belong to the submitting player unless a field says otherwise.
 | `waypoint_add`, `waypoint_change` | `fleet`, `index`, `waypoint` (as in `fleets`) |
 | `waypoint_delete` | `fleet`, `index` |
 | `repeat_orders` | `fleet`, `on` |
-| `cargo` | `fleet`, `with` (`{kind: planet or fleet, id, owner}`), `amounts` per cargo type (kT; colonists in hundreds; fuel in mg), positive into the fleet and negative out of it |
+| `cargo` | `fleet`, `with` (`{kind: planet or fleet, id, owner}`), `amounts` per cargo type (kT; colonists in hundreds; fuel in mg), positive into the fleet and negative out of it. Computer players also write an unload with the planet first in the file; it is given here the same way, with negative amounts |
 | `split` | `fleet`: a new empty fleet beside it, which the next `move_ships` fills |
 | `move_ships` | `fleet`, `with` (`{kind: fleet, owner, id}`), `ships` (`{design, count}`), counts positive into `fleet` and negative out of it |
 | `merge` | `fleet`, `fleets` that join it |
 | `rename` | `fleet`, `name` |
 | `detonate` | `minefield`, `on` |
 | `relations` | `relations` (player → `neutral`, `friend`, `enemy`) |
+
+`waypoint_add` inserts the waypoint before `index`. The `rg` vector also
+uses `waypoint_add`, `waypoint_delete` and `planet_settings`, as the
+computer players wrote them.
 
 The client-order corpora so far use `cargo` (to planets and own fleets),
 `split`, `move_ships`, `merge`, `rename`, `production_queue`, `research`, `battle_plan`, `battle_plan_delete`,
@@ -212,6 +218,23 @@ other kinds are defined for the rest of `ORDERS.md` and have no vector yet.
 Order vectors' `fleet` expectations also list the fleet's `waypoints`,
 `battle_plan`, `repeat_orders` and `name` (when the player named the
 fleet).
+
+### `random_start`
+
+Where the original's random stream began, per generated year (and per
+stream in a several-stream vector; `stream` is `""` in a single-stream
+one):
+
+```jsonc
+"random_start": [{"stream": "", "year": 1, "tick": 164}, ...]
+```
+
+`tick` is the oracle process's startup tick in milliseconds, which seeds the
+generator once per process (`docs/ORACLE.md` "Pinned battle RNG" maps cycles
+values to ticks). A pinned run starts a new process for every year, so each
+listed year's draws begin at seeding. A year with no entry was not recorded.
+With the generator and its seeding, a harness can replay the original's
+draws and compare `sample` expectations exactly.
 
 ### `cases`
 
@@ -300,7 +323,8 @@ committed before the run, and `verdict` says which.
 ### Randomness
 
 The original seeds its random numbers from the clock, so a run cannot give
-you the original's random stream. Vectors handle this two ways:
+you the original's random stream unless the vector records where it began
+(`random_start`, above). Vectors handle randomness two ways:
 
 - `random: "several_streams"`: the same start was run under several seeds.
   An expectation that came out the same in every stream is listed once; one
@@ -363,9 +387,10 @@ Minefields and stargates draw too. In the `mf` runs where fleets cross a
 field at a speed with a stop chance (MF-01, 02, 03h, 03s, 04, 04b, 04d,
 05b, 09h, 09s, 14, 15), the `fleet` and `fleet_gone` of every fleet that
 moved and every `salvage_at` carry `sample: true`, in every stream: where a
-fleet stops decides its position, fuel, cargo and damage. In the
-single-stream ones the `minefield` expectations do too, since every stop
-is paid by a field (MF-4). In `gt`, the fleets whose survivors a gate's
+fleet stops decides its position, fuel, cargo and damage. The
+`minefield` expectations do too, in every stream: every stop is paid by a
+field (MF-4), so the mine count is drawn even where streams agreed (MF-02,
+MF-04). In `gt`, the fleets whose survivors a gate's
 loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's

@@ -32,7 +32,21 @@ type Vector struct {
 	// the order they were given. Without them, the orders are the fleets'
 	// waypoints and the other standing orders in the initial state.
 	Orders []OrderSet `json:"orders,omitempty"`
-	Cases  []Case     `json:"cases"`
+	// RandomStart says where the original's random stream began for each
+	// generated year it was recorded for; a year with no entry was not
+	// recorded.
+	RandomStart []RandomStart `json:"random_start,omitempty"`
+	Cases       []Case        `json:"cases"`
+}
+
+// RandomStart is the random stream's start for one generated year of one
+// stream ("" in a single-stream vector): the oracle process's startup tick
+// in milliseconds, which seeds the generator (docs/ORACLE.md "Pinned battle
+// RNG").
+type RandomStart struct {
+	Stream string `json:"stream"`
+	Year   int    `json:"year"`
+	Tick   *int   `json:"tick,omitempty"`
 }
 
 // OrderSet is what one player submitted for one generated year.
@@ -86,8 +100,11 @@ type Order struct {
 	// detonate
 	Minefield *int `json:"minefield,omitempty"`
 	// planet_settings
+	// (-1 for no route or no packet destination)
 	LeftoverToResearch *bool `json:"leftover_to_research,omitempty"`
 	RouteTo            *int  `json:"route_to,omitempty"`
+	PacketDestination  *int  `json:"packet_destination,omitempty"`
+	PacketWarp         *int  `json:"packet_warp,omitempty"`
 	// relations
 	Relations map[string]string `json:"relations,omitempty"`
 }
@@ -544,6 +561,16 @@ func (v *Vector) Check() []error {
 				}
 			}
 		}
+	}
+	starts := map[RandomStart]bool{}
+	for _, r := range v.RandomStart {
+		if r.Year < 1 || r.Year > v.Years || (r.Stream == "") != (v.Random == "single_stream") {
+			bad("random_start for year %d, stream %q", r.Year, r.Stream)
+		}
+		if starts[RandomStart{Stream: r.Stream, Year: r.Year}] {
+			bad("two random_start entries for year %d, stream %q", r.Year, r.Stream)
+		}
+		starts[RandomStart{Stream: r.Stream, Year: r.Year}] = true
 	}
 	seen := map[string]bool{}
 	for _, c := range v.Cases {
