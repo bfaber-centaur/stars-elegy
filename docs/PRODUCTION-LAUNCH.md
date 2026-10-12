@@ -56,7 +56,12 @@ and is seen like any fleet. It does not move until next year.
   production (CONFIRMED, CB-047). So only a hand-built queue at a planet
   without a starbase reaches this check.
 - The owner must be able to build the hull and every part of the design,
-  checked when the item completes (BINARY-ONLY). Each must be fully
+  checked when the item completes (BINARY-ONLY; the race and Mystery
+  Trader parts are CONFIRMED by prediction in FB-1,
+  `experiments/fb/README.md`: an Inner Strength-only weapon, a Hyper
+  Expansion-only engine and an unowned Multi Function Pod, each fully
+  researched, all gave 0x04f and no fleet; designs placed by state edit,
+  see FB-1). Each must be fully
   researched, allowed to the owner's race, and, for a Mystery Trader
   item, owned: the same rule as `COMPONENTS.md` "Who can build what". If
   any fails, the item builds nothing and the owner is told the plans were
@@ -80,20 +85,28 @@ the resources are already spent and the item is removed from the queue (as `KERN
 finished non-auto item). CONFIRMED for minerals at the fleet limit
 (SL-09: the planet ended 12/6/13 kT of Fe/Bo/Ge below its control); the
 resource share could not be tested there (both players at tech 26, so no
-research accumulates), and is BINARY-ONLY. The rest of this paragraph is
-BINARY-ONLY:
+research accumulates), and is BINARY-ONLY there. FB-1 measured both
+shares for the plans-lost case, from the mines built after the item. The
+rest of this paragraph is BINARY-ONLY except where FB-1 is cited:
 
 - **What is spent.** The checks run only when at least one unit
   completes, after its cost is paid. The spend is what a successful
   build would pay that year: each completed unit's remaining cost (the
   whole cost from 0%, the last hundredth from 99%), and any progress paid toward
-  the item's next unit.
+  the item's next unit. CONFIRMED by prediction in FB-1 from 0%: the
+  whole unit cost (resources and minerals) for a single unit, and one
+  unit plus the progress on the next for an item of 3 with resources for
+  1 unit (designs placed by state edit; see FB-1).
 - **The queue.** An item whose units all completed is removed, and
   production goes on to the next item. An item with units left over is
   emptied: it builds nothing more, production stops at it for that year
   as for any unfinished item, and the empty item is dropped when
   production next reaches it. The progress paid toward its next unit is
-  lost.
+  lost. CONFIRMED by prediction in FB-1: a single-unit item was removed
+  and the mines after it were built; an item of 3 was left as an empty
+  ship item (count 0, its progress still shown) with nothing after it
+  built, then dropped the next year with no message while the mines
+  after it were built (designs placed by state edit; see FB-1).
 
 ### The new fleet
 
@@ -297,7 +310,11 @@ Building a starbase design at a planet:
   old starbase and the planet's packet settings stay, and the item is
   removed with no message of its own; only the queue-empty message
   (`MESSAGES.md` 0x03e) follows if the queue is now empty. The spend and
-  the queue go as for ships. BINARY-ONLY.
+  the queue go as for ships. BINARY-ONLY, except: CONFIRMED by prediction
+  in FB-1 for a Mass Driver 5 starbase (Packet Physics only) replacing an
+  Orbital Fort from 0% (only 0x03e, the Fort kept, the replacement cost
+  spent; designs placed by state edit, see FB-1); the packet settings
+  kept are MEASURED in PD-1.
 - The new starbase replaces the old one, if any. The owner is told in one
   of three forms, chosen by the new hull's dock (`MESSAGES.md` 0x0cd–0x0cf):
   no dock (Orbital Fort) says it can build no ships; a limited dock
@@ -358,8 +375,9 @@ Building a starbase design at a planet:
     the queue with no starbase message, the old starbase and its settings
     stay, and only "queue empty" (0x03e) is sent. At 0% done it had already
     spent some minerals. MEASURED (PD-1 d and e, and two diagnostic runs,
-    one stream each); how much is spent, and whether other forbidden parts
-    behave the same, is not pinned.
+    one stream each). FB-1 pins the spend (the replacement cost, from 0%)
+    and shows ship designs with other forbidden parts refused in the same
+    way ("Can the planet build it").
   - The other ways a starbase is lost (destroyed in battle, unless the
     owner is Alternate Reality, or its design deleted) remove the queued
     packet items in the same way but leave the destination and speed set.
