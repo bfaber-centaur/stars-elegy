@@ -49,3 +49,89 @@ The task ends there, and so it is 0x04e (a). The arrival itself sends
 nothing for a transport task (0x04e (b)).
 
 Raw evidence: private apparatus, `evidence/et1`.
+
+## ET-2: a transport task aimed at a packet
+
+Question: a fleet's transport task targets a packet at its last waypoint.
+The record said the task is cancelled with 0x11e, a BINARY-ONLY claim in
+`ORDERS.md` "Arrival" and `MESSAGES.md` 0x11e. Is 0x04e sent after the
+0x11e? And where does it fall against the bracket fleets of ET-1b?
+
+**Predictions, pushed before the runs.**
+
+- **ET-2** (apparatus 4e12874a, 22:05:43Z; runs 22:05:52Z). There were two:
+  - elegy 0a1c002: 0x11e and no 0x04e;
+  - the `MESSAGES.md` wording: 0x11e, then 0x04e.
+
+  The later elegy head 752646f (pushed 22:05:23Z, before the runs but not
+  in the pre-run record) predicted 0x11e then 0x04e, the same as the
+  wording.
+- **ET-2b** (5074fb83, 22:07:08Z; runs 22:07:10Z). There were two:
+  - elegy 0a1c002: 0x11e for Q;
+  - a hypothesis drawn from ET-2: Q loads.
+
+**Setup.** `et2.spec` takes ET-1b's fleets E, C, S and N and adds
+fleet P. P is one Medium Freighter at warp 9. Its single waypoint aims at
+player 0's own packet 0, which carries 100 kT of ironium toward planet 12
+at packet warp 5 and starts 50 ly north of P. The task is "load all
+ironium". `et2b.spec` adds fleet Q: the same aimed at player 1's packet
+0, which carries 100 kT of boranium, with the task "load all boranium".
+Each case ran one pinned year at cycles 20000 and 30000, and the two
+streams agree on everything below.
+
+| Case | Observed | Verdict |
+|---|---|---|
+| P, own packet (ET-2 and ET-2b) | It reached the packet at (1382, 1283). It loaded all 100 kT: 0x02b, located at the packet object, then 0x04e. Its task was cleared. There was **no 0x11e**. The packet remains, empty. | MEASURED. It contradicts every prediction and the BINARY-ONLY 0x11e claim. |
+| Q, another player's packet (ET-2b) | **No message.** It ended at (1400, 1300), player 0's packet's position before packets moved, 112 ly from its start at warp 9, with fuel going from 300 to 48. Its waypoint 1 still aims at player 1's packet, now at (1478, 1288), and keeps the transport task. Player 1's packet still holds 100 kT. | MEASURED. Explained in ET-2c: Q and the packet started outside the galaxy, and the match with player 0's packet was a coincidence. Elegy put Q at the packet with 0x11e. |
+| E, C, S, N | As in ET-1b | consistent |
+
+Player 0's message order: S's 0x04e, N's 0x04e, the production messages,
+C's 0x02e, E's 0x04e and C's 0x04e. Then come P's 0x02b and P's 0x04e.
+P's load and its 0x04e fall in the after-movement transport pass, after
+the bracket fleets' messages.
+
+So for an own packet, a transport task loads from it like it loads from
+salvage. The other-player case was not resolved here: the fleet did not
+reach the packet. ET-2c resolves it.
+
+Raw evidence: private apparatus, `evidence/et2`.
+
+## ET-2c: another player's packet, inside the galaxy
+
+Question: ET-2b's Q did not reach player 1's packet. Lane G's reading
+(BINARY-ONLY) is that this start's galaxy is 1000..1400 on each axis; a
+fleet's position and waypoint 0 are moved inside it at the start and the
+end of the year, while packets and later waypoints are not. Q and its
+packet started at x = 1500. With both inside, does Q load from another
+player's packet?
+
+**Predictions, pushed before the runs** (apparatus c3dde922, 22:22:22Z;
+runs 22:22:49Z), for the exact start:
+
+- elegy e1798ac: P and Q get 0x11e and load nothing; K stays at (1450, 1200);
+- lane G: Q loads all 100 kT boranium, 0x02b, then 0x04e, and the emptied
+  packet remains; K ends at (1400, 1200) with no message; P repeats ET-2.
+
+**Setup.** `et2c.spec` is `et2.spec` plus two fleets. Q aims at player 1's
+packet 0 (100 kT boranium, bound for planet 12 at packet warp 5) at
+(1300, 1350), starting 50 ly south at (1300, 1400), warp 9, task "load all
+boranium". K is a stationary fleet with no task at (1450, 1200), outside
+the galaxy. One pinned year at cycles 20000 and 30000; the two streams
+agree on everything below.
+
+| Case | Observed | Verdict |
+|---|---|---|
+| Q, another player's packet | It reached the packet at (1293, 1326). It loaded all 100 kT: 0x02b, located at player 1's packet, then 0x04e. Its task was cleared. No 0x11e. The packet remains, empty. | CONFIRMED by prediction (lane G). Elegy differs. |
+| K, outside the galaxy | (1450, 1200) to (1400, 1200), fuel unchanged, no message | CONFIRMED by prediction (lane G). Elegy differs. |
+| P, own packet | As in ET-2 | consistent |
+| E, C, S, N | As in ET-1b | consistent |
+
+So a transport task loads from another player's packet as it does from
+its own. ET-2b's Q result is the clamp: Q started outside the galaxy.
+
+Earlier layouts on this start with objects outside 1000..1400: ET-2b's Q
+and player 1's packet, and CB-056's standard-field group
+(`experiments/cb056/README.md` "Galaxy clamp"). The other ET and CB specs
+place everything inside.
+
+Raw evidence: private apparatus, `evidence/et2/et2c`.

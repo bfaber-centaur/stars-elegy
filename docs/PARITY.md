@@ -6205,6 +6205,29 @@ queue".
   arriving ship got the new default's queue (empty, kept, or auto
   defenses 10). So the record is applied before colonization.
 
+## A transport task aimed at a packet (ET-2)
+
+Status: the own-packet result is MEASURED, and it contradicts every
+prediction pushed before the runs (elegy 0a1c002 and the `MESSAGES.md`
+0x11e wording). The other-player case and the galaxy clamp are CONFIRMED
+by prediction in ET-2c (lane G's BINARY-ONLY reading, pushed before the
+runs for the exact start). Results:
+`experiments/et/README.md` "ET-2". Raw evidence: private apparatus
+`evidence/et2`. The fleets ran one pinned year in two streams, which agree.
+
+| Case | Setup | Observed | Result |
+|---|---|---|---|
+| P | A freighter reaches player 0's own packet (100 kT ironium) with "load all ironium" at its last waypoint | it loaded all 100 kT (0x02b at the packet object), then 0x04e; task cleared; no 0x11e; the packet remains, empty | MEASURED; contradicts `ORDERS.md` "Targets that moved, died or were captured" (its "Arrival" item) and `MESSAGES.md` 0x11e |
+| Q (ET-2b) | The same aimed at player 1's packet, with the packet and the fleet starting outside the galaxy (x = 1500) | no message; it ended at (1400, 1300); waypoint 1 still aims at player 1's packet with the transport task | MEASURED; explained by the clamp below: the fleet started outside the galaxy, and (1400, 1300) matching player 0's packet was a coincidence |
+| Q (ET-2c) | The same with player 1's packet and the fleet inside the galaxy, 50 ly apart | it loaded all 100 kT boranium (0x02b at player 1's packet), then 0x04e; task cleared; no 0x11e; the packet remains, empty | CONFIRMED by prediction (lane G); Elegy e1798ac sends 0x11e and loads nothing |
+| K (ET-2c) | A stationary fleet with no task placed outside the galaxy at (1450, 1200); the galaxy is 1000..1400 on each axis in this start | it ended at (1400, 1200), no message, no fuel used | CONFIRMED by prediction (lane G's clamp reading); Elegy leaves it at (1450, 1200) |
+
+Earlier layouts with objects outside 1000..1400 in this start: ET-2b
+(above), and `experiments/cb056/cb056m.spec`, whose 16 fleets for the
+20,000 standard field started at y 1460..1542 and ended at y = 1400
+(`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
+did.
+
 ## An empty transport task and 0x04e (ET-1)
 
 Status: CONFIRMED by prediction (elegy 84af588; the numbers for the
