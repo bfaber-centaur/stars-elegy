@@ -134,7 +134,7 @@ def orders_of(xpath, nplayers):
             out.append({'kind': 'planet_settings', 'planet': u16(r, 0), 'leftover_to_research': bool(w1 & 1),
                         'packet_destination': pd - 1, 'packet_warp': (w1 >> 11 & 15) + 4, 'route_to': rd - 1})
         elif s.startswith('order type=46 '):
-            # the player's default queue (stars-elegy #158, ORDERS.md "The player's default
+            # the player's default queue (ORDERS.md "The player's default
             # queue"): the client adds it when its own default template
             # differs from the stored one. Read as the player record's layout
             # (bit 0 of the first byte leftover to research, the second byte
