@@ -873,8 +873,16 @@ stolen 23 and 88 stored as 12 and 44).
     field, going round (construction with propulsion current, biotech
     with construction current), and the other chosen fields ended at
     850, 10 short of the new cost.
-  - These are outcomes. The runs do not show the mechanism that produces
-    them.
+  - The mechanism (BINARY-ONLY): the fields are checked in passes in field
+    order. In the first pass the current field receives this year's
+    research when its turn comes, and every other field receives its
+    share at that same moment. So the fields before the current one are
+    checked first with only their stored research, then the current
+    field, then the fields after it with their shares. A further pass
+    then checks every field again in field order, which is when the
+    fields before the current one are checked with their shares. Passes
+    repeat while a field levelled or the current field switched. Both
+    outcomes above follow from this.
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
 - When the current field reaches 26 and the next-field choice is "same
@@ -905,6 +913,16 @@ stolen 23 and 88 stored as 12 and 44).
   `players` the players still in the game; one message per field
   (CONFIRMED, KX-003 S3L: the other player spent 355 on weapons and the SS
   player 95 on energy; it ended with weapons 88 and energy 95 + 23 = 118).
+  - The step happens only when **more than one** player is still in the
+    game. BINARY-ONLY; the one-player games agree (PG, KX-001, KX-002: no
+    stealing, though the formula would give an SS player half its own
+    research).
+  - `spent` sums every player's research, eliminated players included (they
+    have none to add). A Generalized Research player's spending counts in
+    full in every field it fed. `players` leaves eliminated players out.
+    BINARY-ONLY.
+  - Fields whose stolen research reaches a level are then levelled in field
+    order, energy first, after every player's own level-ups (BINARY-ONLY).
 
 Vectors, CONFIRMED (PG003: one player, energy current, next "same field",
 other levels 0, 0, 0, 5 (electronics), 0; research = all resources):

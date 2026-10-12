@@ -467,7 +467,12 @@ A captured planet then belongs to the winning player as a new colony
 - the new owner makes one **tech attempt**, exactly as in `COMBAT.md`, Tech
   from battle, steps 1–5 (MEASURED, TK-115: gains only in a field where the
   old owner was ahead, never more than one level a year; the draw order is
-  BINARY-ONLY). The "seen" levels are the **old owner's current
+  BINARY-ONLY). Each capture is an attempt, and a capture that gains
+  nothing is a failed attempt, not a missing one. In TK-115 the attacker
+  was one field behind and captured two planets: it gained in 5 of 8
+  streams, against about 0.55 for two attempts. In TK-120-A the attacker
+  was four fields behind (about 0.50 per attempt) and gained nothing in
+  its one stream. The "seen" levels are the **old owner's current
   levels** in each field, and no Mystery Trader item has a chance, so step 3
   always makes its 13 `rand(13)` draws and gives nothing. The attempt
   shares the "already gained this turn" mark with battles and scrapping:
