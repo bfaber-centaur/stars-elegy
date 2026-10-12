@@ -1287,8 +1287,9 @@ A tech attempt, for one player:
    doubled cost, i.e. the normal cost. This ends the attempt.
 5. A success (step 3 or 4) marks the player as having gained this turn.
 
-With no trader items in play and exactly one field behind, the chance is
-`½ · (1 − (5/6)^6) ≈ 0.33` per attempt.
+With no trader items in play and `k` fields behind, the chance is
+`½ · (1 − ((6 − k)/6)^6)` per attempt: about 0.33 for one field, 0.46 for
+two, 0.49 for three and 0.50 for four or more.
 
 **Mystery Trader chances** (CONFIRMED, CB-048: 20 streams and a 12-stream
 control, `PARITY.md` "Round 7"; consistent with CB-046 per stream,
