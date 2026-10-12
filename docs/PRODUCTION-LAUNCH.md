@@ -55,9 +55,15 @@ and is seen like any fleet. It does not move until next year.
   A starbase destroyed in battle does the same, after that year's
   production (CONFIRMED, CB-047). So only a hand-built queue at a planet
   without a starbase reaches this check.
-- The owner must have the technology for the hull and every part of the
-  design. If not, the item builds nothing and the owner is told the plans
-  were lost (BINARY-ONLY).
+- The owner must be able to build the hull and every part of the design,
+  checked when the item completes (BINARY-ONLY). Each must be fully
+  researched, allowed to the owner's race, and, for a Mystery Trader
+  item, owned: the same rule as `COMPONENTS.md` "Who can build what". If
+  any fails, the item builds nothing and the owner is told the plans were
+  lost (`MESSAGES.md` 0x04f). Reading a design applies only the research
+  part of this rule (`ORDERS.md` "Range and legality clamps", the design
+  legality items). So a design holding a part the race may not use, or an
+  unowned Mystery Trader part, is stored but cannot be built.
 - **The host does not check the starbase's dock** (LEGACY BUG). The
   original client offers ships only at a starbase with a dock, and only up
   to the dock's hull mass (200 kT for a Space Dock), but the host builds
@@ -74,7 +80,20 @@ the resources are already spent and the item is removed from the queue (as `KERN
 finished non-auto item). CONFIRMED for minerals at the fleet limit
 (SL-09: the planet ended 12/6/13 kT of Fe/Bo/Ge below its control); the
 resource share could not be tested there (both players at tech 26, so no
-research accumulates), and is BINARY-ONLY.
+research accumulates), and is BINARY-ONLY. The rest of this paragraph is
+BINARY-ONLY:
+
+- **What is spent.** The checks run only when at least one unit
+  completes, after its cost is paid. The spend is what a successful
+  build would pay that year: each completed unit's remaining cost (the
+  whole cost from 0%, the last hundredth from 99%), and any progress paid toward
+  the item's next unit.
+- **The queue.** An item whose units all completed is removed, and
+  production goes on to the next item. An item with units left over is
+  emptied: it builds nothing more, production stops at it for that year
+  as for any unfinished item, and the empty item is dropped when
+  production next reaches it. The progress paid toward its next unit is
+  lost.
 
 ### The new fleet
 
@@ -273,8 +292,12 @@ When the owner already has 512 fleets, a build event makes no new fleet:
 
 Building a starbase design at a planet:
 
-- The owner must have the technology for its hull and parts; otherwise
-  nothing is built and the item is removed, with no message (BINARY-ONLY).
+- The owner must be able to build its hull and parts, by the same rule
+  as ships ("Can the planet build it"). Otherwise nothing is built, the
+  old starbase and the planet's packet settings stay, and the item is
+  removed with no message of its own; only the queue-empty message
+  (`MESSAGES.md` 0x03e) follows if the queue is now empty. The spend and
+  the queue go as for ships. BINARY-ONLY.
 - The new starbase replaces the old one, if any. The owner is told in one
   of three forms, chosen by the new hull's dock (`MESSAGES.md` 0x0cd–0x0cf):
   no dock (Orbital Fort) says it can build no ships; a limited dock
