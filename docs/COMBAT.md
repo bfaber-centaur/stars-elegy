@@ -895,16 +895,23 @@ at the tech from before this year's research.
   salvage was 3/3/3, which is a third of the cost at the old tech
   (14/9/12) less the quarter lost in deep space. The new tech's cost
   (13/8/11) would have given 3/2/3.
+- CONFIRMED for salvage (CB-053, 2 of 2 streams): 24 destroyed Small
+  Freighters, whose owner's lowest field went from 5 to 6 that year,
+  gave the salvage of the cost before the level (108/0/90, as the
+  control). This held whether the level came from the year's research or
+  from research stored before the year (`PARITY.md` "Mismatches shrunk to
+  oracle cases").
 - That target choice uses the same cost is BINARY-ONLY.
 - Production computes its own costs, also at the tech from before this
   year's research (`KERNEL.md` step 4b).
 - A design the owner sends in this year's orders is costed when the
   orders are read, which is also before research (BINARY-ONLY).
-- **Bleeding Edge Technology** (BINARY-ONLY): salvage from such an
-  owner's ships recomputes the destroyed design's cost at the moment of
-  the kill, with the owner's tech then, which is after this year's
-  research. Target choice still uses the cost from the start of the
-  generation.
+- **Bleeding Edge Technology**: salvage from such an owner's ships
+  recomputes the destroyed design's cost at the moment of the kill, with
+  the owner's tech then, which is after this year's research. CONFIRMED
+  for salvage (CB-053 BET arm, 2 of 2 streams): 90/0/78 with the level,
+  102/0/84 in the BET control. That target choice still uses the cost
+  from the start of the generation is BINARY-ONLY.
 
 #### Parts the game drops from a design
 

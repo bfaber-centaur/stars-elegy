@@ -428,9 +428,15 @@ free its number for that year's new ships.
   until the next year (KX-007). RG-001 2432: player 6's fleet 3 colonized
   planet 37 from orbit, and the three ships built at planet 35 became
   fleets 4, 13 and 14.
-- The other causes in the list are BINARY-ONLY in this respect. They agree
-  with all 216 owner-years of KX-007, but none of them happens before
-  production, so the data cannot tell them apart.
+- CONFIRMED again in a controlled case (FN-02..05, 2 of 2 streams each)
+  for colonizing from orbit, colonizing on arrival after movement,
+  scrapping at waypoint 0 and merging at waypoint 0: two ships built
+  beside fleets 1 and 2 became fleets 3 and 4 (control: 0 and 3), and the
+  next year's first new fleet took the freed number 0 (`PARITY.md`
+  "Mismatches shrunk to oracle cases").
+- Giving a fleet away and losing all its ships are BINARY-ONLY in this
+  respect. They agree with all 216 owner-years of KX-007, but none of
+  them happens before production, so the data cannot tell them apart.
 - A fleet deleted outright while its owner's orders are read frees its
   number at once, for any fleet created later in the generation. That
   happens when a merge-fleets order merges it away, or when an order moves
@@ -853,6 +859,20 @@ stolen 23 and 88 stored as 12 and 44).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
+- Generalized Research, order of level-ups (GR-ORDER, MEASURED, 2 of 2
+  streams each; `PARITY.md` "Mismatches shrunk to oracle cases"). A level
+  raises every other field's next cost by 10, so the order decides which
+  of several fields just at their cost levels.
+  - With this year's shares flowing in, each field's share is added and
+    checked in turn, starting with the field after the current one and
+    going round: with propulsion current, construction levelled before
+    biotech and weapons; with construction current, biotech before energy
+    and weapons. RG-001 2433 fits this.
+  - With research already stored and nothing added in the year, the field
+    that levelled was the first from energy to biotech, whatever the
+    current field (weapons with propulsion current, energy with
+    construction current).
+  - How the two orders combine in a year that has both is UNKNOWN.
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
 - When the current field reaches 26 and the next-field choice is "same
