@@ -861,7 +861,7 @@ stolen 23 and 88 stored as 12 and 44).
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
 - Generalized Research, order of level-ups (MEASURED, 2 of 2 streams each
   in the GR-ORDER runs, `PARITY.md` "Mismatches shrunk to oracle cases";
-  RG-001 2433 fits the first order below). A level raises every other
+  RG-001 2433 fits the second outcome below). A level raises every other
   field's next cost by 10, so the order decides which of several fields
   just at their cost levels.
   - With research already stored and nothing added in the year, the field
