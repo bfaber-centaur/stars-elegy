@@ -166,7 +166,8 @@ orbiting it.
 Locations are examined in the order of their first fleet, with fleets
 ordered by owner and then by fleet number. The order only matters for the
 random stream, the plan-0 legacy bug below, and the numbering of
-deep-space salvage made in different battles. CONFIRMED (CB-058, 6 runs):
+deep-space salvage made in different battles. MEASURED (CB-058, 6 runs;
+consistent with Elegy eaa474e):
 player 0's fleet 1 at one point and fleet 3 at another destroyed player
 1's fleets 4 and 2 there. The salvage at fleet 1's point was player 1's
 number 0 and the other number 1, so the order is not by the victims' lowest
@@ -1249,7 +1250,9 @@ cargo. The share is computed as follows (CONFIRMED, CB-058, 6 runs: four
 Large Freighters with 1000/700/333 kT and 500 kT of colonists, killed
 one per kill event in deep space, left salvage of exactly 764/528/257,
 the sum of these shares plus a third of each hull, less a quarter per
-event; losing all cargo with the last ship would give 762/525/258):
+event; losing all cargo with the last ship would give 762/525/258. The
+per-event shares for every kill sequence were pushed before the run; the
+total is Elegy eaa474e applied after the run to the observed kill events):
 
 - If the whole fleet died, the share is all of the fleet's cargo.
 - Otherwise the cargo moved is `C · Σ lost ships·cargo capacity /
