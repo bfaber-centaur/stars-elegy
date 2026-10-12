@@ -906,15 +906,33 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   - **Arrival.** Nothing happens because the target is salvage or a
     packet. Reaching it is an ordinary reached waypoint, and later
     movement of the object is no longer followed. Only the waypoint's
-    task acts. A transport task loads minerals from salvage. Aimed at a
-    packet (or any object other than salvage), a transport task is
-    cancelled with 0x11e (`MESSAGES.md`).
-    **Contradicted for an own packet** (MEASURED, ET-2, `PARITY.md` "A
-    transport task aimed at a packet (ET-2)"): a fleet aimed at its own
-    packet with "load all ironium" loaded all of the packet's 100 kT
-    (0x02b, then 0x04e at its last waypoint), with no 0x11e. Aimed at
-    another player's packet, the fleet did not reach it and got no
-    message (UNRESOLVED, ET-2b).
+    task acts. A transport task loads minerals from salvage or a packet,
+    whoever owns it. Colonist and fuel actions are skipped. Aimed at a
+    minefield, a wormhole or the Trader, the task is cancelled with 0x11e
+    (`MESSAGES.md`). For packets: an own packet is MEASURED (ET-2) and
+    another player's is CONFIRMED by prediction (ET-2c), both in `PARITY.md`
+    "A transport task aimed at a packet (ET-2)": the fleet loaded all
+    100 kT (0x02b, then 0x04e at its last waypoint), got no 0x11e, and the
+    emptied packet stays. That the owner is never checked is BINARY-ONLY.
+    **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY, that a
+    transport task aimed at a packet (or any object other than salvage) is
+    cancelled with 0x11e. ET-2 and ET-2c contradicted that for packets.
+  - **Outside the galaxy.** The waypoint check does not clamp packets,
+    so a packet, and a waypoint aimed at it, can lie outside the galaxy.
+    It does clamp each fleet's own position and its waypoint 0, each axis
+    into 1000 to 1000 + W (`OBJECTS.md` gives W).
+    - A fleet outside the box at the start of the year is moved onto its
+      edge, with no message and no fuel used: CONFIRMED by prediction for
+      a stationary fleet (ET-2c fleet K, (1450, 1200) to (1400, 1200) in a
+      1000..1400 galaxy).
+    - That waypoint 0 is clamped and later waypoints are not, and that the
+      end-of-year check clamps again, are BINARY-ONLY. The end-of-year
+      clamp is inferred from ET-2b fleet Q (MEASURED), which it fits
+      exactly: Q's start (1500, 1350) is clamped to (1400, 1350); it flies
+      81 ly at warp 9 toward the packet's moved position (1478, 1288),
+      99.6 ly away, reaching (1463, 1300) (fuel 300 to 48 is 81 ly); it
+      ends at (1400, 1300). It never reached the packet, so its task did
+      not act and it got no message.
   - **Packets and salvage alike.** The same rules hold for both. Only the
     packet moves, so only for a packet does tracking change the
     coordinates.
@@ -954,6 +972,19 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     the two paths can pick different fleets. Which fleet the second path
     picks among several is not pinned. With no fleet left there, one path
     keeps plain coordinates and the other can target the planet.
+  - **Waypoint 0, following** (BINARY-ONLY). The same two paths hold
+    when B's order aims waypoint 0 of a fleet with no other waypoint at
+    F, which is how a fleet is told to follow another. B replayed first:
+    removing F retargets this waypoint like any other, normally to Y. A
+    replayed first: the order is still applied, with F's stale id, since
+    a waypoint edit checks only that the ordering fleet exists and the
+    index is in range, not the target. The start-of-year waypoint check
+    covers waypoint 0 of exactly these fleets (one waypoint, aimed at a
+    fleet), and picks one of A's fleets at the waypoint's coordinates
+    with the same draws as above. The follow step (`KERNEL.md` 1a, step
+    3) then treats the chosen fleet as the leader. With none of A's fleets there, the
+    stale id stays, and the follow step sends 0x138 (leader gone) and the
+    fleet does not follow.
   - The waypoint is not dropped and the order is not rejected. The
     write-time rule above (WU-A) then saves B's target in B's next file
     as a deep-space waypoint at the chased fleet's position. WU-A covers
