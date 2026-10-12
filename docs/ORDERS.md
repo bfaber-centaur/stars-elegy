@@ -103,7 +103,30 @@ the production queues stand, research allocation is unchanged. No cheater or
 tamper flag is set for simply not submitting. The year generates normally
 for that player from their standing orders.
 
-## Per-order validation
+## The player's default queue
+
+Each player has a default production queue (at most 12 items) and a default
+"only leftover to research" setting, which a new colony or a captured planet
+receives (`TAKEOVER.md`). The order file can carry one record (block type 46)
+holding the whole setting: the leftover flag, the item count and the items.
+The host copies the record over the player's stored setting, during turn
+generation only (BINARY-ONLY). The setting is unchanged in a year whose file
+has no such record, and in a year with no file.
+
+**When the client writes the record** (BINARY-ONLY, except where marked).
+The client keeps its own default template among its settings, separate
+from the game. When it saves a non-computer player's order file, it compares
+the player's stored setting (the leftover flag, the count and the items)
+with that template. If they differ, it adds the record carrying the
+**template**. A client that has no default template saved has an empty one:
+no items and leftover off. So the first order file such a client writes for
+a player whose default is not empty resets that default to empty and the
+leftover flag to off, even though the player gave no production order.
+Later files carry no record, because the setting now matches. MEASURED
+(RG-002): year 1's client file held the record with no items, and the
+host's default queue became empty. The files for years 2 to 6 held no such
+record.
+
 
 When a file is accepted, its orders are applied one at a time. Each order is
 validated on its own. The original's validation is **uneven** across kinds,

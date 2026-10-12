@@ -3706,6 +3706,13 @@ queue and its "only leftover to research" setting, in queue order. Alternate
 Reality skipped items 0–2 (auto mines, factories, defenses) and Claim
 Adjuster items 4–5 (auto minimum/maximum terraform); WM kept all five.
 
+**The client resets the default queue (MEASURED, RG-002).** In the RG-002
+recording, player 0's first client-written order file (year 1) gave no
+production order but held the default-queue record (block type 46) with no
+items and leftover off. The host's default queue for player 0 became
+empty. The files for years 2 to 6 held no such record. Rule and
+conditions: `ORDERS.md` "The player's default queue".
+
 **Claim Adjuster capture.** TK-108 (CA attacker, CA defender) ended with
 the captured planet at 50/50/50, its race's ideal: the new CA owner's
 end-of-year terraforming covers any revert, so this case could not show it
