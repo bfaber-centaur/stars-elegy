@@ -44,3 +44,40 @@ Pinned at cycles 20000 and 30000.
 
   The two cases together tell the four orders apart.
 - Every field's level and stored research after the year is recorded.
+
+## Results of the stored-research cases
+
+Cycles 20000 and 30000 agreed.
+
+| case | levelled | stored after (Fe.. fields: energy, weapons, propulsion, construction, electronics, biotech) |
+|---|---|---|
+| `gr-ctl-weapons` | weapons → 6 | 0,0,0,0,0,0 |
+| `gr-ctl-con` | construction → 6 | 0,0,0,0,0,0 |
+| `gr-prop` | **weapons** → 6 | 0,0,0,850,0,850 |
+| `gr-con` | **energy** → 6 | 0,850,0,0,0,850 |
+
+- **MEASURED (2 of 2 streams):** research already stored is levelled
+  field by field from energy to biotech, whatever the current field. The
+  cyclic order from the field after the current one failed in both
+  cases. Exactly one field levelled each time, and the others kept 850,
+  10 short of the new cost 860, as predicted.
+- These cases add no research in the year, so they test the order of the
+  check, not how a year's Generalized Research shares are added.
+
+## Follow-up with research flowing (committed before its runs)
+
+Calibration `gr-cal` (every field at 5, research 100%, no queue,
+propulsion current, nothing stored): one year added 18 to propulsion and
+6 to every other field (35 resources).
+
+`gr-prop-flow` and `gr-con-flow` repeat `gr-prop` and `gr-con` with
+research 100% and no queue, and each chosen field holding 844, so each
+reaches exactly 850 only with this year's 6.
+
+Predictions:
+- If the shares are all added and then checked in the order measured
+  above: weapons (`gr-prop-flow`) and energy (`gr-con-flow`).
+- If each field is checked as its share is added, starting after the
+  current field: construction and biotech.
+- In every case exactly one field levels; the others end at 850 with 10
+  short. Stored values after the year are recorded.
