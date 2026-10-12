@@ -967,6 +967,19 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     the two paths can pick different fleets. Which fleet the second path
     picks among several is not pinned. With no fleet left there, one path
     keeps plain coordinates and the other can target the planet.
+  - **Waypoint 0, following** (BINARY-ONLY). The same two paths hold
+    when B's order aims waypoint 0 of a fleet with no other waypoint at
+    F, which is how a fleet is told to follow another. B replayed first:
+    removing F retargets this waypoint like any other, normally to Y. A
+    replayed first: the order is still applied, with F's stale id, since
+    a waypoint edit checks only that the ordering fleet exists and the
+    index is in range, not the target. The start-of-year waypoint check
+    covers waypoint 0 of exactly these fleets (one waypoint, aimed at a
+    fleet), and picks one of A's fleets at the waypoint's coordinates
+    with the same draws as above. The follow step (`KERNEL.md` 1a, step
+    3) then treats the chosen fleet as the leader. With none of A's fleets there, the
+    stale id stays, and the follow step sends 0x138 (leader gone) and the
+    fleet does not follow.
   - The waypoint is not dropped and the order is not rejected. The
     write-time rule above (WU-A) then saves B's target in B's next file
     as a deep-space waypoint at the chased fleet's position. WU-A covers

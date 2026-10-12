@@ -72,7 +72,9 @@ order shown. "Fleet order" means by owner, then by fleet number
    player, the last of them always 0, and they are the first draws of the
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
-   The permutation itself is BINARY-ONLY. With orders a client can save,
+   The permutation itself is BINARY-ONLY. It is used only to order the
+   replay; no later step of the year reuses it (BINARY-ONLY). With
+   orders a client can save,
    it is observable in two known ways. The first is a cargo gift to another
    player's fleet or planet: that gift is credited **in place** during the
    giver's replay (MEASURED — fleets TK-406/407/409, planets TK-405/412),
