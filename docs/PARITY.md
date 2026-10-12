@@ -2516,14 +2516,21 @@ stars-decomp checker at 4a8c82b except where noted below.
   from R' = min(R − 1, R·L/dp) passed again through deflector and range
   dropoff (L leftover, dp the damage that was applied). A checker using
   only this rule replayed all 59 hits of CB-010 (Colloidal Phaser frigates
-  vs Beam-Deflector frigates); carrying the raw leftover mismatched 8.
+  vs Laser frigates); carrying the raw leftover mismatched 8. Correction
+  (2026-10-12): CB-010's targets were built with a Beam Deflector in the
+  Frigate's shield-or-armor slot, which does not take it. The game
+  dropped the deflector, and every record shows deflector 100 and mass
+  18. So CB-010 tested the carry without a deflector. The same applies to
+  CB-009's Deflector freighters and gunboats (K2, K3) and to the Fuel Tank
+  in K6's frigates (`COMBAT.md` "Parts the game drops from a design").
 - **Beam target order (Q-6, CONFIRMED in 4 cases × 2 seeds).** Among
   stacks in range the attacker chose: a 5-ship stack over a 3-ship stack
   of the same design; the more expensive design at equal armor (Fuel Tank
-  frigates); an already damaged stack over a fresh one; the lower token
-  index between identical stacks. In one of the two seeds or both, the
-  first three choices went to the stack with the higher token index, so
-  they are not the index rule.
+  frigates; the game dropped the tank from the design, but it still
+  counted in that year's cost); an already damaged stack over a fresh
+  one; the lower token index between identical stacks. In one of the two
+  seeds or both, the first three choices went to the stack with the higher
+  token index, so they are not the index rule.
 - **Torpedo misses against shields (Q-14, CONFIRMED).** A salvo that
   misses a shielded target writes a miss record (flags 0xc4) before the
   hit record; the misses do floor(misses × damage / 8) to shields in
