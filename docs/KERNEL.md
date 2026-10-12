@@ -880,9 +880,25 @@ stolen 23 and 88 stored as 12 and 44).
     checked first with only their stored research, then the current
     field, then the fields after it with their shares. A further pass
     then checks every field again in field order, which is when the
-    fields before the current one are checked with their shares. Passes
-    repeat while a field levelled or the current field switched. Both
-    outcomes above follow from this.
+    fields before the current one are checked with their shares. After
+    that, a further pass follows only when the current field switched. A
+    level-up alone starts no new pass, but since a level only raises
+    costs, a repeat could not level anything more. Both outcomes above
+    follow from this.
+  - Players without Generalized Research go through the same passes
+    (BINARY-ONLY). The only difference is that the current field receives
+    the year's research at its turn and no other field receives a share.
+    So a non-current field holding stored research at its cost levels
+    before the current field gets this year's research, if it comes
+    earlier in field order, and after it otherwise. The level then raises
+    the current field's cost. Without Generalized Research, a stored
+    amount at or over its cost at the start of the year is not reached
+    in ordinary play. Research gained from stealing or battle is checked
+    for level-ups when it is gained, and the Mystery Trader grants a level
+    directly. A field
+    switch carries the leftover into the new current field, which is
+    checked in the same pass if it comes later in field order, otherwise
+    in the next pass. No vector covers this case.
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
 - When the current field reaches 26 and the next-field choice is "same
