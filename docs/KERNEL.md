@@ -815,7 +815,9 @@ mining, and no homeworld floor at an unowned planet.
     movement on the fleet as it then stands, so a fleet that arrived
     this year with the task and no further waypoint mines that year. A
     fleet that left does not mine, and neither does a fleet still there
-    that has a further waypoint.
+    that has a further waypoint. CONFIRMED for the arrival year and the
+    further waypoint (RM-4 A and B, `PARITY.md` "Remote-mining refusals
+    (RM)"; prediction elegy 7fb6dfe).
   - **After step 4.1.** A fleet that mined here is skipped at step 6c,
     and it keeps its task.
   - **Draws.** Each step draws one `rand(100)` per mineral with a non-zero
@@ -831,7 +833,8 @@ mining, and no homeworld floor at an unowned planet.
   fleet gets the "planet is inhabited" refusal as at any owned planet
   (BINARY-ONLY; the refusal itself CONFIRMED, `MESSAGES.md` 0x076).
 - **Messages.** Remote mining that succeeds sends no message
-  (BINARY-ONLY). Only the refusals do, each cancelling the task: no
+  (BINARY-ONLY; MEASURED for an AR owner's own miner in step 4.1: oracle,
+  RM-4 A, two streams). Only the refusals do, each cancelling the task: no
   mining modules (0x075, CONFIRMED, CS-003), planet inhabited (0x076,
   CONFIRMED, TK-111) and deep space (0x077, CONFIRMED, RM-3) (`MESSAGES.md`).
 - **Order of the checks** (BINARY-ONLY except where marked). Only a fleet that did not move

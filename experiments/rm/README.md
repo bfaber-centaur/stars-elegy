@@ -71,3 +71,47 @@ no starbase (`PARITY.md` KX-001 Z1). It is reproduced here, not a new
 finding. The 0x076 refusal itself is already CONFIRMED (TK-111).
 
 Raw evidence: private apparatus, `evidence/rm/rm2h`.
+
+## RM-4: an AR owner's remote miner at its own AR planet in the arrival year
+
+Checks `KERNEL.md` "Remote mining", "When an AR owner's own miners mine":
+the BINARY-ONLY claim that such a fleet mines in the year it arrives, with
+no did-not-move test, unless it has a further waypoint.
+
+**Prediction.** elegy 7fb6dfe (economy). Elegy's numbers for this exact
+start were computed from that commit and pushed to the private apparatus
+before the runs: computed 2026-10-12T20:51:34Z, commit time 20:51:50Z.
+The runs started at 20:52:03Z.
+
+**Setup.** `rm4.spec` (`combatlab build`) on the Combat Lab base:
+
+- Player 1 is a human Alternate Reality player at tech 26.
+- Its miner design is a Mini-Miner with two Robo-Miners, 24 robot points.
+- Colonies 4, 5 and 12 are identical: population 500, concentrations
+  50/50/50, surface 0, no installations. Each has a Space Station.
+- Each miner starts 20 ly out at warp 5, with a remote-mining waypoint.
+
+One pinned year (2400 to 2401) was generated at cycles 20000 and 30000.
+
+| Case | Setup | Elegy (pushed before) | Observed, both streams | Verdict |
+|---|---|---|---|---|
+| A | Miner 1/1 arrives at AR colony 4, no further waypoint | surface 23/23/23, fractions 231 | 23/23/23, fractions 231 | CONFIRMED: mines in the arrival year (+12 per mineral over D) |
+| B | Miner 1/2 arrives at AR colony 5, with a further waypoint | 11/11/11, fractions 244 (= D) | 11/11/11, fractions 244 | CONFIRMED: a further waypoint means no mining |
+| D | AR colony 12, no miner | 11/11/11, fractions 244 | 11/11/11, fractions 244 | baseline |
+| U | Miner 1/3 arrives at unowned planet 11 | concentrations 50/50/50, fractions 0 | 50/50/50, fractions 0 | CONFIRMED: not mined in the arrival year (as T-35) |
+
+The fleets:
+
+- All three keep the remote-mining task. Fleet 1/2 keeps its waypoint
+  onward.
+- Player 1's file has no remote-mining message and no 0x04e for any of
+  the three fleets. This matches `MESSAGES.md` 0x04e (b), which leaves out
+  remote mining. MEASURED: messages were not in the prediction.
+- Elegy 7fb6dfe sends its "finished orders" event for 1/1 and 1/3. That
+  was not part of the prediction, but it differs from the oracle here.
+
+The two streams agree on every case planet. They differ only at player
+1's homeworld, ironium 428 against 427 (the random +1). The case colonies
+show no +1 in either stream.
+
+Raw evidence: private apparatus, `evidence/rm4`.
