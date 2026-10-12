@@ -6207,7 +6207,7 @@ queue".
 
 ## Remote-mining refusals (RM)
 
-Status: CONFIRMED for RM-1a, RM-1b, RM-2 (task kept), RM-3 and RM-4. RM-2's
+Status: CONFIRMED for RM-1a, RM-1b, RM-2 (task kept), RM-3 and RM-4 (mining and tasks; its messages are MEASURED). RM-2's
 "no message" is CONFIRMED by RM-2h, which reran it with a human AR
 player. Predictions were pushed before the runs
 (`experiments/rm/PREDICTIONS.md`, bf9518f). Results:
@@ -6221,7 +6221,8 @@ player. Predictions were pushed before the runs
 | RM-2 | AR remote miner at another player's planet, two years | task kept both years; the computer player's `.M` has no messages | task CONFIRMED; message not observable |
 | RM-3 | Remote miner in deep space | 0x077, then 0x04e; task cleared | CONFIRMED |
 | RM-2h | A human AR player's remote miner at another human player's colony (Combat Lab base, one year, two streams) | no message to either player; task kept; nothing mined | CONFIRMED (prediction: elegy f61e7c4, `engine/remotemining.go:56–59`) |
-| RM-4 | A human AR player's remote miners arriving (Combat Lab base, one year, two streams): A at its own AR colony with no further waypoint; B the same with a further waypoint; U at an unowned planet; D a colony with no miner | A mined in the arrival year (+12 each over D); B and U mined nothing; tasks kept; no remote-mining message and no 0x04e | CONFIRMED (prediction: elegy 7fb6dfe, numbers for the exact start pushed before the runs) |
+| RM-4 | A human AR player's remote miners arriving (Combat Lab base, one year, two streams): A at its own AR colony with no further waypoint; B the same with a further waypoint; U at an unowned planet; D a colony with no miner | A mined in the arrival year (+12 each over D); B and U mined nothing; tasks kept | CONFIRMED (prediction: elegy 7fb6dfe, numbers for the exact start pushed before the runs) |
+| RM-4 messages | The same runs | no remote-mining message and no 0x04e for any of the three fleets | MEASURED (messages were not in the prediction). Elegy 7fb6dfe differs: it sends EventFleetArrived for 1/1 and 1/3 |
 
 The setup is RG-002's settled 2462 files with four fleets added (a
 start-state edit, not client orders). Each case was observed once. RM-2h

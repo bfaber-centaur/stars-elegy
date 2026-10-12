@@ -833,7 +833,8 @@ mining, and no homeworld floor at an unowned planet.
   fleet gets the "planet is inhabited" refusal as at any owned planet
   (BINARY-ONLY; the refusal itself CONFIRMED, `MESSAGES.md` 0x076).
 - **Messages.** Remote mining that succeeds sends no message
-  (BINARY-ONLY; CONFIRMED for an AR owner's own miner in step 4.1, RM-4 A). Only the refusals do, each cancelling the task: no
+  (BINARY-ONLY; MEASURED for an AR owner's own miner in step 4.1: oracle,
+  RM-4 A, two streams). Only the refusals do, each cancelling the task: no
   mining modules (0x075, CONFIRMED, CS-003), planet inhabited (0x076,
   CONFIRMED, TK-111) and deep space (0x077, CONFIRMED, RM-3) (`MESSAGES.md`).
 - **Order of the checks** (BINARY-ONLY except where marked). Only a fleet that did not move

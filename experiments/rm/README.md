@@ -106,7 +106,7 @@ The fleets:
   onward.
 - Player 1's file has no remote-mining message and no 0x04e for any of
   the three fleets. This matches `MESSAGES.md` 0x04e (b), which leaves out
-  remote mining.
+  remote mining. MEASURED: messages were not in the prediction.
 - Elegy 7fb6dfe sends its "finished orders" event for 1/1 and 1/3. That
   was not part of the prediction, but it differs from the oracle here.
 
