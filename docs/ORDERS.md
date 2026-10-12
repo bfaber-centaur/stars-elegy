@@ -149,8 +149,11 @@ BINARY-ONLY.
 - **Design legality (tech strip).** A design that lists a component the
   player has not yet earned the tech for, or that the chosen hull does not
   allow in that slot, has that component **dropped** from the stored design
-  rather than rejecting the whole design. The stored design's mass and cost
-  reflect the components that survived the strip. (This is the same
+  rather than rejecting the whole design. The stored design's mass reflects
+  the components that survived the strip. Its cost does too from the next
+  generation; in the generation that reads the design, the cost still
+  includes the dropped parts (`COMBAT.md` "Parts the game drops from a
+  design"). (This is the same
   "strip parts the owner lacks" behavior noted for existing designs in
   `PARITY.md`/`ORACLE.md`.)
 - **Design legality (Mystery Trader parts kept).** CONFIRMED (oracle,

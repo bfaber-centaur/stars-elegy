@@ -416,7 +416,9 @@ part mass (the record matched the part-table sum; see `PARITY.md`,
 ### Token values (CONFIRMED, CB-000..CB-008 and the round-2 replays)
 
 Per ship, from the design (computed fresh from parts: the game recomputes
-armor, it does not trust a stored value):
+armor, it does not trust a stored value). A part in a hull slot that does
+not take it is not part of the design by then and adds nothing here (see
+"Parts the game drops from a design"):
 
 - **Initiative**: hull initiative + 1 per Battle Computer, 2 per Battle
   Super Computer, 3 per Battle Nexus; at most 63.
@@ -875,12 +877,65 @@ used to leave out:
 - Bleeding Edge Technology never doubles terraform or planetary items.
 - Claim Adjuster pays half the resources for terraform items.
 
-In combat the design cost is used only for target choice ("Cost" above).
-Oracle evidence from combat is indirect: target choice among designs of
-different cost in CB-009 (Humanoid JOAT at tech 26). Colony-ship minerals
-in TK T-30 (`TAKEOVER.md`, Colonization) match the base cost and
-miniaturization exactly at tech 3 and 26, including the rounding of the
-reduction.
+In combat the design cost is used for target choice ("Cost" above) and
+for salvage ("Salvage" below). Oracle evidence from combat: target choice
+among designs of different cost in CB-009 (Humanoid JOAT at tech 26), and
+the salvage measurements below. Colony-ship minerals in TK T-30
+(`TAKEOVER.md`, Colonization) match the base cost and miniaturization
+exactly at tech 3 and 26, including the rounding of the reduction.
+
+**Which year's tech.** Each design's cost is computed when the game reads
+the game file at the start of the generation, with the owner's tech and
+race at that moment. It is not recomputed when research raises a level
+later in the same generation. So target choice and salvage use the cost
+at the tech from before this year's research.
+
+- MEASURED once (RG-001 2434): player 1's Mini-Colony Ship was destroyed in
+  deep space in a year in which player 1's research raised a level. The
+  salvage was 3/3/3, which is a third of the cost at the old tech
+  (14/9/12) less the quarter lost in deep space. The new tech's cost
+  (13/8/11) would have given 3/2/3.
+- That target choice uses the same cost is BINARY-ONLY.
+- Production computes its own costs, also at the tech from before this
+  year's research (`KERNEL.md` step 4b).
+- A design the owner sends in this year's orders is costed when the
+  orders are read, which is also before research (BINARY-ONLY).
+- **Bleeding Edge Technology** (BINARY-ONLY): salvage from such an
+  owner's ships recomputes the destroyed design's cost at the moment of
+  the kill, with the owner's tech then, which is after this year's
+  research. Target choice still uses the cost from the start of the
+  generation.
+
+#### Parts the game drops from a design
+
+When the game reads a design, it drops a part whose hull slot does not
+take that kind of part, as well as the other parts `ORDERS.md` "Range and
+legality clamps" lists under "Design legality (tech strip)". The written
+files no longer have the part. But the cost is computed just before the
+drop, so in the generation that reads the design:
+
+- **The dropped part still counts in the design cost**, so in target
+  choice and salvage. MEASURED (CB-009). In K2, two kill events of three
+  Small Freighters, whose Beam Deflector sat in the shield-or-armor slot,
+  left salvage of 6 ironium and 12 germanium. With the deflector's cost
+  each event gives 4/0/7, so 3/0/6 after the quarter lost. Without it
+  the germanium would be 8. In K6, frigates with a Fuel Tank in the
+  scanner-only slot were chosen as the more expensive design at equal
+  armor.
+- **Everything computed from the design's parts leaves it out.** MEASURED
+  (CB-009, two runs, and CB-010: 54 tokens in 12 battle records): the
+  Beam Deflectors gave deflector 100 (none), and every token's mass left
+  the dropped part out. The deflector frigates weighed 18, not the 19 of
+  the design as built, and the Fuel Tank frigates 19, not 22. The
+  generated host file held each design without the part.
+- Since the part is gone from the design, it adds nothing to scanning,
+  fuel capacity, cargo, movement or any other use of the design's parts
+  (BINARY-ONLY, as a consequence of the drop).
+- The stored armor is computed with the cost, so an armor part dropped
+  this way would still count in battle armor that year (BINARY-ONLY: not
+  observed).
+- From the next generation the cost is computed from the design without
+  the part.
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
@@ -1106,6 +1161,18 @@ The battle record goes to every player in the battle's player list `P`
 (the players with tokens on the board) and to no one else. A player that
 was present only as an observer gets no record. CB-031-obs: in 12
 streams the observer's file held no record of the battle.
+
+What a hit record shows for a token that the hit destroys:
+
+- **A ship stack**: the damage it had before the hit (`units` and `pct`),
+  not 0 and not the damage that killed it.
+- **A starbase**: `units` 500 and `pct` 100.
+
+MEASURED in the combat corpora (CB-000 to CB-052, the first player's
+generated file of every run, apparatus 8d82607; distinct battle records
+counted once): 2,700 of 2,700 hits that destroyed a whole stack recorded
+the stack's damage before the hit (2,197 of them with damage), and 44 of
+44 hits that destroyed a starbase recorded 500 and 100.
 
 ### Salvage (CONFIRMED, CB-001 B1; CB-011..013 S6/S7, Q-13)
 

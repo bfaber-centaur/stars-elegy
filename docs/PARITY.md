@@ -1775,6 +1775,37 @@ Not covered (BINARY-ONLY in KERNEL): several unrated designs in one
 fleet, a Cheap Engines stall with a warp-10 stack, chasers, and the gate
 for players flagged as cheaters.
 
+### KX-007 — when a fleet number becomes free again
+
+Status: MEASURED for the corpus statistic below, 2026-10-12; CONFIRMED
+for colonizing from orbit and for scrapping. No new oracle run. Script,
+output and hashes are in apparatus `evidence/fleetnum`. Rule: `KERNEL.md`
+"Fleet numbers".
+
+Question: a fleet goes away during a generation. Can a fleet made later
+in the same generation take its number?
+
+Method: the host file before and after every generated year of the
+computer-player corpus (AIX, 2400–2460) and of the recorded RG-001 years.
+The model under test: each owner's new fleets take, in turn, the lowest
+numbers not held by any of that owner's fleets at the start of the year.
+
+| Observation | Count |
+|---|---|
+| Owner-years with new fleets | 216, the model held in all 216 |
+| Vanished fleets numbered below a new fleet of the same owner and year, number not reused that year | 135 of 135 |
+| of which colonized from orbit (before production) | 14 (RG-001 2432 is the same game year as AIX 2432) |
+| of which scrapped by a waypoint-0 scrap order (before production) | 8 |
+| of which other causes, not placed before production by this data | 113 |
+
+Interpretation: a fleet that colonizes from orbit or is scrapped keeps its
+number through the year's production. The number is taken again from the
+next year (for example, player 6's fleet 0, scrapped in the 2405
+generation, was a new fleet 0 in the 2406 one).
+
+Not covered: fleets deleted while orders are read (merge-fleets orders,
+moving all ships out of a fleet), and a transfer's recipient fleet.
+
 ### KB batch 1 — population, resources, mining, AR, remote mining
 
 Status: CONFIRMED, with one refinement (AR planets' own miners). Every case
@@ -2485,14 +2516,21 @@ stars-decomp checker at 4a8c82b except where noted below.
   from R' = min(R − 1, R·L/dp) passed again through deflector and range
   dropoff (L leftover, dp the damage that was applied). A checker using
   only this rule replayed all 59 hits of CB-010 (Colloidal Phaser frigates
-  vs Beam-Deflector frigates); carrying the raw leftover mismatched 8.
+  vs Laser frigates); carrying the raw leftover mismatched 8. Correction
+  (2026-10-12): CB-010's targets were built with a Beam Deflector in the
+  Frigate's shield-or-armor slot, which does not take it. The game
+  dropped the deflector, and every record shows deflector 100 and mass
+  18. So CB-010 tested the carry without a deflector. The same applies to
+  CB-009's Deflector freighters and gunboats (K2, K3) and to the Fuel Tank
+  in K6's frigates (`COMBAT.md` "Parts the game drops from a design").
 - **Beam target order (Q-6, CONFIRMED in 4 cases × 2 seeds).** Among
   stacks in range the attacker chose: a 5-ship stack over a 3-ship stack
   of the same design; the more expensive design at equal armor (Fuel Tank
-  frigates); an already damaged stack over a fresh one; the lower token
-  index between identical stacks. In one of the two seeds or both, the
-  first three choices went to the stack with the higher token index, so
-  they are not the index rule.
+  frigates; the game dropped the tank from the design, but it still
+  counted in that year's cost); an already damaged stack over a fresh
+  one; the lower token index between identical stacks. In one of the two
+  seeds or both, the first three choices went to the stack with the higher
+  token index, so they are not the index rule.
 - **Torpedo misses against shields (Q-14, CONFIRMED).** A salvo that
   misses a shielded target writes a miss record (flags 0xc4) before the
   hit record; the misses do floor(misses × damage / 8) to shields in
