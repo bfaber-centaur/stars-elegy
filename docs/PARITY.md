@@ -6032,6 +6032,24 @@ adjuster worsening or scrapping at a starbase.
   at a starbase, and an IT player's packet costs.
 - The same limits as RG-001 on views and alternative streams.
 
+## The client's default template (DQ-001)
+
+Predictions were pushed to the private apparatus before the runs. Details:
+`experiments/dq001/README.md`; rule: `ORDERS.md` "The player's default
+queue".
+
+- **CONFIRMED (one run per variant).** Player 0's game default was auto
+  mines 10 and auto factories 10. The original client saved with no
+  orders.
+  - With no saved template, it wrote the empty default-queue record, and
+    the default became empty.
+  - With a template equal to the default, it wrote no record.
+  - With a template of auto defenses 10 and leftover on, it wrote that
+    template, and the default became it.
+- **Order within the year: CONFIRMED.** A colony founded that year by an
+  arriving ship got the new default's queue (empty, kept, or auto
+  defenses 10). So the record is applied before colonization.
+
 ## Remote-mining refusals (RM)
 
 Status: CONFIRMED for RM-1a, RM-1b and RM-3; RM-2's task part CONFIRMED,

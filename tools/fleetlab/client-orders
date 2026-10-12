@@ -10,6 +10,7 @@
 # CMDS (one per line, # comments), saves (File > Save), copies the order
 # file GAME.Xn and GAME.Hn into OUTDIR, exits Stars! and stops the oracle.
 # A screenshot follows every command (OUTDIR/screens/NN-verb.png).
+# CLIENT_INI=FILE appends FILE's lines to the guest's STARS.INI first.
 # Run the year afterwards with pinned-turn, using a base directory holding
 # DIR's files plus the order file. OUTDIR holds registered-copy output
 # (order files carry the serial) and screenshots: keep it out of this
@@ -167,6 +168,13 @@ rclick() {
 
 "$O/stop" >/dev/null 2>&1 || true
 "$O/reset" registered >/dev/null
+# CLIENT_INI=FILE: lines appended to the guest's WINDOWS/STARS.INI before the
+# client starts (caller-supplied client settings).
+# The run copy is registration-bearing: keep FILE and OUTDIR private.
+if [[ -n "${CLIENT_INI:-}" ]]; then
+	sed 's/\r*$/\r/' "$CLIENT_INI" >> "$home/run/StarsBox.app/Contents/Resources/c_drive/WINDOWS/STARS.INI"
+	cp "$CLIENT_INI" "$out/client.ini"
+fi
 cp "$dir/$game".* "$games/"
 rm -f "$games/$game.X$xn"
 "$O/start" >/dev/null
