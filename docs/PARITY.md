@@ -5582,6 +5582,9 @@ setup.
   repeats were byte-identical.
 - Every player's orders are in the vector's `orders` block (36 order
   sets, 719 orders). `random_start` gives tick 164 for every year.
+- `rg001.json` chains the six years. `rg001-y1` to `rg001-y6` each hold
+  one year, starting from the original's own files for the year before,
+  so one year's mismatch does not carry into the next.
 - Each year was also generated from the same start and orders at cycles
   3700 and 1490 (other streams). A field whose value differed in either
   one is flagged `sample: true`, and so are the fleets that fought and the
@@ -5591,7 +5594,12 @@ setup.
 ### Observations
 
 - The 2430 battle's setup draws matched the tick-164 stream at draw 206
-  (stars-decomp `tools/starsrng.py`, 57 bits, unique).
+  (stars-decomp `tools/starsrng.py`, 57 bits, unique). The original AIX
+  2430, generated with the computer players planning in the same process,
+  matched the same tick at draw 356. The other years' battles did not
+  check the tick: the tool could not decode the 2431-2433 and 2435
+  records, and the 2434 battles carry too few draws (several unrelated
+  ticks match far down their streams).
 - 8 battles (1, 1, 1, 0, 2 and 3 in 2430..2435), colonizing, scrapping,
   research, design changes, packets, wormholes and messages.
 - Supplying the orders changed no fleet in 2430 compared with the original

@@ -10,6 +10,8 @@ at other cycles values (other random streams).
 The vector starts from year 1's start file and chains: year k's expectations
 are what changed in the host file from year k-1 to year k in the gen stream
 (build_kx.observe, full=True), plus battles, message ids and score records.
+Each year is also written alone as RUN-yK, starting from the original's own
+files for the year before, with the same orders, expectations and samples.
 Every player's orders for every year are decoded into the `orders` block,
 and `random_start` gives the startup tick of the gen stream for each year
 (each year ran in a new process, so each year's stream starts at seeding).
@@ -116,12 +118,15 @@ def build(ev, out):
     st0 = B.state(B.dump(os.path.join(bdir, GAME + '.HST')), B.dump(os.path.join(bdir, GAME + '.XY')), GAME,
                   os.path.join(bdir, GAME + '.XY'))
     n = len(st0['players'])
-    orders, cases, prev = [], [], st0
+    orders, cases, prev, starts = [], [], st0, []
     for k, yd in enumerate(ydirs, 1):
         y = os.path.join(ev, yd)
         for x in sorted(os.listdir(os.path.join(y, 'x')), key=lambda f: int(f.split('.X')[1])):
             player, ords = R.orders_of(os.path.join(y, 'x', x), n)
             orders.append({'year': k, 'player': player, 'orders': ords})
+        b = os.path.join(y, 'gen', 'raw', 'before')
+        starts.append(B.state(B.dump(os.path.join(b, GAME + '.HST')), B.dump(os.path.join(b, GAME + '.XY')), GAME,
+                              os.path.join(b, GAME + '.XY')))
         adir = os.path.join(y, 'gen', 'raw', 'after')
         st1, exps = K.observe(prev, adir, GAME, k, full=True)
         exps = C.mark_samples(exps, year_battles(adir), single=True)
@@ -144,6 +149,18 @@ def build(ev, out):
            'random_start': [{'stream': '', 'year': k, 'tick': TICK[r['cycles']]} for k in range(1, len(ydirs) + 1)],
            'cases': cases}
     O.write(out, run, vec)
+    # One-year restarts: year k from the original's own files for the year
+    # before (the chained vector's state after year k-1), so a mismatch in
+    # one year does not carry into the next.
+    for k, (sk, ck) in enumerate(zip(starts, cases), 1):
+        one = dict(vec, id='%s-Y%d' % (r['id'], k), years=1, initial_state=sk,
+                   title='%s: year %d alone, from the original\'s files for the year before' % (r['id'], k),
+                   orders=[dict(o, year=1) for o in orders if o['year'] == k],
+                   random_start=[{'stream': '', 'year': 1, 'tick': TICK[r['cycles']]}],
+                   cases=[dict(ck, id='%s-Y%d-%s' % (r['id'], k, ck['id'].rsplit('-', 1)[1]),
+                               setup='year %d alone (%s)' % (k, r['setup']),
+                               expect=[dict(e, year=1) for e in ck['expect']])])
+        O.write(out, '%s-y%d' % (run, k), one)
     ne = sum(len(c['expect']) for c in cases)
     ns = sum(1 for c in cases for e in c['expect'] if e.get('sample'))
     print('%s: %d years, %d fleets at start, %d order sets (%d orders), %d expectations, %d samples' % (

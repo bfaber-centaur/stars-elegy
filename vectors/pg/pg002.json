@@ -261,6 +261,7 @@
     "x": 1113,
     "y": 1298,
     "owner": 0,
+    "homeworld": true,
     "concentrations": [
      30,
      113,

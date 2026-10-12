@@ -48,7 +48,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
-| `rg` | RG-001 | 6 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start` | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
+| `rg` | RG-001, RG-001-Y1..Y6 | 12 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start`. RG-001 chains the six years; RG-001-Yk is year k alone, from the original's own files for the year before | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
@@ -93,7 +93,8 @@ file, so nothing in it is a default you have to guess.
   resource, factory and mine settings, research cost per field, the leftover
   points spend (`UNIVERSE.md` "Leftover advantage points") and race stat 15 (PARITY "Turn-time penalty"). An out-of-range PRT is given
   as its stored number.
-- `planets`: position, owner (-1 none), mineral concentrations, environment
+- `planets`: position, owner (-1 none), `homeworld: true` for a planet whose
+  record carries the homeworld flag (absent otherwise), mineral concentrations, environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
   mines, factories, defenses, planetary scanner, starbase (design slot and

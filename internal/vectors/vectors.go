@@ -277,6 +277,7 @@ type Planet struct {
 	X                   int       `json:"x"`
 	Y                   int       `json:"y"`
 	Owner               int       `json:"owner"`
+	Homeworld           bool      `json:"homeworld,omitempty"` // the planet record's homeworld flag
 	Concentrations      []int     `json:"concentrations"`
 	Environment         []int     `json:"environment"`
 	OriginalEnvironment []int     `json:"original_environment,omitempty"`
