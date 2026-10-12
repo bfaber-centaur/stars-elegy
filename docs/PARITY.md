@@ -1568,8 +1568,12 @@ Also predicted for each struck planet:
   not get one).
 
 **Results** (`experiments/kx004/sweep.sh`, the cycles values above).
-Every run reached its predicted tick, and the KX-004 matcher reproduced
-each run's planet changes and messages from that tick alone.
+The KX-004 matcher, which compares concentration and current
+environment changes and the messages, finds each event run reproduced by
+exactly its predicted tick and by no other; the no-event run matches only
+event-free ticks. The original environments, surface gains, populations
+and queues below were checked against the predictions from the after
+files.
 
 | Cycles | Planet | Current after | Original after | Population (no-event G → after) |
 |---|---|---|---|---|

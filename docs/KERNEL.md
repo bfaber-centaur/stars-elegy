@@ -1169,7 +1169,7 @@ BINARY-ONLY where marked):
   population (CONFIRMED, KX-005: ×9 with capacity 6 built 6; 50/60/58 →
   50/57/55). **Auto Min Terraform** builds up to the capacity only when
   the planet's population change this year is negative or its
-  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED, KX-004
+  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED,
   KX-005: a growing planet built none; a planet at −1% habitability built
   its one unit; an overcrowded planet at 83% built 6). The count of an
   auto item is a per-year limit and the item stays in the queue.
@@ -1556,7 +1556,7 @@ nothing: a waypoint-0 transport or mine-laying task, the registration
 penalty, engine failure, and a stargate jump.
 
 The message (`MESSAGES.md` 0x0c1) is sent only when the loss is at least
-1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED, KX-004
+1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED,
 OT-6: 22 → 22 with no message, 23 → 22 with one).
 
 ### Inner Strength colonists breed in transit (CONFIRMED, OT-5)
