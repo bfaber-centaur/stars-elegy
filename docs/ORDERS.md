@@ -103,6 +103,30 @@ the production queues stand, research allocation is unchanged. No cheater or
 tamper flag is set for simply not submitting. The year generates normally
 for that player from their standing orders.
 
+## The player's default queue
+
+Each player has a default production queue (at most 12 items) and a default
+"only leftover to research" setting, which a new colony or a captured planet
+receives (`TAKEOVER.md`). The order file can carry one record (block type 46)
+holding the whole setting: the leftover flag, the item count and the items.
+The host copies the record over the player's stored setting, during turn
+generation only (BINARY-ONLY). The setting is unchanged in a year whose file
+has no such record, and in a year with no file.
+
+**When the client writes the record** (BINARY-ONLY, except where marked).
+The client keeps its own default template among its settings, separate
+from the game. When it saves a non-computer player's order file, it compares
+the player's stored setting (the leftover flag, the count and the items)
+with that template. If they differ, it adds the record carrying the
+**template**. A client that has no default template saved has an empty one:
+no items and leftover off. So the first order file such a client writes for
+a player whose default is not empty resets that default to empty and the
+leftover flag to off, even though the player gave no production order.
+Later files carry no record, because the setting now matches. MEASURED
+(RG-002): year 1's client file held the record with no items, and the
+host's default queue became empty. The files for years 2 to 6 held no such
+record.
+
 ## Per-order validation
 
 When a file is accepted, its orders are applied one at a time. Each order is
@@ -849,6 +873,39 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   files, at the target's actual end-of-year position, with message
   0x02a. A target that was gone became deep space at its last position,
   with 0x028. How WU-A's target came to be out of view is not checked.
+- **Salvage and mineral packet targets** (BINARY-ONLY except where
+  marked). Salvage and packets are one kind of object, numbered per owner.
+  A waypoint aimed at one stores the object's kind, owner and number as its
+  target, along with coordinates.
+  - **Tracking.** Every check of the year's waypoints copies the object's
+    current position into the waypoint. The checks run at the start of
+    the year, again after packets and the Trader move if any of them
+    moved, and at the end of the year. So a fleet flies toward a packet's
+    position after this year's packet move, the same as for the Trader
+    (`OBJECTS.md`, CONFIRMED for the Trader by WT-001 F1 and WT-005).
+    Salvage does not move, so in practice its target is a fixed point.
+    The exception bit that freezes a fleet target's coordinates is not
+    tested for these objects.
+  - **The object is gone** (decayed away, or a packet that has landed;
+    whether emptying salvage removes it at once is not checked). At the
+    next check the waypoint becomes a plain deep-space
+    waypoint at the coordinates it last held, with no message (the same
+    when the owner's file is written; `MESSAGES.md`). The fleet still
+    flies there. A new packet or salvage of the same owner can take the
+    freed number (numbers are reused, first gap first). If that happens
+    before the next check, the waypoint follows the new object instead.
+  - **Arrival.** Nothing happens because the target is salvage or a
+    packet. Reaching it is an ordinary reached waypoint, and later
+    movement of the object is no longer followed. Only the waypoint's
+    task acts. A transport task loads minerals from salvage. Aimed at a
+    packet (or any object other than salvage), a transport task is
+    cancelled with 0x11e (`MESSAGES.md`).
+  - **Packets and salvage alike.** The same rules hold for both. Only the
+    packet moves, so only for a packet does tracking change the
+    coordinates.
+  - **Saved files.** While the object exists, the owner's file keeps the
+    waypoint aimed at it, whether or not the owner can see it. Minefields,
+    wormholes and the Trader are kept only when the owner knows them.
 - **A fleet target merged away during order replay** (BINARY-ONLY; no
   oracle run). Player B's orders aim a waypoint (index 1 or later) at
   player A's fleet F. A's orders merge F into another of A's fleets Y at
