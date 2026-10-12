@@ -232,6 +232,8 @@ def state(hst, xy, game, xy_path=None):
         elif s.startswith('pdetail '):
             n = int(s.split()[1])
             p = {'id': n, 'x': pos[n][0], 'y': pos[n][1], 'owner': int(d['owner'])}
+            if 'homeworld' in s.split():
+                p['homeworld'] = True
             p['concentrations'] = [int(x) for x in d['conc'].split('/')]
             p['environment'] = [int(x) for x in d['env'].split('/')]
             if 'orig' in d:
@@ -496,6 +498,13 @@ CORPORA = {
 }
 
 
+# Cases whose result depends on whether a capture's tech attempt (TAKEOVER.md
+# "Capture", a draw) gave the attacker a level: the attacker's tech after the
+# year, read from the host file, so the draw's outcome is on record. TK-120-A:
+# no level gained (biotech stayed 0), so its environment is not a tech effect.
+ATTACKER_TECH = {'TK-120-A': (0,)}
+
+
 def run_id(prefix, name):
     return '%s-%s' % (prefix, re.sub(r'^\D+', '', name))
 
@@ -533,6 +542,13 @@ def build(corpus, ev, out):
                             add_queue_kinds(e, os.path.join(ev, r.name, rd, 'after.dump'))
                         per.setdefault(rd.replace('run-', 'cycles '), []).append(e)
                         held = held and res == 'OK'
+            for p in ATTACKER_TECH.get('%s-%s' % (rid, cid), ()):
+                for rd in rdirs:
+                    adir = os.path.join(ev, r.name, rd, 'raw', 'after')
+                    st1 = state(dump(os.path.join(adir, game + '.HST')), dump(os.path.join(adir, game + '.XY')), game)
+                    tech = next(q['tech'] for q in st1['players'] if q['id'] == p)
+                    per.setdefault(rd.replace('run-', 'cycles '), []).append(
+                        {'year': r.years, 'kind': 'player', 'id': p, 'equals': {'tech': tech}})
             if per:
                 vec['cases'].append(case('%s-%s' % (rid, cid), rule, text, per, held, c['legacy']))
         with open(os.path.join(out, r.name + '.json'), 'w') as f:

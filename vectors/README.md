@@ -48,7 +48,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
-| `rg` | RG-001 | 6 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start` | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
+| `rg` | RG-001, RG-001-Y1..Y6 | 12 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start`. RG-001 chains the six years; RG-001-Yk is year k alone, from the original's own files for the year before | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
@@ -93,7 +93,8 @@ file, so nothing in it is a default you have to guess.
   resource, factory and mine settings, research cost per field, the leftover
   points spend (`UNIVERSE.md` "Leftover advantage points") and race stat 15 (PARITY "Turn-time penalty"). An out-of-range PRT is given
   as its stored number.
-- `planets`: position, owner (-1 none), mineral concentrations, environment
+- `planets`: position, owner (-1 none), `homeworld: true` for a planet whose
+  record carries the homeworld flag (absent otherwise), mineral concentrations, environment
   (gravity, temperature, radiation as stored values), original environment,
   surface minerals (ironium, boranium, germanium), population **in hundreds**,
   mines, factories, defenses, planetary scanner, starbase (design slot and
@@ -264,7 +265,7 @@ unconstrained by that case.
 | `fleet_at` | a fleet of `owner` at (`x`, `y`) | as `fleet` |
 | `no_fleet_at` | no fleet of `owner` at (`x`, `y`) | |
 | `no_new_fleets` | `owner` gained no fleet | |
-| `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, ... |
+| `planet` | planet `id` | `owner`, `population` (hundreds), `surface_minerals`, `environment`, `original_environment`, `defenses`, `starbase_design`, `homeworld` (the flag after the year; see below), ... |
 | `production_queue` | planet `planet` | the queue as `{id, count, percent, kind}` items (`percent` omitted when 0; `kind` 1 planetary item, 2 design, as in "Queue items") |
 | `design`, `starbase_design` | design `owner`/`slot` | `hull`, `slots`, `mass` |
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
@@ -274,6 +275,15 @@ unconstrained by that case.
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
+
+A `planet` expectation carries `homeworld` only when the flag changed in
+the year. One vector has it, WU-RSG2's planet 8 (MEASURED, one run,
+apparatus `evidence/wu/wuRSG2`). The setup gave planet 8 to player 0
+without the flag (`combatlab` "planet 8 owner 0"), while player 1's record
+still named planet 8 as its homeworld. After the year planet 8 had the
+flag again. This fits `KERNEL.md` "Turn order" step 3.6, where every
+mark is cleared and then set on each player's recorded homeworld,
+whoever owns the planet.
 
 `tolerance` as an object (`{"surface_minerals": 1}`) allows that much
 difference in the named field. Kernel and combat vectors use it for surface

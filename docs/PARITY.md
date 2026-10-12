@@ -5620,6 +5620,9 @@ setup.
   repeats were byte-identical.
 - Every player's orders are in the vector's `orders` block (36 order
   sets, 719 orders). `random_start` gives tick 164 for every year.
+- `rg001.json` chains the six years. `rg001-y1` to `rg001-y6` each hold
+  one year, starting from the original's own files for the year before,
+  so one year's mismatch does not carry into the next.
 - Each year was also generated from the same start and orders at cycles
   3700 and 1490 (other streams). A field whose value differed in either
   one is flagged `sample: true`, and so are the fleets that fought and the
