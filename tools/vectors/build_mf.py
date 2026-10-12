@@ -20,9 +20,9 @@ HAND_HELD = {'mf07', 'mf07f', 'mf07sd'}
 # Runs whose fleets cross a field at a speed with a stop chance (OBJECTS.md
 # "Minefields": each ly travelled in a field is a draw). Where a fleet stops,
 # what it carries and its damage, and the salvage where it stopped, are those
-# draws: the moving fleets and salvage are samples in every stream. In a
-# single-stream run the fields' mine counts are too (every stop is paid by a
-# field, MF-4).
+# draws: the moving fleets, salvage and the fields' mine counts (every stop is
+# paid by a field, MF-4) are samples in every stream, even where a few
+# streams agreed (MF-02: two streams, the same count).
 DRAWN = {'mf01', 'mf02', 'mf03h', 'mf03s', 'mf04', 'mf04b', 'mf04d', 'mf05b', 'mf09h', 'mf09s', 'mf14', 'mf15'}
 # PARITY records MF-14 and MF-15 as MEASURED: one pinned year each.
 MEASURED_ONLY = {'mf14', 'mf15'}
@@ -48,8 +48,7 @@ def mark_drawn(case, st0, single):
     out = []
     for e in case['expect']:
         k = e['kind']
-        if (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in moved) or k == 'salvage_at' or \
-                (single and k == 'minefield'):
+        if (k in ('fleet', 'fleet_gone') and (e['owner'], e['id']) in moved) or k in ('salvage_at', 'minefield'):
             e = dict(e, sample=True)
         out.append(e)
     case['expect'] = out

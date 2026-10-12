@@ -2103,7 +2103,8 @@
        1
       ]
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "minefield",
@@ -2120,7 +2121,8 @@
        1
       ]
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "message",

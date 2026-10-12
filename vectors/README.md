@@ -387,9 +387,10 @@ Minefields and stargates draw too. In the `mf` runs where fleets cross a
 field at a speed with a stop chance (MF-01, 02, 03h, 03s, 04, 04b, 04d,
 05b, 09h, 09s, 14, 15), the `fleet` and `fleet_gone` of every fleet that
 moved and every `salvage_at` carry `sample: true`, in every stream: where a
-fleet stops decides its position, fuel, cargo and damage. In the
-single-stream ones the `minefield` expectations do too, since every stop
-is paid by a field (MF-4). In `gt`, the fleets whose survivors a gate's
+fleet stops decides its position, fuel, cargo and damage. The
+`minefield` expectations do too, in every stream: every stop is paid by a
+field (MF-4), so the mine count is drawn even where streams agreed (MF-02,
+MF-04). In `gt`, the fleets whose survivors a gate's
 loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's
