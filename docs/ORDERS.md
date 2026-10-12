@@ -237,7 +237,13 @@ BINARY-ONLY.
   disappears; a queue entry building it is dropped **even at 66% done**; the
   slot is **cleared in place with no renumbering** of later designs (correcting
   the earlier battle-plan-renumber reading for this order); and deleting the
-  **starbase** design in use removed the homeworld's starbase (CO-07b). When the
+  **starbase** design in use removed the homeworld's starbase (CO-07b), and
+  the planet's queue then built nothing that year: no minerals were spent,
+  and the year's resources all went to research. The mechanism
+  (BINARY-ONLY): the starbase removal also removes every ship item and
+  every packet item (not the automatic packet item) from that planet's
+  queue, at order time, and resets the progress of any starbase item left
+  in it, as a battle loss does (`COMBAT.md`, CB-047). When the
   deleted ships shared a fleet with survivors, their fuel and cargo are shared
   out exactly as a ship **move** does it: the leaving ships take
   `floor(amount × their capacity ÷ fleet capacity)` and the remainder stays with

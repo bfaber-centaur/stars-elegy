@@ -44,7 +44,17 @@ and is seen like any fleet. It does not move until next year.
 ### Can the planet build it
 
 - The planet must have a starbase. Without one, the item builds nothing
-  (BINARY-ONLY).
+  (BINARY-ONLY). In play this check is not reached by a queue the
+  client wrote. Every way a planet loses its starbase before production
+  also removes the ship items from its queue:
+  - deleting the starbase design in use (MEASURED, CO-07b, for the
+    outcome; BINARY-ONLY, for the removal itself; see `ORDERS.md`
+    "Design delete effect");
+  - a downgrade to an earlier hull ("Queued ships" below).
+
+  A starbase destroyed in battle does the same, after that year's
+  production (CONFIRMED, CB-047). So only a hand-built queue at a planet
+  without a starbase reaches this check.
 - The owner must have the technology for the hull and every part of the
   design. If not, the item builds nothing and the owner is told the plans
   were lost (BINARY-ONLY).
@@ -59,8 +69,8 @@ and is seen like any fleet. It does not move until next year.
   the client could not queue (no dock, or hull mass above the dock's
   limit), as `ORDERS.md` does for other client-only checks.
 
-In each case where nothing is built, the resources are already spent and
-the item is removed from the queue (as `KERNEL.md` "Production" removes a
+In each case where the item reaches these checks and nothing is built,
+the resources are already spent and the item is removed from the queue (as `KERNEL.md` "Production" removes a
 finished non-auto item). CONFIRMED for minerals at the fleet limit
 (SL-09: the planet ended 12/6/13 kT of Fe/Bo/Ge below its control); the
 resource share could not be tested there (both players at tech 26, so no
