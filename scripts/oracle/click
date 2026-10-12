@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Click at guest screen coordinates (as seen in a screenshot).
 #
-#   scripts/oracle/click X Y [BUTTON] [--double]
+#   scripts/oracle/click X Y [BUTTON] [--double] [--shift] [--ctrl]
+#
+# --shift / --ctrl hold that key during the click only (after the move).
 #
 # Locks the DOSBox mouse (ctrl+F10) on first use after start. In locked mode,
 # with Windows acceleration off, the guest cursor was measured to move one
@@ -16,6 +18,10 @@ x="$1" y="$2" button="${3:-1}"
 [[ "$button" == --double ]] && button=1
 repeat=1
 [[ " $* " == *" --double "* ]] && repeat=2
+mods=()
+[[ " $* " == *" --shift "* ]] && mods+=(shift)
+[[ " $* " == *" --ctrl "* ]] && mods+=(ctrl)
+[[ "$button" == --* ]] && button=1
 
 w="$(focus_window)"
 if [[ ! -f "$STATE/mouse-locked" ]]; then
@@ -45,4 +51,8 @@ xdotool mousemove "$((SW - 1))" "$((SH - 1))"
 relmove "$((-(WIDTH + 16)))" "$((-(HEIGHT + 16)))"
 relmove "$x" "$y"
 sleep 0.2
-xdotool click --repeat "$repeat" --delay 120 "$button"
+if ((${#mods[@]})); then
+	xdotool keydown "${mods[@]}" sleep 0.1 click --repeat "$repeat" --delay 120 "$button" sleep 0.1 keyup "${mods[@]}"
+else
+	xdotool click --repeat "$repeat" --delay 120 "$button"
+fi

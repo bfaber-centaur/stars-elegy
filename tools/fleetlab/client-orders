@@ -96,6 +96,7 @@
 #   research next I        "Next field" item I (0 same, 1..6 fields, 7 lowest)
 #   research done          Done
 #   key KEYSYM...          raw keys;  click X Y   raw click;  wait SECONDS
+#   shiftclick X Y         raw click with Shift held;  rightclick X Y  raw right click
 #   drag X1 Y1 X2 Y2       raw left-button drag (scripts/oracle/drag)
 #   shot NAME              extra screenshot
 set -euo pipefail
@@ -272,6 +273,8 @@ while read -r -u 3 verb a b rest || [[ -n "$verb" ]]; do
 	key\ *) "$O/key" $a $b $rest; pause ;;
 	drag\ *) read -r dx2 dy2 <<< "$rest"; "$O/drag" "$a" "$b" "$dx2" "$dy2"; pause ;;
 	click\ *) "$O/click" "$a" "$b"; pause ;;
+	shiftclick\ *) "$O/click" "$a" "$b" --shift; pause ;;
+	rightclick\ *) "$O/click" "$a" "$b" 3; pause ;;
 	wait\ *) sleep "$a" ;;
 	shot\ *) ;;
 	*) echo "client-orders: unknown command: $verb $a" >&2; exit 2 ;;

@@ -1,0 +1,14 @@
+# MR-1, player 0: W1 (fleet 0/1) gets a waypoint on player 1's F1 at S1;
+# F2 (0/2) is merged into Y2 (0/3) at S2.
+click 584 263
+click 584 263
+shot w1
+shiftclick 584 300
+shot w1-wp
+click 554 188
+click 554 188
+fleet other 0
+fleet goto
+shot y2
+fleet merge 0 1
+shot merged

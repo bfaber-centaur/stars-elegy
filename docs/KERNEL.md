@@ -72,7 +72,12 @@ order shown. "Fleet order" means by owner, then by fleet number
    player, the last of them always 0, and they are the first draws of the
    year. CONFIRMED as two draws before mining for two players (KX-004,
    KB-1C, KB-3A: every replay matched only with these two draws first).
-   The permutation itself is BINARY-ONLY. It is used only to order the
+   The permutation itself is BINARY-ONLY. When a freshly started host
+   generates the year (the generator seeded from the clock, as in a pinned
+   oracle run), the stream's first value is even for every possible seed,
+   so with two players the first draw, `Random(2)`, is always 0 and player
+   0's orders are replayed first (BINARY-ONLY, from the generator's
+   seeding; MR-1 relies on it). It is used only to order the
    replay; no later step of the year reuses it (BINARY-ONLY). With
    orders a client can save,
    it is observable in two known ways. The first is a cargo gift to another

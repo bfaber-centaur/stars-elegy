@@ -3099,6 +3099,10 @@ Prediction from the decomp combat pass, restated in
 Lane D's predictions were pushed first (elegy 6bc9046, merged 71f70f9).
 Two pinned streams per start, every run after the predictions. REFUTED:
 Elegy's prediction did not hold. Details: `experiments/cb056/README.md`.
+The fleets that entered the standard field started outside the galaxy and
+were moved to its edge, so the counts of fleets hit there come from clamped
+tracks, not the planned layout (`experiments/cb056/README.md` "Galaxy
+clamp"; the per-hit damage values are unaffected).
 
 - **A starbase's 500th damage step, REFUTED (2 of 2).** A Wall Star (armor
   61,500) at 499/500 took a Laser hit worth far less than one unit. Its
@@ -6204,6 +6208,27 @@ queue".
 - **Order within the year: CONFIRMED.** A colony founded that year by an
   arriving ship got the new default's queue (empty, kept, or auto
   defenses 10). So the record is applied before colonization.
+
+## Following a fleet merged away the same year (MR-1)
+
+Status: CONFIRMED by prediction (elegy e1798ac and lane G's reading of
+`ORDERS.md` "Targets that moved, died or were captured", its item on a
+fleet target merged away during order replay, both pushed
+before the runs for the exact start and orders). Waypoint 1 only. Results:
+`experiments/mr/README.md`. Raw evidence: private apparatus
+`evidence/mf1`. One start, two pinned streams, which agree. The orders
+were written by the original client.
+
+| Case | Setup | Observed | Result |
+|---|---|---|---|
+| Follower replayed first | Player 0's fleet has waypoint 1 aimed at player 1's fleet F, 50 ly away; player 1 merges F into Y at F's spot, and Y moves on | the order was applied; the follower chased Y and ended 20 ly behind it, its waypoint aimed at Y | CONFIRMED |
+| Owner replayed first | The same with the players swapped | the same: the follower's waypoint is aimed at Y | CONFIRMED |
+| Messages | Both | no refusal and no leader-gone message | MEASURED |
+| Saved form | The followers' own `.M` files | the waypoint stays a fleet target on Y (in view) | MEASURED; contradicts the "saved as deep space" reading of WU-A (`ORDERS.md` "Targets that moved, died or were captured") and agrees with RG-001's |
+
+Which player is replayed first was not observed. It is the BINARY-ONLY
+prediction that a fresh two-player host run replays player 0 first
+(`KERNEL.md` "Turn order", step 1). Both paths give the same end state here.
 
 ## A transport task aimed at a packet (ET-2)
 
