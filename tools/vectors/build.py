@@ -98,6 +98,10 @@ def waypoint(d, owner, nplayers):
         wp['target'] = {'kind': 'planet', 'id': obj}
     elif t == 2:
         wp['target'] = {'kind': 'fleet', 'owner': obj >> 9, 'id': obj & 0x1ff}
+    elif t == 8 and obj >> 13 == 1:
+        # a packet-type object (a packet or salvage): object id 0x2000 |
+        # owner << 9 | number, the owner and number in `objects`
+        wp['target'] = {'kind': 'packet_object', 'owner': (obj >> 9) & 15, 'id': obj & 0x1ff}
     elif t == 8:
         wp['target'] = {'kind': {2: 'wormhole', 3: 'trader'}.get(obj >> 13, 'object'), 'id': obj & 0x1ff}
     else:
@@ -204,6 +208,14 @@ def state(hst, xy, game, xy_path=None):
             })
             if d.get('computer') == '1':
                 st['players'][-1]['computer'] = True
+            # The default production queue new colonies start with, and their
+            # default "only leftover to research" (the player record; planetary
+            # items only, as in a planet queue with kind 1).
+            if 'defqueue' in d:
+                st['players'][-1]['default_queue'] = [] if d['defqueue'] == 'none' else [
+                    {'id': int(i), 'count': int(c), 'kind': 1}
+                    for i, c in (x.split(':') for x in d['defqueue'].split(','))]
+                st['players'][-1]['default_leftover_to_research'] = d['defleftover'] == '1'
             # The planet the player's record names as its homeworld (KERNEL "Turn
             # order" step 3.6 re-marks it every year, whoever owns it). Kept only
             # when it names a planet of this file; see the check below.

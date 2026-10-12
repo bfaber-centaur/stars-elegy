@@ -181,8 +181,8 @@ def diff(st0, st1, full=False):
     for p in st1['players']:
         keys = ('tech', 'research_accumulated', 'research_field', 'research_next_field', 'mystery_trader_items', 'race')
         if full:
-            keys += ('research_percent', 'relations', 'counts')
-        ch = {k: p[k] for k in keys if p[k] != pl0[p['id']][k]}
+            keys += ('research_percent', 'relations', 'counts', 'default_queue', 'default_leftover_to_research')
+        ch = {k: p.get(k) for k in keys if p.get(k) != pl0[p['id']].get(k)}
         if ch:
             ex.append({'kind': 'player', 'id': p['id'], 'equals': ch})
     q0 = {q['planet']: q['items'] for q in st0['production_queues']}
@@ -260,7 +260,16 @@ def mark_samples(exps, battles, single=True, setup=None):
             if 'surface_minerals' not in drawn:
                 e.pop('tolerance', None)
         out.append(e)
-    return out
+    return score_samples(out)
+
+
+def score_samples(exps):
+    """A player's score record counts its ships at the end of the year
+    (stars-elegy 56ebfcf), so when one of the player's fleets is a sample
+    the record follows the draws too: flag it a sample."""
+    drawn = {e['owner'] for e in exps if e.get('sample') and e['kind'] in ('fleet', 'fleet_gone')}
+    return [dict(e, sample=True) if e['kind'] == 'player' and 'score_record' in e.get('equals', {})
+            and e['id'] in drawn else e for e in exps]
 
 
 def build(ev, out):

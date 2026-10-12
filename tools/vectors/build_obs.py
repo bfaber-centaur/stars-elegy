@@ -8,6 +8,7 @@ setup's result from PARITY.md, or the check lines of experiments/gt/check.py.
 """
 import json, os, re
 import build as B
+import build_cb as C
 import build_kx as K
 
 # corpus: [(setup dir, vector id, title, prediction held, tag, verdict, spec, parity)]
@@ -164,7 +165,7 @@ def build_gt(ev, out):
                     (e['kind'] == 'message' and e['player'] == 0 and e['message_id'] in drawn_msgs):
                 e = dict(e, sample=True)
             exps.append(e)
-        vec['cases'][0]['expect'] = exps
+        vec['cases'][0]['expect'] = exps = C.score_samples(exps)
         vec['source'] = {'experiment': 'experiments/gt', 'spec_rules': 'docs/OBJECTS.md "Stargates"',
                          'parity': GT_PARITY[run],
                          'raw_evidence': 'stars-oracle-apparatus evidence/gt/%s (private)' % run}
