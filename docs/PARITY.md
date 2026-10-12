@@ -6205,6 +6205,19 @@ queue".
   arriving ship got the new default's queue (empty, kept, or auto
   defenses 10). So the record is applied before colonization.
 
+## An empty transport task and 0x04e (ET-1)
+
+Status: CONFIRMED by prediction (elegy #193, 84af588; the numbers for the
+exact start were pushed before the runs). Results:
+`experiments/et/README.md`. Raw evidence: private apparatus `evidence/et1`.
+
+| Case | Setup | Observed (two streams) | Result |
+|---|---|---|---|
+| E | A freighter reaches its last waypoint, its own colony, with a transport task that has no action for any cargo | task cleared; 0x04e | CONFIRMED |
+| C | Control: the same with "unload all colonists" | 0x02e, then 0x04e; task cleared | CONFIRMED |
+| S | A stationary freighter with the empty transport task on its only waypoint | task cleared; 0x04e | CONFIRMED |
+| Order | Player 0's message order | S's 0x04e before the production messages; C's 0x02e, then E's 0x04e, then C's | MEASURED: E's message is sent in the after-movement transport pass, not at arrival |
+
 ## Remote-mining refusals (RM)
 
 Status: CONFIRMED for RM-1a, RM-1b, RM-2 (task kept), RM-3 and RM-4 (mining and tasks; its messages are MEASURED). RM-2's
