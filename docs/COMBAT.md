@@ -450,8 +450,8 @@ not take it is not part of the design by then and adds nothing here (see
 - **Armor**: hull armor + armor parts, + 65 per Croby Sharmor and
   Langston Shell, + 50 per Multi Cargo Pod. RS: each armor slot's
   total (count × the part's armor) is halved, rounding down, once per
-  slot, not per part and not once for the design. CONFIRMED (CB-057,
-  6 streams): a Destroyer (200) with one Organic Armor in its
+  slot, not per part and not once for the design. MEASURED (CB-057,
+  oracle, 6 streams; consistent with Elegy 89cbc6a): a Destroyer (200) with one Organic Armor in its
   general-purpose slot and one in its armor slot fits armor 372–374
   (374 alone in the longest run), so 200 + 87 + 87, not 200 + 350/2 =
   375; the same parts both in the armor slot fit 375–376. RG-002's year-6
@@ -845,13 +845,15 @@ see "Design cost") × ships.
   AR `c − c/5`, then halved) applies only to what production charges;
   target choice does not use it.
 
-- Multiply by 100 if that is below 100000. Otherwise use 10^7, also
-  when cost × ships is above 10^7. CONFIRMED (CB-057, 4 streams, 14
-  shots): a beam with both stacks in reach chose 10000 unarmed
-  Destroyers (cost × ships 110,000, armor 2,000,000) over 16000 Omega
-  Battleships (10,240,000, armor 32,000,000) every time. Capped, both
-  costs are 10^7 and the lower toughness wins; uncapped, the Battleships
-  would.
+- Multiply by 100 if that is below 100000. Otherwise use 10^7
+  (BINARY-ONLY for the value). MEASURED (CB-057, oracle, 4 streams, 14
+  shots; consistent with Elegy 89cbc6a): stacks at and above 100,000
+  share one common capped cost, reached at or below 10,240,000. A beam
+  with both stacks in reach chose 10000 unarmed Destroyers (cost × ships
+  110,000, armor 2,000,000) over 16000 Omega Battleships (10,240,000,
+  armor 32,000,000) every time. Uncapped, the Battleships would win. Any
+  common cap gives the same choice, so this does not show that the cap
+  is 10^7.
 
 **Toughness.**
 
@@ -1032,8 +1034,8 @@ the salvo reaches. `N` is the number of torpedoes still unfired, and `p`
 uses that target's jammer. With `N ≤ 200`, each target therefore gets its
 own `N` draws.
 
-- if `p ≥ 100`, all hit, with no random draw. CONFIRMED (CB-057,
-  6 streams): a starbase with computer 99 (16 Battle Nexus) fired 32
+- if `p ≥ 100`, all hit, with no random draw. MEASURED (CB-057,
+  oracle, 6 streams; consistent with Elegy 89cbc6a): a starbase with computer 99 (16 Battle Nexus) fired 32
   Delta Torpedoes (accuracy 60, so `p = 100`) at an unjammed shielded
   stack; 24 salvos all hit (shield damage 416 = 32 × 26/2 each, no miss
   record), and the battle replays from the pinned stream only when those
