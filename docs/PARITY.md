@@ -5963,7 +5963,7 @@ and salvage?
   leftover off; the files for years 2 to 6 held none. The client adds
   that record when its own default template differs from the player's
   stored default, and this client had no template saved (research's
-  reading, `ORDERS.md` "The player's default queue", stars-elegy #158).
+  reading in stars-elegy #158, which adds it to `ORDERS.md`).
   Without a player-0 order file the default was kept: in the settling
   year and in both RM years (`experiments/rm`). The vectors carry the
   record as a year-1 `default_queue` order and the result as a year-1
