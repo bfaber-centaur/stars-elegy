@@ -558,8 +558,8 @@ Observed on 2026-10-07 (PQ-001, about 20 generated years):
   `dump` prints `game` (the record's first 32 bytes) for a `.XY` and
   `scores` (block type 45) for a `.M`: per record, word 0 the flag word,
   word 1 the rank, then score (32 bits), resources (32), planets,
-  starbases, unarmed, escort and capital ship counts and the tech-level
-  sum (16 bits each). A player's `.M` held only its own record. The
+  starbases, unarmed, escort and capital ship counts (the packed words,
+  `KERNEL.md` "Yearly score record") and the tech-level sum (16 bits each). A player's `.M` held only its own record. The
   `race` line now prints 14 stats (8–13 the research cost settings). On
   a Combat Lab file, `hst-edit edit` needs `planet=` set to a planet player
   0 owns (the default 7 is not).

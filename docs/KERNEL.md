@@ -1818,6 +1818,35 @@ capital ships, disabled in S1 and flagged): 0x40 planets, 0x80 tech,
 0x100 score, 0x200 lead, 0x400 resources, 0x800 capital ships, 0x1000
 highest score after N years. S1: player 0 `0x0ae0`, player 1 `0x0021`.
 
+- **Ship counts are packed into 16 bits** (rule BINARY-ONLY; every
+  recorded value fits it: CO-06, SL-limit-b). U, E and C are each stored
+  as one word. While the count is 8192 or more, it is divided by 4,
+  dropping the remainder, and an exponent goes up by 1. The word is
+  `exponent·8192 + what is left`, and it reads back as
+  `(w mod 8192)·4^(w div 8192)`. A count up to 8191 is stored as it is.
+  The files hold the packed word:
+
+  | Count | Word | Reads back as |
+  |---|---|---|
+  | 32001 | 16192 | 32000 |
+  | 32766, 32767 | 16383 | 32764 |
+  | 32768 | 18432 | 32768 |
+  | 33000 | 18446 | 32992 |
+
+  The score is computed from the counts before packing (BINARY-ONLY; the
+  two can differ only for more than 8191 capital ships).
+- **Which ships are counted** (MEASURED, GT-001, MF-14). The ships in the
+  player's fleets at the end of the year, after all of the year's losses.
+  A fleet deleted during the year is not counted, including the survivors
+  of a mixed fleet that a stargate deletes whole (`OBJECTS.md` "Mixed
+  fleets"). GT-001 player 0: 25 unarmed ships and 71 escorts before the
+  year; the record holds 22 and 65, the ships left after the gate
+  losses (three fleets deleted, H2's fleet of one unarmed ship and one
+  escort among them, and ships lost from other fleets). MF-14 player 1: 60 unarmed
+  ships (12 fleets of four freighters and a Privateer) before the year;
+  the record holds 16, the survivors (one untouched fleet of five and 11
+  Privateers whose freighters were destroyed by mines).
+
 ### Victory conditions
 
 The game's settings hold ten values (the new-game dialog's defaults in
