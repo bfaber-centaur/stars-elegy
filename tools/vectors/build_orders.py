@@ -134,7 +134,18 @@ def orders_of(xpath, nplayers):
             out.append({'kind': 'planet_settings', 'planet': u16(r, 0), 'leftover_to_research': bool(w1 & 1),
                         'packet_destination': pd - 1, 'packet_warp': (w1 >> 11 & 15) + 4, 'route_to': rd - 1})
         elif s.startswith('order type=46 '):
-            pass  # the client's save-and-submit marker (StarsAPI SAVE_AND_SUBMIT): not an order
+            # the player's default queue (ORDERS.md "The player's default
+            # queue"): the client adds it when its own default template
+            # differs from the stored one. Read as the player record's layout
+            # (bit 0 of the first byte leftover to research, the second byte
+            # the item count, then words id | count << 6); only the empty
+            # record has been seen (RG-002 year 1: raw 0 0).
+            r = [int(x) for x in s.split('raw=', 1)[1].split()]
+            if len(r) < 2 or r[0] >> 1 or r[1] > 12 or len(r) != 2 + 2 * r[1]:
+                raise ValueError('default queue not decoded: ' + s)
+            out.append({'kind': 'default_queue', 'leftover_to_research': bool(r[0] & 1),
+                        'items': [{'id': u16(r, 2 + 2 * i) & 0x3f, 'count': u16(r, 2 + 2 * i) >> 6, 'kind': 1}
+                                  for i in range(r[1])]})
         elif s.startswith('order '):
             raise ValueError('order not decoded: ' + s.split(' raw=')[0])
     return player, out

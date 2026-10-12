@@ -175,6 +175,42 @@ func TestSalvageFresh(t *testing.T) {
 // Terraform 5) at year 1's start and empty from year 2 on (the host
 // emptied it in year 1, PARITY "Representative game (RG-002)"); the
 // computer players' is empty throughout.
+// The client injects its default-queue record (block 46) into player 0's
+// first-year orders; RG-002 carries it as a default_queue order there only.
+func TestDefaultQueueOrder(t *testing.T) {
+	for y := 1; y <= 6; y++ {
+		file := fmt.Sprintf("../../vectors/rg/rg002-y%d.json", y)
+		v, err := Load(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n := 0
+		for _, s := range v.Orders {
+			for _, o := range s.Orders {
+				if o.Kind != "default_queue" {
+					continue
+				}
+				n++
+				if s.Player != 0 || s.Year != 1 || o.Items == nil || len(o.Items) != 0 ||
+					o.LeftoverToResearch == nil || *o.LeftoverToResearch {
+					t.Errorf("%s: default_queue order %+v in year %d player %d", file, o, s.Year, s.Player)
+				}
+			}
+		}
+		if want := map[bool]int{true: 1, false: 0}[y == 1]; n != want {
+			t.Errorf("%s: %d default_queue orders, want %d", file, n, want)
+		}
+	}
+	bad := Vector{ID: "x", Years: 1, InitialState: &State{Players: []Player{{ID: 0}}}, Orders: []OrderSet{{Year: 1, Player: 0, Orders: []Order{{Kind: "default_queue", Items: []QueueItem{}}}}}}
+	found := false
+	for _, e := range bad.Check() {
+		found = found || strings.Contains(e.Error(), "leftover_to_research")
+	}
+	if !found {
+		t.Error("Check accepts a default_queue order without leftover_to_research")
+	}
+}
+
 func TestDefaultQueue(t *testing.T) {
 	want := []QueueItem{{ID: 1, Count: 100}, {ID: 0, Count: 100}, {ID: 2, Count: 20}, {ID: 4, Count: 5}, {ID: 5, Count: 5}}
 	for y := 1; y <= 6; y++ {

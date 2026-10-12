@@ -19594,6 +19594,11 @@
        "kind": "scrap"
       }
      }
+    },
+    {
+     "kind": "default_queue",
+     "leftover_to_research": false,
+     "items": []
     }
    ]
   },
@@ -70139,7 +70144,8 @@
       }
      },
      "seen_by": 3,
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "player",
@@ -70205,7 +70211,8 @@
       }
      },
      "seen_by": 6,
-     "year": 1
+     "year": 1,
+     "sample": true
     }
    ]
   },
@@ -85289,7 +85296,8 @@
       }
      },
      "seen_by": 1,
-     "year": 2
+     "year": 2,
+     "sample": true
     },
     {
      "kind": "player",
@@ -85311,7 +85319,8 @@
       }
      },
      "seen_by": 2,
-     "year": 2
+     "year": 2,
+     "sample": true
     },
     {
      "kind": "player",
@@ -85333,7 +85342,8 @@
       }
      },
      "seen_by": 3,
-     "year": 2
+     "year": 2,
+     "sample": true
     },
     {
      "kind": "player",
@@ -85377,7 +85387,8 @@
       }
      },
      "seen_by": 5,
-     "year": 2
+     "year": 2,
+     "sample": true
     },
     {
      "kind": "player",
@@ -85399,7 +85410,8 @@
       }
      },
      "seen_by": 6,
-     "year": 2
+     "year": 2,
+     "sample": true
     }
    ]
   },
@@ -100002,7 +100014,8 @@
       }
      },
      "seen_by": 1,
-     "year": 3
+     "year": 3,
+     "sample": true
     },
     {
      "kind": "player",
@@ -100047,7 +100060,8 @@
       }
      },
      "seen_by": 3,
-     "year": 3
+     "year": 3,
+     "sample": true
     },
     {
      "kind": "player",
@@ -114255,7 +114269,8 @@
       }
      },
      "seen_by": 0,
-     "year": 4
+     "year": 4,
+     "sample": true
     },
     {
      "kind": "player",
@@ -114280,7 +114295,8 @@
       }
      },
      "seen_by": 1,
-     "year": 4
+     "year": 4,
+     "sample": true
     },
     {
      "kind": "player",
@@ -114302,7 +114318,8 @@
       }
      },
      "seen_by": 2,
-     "year": 4
+     "year": 4,
+     "sample": true
     },
     {
      "kind": "player",
@@ -114371,7 +114388,8 @@
       }
      },
      "seen_by": 5,
-     "year": 4
+     "year": 4,
+     "sample": true
     },
     {
      "kind": "message",
@@ -114400,7 +114418,8 @@
       }
      },
      "seen_by": 6,
-     "year": 4
+     "year": 4,
+     "sample": true
     }
    ]
   },
@@ -129289,7 +129308,8 @@
       }
      },
      "seen_by": 1,
-     "year": 5
+     "year": 5,
+     "sample": true
     },
     {
      "kind": "player",
@@ -129311,7 +129331,8 @@
       }
      },
      "seen_by": 2,
-     "year": 5
+     "year": 5,
+     "sample": true
     },
     {
      "kind": "player",
@@ -129333,7 +129354,8 @@
       }
      },
      "seen_by": 3,
-     "year": 5
+     "year": 5,
+     "sample": true
     },
     {
      "kind": "player",
@@ -129401,7 +129423,8 @@
       }
      },
      "seen_by": 6,
-     "year": 5
+     "year": 5,
+     "sample": true
     }
    ]
   },
@@ -147169,7 +147192,8 @@
       }
      },
      "seen_by": 1,
-     "year": 6
+     "year": 6,
+     "sample": true
     },
     {
      "kind": "player",
@@ -147191,7 +147215,8 @@
       }
      },
      "seen_by": 2,
-     "year": 6
+     "year": 6,
+     "sample": true
     },
     {
      "kind": "player",
@@ -147213,7 +147238,8 @@
       }
      },
      "seen_by": 3,
-     "year": 6
+     "year": 6,
+     "sample": true
     },
     {
      "kind": "player",

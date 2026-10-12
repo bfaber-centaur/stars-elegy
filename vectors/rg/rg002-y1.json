@@ -19594,6 +19594,11 @@
        "kind": "scrap"
       }
      }
+    },
+    {
+     "kind": "default_queue",
+     "leftover_to_research": false,
+     "items": []
     }
    ]
   },
@@ -41241,7 +41246,8 @@
       }
      },
      "seen_by": 3,
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "player",
@@ -41307,7 +41313,8 @@
       }
      },
      "seen_by": 6,
-     "year": 1
+     "year": 1,
+     "sample": true
     }
    ]
   }

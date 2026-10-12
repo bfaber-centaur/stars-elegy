@@ -219,6 +219,7 @@ an order belong to the submitting player unless a field says otherwise.
 |---|---|
 | `production_queue` | `planet`, `items` (`{id, count, percent, kind}` as in `production_queues`): the planet's whole new queue |
 | `planet_settings` | `planet`, `leftover_to_research`, `route_to`, `packet_destination`, `packet_warp`: the planet's whole settings (`-1`: no route, no packet destination; `packet_warp` as in `initial_state`) |
+| `default_queue` | `items` (`{id, count, kind}`, planetary items, kind 1), `leftover_to_research`: the player's whole new default queue and default leftover setting (`players[].default_queue`). The original client adds this record by itself to a human player's file whenever its own default template differs from the player's stored default; with no template saved it carries no items and leftover off (`ORDERS.md` "The player's default queue"). RG-002 year 1 has one |
 | `research` | `percent`, `field`, `next_field` (a field, `same`, `lowest`, or the stored number) |
 | `battle_plan` | `slot`, `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo`: add the plan at `slot` or change it |
 | `battle_plan_delete` | `slot` |
