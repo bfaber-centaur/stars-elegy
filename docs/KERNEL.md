@@ -795,7 +795,7 @@ mining, and no homeworld floor.
 - **Messages.** Remote mining that succeeds sends no message
   (BINARY-ONLY). Only the refusals do, each cancelling the task: no
   mining modules (0x075, CONFIRMED, CS-003), planet inhabited (0x076,
-  CONFIRMED, TK-111) and deep space (0x077, BINARY-ONLY) (`MESSAGES.md`).
+  CONFIRMED, TK-111) and deep space (0x077, CONFIRMED, RM-3) (`MESSAGES.md`).
 - **Order of the checks** (BINARY-ONLY except where marked). Only a fleet that did not move
   this year is checked; a fleet that moved keeps its task with no
   message. The checks then run in this order, and the first that fails

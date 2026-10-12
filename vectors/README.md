@@ -300,7 +300,7 @@ unconstrained by that case.
 | `design_gone`, `starbase_design_gone` | design `owner`/`slot` no longer exists | |
 | `battle_plan` | plan `owner`/`slot` | `name`, `tactic`, `primary`, `secondary`, `attack_who`, `dump_cargo` |
 | `battle_plan_gone` | plan `owner`/`slot` no longer exists | |
-| `player` | player `id` | `tech`, `research_accumulated`, `research_percent`, `research_field`, `relations`, `counts`, `default_queue`, `default_leftover_to_research`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it; the record counts the player's ships at the end of the year, so it is a sample whenever one of that player's fleets is) |
+| `player` | player `id` | `tech`, `research_accumulated`, `research_percent`, `research_field`, `relations`, `counts`, `default_queue`, `default_leftover_to_research`, `mystery_trader_items`, `ship_design_count`, `score_record` (score, resources, planets, starbases, unarmed/escort/capital ship counts, tech level sum, rank, `victory_conditions_met`; `seen_by` names the player whose file held it; the record counts the player's ships at the end of the year, so it is a sample whenever one of that player's fleets is; stars-elegy 56ebfcf) |
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
