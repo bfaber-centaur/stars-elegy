@@ -50,3 +50,22 @@ Pinned at cycles 20000 and 30000.
   not, the setup failed and the case is not read.
 - The kill events are random (samples); the salvage given the events is
   not.
+
+## BET arm (added before any run, after stars-elegy #141)
+
+#141 reads the design cost as fixed when the file loads, at the tech from
+before research, except that a Bleeding Edge Technology owner's salvage
+recomputes the cost after research (BINARY-ONLY). Two more variants, the
+same as `cb053-ctl` and `cb053-up` with player 0 given BET (`lrt 0
+0x1000`): `cb053-bet-ctl` and `cb053-bet-up`.
+
+With BET, miniaturization is `min(5·m, 80)%` (`COMPONENTS.md`). Long
+Hump 6 (m = 3, 15%) is 4/0/1 either way. Cost per Victim:
+
+- lowest level 5 (25%): hull 9/0/13, armor 4/0/0 → **17/0/14**;
+- lowest level 6 (30%): hull 8/0/12, armor 3/0/0 → **15/0/13**.
+
+Predictions:
+- `cb053-up` (no BET): **old tech**, 18/0/15.
+- `cb053-bet-up`: **new tech**, 15/0/13.
+- `cb053-bet-ctl`: 17/0/14.
