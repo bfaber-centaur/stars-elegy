@@ -5599,9 +5599,11 @@ evidence: private apparatus `evidence/fo/co07b` (the run of 2026-10-07).
 
 - **Contradiction.** `PRODUCTION-LAUNCH.md` "Can the planet build it" said
   a ship item at a planet without a starbase builds nothing but its
-  resources are spent. Read together with CO-07b, that predicts 15 Fe
-  and 14 Ge spent at the homeworld, and research given only the 15%
-  tax. The original spent nothing.
+  resources are spent. Read together with CO-07b, that predicts minerals
+  spent at the homeworld and research given only the 15% tax. Elegy,
+  which followed it, ended the year at 395/493/450 kT (Fe/Bo/Ge) against
+  the original's 413/493/464 (Elegy's comparison, not an oracle run). The
+  original spent nothing.
 - **Observation (MEASURED, one run).** Player 0 deleted the starbase
   design in use at its homeworld. The queue held 2 Freighters (the first
   66% done) and then 1 Scout-hull design.
@@ -5624,10 +5626,11 @@ evidence: private apparatus `evidence/fo/co07b` (the run of 2026-10-07).
 - **What stays.** The starbase check at build time and its "already spent"
   rule are unchanged, and still BINARY-ONLY. In play they are reached only
   by a hand-built queue at a planet without a starbase.
-- **Why the run can't tell (a) from (b) by the queue alone.** Under the
-  old rule the items would also have been removed, so the empty queue is
-  the same either way. The unspent minerals and the full research are
-  what tell them apart.
+- **What the run can and can't tell.** Under the old rule the items would
+  also have been removed, so the empty queue is the same either way. The
+  unspent minerals and the full research rule out the old "already spent"
+  reading. They don't tell (a) from (b), since both spend nothing; the
+  choice of (b) is BINARY-ONLY.
 
 ## Representative game (RG-001)
 
