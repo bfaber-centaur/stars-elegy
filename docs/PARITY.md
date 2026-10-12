@@ -3165,6 +3165,36 @@ quantities. Details: `experiments/cb057/README.md`.
   common cap gives this choice, so the cap's value of 10^7 stays
   BINARY-ONLY.
 
+### Round 12: lane D's late combat questions (CB-058)
+
+Lane D's predictions were pushed first (elegy eaa474e), and so were
+Elegy's numbers for the exact run designs (apparatus `evidence/cb058`).
+Four starts, six pinned cycles each. Details:
+`experiments/cb058/README.md`.
+
+- **A missed torpedo writes one 0-hit record, CONFIRMED (6 of 6).** 268
+  one-torpedo misses against a jammer-95 target with no shields each wrote
+  exactly one record, flagged 0x80, with no change.
+- **Cargo leaves with destroyed ships, by cargo capacity, CONFIRMED (6 of
+  6).** Four Large Freighters carrying 1000/700/333 kT, killed one at a
+  time, left salvage of 764/528/257. That is each kill's share plus a third
+  of the hull, less a quarter per event. Losing all cargo with the last ship
+  would give 762/525/258.
+- **Salvage numbering across two battles, CONFIRMED (6 of 6).** The salvage
+  at the point of player 0's lower fleet was the victim's number 0, and the
+  other number 1, so the order is not by the victims' lowest fleet.
+  Ascending y would also fit.
+- **The Langston Shell keeps its armor whole under Regenerating Shields,
+  in any slot, CONFIRMED (6 of 6).** The halving goes by the part's kind, not
+  the slot's. A Rogue with 3 Shells in its shield-or-armor slot replays
+  every hit at armor 645, not 547. The Battleship (2195) and the Organic
+  Armor control (712) replay too.
+- **A Death Star's reach is the part's range + 1, CONFIRMED (6 of 6).** With
+  Heavy Blasters (range 3) it held fire at 5 squares and fired at 4. Its
+  armor fits 1126–1500 (1500 consistent, MEASURED).
+- The token cap with three players and with a starbase was not rerun:
+  CB-042 and CB-043/CB-044 already measured it.
+
 ### Battle plans through the client (BP)
 
 The original client gave the orders (`tools/fleetlab/client-orders`), and

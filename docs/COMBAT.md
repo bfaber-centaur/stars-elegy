@@ -165,7 +165,12 @@ orbiting it.
 
 Locations are examined in the order of their first fleet, with fleets
 ordered by owner and then by fleet number. The order only matters for the
-random stream and for the plan-0 legacy bug below.
+random stream, the plan-0 legacy bug below, and the numbering of
+deep-space salvage made in different battles. CONFIRMED (CB-058, 6 runs):
+player 0's fleet 1 at one point and fleet 3 at another destroyed player
+1's fleets 4 and 2 there. The salvage at fleet 1's point was player 1's
+number 0 and the other number 1, so the order is not by the victims' lowest
+fleet. An order by ascending y would also fit this layout.
 
 ## Who fights (CONFIRMED in part; see each rule)
 
@@ -425,7 +430,9 @@ not take it is not part of the design by then and adds nothing here (see
 - **Weapon initiative** (per weapon slot): min(63, part initiative +
   token initiative).
 - **Weapon range**: the part's range; +1 on a starbase (reach only; see
-  Beams).
+  Beams). CONFIRMED (CB-058, 6 runs): a Death Star with 8 Heavy Blasters
+  (range 3) did not fire while the nearest enemy was 5 squares away, and
+  fired at one 4 away.
 - **Computer %**: start `c = 0`; for each Battle Computer (20), Battle
   Super Computer (30), Battle Nexus (50) and Multi Contained Munition (10)
   item: `c += (100 − c)·v/100`.
@@ -457,8 +464,12 @@ not take it is not part of the design by then and adds nothing here (see
   375; the same parts both in the armor slot fit 375–376. RG-002's year-6
   record (one stream) fits too: base 450 with 2 Organic Armor in one slot
   gives 450 + 350/2 = 625, inside the 625–626 the hits allow, while
-  halving each part gives 624. A shield part's own armor is not halved (Croby Sharmor; the
-  Langston Shell is not observed). The halved value is the design's
+  halving each part gives 624. A shield part's own armor is not halved,
+  in any slot: the halving goes by the part's kind, not the slot's.
+  CONFIRMED for Croby Sharmor (CB-056) and the Langston Shell (CB-058,
+  6 runs). Every hit replays with a Rogue holding 3 Langston Shells in its
+  shield-or-armor slot at armor 450 + 195 = 645, not 547, and with a
+  Battleship holding 3 in its shield slot at 2195 (shields 525 each). The halved value is the design's
   armor itself, so mine and stargate damage use it too: MEASURED for
   mines (CB-056, 23 fleets; PARITY "Round 10: late-game questions
   (CB-056)"), BINARY-ONLY for stargates. CONFIRMED (CB-007): 2 Mole-skin → 70 shields; a Destroyer with
@@ -1082,7 +1093,10 @@ Per salvo, while torpedoes remain:
    `hits·d` is odd. CONFIRMED (CS-003-C2): one Alpha Torpedo hit
    (`d = 5`) did 4.
    - A hit record is written for every target the salvo reaches, even
-     with 0 hits. A 0-hit record changes nothing (CONFIRMED once, CB-049:
+     with 0 hits. CONFIRMED (CB-058, 6 runs): 268 missed one-torpedo
+     salvos (hit chance 1 against jammer 95) on an unshielded target each
+     wrote exactly one record, flagged 0x80, with no change. A 0-hit
+     record changes nothing (CONFIRMED once, CB-049:
      the 0-hit record after a miss record left the target as it was). This
      accounts for the no-change records with flag 0x80 that CS-003-C2
      saw on an unshielded target, one per missed shot (7 for the Alpha
@@ -1231,7 +1245,11 @@ the stack's damage before the hit (2,197 of them with damage), and 44 of
 
 Per kill event, per mineral: a third of the destroyed ships' design
 mineral cost (× ships), plus the destroyed ships' share of the fleet's
-cargo. The share is computed as follows (BINARY-ONLY):
+cargo. The share is computed as follows (CONFIRMED, CB-058, 6 runs: four
+Large Freighters with 1000/700/333 kT and 500 kT of colonists, killed
+one per kill event in deep space, left salvage of exactly 764/528/257,
+the sum of these shares plus a third of each hull, less a quarter per
+event; losing all cargo with the last ship would give 762/525/258):
 
 - If the whole fleet died, the share is all of the fleet's cargo.
 - Otherwise the cargo moved is `C · Σ lost ships·cargo capacity /
