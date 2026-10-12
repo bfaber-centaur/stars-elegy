@@ -1084,7 +1084,13 @@ reproduces the original:
   willing non-enemy was refused; the fleet kept its owner).
 
 Otherwise the fleet changes owner — CONFIRMED (an empty fleet gifted to a
-willing non-enemy human became that player's fleet). (The coverage audit
+willing non-enemy human became that player's fleet). The gift keeps its
+place, fuel and mineral cargo, and it gets the recipient's lowest unused
+fleet number. Its design is copied into the recipient's first free design
+slot. The giver gets 0x14d and the recipient 0x14e (CONFIRMED, GAP-001
+T1, T3: with the recipient holding fleets 0, 1, 2 and 4, the empty fleet
+became number 3 and the one carrying 30 kT of ironium became 5 with its
+cargo). (The coverage audit
 flagged the computer-player and treated-as-enemy refusals as missing; both are
 now measured, and the colonist refusal was already read.)
 
