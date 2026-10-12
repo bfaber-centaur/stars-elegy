@@ -238,7 +238,8 @@ type Player struct {
 	ResearchNextField   string            `json:"research_next_field"` // a field, "same" or "lowest"
 	Relations           map[string]string `json:"relations"`
 	MysteryTraderItems  []string          `json:"mystery_trader_items"`
-	Computer            bool              `json:"computer,omitempty"` // a computer player: the host plans its orders
+	Computer            bool              `json:"computer,omitempty"`  // a computer player: the host plans its orders
+	Homeworld           *int              `json:"homeworld,omitempty"` // the planet the player's record names as its homeworld
 	Race                Race              `json:"race"`
 	Counts              struct {
 		ShipDesigns     int `json:"ship_designs"`
@@ -546,6 +547,11 @@ func (v *Vector) Check() []error {
 			planets[p.ID] = true
 			if f := p.ConcFractions; f != nil && (len(f) != 3 || min(f[0], f[1], f[2]) < 0 || max(f[0], f[1], f[2]) > 255) {
 				bad("planet %d: concentration_fractions %v", p.ID, f)
+			}
+		}
+		for _, p := range st.Players {
+			if p.Homeworld != nil && !planets[*p.Homeworld] {
+				bad("player %d: homeworld %d is not a planet of the state", p.ID, *p.Homeworld)
 			}
 		}
 	}

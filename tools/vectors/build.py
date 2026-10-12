@@ -204,6 +204,10 @@ def state(hst, xy, game, xy_path=None):
             })
             if d.get('computer') == '1':
                 st['players'][-1]['computer'] = True
+            # The planet the player's record names as its homeworld (KERNEL "Turn
+            # order" step 3.6 re-marks it every year, whoever owns it). Kept only
+            # when it names a planet of this file; see the check below.
+            st['players'][-1]['homeworld'] = int(d['homeworld'])
             owners.append(p)
         elif s.startswith('design ') or s.startswith('sbdesign '):
             m = re.match(r'(sb)?design owner=(\d+) n=(\d+) mass=(\d+) armor=(-?\d+) full=\w+ :: (.*)', s)
@@ -287,6 +291,9 @@ def state(hst, xy, game, xy_path=None):
         if n in sb:
             p['starbase'] = sb[n]
     st['planets'] = [planets[n] for n in sorted(planets)]
+    for q in st['players']:
+        if q['homeworld'] not in planets:  # names no planet of this file: leave it out
+            del q['homeworld']
     st['game']['players'] = len(st['players'])
     if xy_path:
         st['game'].pop('random_events', None)
