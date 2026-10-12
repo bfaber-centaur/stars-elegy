@@ -6230,10 +6230,30 @@ agree.
 | No driver before, one Mass Driver 7 now | speed set to 7 (replacing 6, or where none was set); destination kept | CONFIRMED |
 | No driver before, two Mass Driver 7s now | speed 8 replaced 9 | MEASURED (PD-1b) |
 | A driver before, a driver now (two Mass Driver 7s; an Ultra Driver 10) | 6 and 9 kept | MEASURED (PD-1b) |
-| A starbase design holding a part the race may not build (Mass Driver 5, Packet Physics only) | not built; item gone with only 0x03e; old starbase and setting kept | MEASURED (a setup defect, then two diagnostic runs) |
+| A starbase design holding a part the race may not build (Mass Driver 5, Packet Physics only) | not built; item gone with only 0x03e; old starbase and setting kept | MEASURED (a setup defect, then two diagnostic runs); the spend is pinned by FB-1 |
 
 Elegy 8426a6a has no replacement rule and differs in five of the nine
 cases; it also built the Mass Driver 5 starbases.
+
+## A queue item whose design the owner may not build (FB-1)
+
+Status: CONFIRMED by prediction (lane G's rule in `PRODUCTION-LAUNCH.md`
+"Can the planet build it" and "Starbases", pushed before the runs for the
+exact start). Results: `experiments/fb/README.md`. Raw evidence: private
+apparatus `evidence/fb1`. One start, two pinned streams, a second year
+chained from each, which agree. The designs were a state edit: the client
+would not let the race draw them.
+
+| Case | Observed | Result |
+|---|---|---|
+| A ship item ×1 from 0% with a part the race may not use (an Inner Strength weapon; a Hyper Expansion engine) | 0x04f; no fleet; the whole unit cost spent; the item removed and the next item built | CONFIRMED |
+| The same with an unowned Mystery Trader part (Multi Function Pod) | the same | CONFIRMED |
+| A Packet Physics-only starbase (Mass Driver 5) replacing an Orbital Fort from 0% | only 0x03e; the Fort kept; the replacement cost spent | CONFIRMED |
+| A ship item ×3 with resources for one unit | year 1: 0x04f, no fleet, one unit and the progress on the next spent, nothing after it built, an empty item left in the queue; year 2: the empty item dropped with no message and the next item built | CONFIRMED |
+| 0x04f parameters | (design slot + 1, 0), with the planet as the message object | MEASURED |
+
+Elegy 8426a6a has no build-time check and differs in five of the eight
+cases.
 
 ## Following a fleet merged away the same year (MR-1)
 
