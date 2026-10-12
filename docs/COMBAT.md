@@ -946,7 +946,14 @@ drop, so in the generation that reads the design:
   Freighters with a Beam Deflector in the shield-or-armor slot left the
   salvage of the cost with the deflector (4/0/7 per ship) when destroyed
   in the year the design was first read, and the salvage of the plain
-  freighter (4/0/5) when destroyed in the next year.
+  freighter (4/0/5) when destroyed in the next year. CONFIRMED for target
+  choice (CB-055, 18 of 20 battles, both fleet orders; the other 2, `y1-b`
+  and `y2-b` at cycles 50000, had the Fuel Tank stack out of reach at the
+  first shot): a frigate's
+  first shot took a stack of those freighters over a stack of Fuel Tank
+  freighters (cost 7 per ship) in the year the design was first read
+  (cost 8 with the deflector), and the Fuel Tank stack in the next year
+  (cost 6 without it).
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
