@@ -6049,12 +6049,13 @@ corrected them, and every row is scored on run 2.
 - The hostile adjuster fleet whose click left the habitability percentage
   unchanged got "cannot degrade any further" (0x15b), although an axis
   moved. Elegy predicted no message.
-- The Genesis Device costs about 3,500 resources, not 5,000. 37
-  resources gave 1%, 500 gave 14% and 999 gave 28%.
+- The Genesis Device does not cost 5,000 resources. 37 resources gave
+  1%, 500 gave 14% and 999 gave 28%, which bound the cost to 3,445–3,567
+  (MEASURED; consistent with 3,500, but not pinned).
 
-The Genesis rebirth itself (a new environment and new concentrations,
-random, the terraformed mark cleared, minerals kept) is MEASURED and was
-not predicted.
+The Genesis rebirth itself was not predicted. It is MEASURED: it gives a
+new environment and new concentrations, which are random-driven; the
+terraformed mark is cleared; and the minerals are kept.
 
 **Interpretation.** These results are now in the rule text:
 - `KERNEL.md`: the packet item costs, "No driver or no destination",

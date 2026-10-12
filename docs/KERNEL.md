@@ -1036,7 +1036,7 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
 | Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); 10 resources CONFIRMED for IT (GAP-001 P2: 37 resources built 3 units and left 79%); PP's 5 BINARY-ONLY |
 | Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED (OB-028, OB-029); IT 48 and 10 resources CONFIRMED (GAP-001 P1, P3, A1, A2); PP's 5 BINARY-ONLY |
-| Genesis Device (planetary item 13; needs the Mystery Trader part) | about 3,500 resources, no minerals, no miniaturization | MEASURED (GAP-001 G2–G4: 37, 500 and 999 resources reached 1%, 14% and 28%, so 3,445 < cost ≤ 3,567; a cost of 3,500 fits all of them) |
+| Genesis Device (planetary item 13; needs the Mystery Trader part) | 3,445–3,567 resources (consistent with 3,500; not pinned), no minerals, no miniaturization | MEASURED bounds (GAP-001 G2–G4: 37, 500 and 999 resources reached 1%, 14% and 28%) |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -1164,9 +1164,9 @@ What a packet item launches, and the packet it makes, are in `OBJECTS.md`
   reset; it then grows or shrinks with the new habitability (MEASURED,
   GAP-001 G1, two streams: 50/50/50 with concentrations 30/30/30 became
   49/6/38 with 61/61/34 in one stream and 31/42/51 with 58/88/69 in the
-  other). The new values are random draws: the same stream gave the same
-  values from two starts that differed only in population. The draw
-  distribution is UNKNOWN. Installations were 0 in the test, so whether
+  other). The new values are random-driven: the same stream gave the same
+  values from two starts that differed only in population. The draws and
+  their distribution are UNKNOWN. Installations were 0 in the test, so whether
   the device clears them is UNKNOWN.
 
 ### Terraforming
