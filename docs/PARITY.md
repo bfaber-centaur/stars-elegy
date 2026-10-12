@@ -5693,7 +5693,7 @@ results; raw evidence in private apparatus `evidence/<case>`).
   the level came from this year's research or from research already
   stored at the start of the year. With BET it was the new cost
   (90/0/78; BET control 102/0/84). This agrees with RG-001 2434 (player
-  1's Mini-Colony Ship) and with stars-elegy #141.
+  1's Mini-Colony Ship) and with `COMBAT.md` "Design cost".
 - **Order of level-ups in one year (GR-ORDER), MEASURED, 2 of 2 streams.**
   A Generalized Research player with every field at 5 and several fields
   exactly at the cost of level 6, so that the first level raises the

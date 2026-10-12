@@ -859,15 +859,16 @@ stolen 23 and 88 stored as 12 and 44).
 - Generalized Research: the current field gets `trunc((res+1)/2)`; each
   other field gets `trunc((3·res + 19)/20)` (15% rounded up)
   (CONFIRMED, KX-002 R5: 211 → 106 and 32 each).
-- Generalized Research, order of level-ups (GR-ORDER, MEASURED, 2 of 2
-  streams each; `PARITY.md` "Mismatches shrunk to oracle cases"). A level
-  raises every other field's next cost by 10, so the order decides which
-  of several fields just at their cost levels.
+- Generalized Research, order of level-ups (MEASURED, 2 of 2 streams each
+  in the GR-ORDER runs, `PARITY.md` "Mismatches shrunk to oracle cases";
+  RG-001 2433 fits the first order below). A level raises every other
+  field's next cost by 10, so the order decides which of several fields
+  just at their cost levels.
   - With this year's shares flowing in, each field's share is added and
     checked in turn, starting with the field after the current one and
     going round: with propulsion current, construction levelled before
     biotech and weapons; with construction current, biotech before energy
-    and weapons. RG-001 2433 fits this.
+    and weapons.
   - With research already stored and nothing added in the year, the field
     that levelled was the first from energy to biotech, whatever the
     current field (weapons with propulsion current, energy with
