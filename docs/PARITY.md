@@ -6026,6 +6026,63 @@ mining, starbase damage and loss, and raises research level cost and
 population growth to full or near-full coverage. It does not reach
 adjuster worsening or scrapping at a starbase.
 
+### RG-002 restarts: an AR owner's own miners
+
+**Question.** In the Y1 (2463) and Y4 (2466) restarts, Elegy builds one
+ship too few at the Macinti AR homeworld, planet 35. Why?
+
+**Observation** (public vectors `vectors/rg/rg002-y1.json` and
+`rg002-y4.json`).
+- Planet 35 has a Space Station, population 8,066 (Y1) and 8,283 (Y4),
+  ironium concentration 63 and 62.
+- Fleet 6/1, two Miner ships with six Robo-Midget Miners each (60
+  points), has a standing remote-mining task there and does not move.
+- Y1 starts with 155 kT of ironium. The queue holds three design-7 ships
+  (27 kT ironium each), then design 12 ×7 (32 kT each, 89 resources).
+- Y1 oracle: fleet 6/12 has 5 design-12 ships, design 12's next unit is
+  at 30%, and planet 35 ends at 0/1,714/493 kT.
+- Y4 oracle: a design-12 ship is built at planet 35, which ends at
+  0/1,865/551.
+
+**Interpretation.** The planet's own mining adds 56 kT of ironium
+(`trunc(sqrt(8066)) = 89` mines × 63). The miner adds `trunc(60·63/100) =
+37`, plus 1 by draw.
+- If the miner mines after production (step 6c), production sees 211 kT.
+  That builds the three design-7 ships, 4 of design 12 and an 11% partial
+  limited by ironium, and the year ends at 37–38 kT.
+- If it mines first, production sees 249–250 kT. That builds 5 units plus
+  30%, with `largestPercent(32, 9) = 30`, and ends at 0.
+- The oracle matches the second case in ironium. Boranium and germanium
+  agree within the ±1 of the draws.
+- Y4 is the same pattern: one design-12 ship that only the early mining
+  pays for.
+
+So an AR owner's own miners at its own AR planet mine before production,
+in the year's mining step (`KERNEL.md` "Remote mining", MEASURED). KB-1B
+could not see this, because its production did not use the minerals.
+
+**Elegy check.** This was tested on a scratch branch (elegy main 6f53103
+plus the RG-002 loader), all 8 seed variants of each restart:
+- Running that fleet's mining right after planetary mining, and not at
+  6c, clears the planet-35 rows: 6/12's ships and fuel, Y4's 6/15, planet
+  35's minerals and player 6's research.
+- Only a ±1 mineral draw remains on one seed in each year.
+- Restart differ totals over the 8 seeds:
+  - Y1: 91 → 54
+  - Y3: 70 → 63
+  - Y4: 275 → 149
+  - Y5: 99 → 61
+
+**Open.** The timing is MEASURED. The rest of the rule in `KERNEL.md`
+is BINARY-ONLY:
+- which fleets qualify, including one that arrived this year;
+- the homeworld floor;
+- the draw order;
+- unowned planets staying at step 6c.
+
+RG-002's miner never moved and planet 35's concentrations stay above 30,
+so these restarts do not exercise them.
+
 ### Not covered
 
 - The adjuster's worsening clicks (its planet keeps a starbase), a scrap
