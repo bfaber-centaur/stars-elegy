@@ -841,7 +841,9 @@ mining, and no homeworld floor at an unowned planet.
   1. not orbiting a planet → 0x077;
   2. no mining robots → 0x075, whoever owns the planet;
   3. the planet is owned:
-     - an Alternate Reality fleet is skipped;
+     - an Alternate Reality fleet is skipped: no message to either player,
+       the task is kept and nothing is mined (CONFIRMED, RM-2h, a human
+       AR fleet at a human player's colony, two streams);
      - any other fleet → 0x076.
 
   So a fleet with no robots at a planet owned by a race other than
