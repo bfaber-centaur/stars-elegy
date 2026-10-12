@@ -69,3 +69,33 @@ Predictions:
 - `cb053-up` (no BET): **old tech**, 18/0/15.
 - `cb053-bet-up`: **new tech**, 15/0/13.
 - `cb053-bet-ctl`: 17/0/14.
+
+## Results
+
+Cycles 20000 and 30000 gave the same battle in every variant: Player 1's
+destroyers killed 24 Victims in two kill events of 12 each, and 76
+survived the battle. So the prediction "all 100 destroyed" failed, which
+does not affect the reading: salvage per event is
+`trunc(12·c/3) − trunc(trunc(12·c/3)/4)`.
+
+| case | biotech after | salvage (Fe/B/G) | old-cost value | new-cost value |
+|---|---|---|---|---|
+| `cb053-ctl` | 5 | 108/0/90 | 108/0/90 | (no level) |
+| `cb053-up` | 6 | **108/0/90** | 108/0/90 | 102/0/84 |
+| `cb053-pre` | 6 | **108/0/90** | 108/0/90 | 102/0/84 |
+| `cb053-bet-ctl` | 5 | 102/0/84 | 102/0/84 | (no level) |
+| `cb053-bet-up` | 6 | **90/0/78** | 102/0/84 | 90/0/78 |
+
+- **CONFIRMED (2 of 2 streams):** without BET, a ship destroyed in the
+  year its owner levels up a miniaturization field is priced at the tech
+  from before the year's level, both when the level comes from this
+  year's research (`cb053-up`) and when the stored research already
+  covered it at the start of the year (`cb053-pre`).
+- **CONFIRMED (2 of 2 streams):** with Bleeding Edge Technology the same
+  kill is priced at the new tech (`cb053-bet-up`), as stars-elegy #141
+  reads it.
+- Every per-event value matched `S − trunc(S/4)` with
+  `S = trunc(k·c/3)` and the predicted design costs, so the
+  miniaturization rule for these items (20%/24%, and 25%/30% with BET)
+  also held.
+- The kill events are random; the salvage given the kills is not.
