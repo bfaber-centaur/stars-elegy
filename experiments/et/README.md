@@ -63,8 +63,9 @@ The record said the task is cancelled with 0x11e, a BINARY-ONLY claim in
   - elegy 0a1c002: 0x11e and no 0x04e;
   - the `MESSAGES.md` wording: 0x11e, then 0x04e.
 
-  The later elegy head 752646f predicted 0x11e then 0x04e, the same as
-  the wording. It arrived after the runs.
+  The later elegy head 752646f (pushed 22:05:23Z, before the runs but not
+  in the pre-run record) predicted 0x11e then 0x04e, the same as the
+  wording.
 - **ET-2b** (5074fb83, 22:07:08Z; runs 22:07:10Z). There were two:
   - elegy 0a1c002: 0x11e for Q;
   - a hypothesis drawn from ET-2: Q loads.
