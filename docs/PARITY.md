@@ -5796,6 +5796,25 @@ setup.
   minerals, and the wormholes, three players' research and two queues
   differed (interpretation: the computer players' planning moved the
   stream).
+- Mining's random +1, MEASURED against Elegy's restarts (elegy main
+  c8565c4, `rg001-y1` to `rg001-y6`, 8 seed variants each): of the
+  surface-mineral results whose Elegy mining amount had a nonzero
+  remainder `r` (`KERNEL.md` "Mining"), 1,175 differed from the original
+  by at most 1 kT. Reading the original's +1 from the sign of Elegy's
+  difference (and, where all 8 seeds matched, as the likelier side), the
+  original added the +1 584 times against 582 expected from `r/100`,
+  close in every 10-point bin of `r`. This is consistent with a +1 at
+  probability `r/100`; it does not test the draw order. In the chained
+  run these ±1 kT steps add up: 140 of the 149 chained surface-mineral
+  mismatches at that commit are such sums (up to 5 kT by 2435), with each
+  year's own step within 1 kT.
+- Colonizing after movement prices the colony ship at the tech from
+  before the year's research, MEASURED once (2434, all 8 seed variants of
+  `rg001-y5`): player 1's Mini-Colony Ships colonizing planets 97 and 114
+  left 10/6/9 kT, `⌊3/4⌋` of 14/9/12, the cost at the year's starting
+  energy 3. Player 1 ended the year at energy 5, whose cost 13/8/11 gives
+  9/6/8. Whether the levels are the year's start or those after the first
+  level-up check is not distinguished here (`TAKEOVER.md` "Colonization").
 
 ### Not covered
 

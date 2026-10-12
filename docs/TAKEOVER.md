@@ -428,6 +428,12 @@ On success:
   Long Hump 6 + Colonization Module left 18/6/17 kT at tech 3 and 4/1/5 at
   tech 26, which are exactly `⌊3/4⌋` of 25/9/23 and 6/2/7 (T-30). This is
   also the first direct oracle check of the miniaturization rounding.
+  "This year" is the tech from before the year's research, as in
+  `COMBAT.md` "Design cost" ("Which year's tech"): MEASURED once for a
+  colony ship that colonized after movement (RG-001 2434, planets 97 and
+  114: 10/6/9 at the starting energy 3, not 9/6/8 at the year-end energy
+  5; `PARITY.md` "Representative game (RG-001)"). That it is the start of
+  the year rather than after the first level-up check is not measured.
 - The colonists become a queued drop resolved as above. An uncontested
   colony ship lands all its colonists.
 - The new colony gets the owner's default production queue. Alternate
