@@ -5,7 +5,7 @@
  "source": {
   "experiment": "stars-oracle-apparatus evidence/rg001 (private); start from evidence/ai/aix",
   "spec_rules": "docs/KERNEL.md \"Turn order\"",
-  "parity": "docs/PARITY.md \"RG-001\"",
+  "parity": "docs/PARITY.md \"Representative game (RG-001)\"",
   "raw_evidence": "stars-oracle-apparatus evidence/rg001 (private)"
  },
  "years": 6,

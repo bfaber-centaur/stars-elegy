@@ -137,7 +137,7 @@ def build(ev, out):
         prev = st1
     vec = {'schema': B.SCHEMA, 'id': r['id'], 'title': r['title'],
            'source': {'experiment': 'stars-oracle-apparatus evidence/%s (private); start from evidence/ai/aix' % run,
-                      'spec_rules': 'docs/KERNEL.md "Turn order"', 'parity': 'docs/PARITY.md "RG-001"',
+                      'spec_rules': 'docs/KERNEL.md "Turn order"', 'parity': 'docs/PARITY.md "Representative game (RG-001)"',
                       'raw_evidence': 'stars-oracle-apparatus evidence/%s (private)' % run},
            'years': len(ydirs), 'random': 'single_stream', 'streams': 1, 'initial_state': st0,
            'orders': orders,

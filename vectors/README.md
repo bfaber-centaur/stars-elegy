@@ -48,7 +48,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `ug` | UG01..UG30 | 150 | new games: starting tech and designs, planet counts, homeworlds, wormholes, stored victory conditions (`new_game` vectors) | `docs/UNIVERSE.md` |
 | `pg` | PG-002, PG-003 | 4 | population growth and carry, uncrowded and crowded, 19 and 29 empty-order years | `docs/KERNEL.md` "Population growth" |
 | `pq` | PQ-001 C01..C14, P0 | 16 | one year of the production queue: partial builds, mineral shortfall, auto items, alchemy, research tax, order clips | `docs/KERNEL.md` "Production" |
-| `rg` | RG-001 | 6 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start` | `docs/KERNEL.md`, PARITY "RG-001" |
+| `rg` | RG-001 | 6 | a representative game: seven players (six expert computer players), about a hundred fleets, six chained years with every player's orders, battles, colonizing, research, production and random events; each year's random stream start is in `random_start` | `docs/KERNEL.md`, PARITY "Representative game (RG-001)" |
 
 `internal/vectors` holds the same format as Go types and a test that
 decodes every file strictly, so `go test ./...` fails on a malformed vector.
