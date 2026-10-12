@@ -1506,6 +1506,66 @@ coordinates, item draw for the outcomes seen). Not exercised: the part
 reroll and its late-year research conversion, and the `mod 128 = 49`
 branch at an index where `mod 100` also matches.
 
+#### Comets on terraformed planets (addendum, S11)
+
+Question: does a comet move a planet's original environment as well as
+its current one, each clamped on its own, and what does the planet look
+like afterwards? KX-004 left this BINARY-ONLY: no struck planet had been
+terraformed, so the original value was never visible.
+
+Method: E1's 2430 state (the S1 and S2 start) with only these
+environments edited (`experiments/kx004/s11.spec`, built with
+`combatlab`), so current and original differ and some moves cross a
+clamp. One year per cycles value, with the ticks S1, S2, S5 and S8 already
+identified (ORACLE.md "Which stream a cycles value reaches"). Environments
+are written gravity/temperature/radiation.
+
+| Planet | Owner | Current | Original |
+|---|---|---|---|
+| 2 | player 0 | 4/93/50 | 50/50/95 |
+| 11 | player 0 | 97/48/50 | 60/40/30 |
+| 15 | player 1 | 50/50/50 | 97/20/20 |
+| 22 | none | 22/3/84 | 25/10/97 |
+
+Planets 17 (player 0's homeworld) and 19 (unowned) stay untouched, as
+controls whose original equals the current value.
+
+Predictions, from the KX-004 replay of each tick with the edited state
+(the draws do not depend on the environment, so each tick draws the same
+comet as before). The same move `s` goes to both values, and each is
+clamped to 1..99 on its own:
+
+| Cycles → tick | Planet | Size | Move | Current after | Original after |
+|---|---|---|---|---|---|
+| 2190 → 1812 | 11 | medium | +3, +4 | 99/52/50 (gravity clamped) | 63/44/30 |
+| 1985 → 2032 | 2 | huge | −7, +8, +10 | 1/99/60 (two clamps) | 43/58/99 (radiation clamped) |
+| 930 → 4284 | 15 | small | +4 | 54/50/50 | 99/20/20 (clamped) |
+| 6000 → 659 | 22 | large | −3, −4, −3 | 19/1/81 (temperature clamped) | 22/6/94 |
+| 11500 → 329 | 22 | medium | +4, −4 | 26/1/84 (temperature clamped) | 29/6/97 |
+| 3700 → 1098 | 17 | large | +5, −3, +4 | 55/47/54 | the same: no separate original in the file |
+| 10500 → 384 | 19 | small | −4 | 48/78/29 | the same: no separate original in the file |
+| 1000 | — | no event | | | |
+
+Also predicted for each struck planet:
+
+- Concentrations: 11 → 79/134/99; 2 → 200/168/132 (ironium at the
+  200 cap); 15 → 175/53/71; 22 → 127/123/139 at tick 659 and 165/52/150
+  at tick 329; 19 → 23/38/156; 17 (a homeworld with mines) +50/+69/+90
+  over the no-event run.
+- Surface minerals gain, over the no-event run (cycles 1000): 11
+  +10/+880/+607; 2 +365/+814/+881; 15 +895/+18/+15; 17 +257/+379/+1107;
+  8 boranium +5 concentration at tick 1812.
+  Unowned planets have no surface minerals in the file.
+- Owned planets: population `G − trunc(G·(20e + 25)/100)`, where G is the
+  planet's population in the no-event run. The queue keeps only its
+  automatic items (Auto Factories ×5 on 2, 11 and 15). The owner gets 0x087 + e, naming axes 1, 0 (planet 11),
+  1, 0, 2 (planet 2), 2 (planet 15) and 0, 1, 2 (planet 17). Every other
+  player gets 0x083 + e.
+- Every other planet ends as in the no-event run.
+- The file shows a separate original environment exactly when it differs
+  from the current one (planets 2, 11, 15 and 22 keep one; 17 and 19 do
+  not get one).
+
 ### KX-005 — research, tech progression and terraforming
 
 Status: CONFIRMED (research GR under slow tech, GR-fed level-ups, part
