@@ -465,8 +465,16 @@ starvation, a packet or an AR starbase loss) is emptied:
     concentrations and mining depletion fractions are stored separately
     and kept.
   - Until the file is written, the planet in memory keeps its carry, so
-    only the round trip loses it. Growth reads the carry only after that
-    round trip, so a later colony there starts from carry 0.
+    only the round trip loses it. Neither emptying a planet nor landing
+    colonists on it changes the carry; only the year's growth step writes
+    it. So growth uses whatever carry the planet holds when growth runs
+    (BINARY-ONLY):
+    - for a planet emptied after the year's growth (battles, bombing,
+      later invasions), the next growth comes after the round trip, so a
+      later colony there starts from carry 0;
+    - for a planet emptied and recolonized before the year's growth (ground
+      combat or a colony landing in the first order step), growth uses
+      the old carry. No run has observed this case.
   - RG-001 (the original's own files):
     - planet 50 (carry 34, 0 mines, 0 factories in the 2432 file) and
       planet 87 (carry 40 in 2433) were emptied. Both were written without
