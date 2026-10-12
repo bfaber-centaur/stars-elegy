@@ -296,24 +296,27 @@ Building a starbase design at a planet:
   starbase's armor, and is repaired from there as usual (CONFIRMED,
   SL-12: a Station at 200 units replaced by another Station design read
   150 after the year, as the unreplaced control did).
-- **Mass driver** (CONFIRMED by prediction in PD-1 and PD-1b,
-  `experiments/pd/README.md`, except where marked). When the starbase
-  item completes, the planet's mass driver before the replacement is
-  compared with the new starbase's. "Driver" means the launch rule's `Dw`
-  and `t` (`OBJECTS.md` "Mass-driver packets": the best driver's rating,
-  plus 1 when two orbital slots each hold that best driver).
+- **Mass driver** (BINARY-ONLY except where marked; the tested parts
+  carry their own marks from PD-1 and PD-1b, `experiments/pd/README.md`).
+  When the starbase item completes, the planet's mass driver before the
+  replacement is compared with the new starbase's. "Driver" means the
+  launch rule's `Dw` and `t` (`OBJECTS.md` "Mass-driver packets": the best
+  driver's rating, plus 1 when two orbital slots each hold that best
+  driver).
   - **No driver before, one now:** the packet speed is set to `Dw + t` of
     the new starbase, replacing any speed already set. The destination is
     kept. MEASURED once in RG-002 (year 4, planet 88): no speed set, a
     Space Station with two Mass Driver 7s, packet speed 8 after. CONFIRMED
-    in PD-1/PD-1b: one Mass Driver 7 set 7 where no speed was set and
-    replaced a 6 (destination kept); two Mass Driver 7s replaced a 9 with 8.
+    by prediction in PD-1: one Mass Driver 7 set 7 where no speed was set
+    and replaced a 6 (destination kept). MEASURED in PD-1b: two Mass
+    Driver 7s replaced a 9 with 8.
   - **No driver before, none now** (a first starbase without a driver, or
     a driverless starbase replacing another): the packet destination and
     speed are cleared, and every queued packet item for one mineral or
     mixed is removed, with no message. Automatic packet items stay; they
     build nothing without a driver (`KERNEL.md` "Packet items").
-    CONFIRMED for both forms with an ironium item and an auto item (PD-1);
+    CONFIRMED by prediction for both forms with an ironium item and an
+    auto item (PD-1);
     mixed items are BINARY-ONLY.
   - **A driver before**, whatever the new starbase carries: the
     destination, speed and queued packet items are left as they were. A
@@ -323,9 +326,10 @@ Building a starbase design at a planet:
     production reaches each one, which then cancels it with the "packet
     order cancelled" message (`MESSAGES.md` 0x129; the cancellation of a
     packet item on a planet with no driver is CONFIRMED, GAP-001 A3).
-    CONFIRMED in PD-1/PD-1b: Mass Driver 7 replaced by no driver kept
-    17/6 and sent 0x129 for the ironium item that year; replaced by two
-    Mass Driver 7s it kept 6; replaced by an Ultra Driver 10 it kept 9.
+    CONFIRMED by prediction in PD-1: Mass Driver 7 replaced by no driver
+    kept 17/6 and sent 0x129 for the ironium item that year. MEASURED in
+    PD-1b: replaced by two Mass Driver 7s it kept 6; replaced by an Ultra
+    Driver 10 it kept 9.
   - A starbase item whose design holds a part the race may not build
     (Mass Driver 5 for a non-Packet Physics race) is not built: it leaves
     the queue with no starbase message, the old starbase and its settings
