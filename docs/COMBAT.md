@@ -942,7 +942,11 @@ drop, so in the generation that reads the design:
   this way would still count in battle armor that year (BINARY-ONLY: not
   observed).
 - From the next generation the cost is computed from the design without
-  the part.
+  the part. CONFIRMED for salvage (CB-054, 2 of 2 streams): 30 Small
+  Freighters with a Beam Deflector in the shield-or-armor slot left the
+  salvage of the cost with the deflector (4/0/7 per ship) when destroyed
+  in the year the design was first read, and the salvage of the plain
+  freighter (4/0/5) when destroyed in the next year.
 
 ### Beams (CONFIRMED, CB-001, CB-002, CB-010..CB-016; P-12, P-14, Q-7)
 
