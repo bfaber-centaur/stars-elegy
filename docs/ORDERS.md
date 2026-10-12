@@ -796,7 +796,9 @@ another fleet, which leaves the fleet with that one waypoint. The order
 format carries it and the host acts on it. The original computer players
 write it when they send a fleet to another fleet already at its position
 (MEASURED, AI-27: 19 fleets in AIX). Whether the human client's waypoint
-editor writes it is NOT RUN. Reaching another fleet does not start a
+editor writes it is NOT RUN in general. One way was tried: with the fleet
+selected, a shift-click on its own position (where another player's fleet
+stood) wrote no order at all (MR-1, `experiments/mr/README.md`). Reaching another fleet does not start a
 follow (BINARY-ONLY). When a fleet reaches a waypoint 1 aimed at a fleet
 with a transport or merge task, that waypoint becomes waypoint 0 so the
 task can act there. It is gone again when the year's files are written,
@@ -939,8 +941,8 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   - **Saved files.** While the object exists, the owner's file keeps the
     waypoint aimed at it, whether or not the owner can see it. Minefields,
     wormholes and the Trader are kept only when the owner knows them.
-- **A fleet target merged away during order replay** (BINARY-ONLY; no
-  oracle run). Player B's orders aim a waypoint (index 1 or later) at
+- **A fleet target merged away during order replay** (BINARY-ONLY;
+  waypoint 1 measured in MR-1, last item below). Player B's orders aim a waypoint (index 1 or later) at
   player A's fleet F. A's orders merge F into another of A's fleets Y at
   the same spot (a merge order acts only on co-located fleets). The year's
   replay order decides which of two paths runs:
@@ -989,6 +991,14 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     write-time rule above (WU-A) then saves B's target in B's next file
     as a deep-space waypoint at the chased fleet's position. WU-A covers
     only that saved form, not the retargeting during the year.
+  - **Measured for waypoint 1 (MR-1, `experiments/mr/README.md`).** With
+    client-written orders and each replay order once (two pinned
+    streams), the order was applied and the follower chased Y in both
+    cases, ending where Elegy predicted. No message was sent. Contradicted
+    for the saved form: with Y in view, B's next `.M` file kept the
+    waypoint as a fleet target on Y, not a deep-space waypoint (MEASURED),
+    as in RG-001 above. Waypoint 0 was not tested: the client did not
+    write it (below).
 
 ### Following another fleet (leader linkage)
 

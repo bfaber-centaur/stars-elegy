@@ -853,6 +853,17 @@ What the client did, at 1152x864:
   lowest). The host applied both and spent the year's research on the
   new field. Commands: `research open`, `research field K`,
   `research budget D`, `research next I`, `research done`.
+- **Map waypoints and selection** (MR-1, 2026-10-12). On the Combat Lab
+  base the map at 100% shows galaxy point (x, y) at screen
+  (633 + 0.75·(x − 1306), 330 − 0.75·(y − 1060)) for both players' files
+  (y grows upward). A click on a spot selects an object there and shows
+  its summary; a second click opens it in the fleet view. With a fleet
+  selected, a shift-click on the map inserts a waypoint after the selected
+  one, aimed at the object there (a fleet there was named over deep
+  space; of two fleets, the lower-numbered one), at warp 6. A shift-click
+  on the fleet's own position wrote nothing. `client-orders` commands:
+  `shiftclick X Y`, `rightclick X Y` (the right click showed nothing);
+  `scripts/oracle/click` takes `--shift` and `--ctrl`.
 - **Waypoint tasks** (WP-1). In the fleet view, the Waypoint Task list
   (181, 441) has rows every 14 px from y 459: none, Transport,
   Colonize, Remote Mining, Merge with Fleet, Scrap Fleet, Lay Mine

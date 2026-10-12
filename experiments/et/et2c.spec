@@ -1,6 +1,7 @@
-# ET-2c (ET-2 plus a transport to another player's packet inside the galaxy, and a clamp control): does a transport task whose every action is empty send 0x04e
-# ("fleet has finished its orders") when the fleet reaches its last
-# waypoint? Combat Lab base2400. Player 0 (human JOAT) only; its colonies 4,
+# ET-2c: does a transport task load from another player's packet when the
+# packet and the fleet are both inside the 1000..1400 galaxy, and is a fleet
+# placed outside the galaxy moved to its edge? Combat Lab base2400. ET-2's fleets
+# plus Q and K below. Player 0 (human JOAT) only; its colonies 4,
 # 5 and 12 are identical (population 500, no installations, no queue).
 tech 0 prop 26
 research 0 0
