@@ -71,3 +71,24 @@ func TestConcentrationFractions(t *testing.T) {
 		}
 	}
 }
+
+func TestPlayerHomeworld(t *testing.T) {
+	zero, one, two := 0, 1, 2
+	for _, c := range []struct {
+		hw   *int
+		errs int
+	}{
+		{nil, 0},
+		{&zero, 0},
+		{&one, 0},
+		{&two, 1},
+	} {
+		v := &Vector{Schema: Schema, ID: "T", Years: 1, Streams: 1,
+			InitialState: &State{Game: Game{Players: 1}, Players: []Player{{ID: 0, Homeworld: c.hw}},
+				Planets: []Planet{{ID: 0}, {ID: 1}}},
+			Cases: []Case{{ID: "T-1", Tag: "MEASURED", Expect: []Expectation{{Year: 1, Kind: "no_battle"}}}}}
+		if errs := v.Check(); len(errs) != c.errs {
+			t.Errorf("homeworld %v: want %d errors, got %v", c.hw, c.errs, errs)
+		}
+	}
+}
