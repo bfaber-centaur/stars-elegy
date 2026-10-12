@@ -5637,7 +5637,7 @@ setup.
   matched the same tick at draw 356. No other year checks the tick: the
   2431, 2432 and 2435 battles give 3 draws (4.9 bits) and the search ran
   out of memory, 2433 had no battle, and the 2434 battles give 14 and 20
-  bits, which thousands of streams match (apparatus
+  bits, which 840,843 and 14,073 stream offsets match (apparatus
   `evidence/rg001/tickcheck`).
 - 8 battles (1, 1, 1, 0, 2 and 3 in 2430..2435), colonizing, scrapping,
   research, design changes, packets, wormholes and messages.

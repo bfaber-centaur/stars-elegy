@@ -56,6 +56,10 @@ func TestConcentrationFractions(t *testing.T) {
 		{[]int{1, 2}, 1},
 		{[]int{1, 2, 3, 4}, 1},
 		{[]int{-1, 0, 0}, 1},
+		{[]int{0, -1, 0}, 1},
+		{[]int{0, 0, -1}, 1},
+		{[]int{256, 0, 0}, 1},
+		{[]int{0, 256, 0}, 1},
 		{[]int{0, 0, 256}, 1},
 	} {
 		v := &Vector{Schema: Schema, ID: "T", Years: 1, Streams: 1,
