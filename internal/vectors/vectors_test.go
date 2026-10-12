@@ -172,7 +172,9 @@ func TestSalvageFresh(t *testing.T) {
 
 // RG-002 player 0's default queue is the edited one (experiments/rg002:
 // Auto Factories 100, Auto Mines 100, Auto Defenses 20, Auto Min and Max
-// Terraform 5) in every year's start; the computer players' is empty.
+// Terraform 5) at year 1's start and empty from year 2 on (the host
+// emptied it in year 1, PARITY "Representative game (RG-002)"); the
+// computer players' is empty throughout.
 func TestDefaultQueue(t *testing.T) {
 	want := []QueueItem{{ID: 1, Count: 100}, {ID: 0, Count: 100}, {ID: 2, Count: 20}, {ID: 4, Count: 5}, {ID: 5, Count: 5}}
 	for y := 1; y <= 6; y++ {
@@ -186,7 +188,7 @@ func TestDefaultQueue(t *testing.T) {
 				t.Errorf("%s player %d: default_leftover_to_research %v, want false", file, p.ID, p.DefaultLeftover)
 			}
 			w := want
-			if p.ID != 0 {
+			if p.ID != 0 || y > 1 {
 				w = nil
 			}
 			if len(p.DefaultQueue) != len(w) {
