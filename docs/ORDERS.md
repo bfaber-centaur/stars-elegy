@@ -872,6 +872,39 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   files, at the target's actual end-of-year position, with message
   0x02a. A target that was gone became deep space at its last position,
   with 0x028. How WU-A's target came to be out of view is not checked.
+- **Salvage and mineral packet targets** (BINARY-ONLY except where
+  marked). Salvage and packets are one kind of object, numbered per owner.
+  A waypoint aimed at one stores the object's kind, owner and number as its
+  target, along with coordinates.
+  - **Tracking.** Every check of the year's waypoints copies the object's
+    current position into the waypoint. The checks run at the start of
+    the year, again after packets and the Trader move if any of them
+    moved, and at the end of the year. So a fleet flies toward a packet's
+    position after this year's packet move, the same as for the Trader
+    (`OBJECTS.md`, CONFIRMED for the Trader by WT-001 F1 and WT-005).
+    Salvage does not move, so in practice its target is a fixed point.
+    The exception bit that freezes a fleet target's coordinates is not
+    tested for these objects.
+  - **The object is gone** (decayed away, or a packet that has landed;
+    whether emptying salvage removes it at once is not checked). At the
+    next check the waypoint becomes a plain deep-space
+    waypoint at the coordinates it last held, with no message (the same
+    when the owner's file is written; `MESSAGES.md`). The fleet still
+    flies there. A new packet or salvage of the same owner can take the
+    freed number (numbers are reused, first gap first). If that happens
+    before the next check, the waypoint follows the new object instead.
+  - **Arrival.** Nothing happens because the target is salvage or a
+    packet. Reaching it is an ordinary reached waypoint, and later
+    movement of the object is no longer followed. Only the waypoint's
+    task acts. A transport task loads minerals from salvage. Aimed at a
+    packet (or any object other than salvage), a transport task is
+    cancelled with 0x11e (`MESSAGES.md`).
+  - **Packets and salvage alike.** The same rules hold for both. Only the
+    packet moves, so only for a packet does tracking change the
+    coordinates.
+  - **Saved files.** While the object exists, the owner's file keeps the
+    waypoint aimed at it, whether or not the owner can see it. Minefields,
+    wormholes and the Trader are kept only when the owner knows them.
 - **A fleet target merged away during order replay** (BINARY-ONLY; no
   oracle run). Player B's orders aim a waypoint (index 1 or later) at
   player A's fleet F. A's orders merge F into another of A's fleets Y at
