@@ -203,6 +203,9 @@ def build_kx003(ev, out):
 
 KX4 = {
     'S1': (False, 'MEASURED', 'random events from E1 year 2430; the first-round draw order missed and was corrected from this run'),
+    'S11': (False, 'MEASURED', 'comets on terraformed planets: every current and original environment (one move to both, '
+            'each clamped on its own), concentration, population, queue and message as predicted; miss: the struck '
+            'unowned planets 19 and 22 carry the comet\'s surface minerals afterwards (predicted absent)'),
 }
 
 
@@ -212,12 +215,19 @@ def build_kx004(ev, out):
     n = 0
     for s in sorted((d for d in os.listdir(raw) if re.fullmatch(r'S\d+', d)), key=lambda d: int(d[1:])):
         sd = os.path.join(raw, s)
-        streams = {'cycles ' + c[1:]: [os.path.join(sd, c)] for c in sorted(os.listdir(sd), key=lambda c: int(c[1:]))
-                   if re.fullmatch(r'c\d+', c)}
+        streams = {'cycles ' + c[1:]: [os.path.join(sd, c)] for c in sorted(
+            (c for c in os.listdir(sd) if re.fullmatch(r'c\d+', c)), key=lambda c: int(c[1:]))}
         held, tag, verdict = KX4.get(s, (True, 'CONFIRMED', 'random events (comet strike, climate change, new minerals) '
                                          'and Mystery Trader appearance as predicted in every stream'))
         vec = chained('KX-004-' + s, 'KX-004 %s: one year of random events under %d streams' % (s, len(streams)),
                       streams, (held, tag, verdict, '', 'KERNEL random events'))
+        if s == 'S11':
+            # S11 tests the original environment: a struck planet whose file
+            # still has no separate original has it equal to the current one
+            # (planets 17 and 19; every planet that kept one has it changed).
+            for e in vec['cases'][0]['expect']:
+                if e['kind'] == 'planet' and 'environment' in e['equals']:
+                    e['equals'].setdefault('original_environment', None)
         vec['source'] = {'experiment': 'experiments/kx004', 'spec_rules': 'docs/KERNEL.md "Random events"',
                          'parity': 'docs/PARITY.md "KX-004 — random events and turn-time game options"',
                          'raw_evidence': 'stars-oracle-apparatus evidence/kx004/raw/%s (private)' % s}
