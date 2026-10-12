@@ -1169,7 +1169,7 @@ BINARY-ONLY where marked):
   population (CONFIRMED, KX-005: ×9 with capacity 6 built 6; 50/60/58 →
   50/57/55). **Auto Min Terraform** builds up to the capacity only when
   the planet's population change this year is negative or its
-  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED,
+  habitability for the owner is 0 or less; otherwise nothing (CONFIRMED, KX-004
   KX-005: a growing planet built none; a planet at −1% habitability built
   its one unit; an overcrowded planet at 83% built 6). The count of an
   auto item is a per-year limit and the item stays in the queue.
@@ -1556,7 +1556,7 @@ nothing: a waypoint-0 transport or mine-laying task, the registration
 penalty, engine failure, and a stargate jump.
 
 The message (`MESSAGES.md` 0x0c1) is sent only when the loss is at least
-1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED,
+1 kT. A fleet with 11–22 kT loses 0 and gets no message (CONFIRMED, KX-004
 OT-6: 22 → 22 with no message, 23 → 22 with one).
 
 ### Inner Strength colonists breed in transit (CONFIRMED, OT-5)
@@ -1805,7 +1805,7 @@ setting (planets 20%, score 1000, ...); for the tech condition both the
 level and the field count are stored as 0. Conditions that are on keep
 the value they were given (MEASURED, UG01-E..UG30-E). Tests, per player and year:
 
-- Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED,
+- Planets: owned planets ≥ `round(total planets·pct/100)` (CONFIRMED, KX-004
   S1: 24 planets at 20% need 5; 5 met, 4 did not). The rounding is to the
   nearest whole number with halves rounded up (BINARY-ONLY): 30 planets at
   25% need 8.
@@ -1867,9 +1867,10 @@ changes, 12 new-mineral finds) from 17 distinct random streams and three
 game states, each reproduced exactly (concentrations, environment, surface
 minerals, population, queue and every message) by replaying the
 original's random generator with the draw order below, plus the
-protection and early-year cases (`PARITY.md` KX-004). That the original
-environment value moves with the current one is BINARY-ONLY (the dumps
-used do not show it). The probabilities are BINARY-ONLY: the oracle
+protection and early-year cases (`PARITY.md` KX-004). That a comet moves
+the original environment value with the current one, each clamped on its
+own, is CONFIRMED by KX-004 S11 (6 strikes on planets whose original
+differs from the current value). For climate change it stays BINARY-ONLY. The probabilities are BINARY-ONLY: the oracle
 cannot sample them, since each startup tick gives one fixed stream.
 
 ### Comet strike
@@ -1901,7 +1902,8 @@ cannot sample them, since each startup tick gives one fixed stream.
 11. Environment: for axis d = 0 .. min(e, 2) **in index order** (gravity,
     then temperature, then radiation): `s = 3 + rand(3)`, a huge comet adds
     `3 + rand(3)`; `rand(2) ≠ 0` makes it negative. The current and the
-    original value both move by `s`, each clamped to 1..99.
+    original value both move by `s`, each clamped to 1..99 (CONFIRMED, KX-004
+    S11: current gravity 4 → 1 while its original went 50 → 43 under −7).
 12. The planet's production queue loses every item except the automatic
     ones (Auto Mines, Auto Factories, Auto Defenses, Auto Alchemy, Auto
     Min/Max Terraform, Auto Mineral Packets), which keep their counts
@@ -1914,7 +1916,8 @@ message named radiation. For large and huge comets both cover all three
 axes. It is deterministic and affects only the message text.
 
 Unprotected unowned planets are struck the same way (no population,
-messages to every player). An AR owner gets the plain message and loses
+messages to every player). They keep the surface minerals of step 10
+(MEASURED, KX-004 S11: three strikes on unowned planets). An AR owner gets the plain message and loses
 no population (BINARY-ONLY: no AR owner was struck).
 
 ### Planetary climate change

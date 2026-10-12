@@ -26,7 +26,7 @@ vectors/<corpus>/<run>.json      one oracle run
 | `sc` | SC-001..034 | 680 | scanning: what each player's file shows of fleets, planets, designs and player blocks | `docs/SCANNING.md` |
 | `kx001`, `kx002` | KX-001, KX-002 cases | 38 | planet economy: production, Auto Alchemy, growth, research, mining (one year from an edited PG001 file) | `docs/KERNEL.md` |
 | `kx003` | KX-003 r1, r2, r3, r3l | 4 | score records, victory flags, slower tech, Claim Adjuster | `docs/KERNEL.md` |
-| `kx004` | KX-004 S1..S10 | 10 | random events and Mystery Trader appearance, 3 to 61 streams each | `docs/KERNEL.md` "Random events" |
+| `kx004` | KX-004 S1..S11 | 11 | random events and Mystery Trader appearance, 3 to 61 streams each; S11: comets on planets whose original environment differs from the current one | `docs/KERNEL.md` "Random events" |
 | `kx005` | KX-005 R1..R3, T0..T2 | 6 | research (Generalized Research under slower tech, GR-fed level-ups, part announcements, level 26) and terraforming (ties, Auto Min/Max, Claim Adjuster cost and drift, Orbital Adjusters); T0 in 15 streams | `docs/KERNEL.md` "Research", "Terraforming" |
 | `mf` | MF-01..15 | 25 | minefields: hits, sweeping, decay, detonation, speed bumps, laying at the 511-object limit, salvage after a partial loss, due-north and due-south legs | `docs/OBJECTS.md` "Minefields" |
 | `gt` | GT-001..004 | 4 | stargates: limits, danger and loss rolls, friends, refusal order, what makes a gate (MEASURED, one pinned year each) | `docs/OBJECTS.md` "Stargates" |

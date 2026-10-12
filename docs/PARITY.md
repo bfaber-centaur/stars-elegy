@@ -1443,7 +1443,8 @@ Interpretation:
 - Not reached: an Alternate Reality owner (plain message, no population
   loss), the 180 concentration cap for new minerals, a clamp at 1 or 99,
   the original environment value (not in the dumps used), and deciding
-  the game or dead players for score visibility.
+  the game or dead players for score visibility. The clamps and the
+  original environment are covered by S11 below.
 
 Raw evidence: stars-oracle-apparatus `evidence/kx004/`.
 
@@ -1517,7 +1518,7 @@ Method: E1's 2430 state (the S1 and S2 start) with only these
 environments edited (`experiments/kx004/s11.spec`, built with
 `combatlab`), so current and original differ and some moves cross a
 clamp. One year per cycles value, with the ticks S1, S2, S5 and S8 already
-identified (ORACLE.md "Which stream a cycles value reaches"). Environments
+identified (the ORACLE.md cycles-to-tick list). Environments
 are written gravity/temperature/radiation.
 
 | Planet | Owner | Current | Original |
@@ -1565,6 +1566,48 @@ Also predicted for each struck planet:
 - The file shows a separate original environment exactly when it differs
   from the current one (planets 2, 11, 15 and 22 keep one; 17 and 19 do
   not get one).
+
+**Results** (`experiments/kx004/sweep.sh`, the cycles values above).
+Every run reached its predicted tick, and the KX-004 matcher reproduced
+each run's planet changes and messages from that tick alone.
+
+| Cycles | Planet | Current after | Original after | Population (no-event G → after) |
+|---|---|---|---|---|
+| 2190 | 11 | 99/52/50 | 63/44/30 | 8991 → 4946 (medium) |
+| 1985 | 2 | 1/99/60 | 43/58/99 | 8928 → 1340 (huge) |
+| 930 | 15 | 54/50/50 | 99/20/20 | 9237 → 6928 (small) |
+| 6000 | 22 | 19/1/81 | 22/6/94 | unowned |
+| 11500 | 22 | 26/1/84 | 29/6/97 | unowned |
+| 3700 | 17 | 55/47/54 | none in the file | 8110 → 2839 (large) |
+| 10500 | 19 | 48/78/29 | none in the file | unowned |
+| 1000 | none | no event | | |
+
+- Environments, originals, concentrations (planet 2's ironium at 200),
+  the surface gains over the no-event run, populations, the queues (Auto
+  Factories ×5 only on 2, 11 and 15), the messages (0x087 + e to the
+  owner with the predicted axes, 0x083 + e to the other player) and
+  planet 8's boranium +5 at cycles 2190 were all as predicted. Every
+  other planet ended as in the no-event run, apart from homeworld 8's
+  germanium surface (721 or 722), which is mining's random remainder.
+- Miss: the struck unowned planets 19 and 22 carry the comet's surface
+  minerals afterwards (19: 17/8/395; 22: 1207/452/1139 at cycles 6000 and
+  1038/11/512 at cycles 11500), equal to the replayed surface gains. The
+  prediction said the file would show none.
+
+Interpretation:
+
+- A comet adds one move to both the current and the original value of
+  each axis it hits, and clamps each to 1..99 on its own. So a clamp on
+  one value makes the two drift apart (planet 2: gravity moved −3 and its
+  original −7; planet 15: gravity +4, original +2). CONFIRMED in 6 strikes
+  across 4 planets.
+- A planet whose original equals its current value keeps them equal (17
+  and 19).
+- A comet leaves its surface minerals on an unowned planet too (MEASURED,
+  3 strikes).
+
+Raw evidence: stars-oracle-apparatus `evidence/kx004/raw/S11`. Vector:
+`vectors/kx004/s11.json`.
 
 ### KX-005 — research, tech progression and terraforming
 
