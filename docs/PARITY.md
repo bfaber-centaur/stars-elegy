@@ -6032,6 +6032,37 @@ adjuster worsening or scrapping at a starbase.
   at a starbase, and an IT player's packet costs.
 - The same limits as RG-001 on views and alternative streams.
 
+## Coverage gaps after RG-002 (GAP-001)
+
+**Question.** These rules were never exercised by RG-002: hostile Orbital
+Adjusters, scrapping at a starbase planet, the IT and resource costs of
+packet items, auto and driverless packets, the Genesis Device and fleet
+gifts. Do they behave as Elegy predicts?
+
+**Method.** One Combat Lab start, one pinned host year at two streams
+(`experiments/gap001`). The predictions were pushed to elegy first (W, P
+and A in 0aa44f5; C, S, T and G in d2df970). In run 1 the probe
+planets' populations were 100 times too large, a setup error. Run 2
+corrected them, and every row is scored on run 2.
+
+**Observations.** Every predicted row matched, with two exceptions:
+- The hostile adjuster fleet whose click left the habitability percentage
+  unchanged got "cannot degrade any further" (0x15b), although an axis
+  moved. Elegy predicted no message.
+- The Genesis Device costs about 3,500 resources, not 5,000. 37
+  resources gave 1%, 500 gave 14% and 999 gave 28%.
+
+The Genesis rebirth itself (a new environment and new concentrations,
+random, the terraformed mark cleared, minerals kept) is MEASURED and was
+not predicted.
+
+**Interpretation.** These results are now in the rule text:
+- `KERNEL.md`: the packet item costs, "No driver or no destination",
+  "Auto Mineral Packets", the Genesis Device and the Orbital Adjusters
+  messages;
+- `ORDERS.md`: "Transfer fleet";
+- `MESSAGES.md`: 0x03e, 0x0d3, 0x11b, 0x129, 0x15a and 0x15b.
+
 ## The client's default template (DQ-001)
 
 Predictions were pushed to the private apparatus before the runs. Details:

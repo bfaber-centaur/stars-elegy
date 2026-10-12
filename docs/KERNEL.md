@@ -1034,8 +1034,9 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Defenses (and Auto Defenses) | 15 + 5/5/5; Inner Strength `trunc(c·3/5)` of each component (9 + 3/3/3) | CONFIRMED (PQ-001; KX-001 M4) |
 | Mineral Alchemy, Auto Alchemy | 100 resources per unit (1 kT of each mineral); 25 with the Mineral Alchemy LRT | CONFIRMED (PQ-001; KX-001 M1, M2) |
 | Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
-| Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); resources BINARY-ONLY |
-| Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED except IT (OB-028, OB-029); IT and resources BINARY-ONLY |
+| Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); 10 resources CONFIRMED for IT (GAP-001 P2: 37 resources built 3 units and left 79%); PP's 5 BINARY-ONLY |
+| Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED (OB-028, OB-029); IT 48 and 10 resources CONFIRMED (GAP-001 P1, P3, A1, A2); PP's 5 BINARY-ONLY |
+| Genesis Device (planetary item 13; needs the Mystery Trader part) | about 3,500 resources, no minerals, no miniaturization | MEASURED (GAP-001 G2–G4: 37, 500 and 999 resources reached 1%, 14% and 28%, so 3,445 < cost ≤ 3,567; a cost of 3,500 fits all of them) |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
@@ -1139,7 +1140,9 @@ What a packet item launches, and the packet it makes, are in `OBJECTS.md`
   count, and the owner gets the "packet order cancelled" message; a queue
   left empty then gets the "completed its orders" message (MEASURED,
   OB-028-F: one item, no destination, those two messages in that order,
-  no packet, minerals unchanged). See also "Additional rules" above.
+  no packet, minerals unchanged; CONFIRMED, GAP-001 A3: no driver, an
+  ironium ×2 and a mixed ×1 item gave one cancel message each, in queue
+  order, then "completed its orders"). See also "Additional rules" above.
 - **Auto Mineral Packets.** It builds Mixed Mineral Packets. Like the
   other auto items its count is never used up: each year it builds up to
   its count (at most 1000) and stays in the queue with the same count. A
@@ -1147,8 +1150,24 @@ What a packet item launches, and the packet it makes, are in `OBJECTS.md`
   Alchemy prefix stands before it, as for other auto items; a unit short
   only of resources leaves a hidden Mixed Mineral Packet ×1 at that
   percentage at the queue front, and the queue stops (the PQ-001 auto
-  rules). On a planet without a mass driver or destination it builds
-  nothing, sends no message and stays in the queue.
+  rules; CONFIRMED, GAP-001 A1: 20 resources built 2 units and left a
+  Mixed ×1 at 9% ahead of the auto item, with no "completed its orders";
+  A2 the same at 79%). On a planet without a mass driver or destination it
+  builds nothing, sends no packet message and stays in the queue; a queue
+  holding only that item still gets "completed its orders" (CONFIRMED,
+  GAP-001 A4 no driver, A5 no destination).
+- **Genesis Device** (planetary item 13, buildable only by a player who
+  owns the Mystery Trader part). When a unit completes, every player gets
+  the "reborn" message (0x11b), the item leaves the queue, and the planet
+  gets a new environment and new mineral concentrations, and is no longer
+  marked terraformed. Surface minerals are kept and the population is not
+  reset; it then grows or shrinks with the new habitability (MEASURED,
+  GAP-001 G1, two streams: 50/50/50 with concentrations 30/30/30 became
+  49/6/38 with 61/61/34 in one stream and 31/42/51 with 58/88/69 in the
+  other). The new values are random draws: the same stream gave the same
+  values from two starts that differed only in population. The draw
+  distribution is UNKNOWN. Installations were 0 in the test, so whether
+  the device clears them is UNKNOWN.
 
 ### Terraforming
 
@@ -1225,9 +1244,16 @@ BINARY-ONLY where marked):
     KB-2C).
   - Several fleets at one planet act one after another in fleet order
     (owner, then fleet number), each click choosing its axis from the
-    planet as the previous click left it (BINARY-ONLY).
-  - The fleet owner gets a message per planet changed, the planet owner
-    one too when its habitability changed.
+    planet as the previous click left it (CONFIRMED, GAP-001 W1: fleets
+    1/1 with two adjusters and 1/4 with one, three clicks, took 60/60/60
+    to 63/60/60, every click to gravity).
+  - Messages go per fleet. A hostile fleet whose clicks changed the
+    planet's habitability gets the "degraded" message and so does the
+    planet owner. A hostile fleet whose clicks left the habitability
+    percentage unchanged gets "cannot degrade any further" (0x15b), even
+    when an axis moved, and the planet owner gets nothing for it
+    (CONFIRMED, GAP-001 W1: fleet 1/1 72% → 70% to both players; fleet
+    1/4 moved gravity 62 → 63 at 70% and got 0x15b only).
 - **Claim Adjuster.** At the end of the year (after production and growth)
   every axis of each CA planet moves in one step to the full reachable
   value, as far as the reach rule above allows, with no items built and no
