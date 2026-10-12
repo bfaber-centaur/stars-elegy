@@ -1138,6 +1138,14 @@ Then:
 
 - **At a planet:** the planet's surface gains `× 8/10` if it has a
   starbase, else `× 5/10`. No salvage object is created.
+- **A destroyed starbase leaves no salvage.** Its minerals reach neither
+  the planet's surface nor a salvage object. MEASURED (CB-047, 2 streams):
+  when the Space Station was destroyed, planet 8's surface ended within
+  1 kT of each mineral of the control run, which kept its Station. That
+  is far below the `8/10` of a third of the Station's cost that the rule
+  above would add. No salvage object existed after the year. That this
+  holds for every starbase kill is BINARY-ONLY: only ships destroyed in
+  battle make salvage.
 - **In deep space** (BINARY-ONLY in detail; the 30000 kT overflow
   CONFIRMED, CB-040): a quarter is lost
   (`S − S/4`).
