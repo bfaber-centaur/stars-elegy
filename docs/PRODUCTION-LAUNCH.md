@@ -296,11 +296,33 @@ Building a starbase design at a planet:
   starbase's armor, and is repaired from there as usual (CONFIRMED,
   SL-12: a Station at 200 units replaced by another Station design read
   150 after the year, as the unreplaced control did).
-- **Mass driver.** If the planet had no mass driver before and the new
-  starbase has one, the planet's packet speed is set to the new driver's
-  speed. If it still has none, the planet's packet destination and speed
-  are cleared and its queued packet items (not automatic packets) are
-  removed (BINARY-ONLY).
+- **Mass driver** (BINARY-ONLY except where marked). When the starbase
+  item completes, the planet's mass driver before the replacement is
+  compared with the new starbase's. "Driver" means the launch rule's `Dw`
+  and `t` (`OBJECTS.md` "Mass-driver packets": the best driver's rating,
+  plus 1 when two orbital slots each hold that best driver).
+  - **No driver before, one now:** the packet speed is set to `Dw + t` of
+    the new starbase, replacing any speed already set. The destination is
+    kept. MEASURED once in RG-002 (year 4, planet 88): no speed set, a
+    Space Station with two Mass Driver 7s, packet speed 8 after. A single
+    driver (`t` = 0) and the replacement of a speed already set are
+    BINARY-ONLY.
+  - **No driver before, none now** (a first starbase without a driver, or
+    a driverless starbase replacing another): the packet destination and
+    speed are cleared, and every queued packet item for one mineral or
+    mixed is removed, with no message. Automatic packet items stay; they
+    build nothing without a driver (`KERNEL.md` "Packet items").
+  - **A driver before**, whatever the new starbase carries: the
+    destination, speed and queued packet items are left as they were. A
+    new driver of another rating does not reset the speed; at launch a
+    speed above the new `Dw + 3` falls back to `Dw + t` by the launch rule.
+    A planet that loses its driver this way keeps its packet items until
+    production reaches each one, which then cancels it with the "packet
+    order cancelled" message (`MESSAGES.md` 0x129; the cancellation of a
+    packet item on a planet with no driver is CONFIRMED, GAP-001 A3).
+  - The other ways a starbase is lost (destroyed in battle, unless the
+    owner is Alternate Reality, or its design deleted) remove the queued
+    packet items in the same way but leave the destination and speed set.
 
 ### Cost of a replacement
 
