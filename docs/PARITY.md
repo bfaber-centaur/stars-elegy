@@ -3136,6 +3136,28 @@ Elegy's prediction did not hold. Details: `experiments/cb056/README.md`.
   280 is the battle token values: shields 25 × 7/5, armor parts at half
   (armor 3500).
 
+### Round 11: lane D's questions after RG-002 (CB-057)
+
+Lane D's predictions were pushed first (elegy #185, 89cbc6a). Two starts,
+six pinned streams each, every run after the predictions. Details:
+`experiments/cb057/README.md`.
+
+- **Regenerating Shields halve each armor slot, CONFIRMED (6 of 6).** A
+  Destroyer with one Organic Armor in its general-purpose slot and one in its
+  armor slot fits armor 372–374 (374 alone in the longest run), so
+  200 + 87 + 87. Halving the parts' total once would give 375. With both
+  parts in the armor slot it fits 375–376.
+- **A torpedo with hit chance 100 always hits and draws nothing, CONFIRMED
+  (6 of 6).** A starbase with computer 99 fired 32 Delta Torpedoes per round
+  at an unjammed, shielded stack. All 24 salvos read had shield damage 416
+  (32 hits) and no miss record. The battle replays from the pinned stream
+  only if these salvos draw nothing.
+- **The target-cost cap holds above 10^7, CONFIRMED (4 of 6; 2 streams had
+  no informative shot).** A beam with both stacks in reach chose 10000
+  unarmed Destroyers (cost × ships 110,000) over 16000 Omega Battleships
+  (10,240,000) in 14 of 14 shots. Both costs count as 10^7, so the lower
+  toughness wins.
+
 ### Battle plans through the client (BP)
 
 The original client gave the orders (`tools/fleetlab/client-orders`), and

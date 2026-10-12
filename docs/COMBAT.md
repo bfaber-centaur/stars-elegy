@@ -450,10 +450,14 @@ not take it is not part of the design by then and adds nothing here (see
 - **Armor**: hull armor + armor parts, + 65 per Croby Sharmor and
   Langston Shell, + 50 per Multi Cargo Pod. RS: each armor slot's
   total (count × the part's armor) is halved, rounding down, once per
-  slot, not per part (BINARY-ONLY; fits RG-002's year-6 battle record,
-  one stream: base 450 with 2 Organic Armor in one slot gives
-  450 + 350/2 = 625, inside the 625–626 the hits allow, while halving
-  each part gives 624). A shield part's own armor is not halved (Croby Sharmor; the
+  slot, not per part and not once for the design. CONFIRMED (CB-057,
+  6 streams): a Destroyer (200) with one Organic Armor in its
+  general-purpose slot and one in its armor slot fits armor 372–374
+  (374 alone in the longest run), so 200 + 87 + 87, not 200 + 350/2 =
+  375; the same parts both in the armor slot fit 375–376. RG-002's year-6
+  record (one stream) fits too: base 450 with 2 Organic Armor in one slot
+  gives 450 + 350/2 = 625, inside the 625–626 the hits allow, while
+  halving each part gives 624. A shield part's own armor is not halved (Croby Sharmor; the
   Langston Shell is not observed). The halved value is the design's
   armor itself, so mine and stargate damage use it too: MEASURED for
   mines (CB-056, 23 fleets; PARITY "Round 10: late-game questions
@@ -841,7 +845,13 @@ see "Design cost") × ships.
   AR `c − c/5`, then halved) applies only to what production charges;
   target choice does not use it.
 
-- Multiply by 100 if that is below 100000. Otherwise use 10^7.
+- Multiply by 100 if that is below 100000. Otherwise use 10^7, also
+  when cost × ships is above 10^7. CONFIRMED (CB-057, 4 streams, 14
+  shots): a beam with both stacks in reach chose 10000 unarmed
+  Destroyers (cost × ships 110,000, armor 2,000,000) over 16000 Omega
+  Battleships (10,240,000, armor 32,000,000) every time. Capped, both
+  costs are 10^7 and the lower toughness wins; uncapped, the Battleships
+  would.
 
 **Toughness.**
 
@@ -1022,7 +1032,12 @@ the salvo reaches. `N` is the number of torpedoes still unfired, and `p`
 uses that target's jammer. With `N ≤ 200`, each target therefore gets its
 own `N` draws.
 
-- if `p ≥ 100`, all hit;
+- if `p ≥ 100`, all hit, with no random draw. CONFIRMED (CB-057,
+  6 streams): a starbase with computer 99 (16 Battle Nexus) fired 32
+  Delta Torpedoes (accuracy 60, so `p = 100`) at an unjammed shielded
+  stack; 24 salvos all hit (shield damage 416 = 32 × 26/2 each, no miss
+  record), and the battle replays from the pinned stream only when those
+  salvos draw nothing;
 - if `N > 200`, `H = N·p/100` exactly, with no random draw. CONFIRMED
   only for `N = 202` (CB-001: 90/125/103/72 hits; identical across
   reruns);
