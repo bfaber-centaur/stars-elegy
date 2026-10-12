@@ -76,8 +76,8 @@ race-degrade message.
 | T2 | refused; stays player 0's fleet 21 | as predicted, with "couldn't give" and "finished its orders" | CONFIRMED |
 | T3 | given with its cargo, fleet 5 | as predicted | CONFIRMED |
 | G1 | completes from 99% with 60 resources; reborn message to every player | as predicted | CONFIRMED |
-| G2 | 0% (1% would need 50 of a 5,000 cost) | 1% from 37 resources | REFUTED |
-| G3, G4 (no prediction) | | 28% from 999 and 14% from 500 resources | MEASURED bounds with G2: the cost is 3,445–3,567 resources, consistent with 3,500 but not pinned |
+| G2 | 0% (1% would need 50 of a 5,000 cost) | 1% from 37 resources | REFUTED: the prediction left out miniaturization |
+| G3, G4 (no prediction) | | 28% from 999 and 14% from 500 resources | MEASURED bounds with G2: the cost is 3,445–3,567 resources. That agrees with the base 5,000 miniaturized for this BET race at tech 26 (m = 6, 30% off: 3,500), as `COMPONENTS.md` and CS-001 already say |
 | G1 rebirth (not predicted) | | 20000: environment 49/6/38, concentrations 61/61/34; 30000: 31/42/51, 58/88/69. Not marked terraformed afterwards; surface minerals unchanged | MEASURED; the values are random-driven (draws from the year's stream) |
 
 **Random-driven rebirth.** For each stream, the Genesis rebirth gave the same values

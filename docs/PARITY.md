@@ -6049,9 +6049,12 @@ corrected them, and every row is scored on run 2.
 - The hostile adjuster fleet whose click left the habitability percentage
   unchanged got "cannot degrade any further" (0x15b), although an axis
   moved. Elegy predicted no message.
-- The Genesis Device does not cost 5,000 resources. 37 resources gave
-  1%, 500 gave 14% and 999 gave 28%, which bound the cost to 3,445–3,567
-  (MEASURED; consistent with 3,500, but not pinned).
+- The Genesis Device was predicted to cost its base 5,000 resources.
+  37 resources gave 1%, 500 gave 14% and 999 gave 28%, which bound the
+  cost to 3,445–3,567 (MEASURED). That agrees with the existing
+  miniaturization rule (`COMPONENTS.md`; CS-001 showed 3,500 for a BET
+  race at tech 26). The prediction left the miniaturization out; the base
+  cost of 5,000 stands.
 
 The Genesis rebirth itself was not predicted. It is MEASURED: it gives a
 new environment and new concentrations, which are random-driven; the

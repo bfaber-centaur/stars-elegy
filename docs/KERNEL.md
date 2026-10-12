@@ -1036,7 +1036,7 @@ Per unit, as resources and Fe/Bo/Ge kT, from the owner's race:
 | Terraform | 100 resources per step; 70 with Total Terraforming; halved for Claim Adjuster | CONFIRMED (KX-002 T1, T2; Claim Adjuster KX-005) |
 | Ironium, Boranium or Germanium Mineral Packet | 10 resources (Packet Physics 5) + 110 kT of that mineral (Interstellar Traveler 120, PP 70) | minerals MEASURED (OB-028, OB-029); 10 resources CONFIRMED for IT (GAP-001 P2: 37 resources built 3 units and left 79%); PP's 5 BINARY-ONLY |
 | Mixed Mineral Packet (and Auto Mineral Packets) | 10 resources (PP 5) + 44 kT of each mineral (IT 48, PP 25) | minerals MEASURED (OB-028, OB-029); IT 48 and 10 resources CONFIRMED (GAP-001 P1, P3, A1, A2); PP's 5 BINARY-ONLY |
-| Genesis Device (planetary item 13; needs the Mystery Trader part) | 3,445–3,567 resources (consistent with 3,500; not pinned), no minerals, no miniaturization | MEASURED bounds (GAP-001 G2–G4: 37, 500 and 999 resources reached 1%, 14% and 28%) |
+| Genesis Device (planetary item 13; needs the Mystery Trader part) | the component's cost for the owner: base 5,000 resources, no minerals, miniaturized (`COMPONENTS.md` "Cost for an owner"; CS-001 showed 3,800, and 3,500 with BET, at tech 26) | build cost MEASURED (GAP-001 G2–G4, a BET race at tech 26: 37, 500 and 999 resources reached 1%, 14% and 28%, bounding the cost to 3,445–3,567, which agrees with the miniaturized 3,500) |
 
 Race settings outside the race wizard's advantage-point budget do not
 survive: at the start of turn generation the game sends the player a
