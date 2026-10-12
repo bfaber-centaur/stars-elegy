@@ -1319,7 +1319,8 @@
        "electronics": 0,
        "biotechnology": 0
       }
-     }
+     },
+     "sample": true
     }
    ]
   },
