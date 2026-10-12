@@ -3138,7 +3138,7 @@ Elegy's prediction did not hold. Details: `experiments/cb056/README.md`.
 
 ### Round 11: lane D's questions after RG-002 (CB-057)
 
-Lane D's predictions were pushed first (elegy #185, 89cbc6a). Two starts,
+Lane D's predictions were pushed first (elegy 89cbc6a). Two starts,
 six pinned streams each, every run after the predictions. Details:
 `experiments/cb057/README.md`.
 
