@@ -907,27 +907,32 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     packet. Reaching it is an ordinary reached waypoint, and later
     movement of the object is no longer followed. Only the waypoint's
     task acts. A transport task loads minerals from salvage or a packet,
-    whoever owns it: the object's owner is not checked (BINARY-ONLY; the
-    own-packet case is observed in the packet transport runs, write-up
-    pending in `experiments/et/README.md`: all 100 kT, 0x02b, then 0x04e,
-    and the emptied packet stays). Colonist and fuel actions are skipped.
-    Aimed at a minefield, a wormhole or the Trader, the task is cancelled
-    with 0x11e (`MESSAGES.md`).
+    whoever owns it. Colonist and fuel actions are skipped. Aimed at a
+    minefield, a wormhole or the Trader, the task is cancelled with 0x11e
+    (`MESSAGES.md`). For packets: an own packet is MEASURED (ET-2) and
+    another player's is CONFIRMED by prediction (ET-2c), both in `PARITY.md`
+    "A transport task aimed at a packet (ET-2)": the fleet loaded all
+    100 kT (0x02b, then 0x04e at its last waypoint), got no 0x11e, and the
+    emptied packet stays. That the owner is never checked is BINARY-ONLY.
+    **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY, that a
+    transport task aimed at a packet (or any object other than salvage) is
+    cancelled with 0x11e. ET-2 and ET-2c contradicted that for packets.
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.
     It does clamp each fleet's own position and its waypoint 0, each axis
-    into 1000 to 1000 + W (`OBJECTS.md` gives W); later waypoints are not
-    clamped. So a fleet that starts outside the box is first moved onto
-    its edge, and a fleet that flies out of the box toward a packet beyond
-    the edge is pulled back onto the edge at the end of the year, with no
-    message and no extra fuel (BINARY-ONLY). This fits exactly the same
-    runs' fleet aimed at another player's packet, in a tiny galaxy (1000
-    to 1400): its start (1500, 1350) is clamped to (1400, 1350); it flies
-    81 ly at warp 9 toward the packet's moved position (1478, 1288),
-    99.6 ly away, reaching (1463, 1300) (fuel 300 to 48 is 81 ly); the
-    end-of-year check clamps it to (1400, 1300). It never reached the
-    packet, so its task did not act and it got no message. Loading from
-    another player's packet is not yet observed.
+    into 1000 to 1000 + W (`OBJECTS.md` gives W).
+    - A fleet outside the box at the start of the year is moved onto its
+      edge, with no message and no fuel used: CONFIRMED by prediction for
+      a stationary fleet (ET-2c fleet K, (1450, 1200) to (1400, 1200) in a
+      1000..1400 galaxy).
+    - That waypoint 0 is clamped and later waypoints are not, and that the
+      end-of-year check clamps again, are BINARY-ONLY. The end-of-year
+      clamp is inferred from ET-2b fleet Q (MEASURED), which it fits
+      exactly: Q's start (1500, 1350) is clamped to (1400, 1350); it flies
+      81 ly at warp 9 toward the packet's moved position (1478, 1288),
+      99.6 ly away, reaching (1463, 1300) (fuel 300 to 48 is 81 ly); it
+      ends at (1400, 1300). It never reached the packet, so its task did
+      not act and it got no message.
   - **Packets and salvage alike.** The same rules hold for both. Only the
     packet moves, so only for a packet does tracking change the
     coordinates.
