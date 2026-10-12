@@ -142,7 +142,11 @@ file, so nothing in it is a default you have to guess.
 - `objects`: wormhole ends (partner, stability class, years since the last
   jump, players who know it, players who know where it leads), Mystery
   Traders (destination, warp, players met), mineral packets, salvage
-  (`kind: "salvage"`: owner, number, position, minerals), minefields.
+  (`kind: "salvage"`: owner, number, position, minerals, and `fresh`, the
+  stored skip-decay mark: bit 14 of the record's destination/warp word,
+  true or false on every salvage record; OBJECTS.md "Salvage", "The
+  mark is saved in the game file"),
+  minefields.
   Packets and salvage are one kind of object in the game's files; one whose
   stored packet warp is 0 (warp 4) is salvage whatever its destination
   (BINARY-ONLY: Objects decomp reading). Changed or new salvage after a year

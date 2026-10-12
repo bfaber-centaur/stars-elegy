@@ -403,6 +403,7 @@ type Object struct {
 	Mines              *int   `json:"mines,omitempty"`
 	Type               string `json:"type,omitempty"`
 	Detonating         *bool  `json:"detonating,omitempty"`
+	Fresh              *bool  `json:"fresh,omitempty"` // salvage: the stored skip-decay mark (every salvage record has it)
 }
 
 type ProductionQueue struct {
@@ -548,6 +549,11 @@ func (v *Vector) Check() []error {
 			planets[p.ID] = true
 			if f := p.ConcFractions; f != nil && (len(f) != 3 || min(f[0], f[1], f[2]) < 0 || max(f[0], f[1], f[2]) > 255) {
 				bad("planet %d: concentration_fractions %v", p.ID, f)
+			}
+		}
+		for _, o := range st.Objects {
+			if (o.Kind == "salvage") != (o.Fresh != nil) {
+				bad("%s %d: fresh %v (salvage records only, and every one)", o.Kind, o.ID, o.Fresh)
 			}
 		}
 		for _, p := range st.Players {
