@@ -24,7 +24,7 @@ every field for both players.
 
 ## Predictions (pushed before the runs)
 
-From Elegy's model (elegy e35c871, merged as 5c63346; extended with the
+From Elegy's model (elegy #160, e35c871, merged as 5c63346; extended with the
 fleet orders before the runs in the private apparatus): the frigate's
 first shot targets the Deflector Hauler in `y1` and the Tank Hauler in
 `y2`, in both fleet orders.
@@ -56,7 +56,8 @@ Cycles 20000, 30000, 50000, 12000, 40000 (20 battles):
 | `y2-a` | Tank Hauler | 5 of 5 |
 | `y2-b` | Tank Hauler | 4 of 4 (at 50000 the Tank stack was out of reach) |
 
-- **CONFIRMED (18 of 18 eligible battles):** target choice uses the
+- **CONFIRMED (18 of 20 battles; the other 2, `y1-b` and `y2-b` at
+  cycles 50000, had the Tank stack out of reach at the first shot):** target choice uses the
   design cost with the dropped part in the year the game first reads the
   design, and without it from the next year. In each battle the first
   shot came in round 4 with both stacks at distance 3.

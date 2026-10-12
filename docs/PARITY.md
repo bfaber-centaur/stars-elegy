@@ -5871,8 +5871,9 @@ results; raw evidence in private apparatus `evidence/<case>`).
   as CB-009); destroyed in the next year, the salvage of the plain
   freighter (4/0/5), the same as a design built without the part
   (`COMBAT.md` "Parts the game drops from a design").
-- **A dropped part's cost in target choice (CB-055), CONFIRMED, 18 of 18
-  eligible battles.** Stacks of 15 Small Freighters with the misslotted
+- **A dropped part's cost in target choice (CB-055), CONFIRMED, 18 of 20
+  battles; the other 2 (`y1-b` and `y2-b` at cycles 50000) had the Fuel
+  Tank stack out of reach at the first shot.** Stacks of 15 Small Freighters with the misslotted
   Beam Deflector (cost 8 the first year, 6 after) and 15 with a Fuel Tank
   (cost 7), armor equal, against one range-3 beam frigate: the first shot
   with both stacks in reach took the deflector stack in year 1 and the
