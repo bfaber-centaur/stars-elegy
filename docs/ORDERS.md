@@ -880,9 +880,9 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     whose coordinates were frozen by a gate or wormhole jump also gets
     0x02a. The waypoint becomes deep space at its coordinates, which are
     the target's end-of-year position (the planet instead, if one stands
-    exactly there). MEASURED only for 0x02a with a deep-space result, for
-    a target not at a planet, in RG-001 (WF-01..05); 0x029, the planet
-    substitution and the jump case are BINARY-ONLY.
+    exactly there). MEASURED only for 0x02a with a deep-space result in
+    RG-001 (WF-01..05); 0x029, the planet substitution and the jump case
+    are BINARY-ONLY.
   - Waypoint 0 is not handled by this rule.
   It is **not** caused by the waypoint's warp.
   **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY from
