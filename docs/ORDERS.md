@@ -859,31 +859,35 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   position for the turn; wormholes move after fleets (objects decomp, stars-
   elegy #49, `OBJECTS.md`). Tracking a fleet target reads the target's
   position as of this same upkeep pass.
-- **A target that is another player's fleet is saved as a plain waypoint in the
-  owner's view.** Through the turn the waypoint tracks the enemy fleet like any
-  other moving target (its coordinates follow the enemy's position), but when
-  the owner's file is written the target is recorded as a **deep-space** waypoint
-  at the fleet's last-seen position rather than as a live fleet target: the
-  owner's saved game carries no persistent handle to another player's fleet. An
-  **own-fleet** target is kept as a fleet target — the owner can always see and
-  name its own fleet — which is why the follower waypoints below retain their
-  type (WU-FOLLOW). This is the same retargeting applied when the player's file
-  is written that sends a target which drops
-  out of scan range to its last-seen position (messages `0x28`/`0x29`/`0x2a`).
-  Observed in the written player file, BINARY-ONLY; seen in WU-A, where a fleet
-  whose waypoint named an enemy fleet came back as a space waypoint at that
-  fleet's position. It is **not** caused by the waypoint's warp. Whether the
-  saved coordinates are the enemy's current position (still in view) or its
-  last-seen position (out of view) is not pinned here.
-  **Contradicted in part (WF, PARITY "Representative game (RG-001)",
-  MEASURED, one stream):** while the owner saw the target, both the host
-  file and the owner's `.M` file kept the waypoint as a fleet target at
-  the target's end-of-year position, for an enemy and for a friend, two
-  years running (RG-001 2434 shows the host-file half). Only a target out
-  of every scanner of the owner's was turned into deep space, in both
-  files, at the target's actual end-of-year position, with message
-  0x02a. A target that was gone became deep space at its last position,
-  with 0x028. How WU-A's target came to be out of view is not checked.
+- **A waypoint aimed at a fleet, in the owner's saved file** (the rule is
+  BINARY-ONLY; the RG-001 and MR-1 parts MEASURED as marked). Through the year the waypoint
+  tracks the fleet like any other moving target. When a player's file is
+  written, each of that player's waypoints at index 1 or later that is
+  aimed at a fleet is handled by what the player can see then:
+  - **The target exists and the player sees it this year** (a player
+    always sees its own fleets): the waypoint is kept as a fleet target at
+    the target's position, with no message. MEASURED for an enemy and a
+    friend, two years running (WF-01..05, PARITY "Representative game (RG-001)";
+    RG-001 2434 shows the host-file half), and in MR-1 (the target in
+    view). Own-fleet targets are why the follower waypoints below keep
+    their type (WU-FOLLOW).
+  - **The target is gone:** message 0x028, and the waypoint becomes deep
+    space at its coordinates (the planet instead, if one stands exactly
+    there). MEASURED in RG-001 (WF-01..05).
+  - **The target exists but the player does not see it:** message 0x029
+    naming the planet if the target is orbiting one, else 0x02a. A target
+    whose coordinates were frozen by a gate or wormhole jump also gets
+    0x02a. The waypoint becomes deep space at its coordinates, which are
+    the target's end-of-year position (the planet instead, if one stands
+    exactly there). MEASURED for 0x02a in RG-001 (WF-01..05).
+  - Waypoint 0 is not handled by this rule.
+  It is **not** caused by the waypoint's warp.
+  **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY from
+  WU-A, that every waypoint aimed at another player's fleet is saved as a
+  deep-space waypoint at its last-seen position, with only own-fleet
+  targets kept. WF-01..05 (RG-001) and MR-1 contradicted that for a target in
+  view. WU-A's target, which came back as deep space, must have been out
+  of view or gone; how is not checked.
 - **Salvage and mineral packet targets** (BINARY-ONLY except where
   marked). Salvage and packets are one kind of object, numbered per owner.
   A waypoint aimed at one stores the object's kind, owner and number as its
@@ -942,7 +946,8 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     waypoint aimed at it, whether or not the owner can see it. Minefields,
     wormholes and the Trader are kept only when the owner knows them.
 - **A fleet target merged away during order replay** (BINARY-ONLY;
-  waypoint 1 measured in MR-1, last item below). Player B's orders aim a waypoint (index 1 or later) at
+  waypoint 1 CONFIRMED by prediction in MR-1, last item below; waypoint 0
+  NOT RUN). Player B's orders aim a waypoint (index 1 or later) at
   player A's fleet F. A's orders merge F into another of A's fleets Y at
   the same spot (a merge order acts only on co-located fleets). The year's
   replay order decides which of two paths runs:
@@ -987,18 +992,20 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     3) then treats the chosen fleet as the leader. With none of A's fleets there, the
     stale id stays, and the follow step sends 0x138 (leader gone) and the
     fleet does not follow.
-  - The waypoint is not dropped and the order is not rejected. The
-    write-time rule above (WU-A) then saves B's target in B's next file
-    as a deep-space waypoint at the chased fleet's position. WU-A covers
-    only that saved form, not the retargeting during the year.
-  - **Measured for waypoint 1 (MR-1, `experiments/mr/README.md`).** With
+  - The waypoint is not dropped and the order is not rejected. When B's
+    next file is written, the saved-file rule above applies: the waypoint
+    stays a fleet target on Y while B sees Y, and becomes deep space with
+    0x029 or 0x02a only if B does not. **Corrected 2026-10-12:** this item
+    used to say the waypoint is always saved as deep space (WU-A);
+    MR-1 contradicted that with Y in view.
+  - **CONFIRMED by prediction for waypoint 1 (MR-1, `experiments/mr/README.md`,
+    PARITY "Following a fleet merged away the same year (MR-1)").** With
     client-written orders and each replay order once (two pinned
     streams), the order was applied and the follower chased Y in both
-    cases, ending where Elegy predicted. No message was sent. Contradicted
-    for the saved form: with Y in view, B's next `.M` file kept the
-    waypoint as a fleet target on Y, not a deep-space waypoint (MEASURED),
-    as in RG-001 above. Waypoint 0 was not tested: the client did not
-    write it (below).
+    cases, ending where Elegy and this item predicted. No message was sent
+    (MEASURED). With Y in view, B's next `.M` file kept the waypoint as a
+    fleet target on Y (MEASURED), as the saved-file rule above says.
+    Waypoint 0 is NOT RUN: the client did not write it (below).
 
 ### Following another fleet (leader linkage)
 

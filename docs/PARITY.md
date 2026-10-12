@@ -5954,8 +5954,10 @@ results; raw evidence in private apparatus `evidence/<case>`).
   - While the owner sees the target, the waypoint stays a fleet target,
     at the target's end-of-year position, in the host file **and** in the
     owner's `.M` file, for an enemy and for a friend, over two years.
-    This contradicts `ORDERS.md` ("saved as a plain waypoint in the
-    owner's view", WU-A), at least while the target is in view.
+    This contradicted the old `ORDERS.md` wording ("saved as a plain
+    waypoint in the owner's view", WU-A), at least while the target is in
+    view. Corrected 2026-10-12: `ORDERS.md` "Targets that moved, died or
+    were captured" now gives the saved-file rule (kept while in view).
   - The chaser moves toward the target's end-of-year position each year
     (it moves after the target).
   - A target scrapped before movement leaves deep space at its last
