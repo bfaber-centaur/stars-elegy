@@ -95,11 +95,10 @@ Cycles 20000 and 30000 agreed; 35 resources went to research in both.
   arriving in the year, the field levelled first is the first one after
   the current field, going round (propulsion current: construction before
   biotech and weapons; construction current: biotech before energy and
-  weapons). Each field's share is added and checked in turn, so a field
-  that levels raises the cost before the next field is checked: the
-  others ended at 850, 10 short of 860.
-- Combined with the stored-research cases: a check with nothing added
-  goes from energy to biotech; the check made as the year's shares are
-  added goes cyclically from the field after the current one. RG-001
-  2433 (player 3, electronics current, biotech before energy) fits the
-  second.
+  weapons). The other chosen fields ended at 850, 10 short of 860.
+- With the stored-research cases: with nothing added, the first field
+  from energy to biotech levelled; with the year's shares reaching the
+  cost, the first field after the current one, going round, levelled.
+  RG-001 2433 (player 3, electronics current, biotech before energy)
+  fits the second. These are outcomes only: the runs do not tell apart
+  mechanisms that give the same outcomes.

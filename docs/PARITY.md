@@ -5704,6 +5704,7 @@ results; raw evidence in private apparatus `evidence/<case>`).
   - each chosen field 6 short, reaching the cost with this year's 15%
     share: the first field after the current one, going round, levelled
     (construction with propulsion current; biotech with construction
-    current). Each share is added and checked in turn.
+    current), and the other chosen fields ended 10 short of the new
+    cost. The runs record outcomes, not the mechanism.
   RG-001 2433 (player 3, electronics current, biotech before energy)
   fits the second.

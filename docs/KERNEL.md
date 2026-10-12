@@ -864,16 +864,17 @@ stolen 23 and 88 stored as 12 and 44).
   RG-001 2433 fits the first order below). A level raises every other
   field's next cost by 10, so the order decides which of several fields
   just at their cost levels.
-  - With this year's shares flowing in, each field's share is added and
-    checked in turn, starting with the field after the current one and
-    going round: with propulsion current, construction levelled before
-    biotech and weapons; with construction current, biotech before energy
-    and weapons.
   - With research already stored and nothing added in the year, the field
     that levelled was the first from energy to biotech, whatever the
     current field (weapons with propulsion current, energy with
     construction current).
-  - How the two orders combine in a year that has both is UNKNOWN.
+  - With each chosen field reaching its cost only through this year's
+    share, the field that levelled was the first one after the current
+    field, going round (construction with propulsion current, biotech
+    with construction current), and the other chosen fields ended at
+    850, 10 short of the new cost.
+  - These are outcomes. The runs do not show the mechanism that produces
+    them.
 - Research into a field at level 26 is lost (CONFIRMED, KX-002 R6);
   level 10 for a capped player: BINARY-ONLY.
 - When the current field reaches 26 and the next-field choice is "same
