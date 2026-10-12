@@ -6211,6 +6211,30 @@ queue".
   arriving ship got the new default's queue (empty, kept, or auto
   defenses 10). So the record is applied before colonization.
 
+## Mass-driver settings when a starbase is replaced (PD-1)
+
+Status: CONFIRMED by prediction for PD-1's cases (lane G's rule in
+`PRODUCTION-LAUNCH.md` "Starbases", pushed before the runs for the exact
+start, with lane G's own numbers for three cases and lane F's derived
+numbers for the rest). PD-1b's cases are MEASURED, consistent with a
+prediction committed before its runs: its push and its run start fall in
+the same second.
+Results: `experiments/pd/README.md`. Raw evidence: private apparatus
+`evidence/pd1`. Two starts (PD-1, PD-1b), two pinned streams each, which
+agree.
+
+| Case | Observed | Result |
+|---|---|---|
+| No driver before, none now (with and without an earlier starbase) | destination and speed cleared; an ironium packet item removed with no message; an auto packet item kept | CONFIRMED |
+| A driver before, none now | destination and speed kept; the ironium item cancelled with 0x129 when reached | CONFIRMED |
+| No driver before, one Mass Driver 7 now | speed set to 7 (replacing 6, or where none was set); destination kept | CONFIRMED |
+| No driver before, two Mass Driver 7s now | speed 8 replaced 9 | MEASURED (PD-1b) |
+| A driver before, a driver now (two Mass Driver 7s; an Ultra Driver 10) | 6 and 9 kept | MEASURED (PD-1b) |
+| A starbase design holding a part the race may not build (Mass Driver 5, Packet Physics only) | not built; item gone with only 0x03e; old starbase and setting kept | MEASURED (a setup defect, then two diagnostic runs) |
+
+Elegy 8426a6a has no replacement rule and differs in five of the nine
+cases; it also built the Mass Driver 5 starbases.
+
 ## Following a fleet merged away the same year (MR-1)
 
 Status: CONFIRMED by prediction (elegy e1798ac and lane G's reading of
