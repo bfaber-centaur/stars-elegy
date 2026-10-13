@@ -6859,6 +6859,55 @@ known mask of Z's and S's fields reads 3, but the field laid this year
 reads 1, and every listed field's seen word reads 1. Packets and salvage
 at d² 0 were not covered and stay ASSUMPTION in Elegy.
 
+## The fleet slot of 0x05b and 0x059 (FS-1)
+
+Status: CONFIRMED by prediction for fleets of one design, 3 of 3
+streams; the mixed-fleet value is MEASURED. Lane D asked for it because
+0x05b's fleet slot was the last open contradiction behind four
+not-compared RG lines (`MESSAGES.md` "Object ids in slots"). The values
+on record (0, 1, 0, 512, 6 and 6151) did not follow the owner.
+Preparing the case, the preserved raw evidence showed that every one of
+them equals design·512 + fleet number, where design is the scrapped
+fleet's ship design. The prediction (`experiments/fs/PREDICTION.md`)
+was pushed alone at 18:25:47Z (activity API), before the runs at
+18:26:06Z. Results: `experiments/fs/README.md` "FS-1". Raw evidence:
+private apparatus `evidence/fs1`.
+
+The setup is a state edit on the CB base (2 players). Fleets of
+Scouts, which differ only in design index, scrap themselves in one
+pinned year (cycles 20000, 30000 and 14000). The message values are the
+same in all three streams; the raw host and player files differ.
+
+| Case | Fleet | Message, slot | Value |
+|---|---|---|---|
+| a | 0/3, design 5, deep space | 0x05b, 2 | 2563 = 5·512 + 3 |
+| b | 1/0, design 0, deep space | 0x05b, 2 | 0 |
+| c | 1/1, design 0, followed by a player 0 fleet | 0x05b, 2 | 1 |
+| d | 1/2, design 3, deep space | 0x05b, 2 | 1538 = 3·512 + 2 |
+| e | 1/4, design 3, followed by its owner's fleet | 0x05b, 2 | 1540 = 3·512 + 4 |
+| m | 0/8, design 15, deep space | 0x05b, 2 | 7688 = 15·512 + 8 |
+| p | 0/7, design 9, at its owner's planet without a starbase | 0x059, 1 | 4615 = 9·512 + 7 |
+| q | 1/6, design 4, at its owner's planet without a starbase | 0x059, 1 | 2054 = 4·512 + 6 |
+| f | 0/6, designs 2 and 7 (one ship each) | 0x05b, 2 | 9222 = 0x2000 + 2·512 + 6 |
+
+Rows a to q are CONFIRMED by prediction. So, for a fleet of one design,
+the fleet slot of 0x05b and 0x059 holds design·512 + fleet number, for
+either owner, with or without another fleet following it. Lane D's
+candidate readings (owner bits shown only for a followed fleet; a
+constant per year; the fleet record's flags; the recipient or player
+count) do not fit: c gave 1, not 513, and the values changed with the
+design only. Row f's prediction (1030) failed. Its value is MEASURED;
+reading bit 13 as "more than one design" is inferred. With one mixed
+fleet, "first design in the record" and "lowest design" cannot be told
+apart (both 2).
+
+MEASURED, not predicted: 0x028's follower slot is owner·512 + number
+(player 1's follower 1/5 gave 517; WK-1 and WK-2 had only player 0
+followers). 0x140, sent to the planet owner with 0x059, gave 7 for 0/7
+and 518 for 1/6, also owner·512 + number. Scope: CB with 2 players and
+one year. The player-count reading rests on RG-002 year 1 (7 players,
+design 0, value 6) and was not retested.
+
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
 Status (2026-10-13): six readings CONFIRMED by prediction; DC-2's

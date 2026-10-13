@@ -132,6 +132,17 @@ An `object` slot holds the object's record id from the host file,
 
   What sets the owner bits and 0x1800 here is not known.
 
+  **Updated 2026-10-13 (FS-1, `PARITY.md` "The fleet slot of 0x05b and
+  0x059 (FS-1)"):** the bits are not the owner. For a fleet of one
+  design, 0x05b's second slot and 0x059's first slot hold design·512 +
+  fleet number. That is CONFIRMED by prediction in 3 streams for designs
+  0, 3, 4, 5, 9 and 15, both owners, and fleets with or without a
+  follower. It also fits every value above: SV-1 and RG-002 used design
+  0, WF's fleet was design 1, and tk111's were design 12 (0x1800). A
+  fleet of designs 2 and 7 gave 0x2000 + 2·512 + 6 (MEASURED; what bit 13
+  means is inferred, not known). 0x028 and 0x140 carry owner·512 +
+  number in their fleet slots instead (MEASURED, FS-1).
+
 ## Phases (BINARY-ONLY; step numbers from KERNEL.md)
 
 | Label | Where in the year (`KERNEL.md` "Turn order") |
@@ -229,9 +240,9 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x056 | Your crew refused to beam colonists down (race cannot live on planets) | Alternate Reality fleet unloads colonists onto a planet it does not own; task cancelled | fleet owner | fleet, planet | fleet | P2, P6c | CONFIRMED (tk2/tk107) |
 | 0x057 | Your colonists died on landing because your race cannot live on planets | Alternate Reality colonists land anywhere other than an unowned planet with a colonize order (for example a manual or invasion drop) | dropping player | planet | planet | P2, P6c | BINARY-ONLY |
 | 0x058 | A starbase shot down the colonists you tried to land | Colonists dropped on an owned planet that has a starbase | dropping player | planet | planet | P2, P6c | CONFIRMED (TK-410: tk5/tk501, manual transfer) |
-| 0x059 | Fleet was taken apart; its minerals went to the planet surface | Scrap at a planet without a starbase whose owner lacks Ultimate Recycling (or unowned); also on every successful colonization (the ship-cost share given to the new colony) | fleet owner | fleet, kT, planet | planet | P2 (scrap); P2, P6c (colonize) | CONFIRMED (cs/cs-003, tk2) |
+| 0x059 | Fleet was taken apart; its minerals went to the planet surface | Scrap at a planet without a starbase whose owner lacks Ultimate Recycling (or unowned); also on every successful colonization (the ship-cost share given to the new colony) | fleet owner | fleet (design·512 + number for a one-design fleet, FS-1), kT, planet | planet | P2 (scrap); P2, P6c (colonize) | CONFIRMED (cs/cs-003, tk2) |
 | 0x05a | Fleet was taken apart at the starbase; minerals deposited | Scrap at a planet with a starbase, owner without Ultimate Recycling | fleet owner | fleet, kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
-| 0x05b | Fleet was taken apart in deep space, leaving salvage | Scrap with no planet | fleet owner | object (salvage), fleet | object (salvage) | P2 | CONFIRMED (tk2/tk111) |
+| 0x05b | Fleet was taken apart in deep space, leaving salvage | Scrap with no planet | fleet owner | object (salvage), fleet (design·512 + number for a one-design fleet, FS-1) | object (salvage) | P2 | CONFIRMED (tk2/tk111) |
 | 0x05c | Fleet scrapped at the planet, with recycled resources made available | Scrap at a planet without a starbase whose owner has Ultimate Recycling | fleet owner | fleet, kT, planet, amount (resources) | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x05d | As 0x05c, at a starbase | Same, with starbase | fleet owner | fleet, kT, planet, amount | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x05e | Settlers found an artifact that added research to a field | A planet holding an artifact is owned after the landings resolve and random events are on: a colony, a capture, or an invasion the defender beat off. Field random (1 of 6); points 100–400, scaled by pop/1000 when pop < 1000. Sent after that planet's landing messages | planet owner after landing (the defender, if it held) | planet, field, value (resources) | special: research (inferred; focus code −2) | P2, P6c | CONFIRMED (TK-303, TK-304, TK-306) |
@@ -265,7 +276,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x13d | Scrapping at your starbase gave you a research level in a field | Same, roll gives a level | planet owner | fleet, kT, planet, field | special (inferred: research) | P2 | CONFIRMED (tk3/tk203) |
 | 0x13e | As 0x13c, with recycled resources | Starbase scrap with Ultimate Recycling, plus a tech discovery. Also coded (LEGACY BUG?, probably unreachable) as the result of battle wreckage giving the Mystery Trader's planetary device, where this scrap text would be shown with misread slots | planet owner | fleet, kT, planet, amount | special (inferred) | P2 | BINARY-ONLY |
 | 0x13f | As 0x13d, with recycled resources | Starbase scrap with UR, level gained | planet owner | fleet, kT, planet, amount, field | special (inferred) | P2 | BINARY-ONLY |
-| 0x140 | A fleet was scrapped at your planet; minerals deposited | Sent with every 0x059 (dropped when the planet is unowned, so colonization never sends it) | planet owner | fleet, kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
+| 0x140 | A fleet was scrapped at your planet; minerals deposited | Sent with every 0x059 (dropped when the planet is unowned, so colonization never sends it) | planet owner | fleet (owner·512 + number, FS-1), kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x141 | A fleet was scrapped at your starbase | Sent with 0x05a when no technology was gained | planet owner | fleet, kT, planet | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x142 | As 0x140, with recycled resources | Sent with 0x05c | planet owner | fleet, kT, planet, amount | planet | P2 | CONFIRMED (tk2/tk111) |
 | 0x143 | As 0x141, with recycled resources | Sent with 0x05d when no technology was gained | planet owner | fleet, kT, planet, amount | planet | P2 | CONFIRMED (tk2/tk111) |
@@ -474,7 +485,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 
 | Id | What the player is told | Sent when | To | Slots | Focus | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| 0x028 | A fleet's target fleet is gone; the fleet goes to its last known position | End of turn: a later waypoint follows a fleet that no longer exists | fleet owner | fleet, fleet | fleet | P8a | CONFIRMED by prediction (WK-1: once per follower, waypoint 1, of a fleet destroyed in battle by the waypoint owner; WK-2: once per such waypoint, at indexes 1 to 3, with several followers of one victim, params follower, target object id, 3 streams); params MEASURED in WK-1 (2 streams); message sequence MEASURED, order rule UNRESOLVED (WK-2: follower, waypoint, victim id and battle order coincide); MEASURED (RG-001 WF) |
+| 0x028 | A fleet's target fleet is gone; the fleet goes to its last known position | End of turn: a later waypoint follows a fleet that no longer exists | fleet owner | fleet, fleet (both owner·512 + number, FS-1) | fleet | P8a | CONFIRMED by prediction (WK-1: once per follower, waypoint 1, of a fleet destroyed in battle by the waypoint owner; WK-2: once per such waypoint, at indexes 1 to 3, with several followers of one victim, params follower, target object id, 3 streams); params MEASURED in WK-1 (2 streams); message sequence MEASURED, order rule UNRESOLVED (WK-2: follower, waypoint, victim id and battle order coincide); MEASURED (RG-001 WF) |
 | 0x029 | A tracked fleet was lost from view at a planet; orders now go to that planet | As 0x028, when the followed fleet still exists but is out of sight and is at a planet | fleet owner | fleet, planet | fleet | P8a | BINARY-ONLY |
 | 0x02a | A tracked fleet moved out of scanner range; orders now go to its last known position | As 0x029, when the followed fleet is in deep space | fleet owner | fleet | fleet | P8a | BINARY-ONLY |
 | 0x050 | A research field reached a new level; research stays in the same field (or moves to the named field) | A field gains a level and the player does not have Generalized Research. One message per level, so a big surplus can give several. Fields at level 26 (or at level 10 for a player flagged for an invalid or duplicated registration) do not level, and research put into them is lost. The third slot is the field researched next: the chosen next field if the leveled field was the current one and the "next" setting is not "same field" ("lowest field" picks the lowest-level field, the first one on ties); otherwise the current field | field owner | count (new level), field, field | research | P4b (also after battles/invasions, P6) | CONFIRMED (cb5/cb041-sf-joat, ob/ob004, tk2, KX-003, KX-004) |
