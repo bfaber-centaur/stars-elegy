@@ -10,6 +10,13 @@
   "game": {
    "name": "GT",
    "size": "medium",
+   "bounds": [
+    1000,
+    1000,
+    2200,
+    2200
+   ],
+   "density": "normal",
    "players": 2,
    "slower_tech": false,
    "random_events": false,

@@ -9,6 +9,14 @@
   "year": 2400,
   "game": {
    "name": "AP01",
+   "size": "small",
+   "bounds": [
+    1000,
+    1000,
+    1800,
+    1800
+   ],
+   "density": "normal",
    "players": 3,
    "slower_tech": false,
    "random_events": true,

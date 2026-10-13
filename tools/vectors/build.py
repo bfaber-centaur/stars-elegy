@@ -41,8 +41,13 @@ GAMES = {
     'CB3P': dict(name='CB3P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB5P': dict(name='CB5P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'CB16P': dict(name='CB16P', size='tiny', bounds=[1000, 1000, 1400, 1400]),
-    'RD07': dict(name='RD07'),
-    'GT': dict(name='GT', size='medium'),
+    # Size and density for these are from each game's .XY planets block
+    # (universe size 1 = small, 2 = medium; density 1 = normal).
+    'RD07': dict(name='RD07', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
+    'AP01': dict(name='AP01', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
+    'RW08': dict(name='RW08', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
+    'AI01': dict(name='AI01', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
+    'GT': dict(name='GT', size='medium', bounds=[1000, 1000, 2200, 2200], density='normal'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'AIX': dict(name='AIX', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
     'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal'),

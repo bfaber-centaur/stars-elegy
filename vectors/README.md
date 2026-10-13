@@ -551,6 +551,14 @@ The ones an implementer is most likely to want are FM-000..004 and
 TK-001..007 (round 1 prose and tables, which need a checker-output rerun
 or a hand conversion), KX-004 E0/E1, and BP-2.
 
+**Pending full rebuild (2026-10-13).** The current builders add each
+player's `default_queue` and `default_leftover_to_research` to every
+`rp`, `wu` and `gt` vector, which the committed files predate. A full
+rebuild of those corpora would change what an implementation loads, so it
+waits on a parity check on the implementation side. Until then only
+`initial_state.game` was refreshed from the builders (universe size,
+bounds and density, read from each game's `.XY` planets block).
+
 **Oracle runs not run.** Each PARITY section's "Not tested" list is the
 current record; the main ones are:
 
