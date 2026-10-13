@@ -59,7 +59,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
 //         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
-//         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
+//         [target fleet OWNER ID|target thing ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
@@ -72,7 +72,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
 //                                   kT or 100s of colonists; "-" for no order). "target
 //                                   fleet" makes waypoint 0 target a fleet (id number |
-//                                   owner << 9, type 0x12) for merge and fleet transport
+//                                   owner << 9, type 0x12) for merge and fleet transport;
+//                                   "target thing" makes it target a universe object
+//                                   (object id, type 0x18) at the fleet's position
 //   planetset N KEY=V...            planet N's fields after any "planet" line: mines=
 //                                   factories= defenses= excess= fe= bo= ge= (installed/
 //                                   surface values; owned planets) scanner=ID (planetary
@@ -500,6 +502,7 @@ public class CombatLab {
         int owner, id, x, y, fuel, plan, planet = -1;
         boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
+        int wp0Thing = -1;  // waypoint 0 targets this object id (type << 13 | owner << 9 | number) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -882,7 +885,8 @@ public class CombatLab {
             List<Block> unit = new ArrayList<>();
             unit.add(fl);
             List<int[]> all = new ArrayList<>();
-            all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
+            all.add(fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
+                : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
                 : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
             all.addAll(fs.wps);
             for (int w = 0; w < all.size(); w++) {
@@ -1450,7 +1454,9 @@ public class CombatLab {
                 case "repeat": fs.repeat = true; i += 1; break;
                 case "target":
                     // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
-                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
+                    // target thing ID: waypoint 0 targets that object, at the fleet's own position
+                    if (t[i + 1].equals("thing")) { fs.wp0Thing = Integer.decode(t[i + 2]); i += 3; break; }
+                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID | target thing ID");
                     fs.wp0Fleet = Integer.parseInt(t[i + 3]) | Integer.parseInt(t[i + 2]) << 9;
                     i += 4; break;
                 case "plan": fs.plan = Integer.parseInt(t[i + 1]); i += 2; break;
