@@ -15,6 +15,14 @@
   "year": 2468,
   "game": {
    "name": "RGF",
+   "size": "small",
+   "bounds": [
+    1000,
+    1000,
+    1800,
+    1800
+   ],
+   "density": "dense",
    "players": 7,
    "slower_tech": false,
    "random_events": true,
