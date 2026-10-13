@@ -487,7 +487,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
   - `index` is the item's `index` within that category in `data/components.json`.
   - The focus of 0x05f, 0x145 and 0x157 is a part code, `0xC000 | b << 8 | index`, where `b` is the bit number of `mask` (`mask = 1 << b`). It repeats the category and index of the slots, so a comparator that matches the slots can check the focus by computing it. The screen it opens is inferred to be that component in the Technology Browser. The focus of 0x078 and 0x0d0 is −3 (stored 0xFFFD, the ship-design screen, inferred), whatever the hull.
 
-  MEASURED (RG-001, RG-002, RG-003, KX-002, KX-003, KX-004, KX-005): every 0x05f, 0x078, 0x145 and 0x157 entry in the public vectors' `message_sequence` cases has this layout, with the focus equal to the part code above (or −3 for 0x078). The 0x0d0 values are MEASURED in AO-1 (b) only, from the private raw results; no public vector holds a 0x0d0 message. A category marked BINARY-ONLY below appears neither in the public vectors nor in AO-1; its mask and part code follow the same bit numbering, which is read from the binary.
+  MEASURED (RG-001, RG-002, RG-003, KX-002, KX-003, KX-004, KX-005): every 0x05f, 0x078, 0x145 and 0x157 entry in the public vectors' `message_sequence` cases has this layout, with the focus equal to the part code above (or −3 for 0x078). The 0x0d0 values are MEASURED in AO-1 (b) only, from the private raw results (`PARITY.md` "Component announcements within one level (AO-1)"; private apparatus `evidence/ao1`); no public vector holds a 0x0d0 message. A category marked BINARY-ONLY below appears neither in the public vectors nor in AO-1; its mask and part code follow the same bit numbering, which is read from the binary.
 
   | Category | Mask | `b` | Message (focus) | Status, with an example from the vectors |
   |---|---|---:|---|---|
@@ -501,7 +501,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
   | Mining robots | 0x0080 | 7 | 0x05f (part code) | MEASURED: Robo-Mini-Miner 1 (RG-001) |
   | Mine layers | 0x0100 | 8 | 0x05f (part code) | BINARY-ONLY |
   | Orbital | 0x0200 | 9 | 0x05f (part code) | MEASURED: Mass Driver 7, index 9 (RG-001) |
-  | Starbase hulls | 0x0400 | 10 | 0x0d0 (−3) | MEASURED in AO-1 (b) only: Space Dock 1, field 3; not in the public vectors |
+  | Starbase hulls | 0x0400 | 10 | 0x0d0 (−3) | MEASURED in AO-1 (b) only: Space Dock 1, field 3, from the private raw results (`PARITY.md` "Component announcements within one level (AO-1)"; private apparatus `evidence/ao1`); not in the public vectors |
   | Electrical | 0x0800 | 11 | 0x05f (part code) | MEASURED: Energy Capacitor 12 (KX-002) |
   | Mechanical | 0x1000 | 12 | 0x05f (part code) | MEASURED: Cargo Pod 2 and Maneuvering Jet 7 (RG-001) |
   | Terraforming | 0x2000 | 13 | 0x05f (part code) | MEASURED: Temp Terraform ±7 13 (KX-003, KX-005, RG-001); Temp Terraform ±11 14 and Radiation Terraform ±3 16 (KX-005) |
