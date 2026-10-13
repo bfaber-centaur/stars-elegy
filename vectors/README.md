@@ -490,13 +490,23 @@ python3 tools/vectors/build.py fm2 ../stars-oracle-apparatus/evidence/fm2
 python3 tools/vectors/build.py wt  ../stars-oracle-apparatus/evidence/wt
 python3 tools/vectors/build.py cb  ../stars-oracle-apparatus/evidence/cb   # reads every cb* round
 python3 tools/vectors/build.py sc  ../stars-oracle-apparatus/evidence/sc
-python3 tools/vectors/build.py sl  ../stars-oracle-apparatus/evidence/sl   # also cb7, tk3
+python3 tools/vectors/build.py sl  ../stars-oracle-apparatus/evidence/sl
 python3 tools/vectors/build.py mf  ../stars-oracle-apparatus/evidence/mf
 python3 tools/vectors/build.py rp  ../stars-oracle-apparatus/evidence/rd
 python3 tools/vectors/build.py rw  ../stars-oracle-apparatus/evidence/rd
 python3 tools/vectors/build.py kx005 ../stars-oracle-apparatus/evidence/kx005
 python3 tools/vectors/build.py kx004 ../stars-oracle-apparatus/evidence/kx004   # also kx001..kx003
-python3 tools/vectors/build.py xf  ../stars-oracle-apparatus/evidence/xf    # also bp, tk5, wu
+python3 tools/vectors/build.py xf  ../stars-oracle-apparatus/evidence/xf
+python3 tools/vectors/build.py bp  ../stars-oracle-apparatus/evidence/bp    # likewise tk5, wu
+python3 tools/vectors/build.py cb7 ../stars-oracle-apparatus/evidence/cb7   # likewise tk3
+python3 tools/vectors/build.py gt  ../stars-oracle-apparatus/evidence/gt    # likewise es, fc, ob
+python3 tools/vectors/build.py fo  ../stars-oracle-apparatus/evidence/fo    # likewise tk2
+python3 tools/vectors/build.py cs  ../stars-oracle-apparatus/evidence/cs/cs-003
+python3 tools/vectors/build.py pg  ../stars-oracle-apparatus/evidence       # reads pq001, pg002, pg003
+python3 tools/vectors/build.py pq  ../stars-oracle-apparatus/evidence/pq001
+python3 tools/vectors/build.py rg001 ../stars-oracle-apparatus/evidence/rg001
+python3 tools/vectors/build.py rg002 <dir named rg002>                      # a link to evidence/rg002/run
+python3 tools/vectors/build.py co  <dir named co>                           # a link to evidence/fo (the co* runs)
 go test ./internal/vectors
 ```
 
@@ -554,13 +564,15 @@ The ones an implementer is most likely to want are FM-000..004 and
 TK-001..007 (round 1 prose and tables, which need a checker-output rerun
 or a hand conversion), KX-004 E0/E1, and BP-2.
 
-**Pending full rebuild (2026-10-13).** The current builders add each
-player's `default_queue` and `default_leftover_to_research` to every
-`rp`, `wu` and `gt` vector, which the committed files predate. A full
-rebuild of those corpora would change what an implementation loads, so it
-waits on a parity check on the implementation side. Until then only
-`initial_state.game` was refreshed from the builders (universe size,
-bounds and density, read from each game's `.XY` planets block).
+**Full rebuild (2026-10-13).** Every corpus with an `initial_state` was
+rebuilt from its raw evidence with the current builders, so each player now
+carries `default_queue` and `default_leftover_to_research`. The rebuild
+changed nothing else: each of the 384 rebuilt files equals its earlier
+version once those two keys are removed. 863 player records have an empty
+default queue; only TK-106, TK-107 and TK-108 give player 0 a queue and
+`default_leftover_to_research: true` (RG-001 and RG-002 already carried
+them). `ug` and `rw` were not changed (`ug` is new-game vectors; `rw` came
+out identical).
 
 **WT-001 player-0 wormhole bit (UNRESOLVED, 2026-10-13).** WT-001-G
 expects ends 2 and 3 known to players 0 and 1, and it is not flagged a

@@ -142,6 +142,8 @@
      "ship_designs": 3,
      "starbase_designs": 2
     },
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 81
    },
    {
@@ -224,6 +226,8 @@
      "ship_designs": 3,
      "starbase_designs": 2
     },
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 111
    },
    {
@@ -306,6 +310,8 @@
      "ship_designs": 3,
      "starbase_designs": 2
     },
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 72
    },
    {
@@ -388,6 +394,8 @@
      "ship_designs": 3,
      "starbase_designs": 2
     },
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 60
    },
    {
@@ -470,6 +478,8 @@
      "ship_designs": 3,
      "starbase_designs": 2
     },
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 24
    },
    {
@@ -552,6 +562,8 @@
      "starbase_designs": 1
     },
     "computer": true,
+    "default_queue": [],
+    "default_leftover_to_research": false,
     "homeworld": 62
    }
   ],
