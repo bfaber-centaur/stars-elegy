@@ -6561,12 +6561,18 @@ ly away, whose waypoint 1 was aimed at it.
 | M | Fly 20 ly onto unowned planet 0 and die there | Planet 0 (where they died, not where they started) | CONFIRMED by prediction |
 
 In every case the host file and player 0's file agree, player 0 gets
-0x028 once per follower, and no follower arrives. This confirms, for
-targets destroyed in battle, the `ORDERS.md` rule that was BINARY-ONLY:
+0x028 once per follower, and no follower arrives. Each follower moved
+16 ly, as predicted. 0x028's parameters (the follower and the target's
+object id) are MEASURED, since they were not predicted. This confirms,
+for waypoint 1 aimed at a fleet destroyed in battle, the `ORDERS.md`
+rule that was BINARY-ONLY:
 the waypoint becomes deep space at the target's last position (after
 movement), or the planet that stands exactly there. It is not the
 nearest object, it is not the waypoint's position before movement, and
-the waypoint does not keep the fleet.
+the waypoint does not keep the fleet. Other losses (scrapped, merged,
+out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
+and up, waypoint 0, a kill by a third player, and targets other than
+fleets are NOT RUN.
 
 ## A named packet at other distances and after movement (NS-2)
 

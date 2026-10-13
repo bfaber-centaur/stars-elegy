@@ -113,11 +113,17 @@ streams are identical, and every victim fleet died in both.
 | M | Fly 20 ly from (1045,1311) onto unowned planet 0 (1045,1291) and die there | Planet 0 at (1045,1291) | CONFIRMED by prediction |
 
 The host file and player 0's file agree. Player 0 got 0x028 once per
-follower, with the follower and the target's object id as parameters.
-No follower arrived.
+follower, as predicted. Its parameters, the follower and the target's
+object id, are MEASURED, since they were not predicted. No follower
+arrived. Each follower moved 16 ly toward its waypoint, as predicted:
+from y 1282 to 1298, 1263 to 1279 and 1211 to 1227.
 
-So a waypoint aimed at a fleet that dies becomes deep space at the
-fleet's last position, which is where it died, after this year's
+So waypoint 1 aimed at a fleet destroyed in battle becomes deep space at
+the fleet's last position, which is where it died, after this year's
 movement. If a planet stands exactly there, the planet is used instead.
 It is not the nearest object (D), not the position the waypoint held
 before movement (M), and the waypoint does not keep the fleet target.
+
+Other ways a target can be lost remain BINARY-ONLY: scrapped, merged,
+out of fuel, a minefield, a wormhole. Waypoint index 2 and up, waypoint
+0, a kill by a third player, and targets other than fleets are NOT RUN.

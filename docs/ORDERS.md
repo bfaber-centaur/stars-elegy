@@ -875,12 +875,16 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     space at its coordinates (the planet instead, if one stands exactly
     there). MEASURED for the deep-space result with 0x028 in RG-001
     (WF-01..05). **Clarified 2026-10-13 (WK-1, `PARITY.md` "A waypoint
-    aimed at a fleet destroyed in battle (WK-1)"):** for a target
-    destroyed in battle, the coordinates are where it died, after this
-    year's movement. The planet substitution and the deep-space result
-    5 ly from a planet (not the nearest planet) are CONFIRMED by
-    prediction, with 0x028, in 2 of 2 streams. RG-003 years 7 and 8 show
-    the same for computer players' waypoints (MEASURED).
+    aimed at a fleet destroyed in battle (WK-1)"):** for waypoint 1
+    aimed at a target destroyed in battle by the waypoint owner, the
+    coordinates are where it died, after this year's movement. The
+    planet substitution and the deep-space result 5 ly from a planet
+    (not the nearest planet) are CONFIRMED by prediction, with 0x028, in
+    2 of 2 streams. RG-003 years 7 and 8 show the same for computer
+    players' waypoints (MEASURED). For other losses (scrapped, merged, out
+    of fuel, minefield, wormhole) the planet substitution remains
+    BINARY-ONLY. Waypoint index 2 and up, a kill by a third player, and
+    targets other than fleets are NOT RUN.
   - **The target exists but the player does not see it:** message 0x029
     naming the planet if the target is orbiting one, else 0x02a. A target
     whose coordinates were frozen by a gate or wormhole jump also gets
@@ -955,12 +959,21 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
        A packet gains no cargo during the year, so the second pass finds
        nothing new. Unloads also run before movement (step 2.2), so a
        full hold cannot hold back the first pass while freeing room for
-       the second.
-    2. A waypoint 0 that names a packet does not arise in play. The host
-       rewrites waypoint 0 to a planet or deep space after movement each
-       year ("Waypoint 0 and a task still in progress", MEASURED). In
-       RG-001, RG-002 and RG-003, every waypoint-0 order named a planet,
+       the second. Step 2.6 (cargo given to other players) runs between
+       the two passes. It moves only cargo that a waypoint task gives to
+       another player's planet or fleet, and this task's target is the
+       packet, so it gives none. One way remains open and is NOT RUN:
+       another player's fleet stealing from this fleet later in the 2.5
+       fleet order frees hold space before 6c.5. That needs a packet
+       holding more than the hold, a "set amount to" above what the
+       packet holds, and the steal task, which this lane does not run.
+    2. A waypoint 0 that names a packet was not seen in RG-001 to RG-003.
+       The host rewrites waypoint 0 to a planet or deep space after
+       movement each year ("Waypoint 0 and a task still in progress",
+       MEASURED). In those games every waypoint-0 order named a planet,
        deep space or a fleet. NS-1's waypoint-0 cases were crafted.
+       Whether the human client can write a waypoint-0 order naming a
+       packet is NOT RUN.
     3. For waypoint 1 and later, tracking moved the fleet to the packet
        (distance 0) or left it short (NS-2 P1, P1-F, MEASURED).
   - **Outside the galaxy.** The waypoint check does not clamp packets,
