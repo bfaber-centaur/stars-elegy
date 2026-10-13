@@ -874,7 +874,13 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   - **The target is gone:** message 0x028, and the waypoint becomes deep
     space at its coordinates (the planet instead, if one stands exactly
     there). MEASURED for the deep-space result with 0x028 in RG-001
-    (WF-01..05); the planet substitution is BINARY-ONLY.
+    (WF-01..05). **Clarified 2026-10-13 (WK-1, `PARITY.md` "A waypoint
+    aimed at a fleet destroyed in battle (WK-1)"):** for a target
+    destroyed in battle, the coordinates are where it died, after this
+    year's movement. The planet substitution and the deep-space result
+    5 ly from a planet (not the nearest planet) are CONFIRMED by
+    prediction, with 0x028, in 2 of 2 streams. RG-003 years 7 and 8 show
+    the same for computer players' waypoints (MEASURED).
   - **The target exists but the player does not see it:** message 0x029
     naming the planet if the target is orbiting one, else 0x02a. A target
     whose coordinates were frozen by a gate or wormhole jump also gets

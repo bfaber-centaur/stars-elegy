@@ -6539,6 +6539,35 @@ loaded from it (CONFIRMED by prediction); NS-2 below adds 10 ly and
 150 ly. Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
 fails every case.
 
+## A waypoint aimed at a fleet destroyed in battle (WK-1)
+
+Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
+for this from the RG-003 ledger. In RG-003 year 8, player 1's fleets 81,
+82, 84, 86 and 91 had waypoint 1 aimed at player 5's fleet 71, which flew
+onto planet 94 and died in the battle there. Afterwards their waypoints
+named planet 94 (MEASURED). Year 7's fleet 5/45 did the same with planet
+83. Predictions (`experiments/wf/WK1-PREDICTION.md`) were pushed at
+06:02:20Z (activity API), before the runs at 06:02:31Z. Results:
+`experiments/wf/README.md` "WK-1". Raw evidence: private apparatus
+`evidence/wk1`. One pinned year (cycles 20000 and 30000), identical
+streams. Player 0's HB Battleships killed player 1's Laser Destroyers at
+three places. Each victim fleet was followed by a player 0 freighter 100
+ly away, whose waypoint 1 was aimed at it.
+
+| Case | Victims | Follower's waypoint 1 after the year | Result |
+|---|---|---|---|
+| A | Orbit unowned planet 7 all year | Planet 7 | CONFIRMED by prediction |
+| D | Deep space 5 ly from planet 10 | Deep space at the victims' position, not planet 10 | CONFIRMED by prediction |
+| M | Fly 20 ly onto unowned planet 0 and die there | Planet 0 (where they died, not where they started) | CONFIRMED by prediction |
+
+In every case the host file and player 0's file agree, player 0 gets
+0x028 once per follower, and no follower arrives. This confirms, for
+targets destroyed in battle, the `ORDERS.md` rule that was BINARY-ONLY:
+the waypoint becomes deep space at the target's last position (after
+movement), or the planet that stands exactly there. It is not the
+nearest object, it is not the waypoint's position before movement, and
+the waypoint does not keep the fleet.
+
 ## A named packet at other distances and after movement (NS-2)
 
 Status: CONFIRMED by prediction for waypoint 0 at 10 ly and 150 ly. The

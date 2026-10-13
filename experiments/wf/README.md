@@ -91,3 +91,33 @@ at fleet 2's end position in every case.
 
 So the rewrite to deep space (Elegy's W5) happens only when the target is
 gone or out of the owner's sight, and then in the host file too.
+
+## WK-1: a waypoint aimed at a fleet destroyed in battle
+
+Question (coordinator, from the RG-003 ledger): in RG-003 year 8, five of
+player 1's fleets (81, 82, 84, 86 and 91) had waypoint 1 aimed at player
+5's fleet 71. That fleet flew onto planet 94 and died in the battle there.
+After the year each waypoint named planet 94. Year 7's fleet 5/45 did the
+same with planet 83. Elegy kept the fleet target.
+
+Predictions: `WK1-PREDICTION.md`, pushed in 30ebc36. The activity API
+shows the push at 2026-10-13T06:02:20Z, and the runs started at
+06:02:31Z. Spec: `wk1.spec`. Raw evidence: private apparatus
+`evidence/wk1`. One pinned year at cycles 20000 and 30000. The two
+streams are identical, and every victim fleet died in both.
+
+| Case | Victims | Follower's waypoint 1 after the year (2 of 2 streams) | Result |
+|---|---|---|---|
+| A | Orbit unowned planet 7 (1166,1382) all year | Planet 7 at (1166,1382) | CONFIRMED by prediction |
+| D | Deep space at (1227,1363), 5 ly from planet 10 | Deep space at (1227,1363), not planet 10 | CONFIRMED by prediction |
+| M | Fly 20 ly from (1045,1311) onto unowned planet 0 (1045,1291) and die there | Planet 0 at (1045,1291) | CONFIRMED by prediction |
+
+The host file and player 0's file agree. Player 0 got 0x028 once per
+follower, with the follower and the target's object id as parameters.
+No follower arrived.
+
+So a waypoint aimed at a fleet that dies becomes deep space at the
+fleet's last position, which is where it died, after this year's
+movement. If a planet stands exactly there, the planet is used instead.
+It is not the nearest object (D), not the position the waypoint held
+before movement (M), and the waypoint does not keep the fleet target.
