@@ -354,17 +354,27 @@ transport.
 
 ### Ground combat (CONFIRMED, T-21..T-25)
 
-All drops queued for one planet in one phase are resolved together.
+All drops queued for one planet in one phase are resolved together: the
+strengths of every drop are pooled first, and the planet's defenders are
+compared with the total once (BINARY-ONLY). Drops are not resolved one
+after another, so their order does not change the result.
 
 1. `s` is the planet owner's bombing survival factor (above; 1 when the
    planet is unowned or has no defenses). Against troops it is
    `s' = s + (1 − s)/4`: defenses are 75% as effective as against bombs.
-2. Each attacking player `p` has `troops[p]` (units), and its strength is
-   `strength[p] = ⌊⌊troops[p]·k/100⌋·s'⌋`, with `k = 110`. For War Monger
-   `k = 165` (CONFIRMED, T-24), and for Alternate Reality `k = 0`
-   (BINARY-ONLY; an AR drop lands only by colonizing an unowned planet,
-   where `Σ = 0` lands every colonist anyway, T-33).
-   `Σ` is the sum of all strengths.
+2. Each drop (one fleet's colonists, `c` units) has strength
+   `⌊⌊c·k/100⌋·s'⌋`, with `k = 110`. For War Monger `k = 165` (CONFIRMED,
+   T-24), and for Alternate Reality `k = 0` (BINARY-ONLY; an AR drop lands
+   only by colonizing an unowned planet, where `Σ = 0` lands every
+   colonist anyway, T-33). Each attacking player `p` has `troops[p]`, the
+   sum of its drops' units, and `strength[p]`, the sum of its drops'
+   strengths: the 110% factor and both floors apply per drop, not to the
+   player's total. `Σ` is the sum of all strengths. MEASURED once
+   (RG-003, year 2469, a chained year): planet 51 with ten Neutron
+   Shields (`s' ≈ 0.7591`) repelled player 1's drops of 250 and 300 units
+   and lost 458, the per-drop sum 208 + 250. A per-player strength would
+   be `⌊605·s'⌋ = 459`. **Corrected 2026-10-13:** this step used to
+   compute one strength per player from its total troops.
 3. If the planet is owned, the defender strength is `D = P` (×2 for Inner
    Strength, CONFIRMED, T-24).
    - `D > Σ`: every attacker dies, and the planet loses `⌊P·Σ/D⌋`. 200
@@ -372,8 +382,9 @@ All drops queued for one planet in one phase are resolved together.
    - `D ≤ Σ` (**a tie goes to the attackers**): the planet is emptied
      (Capture, below) and the attackers resolve as for an empty planet,
      with `D` subtracted.
-4. Empty-planet resolution, with `D = 0` for an unowned planet. A single
-   attacking player `w` lands
+4. Empty-planet resolution, with `D = 0` for an unowned planet. The
+   winner's drops land as one population: a single attacking player `w`
+   lands
    `max(1, troops[w]·⌊(Σ − D)·best/Σ⌋/best)`, where `best =
    strength[w]`. If `Σ = 0`, it lands all its troops.
 
