@@ -3806,7 +3806,9 @@ tech was removed). Hush-a-Boom and Retro are above tech 3 but stayed:
 the check removes only parts the owner lacks tech for, and skips
 race-restricted parts (Retro) and Mystery Trader parts (Hush-a-Boom, Multi
 Contained Munition): `TAKEOVER.md`, "Design parts dropped when the year is
-generated" (CONFIRMED in one setting there).
+generated". Timing, energy-gated parts, received designs and the load
+phase: "The design check: timing, transfers, energy and loads (DC-1 to
+DC-6)".
 
 ### Round 2 (TK-101 to TK-121)
 
@@ -3934,7 +3936,9 @@ Construction Module ship 5/2/5: BET miniaturization (80%) applies.
 **Design check (CONFIRMED, T-37).** With electronics 7 and everything else
 26, LBU-17 (electronics 8) and LBU-32 (electronics 10) were removed whether
 the research field was energy or electronics; Hush-a-Boom (Mystery
-Trader), Retro (CA only) and every other part stayed.
+Trader), Retro (CA only) and every other part stayed. Timing, received
+designs and the load phase: "The design check: timing, transfers, energy
+and loads (DC-1 to DC-6)".
 
 ### Round 3 (TK-201 to TK-203)
 
@@ -6630,6 +6634,36 @@ the waypoint does not keep the fleet. Other losses (scrapped, merged,
 out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
 and up, waypoint 0, a kill by a third player, and targets other than
 fleets are NOT RUN.
+
+## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
+
+Status (2026-10-13): six readings CONFIRMED by prediction; DC-2's
+prediction failed, and its result is MEASURED. The question came from the review of lane A's T-37
+work: Elegy's ASSUMPTION T15 (tech from before research; a received
+design checked against the recipient's tech) and an energy-gated part.
+Pre-run records `experiments/t15/PREDICTION.md` (pushed 08:29:06Z,
+activity API; runs 08:29:22Z) and `experiments/t15/PREDICTION-DC4.md` (pushed
+08:34:54Z; runs 08:35:10Z) and `experiments/t15/PREDICTION-DC6.md`
+(pushed 08:40:24Z; runs 08:40:36Z). Write-up: `experiments/t15/README.md`. Raw
+evidence: private apparatus `evidence/t15`. Combat Lab, two JOAT
+players. Two chained years (one for DC-4 and DC-6) at cycles 20000, 30000 and
+14000. The streams agreed everywhere.
+
+| Case | Setup | Result |
+|---|---|---|
+| DC-1 | Player 0 at energy 9, Bear Neutrino Barrier (energy 10); no level-up, a level-up from research stored before the year (enough when it starts), or a level-up from the year's research | Removed in year 1 in all three (9 of 9 runs): the part is removed in the year its field levels up. CONFIRMED by prediction. That the check precedes the first level-up check is inferred (stored research levels there by `KERNEL.md` "Allocation"; the dumps show the level only at year end) |
+| DC-3 | Gorilla Delagator (energy 14), Wolverine Diffuse Shield (energy 6), same owner | Gorilla removed, Wolverine kept (9 of 9). CONFIRMED by prediction |
+| DC-2 | Player 0 (electronics 26) transfers a Possum Scout (electronics 5) to player 1 (electronics 3) | The copy kept its scanner after years 1 and 2 (9 of 9). The prediction (removed after year 2) failed. MEASURED |
+| DC-4 | Player 1's own Possum Scout at electronics 3 | Removed in year 1 (3 of 3). CONFIRMED by prediction |
+| DC-5 | Player 1 (electronics 26) transfers a Possum Scout to player 0 (electronics 3); player 0's own Possum Scout as control | Control removed in year 1; the received copy kept its scanner after years 1 and 2 (3 of 3). CONFIRMED by prediction |
+| DC-6 | Player 0 at construction 8: a Super Cargo Pod ship (construction 9) and a Cargo Pod ship (construction 3) load all ironium at the homeworld; a third Super Cargo Pod ship already holds 80 kT | The pod was removed and that ship loaded 0, while the control loaded 50; the third ship kept 80 kT (3 of 3). CONFIRMED by prediction: the check runs before the load tasks, and the cargo is kept. Its new capacity of 0 is inferred from the stripped design |
+
+So a design received with a fleet transfer escapes the check for at least
+the two years observed, whichever player receives it. This contradicts
+the transfer half of ASSUMPTION T15. Later years are NOT RUN. Why the
+copy escapes the check is unknown. DC-6 places the check before the waypoint-0 load tasks. Its
+order against client order replay (a split in the same year) is NOT RUN:
+that needs an order file, which waits on the serial decision.
 
 ## A chase target destroyed by mines during movement (Z-MD)
 

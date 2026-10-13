@@ -662,10 +662,13 @@ no other player 1 planet marked. Player 0's homeworld 17 was emptied by
 loading every colonist (above): it was unowned and still marked at the end
 of that year **and of the next**, and player 0's record still named 17.
 
-## Design parts dropped when the year is generated (CONFIRMED in one setting)
+## Design parts dropped when the year is generated (CONFIRMED; received designs excepted)
 
 When the original game generates a year, it re-checks every ship design
-against its owner's tech. A slot whose part the owner **lacks the tech
+against its owner's tech. **Corrected 2026-10-13:** this used to say
+"every ship design" without exception. A design received with a fleet
+transfer was not checked in the two years observed (DC-2, DC-5, below).
+A slot whose part the owner **lacks the tech
 for** is emptied, the design is written back without it, and ships of that
 design act without it. Race-restricted parts (Retro Bomb, which only Claim
 Adjuster may build; the Orbital Construction Module, Alternate Reality only)
@@ -682,7 +685,38 @@ agrees with SC-021 (a scanner above the owner's tech was removed).
 For Elegy this matters only when designs come from outside the UI
 (imported files, edited states): such designs keep parts the owner could
 never have chosen. Whether Elegy accepts or rejects them is a project
-choice; parity is "keep and use".
+choice; parity is "keep and use". **Corrected 2026-10-13:** this was
+wrong. An ordinary fleet transfer also leaves the recipient a design with
+a part above its tech, and the check did not remove it in the two years
+observed (DC-2, DC-5, below).
+
+**When, and which designs** (`experiments/t15/README.md`; PARITY "The
+design check: timing, transfers, energy and loads (DC-1 to DC-6)"):
+- A part that comes into tech through a level-up in the same year is
+  still removed, whether the year starts with enough stored research for
+  the level or reaches it with the year's research. CONFIRMED by
+  prediction (DC-1, energy 9 to 10, 9 of 9 runs). That the check also
+  precedes the first level-up check is inferred: it rests on the stored
+  research levelling there (`KERNEL.md` "Allocation"), while the dumps show
+  the new level only at year end.
+- A part gated by energy alone is checked like any other: CONFIRMED by
+  prediction (DC-3: Gorilla Delagator removed at energy 9 and 10,
+  Wolverine Diffuse Shield kept).
+- Both players' own designs are checked: CONFIRMED by prediction (DC-4,
+  player 1's own design).
+- A design received with a fleet transfer was not checked in the two
+  years observed. The copy in the recipient's slots kept a part above the
+  recipient's tech after the transfer year and the year after: CONFIRMED
+  by prediction (DC-5, player 0 receiving, 3 of 3) and MEASURED (DC-2,
+  player 1 receiving, 9 of 9). Later years are NOT RUN. Why the copy
+  escapes is unknown. The giver keeps its own copy (MEASURED, DC-2 and
+  DC-5).
+- The check runs before the waypoint-0 load tasks. A ship whose cargo pod
+  was removed loaded nothing that year, and a ship already holding cargo
+  kept it. CONFIRMED by prediction (DC-6, DC-6b, 3 of 3). That its new
+  capacity was 0 is inferred from the stripped design (a bare Scout has no
+  cargo space); the dumps show only the cargo. The check's order against client order replay is NOT
+  RUN.
 
 ## Other waypoint tasks (CONFIRMED, T-34, T-35, FO corpus)
 
