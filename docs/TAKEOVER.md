@@ -685,7 +685,7 @@ never have chosen. Whether Elegy accepts or rejects them is a project
 choice; parity is "keep and use".
 
 **When, and which designs** (`experiments/t15/README.md`; PARITY "The
-design check: timing, transfers and energy (DC-1 to DC-5)"):
+design check: timing, transfers, energy and loads (DC-1 to DC-6)"):
 - The check uses the owner's tech from before any of the year's
   research. A part that comes into tech through a level-up in the same
   year is still removed, whether the level comes from research already
@@ -701,6 +701,11 @@ design check: timing, transfers and energy (DC-1 to DC-5)"):
   the transfer year and the year after: CONFIRMED by prediction (DC-5,
   player 0 receiving, 3 of 3) and MEASURED (DC-2, player 1 receiving, 9 of
   9). Later years are NOT RUN. The giver keeps its own copy.
+- The check runs before the waypoint-0 load tasks. A ship whose cargo pod
+  was removed loaded nothing that year, and a ship already holding cargo
+  kept it above its new capacity (0). CONFIRMED by prediction (DC-6,
+  DC-6b, 3 of 3). The check's order against client order replay is NOT
+  RUN.
 
 ## Other waypoint tasks (CONFIRMED, T-34, T-35, FO corpus)
 

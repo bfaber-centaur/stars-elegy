@@ -6631,17 +6631,18 @@ out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
 and up, waypoint 0, a kill by a third player, and targets other than
 fleets are NOT RUN.
 
-## The design check: timing, transfers and energy (DC-1 to DC-5)
+## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
-Status: four readings CONFIRMED by prediction, and one prediction failed
+Status: six readings CONFIRMED by prediction, and one prediction failed
 and was followed up. The question came from the review of lane A's T-37
 work: Elegy's ASSUMPTION T15 (tech from before research; a received
 design checked against the recipient's tech) and an energy-gated part.
 Pre-run records `experiments/t15/PREDICTION.md` (pushed 08:29:06Z,
 activity API; runs 08:29:22Z) and `experiments/t15/PREDICTION-DC4.md` (pushed
-08:34:54Z; runs 08:35:10Z). Write-up: `experiments/t15/README.md`. Raw
+08:34:54Z; runs 08:35:10Z) and `experiments/t15/PREDICTION-DC6.md`
+(pushed 08:40:24Z; runs 08:40:36Z). Write-up: `experiments/t15/README.md`. Raw
 evidence: private apparatus `evidence/t15`. Combat Lab, two JOAT
-players. Two chained years (one for DC-4) at cycles 20000, 30000 and
+players. Two chained years (one for DC-4 and DC-6) at cycles 20000, 30000 and
 14000. The streams agreed everywhere.
 
 | Case | Setup | Result |
@@ -6651,13 +6652,14 @@ players. Two chained years (one for DC-4) at cycles 20000, 30000 and
 | DC-2 | Player 0 (electronics 26) transfers a Possum Scout (electronics 5) to player 1 (electronics 3) | The copy kept its scanner after years 1 and 2 (9 of 9). The prediction (removed after year 2) failed. MEASURED |
 | DC-4 | Player 1's own Possum Scout at electronics 3 | Removed in year 1 (3 of 3). CONFIRMED by prediction |
 | DC-5 | Player 1 (electronics 26) transfers a Possum Scout to player 0 (electronics 3); player 0's own Possum Scout as control | Control removed in year 1; the received copy kept its scanner after years 1 and 2 (3 of 3). CONFIRMED by prediction |
+| DC-6 | Player 0 at construction 8: a Super Cargo Pod ship (construction 9) and a Cargo Pod ship (construction 3) load all ironium at the homeworld; a third Super Cargo Pod ship already holds 80 kT | The pod was removed and that ship loaded 0, while the control loaded 50; the third ship kept 80 kT with no cargo space (3 of 3). CONFIRMED by prediction: the check runs before the load tasks, and cargo above the new capacity is kept |
 
 So a design received with a fleet transfer escapes the check for at least
 the two years observed, whichever player receives it. This contradicts
 the transfer half of ASSUMPTION T15. Why it escapes, and later years, are
-NOT RUN. The order of the check against client orders (a split in the
-same year) is NOT RUN: it needs an order file, which waits on the serial
-decision.
+NOT RUN. DC-6 places the check before the waypoint-0 load tasks. Its
+order against client order replay (a split in the same year) is NOT RUN:
+that needs an order file, which waits on the serial decision.
 
 ## A chase target destroyed by mines during movement (Z-MD)
 
