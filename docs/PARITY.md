@@ -6766,7 +6766,39 @@ nearest object, it is not the waypoint's position before movement, and
 the waypoint does not keep the fleet. Other losses (scrapped, merged,
 out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
 and up, waypoint 0, a kill by a third player, and targets other than
-fleets are NOT RUN.
+fleets are NOT RUN. (Updated 2026-10-13: WK-2 below has since run
+waypoints 2 and 3, and several followers of one victim.)
+
+## Several followers, and waypoints 2 and up, aimed at a fleet destroyed in battle (WK-2)
+
+Status: CONFIRMED by prediction, 3 of 3 streams. The coordinator asked
+for it to test two ASSUMPTIONs in Elegy's WK-1 code: one 0x028 per
+follower when several fleets follow one victim, and the handling of
+waypoints 2 and up. The prediction (`experiments/wf/WK2-PREDICTION.md`)
+was pushed alone at 13:49:00Z (activity API), before the runs at
+13:49:30Z. Results: `experiments/wf/README.md` "WK-2". Raw evidence:
+private apparatus `evidence/wk2`. The setup is a state edit, as in WK-1.
+In one pinned year (cycles 20000, 30000 and 14000; identical streams),
+player 0's HB Battleships killed five pairs of player 1's Laser
+Destroyers. Each pair died at a deep-space point 20 ly south of its
+start.
+
+| Case | Followers | Result |
+|---|---|---|
+| A | Three fleets, waypoint 1 aimed at the same victim | Each waypoint becomes deep space where the victim died; 0x028 once per follower (3) |
+| B1 | One fleet, waypoints 1 and 3 aimed at the same victim, waypoint 2 deep space | Waypoints 1 and 3 become deep space where it died; waypoint 2 unchanged; 0x028 twice |
+| B2 | One fleet, waypoints 1 and 2 aimed at two different victims | Each becomes deep space where its own victim died; 0x028 twice |
+| B3 | One fleet, waypoint 1 deep space, waypoint 2 aimed at a victim | Waypoint 2 becomes deep space where the victim died; 0x028 once |
+
+All CONFIRMED by prediction. So each waypoint aimed at a fleet
+destroyed in battle by the waypoint owner is handled on its own, at
+indexes 1 to 3: one 0x028 per waypoint, with params (follower, target
+object id). The waypoint becomes deep space at the victim's position
+after movement. MEASURED, not predicted: the messages come in follower
+order, then waypoint order. A rewritten deep-space waypoint's object
+field holds its own waypoint index. Waypoint 0, a kill by a third
+player, targets other than fleets, and the planet substitution at
+waypoints 2 and up are NOT RUN.
 
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
