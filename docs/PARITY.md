@@ -6353,6 +6353,26 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## Late-tech weapons (CB-060)
+
+Status: per case below. Predictions for the exact start were pushed
+before the runs (private apparatus c3d48b65; Elegy's numbers from elegy
+387c622). Results: `experiments/cb060/README.md`. Raw evidence: private
+apparatus `evidence/lw`. Six pinned streams.
+
+| Question | Result | Status |
+|---|---|---|
+| G1: does a gatling skip a secondary-type target while a primary-type one is in reach? | No. With primary "armed ships" and secondary "any", one shot hit both an armed and an unarmed stack. | CONFIRMED by prediction (3 of 6 streams took the branch). Elegy's rule fails. |
+| G2, G3: Big Mutha Cannon and Mini Gun | 204 and 13 at distances 0 and 1, no dropoff | CONFIRMED by prediction; distance 2 NOT RUN |
+| S1: Phased and Syncro Sapper dropoff | Beam dropoff at distances 1–3; no armor damage | CONFIRMED by prediction; distance 0 NOT RUN |
+| S2: does a sapper carry on after stripping the last shields? | Yes, onto another target in reach, by the beam carry rule | MEASURED (5 streams). Elegy's no-carry rule fails. |
+| S3: a sapper with only unshielded targets | No record | CONFIRMED by prediction |
+| B: eight plain late beams | Damage at each distance seen matches catalog damage and range; firing order by weapon initiative, ties in reverse token order | CONFIRMED by prediction for distances 1–3 |
+| N: one Battle Nexus on a ship | Token initiative +3, computer 50 | CONFIRMED by prediction |
+
+See `COMBAT.md` "Beams" (the Gatling and Sappers clarifications dated
+2026-10-13).
+
 ## Battle summaries B1–B4 and the battle order (CB-059)
 
 Status: per case below. Predictions for the exact starts were pushed
