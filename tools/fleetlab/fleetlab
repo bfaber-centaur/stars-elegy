@@ -30,4 +30,9 @@ if [ ! -f "$out/FleetLab.class" ] || [ ! -f "$out/CombatLab.class" ] || [ ! -f "
      "$src"/src/main/java/org/starsautohost/starsapi/items/*.properties \
      "$out/org/starsautohost/starsapi/items/"
 fi
-java -cp "$out" "$main" "$@" 2>&1 | grep -v '^Picked up'
+# Keep java's exit status: a plain pipe into grep would report grep's, so a
+# Java exception (or a missing class) used to exit 0.
+status=$(mktemp)
+{ rc=0; java -cp "$out" "$main" "$@" 2>&1 || rc=$?; echo "$rc" > "$status"; } | { grep -v '^Picked up' || true; }
+rc=$(cat "$status"); rm -f "$status"
+exit "$rc"
