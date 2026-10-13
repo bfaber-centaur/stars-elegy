@@ -147,9 +147,17 @@ Recording:
   runs stopped the oracle mid-write, because `pinned-turn` took the host
   file's brief absence during the rewrite as the new year. `pinned-turn`
   now waits for a turn number that differs (this PR). It then ran all six.
-- The vector has 6 years, 189 fleets at the start, 42 order sets (1,866
-  orders) and 2,610 expectations, 764 of them `sample: true`. The year's
-  draws start at tick 164 in every year (`random_start`).
+  The 3700 runs had used the old loop, and year 6's host file
+  (`y06/alt3700`) was cut off while Stars! was still writing it. Before
+  2026-10-13 the dump tool hid the error, and the vector builder read
+  that stream without its host file. Year 6 was re-run at 3700 on
+  2026-10-13 (`docs/ORACLE.md` "Dump audit (DA-1)").
+- The vector has 6 years, 189 fleets at the start, 42 order sets (1,867
+  orders) and 2,669 expectations, 408 of them `sample: true`. The year's
+  draws start at tick 164 in every year (`random_start`). Corrected
+  2026-10-13: this said "(1,866 orders) and 2,610 expectations, 764 of
+  them `sample: true`", an earlier build. The build before the year-6
+  re-run gave 1,867 orders, 2,652 expectations and 785 samples.
 
 Observed (one stream each; samples flagged in the vector):
 

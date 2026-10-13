@@ -6187,8 +6187,11 @@ and salvage?
   deep space, an Auto Mineral Packets item with no driver, a research
   budget change, a cleared remote-mining task, a queue change and a
   research field change). All six repeats were byte-identical. Every
-  year was also generated at cycles 3700 and 1490: 764 of 2,610
-  expectations are `sample: true`.
+  year was also generated at cycles 3700 and 1490: 408 of 2,669
+  expectations are `sample: true`. Corrected 2026-10-13: this said "764
+  of 2,610", an earlier build. Year 6's cycles-3700 host file had been
+  cut off mid-write, which flagged 459 of that year's 476 expectations;
+  the year was re-run (`ORACLE.md` "Dump audit (DA-1)").
 
 ### Observations
 
