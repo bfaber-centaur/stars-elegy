@@ -6468,8 +6468,8 @@ The question came from lane D's reading of RG-003 year 8.
 |---|---|---|
 | Z1b: does a sapper slot fall back to the secondary type when its only primary-type target in reach scores 0? | Yes. In 30 rounds with an unshielded armed Destroyer and an unarmed shielded Battleship both in reach, it hit the Battleship every time. With only the Destroyer in reach, it wrote no record. | CONFIRMED by prediction (6 of 6). `COMBAT.md` as written failed. |
 | Z1c (control): a primary-type target that scores above 0 | Chosen over the secondary-type one in all 6 decisive rounds | CONFIRMED by prediction (4 of 6 streams took the branch) |
-| Z2: can shields far above armor make a torpedo score 0? | No. In 12 decisive shots, the torpedo chose an armed Frigate (armor 45, shields 1000) over an unarmed one each time. | CONFIRMED by prediction (6 of 6). Lane D's premise fails. |
-| Z1: does movement use the same fallback? | No. A sapper-only ship whose only primary-type enemy was unshielded stayed put and never fired. | MEASURED (6 streams) |
+| Z2: can shields far above armor make a torpedo score 0? | In the one setup run (Alpha Torpedo, accuracy 35, no jammer or computer), no. In 12 decisive shots, it chose an armed Frigate (armor 45, shields 1000) over an unarmed one, so this was not a zero-score case. That non-sapper beams, torpedoes and missiles never score 0 is reasoning from the CONFIRMED formula, not a measurement, and assumes no overflow in the original's arithmetic. | CONFIRMED by prediction for this setup (6 of 6). Lane D's premise fails here. |
+| Z1: its own pre-run question (sapper-only firer, Laser DD and a normal-speed Shield BB) | NOT RUN: no decisive round in 6 streams. The sapper-only ship (plan Armed First, one unshielded primary-type enemy) never moved and never fired; the Shield BB left in round 5. Z1b is a second start, whose pre-run was pushed after Z1 ran. For this one setup, movement did not use the fallback. | NOT RUN (target choice); MEASURED (movement, this setup, 6 streams) |
 
 See `COMBAT.md` "Firing", its "Eligible targets" list (the clarification dated 2026-10-13).
 

@@ -858,16 +858,28 @@ initiative present:
   reach, and so was an unarmed Battleship with 4000 shields. The sapper hit
   the Battleship every time. It wrote no record when only the Destroyer
   was in reach. First seen in RG-003 year 8 (MEASURED once).
-  - Beams and torpedoes never score 0 against a live target (a torpedo's
-    accuracy after jamming is at least 1, and its `eff` is above 0). So
-    the clarification only changes sapper slots. CB-062 Z2 (6 of 6
-    streams): a torpedo chose an armed Frigate with armor 45 and shields
-    1000 over an unarmed one each time both were in reach.
-  - Movement does not use this fallback. "Choosing a square" step 1 still
-    counts the primary-type enemies, even when the token cannot damage
-    them. MEASURED (CB-062 Z1, 6 streams): a sapper-only ship whose only
-    primary-type enemy was unshielded never moved toward the unarmed
-    shielded enemy and never fired.
+  - Scope. Run: the Pulsed Sapper, plan primary armed and secondary any,
+    one primary-type target, at distance 3 or less. NOT RUN: several
+    zero-scoring primary-type targets, other plan pairings, other
+    sappers, and secondary-type targets that also score 0. Nothing is
+    claimed for bombs.
+  - Non-sapper beams, torpedoes and missiles: this is reasoning from the
+    CONFIRMED formula in "Target choice", not a measurement. Under it,
+    they never score 0 against a live target: a torpedo's accuracy after
+    jamming is at least 1, its `eff` is above 0, and a non-sapper beam
+    scores at least 1. If so, the clarification only changes sapper
+    slots. That reasoning would fail if the original's arithmetic
+    overflowed, which has not been checked. CB-062 Z2 (6 of 6 streams)
+    tested one setup, and it was not a zero-score case: an Alpha Torpedo
+    (accuracy 35, no jammer or computer) chose an armed Frigate with
+    armor 45 and shields 1000 over an unarmed one each time both were in
+    reach.
+  - Movement: in the one setup run, movement did not use this fallback.
+    "Choosing a square" step 1 counted only the primary-type enemy, which
+    the ship could not damage, so it had no goal. MEASURED (CB-062 Z1,
+    6 streams): a sapper-only ship with plan Armed First had one
+    primary-type enemy, an unshielded one, and never moved toward the
+    unarmed shielded enemy and never fired. Other setups are NOT RUN.
 
 ### Target choice (CONFIRMED, CB-009 K4–K7, Q-6)
 

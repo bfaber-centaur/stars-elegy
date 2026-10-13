@@ -32,16 +32,20 @@ torpedo, within 4.
 | Z1b | 2 Pulsed Sappers + 1 Laser. Targets: Laser DD (armed, 0 shields) and Slow Shield BB (unarmed, 4000 shields). | 30 decisive rounds, in 6 of 6 streams: the sapper slot hit the Slow Shield BB every time (147/154/159 at distance 3/2/1, no armor damage). It wrote no record in the 54 rounds with only the Laser DD within 3. It never hit the Laser DD. | H-gen CONFIRMED by prediction for sappers (6 of 6). H-doc fails. |
 | Z1c (control) | 2 Pulsed Sappers. Targets: Armed Shield BB (armed, 4000) and Shield BB (unarmed, 4000). | 6 decisive rounds, in 4 of 6 streams: the sapper hit the Armed Shield BB every time. | CONFIRMED by prediction: a primary-type target that scores above 0 is chosen. |
 | Z2 | 1 Alpha Torpedo. Targets: Shield FF (armed, armor 45, shields 1000) and Bare FF (unarmed, 0 shields). | 12 decisive shots, in 6 of 6 streams: the torpedo targeted the Shield FF every time. The Bare FF was targeted only on the 7 shots where it alone was within 4. | CONFIRMED by prediction: the torpedo score of `COMBAT.md` stays above 0 when shields far exceed armor. Lane D's premise for Z2 (score 0) fails. |
-| Z1 | 2 Pulsed Sappers. Targets: Laser DD and Shield BB (unarmed, 4000; normal speed). | No decisive round. The sapper ship never moved: it stayed 7–8 squares from both. It never fired. The Shield BB left the board in round 5. | NOT RUN for the target question. Z1b replaced it. |
+| Z1 | 2 Pulsed Sappers. Targets: Laser DD and Shield BB (unarmed, 4000; normal speed). | No decisive round in 6 streams. The sapper ship never moved: it stayed 7–8 squares from both. It never fired. The Shield BB left the board in round 5. | Z1's own pre-run question is NOT RUN. Z1b is a second start, whose pre-run (`PREDICTION-Z1b.md`) was pushed after Z1 ran. |
 
 Two consequences:
 
-- **Torpedoes and beams.** H-gen and H-doc cannot differ for them. A
-  torpedo's score is at least 1 against any live target: accuracy after
-  jamming is at least 1, and `eff > 0`, as shown in `PREDICTION.md`. A
-  beam's score is at least 1 too. So the general rule needs no torpedo
-  case. Z2 checks the one extreme lane D proposed.
-- **Movement keeps the old rule.** In Z1 the sapper ship had no goal and
+- **Non-sapper beams, torpedoes and missiles.** By reasoning from the
+  CONFIRMED formula, not by measurement, H-gen and H-doc cannot differ
+  for them. Their score is at least 1 against any live target: accuracy
+  after jamming is at least 1, and `eff > 0` (`PREDICTION.md`). That
+  assumes no overflow in the original's arithmetic. Z2 tested one setup
+  (Alpha Torpedo, accuracy 35, no jammer or computer), which was not a
+  zero-score case.
+- **Movement keeps the old rule, in the one setup run** (Z1: a
+  sapper-only firer, plan Armed First, one unshielded primary-type
+  enemy). In Z1 the sapper ship had no goal and
   did not move, which is MEASURED in 6 streams. Under "Choosing a
   square", its attackable enemies were the primary-type Laser DD alone,
   which it could not damage. If movement fell back to the secondary type
@@ -49,7 +53,14 @@ Two consequences:
   BB. So the score-0 fallback applies to the choice of target, not to
   the movement goal.
 
-Also seen in Z1b (30000, 5000, round 5): the Laser slot hit the Slow
-Shield BB at distance 1 while the Laser DD was 2 away, outside the
-Laser's reach. That is the existing "no primary-type target in reach"
-case.
+Z1b's Laser slot, as predicted: in all 49 rounds (6 streams) with the
+Laser DD within 1, the Laser hit the Laser DD. In two other rounds
+(30000 and 5000, round 5), the Laser DD was 2 away, outside the Laser's
+reach. The Laser hit the Slow Shield BB at distance 1 instead. That is
+the existing "no primary-type target in reach" case.
+
+Scope: the Pulsed Sapper, plan primary armed and secondary any, one
+primary-type target, at distance 3 or less. NOT RUN: several
+zero-scoring primary-type targets, other plan pairings, other sappers,
+and secondary-type targets that also score 0. Nothing is claimed for
+bombs.
