@@ -356,8 +356,13 @@ transport.
 
 All drops queued for one planet in one phase are resolved together: the
 strengths of every drop are pooled first, and the planet's defenders are
-compared with the total once (BINARY-ONLY). Drops are not resolved one
-after another, so their order does not change the result.
+compared with the total once. Drops are not resolved one after another,
+so their order does not change the result. This is CONFIRMED by
+prediction (GC-1, 2 of 2 streams) for one attacking player with two
+drops onto a non-IS defender with Neutron Shields; several attackers,
+three or more drops, IS and other defenses are BINARY-ONLY.
+**Corrected 2026-10-13:** this paragraph was BINARY-ONLY as a whole
+before GC-1.
 
 1. `s` is the planet owner's bombing survival factor (above; 1 when the
    planet is unowned or has no defenses). Against troops it is
@@ -369,18 +374,20 @@ after another, so their order does not change the result.
    colonist anyway, T-33). Each attacking player `p` has `troops[p]`, the
    sum of its drops' units, and `strength[p]`, the sum of its drops'
    strengths: the 110% factor and both floors apply per drop, not to the
-   player's total. `Σ` is the sum of all strengths. The outer floor per
-   drop is MEASURED once (RG-003, case RG-003-Y7-2469): planet 51 with
-   ten Neutron Shields (`s' ≈ 0.75911`) repelled player 1's drops of 250
-   and 300 units and lost 458, the per-drop sum 208 + 250. A per-player
-   strength would be `⌊605·s'⌋ = 459`. The inner floor per drop is
-   BINARY-ONLY: 250·1.1 and 300·1.1 are whole numbers. This case does not
-   separate pooling from resolving the drops one after another (208
-   against the full population, then 250 against the rest, also kills
-   458; TK-403 gives the same either way), so the pooling and order
-   independence above stay BINARY-ONLY ("Open experiments").
+   player's total. `Σ` is the sum of all strengths. That at least one
+   floor applies per drop is CONFIRMED by prediction (GC-1, 2 of 2
+   streams): drops of 395 and 165 units against 600 defenders with ten
+   Neutron Shields killed 466, where one strength from the 560 total
+   gives 467. GC-1 cannot tell which floor it is; that both apply per
+   drop is BINARY-ONLY. The outer floor per drop is MEASURED once
+   (RG-003, case RG-003-Y7-2469): planet 51 with ten Neutron Shields
+   (`s' ≈ 0.75911`) repelled player 1's drops of 250 and 300 units and
+   lost 458, the per-drop sum 208 + 250. A per-player strength would be
+   `⌊605·s'⌋ = 459`. The inner floor per drop is BINARY-ONLY there:
+   250·1.1 and 300·1.1 are whole numbers.
    **Corrected 2026-10-13:** this step used to compute one strength per
-   player from its total troops.
+   player from its total troops. **Corrected 2026-10-13 (GC-1):** the
+   per-drop floor was MEASURED only before GC-1.
 3. If the planet is owned, the defender strength is `D = P` (×2 for Inner
    Strength, CONFIRMED, T-24).
    - `D > Σ`: every attacker dies, and the planet loses `⌊P·Σ/D⌋`. 200
@@ -765,13 +772,15 @@ left:
 
 - The draw order of a whole year (drops, battles, bombing, capture tech)
   as seen through the random stream; only the bombing part is measured.
-- Several drops by one player on one planet: whether their strengths are
-  pooled and compared with the defenders once, in any order (the binary),
-  or resolved one after another. RG-003-Y7-2469 cannot separate the two.
-  Lane F's planned GC-1 case can: 39,500 and 12,500 colonists from two
-  fleets onto a non-IS planet of 32,900 with RG-003's `s'`, predicted 123
-  units landed when pooled, against 126 when resolved in sequence with
-  the larger drop first.
+- Several drops on one planet beyond GC-1: several attacking players,
+  three or more drops, IS and other PRT defenders, and defenses other
+  than Neutron Shields are NOT RUN. GC-1 settled the two-drop case
+  (CONFIRMED by prediction, 2 of 2 streams): 395 then 165 units onto 329
+  defenders landed 164, the pooled per-drop value, against 165 for one
+  strength per player and 166 for resolving the drops in sequence; 165
+  first also landed 164, and a 600-defender repel lost 466 (pooled) as
+  predicted. Which floor applies per drop, inner or outer, is still
+  BINARY-ONLY.
 - Alternate Reality `k = 0` in a contested drop (an AR invasion is refused
   before strength matters, so legal orders do not reach it).
 
@@ -783,6 +792,9 @@ left:
   `evidence/tk3/` and `evidence/tk4/`.
 - `PARITY.md` "Representative game, 12 years (RG-003)": RG-003-Y7-2469,
   several drops by one player on a defended planet.
+- `PARITY.md` "Ground combat with two drops by one player (GC-1)" and
+  `experiments/gc/README.md`: pooling, order and the per-drop floor;
+  raw files in private `stars-oracle-apparatus` `evidence/gc1`.
 - White-box reading: private `stars-decomp` `docs/takeover.md` (§10 is
   the reconciliation with TK) and `docs/takeover-predictions.md`.
 - Related specs: `KERNEL.md` (turn order, growth, caps, research),
