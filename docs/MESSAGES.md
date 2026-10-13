@@ -96,6 +96,38 @@ OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot coun
 | field | research field |
 | hab | habitability axis and value |
 
+### Object ids in slots (MEASURED, SV-1)
+
+An `object` slot holds the object's record id from the host file,
+`type << 13 | owner << 9 | number` (`ORACLE.md` "Universe objects experiments", the "Objects as records" note):
+
+| Object | type | Id | Evidence |
+|---|---|---|---|
+| minefield | 0 | owner·512 + number | 0x0be (SW-1, "Sweep slots") |
+| packet | 1 | 0x2000 + owner·512 + number | host-file records only: no stored message seen names a packet object |
+| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF |
+| wormhole | 2 | 0x4000 + number | host-file records |
+| Mystery Trader | 3 | 0x6000 + number (numbers 0 to 12 seen) | host-file records (RG-004 and OB runs) |
+
+- **Salvage is a packet-type record.** It has destination 1023 (none) and
+  speed field 4, and its owner is the owner of the scrapped fleet.
+- **Packets and salvage share one number pool per owner.** In SV-1, player 0
+  owned packet 0 and scrapped two fleets in deep space. The salvage got
+  numbers 1 and 2 (ids 8193 and 8194). Player 1 owned packets 0 and 1, and
+  its salvage got number 2 (id 8706). Both streams gave the same result.
+  SV-1 cannot tell "lowest free number" from "one past the highest". The
+  ids in 0x05b slot 1 equalled the new records' ids.
+- **0x05b's fleet slot (UNRESOLVED, contradiction kept).** The second slot
+  does not always carry the owner bits. Values seen:
+  - SV-1: player 0's fleets 0 and 1 gave 0 and 1, and player 1's fleet 0
+    gave 0;
+  - WF (wf-gone): player 1's fleet 0 gave 512;
+  - RG-002 year 1: player 0's fleet 6 gave 6;
+  - tk2/tk111: player 0's fleet 7 gave 0x1800 + 7. The 0x059/0x05a/0x05c/0x05d
+    messages in the same year carried 0x1800 + n for fleets 0 to 8.
+
+  What sets the owner bits and 0x1800 here is not known.
+
 ## Phases (BINARY-ONLY; step numbers from KERNEL.md)
 
 | Label | Where in the year (`KERNEL.md` "Turn order") |

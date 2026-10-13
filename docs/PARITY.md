@@ -4754,6 +4754,24 @@ Raw evidence: private `stars-oracle-apparatus` `evidence/mf/mf14`,
     direction.
   - 8 east-leg controls entering from outside: 8 stopped.
 
+#### Salvage and packet object ids (MEASURED, SV-1)
+
+This came from lane D: RG-002 year 1's 0x05b gave the salvage as 8192.
+- Setup: one pinned year on the CB base, cycles 20000 and 30000 (both gave
+  the same result). Player 0 owns packet 0, and player 1 owns packets 0
+  and 1. Two player 0 fleets and one player 1 fleet scrap themselves in
+  deep space (waypoint 0 task scrap).
+- Result: player 0's salvage has ids 8193 and 8194 (owner 0, numbers 1 and
+  2). Player 1's salvage has id 8706 (owner 1, number 2). 0x05b's object
+  slot held those ids. So salvage is a type-1 record, shared with packets,
+  with id 0x2000 + owner·512 + number. Its number is the next one free in
+  the owner's packet-and-salvage pool.
+- 0x05b's fleet slot did not match earlier runs: player 1's fleet 0 gave 0
+  here and 512 in WF. This is kept open in `MESSAGES.md` "Object ids in
+  slots".
+
+Raw evidence: apparatus `evidence/sv1`.
+
 #### Packet settings after a starbase is destroyed (MEASURED, PK-1)
 
 Asked from the RG-003 ledger: are a planet's packet destination and speed
