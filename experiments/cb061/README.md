@@ -35,6 +35,7 @@ then four counts.
 | Run | Case | Branch | Players 0, 1, 2 | Player 3 | Result |
 |---|---|---|---|---|---|
 | PQ-1 | M | not taken in any stream: nothing was destroyed (the Scout was never hit) | 0x0a8, races 3 | 0x0a8, races 3 | MEASURED (6 streams) |
+| PQ-1 | C | not taken in any stream: nothing was destroyed | 0x0a8, races 3 | none | MEASURED (6 streams) |
 | PQ-1b | M | all 6 streams: player 0's Plain DD destroyed, nothing else; no shot at the starbase | 0x0a8, races 3 | 0x0a8, races 3 | Q: CONFIRMED by prediction (6 of 6). Elegy's P fails, and so does "player 3 gets no summary". |
 | PQ-1b | C | all 6 streams: player 0's Plain DD destroyed | 0x0a8, races 3 | none | CONFIRMED by prediction (6 of 6) |
 

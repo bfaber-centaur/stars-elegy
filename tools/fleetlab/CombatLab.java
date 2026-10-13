@@ -59,6 +59,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
 //         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
+//         [hi N]                    set the high nibble (bits 4-7, default 1) of the target-type
+//                                   byte of the waypoint before it (waypoint 0 when first)
 //         [target fleet OWNER ID|target thing ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
@@ -505,6 +507,7 @@ public class CombatLab {
         boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         int wp0Thing = -1;  // waypoint 0 targets this object id (type << 13 | owner << 9 | number) when >= 0
+        int wp0Hi = -1;     // waypoint 0's target-type high nibble when >= 0 (default 1)
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -1437,6 +1440,12 @@ public class CombatLab {
 
     // Waypoint 0 as written: x, y, target object, target type, warp.
     static int[] waypoint0(FleetSpec fs) {
+        int[] w = waypoint0Default(fs);
+        if (fs.wp0Hi >= 0) w[3] = (w[3] & 0x0f) | fs.wp0Hi << 4;
+        return w;
+    }
+
+    static int[] waypoint0Default(FleetSpec fs) {
         return fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
             : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
             : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0};
@@ -1504,6 +1513,15 @@ public class CombatLab {
                     i += t[i + 1].equals("transport") || t[i + 1].equals("transfer") || t[i + 1].equals("patrol")
                         || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
                     break;
+                }
+                case "hi": {
+                    // hi N: the high nibble (bits 4-7) of the target-type byte of the waypoint
+                    // before it (waypoint 0 when first); the builder's default is 1
+                    int h = Integer.decode(t[i + 1]);
+                    if (h < 0 || h > 15) throw new Exception("hi 0-15 expected, got " + h);
+                    if (fs.wps.isEmpty()) fs.wp0Hi = h;
+                    else { int[] w = fs.wps.get(fs.wps.size() - 1); w[3] = (w[3] & 0x0f) | h << 4; }
+                    i += 2; break;
                 }
                 case "to": {
                     // to X Y [planet N] warp W
