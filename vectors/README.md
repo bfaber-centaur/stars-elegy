@@ -434,6 +434,9 @@ loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's
 size is a draw, so OB-029's `environment` expectations are samples.
+In `rp`, every year-end wormhole `object` (RD-P20, RD-P21) carries
+`sample: true`, as in RG-002: each end jiggles or jumps on its own draws
+every year (OBJECTS.md "Yearly movement").
 In `ob` and `wt`, these are samples too, because the original draws them
 (OBJECTS.md):
 - whether a player sees a wormhole, where the drawn jiggle (at most 17 ly

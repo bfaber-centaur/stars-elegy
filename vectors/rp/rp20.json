@@ -3599,7 +3599,8 @@
       "known_to": [],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "object",
@@ -3614,7 +3615,8 @@
       "known_to": [],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "object",
@@ -3629,7 +3631,8 @@
       "known_to": [],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "object",
@@ -3644,7 +3647,8 @@
       "known_to": [],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "object",
@@ -3659,7 +3663,8 @@
       "known_to": [],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "object",
@@ -3676,7 +3681,8 @@
       ],
       "destination_known_to": []
      },
-     "year": 1
+     "year": 1,
+     "sample": true
     },
     {
      "kind": "message",

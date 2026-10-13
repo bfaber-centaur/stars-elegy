@@ -162,6 +162,11 @@ def chained(vid, title, streams, meta):
             exps += ex
         per[sname] = exps
         years = len(dirs)
+    # Every wormhole end jiggles or jumps each year, so a year-end
+    # wormhole object is the original's own draw (OBJECTS.md "Yearly movement"):
+    # flagged whole, as in RG-002.
+    per = {s: [dict(e, sample=True) if e['kind'] == 'object' and e['equals'].get('kind') == 'wormhole' else e
+               for e in xs] for s, xs in per.items()}
     held, tag, verdict, pred, rule = meta
     cs = B.case(vid, rule, title, per, held, set())
     cs['tag'], cs['verdict'] = tag, verdict
