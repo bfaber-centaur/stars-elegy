@@ -6095,6 +6095,60 @@ mining, starbase damage and loss, and raises research level cost and
 population growth to full or near-full coverage. It does not reach
 adjuster worsening or scrapping at a starbase.
 
+### Elegy's full-order result (RG-002)
+
+Status: MEASURED, by Elegy's own harness on elegy main bd5d67b. The
+record is elegy `docs/PARITY-STATUS.md` "RG-002: full-order six-year
+regression" and `docs/RG002-REPORT.md`. The ledger is elegy
+`engine/testdata/vectors/rg/rg002-ledger.txt`. It covers the six restarts
+(Y1 to Y6) and the chained run 2463 to 2468, on all 8 seed variants. This
+section mirrors the counts; it adds no oracle observation.
+
+| Ledger class | Fields | Orders | Battle records |
+|---|---|---|---|
+| missing mechanic | 1 | 0 | 0 |
+| incorrect mechanic | 0 | 2 | 0 |
+| state-import error | 0 | 0 | 0 |
+| unsupported order | 0 | 0 | 0 |
+| unresolved randomness | 0 | 0 | 0 |
+| random-driven | 30 | 0 | 0 |
+| not compared | 344 | 0 | 0 |
+| sample | 977 | 43 | 16 |
+
+- **Orders.** All 1867 recorded order records load, and no order is
+  refused silently. On the reference seed, the restarts and the chained
+  run's first year refuse none. The chained run's 43 refusals in years 2
+  to 6 are samples, because those years follow Elegy's own draws.
+- **Missing mechanic, 1 field line.** In the Y4 restart, planet 88's
+  packet warp is 8 in the original and unset in Elegy, the year a
+  starbase with two Mass Driver 7s completes there. This is the rule in
+  `PRODUCTION-LAUNCH.md` "Starbases", mass driver item (no driver before,
+  one now): CONFIRMED by prediction in PD-1 for one Mass Driver 7; the
+  two-driver speed (8) is MEASURED (PD-1b) ("Mass-driver settings when a
+  starbase is replaced (PD-1)"). Elegy implements the rule from elegy
+  f6beefa, which clears this line and its chained-run sample.
+- **Incorrect mechanic, 2 order lines.** On seed variants 1 and 6 only,
+  in Y1 and in the chained run's first year, Elegy refuses player 2's
+  waypoint-0 change aimed at a fleet that player 6's earlier-replayed
+  order merged away. The original does not refuse such an order (`ORDERS.md`
+  "Targets that moved, died or were captured", BINARY-ONLY; MR-1 is the
+  waypoint-1 case). The reference seed replays player 2 first.
+- **Random-driven, 30 field lines.** Each one misses on the reference
+  seed and matches on at least one other variant. On every variant of
+  every run, every failing field is random-driven, a sample, or the
+  missing-mechanic line above.
+- **Not compared, 344 lines.** 160 are comparator gaps for quantities
+  Elegy models (72 wormholes in `object` form, 68 messages, 14 design
+  reads, 6 player counts). 176 are battle expectations compared record
+  by record instead. 8 are null in the original's file.
+- No RG-002 battle record in a restart, or in the chained run's first
+  year, fails (44 and 8).
+- Case level (a case passes on a seed when every compared expectation
+  matches): Y6 on 8 of 8 seeds; Y1 and the chained year 1 on 1 of 8;
+  the chained run's last year (2468) on 6 of 8, a sample result; the rest
+  on none, each variant missing different draw-decided fields. Exact random outcomes need the original's
+  generator in the harness.
+
 ### RG-002 restarts: an AR owner's own miners
 
 **Question.** In the Y1 (2463) and Y4 (2466) restarts, Elegy builds one
