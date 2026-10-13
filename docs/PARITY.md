@@ -4754,6 +4754,30 @@ Raw evidence: private `stars-oracle-apparatus` `evidence/mf/mf14`,
     direction.
   - 8 east-leg controls entering from outside: 8 stopped.
 
+#### Sweep message slots (MEASURED, SW-1)
+
+docs/MESSAGES.md had no public slot table for the sweep messages 0x0be,
+0x0c2 and 0x0f4. Existing recorded years gave 87, 54 and 43 records with
+standard and heavy fields only (ob/ob007, ob/ob010, cs/cs-003,
+mf/mf01–mf15, RG-003 year 11, cb056, zmd). SW-1 added a speed bump:
+
+- One pinned year (cycles 20000) on the two-player CB base. Player 1 owns
+  three 1000-mine fields: standard at (1050,1030), heavy at (1050,1180),
+  speed bump at (1080,1360). Five player 0 beam-armed destroyers sit
+  still at each centre with plan "Enemies". Legal orders only.
+- 0x0c2 slots: [0,100,0,1,0,1050,1030], [1,100,0,1,1,1050,1180],
+  [2,33,0,1,2,1080,1360]. 0x0be slots: [512,100,0,0,1050,1030],
+  [513,100,0,1,1050,1180], [514,33,0,2,1080,1360].
+- Field type 2 is a speed bump (MEASURED, one field). The speed bump lost
+  33 where the others lost 100, which is consistent with the "a third for
+  speed bumps" rule in MESSAGES.md 0x0c2.
+- The field-owner slot was a plain player number in every record (owners
+  0, 1 and 5); no flag bit was seen. The location was x, y in every record,
+  including a field centred on planet 8 in ob/ob007.
+
+The slot table is in MESSAGES.md under "Sweep slots". Raw evidence is in
+the apparatus under evidence/sw1.
+
 Not tested: the detonate-order validation gap (needs crafted orders), SS
 and SD safe-warp bonuses, fleets moving through gates in a field, steep
 but not due-north legs, and the stop-point rounding on diagonal legs.

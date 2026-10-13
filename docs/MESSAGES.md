@@ -321,6 +321,17 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 - **Order within movement (per fleet, fleets in number order):** serial refusal (0x102) → engine failure (0x0f2). Then gate path: 0x0e6/0x0de/0x147/0x0e2/0x0e5/0x15e → cargo dump 0x0ec/0x0ed/0x0ee → jump outcome 0x0e3/0x0e4/0x0e7/0x0e8–0x0eb. Or normal path: AR colonist loss 0x0c1 → warp-10 losses 0x0df/0x0e0/0x0e1 → fuel 0x027/0x08b → minefield 0x0c5–0x0cc/0x15f → ram scoop 0x0f3 → radiation 0x074. Once every fleet has moved: 0x04e / 0x137.
 - **Minefield message choice:** no damage (speed bump) → stopped; damage with no kills → damaged; some kills → ships destroyed; all ships → annihilated. A destroyed fleet always gets the plain annihilation ids (0x0c8/0x15f/0x0cc/0x162), even in a detonation. The victim is not told when it owns the field; the field owner is always told. Damage is shown before shields and capped at 32760 (CONFIRMED, MF-1..MF-12).
 - **Detonation:** messages give the field centre, not the fleet's position. A speed bump that detonates sends "stopped" messages (0x0c5/0x0c9) even to fleets that were not moving (CONFIRMED, MF-7). A detonating standard or heavy field that does no damage sends nothing (BINARY-ONLY).
+- **Sweep slots (0x0be, 0x0c2, 0x0f4).** One slot is one 16-bit word; the mines swept take two (low word, then high word). MEASURED on 87 0x0be, 54 0x0c2 and 43 0x0f4 records (ob/ob007, ob/ob010, cs/cs-003, mf/mf01–mf15, RG-003 year 11, cb056, zmd) and the pinned case SW-1 (PARITY.md, "Sweep message slots").
+
+  | Message | Slots |
+  |---|---|
+  | 0x0be (focus −6: the field) | minefield id (owner·512 + field number), mines low, mines high, field type, x, y (6 slots) |
+  | 0x0c2 | sweeping fleet id, mines low, mines high, field owner, field type, x, y (7 slots) |
+  | 0x0f4 | sweeping planet, mines low, mines high, field owner, field type, x, y (7 slots) |
+
+  - **Field type:** 0 standard, 1 heavy, 2 speed bump. Values 0 and 1 are MEASURED in all three messages (standard/heavy records: 0x0be 33/54, 0x0c2 24/30, 0x0f4 19/24). Value 2 is MEASURED once each in 0x0c2 and 0x0be (SW-1); 0x0f4 with a speed bump is NOT RUN.
+  - **Field owner:** the plain player number in every record (owners 0, 1 and 5). No other bit was ever set. Whether the slot can carry a flag is UNRESOLVED; none was observed.
+  - **Location:** the field centre as two coordinate slots, never a planet or object reference. A field centred on planet 8's position (1169,1145) in ob/ob007 still gave x, y (MEASURED).
 - **Duplicates:** the sweep messages (0x0c2/0x0f4 plus 0x0be) come once per sweeper per field, so several sweepers give the field owner several 0x0be messages in one year. 0x0fb and 0x158 can both go to the same fleet.
 - **0x0ec / 0x0ed / 0x0ee:** the cargo dump stands even when the jump then fails (0x0e3, 0x0e4, 0x0e7), so the owner gets both messages. The copy to a friendly gate owner is coded for all three, but for 0x0ed/0x0ee it is NEVER SENT: carrying colonists to a friend's gate is refused first (0x15e).
 - **LEGACY BUG 0x0e2 (CONFIRMED, OB-021-H) and 0x0e5 (LEGACY BUG?):** the slot for the departure gate holds the destination, so the message names the destination planet twice (three times in 0x0e5). In OB-021-H a fleet at planet 18 got 0x0e2 with slots (fleet, 20, −1, 20).

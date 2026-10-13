@@ -3,6 +3,7 @@
 //   racelab dump FILE...                race fields, checksum and advantage points
 //   racelab edit IN OUT KEY=V...        copy IN to OUT with fields changed and the
 //                                       footer checksum recomputed
+//   racelab selftest                    checksum after a rename to a shorter name
 //
 // KEYs (offsets are into the race block after its 8-byte header, the same
 // layout as a host file's player block):
@@ -37,12 +38,53 @@ public class RaceLab {
     public static void main(String[] a) throws Exception {
         if (a.length >= 2 && a[0].equals("dump")) {
             for (int i = 1; i < a.length; i++) dump(a[i]);
+        } else if (a.length == 1 && a[0].equals("selftest")) {
+            selftest();
         } else if (a.length >= 3 && a[0].equals("edit")) {
             edit(a[1], a[2], Arrays.copyOfRange(a, 3, a.length));
         } else {
             System.err.println("usage: racelab dump FILE... | racelab edit IN OUT KEY=V...");
             System.exit(2);
         }
+    }
+
+    // The footer checksum of a race block as the game computes it. StarsAPI's
+    // decode copies the names into the 192-byte checksum struct without
+    // clearing it, so a name shorter than the one decoded before kept that
+    // name's tail and gave a bad checksum (four-letter names over the
+    // five-letter "pg000", 2026-10-13). Clear the struct first.
+    static int checksum(PlayerBlock p) throws Exception {
+        p.encode();
+        Arrays.fill(p.raceFileStructData, (byte) 0);
+        p.decode();
+        return Util.checkSumRaceFile(p.raceFileStructData);
+    }
+
+    static PlayerBlock block(String name, String plural) throws Exception {
+        PlayerBlock p = new PlayerBlock();
+        p.fullDataFlag = true;
+        p.fullDataBytes = new byte[0x68];
+        p.nameSingular = name;
+        p.namePlural = plural;
+        p.encode();
+        p.decode();
+        return p;
+    }
+
+    // racelab selftest: renaming a decoded block to a shorter name gives the
+    // checksum of a block that always had that name.
+    static void selftest() throws Exception {
+        String[][] cases = {{"pg000", "pg000s", "Jack", "Jacks"}, {"Warlord", "Warlords", "Hiv", "Hives"},
+            {"abcde", "abcdefgh", "A", "B"}};
+        for (String[] c : cases) {
+            PlayerBlock p = block(c[0], c[1]);
+            checksum(p);
+            p.nameSingular = c[2];
+            p.namePlural = c[3];
+            int got = checksum(p), want = checksum(block(c[2], c[3]));
+            if (got != want) throw new Exception("selftest: " + c[0] + " -> " + c[2] + ": checksum " + got + ", want " + want);
+        }
+        System.out.println("racelab selftest: ok");
     }
 
     static List<Block> read(String f) throws Exception {
@@ -129,10 +171,8 @@ public class RaceLab {
                 default: throw new Exception("unknown key " + k);
             }
         }
-        p.encode();
-        p.decode();
         FileFooterBlock foot = new FileFooterBlock();
-        foot.checksum = Util.checkSumRaceFile(p.raceFileStructData);
+        foot.checksum = checksum(p);
         foot.encode();
         new Decryptor().writeBlocks(out, Arrays.asList(bl.get(0), p, foot), false);
         System.out.println("wrote " + out);
