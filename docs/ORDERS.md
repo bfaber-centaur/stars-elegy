@@ -946,6 +946,23 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     (CONFIRMED by prediction, NS-2). A load after movement from a packet
     some distance away is UNRESOLVED: tracking brought the fleet to the
     packet, or it fell short (NS-2).
+    It may not be reachable from orders a game produces. This is reasoning
+    from the cited rows, not an observation (2026-10-13):
+    1. A stationary waypoint-0 transport task loads before movement
+       (`KERNEL.md` step 2.5) and again after it (step 6c.5). The first
+       pass takes all that the hold and the packet allow ("load all",
+       "wait for", "set amount to": `KERNEL.md` "Other movement rules", its unmet-load item).
+       A packet gains no cargo during the year, so the second pass finds
+       nothing new. Unloads also run before movement (step 2.2), so a
+       full hold cannot hold back the first pass while freeing room for
+       the second.
+    2. A waypoint 0 that names a packet does not arise in play. The host
+       rewrites waypoint 0 to a planet or deep space after movement each
+       year ("Waypoint 0 and a task still in progress", MEASURED). In
+       RG-001, RG-002 and RG-003, every waypoint-0 order named a planet,
+       deep space or a fleet. NS-1's waypoint-0 cases were crafted.
+    3. For waypoint 1 and later, tracking moved the fleet to the packet
+       (distance 0) or left it short (NS-2 P1, P1-F, MEASURED).
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.
     It does clamp each fleet's own position and its waypoint 0, each axis
