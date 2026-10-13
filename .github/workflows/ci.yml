@@ -39,6 +39,10 @@ jobs:
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
           tools/fleetlab/fleetlab >/dev/null 2>&1 || true
           for c in FleetLab CombatLab RaceLab; do test -f "$FLEETLAB_CACHE/build/$c.class"; done
+      # CombatLab "computer" key: the AIX expert bytes, read back as b7= in the dump.
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          tools/fleetlab/combatlab selftest | grep -qx 'combatlab selftest: ok'
       # CombatLab "target thing": waypoint 0 aims at a universe object (type 0x18).
       - run: |
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"

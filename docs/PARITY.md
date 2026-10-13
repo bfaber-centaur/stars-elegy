@@ -6289,6 +6289,33 @@ evidence: private apparatus `evidence/rg003`.
     mines were built first. The Mine ×1 at 79% that heads the queue at
     the end of 2472 is a new partial left by Auto Mines (MEASURED).
 
+## Representative game (RG-004)
+
+Status: MEASURED (recorded, no predictions committed). Vector:
+`vectors/rg/rg004.json` and `rg004-y1` to `rg004-y12`. Write-up:
+`experiments/rg004/README.md`. Raw evidence: private apparatus
+`evidence/rg004`.
+
+- **A second game, not from its start.** A new small dense game with
+  seven custom races (WM, SD, IT, JoaT, PP, IS, HE), each played by an
+  expert computer player. 65 warm-up years were generated unrecorded (no
+  orders captured, nothing checked), and then 12 chained years were
+  recorded (2466 to 2477). No orders were injected.
+- **Setup step (ASSUMPTION that it equals creating the game with computer
+  players).** One byte per player record was set to the computer flag,
+  level and personality values MEASURED on AIX (expert only). Every pair
+  of players was set to enemies, as AIX starts.
+- MEASURED: all 12 repeats were byte-identical. With the 3700 and 1490
+  streams, 404 of 2,941 expectations are `sample: true`. There were 55
+  battle records, 54 of them with `start_sample: false`, and one
+  `alt_battle`. Nine planets changed hands (HE from WM 4, WM from HE 2,
+  JoaT from HE 1, HE from JoaT 1, SD from WM 1).
+- Random events: the recorded stream has one comet-like strike (year 11,
+  planet 10; "comet" is inferred, and the planet's expectation is a
+  sample). The Mystery Trader is absent from the recorded stream but
+  appears in some other streams and in the late warm-up
+  (`experiments/rg004/README.md` "Random events").
+
 ## Coverage gaps after RG-002 (GAP-001)
 
 **Question.** These rules were never exercised by RG-002: hostile Orbital

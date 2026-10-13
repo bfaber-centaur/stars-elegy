@@ -12,12 +12,19 @@ import org.starsautohost.starsapi.items.Items;
 //
 //   CombatLab dump FILE...
 //   CombatLab build BASE.HST SPEC OUT.HST
+//   CombatLab selftest                (the "computer" key and the dump's b7= field)
 //
 // SPEC is line based ('#' starts a comment). Players are numbered from 0.
 //   tech P FIELD LEVEL              set a tech level (energy weapons prop con elec bio)
 //   lrt P MASK                      set the lesser racial traits bit mask (StarsAPI order)
 //   prt P N                         set the primary racial trait (0 HE 1 SS 2 WM 3 CA 4 IS
 //                                   5 SD 6 PP 7 IT 8 AR 9 JOAT)
+//   computer P TYPE LEVEL | computer P off
+//                                   make P a computer player: the player record's computer
+//                                   flag, level and personality byte (b7 in the dump).
+//                                   TYPE 0..5 Robotoid..Macinti; LEVEL 3 expert. MEASURED
+//                                   on AIX for expert only (0x0f 0x2f 0x4f 0x6f 0x8f 0xaf);
+//                                   other LEVEL values are inferred. off = 1 (human)
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
@@ -132,6 +139,8 @@ public class CombatLab {
             for (int i = 1; i < args.length; i++) dump(args[i]);
         } else if (args.length == 4 && args[0].equals("build")) {
             build(args[1], args[2], args[3]);
+        } else if (args.length == 1 && args[0].equals("selftest")) {
+            selftest();
         } else if (args.length == 2 && args[0].equals("parse")) {
             parse(args[1], false);
         } else if (args.length == 3 && args[0].equals("parse") && args[1].equals("-wps")) {
@@ -221,7 +230,7 @@ public class CombatLab {
                         d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
                         Util.read16(d, 0x48), d[0x45]));
                     // computer player: player struct +0x07 bit 1 (block byte 7)
-                    sb.append(" computer=").append(p.getDecryptedData()[7] >> 1 & 1);
+                    sb.append(computerField(p));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                     // economy settings (estimates corpus): growth %, colonists per resource / 100,
@@ -622,7 +631,7 @@ public class CombatLab {
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
         Map<String, Long> accums = new HashMap<>();
-        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
+        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>(), computers = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
@@ -650,6 +659,10 @@ public class CombatLab {
                     case "tech": tech.put(t[1] + " " + t[2], Integer.parseInt(t[3])); break;
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
                     case "prt": prts.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    // computer P TYPE LEVEL: player block byte 7 = 1 | computer 2 | LEVEL << 2 | TYPE << 5
+                    // (TYPE 0..5 Robotoid..Macinti as in AIX; LEVEL 3 expert). Only expert was measured
+                    // (AIX); the LEVEL position for other levels is inferred. "computer P off" = 1
+                    case "computer": computers.put(Integer.parseInt(t[1]), computerByte(t)); break;
                     case "hab": {
                         String[] h = t[2].split(",");
                         if (h.length != 9) throw new Exception("hab needs 9 values");
@@ -924,6 +937,7 @@ public class CombatLab {
                 p.fullDataBytes[0x47] = (byte) (lrts.get(k) >> 8);
             }
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
+            if (computers.containsKey(k)) p.byte7 = (byte) (int) computers.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
             for (Map.Entry<String, Long> e : accums.entrySet()) {
@@ -1472,6 +1486,40 @@ public class CombatLab {
     // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE". With wps, each fleet line is
     // followed by one line per waypoint, "  wp N HEX", the waypoint block's bytes
     // exactly as build writes them.
+    // "computer P TYPE LEVEL" or "computer P off" -> player block byte 7
+    static int computerByte(String[] t) {
+        if (t[2].equals("off")) return 1;
+        return 1 | 2 | (Integer.parseInt(t[3]) & 3) << 2 | (Integer.parseInt(t[2]) & 7) << 5;
+    }
+
+    // the dump's computer fields: flag (byte 7 bit 1) and the whole byte
+    static String computerField(PlayerBlock p) throws Exception {
+        byte b = p.getDecryptedData()[7];
+        return " computer=" + (b >> 1 & 1) + String.format(" b7=%02x", b & 0xff);
+    }
+
+    // combatlab selftest: the computer key writes the AIX expert bytes, and they
+    // survive encoding and read back in the dump's b7= field.
+    static void selftest() throws Exception {
+        int[] want = {0x0f, 0x2f, 0x4f, 0x6f, 0x8f, 0xaf}; // AIX, types 1..6 at expert (MEASURED)
+        for (int type = 0; type <= 6; type++) {
+            String[] t = type < 6 ? new String[]{"computer", "0", "" + type, "3"} : new String[]{"computer", "0", "off"};
+            int b = computerByte(t), w = type < 6 ? want[type] : 1;
+            if (b != w) throw new Exception(String.join(" ", t) + ": byte " + Integer.toHexString(b) + ", want " + Integer.toHexString(w));
+            PlayerBlock p = new PlayerBlock();
+            p.fullDataFlag = true;
+            p.fullDataBytes = new byte[0x68];
+            p.nameSingular = "Test";
+            p.namePlural = "Tests";
+            p.byte7 = (byte) b;
+            p.encode();
+            p.decode();
+            String got = computerField(p), exp = String.format(" computer=%d b7=%02x", type < 6 ? 1 : 0, w);
+            if (!got.equals(exp)) throw new Exception(String.join(" ", t) + ": dump" + got + ", want" + exp);
+        }
+        System.out.println("combatlab selftest: ok");
+    }
+
     static void parse(String spec, boolean wps) throws Exception {
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
