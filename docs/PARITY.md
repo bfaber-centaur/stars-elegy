@@ -6364,7 +6364,7 @@ branch it states.
 
 | Question | Result | Status |
 |---|---|---|
-| B1: what counts as "hit" in the one-ship texts 0x091–0x095 | Only armor damage. Shield damage alone (from a Laser in B1-S, or from all-miss torpedo salvos in B1-M) gave 0x091 / 0x092, as did 0-hit torpedo records alone (B1-Z). One torpedo hit with armor damage gave 0x093 / 0x094. | CONFIRMED by prediction for B1-S, B1-Z and B1-M. Elegy's rule (shield damage counts) failed B1-S and B1-M. |
+| B1: what counts as "hit" in the one-ship texts 0x091–0x095 | Only armor damage. Shield damage alone (from a Laser in B1-S, or from all-miss torpedo salvos in B1-M) gave 0x091 / 0x092, as did 0-hit torpedo records alone (B1-Z). One torpedo hit with armor damage gave 0x093 / 0x094. | CONFIRMED by prediction in the streams that took the branch: B1-S 8 of 8, B1-Z 7 of 8, B1-M 3 of 8 (14000, 10000, 5000); the other streams MEASURED. Elegy's rule (shield damage counts) failed B1-S and B1-M. |
 | B2b: a single ship dies after destroying some of several | Single ship's owner 0x0a3, the other side 0x0a2 | CONFIRMED by prediction (Elegy), 2 layouts |
 | X: a single ship destroys several and loses nothing | 0x113 / 0x114 | CONFIRMED by prediction (Elegy) |
 | B2a/c: both sides wiped out in a 2-player battle | Not reachable by fire: firing stops once only one player has live tokens (`COMBAT.md` "Firing") | NOT RUN |

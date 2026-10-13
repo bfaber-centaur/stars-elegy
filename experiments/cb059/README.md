@@ -17,8 +17,8 @@ ASSUMPTION, and CB-058's open battle-order question):
 **Predictions, pushed before the runs** (private apparatus 76789105,
 committed 2026-10-13T01:13:15Z, the push returned by 01:13:17Z; the runs
 started 01:13:24Z), for the exact starts. Elegy's Q4b prediction was
-pushed earlier, as elegy 5d2450e (on GitHub by 01:07:19Z, when its CI run
-was created). Each case states its hypotheses and the branch a stream
+pushed earlier, as elegy 5d2450e (pushed at 01:07:04Z, from GitHub's
+activity record). Each case states its hypotheses and the branch a stream
 must take for it to decide the case; a stream that took another branch is
 MEASURED.
 
