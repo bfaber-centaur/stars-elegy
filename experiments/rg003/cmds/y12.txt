@@ -1,0 +1,6 @@
+queue open
+queue select 0
+queue add 8 20
+queue leftover
+shot queue
+queue ok

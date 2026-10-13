@@ -1,0 +1,5 @@
+queue open
+queue select 1
+queue remove 1
+shot queue
+queue ok
