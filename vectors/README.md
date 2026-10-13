@@ -314,6 +314,7 @@ unconstrained by that case.
 | `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage`; in `rg`, `start_sample` (see below) |
 | `battle_actions` | the moves and shots of that battle | `actions`: per action `round`, `token`, `to` (square, or `null` for leaving the board) and `hits` (`token`, `flags`, `kills`, `shield_damage`, `armor_damage`) |
 | `no_battle` | no battle record was written | |
+| `alt_battle` | (`rg` only) a battle at (`x`, `y`) that an alternative stream fought and the recorded stream did not; always `sample: true` | `players` (every player in those records), `planet` when the records agree on it; see below |
 | `client_estimate` | a value the original client shows on `screen` for `subject` after the year | `field` names the value; `equals` holds it as a number or a short value with its unit, never the client's sentence |
 | `sample` | a random outcome | see below |
 
@@ -370,6 +371,16 @@ player 1's fleet 88, and year 11's at (1323,1300), which neither
 alternative stream fought. Per-stream stacks for one battle of each
 kind are tabled in experiments/rg003/README.md, "Start tokens in the
 other streams".
+
+`alt_battle` (`rg` only) marks a place where at least one alternative
+stream wrote a battle record and the recorded stream wrote none, so
+whether a battle happens there at all was drawn. A harness that fights
+there should class that battle as a sample, not as a gap. A battle
+fought only in the recorded stream already carries `sample: true` and
+`start_sample: true`. Example: RG-003 year 9 at (1388,1386), where only
+the recorded stream stopped the fleet that would have fought there
+(`experiments/rg003/README.md` "Year 9 (2471): the mine stop before
+(1388,1386)").
 
 ### Message sequences
 

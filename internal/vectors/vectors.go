@@ -502,7 +502,7 @@ var (
 		"message": true, "sample": true, "battle": true, "battle_actions": true, "no_battle": true,
 		"object": true, "object_gone": true, "minefield": true, "view": true, "client_estimate": true,
 		"battle_plan": true, "battle_plan_gone": true, "design_gone": true, "starbase_design": true,
-		"starbase_design_gone": true, "message_sequence": true}
+		"starbase_design_gone": true, "message_sequence": true, "alt_battle": true}
 )
 
 // Load decodes one vector strictly.
@@ -647,6 +647,9 @@ func (v *Vector) Check() []error {
 			}
 			if e.StartSample != nil && e.Kind != "battle" {
 				bad("%s: start_sample on a %s expectation", c.ID, e.Kind)
+			}
+			if e.Kind == "alt_battle" && (e.X == nil || e.Y == nil || len(e.Players) == 0 || !e.Sample) {
+				bad("%s: alt_battle without x, y, players or sample", c.ID)
 			}
 			if e.Kind == "sample" && c.Tag == "CONFIRMED" {
 				bad("%s: CONFIRMED case with a sampled expectation", c.ID)

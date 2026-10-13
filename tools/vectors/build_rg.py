@@ -20,7 +20,9 @@ An expectation is flagged `sample: true` when the year's draws decide it:
 the battle rule of build_cb.mark_samples, plus every field whose value
 differed in any alternative stream from the same start and orders. A value
 the streams happened to agree on can still be drawn; one that changed only
-in an alternative stream has no expectation to flag.
+in an alternative stream has no expectation to flag, except a battle: a
+place where only an alternative stream fought gets an `alt_battle`
+expectation.
 """
 import json, os, re
 import build as B
@@ -190,6 +192,28 @@ def year_battles(adir):
     return list(bs.values())
 
 
+def alt_battles(k, gen, alts):
+    """An `alt_battle` expectation for every place where an alternative
+    stream wrote a battle record and the recorded stream wrote none: the
+    battle happening there is itself drawn. `players` is the union over the
+    streams that fought there; `planet` is given when they all agree."""
+    seen = {(b['x'], b['y']) for b in gen}
+    at = {}
+    for bs in alts:
+        for b in bs:
+            if (b['x'], b['y']) not in seen:
+                at.setdefault((b['x'], b['y']), []).append(b)
+    out = []
+    for (x, y), bs in sorted(at.items()):
+        e = {'kind': 'alt_battle', 'x': x, 'y': y, 'players': sorted({p for b in bs for p in b['players']}),
+             'year': k, 'sample': True}
+        planets = {b.get('planet') for b in bs}
+        if len(planets) == 1 and None not in planets:
+            e['planet'] = planets.pop()
+        out.append(e)
+    return out
+
+
 def build(ev, out):
     run = os.path.basename(ev.rstrip('/'))
     r = RUNS[run]
@@ -212,9 +236,9 @@ def build(ev, out):
         adir = os.path.join(y, 'gen', 'raw', 'after')
         st1, exps = K.observe(prev, adir, GAME, k, full=True, sequence=True)
         exps = C.mark_samples(exps, year_battles(adir), single=True)
-        alts = [K.observe(prev, os.path.join(y, a, 'raw', 'after'), GAME, k, full=True, sequence=True)[1]
-                for a in sorted(os.listdir(y)) if re.fullmatch(r'alt\d+', a)]
-        exps = drawn(exps, alts)
+        adirs = [os.path.join(y, a, 'raw', 'after') for a in sorted(os.listdir(y)) if re.fullmatch(r'alt\d+', a)]
+        alts = [K.observe(prev, a, GAME, k, full=True, sequence=True)[1] for a in adirs]
+        exps = drawn(exps, alts) + alt_battles(k, year_battles(adir), [year_battles(a) for a in adirs])
         year = 2400 + st1['year'] if st1['year'] < 2400 else st1['year']
         cases.append({'id': '%s-%d' % (r['id'], year), 'rule': 'KERNEL',
                       'setup': 'year %d of the chain (%s)' % (k, r['setup']), 'tag': 'MEASURED',
