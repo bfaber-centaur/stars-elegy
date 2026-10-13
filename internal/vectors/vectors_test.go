@@ -344,6 +344,9 @@ func TestMessageSequence(t *testing.T) {
 		{Year: 1, Kind: "message_sequence", Player: &p},
 		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 0x183}}},
 		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 1, Params: make([]int, 8)}}},
+		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 1, Focus: 0x10000}}},
+		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 1, Focus: -1}}},
+		{Year: 1, Kind: "message_sequence", Messages: []Message{{ID: 1}}},
 	} {
 		bad := Vector{ID: "x", Years: 1, InitialState: &State{Players: []Player{{ID: 0}}},
 			Cases: []Case{{ID: "x", Tag: "MEASURED", Expect: []Expectation{e}}}}
