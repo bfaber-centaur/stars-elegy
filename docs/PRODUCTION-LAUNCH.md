@@ -319,8 +319,11 @@ Building a starbase design at a planet:
   of three forms, chosen by the new hull's dock (`MESSAGES.md` 0x0cd–0x0cf):
   no dock (Orbital Fort) says it can build no ships; a limited dock
   (Space Dock) gives the limit in kT; an unlimited dock (Space Station,
-  Ultra Station, Death Star) says any size. The first form is observed
-  (see `MESSAGES.md` 0x0cd); the choice by dock is BINARY-ONLY.
+  Ultra Station, Death Star) says any size. The choice by dock is
+  BINARY-ONLY and is contradicted by the turn files: every starbase built
+  gave 0x0cd, including a Space Dock, Space Stations and an Ultra Station
+  (MEASURED, SL-12, PD-1, PK-1, RG-003 year 8; see `MESSAGES.md`
+  0x0cd–0x0cf). Death Star NOT RUN.
 - **Queued ships.** If the new starbase's hull comes **earlier** in the
   hull list than the old one's (Orbital Fort, Space Dock, Space Station,
   Ultra Station, Death Star), every ship item is removed from the planet's
@@ -370,6 +373,22 @@ Building a starbase design at a planet:
     kept 17/6 and sent 0x129 for the ironium item that year. MEASURED in
     PD-1b: replaced by two Mass Driver 7s it kept 6; replaced by an Ultra
     Driver 10 it kept 9.
+  - **A starbase destroyed in battle** (MEASURED, PK-1, two streams, two
+    planets). Production comes before battle in the year, so a planet
+    whose starbase dies that year has already built its queue: a Catcher
+    7 (Mass Driver 7) queued at 99% replaced the old one and the packet
+    item after it launched to the set destination, then the battle
+    destroyed the new starbase. After the year, the host file holds no
+    packet destination or speed for the planet (they are stored with the
+    starbase). The next year, the owner queued a Catcher 7 and an ironium
+    packet without setting a destination. The starbase was built
+    (0x0cd), and the packet item was then cancelled with 0x129, so no
+    packet was launched and no minerals were spent on it. In the controls,
+    whose starbases were never destroyed, the same queue launched to the
+    old destination at the old warp 9. So the old settings do not come
+    back with a rebuilt starbase. Whether they are wiped at the moment of
+    destruction or simply not written is not observable: production, the
+    only reader, has already run that year.
   - A starbase item whose design holds a part the race may not build
     (Mass Driver 5 for a non-Packet Physics race) is not built: it leaves
     the queue with no starbase message, the old starbase and its settings

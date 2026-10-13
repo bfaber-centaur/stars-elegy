@@ -4754,6 +4754,54 @@ Raw evidence: private `stars-oracle-apparatus` `evidence/mf/mf14`,
     direction.
   - 8 east-leg controls entering from outside: 8 stopped.
 
+#### Packet settings after a starbase is destroyed (MEASURED, PK-1)
+
+Asked from the RG-003 ledger: are a planet's packet destination and speed
+cleared when its starbase is destroyed, or kept but not written?
+
+- Setup: CB base, player 0 at tech 26. Planets 3, 4, 6 and 9 each have a
+  Catcher 7 starbase (Orbital Fort with one Mass Driver 7), packet
+  destination planet 17 and packet warp 9. Ten player 1 Laser destroyers
+  sit at planets 4 and 6. Year 1 queues: planets 4 and 3 hold a Catcher
+  7 at 99% and then one ironium packet; planets 6 and 9 hold one ironium
+  packet. Two pinned streams (cycles 20000 and 30000) gave identical
+  results.
+- Year 1: all four planets launched a packet to planet 17 at warp 9
+  (0x0d3), and planets 3 and 4 built their Catcher 7 (0x0cd). Then
+  battles at 4 and 6 destroyed both starbases. Production came before
+  the battle. After the year, planets 4 and 6 have no starbase and no
+  packet setting in the host file.
+- Year 2 started from the year-1 result. The only change was the owner's
+  queue order on all four planets: Catcher 7 at 99%, then one ironium
+  packet. No destination or speed was set. On planets 4 and 6 the
+  starbase was built (0x0cd), the packet item was cancelled (0x129), and
+  no packet launched. On planets 3 and 9 (controls) a packet launched to
+  planet 17 at warp 9 (0x0d3).
+- Reading: a rebuilt starbase does not bring back the old packet
+  settings. The planet has no destination, and the speed is not
+  observable here because the battle destroyed the rebuilt starbase
+  again. "Cleared at destruction" and "kept but not written" cannot be
+  told apart, because packet settings are read only in production, which
+  runs before battle.
+
+Raw evidence: apparatus `evidence/pk1`. Rules: `PRODUCTION-LAUNCH.md`,
+"A starbase destroyed in battle".
+
+#### Starbase-built message and invasion slots (MEASURED)
+
+From existing evidence. The tables are in `MESSAGES.md` under
+"0x0cd–0x0cf" and "Invasion slots".
+- Every starbase built in the preserved runs gave 0x0cd: Orbital Forts
+  (PD-1, PK-1), a Space Dock and Space Stations (SL-12), an Ultra
+  Station for player 1 (SL-12), and a Space Station in RG-003 year 8. No
+  0x0ce or 0x0cf record exists in about 67,600 decoded messages. This
+  contradicts the BINARY-ONLY dock rule, and the contradiction is kept
+  open. Design slot: owner·32 + 16 + starbase design index.
+- 0x004 [planet, troops lo, hi, player] and 0x007 [player, planet, troops
+  lo, hi]. The player slot is player + 0x30 in every record. Troops are
+  the attacker's total dropped that year: TK-301 and TK-302 gave 600 for
+  a repelled 600, and GC-1 gave 560 for 395 + 165.
+
 #### Sweep message slots (MEASURED, SW-1)
 
 docs/MESSAGES.md had no public slot table for the sweep messages 0x0be,
