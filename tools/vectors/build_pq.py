@@ -10,6 +10,7 @@ PARITY.md "PQ-001" records every case as matching its prediction.
 """
 import os
 import build as B
+import build_kx as K
 
 PARITY = 'docs/PARITY.md "PQ-001 — production-queue boundary corpus"'
 SPEC = 'docs/KERNEL.md "Production"'
@@ -96,6 +97,8 @@ def observe(year, adir, mined):
                 ids.append(mid)
     for mid in ids:
         out.append({'year': year, 'kind': 'message', 'player': PLAYER, 'message_id': mid, 'present': True})
+    out.append({'year': year, 'kind': 'message_sequence', 'player': PLAYER,
+                'messages': K.message_sequence(os.path.join(adir, 'PG001.M1'))})
     if COMPLETED not in ids:
         out.append({'year': year, 'kind': 'message', 'player': PLAYER, 'message_id': COMPLETED, 'present': False})
     sample = None

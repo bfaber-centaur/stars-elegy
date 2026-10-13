@@ -1016,9 +1016,10 @@ drop, so in the generation that reads the design:
 4. Apply `dp` to the target (Damage). A sapper hits shields only.
 5. If the target died and damage `L` is left over, the next target
    receives `R' = min(R − 1, R·L/dp)`, recomputed from step 1 (deflector
-   and dropoff again). Otherwise the slot is done. CONFIRMED (CB-010):
-   59 of 59 hits; carrying `L` itself mismatched 8. CB-042 (two
-   three-player streams, 255 one-ship tokens): every hit replayed,
+   and dropoff again). Otherwise the slot is done (for sappers, see
+   "Sappers", CB-060). CONFIRMED (CB-010): 59 of 59 hits; carrying `L`
+   itself mismatched 8. CB-042 (two three-player streams, 255 one-ship
+   tokens): every hit replayed,
    including the carried hits. The carried amount belongs to that one
    shot; a token's next shot starts again from `R`.
 
