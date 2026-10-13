@@ -901,6 +901,10 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     moved, and at the end of the year. So a fleet flies toward a packet's
     position after this year's packet move, the same as for the Trader
     (`OBJECTS.md`, CONFIRMED for the Trader by WT-001 F1 and WT-005).
+    For a packet, MEASURED by NS-2 P1 and P1-F (`PARITY.md` "A named
+    packet at other distances and after movement (NS-2)"): waypoint 1
+    followed the packet's 25 ly move, and the fleet flew to the new
+    position.
     Salvage does not move, so in practice its target is a fixed point.
     The exception bit that freezes a fleet target's coordinates is not
     tested for these objects.
@@ -932,7 +936,10 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     another player's; the planet gives nothing (CONFIRMED by prediction
     for waypoint 0, MEASURED on arrival). A waypoint 0 that names a packet
     40 ly away loads from it before movement, without the fleet moving
-    (CONFIRMED by prediction, NS-1); other distances are NOT RUN.
+    (CONFIRMED by prediction, NS-1), and so do 10 ly and 150 ly
+    (CONFIRMED by prediction, NS-2). A load after movement from a packet
+    some distance away is UNRESOLVED: tracking brought the fleet to the
+    packet, or it fell short (NS-2).
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.
     It does clamp each fleet's own position and its waypoint 0, each axis
