@@ -377,8 +377,9 @@ before GC-1.
    player's total. `Σ` is the sum of all strengths. That at least one
    floor applies per drop is CONFIRMED by prediction (GC-1, 2 of 2
    streams): drops of 395 and 165 units against 600 defenders with ten
-   Neutron Shields killed 466, where one strength from the 560 total
-   gives 467. GC-1 cannot tell which floor it is; that both apply per
+   Neutron Shields killed 466 (inferred from the year-end population
+   and carry through the growth rule, `PARITY.md` GC-1), where one
+   strength from the 560 total gives 467. GC-1 cannot tell which floor it is; that both apply per
    drop is BINARY-ONLY. The outer floor per drop is MEASURED once
    (RG-003, case RG-003-Y7-2469): planet 51 with ten Neutron Shields
    (`s' ≈ 0.75911`) repelled player 1's drops of 250 and 300 units and
@@ -779,7 +780,9 @@ left:
   defenders landed 164, the pooled per-drop value, against 165 for one
   strength per player and 166 for resolving the drops in sequence; 165
   first also landed 164, and a 600-defender repel lost 466 (pooled) as
-  predicted. Which floor applies per drop, inner or outer, is still
+  predicted. The landed and lost counts are inferred from the year-end
+  population and carry through the growth rule, because 0x007 does not
+  report the landed count (`PARITY.md` GC-1). Which floor applies per drop, inner or outer, is still
   BINARY-ONLY.
 - Alternate Reality `k = 0` in a contested drop (an AR invasion is refused
   before strength matters, so legal orders do not reach it).
