@@ -104,7 +104,10 @@ Predictions: `WK1-PREDICTION.md`, pushed in 30ebc36. The activity API
 shows the push at 2026-10-13T06:02:20Z, and the runs started at
 06:02:31Z. Spec: `wk1.spec`. Raw evidence: private apparatus
 `evidence/wk1`. One pinned year at cycles 20000 and 30000. The two
-streams are identical, and every victim fleet died in both.
+streams are identical, and every victim fleet died in both. (Updated
+2026-10-13: "identical" holds for every line of the results, the
+fleets, waypoints and 0x028 messages. The raw host file and both player
+files differ between the two streams.)
 
 | Case | Victims | Follower's waypoint 1 after the year (2 of 2 streams) | Result |
 |---|---|---|---|
