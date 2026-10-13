@@ -6571,11 +6571,22 @@ The defender is player 1, not IS, with 10 Neutron Shields
 165 units. The drop strengths are 329 and 137, against 467 for one
 strength computed from the 560 total.
 
-| Case | P | Observed | Per drop, pooled | Per player | Sequential | Result |
+| Case | P | Observed (inferred) | Per drop, pooled | Per player | Sequential | Separates |
 |---|---:|---|---|---|---|---|
-| C, 395 first | 329 | captured, 164 landed (year-end 188, carry 60) | 164 | 165 | 166 | per drop, CONFIRMED by prediction |
-| C2, 165 first | 329 | captured, 164 landed | 164 | 165 | 164 | per drop, CONFIRMED by prediction |
-| R, 395 first | 600 | repelled, defender lost 466 (year-end 154, carry 10) | 466 | 467 | 466 | per drop, CONFIRMED by prediction |
+| C, 395 first | 329 | captured, 164 landed (year-end 188, carry 60) | 164 | 165 | 166 | per drop vs per player, and per drop vs sequential |
+| C2, 165 first | 329 | captured, 164 landed | 164 | 165 | 164 | per drop vs per player only |
+| R, 395 first | 600 | repelled, defender lost 466 (year-end 154, carry 10) | 466 | 467 | 466 | per drop vs per player only |
+
+Per drop, pooled matched every case: CONFIRMED by prediction (2 of 2
+streams). The landed and lost counts are inferred from the year-end
+population and carry, through the growth rule, because 0x007 does not
+report the landed count.
+- At least one floor, inner or outer, is applied per drop. GC-1 cannot
+  tell which: any per-drop floor gives 466, and only "no per-drop floor"
+  gives 467.
+- Scope: one attacking player, two drops, a JOAT (not IS) defender,
+  Neutron Shield only, drops before movement. Several attackers, three
+  or more drops, IS or other PRTs, and other defenses are NOT RUN.
 
 0x007's colonists field held 560 (the troops dropped), not the landed
 164. That missed the prediction but matches `MESSAGES.md`.
