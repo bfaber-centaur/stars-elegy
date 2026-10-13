@@ -54,3 +54,35 @@ if __name__ == '__main__':
     for name, accum in VARIANTS.items():
         with open(os.path.join(d, name + '.spec'), 'w') as f:
             f.write(spec(name, accum))
+
+
+# ---------------------------------------------------------------- DC-4, DC-5 (PREDICTION-DC4.md)
+# Written after DC-2's runs, which left player 1's received Possum Scout unchecked.
+T26 = dict(energy=26, weapons=26, prop=26, con=26, elec=26, bio=26)
+E3 = dict(T26, elec=3)
+POSSUM = 'Scout, 1 Quick Jump 5, 1 Possum Scanner, empty'
+
+
+def spec2(name, p0, p1, designs, fleets):
+    out = [f'# {name}: T15 design check, follow-up (experiments/t15/gen.py)']
+    for p, t in ((0, p0), (1, p1)):
+        out += [f'tech {p} {f} {t[f]}' for f in FIELDS]
+    out += ['research 0 0', 'research 1 0', 'relation 0 1 0', 'relation 1 0 0']
+    out += designs + fleets
+    return '\n'.join(out) + '\n'
+
+
+VARIANTS2 = {
+    # DC-4: player 1's own design above its tech
+    't15-p1own': (T26, E3, [f'design 1 6 {POSSUM} = P1 Possum Scout'],
+                  ['fleet 1 0 at 1385 1010 ships 6:1 fuel 50']),
+    # DC-5: a design received by player 0, whose own designs are checked (DC-1, DC-3, T-37)
+    't15-recv0': (E3, T26, [f'design 0 0 {POSSUM} = P0 Possum Scout', f'design 1 6 {POSSUM} = P1 Possum Scout'],
+                  ['fleet 0 0 at 1010 1010 ships 0:1 fuel 50',
+                   'fleet 1 0 at 1385 1010 ships 6:1 fuel 50 task transfer 0']),
+}
+
+if __name__ == '__main__':
+    for name, args in VARIANTS2.items():
+        with open(os.path.join(sys.argv[1], name + '.spec'), 'w') as f:
+            f.write(spec2(name, *args))
