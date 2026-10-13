@@ -6273,6 +6273,13 @@ evidence: private apparatus `evidence/rg003`.
   built in 2470; 58 battles; populations over the maximum kept falling
   (homeworld 15,744 to 14,386, colony 92 772 to 726, colony 95 2,544 to
   2,509), and colony 100, under its maximum, kept growing (3,216 to 3,374).
+- Two injected orders did less or more than their commands suggest
+  (`experiments/rg003/README.md` "What the orders did").
+  - Year 9's attack-who stayed 2, the copied plan's value, because the
+    client's Attack Who list was greyed out in this game.
+  - Year 10's removal of a 39% Mine ×1 partial took effect: 30, not 31,
+    mines were built first. The Mine ×1 at 79% that heads the queue at
+    the end of 2472 is a new partial left by Auto Mines (MEASURED).
 
 ## Coverage gaps after RG-002 (GAP-001)
 

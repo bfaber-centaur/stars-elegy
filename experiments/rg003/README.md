@@ -30,7 +30,13 @@ The method is RG-002's (`experiments/rg002/README.md` "Recording"):
 
 All six repeats were byte-identical. Every year was also generated at
 cycles 3700 and 1490 from the same files and orders, and an expectation
-that differed in either stream is flagged `sample: true`.
+that differed in either stream is flagged `sample: true`. For message
+sequences, a message is a sample when it is not in a longest common
+subsequence with both other streams. This applies to all 12 years and
+to every file: rebuilding from the raw evidence gives the 13 published
+files byte for byte. Of the 156 messages in the 84 sequences, 20 are
+samples by the battle rule and 7 more only by this rule (years 2, 5, 7
+and 10, the same in the single-year files).
 
 Every order every player gave is in the vector's `orders`, decoded. No
 order kind was new to the decoder, and no year or order was dropped.
@@ -53,6 +59,33 @@ human's play.
 | 10 (2472) | remove the first item of the homeworld queue | production queue without that item |
 | 11 (2473) | research field 4, budget -5 | research 50%, field electronics |
 | 12 (2474) | add item 8 ×20 at the top of the homeworld queue; "leftover resources to research" on | production queue, plus planet settings (leftover to research) |
+
+What the orders did (checked 2026-10-13 against the raw files and the
+client's screenshots):
+
+- **Year 9, battle plan.** The client wrote plan 5 "Guard" with tactic 4,
+  primary 2 (starbase), secondary 1 and attack-who 2, which is plan 0's
+  attack-who. `plan who 1` changed nothing: in this game the dialog showed
+  the Attack Who list greyed out, reading "Everyone", before and after the
+  keys. So the injected order copied the plan and set its name and
+  primary target, but **not** the intended attack-who. In BP-1 (Combat
+  Lab, `experiments/bp`) the same command did change it. Why the list was
+  greyed here is UNRESOLVED.
+- **Year 10, queue removal.** The removed row was a Mine ×1 at 39%: the
+  hidden partial item that an auto item leaves at the front of the queue
+  (`PARITY.md` "Production Queues", C04/C14). It was spawned in 2470,
+  when the Auto Mines items ran out of resources. The client wrote the
+  queue without it (7 items, as shown on screen). The year started with
+  the order applied: the homeworld built 30 + 21 = 51 mines (718 to 769),
+  while in the other years a carried partial is finished first and the
+  first count is 31 (2471: 31 + 27, 660 to 718; 2473: 31 + 35). At the
+  end of 2472 the Auto Mines item ran short again and left a **new**
+  Mine ×1 partial, at 79%. That is why the queue still starts with a
+  Mine ×1 partial. So the removal took effect, as in LQ-2
+  (`LIMITS.md`: a removed partial item is dropped). The host neither
+  refused the removal nor dropped the order.
+- **Year 12, "item 8".** Item 8 of the client's buildable list is
+  Defenses. 20 were built in 2474 (0x03a).
 
 ## Counts
 
