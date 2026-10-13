@@ -6353,6 +6353,22 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## The races count in multi-race battle summaries (CB-061)
+
+Status: CONFIRMED by prediction (PQ-1b, 6 of 6 streams). Predictions for
+the exact starts were pushed before the runs (private apparatus 3479c85
+for PQ-1, 0c957e5 for PQ-1b). Results: `experiments/cb061/README.md`. Raw
+evidence: private apparatus `evidence/pq1`.
+
+| Question | Result | Status |
+|---|---|---|
+| Is the races count in 0x0a4–0x0a8 every player present or only the players who fought? | Only the players who fought. Three players fought at a fourth player's homeworld, whose unarmed starbase was not fired on; all four players got 0x0a8 with races count 3. In a deep-space control with the same three fleets, where player 3 had nothing at the location, the three fighters also got 3 and player 3 got nothing. | CONFIRMED by prediction (PQ-1b, 6 of 6). Elegy's rule (every player present) failed. PQ-1, where nothing was destroyed, gave 3 too (MEASURED). |
+| Does the uninvolved starbase owner get a summary? | Yes, 0x0a8, with its starbase as its one ship | CONFIRMED by prediction (6 of 6) |
+| The four counts after the races count | The recipient's losses and ships, then everyone else's losses and ships; the uninvolved starbase is counted among everyone else's ships | MEASURED (6 streams) |
+
+See `MESSAGES.md` "Battles and bombing" (the races-count clarification
+dated 2026-10-13).
+
 ## Late-tech weapons (CB-060)
 
 Status: per case below. Predictions for the exact start were pushed
