@@ -938,7 +938,7 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     40 ly away loads from it before movement, without the fleet moving
     (CONFIRMED by prediction, NS-1), and so do 10 ly and 150 ly
     (CONFIRMED by prediction, NS-2). A load after movement from a packet
-    some distance away is NOT RUN: tracking brought the fleet to the
+    some distance away is UNRESOLVED: tracking brought the fleet to the
     packet, or it fell short (NS-2).
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.

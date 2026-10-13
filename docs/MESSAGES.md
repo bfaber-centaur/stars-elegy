@@ -471,10 +471,12 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 
   CONFIRMED by prediction (AO-1, `PARITY.md` "Component announcements within one level (AO-1)", 2 of 2 streams per case):
   - (a) JOAT, energy 5: Dolphin and Cheetah Scanner (scanners, indices 8 and 11), Battle Super Computer (electrical), Temp Terraform ±7, then Snooper 500X (0x157), then Missile Battery (0x145).
-  - (b) IS + ISB, construction 4: Croby Sharmor (armor), Robo-Miner (mining robot), Space Dock (0x0d0), then Privateer and Fuel Transport (0x078).
+  - (b) IS + ISB, construction 4: Croby Sharmor (shield), Robo-Miner (mining robot), Space Dock (0x0d0), then Privateer and Fuel Transport (0x078).
   - (c) a Total Terraforming race at biotech 1 got 0x050 only; the same start without TT also got Gravity, Temp and Radiation Terraform ±3.
 
-  Not observed, so BINARY-ONLY: the order among the ten categories of the first group (no two have met in one observed level); the order among electrical, mechanical and terraforming; ship hulls against planetary items; the position of starbase hulls beyond the mining-robot and ship-hull neighbours of AO-1 (b); the Genesis Device's place; index order within any category but scanners and ship hulls; and the Total Terraforming skip beyond AO-1 (c).
+  So two category orders are CONFIRMED by prediction (AO-1, 2 of 2 streams): shields before mining robots (b), and electrical before terraforming (a).
+
+  Not observed, so BINARY-ONLY: the order among the ten categories of the first group, except shields before mining robots; the order among electrical, mechanical and terraforming, except electrical before terraforming; ship hulls against planetary items; the position of starbase hulls beyond the mining-robot and ship-hull neighbours of AO-1 (b); the Genesis Device's place; index order within any category but scanners and ship hulls; and the Total Terraforming skip beyond AO-1 (c).
 - **0x050 vs 0x136:** the choice depends only on whether the player has Generalized Research.
 - **Wrong id in an earlier note:** an earlier private reading had 0x150 for the normal level-up message. The correct id is 0x050, and the oracle files agree.
 - **Component announcements:** the check is not limited to the leveled field. MEASURED, KX-005 R1 (`KERNEL.md` "Research"): energy 9 → 10 did not announce Battle Nexus, which also needs electronics 19; the check of all six fields is BINARY-ONLY beyond that case.

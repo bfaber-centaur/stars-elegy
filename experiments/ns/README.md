@@ -68,7 +68,8 @@ Interpretation, consistent with `OBJECTS.md`:
 - **Arrival loads.** These ran after the decay (`OBJECTS.md` "Turn
   placement", step 5). The arrivals therefore found 100 − ⌊100/10⌋ = 90,
   and the emptied salvage stays until the next year's decay. ET-2's emptied
-  packets stayed for the same reason.
+  packets stayed for the same reason. **Clarified 2026-10-13 (NS-2 P1-F):**
+  a packet emptied after movement stays (MEASURED).
 
 Raw evidence: private apparatus, `evidence/ns1`.
 
@@ -84,13 +85,15 @@ are identical in every value below.
 
 | Case | Setup | Observed (2 of 2 streams) | Result |
 |---|---|---|---|
-| N | Waypoint 0 at player 0's planet 3 names an in-flight packet 10 ly away | Loaded 100 kT boranium before movement: 0x02b at the packet, then 0x04e. No ironium; the planet keeps 50/0/0. The fleet did not move. The packet is gone at the end of the year. | CONFIRMED by prediction (the removal MEASURED, as NS-1 B) |
-| F | As N, with the packet 150 ly away | As N | CONFIRMED by prediction (the removal MEASURED) |
-| P1 | A packet written unmoved lies in deep space at (1080,1180). A fleet 20 ly away flies there at warp 5 with waypoint 1 naming it. | The packet moved a full 25 ly before fleet movement, to (1096,1161), and is now marked moved. Waypoint 1 followed it. The fleet stopped short at (1089,1177) and loaded nothing. | Branch E (MEASURED). The after-movement load from a distance was not reached. |
+| N | Waypoint 0 at player 0's planet 3 names an in-flight packet 10 ly away | Loaded 100 kT boranium before movement: 0x02b at the packet, then 0x04e. No ironium; the planet keeps 50/0/0. The fleet did not move. The packet is gone at the end of the year. | CONFIRMED by prediction (the removal included: the pre-run record predicted it from NS-1 B) |
+| F | As N, with the packet 150 ly away | As N | CONFIRMED by prediction (the removal included) |
+| P1 | A packet written unmoved lies in deep space at (1080,1180). A fleet 20 ly away flies there at warp 5 with waypoint 1 naming it. | The packet moved a full 25 ly before fleet movement, to (1096,1161), and is now marked moved. Waypoint 1 followed it. The fleet stopped about 17 ly short, at (1089,1177), and loaded nothing. | Branch E (MEASURED). The after-movement load from a distance was not reached. |
 | P1-F | An in-flight packet at (1000,1300). A fleet 20 ly away at warp 9 with waypoint 1 naming it. | The packet moved 25 ly and waypoint 1 followed it. The fleet reached the packet's new position, (1008,1276), and loaded 100 kT boranium after movement: 0x02b then 0x04e, after the production messages. The emptied packet stays. | MEASURED (the tracking branch, as predicted); load at distance 0, as ET-2 |
 
 So waypoint 0 loads from a named packet at 10, 40 and 150 ly (NS-1, NS-2)
 before movement. For arrival, the waypoint followed the packet's move, so
 the fleet loaded where the packet was or did not arrive at all. A load
 after movement from a packet some distance away was not produced: no
-crafted start made a packet move after the fleets.
+crafted start made a packet move after the fleets, so it stays UNRESOLVED.
+P1 is a crafted state: the packet was written with bit 14 ("has moved")
+clear (see the bit-14 note in `docs/ORACLE.md`).

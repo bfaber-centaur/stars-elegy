@@ -6531,7 +6531,7 @@ planet beneath has 50 kT ironium.
 | Waypoint 0 over a planet (A3–A6) | The fleet orbits a planet, its own or player 1's. Waypoint 0 names salvage, or a packet of either owner, lying over that planet. | It loaded 100 kT boranium from the named object: 0x02b at the object, then 0x04e, before movement. No ironium from the planet. No 0x11e. | CONFIRMED by prediction |
 | Waypoint 0, packet flown on (B1, B2) | The fleet orbits the planet a packet left. Waypoint 0 names the packet, now 40 ly away. | It loaded the packet's 100 kT boranium from 40 ly away: 0x02b at the packet, then 0x04e. The fleet did not move. No ironium from the planet. No 0x11e. | CONFIRMED by prediction |
 | Arrival over a planet (A1, A2) | The fleet arrives at salvage over a planet, its own or player 1's. | It loaded 90 kT boranium from the salvage (after that year's decay): 0x02b at the salvage, then 0x04e. No ironium from the planet. No 0x11e. | MEASURED (H-named predicted 100) |
-| The emptied objects | The same runs | Objects emptied before movement are gone at the end of the year. Salvage emptied on arrival stays, empty. | MEASURED; consistent with `OBJECTS.md` "Salvage" (decay removes an empty object) |
+| The emptied objects | The same runs | Objects emptied before movement are gone at the end of the year. Salvage emptied on arrival stays, empty. | MEASURED; consistent with `OBJECTS.md` "Salvage" (decay removes an empty object). **Clarified 2026-10-13 (NS-2 P1-F):** a packet emptied after movement stays (MEASURED), as the ET-2 packets and the A1/A2 salvage did. |
 
 So the source is the named object, never a planet at the same spot, whoever
 owns the planet. A waypoint-0 load found the named packet 40 ly away and
@@ -6554,9 +6554,9 @@ which are identical. Every fleet is player 0's empty Medium Freighter with
 
 | Case | Setup | Observed (2 of 2 streams) | Result |
 |---|---|---|---|
-| N | Waypoint 0 at the fleet's own planet names an in-flight packet 10 ly away | Loaded 100 kT boranium before movement (0x02b, 0x04e); nothing from the planet; the fleet did not move; the packet is gone at year end | CONFIRMED by prediction |
+| N | Waypoint 0 at the fleet's own planet names an in-flight packet 10 ly away | Loaded 100 kT boranium before movement (0x02b, 0x04e); nothing from the planet; the fleet did not move; the packet is gone at year end | CONFIRMED by prediction (the removal included: the pre-run record predicted it from NS-1 B) |
 | F | As N, 150 ly away | As N | CONFIRMED by prediction |
-| P1 | Waypoint 1 names an unmoved packet 20 ly ahead; fleet at warp 5 | The packet moved 25 ly before the fleets; waypoint 1 followed it; the fleet stopped 20 ly short and loaded nothing | MEASURED (branch E of the prediction) |
+| P1 | Waypoint 1 names an unmoved packet 20 ly ahead; fleet at warp 5 | The packet moved 25 ly before the fleets; waypoint 1 followed it; the fleet stopped about 17 ly short, at (1089,1177) against the packet at (1096,1161), and loaded nothing | MEASURED (branch E of the prediction) |
 | P1-F | Waypoint 1 names an in-flight packet 20 ly ahead; fleet at warp 9 | Waypoint 1 followed the packet's 25 ly move; the fleet reached its new position and loaded 100 kT boranium after movement (0x02b, 0x04e after the production messages); the emptied packet stays | MEASURED (as predicted) |
 
 So T5's "any distance" holds before movement for 10, 40 and 150 ly (NS-1,
@@ -6566,8 +6566,10 @@ the fleet loaded at distance 0 or did not arrive. Whether that case can
 arise at all is UNRESOLVED; a waypoint-0 task left waiting into the
 after-movement pass is one untried way to stage it.
 
-A packet record written unmoved (bit 14 clear) moved its full 25 ly in
-the year's packet move, and was then marked moved (P1, MEASURED).
+P1 is a crafted state: the packet was written with bit 14 ("has moved")
+clear, which `ORACLE.md` (the Combat Lab "thing" records, OB-003-J/K,
+OB-017-E) found changed nothing in the next year. It moved its full 25 ly
+in the year's packet move and was then marked moved (P1, MEASURED).
 
 ## Component announcements within one level (AO-1)
 
@@ -6589,7 +6591,8 @@ each player gained exactly one level.
 
 This places the starbase hull after the mining robots and before the ship
 hulls, puts planetary scanners before planetary defenses, and confirms the
-Total Terraforming skip for these starts. Index order within the scanner
+Total Terraforming skip for these starts. It also orders shields before
+mining robots (b) and electrical before terraforming (a). Index order within the scanner
 and ship-hull categories also held. The Genesis Device's place is NOT RUN.
 
 ## An empty transport task and 0x04e (ET-1)
