@@ -6374,7 +6374,8 @@ planet beneath has 50 kT ironium.
 | The emptied objects | The same runs | Objects emptied before movement are gone at the end of the year. Salvage emptied on arrival stays, empty. | MEASURED; consistent with `OBJECTS.md` "Salvage" (decay removes an empty object) |
 
 So the source is the named object, never a planet at the same spot, whoever
-owns the planet. A waypoint-0 load finds the named packet wherever it is.
+owns the planet. A waypoint-0 load found the named packet 40 ly away and
+loaded from it (CONFIRMED by prediction); other distances are NOT RUN.
 Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
 fails every case.
 

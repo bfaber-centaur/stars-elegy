@@ -931,8 +931,8 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     named object even when it lies over a planet, the fleet's own or
     another player's; the planet gives nothing (CONFIRMED by prediction
     for waypoint 0, MEASURED on arrival). A waypoint 0 that names a packet
-    loads from it wherever it is, before movement, 40 ly away in NS-1,
-    without the fleet moving (CONFIRMED by prediction).
+    40 ly away loads from it before movement, without the fleet moving
+    (CONFIRMED by prediction, NS-1); other distances are NOT RUN.
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.
     It does clamp each fleet's own position and its waypoint 0, each axis

@@ -130,8 +130,10 @@ public class CombatLab {
             for (int i = 1; i < args.length; i++) dump(args[i]);
         } else if (args.length == 4 && args[0].equals("build")) {
             build(args[1], args[2], args[3]);
+        } else if (args.length == 2 && args[0].equals("parse")) {
+            parse(args[1]);
         } else {
-            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST");
+            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse SPEC");
             System.exit(2);
         }
     }
@@ -885,9 +887,7 @@ public class CombatLab {
             List<Block> unit = new ArrayList<>();
             unit.add(fl);
             List<int[]> all = new ArrayList<>();
-            all.add(fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
-                : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
-                : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
+            all.add(waypoint0(fs));
             all.addAll(fs.wps);
             for (int w = 0; w < all.size(); w++) {
                 int[] wp = all.get(w);
@@ -1433,6 +1433,31 @@ public class CombatLab {
                 u16(d, 6), u16(d, 8), u16(d, 10) & 15, u16(d, 10), u16(d, 12), u16(d, 14), u16(d, 16)); break;
         }
         return head + body + " raw=" + h;
+    }
+
+    // Waypoint 0 as written: x, y, target object, target type, warp.
+    static int[] waypoint0(FleetSpec fs) {
+        return fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
+            : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
+            : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0};
+    }
+
+    // Parse-only check of a spec's fleet lines, with no base file: one line per
+    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE".
+    static void parse(String spec) throws Exception {
+        int lineNo = 0;
+        for (String raw : Files.readAllLines(Paths.get(spec))) {
+            lineNo++;
+            String line = raw.replaceAll("#.*", "").trim();
+            if (!line.startsWith("fleet ")) continue;
+            try {
+                FleetSpec fs = parseFleet(line.split("\\s+"));
+                int[] w = waypoint0(fs);
+                System.out.printf("fleet %d %d wp0 %d %d %d 0x%x%n", fs.owner, fs.id, w[0], w[1], w[2], w[3]);
+            } catch (Exception e) {
+                throw new Exception(spec + ":" + lineNo + ": " + e.getMessage(), e);
+            }
+        }
     }
 
     static FleetSpec parseFleet(String[] t) throws Exception {

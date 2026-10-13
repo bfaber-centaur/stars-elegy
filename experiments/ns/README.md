@@ -14,7 +14,8 @@ committed 2026-10-13T00:55:54Z, the push returned by 00:55:56Z; the runs
 started 00:56:04Z), for the exact start:
 
 - **H-named:** only the waypoint's task acts, on the object it names,
-  whoever owns it, wherever it is (`ORDERS.md` "Salvage and mineral packet
+  whoever owns it, wherever it is (this is the hypothesis as pushed; only
+  40 ly was run) (`ORDERS.md` "Salvage and mineral packet
   targets", the BINARY-ONLY "Arrival" reading). Every fleet loads the named
   object's 100 kT boranium, takes no ironium from the planet, and gets
   0x02b at the object, then 0x04e. No 0x11e. The emptied object stays at
@@ -54,8 +55,9 @@ got 0x11e. H-planet failed every case.
 
 So a transport task loads from the object its waypoint names, not from a
 planet at the same spot. That holds whether the planet is the fleet's own
-or another player's. With waypoint 0, the named packet is found wherever it
-is: a packet 40 ly away was loaded from, and the fleet did not move.
+or another player's. With waypoint 0, a named packet 40 ly away was loaded
+from, and the fleet did not move (CONFIRMED by prediction). Other distances
+are NOT RUN.
 
 Interpretation, consistent with `OBJECTS.md`:
 
