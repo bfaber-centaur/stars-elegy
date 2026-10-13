@@ -6378,7 +6378,10 @@ evidence: private apparatus `evidence/rg003`.
   battle plan, two queue changes and the leftover-to-research setting
   (`experiments/rg003/README.md` lists each one).
 - All six new repeats were byte-identical. With the 3700 and 1490
-  streams, 1,337 of 5,851 expectations are `sample: true`. Every order
+  streams, 960 of 5,868 expectations are `sample: true` (961 of 5,869
+  with the one `alt_battle`). Corrected 2026-10-13: this said "1,337 of
+  5,851", before year 6's cycles-3700 stream was re-run (`ORACLE.md` "Dump
+  audit (DA-1)"). Every order
   decoded, with no new order kind (3,731 orders in 84 player-years).
 - Observed in years 7 to 12: the homeworld starbase queued in 2469 was
   built in 2470; 58 battles; populations over the maximum kept falling

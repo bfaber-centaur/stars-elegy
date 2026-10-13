@@ -148,7 +148,8 @@ Recording:
   file's brief absence during the rewrite as the new year. `pinned-turn`
   now waits for a turn number that differs (this PR). It then ran all six.
   The 3700 runs had used the old loop, and year 6's host file
-  (`y06/alt3700`) was cut off while Stars! was still writing it. Before
+  (`y06/alt3700`) was cut off (inferred: copied while Stars! was still
+  writing it). Before
   2026-10-13 the dump tool hid the error, and the vector builder read
   that stream without its host file. Year 6 was re-run at 3700 on
   2026-10-13 (`docs/ORACLE.md` "Dump audit (DA-1)").

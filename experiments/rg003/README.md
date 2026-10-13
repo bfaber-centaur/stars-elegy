@@ -97,6 +97,12 @@ client's screenshots):
 | Samples | 408 | 552 | 960 |
 | Battles | 44 | 58 | 102 |
 
+Corrected 2026-10-13, after year 6's cycles-3700 stream was re-run
+(`docs/ORACLE.md` "Dump audit (DA-1)"). Before, the table said
+expectations 2,652, 3,199 and 5,851 and samples 785, 552 and 1,337, and
+the list below said fleet 2,062, planet 1,615 and player 184. The counts
+leave out RG-003's one `alt_battle`.
+
 Expectations by kind (all 12 years):
 
 - fleet 2,070, planet 1,623;
