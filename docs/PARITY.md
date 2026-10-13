@@ -6459,6 +6459,25 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## Target choice when every primary-type target scores 0 (CB-062)
+
+Status: per case below. Predictions for the exact starts were pushed
+before the runs (`experiments/cb062/PREDICTION.md` and
+`PREDICTION-Z1b.md`; activity-API times 06:44:56Z and 06:49:14Z, runs at
+06:45:07Z and 06:49:25Z). Results: `experiments/cb062/README.md`. Raw
+evidence: private apparatus `evidence/tz`. Six pinned streams per start.
+The question came from lane D's reading of RG-003 year 8.
+
+| Question | Result | Status |
+|---|---|---|
+| Z1b: does a sapper slot fall back to the secondary type when its only primary-type target in reach scores 0? | Yes. In 30 rounds with an unshielded armed Destroyer and an unarmed shielded Battleship both in reach, it hit the Battleship every time. With only the Destroyer in reach, it wrote no record. | CONFIRMED by prediction (6 of 6). `COMBAT.md` as written failed. |
+| Z1c (control): a primary-type target that scores above 0 | Chosen over the secondary-type one in all 6 decisive rounds | CONFIRMED by prediction (4 of 6 streams took the branch) |
+| Z2: can shields far above armor make a torpedo score 0? | In the one setup run (Alpha Torpedo, accuracy 35, no jammer or computer), no. In 12 decisive shots, it chose an armed Frigate (armor 45, shields 1000) over an unarmed one, so this was not a zero-score case. That non-sapper beams, torpedoes and missiles never score 0 is reasoning from the CONFIRMED formula, not a measurement, and assumes no overflow in the original's arithmetic. | CONFIRMED by prediction for this setup (6 of 6). Lane D's premise fails here. |
+| Z1: its own pre-run question (sapper-only firer, Laser DD and a normal-speed Shield BB) | NOT RUN: no decisive round in 6 streams. The sapper-only ship (plan Armed First, one unshielded primary-type enemy) never moved and never fired; the Shield BB left in round 5. Z1b is a second start, whose pre-run was pushed after Z1 ran. For this one setup, movement did not use the fallback. | NOT RUN (target choice); MEASURED (movement, this setup, 6 streams) |
+| Z1b's Laser slot with the Laser DD out of its reach | In 2 rounds (2 streams, round 5) the Laser DD was 2 away. The Laser hit the Slow Shield BB at distance 1, the existing "no primary-type target in reach" case. In all 49 rounds with the DD within 1, it hit the DD, as predicted. | MEASURED, not predicted (the 2 rounds) |
+
+See `COMBAT.md` "Firing", its "Eligible targets" list (the clarification dated 2026-10-13).
+
 ## The races count in multi-race battle summaries (CB-061)
 
 Status: CONFIRMED by prediction (PQ-1b, 6 of 6 streams). Predictions for
@@ -6542,6 +6561,75 @@ owns the planet. A waypoint-0 load found the named packet 40 ly away and
 loaded from it (CONFIRMED by prediction); NS-2 below adds 10 ly and
 150 ly. Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
 fails every case.
+
+## Ground combat with two drops by one player (GC-1)
+
+Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
+for this to test lane G's per-drop strength rule for
+`TAKEOVER.md` "Ground combat". Predictions
+(`experiments/gc/PREDICTION.md`) were pushed at 06:38:16Z (activity
+API), before the runs at 06:38:30Z. Results: `experiments/gc/README.md`.
+Raw evidence: private apparatus `evidence/gc1`.
+
+The defender is player 1, not IS, with 10 Neutron Shields
+(`s' = 0.75911`). Player 0's freighters already in orbit drop 395 and
+165 units. The drop strengths are 329 and 137, against 467 for one
+strength computed from the 560 total.
+
+| Case | P | Observed (inferred) | Per drop, pooled | Per player | Sequential | Separates |
+|---|---:|---|---|---|---|---|
+| C, 395 first | 329 | captured, 164 landed (year-end 188, carry 60) | 164 | 165 | 166 | per drop vs per player, and per drop vs sequential |
+| C2, 165 first | 329 | captured, 164 landed | 164 | 165 | 164 | per drop vs per player only |
+| R, 395 first | 600 | repelled, defender lost 466 (year-end 154, carry 10) | 466 | 467 | 466 | per drop vs per player only |
+
+Per drop, pooled matched every case: CONFIRMED by prediction (2 of 2
+streams). The landed and lost counts are inferred from the year-end
+population and carry, through the growth rule, because 0x007 does not
+report the landed count.
+- At least one floor, inner or outer, is applied per drop. GC-1 cannot
+  tell which: any per-drop floor gives 466, and only "no per-drop floor"
+  gives 467.
+- Scope: one attacking player, two drops, a JOAT (not IS) defender,
+  Neutron Shield only, drops before movement. Several attackers, three
+  or more drops, IS or other PRTs, and other defenses are NOT RUN.
+
+0x007's colonists field held 560 (the troops dropped), not the landed
+164. That missed the prediction but matches `MESSAGES.md`.
+
+## A waypoint aimed at a fleet destroyed in battle (WK-1)
+
+Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
+for this from the RG-003 ledger. In RG-003 year 8, player 1's fleets 81,
+82, 84, 86 and 91 had waypoint 1 aimed at player 5's fleet 71, which flew
+onto planet 94 and died in the battle there. Afterwards their waypoints
+named planet 94 (MEASURED). Year 7's fleet 5/45 did the same with planet
+83. Predictions (`experiments/wf/WK1-PREDICTION.md`) were pushed at
+06:02:20Z (activity API), before the runs at 06:02:31Z. Results:
+`experiments/wf/README.md` "WK-1". Raw evidence: private apparatus
+`evidence/wk1`. One pinned year (cycles 20000 and 30000), identical
+streams. Player 0's HB Battleships killed player 1's Laser Destroyers at
+three places. Each victim fleet was followed by a player 0 freighter 100
+ly away, whose waypoint 1 was aimed at it.
+
+| Case | Victims | Follower's waypoint 1 after the year | Result |
+|---|---|---|---|
+| A | Orbit unowned planet 7 all year | Planet 7 | CONFIRMED by prediction |
+| D | Deep space 5 ly from planet 10 | Deep space at the victims' position, not planet 10 | CONFIRMED by prediction |
+| M | Fly 20 ly onto unowned planet 0 and die there | Planet 0 (where they died, not where they started) | CONFIRMED by prediction |
+
+In every case the host file and player 0's file agree, player 0 gets
+0x028 once per follower, and no follower arrives. Each follower moved
+16 ly, as predicted. 0x028's parameters (the follower and the target's
+object id) are MEASURED, since they were not predicted. This confirms,
+for waypoint 1 aimed at a fleet destroyed in battle, the `ORDERS.md`
+rule that was BINARY-ONLY:
+the waypoint becomes deep space at the target's last position (after
+movement), or the planet that stands exactly there. It is not the
+nearest object, it is not the waypoint's position before movement, and
+the waypoint does not keep the fleet. Other losses (scrapped, merged,
+out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
+and up, waypoint 0, a kill by a third player, and targets other than
+fleets are NOT RUN.
 
 ## A named packet at other distances and after movement (NS-2)
 
