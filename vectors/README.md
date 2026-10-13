@@ -357,6 +357,12 @@ draws. Each player's start squares differed between streams in 1 of the
 start squares are samples. A restart that gives other stacks
 there is a gap, not a sample.
 
+**Corrected 2026-10-13:** this paragraph used to say "Usually only the
+token order differed, and with it which start square each player got,
+because the battle draws the order." The order is drawn, but the start
+squares rarely changed with it: each player's start squares differed
+between streams in 1 of the 154 RG battles (MEASURED).
+
 MEASURED: the stacks matched in every alternative stream for every
 RG-001 and RG-002 battle, and for 100 of RG-003's 102. The two exceptions
 are year 10's battle at (1571,1434), where one stream had no token for
