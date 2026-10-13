@@ -96,6 +96,19 @@ OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot coun
 | field | research field |
 | hab | habitability axis and value |
 
+**Updated 2026-10-13 (CM-1, `PARITY.md` "The slots of the cargo messages
+0x02b to 0x02e (CM-1)"):** for 0x02b to 0x02e, the stored values are
+MEASURED from 66 records. The location's first slot is 65535 for a planet
+(second slot: planet number) or a fleet (second slot: 0x8000 + owner·512
++ number), 65534 for a packet or salvage (second slot: its object id),
+and x for deep space (second slot: y; one record). The mineral slot is a
+cargo type: 0 ironium, 1 boranium, 2 germanium, 3 colonists, 4 fuel.
+For these four kinds, the rows "location | either a planet, or x and y
+in deep space (two slots)" and "mineral | Ironium, Boranium or
+Germanium" were incomplete: a location can also be a fleet, a packet or
+salvage, and the mineral slot also takes colonists and fuel. The rest of
+this table stays BINARY-ONLY.
+
 ### Object ids in slots
 
 An `object` slot holds the object's record id from the host file,
@@ -104,8 +117,8 @@ An `object` slot holds the object's record id from the host file,
 | Object | type | Id | Evidence | Label |
 |---|---|---|---|---|
 | minefield | 0 | owner·512 + number | 0x0be (SW-1, "Sweep slots") and host-file records | MEASURED |
-| packet | 1 | 0x2000 + owner·512 + number | host-file records only (SV-1, PK-1, OB-028): no stored message seen names a packet object | MEASURED (records); in messages NOT OBSERVED |
-| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF | MEASURED |
+| packet | 1 | 0x2000 + owner·512 + number | host-file records (SV-1, PK-1, OB-028); 0x02b's location slot (ET-2, ET-2c, NS-1, NS-2: 9 records, CM-1) | MEASURED (records and messages). Corrected 2026-10-13: this row said "host-file records only (SV-1, PK-1, OB-028): no stored message seen names a packet object" and "in messages NOT OBSERVED"; ET-2, NS-1 and NS-2 had already stored 0x02b messages naming packets |
+| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF; 0x02b's location slot: NS-1 A1 to A4 (CM-1) | MEASURED |
 | wormhole | 2 | 0x4000 + number | host-file records (WT-001..WT-005, OB runs) | MEASURED (records); in messages NOT OBSERVED |
 | Mystery Trader | 3 | 0x6000 + number (numbers 0 to 12 seen) | host-file records (RG-004 and OB runs) | MEASURED (records); in messages NOT OBSERVED |
 
@@ -217,10 +230,10 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x00b | Your orbital construction module set up a starter colony | As 0x00a when the new owner is Alternate Reality | new owner | planet | planet | P2, P6c | CONFIRMED (tk2/tk107) |
 | 0x00c | You defeated the named player's colonists and now control the planet | Capture (see 0x007); sent before 0x007 | winner | player (former owner), planet | planet | P2, P6c | CONFIRMED (tk2/tk116) |
 | 0x00d | Your colonists landed on the planet were wiped out in the fighting | Capture with several attackers, sent to those who did not win | each losing attacker | planet | planet | P2, P6c | BINARY-ONLY |
-| 0x02b | Fleet loaded this much cargo from a location | Load task: any amount > 0 taken from an own planet, own or friendly fleet, salvage, or (by a fleet able to steal) a foreign planet; also fuel load-optimal when the net fuel change is a gain | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
-| 0x02c | Fleet took colonists aboard from a location | Load task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo01) |
-| 0x02d | Fleet unloaded this much cargo to a location | Unload task, amount accepted > 0 (unloads to an enemy player's fleet move nothing, silently); also fuel load-optimal dumping surplus fuel | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo04; fuel form mg/mg003) |
-| 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02) |
+| 0x02b | Fleet loaded this much cargo from a location | Load task: any amount > 0 taken from an own planet, own or friendly fleet, salvage, or (by a fleet able to steal) a foreign planet; also fuel load-optimal when the net fuel change is a gain | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02); slot values MEASURED (CM-1) |
+| 0x02c | Fleet took colonists aboard from a location | Load task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo01); slot values MEASURED (CM-1) |
+| 0x02d | Fleet unloaded this much cargo to a location | Unload task, amount accepted > 0 (unloads to an enemy player's fleet move nothing, silently); also fuel load-optimal dumping surplus fuel | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo04; fuel form mg/mg003); slot values MEASURED (CM-1) |
+| 0x02e | Fleet beamed colonists down to a location | Unload task, colonists | fleet owner | fleet, amount, mineral, location | fleet | P2, P6c | CONFIRMED (fo/fo02); slot values MEASURED (CM-1) |
 | 0x03c | Not enough fuel here for the next leg; fleet waits; shortfall given | Fuel load-optimal before movement (target a fleet or deep space): fuel below the estimated need, but tanks are big enough; the fleet waits | fleet owner | location, fleet, mg (shortfall) | fleet | P2 | CONFIRMED (mg/mg003, mg/mg006) |
 | 0x03d | Fleet can never reach its next waypoint: tank capacity vs. fuel needed | Same, tank capacity < estimated need | fleet owner | fleet, mg (capacity), mg (need) | fleet | P2 | CONFIRMED (mg/mg003, fleet target) |
 | 0x042 | Your cargo was delivered to the other player's object | Queued gift to another player's object, destination accepts all of it; minerals or colonists. No manual order reaches the queue in this build: gifts are credited in place at order time with no message (TK-405, TK-412 for planets; TK-406, TK-407, TK-409 for fleets) | sending object's owner | object (fleet/planet), amount, mineral, object | fleet or planet (source) | P2 | BINARY-ONLY |

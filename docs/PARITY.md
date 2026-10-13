@@ -6911,6 +6911,65 @@ for 0x140, planet owner coincide in every case; the 0x028 target slot,
 year, one ship per fleet. The player-count reading rests on RG-002 year
 1 (7 players, design 0, value 6) and was not retested.
 
+## The slots of the cargo messages 0x02b to 0x02e (CM-1)
+
+Status (2026-10-13): MEASURED from preserved records; no new run. Lane A
+asked for it: RG-002 year 1 has one 0x02e, params [7, 50, 0, 3, 65535,
+92], and `MESSAGES.md` gave only the slot list and a BINARY-ONLY slot-type
+table. That record is the one under test and is not counted. Every
+stored 0x02b to 0x02e message in the private apparatus `evidence/` tree
+was decoded (`experiments/cm/tabulate.py`, listing in
+`experiments/cm/records.txt`; write-up `experiments/cm/README.md`).
+Repeated setups count once: 66 records from 18 sources, all in player
+0's file about player 0's fleets. Each was matched to its case setup.
+
+The six slots are: fleet; amount (two slots; the second was 0 in every
+record, largest amount 300); cargo type; location (two slots).
+
+| Cargo type | Cargo | Records (0x02b, 0x02c, 0x02d, 0x02e) |
+|---|---|---|
+| 0 | ironium | 31 (17, 0, 14, 0) |
+| 1 | boranium | 14 (13, 0, 1, 0) |
+| 2 | germanium | 2 (2, 0, 0, 0) |
+| 3 | colonists, amount in kT (100 colonists each) | 14 (0, 4, 0, 10) |
+| 4 | fuel, amount in mg | 5 (2, 0, 3, 0) |
+
+| Location | First slot | Second slot | Records |
+|---|---|---|---|
+| planet | 65535 | planet number | 39 (player 0's, player 1's and unowned planets) |
+| fleet | 65535 | 0x8000 + owner·512 + fleet number | 13 (one at player 1's fleet: FO-04, 33280) |
+| packet | 65534 | object id, 0x2000 + owner·512 + number | 9 (3 of them player 1's) |
+| salvage | 65534 | object id, as for a packet | 4 (player 0's only) |
+| deep space | x | y | 1 (TK-201 F, 0x02d at (1200, 1230)) |
+
+Each row is MEASURED by the records shown. That bit 15 of the second
+slot tells a fleet from a planet is inferred. The deep-space form rests on
+one record. 0x03c used the same planet-or-fleet and x,y forms in MG-003
+and MG-006, which is consistent but not counted. In these records 0x02c
+and 0x02e carried only colonists, and 0x02b and 0x02d never did. In FO-01 B
+and TK-114, a fleet that moved two minerals got one message per
+mineral, ironium first (one fleet in each).
+
+The fleet slot held the fleet number in all 66 records. Every fleet
+was of one design and one ship, with designs including 1, 2, 4, 6, 11,
+13 and 15 (design 0, in MG-003, cannot tell the readings apart and is
+not counted). So for one-design, one-ship fleets there were no design
+bits, unlike 0x05b and 0x059 ("The fleet slot of 0x05b and 0x059
+(FS-1)"). Every fleet was player 0's, so number and owner·512 + number
+cannot be told apart.
+
+Retrodiction (not support): RG-002's [7, 50, 0, 3, 65535, 92] reads as
+fleet 7, 50 kT of colonists, at planet 92.
+
+Not observed, so UNKNOWN: the deep-space form in 0x02b, 0x02c or 0x02e
+(a fleet unloading colonists in deep space kept them and got 0x165,
+TK-201 F); an
+unload to a packet or salvage; another player's salvage; a load from
+another player's planet; a fleet slot of a player other than 0; the
+fleet slot of a mixed-design fleet (FS-1 found bit 13 on one); an
+amount of 65536 or more (which amount slot is the high word is
+inferred).
+
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
 Status (2026-10-13): six readings CONFIRMED by prediction; DC-2's
