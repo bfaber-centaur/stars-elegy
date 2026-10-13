@@ -684,6 +684,24 @@ For Elegy this matters only when designs come from outside the UI
 never have chosen. Whether Elegy accepts or rejects them is a project
 choice; parity is "keep and use".
 
+**When, and which designs** (`experiments/t15/README.md`; PARITY "The
+design check: timing, transfers and energy (DC-1 to DC-5)"):
+- The check uses the owner's tech from before any of the year's
+  research. A part that comes into tech through a level-up in the same
+  year is still removed, whether the level comes from research already
+  stored when the year starts or from the year's research. CONFIRMED by
+  prediction (DC-1, energy 9 to 10, 9 of 9 runs).
+- A part gated by energy alone is checked like any other: CONFIRMED by
+  prediction (DC-3: Gorilla Delagator removed at energy 9 and 10,
+  Wolverine Diffuse Shield kept).
+- Both players' own designs are checked: CONFIRMED by prediction (DC-4,
+  player 1's own design).
+- A design received with a fleet transfer is **not** checked. The copy
+  in the recipient's slots kept a part above the recipient's tech after
+  the transfer year and the year after: CONFIRMED by prediction (DC-5,
+  player 0 receiving, 3 of 3) and MEASURED (DC-2, player 1 receiving, 9 of
+  9). Later years are NOT RUN. The giver keeps its own copy.
+
 ## Other waypoint tasks (CONFIRMED, T-34, T-35, FO corpus)
 
 - **Scrap** (T-34): before movement only. A fleet that arrives with a scrap order

@@ -6631,6 +6631,34 @@ out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
 and up, waypoint 0, a kill by a third player, and targets other than
 fleets are NOT RUN.
 
+## The design check: timing, transfers and energy (DC-1 to DC-5)
+
+Status: four readings CONFIRMED by prediction, and one prediction failed
+and was followed up. The question came from the review of lane A's T-37
+work: Elegy's ASSUMPTION T15 (tech from before research; a received
+design checked against the recipient's tech) and an energy-gated part.
+Pre-run records `experiments/t15/PREDICTION.md` (pushed 08:29:06Z,
+activity API; runs 08:29:22Z) and `experiments/t15/PREDICTION-DC4.md` (pushed
+08:34:54Z; runs 08:35:10Z). Write-up: `experiments/t15/README.md`. Raw
+evidence: private apparatus `evidence/t15`. Combat Lab, two JOAT
+players. Two chained years (one for DC-4) at cycles 20000, 30000 and
+14000. The streams agreed everywhere.
+
+| Case | Setup | Result |
+|---|---|---|
+| DC-1 | Player 0 at energy 9, Bear Neutrino Barrier (energy 10); no level-up, a level-up from research stored before the year (enough when it starts), or a level-up from the year's research | Removed in year 1 in all three (9 of 9 runs): the check uses the tech from before the year's research. CONFIRMED by prediction |
+| DC-3 | Gorilla Delagator (energy 14), Wolverine Diffuse Shield (energy 6), same owner | Gorilla removed, Wolverine kept (9 of 9). CONFIRMED by prediction |
+| DC-2 | Player 0 (electronics 26) transfers a Possum Scout (electronics 5) to player 1 (electronics 3) | The copy kept its scanner after years 1 and 2 (9 of 9). The prediction (removed after year 2) failed. MEASURED |
+| DC-4 | Player 1's own Possum Scout at electronics 3 | Removed in year 1 (3 of 3). CONFIRMED by prediction |
+| DC-5 | Player 1 (electronics 26) transfers a Possum Scout to player 0 (electronics 3); player 0's own Possum Scout as control | Control removed in year 1; the received copy kept its scanner after years 1 and 2 (3 of 3). CONFIRMED by prediction |
+
+So a design received with a fleet transfer escapes the check for at least
+the two years observed, whichever player receives it. This contradicts
+the transfer half of ASSUMPTION T15. Why it escapes, and later years, are
+NOT RUN. The order of the check against client orders (a split in the
+same year) is NOT RUN: it needs an order file, which waits on the serial
+decision.
+
 ## A chase target destroyed by mines during movement (Z-MD)
 
 Status: R-start CONFIRMED by prediction in 3 of 3 streams, for the setup
