@@ -627,14 +627,18 @@ default queue; only TK-106, TK-107 and TK-108 give player 0 a queue and
 them). `ug` and `rw` were not changed (`ug` is new-game vectors; `rw` came
 out identical).
 
-**WT-001 player-0 wormhole bit (UNRESOLVED, 2026-10-13).** WT-001-G
+**WT-001 player-0 wormhole bit (explained, 2026-10-13).** WT-001-G
 expects ends 2 and 3 known to players 0 and 1, and it is not flagged a
-sample. Player 1's bit is clear of the jiggle: its scouts sit 5 ly from
-each end against a 50 ly bound, and the jiggle moves an end at most 17 ly.
-Player 0 has no scanner close to either end, so there is no jiggle margin
-for its bit, and the run does not show how player 0 came to know them.
-Both streams agree. Until that is explained, player 0's bit on ends 2
-and 3 may be drawn rather than a rule.
+sample. Player 0's bit comes from its Scouts' JOAT built-in scanner
+(`SCANNING.md` "Ship designs" (JOAT hulls): 520 / 260 at electronics 26). Ends 2 and 3 were
+154 and 233 ly from player 0's Scouts 0/1 and 0/3, inside the penetrating
+range, so the jiggle (at most 17 ly) cannot flip the bit. With the JOAT
+built-ins, the planetary scanners and `SCANNING.md` "Space objects" (Wormholes), all 24
+known bits of WT-001 (12 ends, 2 players) are reproduced in both streams.
+WG-1 removed the built-in (player 0 made IS) and player 0 then lacked ends
+2, 3 and 11 exactly as predicted (CONFIRMED by prediction, 2 of 2 streams;
+`docs/PARITY.md` "Wormholes and Mystery Trader, round 2"). The expectation
+stays exact.
 
 **Oracle runs not run.** Each PARITY section's "Not tested" list is the
 current record; the main ones are:

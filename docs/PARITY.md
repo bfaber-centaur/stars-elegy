@@ -4744,6 +4744,18 @@ In the host file a wormhole has two player masks, the **known** mask
     the bit. Neither did player 1 for a second, unknown pair it saw that
     year: it got the known bit on both ends, and the destination mask
     stayed 0.
+- **CONFIRMED by prediction: how player 0 knew WT-001's far ends (WG-1).**
+  - In WT-001 player 0 knew all 12 ends after the year, including ends 2,
+    3 and 11, about 320 to 400 ly from its homeworld. Its Scouts are
+    JOAT hulls with a built-in 520 / 260 scanner at electronics 26
+    (`SCANNING.md` "Ship designs" (JOAT hulls)). With those, the homeworld scanners and
+    the wormhole visibility rule (`SCANNING.md` "Space objects" (Wormholes)), all 24 known
+    bits of WT-001 are reproduced in both streams (MEASURED retrodiction).
+  - WG-1 is WT-001 with player 0 made IS, so its Scouts have no scanner.
+    The prediction was pushed before the runs (private apparatus 932ed70).
+    Player 0 then knew ends 0, 1 and 4 to 10, and not 2, 3 or 11, as
+    predicted. All 24 bits matched in both streams (2 of 2). Raw evidence:
+    private apparatus `evidence/wg1`.
 - **CONFIRMED: a jump keeps the destination (O-44, WT-004, 18 jumps in
   16 streams).**
   - Every jumped end kept player 0's destination bit and reset its years
