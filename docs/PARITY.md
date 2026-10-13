@@ -6539,6 +6539,29 @@ loaded from it (CONFIRMED by prediction); NS-2 below adds 10 ly and
 150 ly. Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
 fails every case.
 
+## Ground combat with two drops by one player (GC-1)
+
+Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
+for this to test lane G's per-drop strength rule (stars-elegy #195,
+`TAKEOVER.md` "Ground combat"). Predictions
+(`experiments/gc/PREDICTION.md`) were pushed at 06:38:16Z (activity
+API), before the runs at 06:38:30Z. Results: `experiments/gc/README.md`.
+Raw evidence: private apparatus `evidence/gc1`.
+
+The defender is player 1, not IS, with 10 Neutron Shields
+(`s' = 0.75911`). Player 0's freighters already in orbit drop 395 and
+165 units. The drop strengths are 329 and 137, against 467 for one
+strength computed from the 560 total.
+
+| Case | P | Observed | Per drop, pooled | Per player | Sequential | Result |
+|---|---:|---|---|---|---|---|
+| C, 395 first | 329 | captured, 164 landed (year-end 188, carry 60) | 164 | 165 | 166 | per drop, CONFIRMED by prediction |
+| C2, 165 first | 329 | captured, 164 landed | 164 | 165 | 164 | per drop, CONFIRMED by prediction |
+| R, 395 first | 600 | repelled, defender lost 466 (year-end 154, carry 10) | 466 | 467 | 466 | per drop, CONFIRMED by prediction |
+
+0x007's colonists field held 560 (the troops dropped), not the landed
+164. That missed the prediction but matches `MESSAGES.md`.
+
 ## A waypoint aimed at a fleet destroyed in battle (WK-1)
 
 Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
