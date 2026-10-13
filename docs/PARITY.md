@@ -6656,8 +6656,8 @@ players. Two chained years (one for DC-4 and DC-6) at cycles 20000, 30000 and
 
 So a design received with a fleet transfer escapes the check for at least
 the two years observed, whichever player receives it. This contradicts
-the transfer half of ASSUMPTION T15. Why it escapes, and later years, are
-NOT RUN. DC-6 places the check before the waypoint-0 load tasks. Its
+the transfer half of ASSUMPTION T15. Later years are NOT RUN. Why the
+copy escapes the check is unknown. DC-6 places the check before the waypoint-0 load tasks. Its
 order against client order replay (a split in the same year) is NOT RUN:
 that needs an order file, which waits on the serial decision.
 

@@ -700,7 +700,8 @@ design check: timing, transfers, energy and loads (DC-1 to DC-6)"):
   in the recipient's slots kept a part above the recipient's tech after
   the transfer year and the year after: CONFIRMED by prediction (DC-5,
   player 0 receiving, 3 of 3) and MEASURED (DC-2, player 1 receiving, 9 of
-  9). Later years are NOT RUN. The giver keeps its own copy.
+  9). Later years are NOT RUN. Why the copy escapes is unknown. The giver
+  keeps its own copy.
 - The check runs before the waypoint-0 load tasks. A ship whose cargo pod
   was removed loaded nothing that year, and a ship already holding cargo
   kept it above its new capacity (0). CONFIRMED by prediction (DC-6,
