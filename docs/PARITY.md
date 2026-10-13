@@ -6542,8 +6542,8 @@ fails every case.
 ## Ground combat with two drops by one player (GC-1)
 
 Status: CONFIRMED by prediction, 2 of 2 streams. The coordinator asked
-for this to test lane G's per-drop strength rule (stars-elegy #195,
-`TAKEOVER.md` "Ground combat"). Predictions
+for this to test lane G's per-drop strength rule for
+`TAKEOVER.md` "Ground combat". Predictions
 (`experiments/gc/PREDICTION.md`) were pushed at 06:38:16Z (activity
 API), before the runs at 06:38:30Z. Results: `experiments/gc/README.md`.
 Raw evidence: private apparatus `evidence/gc1`.
