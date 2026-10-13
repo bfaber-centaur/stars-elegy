@@ -271,6 +271,45 @@ func TestRG001Artifact(t *testing.T) {
 	}
 }
 
+// TestStartSample checks that every RG battle record says whether its start
+// tokens were drawn, and the RG-003 count (vectors/README "start_sample").
+func TestStartSample(t *testing.T) {
+	for _, f := range []string{"rg001", "rg002", "rg003"} {
+		v, err := Load("../../vectors/rg/" + f + ".json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		n, fixed := 0, 0
+		for _, c := range v.Cases {
+			for _, e := range c.Expect {
+				if e.Kind != "battle" {
+					continue
+				}
+				n++
+				if e.StartSample == nil {
+					t.Errorf("%s: battle at (%d,%d) without start_sample", c.ID, *e.X, *e.Y)
+				} else if !*e.StartSample {
+					fixed++
+				}
+			}
+		}
+		if f == "rg003" && (n != 102 || fixed != 100) {
+			t.Errorf("rg003: %d battles, %d with fixed start tokens; want 102, 100", n, fixed)
+		}
+	}
+	f := false
+	bad := Vector{ID: "x", Years: 1, InitialState: &State{Players: []Player{{ID: 0}}},
+		Cases: []Case{{ID: "x", Tag: "MEASURED", Expect: []Expectation{{Year: 1, Kind: "battle_actions",
+			Actions: json.RawMessage(`[]`), StartSample: &f}}}}}
+	found := false
+	for _, err := range bad.Check() {
+		found = found || strings.Contains(err.Error(), "start_sample")
+	}
+	if !found {
+		t.Error("Check accepts start_sample on battle_actions")
+	}
+}
+
 // TestMessageSequence checks that each player's message sequence holds the
 // same ids as its `message` expectations, in a corpus of each builder, and
 // that Check refuses a malformed entry.

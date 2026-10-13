@@ -329,6 +329,27 @@ and otherwise treat it as one sample of what the rule allows. Single-stream
 combat vectors flag what the year's battle draws decide (see "Combat
 vectors").
 
+`start_sample` (`rg` only, on every `battle` record) says whether the
+battle's start tokens were drawn. The rule:
+- `false` when every alternative stream had the same tokens: the same
+  owner, fleet or planet, design, ships, damage, shields and every other
+  token field, compared as an order-free set without `start_square`;
+- `true` otherwise, for example when a token was missing or the battle was
+  not fought in another stream.
+
+The record keeps `sample: true` whenever it differed in any alternative
+stream at all. Usually only the token order differed, and with it which
+start square each player got, because the battle draws the order. So a
+record with `sample: true` and `start_sample: false` has exact stacks, and
+only the order and squares are samples. A restart that gives other stacks
+there is a gap, not a sample.
+
+MEASURED: the stacks matched in every alternative stream for every
+RG-001 and RG-002 battle, and for 100 of RG-003's 102. The two exceptions
+are year 10's battle at (1571,1434), where one stream had no token for
+player 1's fleet 88, and year 11's at (1323,1300), which neither
+alternative stream fought.
+
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
 | `message_sequence` | every message player `player` got in the year, in `.M` order (`rg`, `kx001`–`kx005`, `pq`) | `messages`: per message `id`, `focus` and `params`; see "Message sequences" below |
@@ -336,7 +357,7 @@ vectors").
 | `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
 | `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
 | `view` | what player `viewer` knows of `subject` (`{kind, owner, id}`: a planet, fleet, wormhole, minefield, design or player) | the fields the case checks, e.g. `level` (report level), `known`, `starbase_visible`, `heading`, `design_count` |
-| `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage` |
+| `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage`; in `rg`, `start_sample` (see above) |
 | `battle_actions` | the moves and shots of that battle | `actions`: per action `round`, `token`, `to` (square, or `null` for leaving the board) and `hits` (`token`, `flags`, `kills`, `shield_damage`, `armor_damage`) |
 | `no_battle` | no battle record was written | |
 | `client_estimate` | a value the original client shows on `screen` for `subject` after the year | `field` names the value; `equals` holds it as a number or a short value with its unit, never the client's sentence |

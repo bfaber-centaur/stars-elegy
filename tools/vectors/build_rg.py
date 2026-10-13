@@ -122,6 +122,24 @@ def drawn_sequence(e, others):
                              for i, m in enumerate(e['messages'])])
 
 
+def stacks(b):
+    """A battle record's start tokens as an order-free multiset, without
+    start squares: which square each token starts on follows the drawn
+    token order, the stacks themselves do not."""
+    return sorted(json.dumps({k: v for k, v in t.items() if k != 'start_square'}, sort_keys=True)
+                  for t in b['tokens'])
+
+
+def drawn_battle(e, others):
+    """Flag a battle record as drawn as a whole when it differed in any
+    alternative stream, as before, and add `start_sample`: false when every
+    alternative stream had the same start tokens (stacks, damage, shields)
+    in any order and on any squares, true otherwise."""
+    fixed = all(o is not None and stacks(o) == stacks(e) for o in others)
+    same = all(o is not None and json.dumps(o, sort_keys=True) == json.dumps(e, sort_keys=True) for o in others)
+    return dict(e if same else dict(e, sample=True), start_sample=not fixed)
+
+
 def drawn(exps, alts):
     """Flag what differed in any alternative stream. A dict-valued `equals`
     is split field by field; a message sequence message by message; anything
@@ -132,6 +150,8 @@ def drawn(exps, alts):
         others = [a.get(ident(e)) for a in alt]
         if e['kind'] == 'message_sequence':
             out.append(drawn_sequence(e, others))
+        elif e['kind'] == 'battle':
+            out.append(drawn_battle(e, others))
         elif e.get('sample'):
             out.append(e)
         elif any(o is None for o in others):

@@ -99716,7 +99716,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -99949,7 +99950,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -100227,7 +100229,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -100484,7 +100487,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -101905,7 +101909,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -102113,7 +102118,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -103095,7 +103101,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -105688,7 +105695,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -117242,7 +117250,8 @@
       }
      ],
      "year": 2,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -117457,7 +117466,8 @@
        "fleet": 8
       }
      ],
-     "year": 2
+     "year": 2,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -117687,7 +117697,8 @@
       }
      ],
      "year": 2,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -118042,7 +118053,8 @@
       }
      ],
      "year": 2,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -118763,7 +118775,8 @@
        "fleet": 36
       }
      ],
-     "year": 2
+     "year": 2,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -119189,7 +119202,8 @@
       }
      ],
      "year": 2,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -119478,7 +119492,8 @@
       }
      ],
      "year": 2,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -132358,7 +132373,8 @@
        "planet": 42
       }
      ],
-     "year": 3
+     "year": 3,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -132576,7 +132592,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -133701,7 +133718,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -134305,7 +134323,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -134680,7 +134699,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -135683,7 +135703,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -135913,7 +135934,8 @@
       }
      ],
      "year": 3,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -147368,7 +147390,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -147624,7 +147647,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -147872,7 +147896,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -148174,7 +148199,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -148351,7 +148377,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -149174,7 +149201,8 @@
       }
      ],
      "year": 4,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -150116,7 +150144,8 @@
        "fleet": 0
       }
      ],
-     "year": 4
+     "year": 4,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -150323,7 +150352,8 @@
        "fleet": 41
       }
      ],
-     "year": 4
+     "year": 4,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -164244,7 +164274,8 @@
       }
      ],
      "year": 5,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -164440,7 +164471,8 @@
       }
      ],
      "year": 5,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -164648,7 +164680,8 @@
       }
      ],
      "year": 5,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -165151,7 +165184,8 @@
        "fleet": 9
       }
      ],
-     "year": 5
+     "year": 5,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -165363,7 +165397,8 @@
        "planet": 84
       }
      ],
-     "year": 5
+     "year": 5,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -180305,7 +180340,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -180689,7 +180725,8 @@
        "planet": 37
       }
      ],
-     "year": 6
+     "year": 6,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -181056,7 +181093,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -182415,7 +182453,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -182718,7 +182757,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -182938,7 +182978,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -183145,7 +183186,8 @@
        "fleet": 45
       }
      ],
-     "year": 6
+     "year": 6,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -183371,7 +183413,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -183579,7 +183622,8 @@
       }
      ],
      "year": 6,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -198143,7 +198187,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -199085,7 +199130,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -199921,7 +199967,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -200129,7 +200176,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -200641,7 +200689,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -202334,7 +202383,8 @@
       }
      ],
      "year": 7,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -217771,7 +217821,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -218146,7 +218197,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -218582,7 +218634,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -218835,7 +218888,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -219615,7 +219669,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -220483,7 +220538,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -222817,7 +222873,8 @@
        "fleet": 0
       }
      ],
-     "year": 8
+     "year": 8,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -223157,7 +223214,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -224640,7 +224698,8 @@
       }
      ],
      "year": 8,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -239907,7 +239966,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -240245,7 +240305,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -241820,7 +241881,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -241978,7 +242040,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -242249,7 +242312,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -242461,7 +242525,8 @@
        "planet": 74
       }
      ],
-     "year": 9
+     "year": 9,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -242677,7 +242742,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -242863,7 +242929,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -243252,7 +243319,8 @@
       }
      ],
      "year": 9,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -260064,7 +260132,8 @@
        "fleet": 23
       }
      ],
-     "year": 10
+     "year": 10,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -260260,7 +260329,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -260538,7 +260608,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -260863,7 +260934,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -261254,7 +261326,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -261503,7 +261576,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -262081,7 +262155,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -262606,7 +262681,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -263119,7 +263195,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -263808,7 +263885,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -264081,7 +264159,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -265677,7 +265756,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": true
     },
     {
      "kind": "battle_actions",
@@ -266294,7 +266374,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -266540,7 +266621,8 @@
       }
      ],
      "year": 10,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -283343,7 +283425,8 @@
        "fleet": 47
       }
      ],
-     "year": 11
+     "year": 11,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -283571,7 +283654,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -283850,7 +283934,8 @@
        "fleet": 71
       }
      ],
-     "year": 11
+     "year": 11,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -284085,7 +284170,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": true
     },
     {
      "kind": "battle_actions",
@@ -284500,7 +284586,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -284795,7 +284882,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -285683,7 +285771,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -288403,7 +288492,8 @@
       }
      ],
      "year": 11,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -304936,7 +305026,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -305134,7 +305225,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -305459,7 +305551,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -305618,7 +305711,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -306105,7 +306199,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -306406,7 +306501,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -307013,7 +307109,8 @@
        "fleet": 23
       }
      ],
-     "year": 12
+     "year": 12,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -307441,7 +307538,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -308885,7 +308983,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -309294,7 +309393,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -309684,7 +309784,8 @@
       }
      ],
      "year": 12,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -310008,7 +310109,8 @@
        "fleet": 31
       }
      ],
-     "year": 12
+     "year": 12,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",

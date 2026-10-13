@@ -483,6 +483,9 @@ type Expectation struct {
 	Players []int           `json:"players,omitempty"`
 	Tokens  json.RawMessage `json:"tokens,omitempty"`
 	Actions json.RawMessage `json:"actions,omitempty"`
+	// battle (rg): false when every alternative stream had the same start
+	// tokens, in any order and on any squares
+	StartSample *bool `json:"start_sample,omitempty"`
 	// view: what player Viewer knows of Subject; client_estimate: a value
 	// the original client displays on Screen for Subject
 	Viewer  *int            `json:"viewer,omitempty"`
@@ -641,6 +644,9 @@ func (v *Vector) Check() []error {
 			}
 			if e.Kind == "sample" && (e.Check == "" || e.Observed == nil) {
 				bad("%s: sample without check or observed", c.ID)
+			}
+			if e.StartSample != nil && e.Kind != "battle" {
+				bad("%s: start_sample on a %s expectation", c.ID, e.Kind)
 			}
 			if e.Kind == "sample" && c.Tag == "CONFIRMED" {
 				bad("%s: CONFIRMED case with a sampled expectation", c.ID)
