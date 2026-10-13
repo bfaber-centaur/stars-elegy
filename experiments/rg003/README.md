@@ -93,14 +93,20 @@ client's screenshots):
 |---|---|---|---|
 | Order sets (player-years) | 42 | 42 | 84 |
 | Orders | 1,867 | 1,864 | 3,731 |
-| Expectations | 2,652 | 3,199 | 5,851 |
-| Samples | 785 | 552 | 1,337 |
+| Expectations | 2,669 | 3,199 | 5,868 |
+| Samples | 408 | 552 | 960 |
 | Battles | 44 | 58 | 102 |
+
+Corrected 2026-10-13, after year 6's cycles-3700 stream was re-run
+(`docs/ORACLE.md` "Dump audit (DA-1)"). Before, the table said
+expectations 2,652, 3,199 and 5,851 and samples 785, 552 and 1,337, and
+the list below said fleet 2,062, planet 1,615 and player 184. The counts
+leave out RG-003's one `alt_battle`.
 
 Expectations by kind (all 12 years):
 
-- fleet 2,062, planet 1,615;
-- production_queue 773, object 507, player 184, minefield 173;
+- fleet 2,070, planet 1,623;
+- production_queue 773, object 507, player 185, minefield 173;
 - battle 102, battle_actions 102, fleet_gone 95;
 - message_sequence 84 (every player, every year), message 73;
 - salvage_at 59, object_gone 9, design 8;

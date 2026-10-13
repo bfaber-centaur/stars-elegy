@@ -6187,8 +6187,11 @@ and salvage?
   deep space, an Auto Mineral Packets item with no driver, a research
   budget change, a cleared remote-mining task, a queue change and a
   research field change). All six repeats were byte-identical. Every
-  year was also generated at cycles 3700 and 1490: 764 of 2,610
-  expectations are `sample: true`.
+  year was also generated at cycles 3700 and 1490: 408 of 2,669
+  expectations are `sample: true`. Corrected 2026-10-13: this said "764
+  of 2,610", an earlier build. Year 6's cycles-3700 host file had been
+  cut off mid-write, which flagged 459 of that year's 476 expectations;
+  the year was re-run (`ORACLE.md` "Dump audit (DA-1)").
 
 ### Observations
 
@@ -6375,7 +6378,10 @@ evidence: private apparatus `evidence/rg003`.
   battle plan, two queue changes and the leftover-to-research setting
   (`experiments/rg003/README.md` lists each one).
 - All six new repeats were byte-identical. With the 3700 and 1490
-  streams, 1,337 of 5,851 expectations are `sample: true`. Every order
+  streams, 960 of 5,868 expectations are `sample: true` (961 of 5,869
+  with the one `alt_battle`). Corrected 2026-10-13: this said "1,337 of
+  5,851", before year 6's cycles-3700 stream was re-run (`ORACLE.md` "Dump
+  audit (DA-1)"). Every order
   decoded, with no new order kind (3,731 orders in 84 player-years).
 - Observed in years 7 to 12: the homeworld starbase queued in 2469 was
   built in 2470; 58 battles; populations over the maximum kept falling

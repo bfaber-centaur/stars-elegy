@@ -687,7 +687,9 @@ exits on its own, with no window input (no Host Mode dialog). It uses
   `pinned-turn` waits for a readable turn number that differs from the
   start before stopping the oracle. An earlier version took the missing
   file for the new year and stopped DOSBox mid-write, leaving no host
-  file. `PINNED_TIMEOUT` (seconds, default 240) bounds the wait.
+  file, or (once, RG-002 year 6 at 3700) a host file cut off part-way
+  ("Dump audit (DA-1)" below). `PINNED_TIMEOUT` (seconds, default 240)
+  bounds the wait.
 - **Which stream a cycles value reaches** (KX-004, 2026-10-07). The
   startup tick is `trunc(k·54.925)` ms for a small integer k, about
   `k ≈ 70000/cycles`. Ticks identified by replaying random events: 35000
@@ -1468,6 +1470,79 @@ python3 experiments/es001/check.py predictions.tsv results.tsv
   the computer players plan (its result is discarded), one with their
   files supplied. The apparatus `evidence/rg001/tools/rg-chain` does it and
   repeats each supplied-orders year; all six repeats were byte-identical.
+
+## Dump audit (DA-1)
+
+Observed 2026-10-13. Why: until that day, `tools/fleetlab/fleetlab` returned grep's
+exit status instead of java's, so a dump that ended in a Java exception
+still exited 0. `tools/vectors/build.py` treated such a dump as complete.
+DA-1 checks whether any evidence a public vector reads had failed that
+way. Raw evidence, scripts and full outputs: private apparatus
+`evidence/da1`.
+
+Method. Four checks, run over every corpus in the apparatus `evidence/`,
+not only those the builders read:
+
+1. Every precomputed `*.dump` (4,281) searched for a Java error.
+2. The block headers of every host and player file (33,347), walked
+   section by section. A section must open with a file header block and
+   close with a footer block, and no block may run past the end of the
+   file.
+3. In each folder, the turn in the host file's header compared with the
+   turn in every `.M` file. Capture slots and backups are skipped.
+4. `combatlab dump` with the fixed wrapper run on every non-empty game
+   file outside capture slots (33,106 files in 5,177 folders), with
+   failures retried file by file.
+
+Results (MEASURED, within the scope above):
+
+- One damaged game file: RG-002 year 6's cycles-3700 host file. Its last
+  block runs 18 bytes past the end of the 23,647-byte file. It has no
+  footer, and none of the battle-plan blocks the other two streams carry.
+  Checks 1, 2 and 4 each found it, and check 3 listed no other output
+  folder. RG-003's years 1–6 are the same files.
+- 15 precomputed dumps hold only "could not find or load main class"
+  (computer-player batch AI-02 years 2400–2405 and its new game; KB-1A at
+  cycles 3700). The game files under them decode cleanly. No vector reads
+  those corpora. KB-1A's host file decodes identically at 3700 and
+  20000, so PARITY "KB batch 1" is unchanged. The dumps were regenerated.
+- 987 empty files, all capture slots, which no builder reads.
+
+Repair. Year 6 was re-run at cycles 3700 from the same base with the
+current `pinned-turn`. The new host file is 24,444 bytes and passes all
+four checks. Its first 23,647 bytes are identical to the old file
+(MEASURED). So the old file was copied while Stars! was still writing it
+(inferred; its log records the host file missing mid-run, the race
+described under "Pinned battle RNG"). The other 14 output files match the
+old run byte for byte. As a control, year 5 re-run at 3700 matched its
+recorded files byte for byte (MEASURED, one repeat). 148 run logs across
+the evidence show the same missing-file moment; checks 2–4 found no
+other damaged file among them.
+
+Effect on the vectors. Rebuilt from stars-elegy main at 4d05d97 with
+the repaired evidence; every other RG-002 and RG-003 file is
+byte-identical to main. The vector builder marks an expectation
+`sample: true` when another stream disagrees. A stream with no host
+file disagrees on almost everything, so the damage over-flagged rather
+than hid differences:
+
+| Vector, year 6 (2468) | Expectations | `sample: true` | strict |
+|---|---|---|---|
+| RG-002 and RG-003, before | 476 | 459 | 17 |
+| RG-002 and RG-003, after | 493 | 82 | 411 |
+
+The same 430 observed items are covered before and after. There are 17
+more entries because, where the streams disagree on only some fields,
+the builder splits an expectation into a strict part and a sample part.
+By kind, sample over total before and after: fleet 180/180 → 26/188,
+planet 129/129 → 14/137, object 40/40 → 6/40, production_queue 59/59 →
+8/59, minefield 13/13 → 0/13, player 13/14 → 9/15, salvage_at 4/4 →
+2/4, starbase_design 4/4 → 0/4; battle, battle_actions, fleet_gone,
+message, message_sequence and object_gone are unchanged. Whole vectors:
+RG-002 785 of 2,652 → 408 of 2,669; RG-003 1,338 of 5,852 → 961 of 5,869
+(counts include RG-003's one `alt_battle`). The year-6 restarts
+(`rg002-y6`, `rg003-y6`) change the same way. Lane B re-syncs elegy's
+ledgers.
 
 ## Known fragility
 
