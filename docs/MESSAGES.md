@@ -143,7 +143,8 @@ An `object` slot holds the object's record id from the host file,
   fleet of designs 2 and 7 gave 0x2000 + 2·512 + 6 (MEASURED; what bit 13
   means is inferred, not known). 0x028 and 0x140 carry owner·512 +
   number in their fleet slots instead (MEASURED, FS-1; fleet owner,
-  recipient and, for 0x140, planet owner coincide in every case). Scope:
+  recipient and, for 0x140, planet owner coincide in every case; the
+  0x028 target slot, 513 sent to player 0, is the exception). Scope:
   CB, 2 players, one year, one ship per fleet.
 
 ## Phases (BINARY-ONLY; step numbers from KERNEL.md)

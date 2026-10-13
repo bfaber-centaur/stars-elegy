@@ -6897,10 +6897,10 @@ either owner, with or without another fleet following it. Lane D's
 candidate readings (owner bits shown only for a followed fleet; a
 constant per year; the fleet record's flags; the recipient) do not fit:
 c gave 1, not 513, and bits 9 and up changed only with the design. The
-player-count part of D was not retested (see Scope). Row f's prediction (1030) failed. Its value is MEASURED;
-reading bit 13 as "more than one design" is inferred. With one mixed
-fleet, "first design in the record" and "lowest design" cannot be told
-apart (both 2).
+player-count part of D was not retested (see Scope). Row f's prediction
+(1030) failed. Its value is MEASURED; reading bit 13 as "more than one
+design" is inferred. With one mixed fleet, "first design in the record"
+and "lowest design" cannot be told apart (both 2).
 
 MEASURED, not predicted: 0x028's follower slot is owner·512 + number
 (player 1's follower 1/5 gave 517; WK-1 and WK-2 had only player 0
@@ -6908,8 +6908,8 @@ followers). 0x140, sent to the planet owner with 0x059, gave 7 for 0/7
 and 518 for 1/6, also owner·512 + number (fleet owner, recipient and,
 for 0x140, planet owner coincide in every case; the 0x028 target slot,
 513 sent to player 0, is the exception). Scope: CB with 2 players, one
-year, one ship per fleet. The player-count reading rests on RG-002 year 1 (7 players,
-design 0, value 6) and was not retested.
+year, one ship per fleet. The player-count reading rests on RG-002 year
+1 (7 players, design 0, value 6) and was not retested.
 
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
