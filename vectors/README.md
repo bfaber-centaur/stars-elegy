@@ -304,6 +304,18 @@ unconstrained by that case.
 | `wormhole` | wormhole end `id` | `known_to`, `destination_known_to` |
 | `trader` | Mystery Trader `id` | `x`, `y`, `warp`, `destination`, `met` |
 | `packet` | packet `owner`/`id` | `x`, `y` (within `tolerance` ly) |
+| `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
+| `message` | player `player` got message `message_id` | `present` |
+| `message_sequence` | every message player `player` got in the year, in `.M` order (`rg`, `kx001`–`kx005`, `pq`) | `messages`: per message `id`, `focus` and `params`; see "Message sequences" below |
+| `object` | a new or changed map object | the object, as in `initial_state.objects` |
+| `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
+| `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
+| `view` | what player `viewer` knows of `subject` (`{kind, owner, id}`: a planet, fleet, wormhole, minefield, design or player) | the fields the case checks, e.g. `level` (report level), `known`, `starbase_visible`, `heading`, `design_count` |
+| `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage`; in `rg`, `start_sample` (see below) |
+| `battle_actions` | the moves and shots of that battle | `actions`: per action `round`, `token`, `to` (square, or `null` for leaving the board) and `hits` (`token`, `flags`, `kills`, `shield_damage`, `armor_damage`) |
+| `no_battle` | no battle record was written | |
+| `client_estimate` | a value the original client shows on `screen` for `subject` after the year | `field` names the value; `equals` holds it as a number or a short value with its unit, never the client's sentence |
+| `sample` | a random outcome | see below |
 
 A `planet` expectation carries `homeworld` only when the flag changed in
 the year. One vector has it, WU-RSG2's planet 8 (MEASURED, one run,
@@ -338,30 +350,20 @@ battle's start tokens were drawn. The rule:
   not fought in another stream.
 
 The record keeps `sample: true` whenever it differed in any alternative
-stream at all. Usually only the token order differed, and with it which
-start square each player got, because the battle draws the order. So a
-record with `sample: true` and `start_sample: false` has exact stacks, and
-only the order and squares are samples. A restart that gives other stacks
+stream at all. Usually only the token order differed, which the battle
+draws. Each player's start squares differed between streams in 1 of the
+154 RG battles (MEASURED). So a record with `sample: true` and
+`start_sample: false` has exact stacks, and only the token order and
+start squares are samples. A restart that gives other stacks
 there is a gap, not a sample.
 
 MEASURED: the stacks matched in every alternative stream for every
 RG-001 and RG-002 battle, and for 100 of RG-003's 102. The two exceptions
 are year 10's battle at (1571,1434), where one stream had no token for
 player 1's fleet 88, and year 11's at (1323,1300), which neither
-alternative stream fought.
-
-| `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
-| `message` | player `player` got message `message_id` | `present` |
-| `message_sequence` | every message player `player` got in the year, in `.M` order (`rg`, `kx001`–`kx005`, `pq`) | `messages`: per message `id`, `focus` and `params`; see "Message sequences" below |
-| `object` | a new or changed map object | the object, as in `initial_state.objects` |
-| `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
-| `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
-| `view` | what player `viewer` knows of `subject` (`{kind, owner, id}`: a planet, fleet, wormhole, minefield, design or player) | the fields the case checks, e.g. `level` (report level), `known`, `starbase_visible`, `heading`, `design_count` |
-| `battle` | the battle at (`x`, `y`) | `players`, `planet`, and `tokens`: per token its `owner`, `fleet` or `planet`, `kind`, `design`, `start_square`, `initiative`, `mass`, `shield`, `jammer`, `computer`, `capacitor`, `deflector`, `ships`, `damage`; in `rg`, `start_sample` (see above) |
-| `battle_actions` | the moves and shots of that battle | `actions`: per action `round`, `token`, `to` (square, or `null` for leaving the board) and `hits` (`token`, `flags`, `kills`, `shield_damage`, `armor_damage`) |
-| `no_battle` | no battle record was written | |
-| `client_estimate` | a value the original client shows on `screen` for `subject` after the year | `field` names the value; `equals` holds it as a number or a short value with its unit, never the client's sentence |
-| `sample` | a random outcome | see below |
+alternative stream fought. Per-stream stacks for one battle of each
+kind are tabled in experiments/rg003/README.md, "Start tokens in the
+other streams".
 
 ### Message sequences
 
