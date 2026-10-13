@@ -6123,10 +6123,10 @@ section mirrors the counts; it adds no oracle observation.
   packet warp is 8 in the original and unset in Elegy, the year a
   starbase with two Mass Driver 7s completes there. This is the rule in
   `PRODUCTION-LAUNCH.md` "Starbases", mass driver item (no driver before,
-  one now), CONFIRMED by prediction in PD-1 ("Mass-driver settings when a
-  starbase is replaced (PD-1)"). An elegy change implementing the rule,
-  which would clear this line and its chained-run sample, was still open
-  when this was written.
+  one now): CONFIRMED by prediction in PD-1 for one Mass Driver 7; the
+  two-driver speed (8) is MEASURED (PD-1b) ("Mass-driver settings when a
+  starbase is replaced (PD-1)"). Elegy implements the rule from elegy
+  f6beefa, which clears this line and its chained-run sample.
 - **Incorrect mechanic, 2 order lines.** On seed variants 1 and 6 only,
   in Y1 and in the chained run's first year, Elegy refuses player 2's
   waypoint-0 change aimed at a fleet that player 6's earlier-replayed
@@ -6144,9 +6144,9 @@ section mirrors the counts; it adds no oracle observation.
 - No RG-002 battle record in a restart, or in the chained run's first
   year, fails (44 and 8).
 - Case level (a case passes on a seed when every compared expectation
-  matches): Y6 passes on 8 of 8 seeds, and Y1 and the chained year 1 on
-  1 of 8. The rest pass on none, each variant missing different
-  draw-decided fields. Exact random outcomes need the original's
+  matches): Y6 on 8 of 8 seeds; Y1 and the chained year 1 on 1 of 8;
+  the chained run's last year (2468) on 6 of 8, a sample result; the rest
+  on none, each variant missing different draw-decided fields. Exact random outcomes need the original's
   generator in the harness.
 
 ### RG-002 restarts: an AR owner's own miners
