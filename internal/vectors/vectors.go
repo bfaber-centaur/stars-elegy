@@ -443,6 +443,15 @@ type VoidStreams struct {
 	Reason  string   `json:"reason"`
 }
 
+// Message is one entry of a message_sequence: the kind, the focus as
+// stored (MESSAGES.md "How messages work") and the slot values in stored order.
+type Message struct {
+	ID     int   `json:"id"`
+	Focus  int   `json:"focus"`
+	Params []int `json:"params"`
+	Sample bool  `json:"sample,omitempty"` // decided by the year's random draws
+}
+
 // Expectation is one observed outcome. Kind selects the subject and the
 // fields that apply (vectors/README.md); Equals holds the observed values
 // of the subject's fields that the case checked.
@@ -462,6 +471,7 @@ type Expectation struct {
 	Tolerance   any             `json:"tolerance,omitempty"` // ly for a packet, or {field: amount}
 	Sample      bool            `json:"sample,omitempty"`    // one stream's outcome of random draws, not a fixed result
 	MessageID   *int            `json:"message_id,omitempty"`
+	Messages    []Message       `json:"messages,omitempty"` // message_sequence, in .M order
 	Present     *bool           `json:"present,omitempty"`
 	ObservedNew []int           `json:"observed_new,omitempty"`
 	Check       string          `json:"check,omitempty"`
@@ -489,7 +499,7 @@ var (
 		"message": true, "sample": true, "battle": true, "battle_actions": true, "no_battle": true,
 		"object": true, "object_gone": true, "minefield": true, "view": true, "client_estimate": true,
 		"battle_plan": true, "battle_plan_gone": true, "design_gone": true, "starbase_design": true,
-		"starbase_design_gone": true}
+		"starbase_design_gone": true, "message_sequence": true}
 )
 
 // Load decodes one vector strictly.
@@ -643,6 +653,16 @@ func (v *Vector) Check() []error {
 			for _, o := range []*int{e.Owner, e.Player} {
 				if o != nil && *o >= 0 && !known(players, *o) {
 					bad("%s: player %d not in the initial state", c.ID, *o)
+				}
+			}
+			if e.Kind == "message_sequence" {
+				if e.Player == nil || e.Messages == nil {
+					bad("%s: message_sequence without player or messages", c.ID)
+				}
+				for _, m := range e.Messages {
+					if m.ID < 0 || m.ID > 0x182 || m.Focus < 0 || m.Focus > 0xffff || len(m.Params) > 7 {
+						bad("%s: message_sequence message %+v", c.ID, m)
+					}
 				}
 			}
 			if e.Kind == "player" && (e.ID == nil || !known(players, *e.ID)) {

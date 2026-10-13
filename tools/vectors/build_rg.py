@@ -60,7 +60,8 @@ IDENT = {
     'production_queue': ('planet',), 'design': ('owner', 'slot'), 'design_gone': ('owner', 'slot'),
     'starbase_design': ('owner', 'slot'), 'starbase_design_gone': ('owner', 'slot'),
     'battle_plan': ('owner', 'slot'), 'battle_plan_gone': ('owner', 'slot'), 'salvage_at': ('x', 'y'),
-    'minefield': ('owner', 'id'), 'message': ('player', 'message_id'), 'battle': ('x', 'y'),
+    'minefield': ('owner', 'id'), 'message': ('player', 'message_id'), 'message_sequence': ('player',),
+    'battle': ('x', 'y'),
     'battle_actions': ('x', 'y'), 'object_gone': ('subject',),
 }
 
@@ -78,14 +79,49 @@ def close(a, b, tol):
     return a == b
 
 
+def common(a, b):
+    """Indices of a in one longest common subsequence of a and b."""
+    n, m = len(a), len(b)
+    t = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            t[i][j] = t[i + 1][j + 1] + 1 if a[i] == b[j] else max(t[i + 1][j], t[i][j + 1])
+    keep, i, j = set(), 0, 0
+    while i < n and j < m:
+        if a[i] == b[j]:
+            keep.add(i)
+            i, j = i + 1, j + 1
+        elif t[i + 1][j] >= t[i][j + 1]:
+            i += 1
+        else:
+            j += 1
+    return keep
+
+
+def drawn_sequence(e, others):
+    """Flag each message that is not in a longest common subsequence with
+    every alternative stream's sequence (sent, its values or its place
+    differed)."""
+    key = lambda m: (m['id'], m['focus'], m['params'])
+    seq = [key(m) for m in e['messages']]
+    keep = set(range(len(seq)))
+    for o in others:
+        keep &= common(seq, [key(m) for m in (o or {}).get('messages', [])])
+    return dict(e, messages=[m if i in keep or m.get('sample') else dict(m, sample=True)
+                             for i, m in enumerate(e['messages'])])
+
+
 def drawn(exps, alts):
     """Flag what differed in any alternative stream. A dict-valued `equals`
-    is split field by field; anything else is flagged whole."""
+    is split field by field; a message sequence message by message; anything
+    else is flagged whole."""
     alt = [{ident(e): e for e in a} for a in alts]
     out = []
     for e in exps:
         others = [a.get(ident(e)) for a in alt]
-        if e.get('sample'):
+        if e['kind'] == 'message_sequence':
+            out.append(drawn_sequence(e, others))
+        elif e.get('sample'):
             out.append(e)
         elif any(o is None for o in others):
             out.append(dict(e, sample=True))
@@ -143,9 +179,9 @@ def build(ev, out):
         starts.append(B.state(B.dump(os.path.join(b, GAME + '.HST')), B.dump(os.path.join(b, GAME + '.XY')), GAME,
                               os.path.join(b, GAME + '.XY')))
         adir = os.path.join(y, 'gen', 'raw', 'after')
-        st1, exps = K.observe(prev, adir, GAME, k, full=True)
+        st1, exps = K.observe(prev, adir, GAME, k, full=True, sequence=True)
         exps = C.mark_samples(exps, year_battles(adir), single=True)
-        alts = [K.observe(prev, os.path.join(y, a, 'raw', 'after'), GAME, k, full=True)[1]
+        alts = [K.observe(prev, os.path.join(y, a, 'raw', 'after'), GAME, k, full=True, sequence=True)[1]
                 for a in sorted(os.listdir(y)) if re.fullmatch(r'alt\d+', a)]
         exps = drawn(exps, alts)
         year = 2400 + st1['year'] if st1['year'] < 2400 else st1['year']

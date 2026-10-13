@@ -46,6 +46,61 @@ def messages(mpath):
     return ids
 
 
+def _ids(spec):
+    out = set()
+    for part in spec.split(', '):
+        a, _, b = part.partition('-')
+        out.update(range(int(a, 16), int(b or a, 16) + 1))
+    return out
+
+
+# MESSAGES.md "Catalogue", Phase column: the ids the battle step sends (P6;
+# 0x050, a level-up, is listed there too because a battle can give research,
+# so it is drawn only for a player who fought) and the ids sent after the
+# battles (P6a to P8a).
+BATTLE_MSGS = _ids('0x00e-0x022, 0x050, 0x07e, 0x08d-0x08e, 0x091-0x0a8, 0x0ef-0x0f1, 0x0f9-0x0fa, 0x113-0x116, '
+                   '0x13a-0x13b, 0x144, 0x180')
+AFTER_MSGS = _ids('0x000-0x001, 0x003-0x00d, 0x028-0x02e, 0x04e, 0x051-0x059, 0x05e, 0x060-0x073, 0x075-0x077, '
+                  '0x07d, 0x08f-0x090, 0x0b5-0x0b8, 0x0bb-0x0bc, 0x0be-0x0bf, 0x0c2-0x0c4, 0x0f4-0x0f8, 0x0ff, '
+                  '0x104-0x10c, 0x10e-0x111, 0x118-0x119, 0x11e-0x123, 0x126, 0x12c-0x12e, 0x135, 0x148-0x150, '
+                  '0x155-0x156, 0x15a-0x15c, 0x165-0x17e')
+
+LEVEL_UP = 0x050
+
+
+def message_sequence(mpath):
+    """The player's messages for the generated year in .M order: the id, the
+    focus as stored (MESSAGES.md "How messages work") and the slot values."""
+    seq = []
+    for s in B.last_section(B.dump(mpath)):
+        m = re.fullmatch(r'msg id=0x([0-9a-f]+) name=\S+ obj=0x([0-9a-f]+) p=([0-9,]*)', s)
+        if m:
+            seq.append({'id': int(m.group(1), 16), 'focus': int(m.group(2), 16),
+                        'params': [int(x) for x in m.group(3).split(',') if x]})
+        elif s.startswith('msg '):
+            raise ValueError('%s: unparsed message line %r' % (mpath, s))
+    return seq
+
+
+def battle_messages(seq, battles, player):
+    """Flag the entries a year's battle draws decide: in a year with a
+    battle, every battle-step message (a level-up only for a player who
+    fought), and every later message whose focus is a fleet that fought or a
+    planet where a battle was."""
+    if not battles:
+        return seq
+    fought = any(player in b['players'] for b in battles)
+    fleets = {(t['owner'], t['fleet']) for b in battles for t in b['tokens'] if 'fleet' in t}
+    planets = {b['planet'] for b in battles if b.get('planet') is not None}
+    out = []
+    for e in seq:
+        f = e['focus']
+        hit = e['id'] in BATTLE_MSGS and (e['id'] != LEVEL_UP or fought) or e['id'] in AFTER_MSGS and (
+            f < 0x4000 and f in planets or f & 0xc000 == 0x8000 and ((f >> 9) & 15, f & 0x1ff) in fleets)
+        out.append(dict(e, sample=True) if hit else e)
+    return out
+
+
 CONDITIONS = [(0x40, 'planets_owned_percent'), (0x80, 'tech_level'), (0x100, 'score'),
               (0x200, 'lead_over_second_percent'), (0x400, 'resources_thousands'), (0x800, 'capital_ships'),
               (0x1000, 'highest_score_after_years')]
@@ -67,9 +122,10 @@ def score_records(mpath):
     return recs
 
 
-def observe(st_prev, adir, g, year, full=False):
+def observe(st_prev, adir, g, year, full=False, sequence=False):
     """Expectations for one generated year: host-file changes since the
-    previous year, message ids and score records from every player file."""
+    previous year, message ids and score records from every player file, and
+    with `sequence` each player's whole message sequence."""
     st1 = B.state(B.dump(os.path.join(adir, g + '.HST')), B.dump(os.path.join(adir, g + '.XY')), g)
     exps = []
     for e in C.diff(st_prev, st1, full):
@@ -80,6 +136,7 @@ def observe(st_prev, adir, g, year, full=False):
     for f in sorted(os.listdir(adir)):
         if re.fullmatch(re.escape(g) + r'\.M\d+', f):
             bs.update(C.battles(B.last_section(B.dump(os.path.join(adir, f)))))
+    battles = list(bs.values())
     for b in sorted(bs.values(), key=lambda b: (b['x'], b['y'])):
         acts = b.pop('actions')
         exps.append(dict(b, year=year))
@@ -91,6 +148,9 @@ def observe(st_prev, adir, g, year, full=False):
         p = int(m.group(1)) - 1
         exps += [{'kind': 'message', 'player': p, 'message_id': i, 'present': True, 'year': year}
                  for i in messages(os.path.join(adir, f))]
+        if sequence:
+            exps.append({'kind': 'message_sequence', 'player': p,
+                         'messages': battle_messages(message_sequence(os.path.join(adir, f)), battles, p), 'year': year})
         for r in score_records(os.path.join(adir, f)):
             exps.append({'kind': 'player', 'id': r.pop('player'), 'equals': {'score_record': r},
                          'seen_by': p, 'year': year})
@@ -114,7 +174,7 @@ def build(corpus, ev, out):
         exps, years, prev = [], 0, st0
         for k, a in enumerate(afters, 1):
             adir = os.path.join(d, a)
-            st1, ex = observe(prev, adir, 'PG001', k)
+            st1, ex = observe(prev, adir, 'PG001', k, sequence=True)
             if st1['year'] == prev['year']:
                 break
             years, prev = k, st1
@@ -146,7 +206,7 @@ def build(corpus, ev, out):
     print('%s: %d vectors' % (corpus, n))
 
 
-def chained(vid, title, streams, meta):
+def chained(vid, title, streams, meta, sequence=False):
     """One vector from runs that each start where the last ended.
     streams: {stream: [rundir, ...]} (pinned-turn layout raw/before, raw/after)."""
     first = list(streams.values())[0][0]
@@ -158,7 +218,7 @@ def chained(vid, title, streams, meta):
     for sname, dirs in streams.items():
         prev, exps = st0, []
         for k, d in enumerate(dirs, 1):
-            prev, ex = observe(prev, os.path.join(d, 'raw', 'after'), g, k)
+            prev, ex = observe(prev, os.path.join(d, 'raw', 'after'), g, k, sequence)
             exps += ex
         per[sname] = exps
         years = len(dirs)
@@ -196,7 +256,7 @@ def build_kx003(ev, out):
         pp = os.path.join(raw, pfile + '-predictions.txt')
         pred = '; '.join(l.strip() for l in open(pp) if l.strip()) if os.path.exists(pp) else ''
         vec = chained('KX-003-' + name, 'KX-003 %s: %s' % (name, title), {'run': [os.path.join(raw, d) for d in dirs]},
-                      (held, tag, verdict, pred, 'KERNEL'))
+                      (held, tag, verdict, pred, 'KERNEL'), sequence=True)
         vec['source'] = {'experiment': 'experiments/kx003', 'spec_rules': 'docs/KERNEL.md',
                          'parity': 'docs/PARITY.md "KX-003 — scores, victory conditions, slower tech, Claim Adjuster, Super Stealth"',
                          'raw_evidence': 'stars-oracle-apparatus evidence/kx003/raw/{%s} (private)' % ','.join(dirs)}
@@ -225,7 +285,7 @@ def build_kx004(ev, out):
         held, tag, verdict = KX4.get(s, (True, 'CONFIRMED', 'random events (comet strike, climate change, new minerals) '
                                          'and Mystery Trader appearance as predicted in every stream'))
         vec = chained('KX-004-' + s, 'KX-004 %s: one year of random events under %d streams' % (s, len(streams)),
-                      streams, (held, tag, verdict, '', 'KERNEL random events'))
+                      streams, (held, tag, verdict, '', 'KERNEL random events'), sequence=True)
         if s == 'S11':
             # S11 tests the original environment: a struck planet whose file
             # still has no separate original has it equal to the current one
@@ -283,6 +343,8 @@ def kx5_samples(vec, ca):
             e = dict({k: v for k, v in e.items() if k != 'tolerance'}, equals=env, sample=True)
         elif e['kind'] == 'message' and e['message_id'] == CA_DRIFT_MSG:
             e = dict(e, sample=True)
+        elif e['kind'] == 'message_sequence':
+            e = dict(e, messages=[dict(m, sample=True) if m['id'] == CA_DRIFT_MSG else m for m in e['messages']])
         out.append(e)
     vec['cases'][0]['expect'] = out
 
@@ -295,7 +357,7 @@ def build_kx005(ev, out):
         streams = {'cycles ' + c[1:]: [os.path.join(rd, c)] for c in sorted(os.listdir(rd), key=lambda c: -int(c[1:]))
                    if re.fullmatch(r'c\d+', c)}
         vec = chained('KX-005-' + run, 'KX-005 %s: %s' % (run, title), streams,
-                      (held, tag, verdict, '', KX5_RULE[run[0]]))
+                      (held, tag, verdict, '', KX5_RULE[run[0]]), sequence=True)
         if run[0] == 'T' and len(streams) == 1:
             st = vec['initial_state']
             ca = {p['id'] for p in st['planets'] if p.get('owner') == 1}

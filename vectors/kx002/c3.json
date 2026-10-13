@@ -1006,6 +1006,28 @@
      "year": 1
     },
     {
+     "kind": "message_sequence",
+     "player": 0,
+     "messages": [
+      {
+       "id": 298,
+       "focus": 7,
+       "params": [
+        7
+       ]
+      },
+      {
+       "id": 56,
+       "focus": 7,
+       "params": [
+        20,
+        7
+       ]
+      }
+     ],
+     "year": 1
+    },
+    {
      "kind": "player",
      "id": 0,
      "equals": {

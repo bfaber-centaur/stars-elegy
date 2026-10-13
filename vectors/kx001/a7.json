@@ -1001,6 +1001,12 @@
      "year": 1
     },
     {
+     "kind": "message_sequence",
+     "player": 0,
+     "messages": [],
+     "year": 1
+    },
+    {
      "kind": "player",
      "id": 0,
      "equals": {

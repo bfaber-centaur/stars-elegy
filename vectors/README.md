@@ -331,6 +331,7 @@ vectors").
 
 | `salvage_at` | salvage at (`x`, `y`) | `minerals`; `observed: "none"` if there was none |
 | `message` | player `player` got message `message_id` | `present` |
+| `message_sequence` | every message player `player` got in the year, in `.M` order (`rg`, `kx001`–`kx005`, `pq`) | `messages`: per message `id`, `focus` and `params`; see "Message sequences" below |
 | `object` | a new or changed map object | the object, as in `initial_state.objects` |
 | `object_gone` | the object `subject` (`{kind, owner, id}`) no longer exists, e.g. a swept minefield | |
 | `minefield` | minefield `owner`/`id` | `x`, `y`, `mines`, `type`, `detonating`; `radius` when the case checks it |
@@ -340,6 +341,58 @@ vectors").
 | `no_battle` | no battle record was written | |
 | `client_estimate` | a value the original client shows on `screen` for `subject` after the year | `field` names the value; `equals` holds it as a number or a short value with its unit, never the client's sentence |
 | `sample` | a random outcome | see below |
+
+### Message sequences
+
+A `message_sequence` lists the messages a player found in its `.M` file for
+the year, in the order the file holds them, which is the order the year
+generated them (MESSAGES.md "How messages work", "Order"). Each entry is:
+
+- `id`: the message kind (MESSAGES.md "Catalogue");
+- `focus`: the focus word as stored (MESSAGES.md "How messages work",
+  focus codes): a planet number, a fleet id with bit 15 set, a battle id
+  with bit 14 set, a part code with bits 14 and 15 set, or a negative code
+  as a 16-bit value;
+- `params`: the slot values in stored order (the Slots column of
+  MESSAGES.md "Catalogue"; "Slot types"). A value is a number: a planet, fleet or player number, a design, a part,
+  a count, an amount or a location coordinate. No message text is stored.
+
+A computer player's file keeps only four kinds (MESSAGES.md "Computer
+players"), so its list is often empty; an empty list is an expectation
+too. The `message` expectations stay as they were; the sequence adds the
+order, repeats and slot values.
+
+**Order rule.** The entries without `sample` are exact: an implementation's
+sequence for that player and year must contain them, with the same `id`,
+`focus` and `params`, in the same relative order. An entry with `sample:
+true` was decided by that stream's draws: where it stands, whether it was
+sent and its values are one sample. When no entry carries `sample`, the
+list is the whole sequence and nothing else may be sent.
+
+An entry is a sample when:
+- the year had a battle and the entry's id is one the battle step sends
+  (Phase P6 in MESSAGES.md: 0x00e–0x022, 0x07e, 0x08d–0x08e, 0x091–0x0a8,
+  0x0ef–0x0f1, 0x0f9–0x0fa, 0x113–0x116, 0x13a–0x13b, 0x144, 0x180), or
+  the level-up 0x050 to a player who fought (a battle can give research);
+- the year had a battle and the entry's id is sent after the battles
+  (Phase P6a to P8a) and its focus is a fleet that fought or a planet where
+  a battle was;
+- in `rg`, it is not in a longest common subsequence of the gen stream's
+  sequence and an alternative stream's sequence for the same player
+  (sent, its values or its place differed);
+- in the single-stream `kx005` runs T1 and T2, it is the drift message
+  0x15c.
+
+In several-stream vectors (`kx004`, `kx005`, `pq` repeats), a sequence that
+differed between streams is listed once per stream with `stream`, as any
+other expectation.
+
+The repeated block of a year without orders (MESSAGES.md "Years without
+orders") was not seen in these corpora. Of the 1222 player files checked
+against the year before, 24 began with the previous year's block, and each
+of those blocks was one message the year sends again in its own place:
+0x03f for a planet still without a queue (23) and 0x036 for the same build
+(1).
 
 ### Tags
 

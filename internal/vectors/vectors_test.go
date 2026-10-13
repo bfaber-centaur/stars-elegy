@@ -270,3 +270,89 @@ func TestRG001Artifact(t *testing.T) {
 		t.Errorf("artifacts on %v: want 81, not 32 or 77", art)
 	}
 }
+
+// TestMessageSequence checks that each player's message sequence holds the
+// same ids as its `message` expectations, in a corpus of each builder, and
+// that Check refuses a malformed entry.
+func TestMessageSequence(t *testing.T) {
+	type key struct {
+		stream       string
+		year, player int
+	}
+	for _, file := range []string{"../../vectors/rg/rg002.json", "../../vectors/kx005/t0.json", "../../vectors/pq/c01.json"} {
+		v, err := Load(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids, seqs := map[key]map[int]bool{}, map[key]map[int]bool{}
+		summaries, drawn := 0, 0
+		for _, c := range v.Cases {
+			for _, e := range c.Expect {
+				if e.Player == nil {
+					continue
+				}
+				k := key{e.Stream, e.Year, *e.Player}
+				switch {
+				case e.Kind == "message" && e.Present != nil && *e.Present:
+					if ids[k] == nil {
+						ids[k] = map[int]bool{}
+					}
+					ids[k][*e.MessageID] = true
+				case e.Kind == "message_sequence":
+					if seqs[k] != nil {
+						t.Errorf("%s: two sequences for %+v", file, k)
+					}
+					seqs[k] = map[int]bool{}
+					for _, m := range e.Messages {
+						seqs[k][m.ID] = true
+						// battle summaries (MESSAGES.md 0x091-0x0a8, 0x113-0x116) follow the draws
+						summary := m.ID >= 0x091 && m.ID <= 0x0a8 || m.ID >= 0x113 && m.ID <= 0x116
+						if summary && !m.Sample {
+							t.Errorf("%s %+v: battle summary %#x not a sample", file, k, m.ID)
+						}
+						if summary {
+							summaries++
+						}
+						// a build at planet 95 that another stream did not repeat (no battle there)
+						if c.ID == "RG-002-2464" && *e.Player == 0 && m.ID == 0x036 && m.Focus == 95 && m.Sample {
+							drawn++
+						}
+					}
+				}
+			}
+		}
+		if len(seqs) == 0 {
+			t.Errorf("%s: no message_sequence", file)
+		}
+		if strings.Contains(file, "rg002") && (summaries == 0 || drawn != 1) {
+			t.Errorf("%s: %d battle summaries, %d drawn builds at planet 95 in 2464; want some and 1", file, summaries, drawn)
+		}
+		for k, s := range seqs {
+			want := map[int]bool{}
+			for _, st := range []string{"", k.stream} { // ids every stream got are listed once, without a stream
+				for id := range ids[key{st, k.year, k.player}] {
+					want[id] = true
+				}
+			}
+			if fmt.Sprint(s) != fmt.Sprint(want) {
+				t.Errorf("%s %+v: sequence ids %v, message ids %v", file, k, s, want)
+			}
+		}
+	}
+	p := 0
+	for _, e := range []Expectation{
+		{Year: 1, Kind: "message_sequence", Player: &p},
+		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 0x183}}},
+		{Year: 1, Kind: "message_sequence", Player: &p, Messages: []Message{{ID: 1, Params: make([]int, 8)}}},
+	} {
+		bad := Vector{ID: "x", Years: 1, InitialState: &State{Players: []Player{{ID: 0}}},
+			Cases: []Case{{ID: "x", Tag: "MEASURED", Expect: []Expectation{e}}}}
+		found := false
+		for _, err := range bad.Check() {
+			found = found || strings.Contains(err.Error(), "message_sequence")
+		}
+		if !found {
+			t.Errorf("Check accepts %+v", e)
+		}
+	}
+}

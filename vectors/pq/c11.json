@@ -1034,6 +1034,20 @@
     },
     {
      "year": 1,
+     "kind": "message_sequence",
+     "player": 0,
+     "messages": [
+      {
+       "id": 53,
+       "focus": 7,
+       "params": [
+        7
+       ]
+      }
+     ]
+    },
+    {
+     "year": 1,
      "kind": "message",
      "player": 0,
      "message_id": 62,
