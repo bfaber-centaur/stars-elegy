@@ -143,3 +143,49 @@ Battle at (1571,1434), over planet 94, players 1 and 5:
 Stream 3700 has no token for player 1's fleet 88, so the stacks differ.
 In both battles, every token that is present starts on the same square
 in all three streams.
+
+## Year 9 (2471): the mine stop before (1388,1386)
+
+The question (from the RG-003 ledger): Elegy fights a battle at
+(1388,1386) between players 3 and 6, and the recorded year has none. Is
+the recorded outcome, a minefield stop of player 6's fleet 2, a drawn
+result whose draw could be replayed, or does it depend on the stream?
+
+Observed (apparatus `evidence/rg003/run/y09`, one run per stream; `gen2`
+repeated the recorded run byte for byte). At the start, fleet 6/2 (ten
+ships, 423 damage units on 30% of them) and fleet 3/2 (one ship) were
+both at (1364,1378), moving at warp 5 toward (1388,1386), inside player
+1's standard minefield at (1387,1441) (4,231 mines).
+
+| Stream | Fleet 6/2 after the year | Battle at (1388,1386) | Player 1's field after |
+|---|---|---|---|
+| recorded (cycles 20000, every order file supplied) | at (1385,1385), 268 damage units on all ten ships | none | 3,673 mines |
+| cycles 20000, the host planning for the computer players (`plan`) | at (1388,1386), damage unchanged | players 3 and 6 | 3,759 mines |
+| cycles 1490 | at (1388,1386), damage unchanged | players 3 and 6 | 3,759 mines |
+| cycles 3700 | at (1388,1386), damage unchanged | players 3 and 6 | 3,759 mines |
+
+In the three battles the start tokens were the same two stacks: 6/2 with
+its start damage, and 3/2 undamaged. The two alternative streams ran
+from the same files and orders as the recorded year; `plan` had the
+host write the computer players' orders, so its orders may differ.
+
+Reading (MEASURED, RG-003-Y9-2471): the stop is a minefield hit, drawn
+in the recorded stream only. Fleet 6/2 stopped about 22 ly into its
+25-ly leg, took mine damage, and the field lost 86 mines more than in
+the other streams (the stop's loss, `OBJECTS.md` "Hits on moving
+fleets"). With the rule there (effective warp 5, standard field, 3 per
+mille per ly) the leg makes about 21 draws, so a stop has odds of about
+6% per stream (inferred from the geometry, not counted). The battle
+Elegy fights is what the original did in 3 of the 4 streams.
+
+The draw cannot be replayed from this record. The recorded year's draws
+start at seeding (`random_start`, tick 164), but the hit's position in
+the stream comes after every earlier draw of the year (`KERNEL.md`
+"Random draws"): the player shuffle, the draws before movement, and the
+movement and minefield draws of every fleet that moves before 6/2,
+including other fleets' stops, which end their own draws early. Elegy
+draws from its own generator, so its stream never reaches that position
+with the same values. An exact replay needs the original's generator in
+the harness and the whole year's draw order up to movement. Until then
+the stop, the missing battle and 6/2's position and damage are samples.
+No new oracle case is needed for this question.
