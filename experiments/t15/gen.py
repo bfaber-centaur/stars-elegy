@@ -86,3 +86,22 @@ if __name__ == '__main__':
     for name, args in VARIANTS2.items():
         with open(os.path.join(sys.argv[1], name + '.spec'), 'w') as f:
             f.write(spec2(name, *args))
+
+
+# ---------------------------------------------------------------- DC-6 (PREDICTION-DC6.md)
+# The check against the load phase: a cargo pod above the owner's construction.
+C8 = dict(T26, con=8)
+HW0 = (1240, 1299)   # player 0's homeworld, planet 17
+VARIANTS3 = {
+    't15-load': (C8, T26,
+                 ['design 0 0 Scout, 1 Quick Jump 5, empty, 1 Super Cargo Pod = Pod Scout',     # construction 9
+                  'design 0 1 Scout, 1 Quick Jump 5, empty, 1 Cargo Pod = Small Pod Scout'],     # construction 3
+                 [f'fleet 0 0 planet 17 at {HW0[0]} {HW0[1]} ships 0:1 fuel 50 task transport 1:0,-,-,-,-',
+                  f'fleet 0 1 planet 17 at {HW0[0]} {HW0[1]} ships 1:1 fuel 50 task transport 1:0,-,-,-,-',
+                  'fleet 0 2 at 1010 1010 ships 0:1 fuel 50 cargo 80 0 0 0']),
+}
+
+if __name__ == '__main__':
+    for name, args in VARIANTS3.items():
+        with open(os.path.join(sys.argv[1], name + '.spec'), 'w') as f:
+            f.write(spec2(name, *args))
