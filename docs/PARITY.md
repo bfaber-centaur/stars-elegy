@@ -3237,9 +3237,33 @@ battle-plan rules were committed first (5aaa4d1). Details:
   tool that defaulted to 3 dampeners in the slot; it was not a game
   discrepancy.
 
+### Salvage from several battles beside lying salvage (E-8)
+
+CONFIRMED by prediction, in 4 of 4 streams (2026-10-13,
+`experiments/e8`). The prediction was pushed to the apparatus at
+03:48:58Z (38ba2fdb), and the runs started at 03:49:06Z. Three deep-space
+battles in one year: player 0's fleets 1, 2 and 3 (one Heavy Blaster
+Battleship each) killed two of player 1's Laser Destroyers at each of X,
+Z and Y. Salvage was already lying, unmarked, at two of those points:
+player 1's number 1 at X (250/50/30) and player 0's number 0 at Y
+(60/0/0). Every stream had two kill events of one Destroyer per battle.
+
+- The lying salvage decayed by `⌊m/10⌋`, at least 10 kT: 250/50/30 became
+  225/40/20, and 60/0/0 became 50/0/0. Plain `⌊m/10⌋` would give 225/45/27
+  and 54/0/0.
+- No battle joined salvage already lying at its point, whether it
+  belonged to the victims' owner (X) or to the other player (Y). Each
+  battle left a new object of its own, and the lying objects kept only
+  their decayed minerals.
+- The new objects took player 1's lowest unused numbers in battle order
+  (X, Z, Y by first fleet): 0, 2 and 3, with number 1 already in use. "Next
+  after the highest" would give 2, 3 and 4.
+- Each new object held 6/4/2 with the mark set, as in CB-058 run B. No
+  other object appeared.
+
 ### Not tested
 
-Salvage at more than one point (E-8), the firing live-token recheck (no
+The firing live-token recheck (no
 observable effect), minefields. Mystery Trader items from battle were
 never observed (CB-046). Bombing and invasion: see
 "Planet Takeover".

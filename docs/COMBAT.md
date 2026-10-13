@@ -1319,7 +1319,11 @@ Then:
   CONFIRMED, CB-040): a quarter is lost
   (`S − S/4`).
   - The rest goes into this battle's salvage object. Every kill event
-    in the battle adds to it.
+    in the battle adds to it. The object is new even when salvage of
+    either owner already lies at that point, and it takes its owner's
+    lowest unused packet number (CONFIRMED by prediction, E-8, 4 of 4
+    streams; `PARITY.md` "Salvage from several battles beside lying
+    salvage (E-8)").
   - No salvage object is placed exactly on a planet's position.
   - If all three minerals of an addition are 0, each becomes `rand(10)`.
     This is redrawn until the total is above 0.
@@ -1518,7 +1522,6 @@ Not yet tested:
 
 - the exact plan-0 value X at the first location of a turn (only that it
   was never a player; Elegy's chosen rule is above);
-- salvage at more than one point;
 - the host's 16-plan limit, which needs crafted orders.
 
 The firing live-token recheck has no observable effect (see "Firing").

@@ -627,7 +627,7 @@ default queue; only TK-106, TK-107 and TK-108 give player 0 a queue and
 them). `ug` and `rw` were not changed (`ug` is new-game vectors; `rw` came
 out identical).
 
-**WT-001 player-0 wormhole bit (explained, 2026-10-13).** WT-001-G
+**WT-001 player-0 wormhole bit (UNRESOLVED until WG-1, explained 2026-10-13).** WT-001-G
 expects ends 2 and 3 known to players 0 and 1, and it is not flagged a
 sample. Player 0's bit comes from its Scouts' JOAT built-in scanner
 (`SCANNING.md` "Ship designs" (JOAT hulls): 520 / 260 at electronics 26). Ends 2 and 3 were
@@ -645,8 +645,8 @@ current record; the main ones are:
 
 - Fleet Operations: split, direct transfers and merges, direct cargo
   placement, steal mode (need host-accepted order files, serial-gated).
-- Combat: salvage at more than one point (E-8), Mystery Trader items from
-  battle (never observed).
+- Combat: Mystery Trader items from battle (never observed). Salvage
+  at more than one point (E-8) was run on 2026-10-13 (`experiments/e8`).
 - Scanning: SD detection of cloaked fleets (S-21), AR planet scanners
   (S-11), chase retargeting (S-24), more than two players, planet reports
   after bombing, minefield hits or a lost planet.

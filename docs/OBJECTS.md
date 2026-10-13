@@ -491,7 +491,9 @@ After laying, every fleet and then every starbase sweeps.
   16,291 does not). A merged mineral that would pass 32,767 kT becomes
   32,760. Otherwise a new packet is made.
 - **Numbering (BINARY-ONLY).** A new packet takes its owner's lowest
-  unused packet number, from 0. Packets use the same numbering rule as
+  unused packet number, from 0 (for battle salvage, CONFIRMED by
+  prediction, E-8: with number 1 in use, three battles' objects took 0,
+  2 and 3). Packets use the same numbering rule as
   minefields ("Limits" above, MEASURED there by MF-11 and MF-13): numbers
   0..510, and 511 only when no other space object sorts after the owner's
   packets; the universe holds at most 4050 objects. Packets and salvage
@@ -640,13 +642,17 @@ CB-040).
   every loss and dump in that battle goes into it, whoever's ships they
   were, and it never joins salvage already lying at that spot, from an
   earlier year or not (CONFIRMED in part: one object per battle location,
-  CB-001 B1). A mine hit's minerals join the first salvage object (in
+  CB-001 B1; not joining salvage from an earlier year lying at the point,
+  of the victims' owner or of another player, CONFIRMED by prediction,
+  E-8, 4 of 4 streams). A mine hit's minerals join the first salvage object (in
   object order) lying exactly at the stop point, of any owner and age, or
   make a new one. Scrapping in deep space always makes a new object. In
   every case where minerals are added, the object's whole contents are
   taken out and added back with the new ones under the 30,000 kT limit.
 - **Decay.** Once a year, with packets (step 5 of "Turn placement"), each
-  non-empty mineral loses `⌊m/10⌋`, at least 10 kT, and not below 0. An
+  non-empty mineral loses `⌊m/10⌋`, at least 10 kT, and not below 0
+  (the 10 kT floor CONFIRMED by prediction for unmarked salvage, E-8,
+  4 of 4 streams: 250/50/30 became 225/40/20 and 60/0/0 became 50/0/0). An
   object with nothing left is removed. An object skips the first decay
   after it is made or added to: making or adding marks it, and the next
   decay only clears the mark. So salvage from a mine hit or a deep-space
