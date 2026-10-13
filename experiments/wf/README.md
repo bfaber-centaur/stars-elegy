@@ -128,3 +128,60 @@ before movement (M), and the waypoint does not keep the fleet target.
 Other ways a target can be lost remain BINARY-ONLY: scrapped, merged,
 out of fuel, a minefield, a wormhole. Waypoint index 2 and up, waypoint
 0, a kill by a third player, and targets other than fleets are NOT RUN.
+
+## WK-2: several followers, and waypoints 2 and up, aimed at a fleet destroyed in battle
+
+Question (coordinator, from two ASSUMPTIONs in Elegy's WK-1 code): (a) when two or
+more fleets have waypoint 1 aimed at the same fleet and it dies in
+battle, does each follower get its own 0x028? (b) when one fleet has
+gone-fleet targets at waypoint 1 and at waypoint 2 or later, how many
+0x028 does it get, and what do waypoints 2 and up become?
+
+Predictions: `WK2-PREDICTION.md`, pushed alone in 7862a21. The activity
+API shows the push at 2026-10-13T13:49:00Z, and the runs started at
+13:49:30Z. Spec: `wk2.spec` (a state edit, as WK-1). Raw evidence:
+private apparatus `evidence/wk2`. One pinned year at cycles 20000, 30000
+and 14000. Every victim fleet died in all three streams, and the fleet,
+waypoint and 0x028 results below are the same in all three. The raw
+files are not identical: the host file and both player files differ
+between streams, and the battle records differ with the cycles value. Each victim pair flew 20 ly due south before it died, so
+its death point differs from its start.
+
+| Case | Follower's waypoints after the year (3 of 3 streams) | 0x028 to player 0 | Result |
+|---|---|---|---|
+| A: 0/11, 0/12, 0/13, waypoint 1 aimed at 1/1 | Each waypoint 1: deep space at (1100,1340), where 1/1 died | 3: (11,513), (12,513), (13,513) | CONFIRMED by prediction |
+| B1: 0/14, waypoints 1 and 3 aimed at 1/2, waypoint 2 deep space | Waypoints 1 and 3: deep space at (1300,1240); waypoint 2 unchanged | 2: (14,514) twice | CONFIRMED by prediction |
+| B2: 0/15, waypoint 1 aimed at 1/3, waypoint 2 at 1/4 | Waypoint 1: (1200,1220); waypoint 2: (1380,1200); both deep space | 2: (15,515), (15,516) | CONFIRMED by prediction |
+| B3: 0/16, waypoint 1 deep space, waypoint 2 aimed at 1/5 | Waypoint 1 unchanged; waypoint 2: deep space at (1060,1180) | 1: (16,517) | CONFIRMED by prediction |
+
+The host file and player 0's file agree. No follower arrived. Each moved
+about 16 ly toward waypoint 1.
+
+So each waypoint aimed at a fleet destroyed in battle is handled on its
+own: one 0x028 per such waypoint, and the waypoint becomes deep space
+where the fleet died. That holds whatever its index (1 to 3 here) and
+however many fleets follow the same victim. The alternatives in the
+pre-run record (one message per victim, one per follower fleet, only
+waypoint 1 checked, the coordinates before movement, the waypoint
+removed) did not occur.
+
+MEASURED, not predicted:
+- The 0x028 messages came in the sequence (11,513), (12,513), (13,513),
+  (14,514), (14,514), (15,515), (15,516), (16,517). That fits follower
+  order then waypoint order, but it also follows victim object id and
+  battle number, and in B2 waypoint order equals victim-id order. This
+  design cannot separate them, so the ordering rule is UNRESOLVED.
+- Each rewritten deep-space waypoint carries its own waypoint index in
+  its object field (1, 2 or 3). WK-1's case D showed 1 at waypoint 1.
+  Deep-space waypoints written by the builder carry 0.
+
+Whether player 0 saw the victims when the orders were set was not
+recorded. Player 0's file before the year lists no fleets, and the
+pre-run record's phrase "a fleet target the player sees" is not
+backed by this evidence.
+
+Scope: victims destroyed in battle by the waypoint owner, at deep-space
+points, waypoint indexes 1 to 3. Waypoint 0, a kill by a third player,
+and targets other than fleets are NOT RUN. So is the planet substitution
+at waypoints 2 and up, though B's deep-space results follow the same
+rule as waypoint 1.

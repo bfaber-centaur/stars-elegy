@@ -1546,6 +1546,15 @@ ledgers.
 
 ## Known fragility
 
+- **One dump-tool build per concurrent job** (observed 2026-10-13,
+  DA-1). `tools/fleetlab/fleetlab` rebuilds its cache
+  (`${FLEETLAB_CACHE:-$HOME/.cache/fleetlab}`) when a `.java` file in the
+  checkout is newer than its class file. It deletes the build first. Two
+  checkouts that share one cache, such as a worktree made while another
+  checkout's build is running, rebuild it under each other. One vector
+  build then gave a different result (its order count changed) with no
+  error, and the next one failed. Give each checkout or concurrent job its
+  own `FLEETLAB_CACHE`.
 - `stop` kills DOSBox outright. Exit Stars! first (`turn` does), and take
   snapshots only while stopped.
 - Observed once: a `ctrl+F10` sent from `start` right after the window

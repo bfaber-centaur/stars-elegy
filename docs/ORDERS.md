@@ -894,7 +894,15 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     players' waypoints (MEASURED). For other losses (scrapped, merged, out
     of fuel, minefield, wormhole) the planet substitution remains
     BINARY-ONLY. Waypoint index 2 and up, waypoint 0, a kill by a third
-    player, and targets other than fleets are NOT RUN.
+    player, and targets other than fleets are NOT RUN. (Updated
+    2026-10-13: "Waypoint index 2 and up" was NOT RUN when this was
+    written; WK-2 below has since run waypoints 2 and 3.) **WK-2 (`PARITY.md` "Several followers, and
+    waypoints 2 and up, aimed at a fleet destroyed in battle (WK-2)"),
+    2026-10-13:** each such waypoint is handled on its own, at waypoint
+    indexes 1 to 3 and with several followers of one victim. Each gets
+    one 0x028 and becomes deep space where the victim died. CONFIRMED by
+    prediction, 3 of 3 streams. The planet substitution at waypoints 2
+    and up is NOT RUN.
   - **The target exists but the player does not see it:** message 0x029
     naming the planet if the target is orbiting one, else 0x02a. A target
     whose coordinates were frozen by a gate or wormhole jump also gets
