@@ -6749,9 +6749,10 @@ named planet 94 (MEASURED). Year 7's fleet 5/45 did the same with planet
 `evidence/wk1`. One pinned year (cycles 20000 and 30000), identical
 streams. (Updated 2026-10-13: "identical" holds for every line of the
 results, the fleets, waypoints and 0x028 messages. The raw host file
-and both player files differ between the two streams.) Player 0's HB Battleships killed player 1's Laser Destroyers at
-three places. Each victim fleet was followed by a player 0 freighter 100
-ly away, whose waypoint 1 was aimed at it.
+and both player files differ between the two streams.) Player 0's HB
+Battleships killed player 1's Laser Destroyers at three places. Each
+victim fleet was followed by a player 0 freighter 100 ly away, whose
+waypoint 1 was aimed at it.
 
 | Case | Victims | Follower's waypoint 1 after the year | Result |
 |---|---|---|---|
@@ -6812,6 +6813,51 @@ rule is UNRESOLVED. A rewritten deep-space waypoint's object field holds
 its own waypoint index (MEASURED). Waypoint 0, a kill by a third
 player, targets other than fleets, and the planet substitution at
 waypoints 2 and up are NOT RUN.
+
+## An enemy minefield centred on a planet with no scanner (MV-1)
+
+Status: CONFIRMED by prediction, 3 of 3 streams. Lane D asked for it to
+settle the mechanism behind RG-004's minefield known_to lines. There, two
+of player 6's fields, each centred exactly on a player 0 planet with no
+scanner and laid that year by a player 6 fleet in orbit, were known to
+player 0. Two readings fit: the planet itself sees what sits at its
+position (co-location), or player 0 learned of the field by seeing the
+laying fleet. The prediction (`experiments/mv/PREDICTION.md`) was pushed
+alone at 14:30:28Z (activity API), before the runs at 14:30:47Z.
+Results: `experiments/mv/README.md` "MV-1". Raw evidence: private
+apparatus `evidence/mv1`.
+
+The setup is a state edit. Every field but L's was written straight into
+the host file, so no fleet ever laid it. Player 1 owns every field, and
+each started known only to player 1. Player 0 has no fleets, and its
+only planetary scanner is at planet 13 (control S). One pinned year was
+run (cycles 20000, 30000 and 14000). The results are the same in all
+three streams; the raw host and player files differ.
+
+| Case | Player 0 planet and field | Known to player 0 after the year |
+|---|---|---|
+| Z | Field centred exactly on scannerless planet 18 (d² 0), no fleet | Yes |
+| D1 | Scannerless planet 7 inside a field, 1 ly from its centre (d² 1) | No |
+| D1280 | Scannerless planet 6 inside a field at d² 1280 | No |
+| N | Field in deep space, no planet | No |
+| S | Field 10 ly from planet 13, which has a planetary scanner | Yes |
+| L | Field laid this year by a player 1 fleet in orbit at scannerless planet 1 | Yes; the fleet is in player 0's file too |
+
+All CONFIRMED by prediction. S shows that a field already in the host
+file was scanned again in this year (one pinned year), so by the
+pre-run's reading Z's result separates the two: an owned planet with no
+scanner sees a minefield centred exactly on it, with no fleet involved
+(co-location). At d² 1, with the planet inside the field, it does not.
+Scope: player 0 at tech 3 with electronics 0, standard fields, one
+year, one planet per case. That agrees with the RG-002/RG-003 counter-case
+at d² 1280. "Known" here means the host file's known mask gains player
+0's bit and player 0's file lists the field.
+
+MEASURED, not predicted: in the host file each field's seen word ends
+equal to its known mask (it was 0 in the start). In player 0's file the
+known mask of Z's and S's fields reads 3, but the field laid this year
+reads 1, and every listed field's seen word reads 1. Packets and salvage
+at d² 0 were not covered and stay ASSUMPTION in Elegy.
 
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
 
@@ -6898,7 +6944,9 @@ load passes. Predictions (`experiments/ns/NS2-PREDICTION.md`) were pushed
 at 05:16:03Z (activity API), before the runs at 05:17:07Z. Results:
 `experiments/ns/README.md` "NS-2". Raw evidence: private apparatus
 `evidence/ns2`. One pinned year in two streams (cycles 20000 and 30000),
-which are identical. Every fleet is player 0's empty Medium Freighter with
+which are identical. (Updated 2026-10-13: "identical" holds for the
+values the results list. The raw host file and both player files differ
+between the two streams.) Every fleet is player 0's empty Medium Freighter with
 "load all ironium, load all boranium". Every packet is player 0's, holding
 100 kT boranium.
 
