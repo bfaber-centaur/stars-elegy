@@ -1006,7 +1006,9 @@ stolen 23 and 88 stored as 12 and 44).
   field, the new level and the field research continues in (Generalized
   Research players get a variant). It is followed by one message per part
   that the level makes available: a part the race may use (race-restricted
-  parts and Mystery Trader parts the player does not own are skipped)
+  parts and Mystery Trader parts the player does not own are skipped; a
+  Total Terraforming race is also not told about the three ±3 single-axis
+  terraforms, though it may build them, BINARY-ONLY, `MESSAGES.md`)
   whose requirement in that field equals the new level **and** whose other
   five requirements are already met. That the check is **not** limited to
   the leveled field is MEASURED (KX-005 R1: energy 9 → 10 announced Bear
