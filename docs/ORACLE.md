@@ -1141,7 +1141,9 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   thing raw HEX
   ```
 
-  The game loaded, updated and rewrote all four kinds. `combatlab dump`
+  The game loaded, updated and rewrote all four kinds. It also creates,
+  keeps and rewrites salvage, a packet-type record (tk2/tk111 year 2, SV-1).
+  CombatLab has no salvage line. `combatlab dump`
   prints `things count=` and a `thing id=… type=…` line per record with its
   decoded fields and raw bytes.
   Type numbers: 0 minefield, 1 packet or salvage, 2 wormhole, 3 Mystery

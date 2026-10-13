@@ -96,22 +96,23 @@ OB, PG, PQ, RD, SC, SL, TK, UG). Every record decoded cleanly with the slot coun
 | field | research field |
 | hab | habitability axis and value |
 
-### Object ids in slots (MEASURED, SV-1)
+### Object ids in slots
 
 An `object` slot holds the object's record id from the host file,
 `type << 13 | owner << 9 | number` (`ORACLE.md` "Universe objects experiments", the "Objects as records" note):
 
-| Object | type | Id | Evidence |
-|---|---|---|---|
-| minefield | 0 | owner·512 + number | 0x0be (SW-1, "Sweep slots") |
-| packet | 1 | 0x2000 + owner·512 + number | host-file records only: no stored message seen names a packet object |
-| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF |
-| wormhole | 2 | 0x4000 + number | host-file records |
-| Mystery Trader | 3 | 0x6000 + number (numbers 0 to 12 seen) | host-file records (RG-004 and OB runs) |
+| Object | type | Id | Evidence | Label |
+|---|---|---|---|---|
+| minefield | 0 | owner·512 + number | 0x0be (SW-1, "Sweep slots") and host-file records | MEASURED |
+| packet | 1 | 0x2000 + owner·512 + number | host-file records only (SV-1, PK-1, OB-028): no stored message seen names a packet object | MEASURED (records); in messages NOT OBSERVED |
+| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF | MEASURED |
+| wormhole | 2 | 0x4000 + number | host-file records (WT-001..WT-005, OB runs) | MEASURED (records); in messages NOT OBSERVED |
+| Mystery Trader | 3 | 0x6000 + number (numbers 0 to 12 seen) | host-file records (RG-004 and OB runs) | MEASURED (records); in messages NOT OBSERVED |
 
-- **Salvage is a packet-type record.** It has destination 1023 (none) and
-  speed field 4, and its owner is the owner of the scrapped fleet.
-- **Packets and salvage share one number pool per owner.** In SV-1, player 0
+- **Salvage is a packet-type record (MEASURED, SV-1, tk2/tk111, WF).** In
+  the records seen it had destination 1023 (none) and speed field 4, and
+  its owner was the owner of the scrapped fleet.
+- **Packets and salvage share one number pool per owner (MEASURED, SV-1).** In SV-1, player 0
   owned packet 0 and scrapped two fleets in deep space. The salvage got
   numbers 1 and 2 (ids 8193 and 8194). Player 1 owned packets 0 and 1, and
   its salvage got number 2 (id 8706). Both streams gave the same result.
@@ -123,8 +124,11 @@ An `object` slot holds the object's record id from the host file,
     gave 0;
   - WF (wf-gone): player 1's fleet 0 gave 512;
   - RG-002 year 1: player 0's fleet 6 gave 6;
-  - tk2/tk111: player 0's fleet 7 gave 0x1800 + 7. The 0x059/0x05a/0x05c/0x05d
-    messages in the same year carried 0x1800 + n for fleets 0 to 8.
+  - tk2/tk111: player 0's fleet 7 gave 0x1800 + 7 (6151), the record
+    `M1 0x05b focus=0xfffa slots=[8192, 6151]` from decoding apparatus
+    `evidence/tk2/tk111/run/after.dump` (the `CB.M1 events raw=` line)
+    with `tools/fleetlab/events.py`. The 0x059/0x05a/0x05c/0x05d messages
+    in the same year carried 0x1800 + n for fleets 0 to 8 (6144 to 6152).
 
   What sets the owner bits and 0x1800 here is not known.
 
@@ -357,7 +361,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 - **Order within movement (per fleet, fleets in number order):** serial refusal (0x102) → engine failure (0x0f2). Then gate path: 0x0e6/0x0de/0x147/0x0e2/0x0e5/0x15e → cargo dump 0x0ec/0x0ed/0x0ee → jump outcome 0x0e3/0x0e4/0x0e7/0x0e8–0x0eb. Or normal path: AR colonist loss 0x0c1 → warp-10 losses 0x0df/0x0e0/0x0e1 → fuel 0x027/0x08b → minefield 0x0c5–0x0cc/0x15f → ram scoop 0x0f3 → radiation 0x074. Once every fleet has moved: 0x04e / 0x137.
 - **Minefield message choice:** no damage (speed bump) → stopped; damage with no kills → damaged; some kills → ships destroyed; all ships → annihilated. A destroyed fleet always gets the plain annihilation ids (0x0c8/0x15f/0x0cc/0x162), even in a detonation. The victim is not told when it owns the field; the field owner is always told. Damage is shown before shields and capped at 32760 (CONFIRMED, MF-1..MF-12).
 - **Detonation:** messages give the field centre, not the fleet's position. A speed bump that detonates sends "stopped" messages (0x0c5/0x0c9) even to fleets that were not moving (CONFIRMED, MF-7). A detonating standard or heavy field that does no damage sends nothing (BINARY-ONLY).
-- **Sweep slots (0x0be, 0x0c2, 0x0f4).** One slot is one 16-bit word; the mines swept take two (low word, then high word). MEASURED on 87 0x0be, 54 0x0c2 and 43 0x0f4 records (ob/ob007, ob/ob010, cs/cs-003, mf/mf01–mf15, RG-003 year 11, cb056, zmd) and the pinned case SW-1 (PARITY.md, "Sweep message slots").
+- **Sweep slots (0x0be, 0x0c2, 0x0f4).** One slot is one 16-bit word. The mines swept take two slots, low word then high word; the high word was 0 in all 184 records, so the two-slot reading is inferred from the slot count. MEASURED on 87 0x0be, 54 0x0c2 and 43 0x0f4 records (ob/ob007, ob/ob008, ob/ob010, cs/cs-003, mf/mf01–mf15, RG-003 year 11, cb056, zmd) and the pinned case SW-1 (PARITY.md, "Sweep message slots"). The counts include the same year's records repeated across cycle runs (for example ob010 at six cycles values), so they are not independent cases; apparatus `evidence/sw1/sweep-messages.txt` lists every record with its source.
 
   | Message | Slots |
   |---|---|
@@ -415,7 +419,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x08c | alchemy made a number of kT of each mineral | one queue item's processing turned resources into minerals (alchemy items completed, plus alchemy bought for the next item when an auto-alchemy item is in front of it) | planet owner | planet, kT | planet | P4 | CONFIRMED (KX-001, PQ-001) |
 | 0x0b9 | scanner order cancelled: planet already has a scanner | production reaches a scanner order on a planet that already has a planetary scanner (planet makes > 0 resources); order removed | planet owner | planet | planet | P4 | BINARY-ONLY |
 | 0x0ba | ships built but lost because the player is at the fleet limit | player already has 512 fleets and no own fleet at the planet can take the new ships; resources spent, order dropped | planet owner | planet, count, design | planet | P4 | BINARY-ONLY |
-| 0x0cd | planet built a starbase that can build no ships | a starbase design order completes. Every completed starbase gave 0x0cd, whatever its dock: Orbital Fort (PD-1, PK-1), Space Dock and Space Station (SL-12), Ultra Station (SL-12, player 1), Space Station (RG-003 year 8). Death Star NOT RUN | planet owner | planet, design (owner·32 + 16 + starbase design index) | planet | P4 | MEASURED (sl/sltool, SL-12, PD-1, PK-1, RG-003); contradicts the dock rule below |
+| 0x0cd | planet built a starbase that can build no ships | a starbase design order completes. Every completed starbase seen gave 0x0cd, for the hulls Orbital Fort, Space Dock, Space Station and Ultra Station (sources in the note below). Death Star NOT RUN. **Corrected 2026-10-13**: this row read "a starbase design order completes and the hull has no ship-building capacity", "planet, design", "CONFIRMED (sl/sltool, SL round 1)"; the trigger was the BINARY-ONLY dock rule, which the turn files contradict | planet owner | planet, design (owner·32 + 16 + starbase design index) | planet | P4 | MEASURED (sl/sltool, SL-12, PD-1, PK-1, RG-002, RG-003); contradicts the dock rule below |
 | 0x0ce | planet built a starbase; can now build ships up to a hull mass | as 0x0cd, hull with a mass limit | planet owner | planet, design, kT | planet | P4 | BINARY-ONLY; NOT OBSERVED (a Space Dock gave 0x0cd, SL-12) |
 | 0x0cf | planet built a starbase; can now build ships of any size | as 0x0cd, hull with no mass limit | planet owner | planet, design | planet | P4 | BINARY-ONLY; NOT OBSERVED (Space Station and Ultra Station gave 0x0cd, SL-12) |
 | 0x0d1 | packet broke up: no mass driver | coded for a packet completed at a planet without a mass driver | planet owner | planet | planet | P4 | NEVER SENT (inferred: such packet orders are removed or capped to 0 before anything is built) |
@@ -437,8 +441,12 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 | 0x15c | Claim Adjuster engineers moved a planet's underlying hab by 1 | end of turn, Claim Adjuster planet: pick a random axis; if it is not immune and the original value is not already ideal, with chance 1/10 and (population ≥ 100,000 or a random roll below population/100 out of 1000) the original value moves 1 toward ideal | planet owner | planet, hab | planet | P7 | BINARY-ONLY |
 
 - Order inside production (P4): planets are handled one at a time in planet-number order. For one planet: the no-queue message (0x03f), or for each order in turn its checks (0x0b9, 0x129, 0x12a, 0x12f), alchemy (0x08c) and build messages; then 0x03e. Population messages (P4a) come after all planets, then the random events in this order: comet, climate change, mineral discovery (P4c). Claim Adjuster messages (0x15c before 0x156 for the same planet) and then remote terraforming come at the end of the turn (P7).
-- **0x0cd–0x0cf (contradiction, preserved).** The binary reading picks 0x0cd, 0x0ce or 0x0cf by the new hull's dock (no dock, limited, unlimited). In the turn files, every starbase built gave 0x0cd: Orbital Forts, a Space Dock, Space Stations and an Ultra Station (MEASURED: SL-12, PD-1, PK-1, RG-003 year 8). No 0x0ce or 0x0cf record appears anywhere in the preserved evidence (about 67,600 decoded messages). For Elegy, the stored id is 0x0cd for every hull seen. Whether 0x0ce/0x0cf are reachable at all, or the dock text is chosen only when the message is displayed, is UNRESOLVED. Death Star is NOT RUN.
-  - **Design slot:** the owner's design number. Starbase designs are 16 + their index, plus 32 per owner number: player 0's index 0, 1 and 2 gave 16, 17 and 18, and player 1's Ultra Station (index 2) gave 50 (MEASURED, SL-12, once for player 1). Ship designs in 0x02f follow the same owner·32 form (player 1's designs 0 and 1 gave 32 and 33).
+- **0x0cd–0x0cf (contradiction, preserved).** The binary reading picks 0x0cd, 0x0ce or 0x0cf by the new hull's dock (no dock, limited, unlimited). In the turn files, every starbase built gave 0x0cd (MEASURED, SL-12, PD-1, PK-1), for these hulls only:
+  - Orbital Fort: PD-1 (Fort, Catcher 7), PK-1 (Catcher 7), RG-002 `sbt/r18` (planet 51);
+  - Space Dock: SL-12 (planet 17);
+  - Space Station: SL-12 (planets 11, 12, 15), PD-1b (Twin 7), the PD-1 diagnostic runs (Bare Station, SS MD7, SS Twin 7), RG-002 (`s0/settle`, `sbt/r16`, `sbt/rec`, and the RM runs `rm/y1`, `rm/y2`, planet 51), RG-003 year 8 (planet 51);
+  - Ultra Station: SL-12 (player 1, planet 8). No 0x0ce or 0x0cf record appears anywhere in the preserved evidence (about 67,600 decoded messages). For Elegy, the stored id is 0x0cd for every hull seen. Whether 0x0ce/0x0cf are reachable at all, or the dock text is chosen only when the message is displayed, is UNRESOLVED. Death Star is NOT RUN.
+  - **Design slot:** the owner's design number. Starbase designs are 16 + their index, plus 32 per owner number: player 0's index 0, 1 and 2 gave 16, 17 and 18, and player 1's Ultra Station (index 2) gave 50 (MEASURED, SL-12, once for player 1). Ship designs in 0x02f follow the same owner·32 form: player 1's designs 0 and 1 gave 32 and 33 (MEASURED: `sl-starbases` M2 [8, 32] and [4, 33], SL-11/SL-12; also the FN runs and CB-047).
 - A planet that makes 0 resources this year skips its queue entirely: no limit, cancel or completion messages.
 - 0x03e can come in the same year as a cancel message (0x0b9, 0x129, 0x12a, 0x12f) when that cancel empties the queue. A queue holding only an auto order that builds nothing (Auto Mineral Packets with no driver or no destination) sends 0x03e (CONFIRMED, GAP-001 A4, A5). An auto packet item held back by a resource-short hidden unit does not (GAP-001 A1, A2).
 - 0x08c is sent once per queue order that produced alchemy, so one planet can get several in a year. Alchemy paid into an unfinished partial unit is not counted.
