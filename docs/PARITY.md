@@ -6750,8 +6750,9 @@ named planet 94 (MEASURED). Year 7's fleet 5/45 did the same with planet
 streams. (Updated 2026-10-13: "identical" holds for every line of the
 results, the fleets, waypoints and 0x028 messages. The raw host file
 and both player files differ between the two streams.) Player 0's HB
-Battleships killed player 1's Laser Destroyers at three places. Each victim fleet was followed by a player 0 freighter 100
-ly away, whose waypoint 1 was aimed at it.
+Battleships killed player 1's Laser Destroyers at three places. Each
+victim fleet was followed by a player 0 freighter 100 ly away, whose
+waypoint 1 was aimed at it.
 
 | Case | Victims | Follower's waypoint 1 after the year | Result |
 |---|---|---|---|
@@ -6831,7 +6832,7 @@ the host file, so no fleet ever laid it. Player 1 owns every field, and
 each started known only to player 1. Player 0 has no fleets, and its
 only planetary scanner is at planet 13 (control S). One pinned year was
 run (cycles 20000, 30000 and 14000). The results are the same in all
-three streams; the raw files differ.
+three streams; the raw host and player files differ.
 
 | Case | Player 0 planet and field | Known to player 0 after the year |
 |---|---|---|
@@ -6843,10 +6844,12 @@ three streams; the raw files differ.
 | L | Field laid this year by a player 1 fleet in orbit at scannerless planet 1 | Yes; the fleet is in player 0's file too |
 
 All CONFIRMED by prediction. S shows that a field already in the host
-file is scanned again each year, so Z's result separates the readings:
-an owned planet with no scanner sees a minefield centred exactly on it,
-with no fleet involved (co-location). At d² 1, with the planet inside
-the field, it does not. That agrees with the RG-002/RG-003 counter-case
+file was scanned again in this year (one pinned year), so by the
+pre-run's reading Z's result separates the two: an owned planet with no
+scanner sees a minefield centred exactly on it, with no fleet involved
+(co-location). At d² 1, with the planet inside the field, it does not.
+Scope: player 0 at tech 3 with electronics 0, standard fields, one
+year, one planet per case. That agrees with the RG-002/RG-003 counter-case
 at d² 1280. "Known" here means the host file's known mask gains player
 0's bit and player 0's file lists the field.
 

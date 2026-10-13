@@ -24,8 +24,8 @@ files differ between streams. No field was lost.
 | S | field 4, 10 ly from planet 13's planetary scanner | 3 | yes | CONFIRMED by prediction |
 | L | field 5 laid this year by 1/0 in orbit at scannerless planet 1 | 3 | yes, and fleet 1/0 at planet 1 | CONFIRMED by prediction |
 
-The control S was known, so a field already in the host file is scanned
-again each year. By the reading fixed in the pre-run record, Z then
+The control S was known, so a field already in the host file was scanned
+again in this year (one pinned year). By the reading fixed in the pre-run record, Z then
 decides: an owned planet with no scanner sees a minefield centred
 exactly on it, without any fleet (co-location). At d² 1 it does not,
 although the planet is inside the field.
