@@ -6950,10 +6950,13 @@ and 0x02e carried only colonists, and 0x02b and 0x02d never did. In FO-01 B
 and TK-114, a fleet that moved two minerals got one message per
 mineral, ironium first (one fleet in each).
 
-The fleet slot held the fleet number in all 66 records, for fleets of
-designs 0, 1, 2, 4, 11, 13 and 15: no design bits, unlike 0x05b and
-0x059 ("The fleet slot of 0x05b and 0x059 (FS-1)"). Every fleet was
-player 0's, so number and owner·512 + number cannot be told apart.
+The fleet slot held the fleet number in all 66 records. Every fleet
+was of one design and one ship, with designs including 1, 2, 4, 6, 11,
+13 and 15 (design 0, in MG-003, cannot tell the readings apart and is
+not counted). So for one-design, one-ship fleets there were no design
+bits, unlike 0x05b and 0x059 ("The fleet slot of 0x05b and 0x059
+(FS-1)"). Every fleet was player 0's, so number and owner·512 + number
+cannot be told apart.
 
 Retrodiction (not support): RG-002's [7, 50, 0, 3, 65535, 92] reads as
 fleet 7, 50 kT of colonists, at planet 92.
@@ -6962,7 +6965,8 @@ Not observed, so UNKNOWN: the deep-space form in 0x02b, 0x02c or 0x02e
 (a fleet unloading colonists in deep space kept them and got 0x165,
 TK-201 F); an
 unload to a packet or salvage; another player's salvage; a load from
-another player's planet; a fleet slot of a player other than 0; an
+another player's planet; a fleet slot of a player other than 0; the
+fleet slot of a mixed-design fleet (FS-1 found bit 13 on one); an
 amount of 65536 or more (which amount slot is the high word is
 inferred).
 

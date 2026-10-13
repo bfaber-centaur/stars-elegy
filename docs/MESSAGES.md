@@ -103,7 +103,11 @@ MEASURED from 66 records. The location's first slot is 65535 for a planet
 + number), 65534 for a packet or salvage (second slot: its object id),
 and x for deep space (second slot: y; one record). The mineral slot is a
 cargo type: 0 ironium, 1 boranium, 2 germanium, 3 colonists, 4 fuel.
-The rest of this table stays BINARY-ONLY.
+For these four kinds, the rows "location | either a planet, or x and y
+in deep space (two slots)" and "mineral | Ironium, Boranium or
+Germanium" were incomplete: a location can also be a fleet, a packet or
+salvage, and the mineral slot also takes colonists and fuel. The rest of
+this table stays BINARY-ONLY.
 
 ### Object ids in slots
 
@@ -113,8 +117,8 @@ An `object` slot holds the object's record id from the host file,
 | Object | type | Id | Evidence | Label |
 |---|---|---|---|---|
 | minefield | 0 | owner·512 + number | 0x0be (SW-1, "Sweep slots") and host-file records | MEASURED |
-| packet | 1 | 0x2000 + owner·512 + number | host-file records only (SV-1, PK-1, OB-028): no stored message seen names a packet object | MEASURED (records); in messages NOT OBSERVED |
-| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF | MEASURED |
+| packet | 1 | 0x2000 + owner·512 + number | host-file records (SV-1, PK-1, OB-028); 0x02b's location slot (ET-2, ET-2c, NS-1, NS-2: 9 records, CM-1) | MEASURED (records and messages). Corrected 2026-10-13: this row said "host-file records only (SV-1, PK-1, OB-028): no stored message seen names a packet object" and "in messages NOT OBSERVED"; ET-2, NS-1 and NS-2 had already stored 0x02b messages naming packets |
+| salvage | 1 (shared with packets) | 0x2000 + owner·512 + number | 0x05b: SV-1, RG-002 year 1, tk2/tk111, WF; 0x02b's location slot: NS-1 A1 to A4 (CM-1) | MEASURED |
 | wormhole | 2 | 0x4000 + number | host-file records (WT-001..WT-005, OB runs) | MEASURED (records); in messages NOT OBSERVED |
 | Mystery Trader | 3 | 0x6000 + number (numbers 0 to 12 seen) | host-file records (RG-004 and OB runs) | MEASURED (records); in messages NOT OBSERVED |
 

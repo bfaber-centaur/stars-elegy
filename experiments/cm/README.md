@@ -42,7 +42,9 @@ match held.
 
 Each value is MEASURED by the number of records shown. In these records,
 0x02c and 0x02e carried only colonists, and 0x02b and 0x02d never did.
-Germanium rests on 2 records: FO-01 C (160 kT) and WP-1 (30 kT, an
+The two WP-NIB 0x02e records (fleets 16 and 17, one run) are two
+fleets at planets 4 and 5 whose setups differ only in the waypoint's
+high nibble; they count as 2. Germanium rests on 2 records: FO-01 C (160 kT) and WP-1 (30 kT, an
 order-file run). In FO-01 B and TK-114 a fleet moved two minerals in
 one year and got one message per mineral, ironium first (one fleet in
 each).
@@ -69,11 +71,14 @@ the fleet's deep-space position). That is consistent, but it is not a
 
 ### Fleet slot (slot 1)
 
-Slot 1 held the fleet's number in all 66 records. The fleets included
-designs 0, 1, 2, 4, 11, 13 and 15, and no record carried design bits. So in
-these records the slot is not design·512 + number, unlike the fleet slot of 0x05b
-and 0x059 (FS-1). All the fleets belong to player 0, so number and
-owner·512 + number cannot be told apart here.
+Slot 1 held the fleet's number in all 66 records. Every fleet was of
+one design and one ship. The designs included 1, 2, 4, 6, 11, 13 and 15,
+and no record carried design bits. Design 0 (MG-003) cannot tell the
+readings apart and is not counted as support. So, for one-design,
+one-ship fleets, the slot is not design·512 + number in these records,
+unlike the fleet slot of 0x05b and 0x059 (FS-1). All the fleets belong
+to player 0, so number and owner·512 + number cannot be told apart
+here.
 
 ### Retrodiction
 
@@ -87,7 +92,10 @@ It is a retrodiction, not support.
   colonists in deep space kept them and got 0x165, not 0x02e (TK-201 F).
 - An unload to a packet or salvage, and another player's salvage.
 - A load from another player's planet.
-- A fleet slot or a fleet target of a player other than 0 and 1.
+- A fleet slot of a player other than 0, and a fleet target of a
+  player other than 0 and 1.
+- The fleet slot of a mixed-design fleet (FS-1 found bit 13 set on one
+  in 0x05b).
 - An amount of 65536 or more: which of slots 2 and 3 is the high word
   is inferred.
 
