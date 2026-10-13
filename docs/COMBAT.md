@@ -850,6 +850,25 @@ initiative present:
 - match the firer's primary target type, or the secondary type if no
   target matches the primary.
 
+  Clarified 2026-10-13: the secondary type is also used when every
+  primary-type target in the slot's reach scores 0 under "Target choice"
+  below. CONFIRMED by prediction for sappers (CB-062 Z1b, 6 of 6 streams,
+  30 decisive rounds). With 2 Pulsed Sappers and plan primary armed,
+  secondary any, an unshielded armed Destroyer (sapper score 0) was in
+  reach, and so was an unarmed Battleship with 4000 shields. The sapper hit
+  the Battleship every time. It wrote no record when only the Destroyer
+  was in reach. First seen in RG-003 year 8 (MEASURED once).
+  - Beams and torpedoes never score 0 against a live target (a torpedo's
+    accuracy after jamming is at least 1, and its `eff` is above 0). So
+    the clarification only changes sapper slots. CB-062 Z2 (6 of 6
+    streams): a torpedo chose an armed Frigate with armor 45 and shields
+    1000 over an unarmed one each time both were in reach.
+  - Movement does not use this fallback. "Choosing a square" step 1 still
+    counts the primary-type enemies, even when the token cannot damage
+    them. MEASURED (CB-062 Z1, 6 streams): a sapper-only ship whose only
+    primary-type enemy was unshielded never moved toward the unarmed
+    shielded enemy and never fired.
+
 ### Target choice (CONFIRMED, CB-009 K4–K7, Q-6)
 
 The firer picks the eligible target with the highest attractiveness. The

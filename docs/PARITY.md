@@ -6455,6 +6455,24 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## Target choice when every primary-type target scores 0 (CB-062)
+
+Status: per case below. Predictions for the exact starts were pushed
+before the runs (`experiments/cb062/PREDICTION.md` and
+`PREDICTION-Z1b.md`; activity-API times 06:44:56Z and 06:49:14Z, runs at
+06:45:07Z and 06:49:25Z). Results: `experiments/cb062/README.md`. Raw
+evidence: private apparatus `evidence/tz`. Six pinned streams per start.
+The question came from lane D's reading of RG-003 year 8.
+
+| Question | Result | Status |
+|---|---|---|
+| Z1b: does a sapper slot fall back to the secondary type when its only primary-type target in reach scores 0? | Yes. In 30 rounds with an unshielded armed Destroyer and an unarmed shielded Battleship both in reach, it hit the Battleship every time. With only the Destroyer in reach, it wrote no record. | CONFIRMED by prediction (6 of 6). `COMBAT.md` as written failed. |
+| Z1c (control): a primary-type target that scores above 0 | Chosen over the secondary-type one in all 6 decisive rounds | CONFIRMED by prediction (4 of 6 streams took the branch) |
+| Z2: can shields far above armor make a torpedo score 0? | No. In 12 decisive shots, the torpedo chose an armed Frigate (armor 45, shields 1000) over an unarmed one each time. | CONFIRMED by prediction (6 of 6). Lane D's premise fails. |
+| Z1: does movement use the same fallback? | No. A sapper-only ship whose only primary-type enemy was unshielded stayed put and never fired. | MEASURED (6 streams) |
+
+See `COMBAT.md` "Firing", its "Eligible targets" list (the clarification dated 2026-10-13).
+
 ## The races count in multi-race battle summaries (CB-061)
 
 Status: CONFIRMED by prediction (PQ-1b, 6 of 6 streams). Predictions for
