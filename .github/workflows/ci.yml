@@ -39,6 +39,12 @@ jobs:
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
           tools/fleetlab/fleetlab >/dev/null 2>&1 || true
           for c in FleetLab CombatLab RaceLab; do test -f "$FLEETLAB_CACHE/build/$c.class"; done
+      # The wrappers pass on java's exit status: a Java exception must fail.
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          for t in combatlab racelab; do
+            if tools/fleetlab/$t dump does-not-exist >/dev/null 2>&1; then echo "$t exited 0 on a Java exception"; exit 1; fi
+          done
       # CombatLab "computer" key: the AIX expert bytes, read back as b7= in the dump.
       - run: |
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
