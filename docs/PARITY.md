@@ -6528,9 +6528,62 @@ planet beneath has 50 kT ironium.
 
 So the source is the named object, never a planet at the same spot, whoever
 owns the planet. A waypoint-0 load found the named packet 40 ly away and
-loaded from it (CONFIRMED by prediction); other distances are NOT RUN.
-Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
+loaded from it (CONFIRMED by prediction); NS-2 below adds 10 ly and
+150 ly. Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
 fails every case.
+
+## A named packet at other distances and after movement (NS-2)
+
+Status: CONFIRMED by prediction for waypoint 0 at 10 ly and 150 ly. The
+tracking cases are MEASURED. The coordinator asked for this to test elegy lane
+A's ASSUMPTION T5: a named packet is a source at any distance, in both
+load passes. Predictions (`experiments/ns/NS2-PREDICTION.md`) were pushed
+at 05:16:03Z (activity API), before the runs at 05:17:07Z. Results:
+`experiments/ns/README.md` "NS-2". Raw evidence: private apparatus
+`evidence/ns2`. One pinned year in two streams (cycles 20000 and 30000),
+which are identical. Every fleet is player 0's empty Medium Freighter with
+"load all ironium, load all boranium". Every packet is player 0's, holding
+100 kT boranium.
+
+| Case | Setup | Observed (2 of 2 streams) | Result |
+|---|---|---|---|
+| N | Waypoint 0 at the fleet's own planet names an in-flight packet 10 ly away | Loaded 100 kT boranium before movement (0x02b, 0x04e); nothing from the planet; the fleet did not move; the packet is gone at year end | CONFIRMED by prediction |
+| F | As N, 150 ly away | As N | CONFIRMED by prediction |
+| P1 | Waypoint 1 names an unmoved packet 20 ly ahead; fleet at warp 5 | The packet moved 25 ly before the fleets; waypoint 1 followed it; the fleet stopped 20 ly short and loaded nothing | MEASURED (branch E of the prediction) |
+| P1-F | Waypoint 1 names an in-flight packet 20 ly ahead; fleet at warp 9 | Waypoint 1 followed the packet's 25 ly move; the fleet reached its new position and loaded 100 kT boranium after movement (0x02b, 0x04e after the production messages); the emptied packet stays | MEASURED (as predicted) |
+
+So T5's "any distance" holds before movement for 10, 40 and 150 ly (NS-1,
+NS-2); larger distances are NOT RUN. A load after movement from a packet
+some distance away was not produced: the waypoint follows the packet, so
+the fleet loaded at distance 0 or did not arrive. Whether that case can
+arise at all is UNRESOLVED; a waypoint-0 task left waiting into the
+after-movement pass is one untried way to stage it.
+
+A packet record written unmoved (bit 14 clear) moved its full 25 ly in
+the year's packet move, and was then marked moved (P1, MEASURED).
+
+## Component announcements within one level (AO-1)
+
+Status: CONFIRMED by prediction, 2 of 2 streams for each case. The
+coordinator asked for the BINARY-ONLY pairs of `MESSAGES.md` "Order of the
+component messages within one level" (stars-elegy #192) to be run.
+Predictions (`experiments/ao1/PREDICTION.md`) were pushed at 05:16:03Z
+(activity API), before the runs at 05:16:17Z. Results:
+`experiments/ao1/README.md`. Raw evidence: private apparatus
+`evidence/ao1`. Each start ran one pinned year (cycles 20000 and 30000);
+each player gained exactly one level.
+
+| Case | Observed message order | Result |
+|---|---|---|
+| (a) JOAT, energy 4 → 5 | 0x050; 0x05f Dolphin Scanner, Cheetah Scanner, Battle Super Computer, Temp Terraform ±7; 0x157 Snooper 500X; 0x145 Missile Battery | CONFIRMED by prediction |
+| (b) IS + ISB, construction 3 → 4 | 0x050; 0x05f Croby Sharmor, Robo-Miner; 0x0d0 Space Dock; 0x078 Privateer, Fuel Transport | CONFIRMED by prediction |
+| (c) JOAT + TT, biotech 0 → 1 | 0x050 only | CONFIRMED by prediction |
+| (c) control without TT | 0x050; 0x05f Gravity, Temp, Radiation Terraform ±3 | CONFIRMED by prediction |
+
+This places the starbase hull after the mining robots and before the ship
+hulls, puts planetary scanners before planetary defenses, and confirms the
+Total Terraforming skip for these starts. Index order within the scanner
+and ship-hull categories also held. The Genesis Device's place is NOT RUN.
 
 ## An empty transport task and 0x04e (ET-1)
 
