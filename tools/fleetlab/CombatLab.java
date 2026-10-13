@@ -59,7 +59,7 @@ import org.starsautohost.starsapi.items.Items;
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
 //         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
-//         [target fleet OWNER ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
+//         [target fleet OWNER ID|target thing ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
@@ -72,7 +72,9 @@ import org.starsautohost.starsapi.items.Items;
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
 //                                   kT or 100s of colonists; "-" for no order). "target
 //                                   fleet" makes waypoint 0 target a fleet (id number |
-//                                   owner << 9, type 0x12) for merge and fleet transport
+//                                   owner << 9, type 0x12) for merge and fleet transport;
+//                                   "target thing" makes it target a universe object
+//                                   (object id, type 0x18) at the fleet's position
 //   planetset N KEY=V...            planet N's fields after any "planet" line: mines=
 //                                   factories= defenses= excess= fe= bo= ge= (installed/
 //                                   surface values; owned planets) scanner=ID (planetary
@@ -128,8 +130,10 @@ public class CombatLab {
             for (int i = 1; i < args.length; i++) dump(args[i]);
         } else if (args.length == 4 && args[0].equals("build")) {
             build(args[1], args[2], args[3]);
+        } else if (args.length == 2 && args[0].equals("parse")) {
+            parse(args[1]);
         } else {
-            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST");
+            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse SPEC");
             System.exit(2);
         }
     }
@@ -500,6 +504,7 @@ public class CombatLab {
         int owner, id, x, y, fuel, plan, planet = -1;
         boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
+        int wp0Thing = -1;  // waypoint 0 targets this object id (type << 13 | owner << 9 | number) when >= 0
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -882,8 +887,7 @@ public class CombatLab {
             List<Block> unit = new ArrayList<>();
             unit.add(fl);
             List<int[]> all = new ArrayList<>();
-            all.add(fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
-                : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0});
+            all.add(waypoint0(fs));
             all.addAll(fs.wps);
             for (int w = 0; w < all.size(); w++) {
                 int[] wp = all.get(w);
@@ -1431,6 +1435,31 @@ public class CombatLab {
         return head + body + " raw=" + h;
     }
 
+    // Waypoint 0 as written: x, y, target object, target type, warp.
+    static int[] waypoint0(FleetSpec fs) {
+        return fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
+            : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
+            : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0};
+    }
+
+    // Parse-only check of a spec's fleet lines, with no base file: one line per
+    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE".
+    static void parse(String spec) throws Exception {
+        int lineNo = 0;
+        for (String raw : Files.readAllLines(Paths.get(spec))) {
+            lineNo++;
+            String line = raw.replaceAll("#.*", "").trim();
+            if (!line.startsWith("fleet ")) continue;
+            try {
+                FleetSpec fs = parseFleet(line.split("\\s+"));
+                int[] w = waypoint0(fs);
+                System.out.printf("fleet %d %d wp0 %d %d %d 0x%x%n", fs.owner, fs.id, w[0], w[1], w[2], w[3]);
+            } catch (Exception e) {
+                throw new Exception(spec + ":" + lineNo + ": " + e.getMessage(), e);
+            }
+        }
+    }
+
     static FleetSpec parseFleet(String[] t) throws Exception {
         FleetSpec fs = new FleetSpec();
         fs.owner = Integer.parseInt(t[1]);
@@ -1450,7 +1479,9 @@ public class CombatLab {
                 case "repeat": fs.repeat = true; i += 1; break;
                 case "target":
                     // target fleet OWNER ID: waypoint 0 targets that fleet (merge or transport with a fleet)
-                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID");
+                    // target thing ID: waypoint 0 targets that object, at the fleet's own position
+                    if (t[i + 1].equals("thing")) { fs.wp0Thing = Integer.decode(t[i + 2]); i += 3; break; }
+                    if (!t[i + 1].equals("fleet")) throw new Exception("target fleet OWNER ID | target thing ID");
                     fs.wp0Fleet = Integer.parseInt(t[i + 3]) | Integer.parseInt(t[i + 2]) << 9;
                     i += 4; break;
                 case "plan": fs.plan = Integer.parseInt(t[i + 1]); i += 2; break;

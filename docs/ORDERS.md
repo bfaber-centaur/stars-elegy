@@ -926,6 +926,13 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     **Corrected 2026-10-12:** this item used to say, as BINARY-ONLY, that a
     transport task aimed at a packet (or any object other than salvage) is
     cancelled with 0x11e. ET-2 and ET-2c contradicted that for packets.
+    **Clarified 2026-10-13 (NS-1, `PARITY.md` "A transport task whose
+    waypoint names a packet or salvage (NS-1)"):** the task loads from the
+    named object even when it lies over a planet, the fleet's own or
+    another player's; the planet gives nothing (CONFIRMED by prediction
+    for waypoint 0, MEASURED on arrival). A waypoint 0 that names a packet
+    40 ly away loads from it before movement, without the fleet moving
+    (CONFIRMED by prediction, NS-1); other distances are NOT RUN.
   - **Outside the galaxy.** The waypoint check does not clamp packets,
     so a packet, and a waypoint aimed at it, can lie outside the galaxy.
     It does clamp each fleet's own position and its waypoint 0, each axis

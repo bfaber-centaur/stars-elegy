@@ -6353,6 +6353,32 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## A transport task whose waypoint names a packet or salvage (NS-1)
+
+Status: CONFIRMED by prediction for waypoint 0, over a planet and for a
+packet that has flown on. The arrival cases and what happens to the
+emptied objects are MEASURED. Predictions were pushed before the runs for
+the exact start. Results: `experiments/ns/README.md` "NS-1". Raw evidence:
+private apparatus `evidence/ns1`. Each case ran one pinned year in two
+streams, which are identical.
+
+Every fleet is player 0's empty Medium Freighter with "load all ironium,
+load all boranium". Every named object holds 100 kT boranium, and every
+planet beneath has 50 kT ironium.
+
+| Case | Setup | Observed | Result |
+|---|---|---|---|
+| Waypoint 0 over a planet (A3–A6) | The fleet orbits a planet, its own or player 1's. Waypoint 0 names salvage, or a packet of either owner, lying over that planet. | It loaded 100 kT boranium from the named object: 0x02b at the object, then 0x04e, before movement. No ironium from the planet. No 0x11e. | CONFIRMED by prediction |
+| Waypoint 0, packet flown on (B1, B2) | The fleet orbits the planet a packet left. Waypoint 0 names the packet, now 40 ly away. | It loaded the packet's 100 kT boranium from 40 ly away: 0x02b at the packet, then 0x04e. The fleet did not move. No ironium from the planet. No 0x11e. | CONFIRMED by prediction |
+| Arrival over a planet (A1, A2) | The fleet arrives at salvage over a planet, its own or player 1's. | It loaded 90 kT boranium from the salvage (after that year's decay): 0x02b at the salvage, then 0x04e. No ironium from the planet. No 0x11e. | MEASURED (H-named predicted 100) |
+| The emptied objects | The same runs | Objects emptied before movement are gone at the end of the year. Salvage emptied on arrival stays, empty. | MEASURED; consistent with `OBJECTS.md` "Salvage" (decay removes an empty object) |
+
+So the source is the named object, never a planet at the same spot, whoever
+owns the planet. A waypoint-0 load found the named packet 40 ly away and
+loaded from it (CONFIRMED by prediction); other distances are NOT RUN.
+Elegy lane A's ASSUMPTION T5 (a planet at the position takes precedence)
+fails every case.
+
 ## An empty transport task and 0x04e (ET-1)
 
 Status: CONFIRMED by prediction (elegy 84af588; the numbers for the

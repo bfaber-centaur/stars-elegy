@@ -39,3 +39,7 @@ jobs:
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
           tools/fleetlab/fleetlab >/dev/null 2>&1 || true
           for c in FleetLab CombatLab RaceLab; do test -f "$FLEETLAB_CACHE/build/$c.class"; done
+      # CombatLab "target thing": waypoint 0 aims at a universe object (type 0x18).
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          tools/fleetlab/combatlab parse experiments/ns/ns1.spec | diff tools/fleetlab/testdata/ns1.parse -
