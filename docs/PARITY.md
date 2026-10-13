@@ -6631,6 +6631,52 @@ out of fuel, minefield, wormhole) remain BINARY-ONLY. Waypoint index 2
 and up, waypoint 0, a kill by a third player, and targets other than
 fleets are NOT RUN.
 
+## A chase target destroyed by mines during movement (Z-MD)
+
+Status: R-start CONFIRMED by prediction in 3 of 3 streams, for the setup
+run. Lane D asked for it from RG-003 year 11, where player 3's fleet 12
+died in a minefield 5 ly into its leg and player 2's two chasers of it
+ended at its start position (MEASURED, one stream). The prediction
+(`experiments/zmd/README.md`, which carries it verbatim) was pushed at
+07:21:15Z (activity API), before the runs at 07:21:26Z. Raw evidence:
+private apparatus `evidence/zmd`.
+
+Setup: player 0's heavy field of 50,000 mines at (1200,1200). In each of
+20 lanes, player 1's unarmed target T flies an 81-ly warp 9 leg due east
+from S through the field, and two unarmed player-0 chasers have waypoint
+1 aimed at it: C-near (warp 9, 28 ly from S) and C-far (warp 5, 60 ly
+from S, moving across the leg). The field owner's fleets are never
+stopped (MF-6). One pinned year at cycles 20000, 30000 and 14000.
+
+| Case | Lane-runs scored | Observed | Result |
+|---|---|---|---|
+| Z-MD-1: T dies (Bare DD) | 29 with d ≥ 3 | C-near ends at S with its waypoint completed; C-far moves 25 ly straight toward S | R-start CONFIRMED by prediction; R-death and R-stop fail |
+| Z-MD-3: C-near numbered below every player-1 fleet | 5 with d ≥ 3 | as Z-MD-1 | CONFIRMED by prediction: fleet-number order made no difference here |
+| Z-MD-2: T stopped and alive (Tank) | 17 | both chasers head for P, T's stop point | control CONFIRMED by prediction (`ORDERS.md` "Targets that moved, died or were captured") |
+
+d is how far into its leg T was stopped. Lane-runs with d < 3 (6) and
+with T not stopped (3) were not scored, as the pre-run said; the latter
+chased T's end position.
+
+MEASURED, not predicted, in the same runs:
+- Player 0 got 0x028 once for each C-far whose target died, with params
+  (follower, 512 + T's fleet id), 40 in all. The C-near chasers, whose
+  waypoint completed at S, got none.
+- After the year, C-far's waypoint 1 no longer named a dead T. It was
+  deep space at S, not at P (40 of 40). With T alive, it still named T at
+  T's end position (20 of 20).
+
+So in this setup a chaser did not follow a target that mines had
+destroyed earlier in movement. It went to the position the waypoint held
+before movement. This differs
+from WK-1, where the target died in battle after movement and the
+waypoint became the target's position after movement.
+
+Scope: targets destroyed by mines during movement in this setup (warp 9
+target; warp 9 and warp 5 chasers; one field). Other causes of death,
+other waypoint indexes, and chasers that are stopped themselves are
+NOT RUN.
+
 ## A named packet at other distances and after movement (NS-2)
 
 Status: CONFIRMED by prediction for waypoint 0 at 10 ly and 150 ly. The

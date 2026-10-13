@@ -107,3 +107,39 @@ Expectations by kind (all 12 years):
 - starbase_design 4, battle_plan 1.
 
 The default-queue record of year 1 is carried, as in RG-002.
+
+## Start tokens in the other streams (`start_sample`)
+
+These tables let anyone check the `start_sample` label (vectors/README.md)
+on two year-10 (2472) battles without the private files. Each row is one
+start token as the battle record gives it, in the record's own order:
+owner, fleet (or the planet for a starbase), design, ships, and damage
+(units, percent of ships). "20000" is the recorded stream that the
+vector holds; 1490 and 3700 are the alternative streams. Read with
+`build_cb.battles` from each stream's `.M` files (apparatus
+`evidence/rg003/run/y10`). MEASURED, one run per stream.
+
+Battle at (1513,1113), over planet 83, players 1, 4 and 5:
+`start_sample: false`.
+
+| Stream | Tokens in record order (owner, fleet, design, ships, damage) |
+|---|---|
+| 20000 | (4, 0, 1, 1, 0/0); (4, planet 83, 25, 1, 0/0); (4, 2, 2, 1, 0/0); (5, 1, 7, 8, 237/75); (1, 45, 13, 1, 0/0) |
+| 1490 | (4, 2, 2, 1, 0/0); (4, planet 83, 25, 1, 0/0); (5, 1, 7, 8, 237/75); (1, 45, 13, 1, 0/0); (4, 0, 1, 1, 0/0) |
+| 3700 | (4, planet 83, 25, 1, 0/0); (4, 2, 2, 1, 0/0); (1, 45, 13, 1, 0/0); (5, 1, 7, 8, 237/75); (4, 0, 1, 1, 0/0) |
+
+The same five stacks appear in all three streams. Only their order
+differs, so the record keeps `sample: true`.
+
+Battle at (1571,1434), over planet 94, players 1 and 5:
+`start_sample: true`.
+
+| Stream | Tokens in record order (owner, fleet, design, ships, damage) |
+|---|---|
+| 20000 | (1, 88, 13, 1, 0/0); (5, 91, 1, 1, 0/0); (5, 74, 0, 4, 0/0); (5, 92, 1, 1, 0/0); (1, 86, 14, 1, 0/0); (1, 81, 14, 1, 0/0) |
+| 1490 | (1, 88, 13, 1, 0/0); (5, 74, 0, 4, 0/0); (1, 86, 14, 1, 0/0); (5, 92, 1, 1, 0/0); (5, 91, 1, 1, 0/0); (1, 81, 14, 1, 0/0) |
+| 3700 | (5, 74, 0, 4, 0/0); (1, 81, 14, 1, 0/0); (1, 86, 14, 1, 0/0); (5, 91, 1, 1, 0/0); (5, 92, 1, 1, 0/0) |
+
+Stream 3700 has no token for player 1's fleet 88, so the stacks differ.
+In both battles, every token that is present starts on the same square
+in all three streams.

@@ -853,6 +853,16 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
   ordinary reached waypoint. The order is not dropped outright. CONFIRMED (a
   waypoint aimed at a fleet id that did not exist came back cleared to a plain
   go-to at the last coordinates, not dropped).
+- **Target destroyed during movement** (by a minefield, before the chasers
+  move): the chaser goes to the waypoint's coordinates from the upkeep before
+  movement, the target's start-of-year position, not to where it died, and
+  completes the waypoint there if it can reach it. Afterwards the waypoint is
+  deep space at that position, and the owner gets 0x028 when it was not
+  completed. The destination is CONFIRMED by prediction (Z-MD-1, Z-MD-3) for
+  targets destroyed by mines during movement in the setup run (PARITY "A chase
+  target destroyed by mines during movement (Z-MD)"). The 0x028 count and
+  params and the waypoint afterwards are MEASURED (Z-MD-1, Z-MD-3). Other
+  causes of death are NOT RUN.
 - **Ordering with moving objects:** this re-resolution runs *after* Mystery
   Traders and mineral packets have moved but *before* fleets move, so a
   waypoint aimed at a moving Trader or packet reads that object's post-move
