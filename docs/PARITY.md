@@ -6778,10 +6778,14 @@ waypoints 2 and up. The prediction (`experiments/wf/WK2-PREDICTION.md`)
 was pushed alone at 13:49:00Z (activity API), before the runs at
 13:49:30Z. Results: `experiments/wf/README.md` "WK-2". Raw evidence:
 private apparatus `evidence/wk2`. The setup is a state edit, as in WK-1.
-In one pinned year (cycles 20000, 30000 and 14000; identical streams),
-player 0's HB Battleships killed five pairs of player 1's Laser
-Destroyers. Each pair died at a deep-space point 20 ly south of its
-start.
+In one pinned year (cycles 20000, 30000 and 14000), player 0's HB
+Battleships killed five pairs of player 1's Laser Destroyers. Each pair
+died at a deep-space point 20 ly south of its start. The fleet, waypoint
+and 0x028 results are the same in all three streams. The raw files are
+not: the host file and both player files differ between streams, and the
+battle records differ with the cycles value. Whether player 0 saw the
+victims when the orders were set was not recorded; player 0's file
+before the year lists no fleets.
 
 | Case | Followers | Result |
 |---|---|---|
@@ -6794,9 +6798,13 @@ All CONFIRMED by prediction. So each waypoint aimed at a fleet
 destroyed in battle by the waypoint owner is handled on its own, at
 indexes 1 to 3: one 0x028 per waypoint, with params (follower, target
 object id). The waypoint becomes deep space at the victim's position
-after movement. MEASURED, not predicted: the messages come in follower
-order, then waypoint order. A rewritten deep-space waypoint's object
-field holds its own waypoint index. Waypoint 0, a kill by a third
+after movement. MEASURED, not predicted: the messages came as (11,513),
+(12,513), (13,513), (14,514) twice, (15,515), (15,516), (16,517). That
+sequence fits follower order then waypoint order, but it also follows
+victim object id and battle number, and in B2 waypoint order equals
+victim-id order. This design cannot tell those apart, so the ordering
+rule is UNRESOLVED. A rewritten deep-space waypoint's object field holds
+its own waypoint index (MEASURED). Waypoint 0, a kill by a third
 player, targets other than fleets, and the planet substitution at
 waypoints 2 and up are NOT RUN.
 

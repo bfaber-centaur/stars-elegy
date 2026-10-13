@@ -893,8 +893,10 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     2 of 2 streams. RG-003 years 7 and 8 show the same for computer
     players' waypoints (MEASURED). For other losses (scrapped, merged, out
     of fuel, minefield, wormhole) the planet substitution remains
-    BINARY-ONLY. Waypoint 0, a kill by a third player, and targets other
-    than fleets are NOT RUN. **WK-2 (`PARITY.md` "Several followers, and
+    BINARY-ONLY. Waypoint index 2 and up, waypoint 0, a kill by a third
+    player, and targets other than fleets are NOT RUN. (Updated
+    2026-10-13: "Waypoint index 2 and up" was NOT RUN when this was
+    written; WK-2 below has since run waypoints 2 and 3.) **WK-2 (`PARITY.md` "Several followers, and
     waypoints 2 and up, aimed at a fleet destroyed in battle (WK-2)"),
     2026-10-13:** each such waypoint is handled on its own, at waypoint
     indexes 1 to 3 and with several followers of one victim. Each gets

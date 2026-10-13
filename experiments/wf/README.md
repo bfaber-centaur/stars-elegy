@@ -141,8 +141,10 @@ Predictions: `WK2-PREDICTION.md`, pushed alone in 7862a21. The activity
 API shows the push at 2026-10-13T13:49:00Z, and the runs started at
 13:49:30Z. Spec: `wk2.spec` (a state edit, as WK-1). Raw evidence:
 private apparatus `evidence/wk2`. One pinned year at cycles 20000, 30000
-and 14000. The three streams are identical, and every victim fleet died
-in all three. Each victim pair flew 20 ly due south before it died, so
+and 14000. Every victim fleet died in all three streams, and the fleet,
+waypoint and 0x028 results below are the same in all three. The raw
+files are not identical: the host file and both player files differ
+between streams, and the battle records differ with the cycles value. Each victim pair flew 20 ly due south before it died, so
 its death point differs from its start.
 
 | Case | Follower's waypoints after the year (3 of 3 streams) | 0x028 to player 0 | Result |
@@ -164,11 +166,19 @@ waypoint 1 checked, the coordinates before movement, the waypoint
 removed) did not occur.
 
 MEASURED, not predicted:
-- The 0x028 messages come in follower order and, within a follower, in
-  waypoint order.
+- The 0x028 messages came in the sequence (11,513), (12,513), (13,513),
+  (14,514), (14,514), (15,515), (15,516), (16,517). That fits follower
+  order then waypoint order, but it also follows victim object id and
+  battle number, and in B2 waypoint order equals victim-id order. This
+  design cannot separate them, so the ordering rule is UNRESOLVED.
 - Each rewritten deep-space waypoint carries its own waypoint index in
   its object field (1, 2 or 3). WK-1's case D showed 1 at waypoint 1.
   Deep-space waypoints written by the builder carry 0.
+
+Whether player 0 saw the victims when the orders were set was not
+recorded. Player 0's file before the year lists no fleets, and the
+pre-run record's phrase "a fleet target the player sees" is not
+backed by this evidence.
 
 Scope: victims destroyed in battle by the waypoint owner, at deep-space
 points, waypoint indexes 1 to 3. Waypoint 0, a kill by a third player,
