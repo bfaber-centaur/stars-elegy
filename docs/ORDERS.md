@@ -883,8 +883,8 @@ instead of fixed coordinates. Each upkeep pass re-resolves that target:
     2 of 2 streams. RG-003 years 7 and 8 show the same for computer
     players' waypoints (MEASURED). For other losses (scrapped, merged, out
     of fuel, minefield, wormhole) the planet substitution remains
-    BINARY-ONLY. Waypoint index 2 and up, a kill by a third player, and
-    targets other than fleets are NOT RUN.
+    BINARY-ONLY. Waypoint index 2 and up, waypoint 0, a kill by a third
+    player, and targets other than fleets are NOT RUN.
   - **The target exists but the player does not see it:** message 0x029
     naming the planet if the target is orbiting one, else 0x02a. A target
     whose coordinates were frozen by a gate or wormhole jump also gets

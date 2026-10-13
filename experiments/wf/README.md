@@ -116,7 +116,8 @@ The host file and player 0's file agree. Player 0 got 0x028 once per
 follower, as predicted. Its parameters, the follower and the target's
 object id, are MEASURED, since they were not predicted. No follower
 arrived. Each follower moved 16 ly toward its waypoint, as predicted:
-from y 1282 to 1298, 1263 to 1279 and 1211 to 1227.
+fleet 11 from y 1282 to 1298, fleet 12 from 1263 to 1279 and fleet 13
+from 1211 to 1227.
 
 So waypoint 1 aimed at a fleet destroyed in battle becomes deep space at
 the fleet's last position, which is where it died, after this year's
