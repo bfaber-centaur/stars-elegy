@@ -59,14 +59,16 @@ import org.starsautohost.starsapi.items.Items;
 //                                   a stationary fleet (one waypoint, at its position),
 //                                   orbiting planet N if given (X Y must be its position)
 //         [repeat]                  set the fleet's repeat-orders flag (fl05 & 2)
+//         [hi N]                    set the high nibble (bits 4-7, default 1) of the target-type
+//                                   byte of the waypoint before it (waypoint 0 when first)
 //         [target fleet OWNER ID|target thing ID] [task TASK] [to X Y [planet N|thing ID|fleet OWNER ID] warp W [task TASK]]...
 //                                   waypoint tasks (takeover corpus): "task" sets the task
 //                                   of the waypoint before it (waypoint 0 when first), "to"
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
 //                                   unload (all colonists) | merge (into the waypoint's
 //                                   fleet) | transfer K (give the fleet to the K-th other
-//                                   player) | lay [YEARS] (lay mines; YEARS
-//                                   word, default 5 = indefinitely) | route (follow the
+//                                   player) | lay [YEARS[:W]] (lay mines; YEARS
+//                                   word, default 5 = indefinitely; W a second word) | route (follow the
 //                                   planet's route, task 8) | patrol RANGE (patrol within
 //                                   RANGE light-years, task 7) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
@@ -131,9 +133,11 @@ public class CombatLab {
         } else if (args.length == 4 && args[0].equals("build")) {
             build(args[1], args[2], args[3]);
         } else if (args.length == 2 && args[0].equals("parse")) {
-            parse(args[1]);
+            parse(args[1], false);
+        } else if (args.length == 3 && args[0].equals("parse") && args[1].equals("-wps")) {
+            parse(args[2], true);
         } else {
-            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse SPEC");
+            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse [-wps] SPEC");
             System.exit(2);
         }
     }
@@ -505,6 +509,7 @@ public class CombatLab {
         boolean repeat;     // repeat orders (fleet flag fl05 & 2)
         int wp0Fleet = -1;  // waypoint 0 targets this fleet id (number | owner << 9) when >= 0
         int wp0Thing = -1;  // waypoint 0 targets this object id (type << 13 | owner << 9 | number) when >= 0
+        int wp0Hi = -1;     // waypoint 0's target-type high nibble when >= 0 (default 1)
         long[] cargo = new long[4];
         int[] ships = new int[16];
         int[] dmg = new int[16];
@@ -537,8 +542,14 @@ public class CombatLab {
                 return 7;
             }
             case "lay": {
-                // lay mines: one word, the years counter (5 = indefinitely)
-                ord[0] = t.length > i + 1 && t[i + 1].matches("\\d+") ? Integer.parseInt(t[i + 1]) : 5;
+                // lay mines: one word, the years counter (5 = indefinitely); "lay Y:W" also
+                // writes a second word W (computer players' orders store one)
+                ord[0] = 5; ord[1] = -1;
+                if (t.length > i + 1 && t[i + 1].matches("\\d+(:\\d+)?")) {
+                    String[] yw = t[i + 1].split(":");
+                    ord[0] = Integer.parseInt(yw[0]);
+                    if (yw.length > 1) ord[1] = Integer.parseInt(yw[1]);
+                }
                 return 6;
             }
             case "transport": {
@@ -886,33 +897,7 @@ public class CombatLab {
             fl.setData(fl.getDecryptedData(), fl.size);
             List<Block> unit = new ArrayList<>();
             unit.add(fl);
-            List<int[]> all = new ArrayList<>();
-            all.add(waypoint0(fs));
-            all.addAll(fs.wps);
-            for (int w = 0; w < all.size(); w++) {
-                int[] wp = all.get(w);
-                WaypointBlock wb = new WaypointBlock();
-                wb.x = wp[0]; wb.y = wp[1];
-                wb.positionObject = wp[2];
-                wb.positionObjectType = wp[3];
-                wb.warp = wp[4];
-                wb.waypointTask = fs.task.getOrDefault(w, 0);
-                if (wb.waypointTask == 1) {
-                    // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
-                    for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
-                } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
-                    int o = fs.orders.get(w)[0];
-                    wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
-                } else if (wb.waypointTask == 7) {
-                    // patrol: two words (range, selected target id)
-                    for (int k = 0; k < 2; k++) {
-                        int o = fs.orders.get(w)[k];
-                        wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
-                    }
-                }
-                wb.encode();
-                unit.add(wb);
-            }
+            unit.addAll(waypointBlocks(fs));
             fleetUnits.put(fs.owner * 1024 + fs.id, unit);
             fleetCount.merge(fs.owner, 1, Integer::sum);
         }
@@ -1437,14 +1422,57 @@ public class CombatLab {
 
     // Waypoint 0 as written: x, y, target object, target type, warp.
     static int[] waypoint0(FleetSpec fs) {
+        int[] w = waypoint0Default(fs);
+        if (fs.wp0Hi >= 0) w[3] = (w[3] & 0x0f) | fs.wp0Hi << 4;
+        return w;
+    }
+
+    static int[] waypoint0Default(FleetSpec fs) {
         return fs.wp0Thing >= 0 ? new int[]{fs.x, fs.y, fs.wp0Thing, 0x18, 0}
             : fs.wp0Fleet >= 0 ? new int[]{fs.x, fs.y, fs.wp0Fleet, 0x12, 0}
             : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0};
     }
 
+    // The waypoint blocks of a spec fleet (waypoint 0 first), as build writes them.
+    static List<WaypointBlock> waypointBlocks(FleetSpec fs) {
+        List<WaypointBlock> out = new ArrayList<>();
+        List<int[]> all = new ArrayList<>();
+        all.add(waypoint0(fs));
+        all.addAll(fs.wps);
+        for (int w = 0; w < all.size(); w++) {
+            int[] wp = all.get(w);
+            WaypointBlock wb = new WaypointBlock();
+            wb.x = wp[0]; wb.y = wp[1];
+            wb.positionObject = wp[2];
+            wb.positionObjectType = wp[3];
+            wb.warp = wp[4];
+            wb.waypointTask = fs.task.getOrDefault(w, 0);
+            if (wb.waypointTask == 1) {
+                // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
+                for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
+            } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
+                int o = fs.orders.get(w)[0];
+                wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                int o2 = fs.orders.get(w)[1];
+                if (wb.waypointTask == 6 && o2 >= 0) { wb.additionalBytes.add((byte) o2); wb.additionalBytes.add((byte) (o2 >> 8)); }
+            } else if (wb.waypointTask == 7) {
+                // patrol: two words (range, selected target id)
+                for (int k = 0; k < 2; k++) {
+                    int o = fs.orders.get(w)[k];
+                    wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                }
+            }
+            wb.encode();
+            out.add(wb);
+        }
+        return out;
+    }
+
     // Parse-only check of a spec's fleet lines, with no base file: one line per
-    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE".
-    static void parse(String spec) throws Exception {
+    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE". With wps, each fleet line is
+    // followed by one line per waypoint, "  wp N HEX", the waypoint block's bytes
+    // exactly as build writes them.
+    static void parse(String spec, boolean wps) throws Exception {
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -1454,6 +1482,15 @@ public class CombatLab {
                 FleetSpec fs = parseFleet(line.split("\\s+"));
                 int[] w = waypoint0(fs);
                 System.out.printf("fleet %d %d wp0 %d %d %d 0x%x%n", fs.owner, fs.id, w[0], w[1], w[2], w[3]);
+                if (wps) {
+                    List<WaypointBlock> bl = waypointBlocks(fs);
+                    for (int k = 0; k < bl.size(); k++) {
+                        byte[] d = bl.get(k).getDecryptedData();
+                        StringBuilder hx = new StringBuilder();
+                        for (int b = 0; b < bl.get(k).size; b++) hx.append(String.format("%02x", d[b] & 0xff));
+                        System.out.printf("  wp %d %s%n", k, hx);
+                    }
+                }
             } catch (Exception e) {
                 throw new Exception(spec + ":" + lineNo + ": " + e.getMessage(), e);
             }
@@ -1502,8 +1539,17 @@ public class CombatLab {
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
                     i += t[i + 1].equals("transport") || t[i + 1].equals("transfer") || t[i + 1].equals("patrol")
-                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
+                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+(:\\d+)?")) ? 3 : 2;
                     break;
+                }
+                case "hi": {
+                    // hi N: the high nibble (bits 4-7) of the target-type byte of the waypoint
+                    // before it (waypoint 0 when first); the builder's default is 1
+                    int h = Integer.decode(t[i + 1]);
+                    if (h < 0 || h > 15) throw new Exception("hi 0-15 expected, got " + h);
+                    if (fs.wps.isEmpty()) fs.wp0Hi = h;
+                    else { int[] w = fs.wps.get(fs.wps.size() - 1); w[3] = (w[3] & 0x0f) | h << 4; }
+                    i += 2; break;
                 }
                 case "to": {
                     // to X Y [planet N] warp W

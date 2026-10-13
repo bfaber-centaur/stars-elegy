@@ -674,6 +674,9 @@ Result:
 - Nothing contradicted the white-box reading.
 - Repeats (C07r, C11r) were identical. Nothing in these cases is known to
   draw random numbers; mining (C09, C14 year 2) was not predicted.
+  Mining draws one `rand(100)` per mineral with a non-zero remainder
+  (`KERNEL.md` "Mining", CONFIRMED by KB-1C), so the mining results of C09,
+  C14 and P0 stay samples.
 
 Not covered (open): ship and starbase designs, terraforming, mineral
 packets, planetary scanners, Genesis Device, Mineral Alchemy LRT rates,
@@ -6308,6 +6311,39 @@ would not let the race draw them.
 
 Elegy 8426a6a has no build-time check and differs in five of the eight
 cases.
+
+## The second word of a lay-mines task (LM-1)
+
+Status: CONFIRMED by prediction (2 of 2 streams, three chained years). The
+prediction was pushed before the runs (private apparatus 77f1dad). Results:
+`experiments/lm1/README.md`. Raw evidence: private apparatus `evidence/lm1`.
+
+| Question | Result | Status |
+|---|---|---|
+| Does a lay-mines task's second order word change the mines laid, the year the task ends or the messages? (All 6 RG-002 computer-player orders have years word 5 and second word 5; MEASURED.) | No. Layers that differed only in the second word matched in every year. Pairs run (years word, second word): (5, 0), (5, 5), (5, 9), (1, 0), (1, 5), (0, 0), (0, 5). | CONFIRMED by prediction |
+| Is the second word stored as given? | Yes, unchanged while the task continues. The years word counts down: 1 became 0 after the first year. | CONFIRMED by prediction |
+
+The durations matched `OBJECTS.md` "Laying" (Duration): years word 0 laid once,
+1 laid twice and 5 kept laying. RG-002's 6 lay-mines orders (5, 5) can drop
+the second word with no behaviour lost in this setup.
+
+## The high nibble of a waypoint's target type (WP-NIB)
+
+Status: H0 CONFIRMED by prediction (2 of 2 streams). The prediction was
+pushed before the runs (private apparatus 5222299). Results:
+`experiments/wpnib/README.md`. Raw evidence: private apparatus
+`evidence/wpnib`.
+
+| Question | Result | Status |
+|---|---|---|
+| Does the high nibble of a waypoint's target-type byte (0x31, 0x51, 0x91, 0x54, 0x52 against 0x11, 0x14, 0x12) change movement, fuel, arrival, a transport unload, chasing a fleet, leaving orbit or the messages sent? | No. Each variant matched its nibble-1 twin. | CONFIRMED by prediction (2 of 2) |
+| Is the byte stored as given? | Bits 0x40, 0x80 and 0x10 are carried on unreached waypoints, on a reached waypoint that becomes waypoint 0, and on a stationary fleet's waypoint 0. Bit 0x20 is cleared: 0x31 was stored as 0x11. | MEASURED |
+| What type does waypoint 0 get after the fleet moves? | 0x14 (deep space) mid-route, whether the fleet left deep space or orbit | CONFIRMED by prediction for deep space; MEASURED for orbit |
+
+Not tested: other tasks (colonize, merge, lay mines, patrol, remote mining)
+with the nibble set, and more than one year. RG-002's 23 waypoint orders
+with 0x31 or 0x51 carry no task, so dropping the nibble (as the vectors do)
+loses no behaviour seen here.
 
 ## Following a fleet merged away the same year (MR-1)
 
