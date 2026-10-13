@@ -67,8 +67,8 @@ import org.starsautohost.starsapi.items.Items;
 //                                   adds a waypoint. TASK: colonize | scrap | mine |
 //                                   unload (all colonists) | merge (into the waypoint's
 //                                   fleet) | transfer K (give the fleet to the K-th other
-//                                   player) | lay [YEARS] (lay mines; YEARS
-//                                   word, default 5 = indefinitely) | route (follow the
+//                                   player) | lay [YEARS[:W]] (lay mines; YEARS
+//                                   word, default 5 = indefinitely; W a second word) | route (follow the
 //                                   planet's route, task 8) | patrol RANGE (patrol within
 //                                   RANGE light-years, task 7) | transport A:V,A:V,A:V,A:V,A:V
 //                                   (Ir, Bo, Ge, colonists, fuel; action 0-9, value in
@@ -540,8 +540,14 @@ public class CombatLab {
                 return 7;
             }
             case "lay": {
-                // lay mines: one word, the years counter (5 = indefinitely)
-                ord[0] = t.length > i + 1 && t[i + 1].matches("\\d+") ? Integer.parseInt(t[i + 1]) : 5;
+                // lay mines: one word, the years counter (5 = indefinitely); "lay Y:W" also
+                // writes a second word W (computer players' orders store one)
+                ord[0] = 5; ord[1] = -1;
+                if (t.length > i + 1 && t[i + 1].matches("\\d+(:\\d+)?")) {
+                    String[] yw = t[i + 1].split(":");
+                    ord[0] = Integer.parseInt(yw[0]);
+                    if (yw.length > 1) ord[1] = Integer.parseInt(yw[1]);
+                }
                 return 6;
             }
             case "transport": {
@@ -906,6 +912,8 @@ public class CombatLab {
                 } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
                     int o = fs.orders.get(w)[0];
                     wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                    int o2 = fs.orders.get(w)[1];
+                    if (wb.waypointTask == 6 && o2 >= 0) { wb.additionalBytes.add((byte) o2); wb.additionalBytes.add((byte) (o2 >> 8)); }
                 } else if (wb.waypointTask == 7) {
                     // patrol: two words (range, selected target id)
                     for (int k = 0; k < 2; k++) {
@@ -1511,7 +1519,7 @@ public class CombatLab {
                     fs.task.put(w, parseTask(t, i + 1, ord));
                     fs.orders.put(w, ord);
                     i += t[i + 1].equals("transport") || t[i + 1].equals("transfer") || t[i + 1].equals("patrol")
-                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+")) ? 3 : 2;
+                        || (t[i + 1].equals("lay") && i + 2 < t.length && t[i + 2].matches("\\d+(:\\d+)?")) ? 3 : 2;
                     break;
                 }
                 case "hi": {

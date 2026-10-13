@@ -674,6 +674,9 @@ Result:
 - Nothing contradicted the white-box reading.
 - Repeats (C07r, C11r) were identical. Nothing in these cases is known to
   draw random numbers; mining (C09, C14 year 2) was not predicted.
+  Mining draws one `rand(100)` per mineral with a non-zero remainder
+  (`KERNEL.md` "Mining", CONFIRMED by KB-1C), so the mining results of C09,
+  C14 and P0 stay samples.
 
 Not covered (open): ship and starbase designs, terraforming, mineral
 packets, planetary scanners, Genesis Device, Mineral Alchemy LRT rates,
@@ -6308,6 +6311,21 @@ would not let the race draw them.
 
 Elegy 8426a6a has no build-time check and differs in five of the eight
 cases.
+
+## The second word of a lay-mines task (LM-1)
+
+Status: CONFIRMED by prediction (2 of 2 streams, three chained years). The
+prediction was pushed before the runs (private apparatus 77f1dad). Results:
+`experiments/lm1/README.md`. Raw evidence: private apparatus `evidence/lm1`.
+
+| Question | Result | Status |
+|---|---|---|
+| Does a lay-mines task's second order word (0, 5 or 9; computer players store it equal to the years word) change the mines laid, the year the task ends or the messages? | No. Layers that differed only in the second word matched in every year, for years words 5, 1 and 0. | CONFIRMED by prediction |
+| Is the second word stored as given? | Yes, unchanged while the task continues. The years word counts down: 1 became 0 after the first year. | CONFIRMED by prediction |
+
+The durations matched `OBJECTS.md` "Laying" (Duration): years word 0 laid once,
+1 laid twice and 5 kept laying. RG-002's 6 lay-mines orders (5, 5) can drop
+the second word with no behaviour lost in this setup.
 
 ## The high nibble of a waypoint's target type (WP-NIB)
 

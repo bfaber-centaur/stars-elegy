@@ -133,6 +133,10 @@ fields of each kind.
   OB-025, and still laying after three years with 4; BINARY-ONLY for 5).
   The fleet's later waypoints stay queued meanwhile (CONFIRMED, OB-019:
   both waypoints kept for three years).
+  The task's years word counts down by one each year it lays (1 became 0
+  after one year, LM-1). A second order word, which computer players set
+  equal to the years word, is stored unchanged and changes nothing that was
+  measured (CONFIRMED, LM-1: words 0, 5 and 9 for years words 5, 1 and 0).
 - **Order (CONFIRMED, MF-12).** Fleets lay one at a time in fleet order (owner,
   then fleet number). Each fleet lays standard, then heavy, then speed-bump
   mines, and each kind is merged (rule above) before the next fleet lays.
