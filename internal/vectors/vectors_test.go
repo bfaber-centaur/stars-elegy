@@ -398,3 +398,24 @@ func TestMessageSequence(t *testing.T) {
 		}
 	}
 }
+
+func TestAltBattleFields(t *testing.T) {
+	x, y := 10, 20
+	for _, c := range []struct {
+		e    Expectation
+		errs int
+	}{
+		{Expectation{X: &x, Y: &y, Players: []int{0}, Sample: true}, 0},
+		{Expectation{X: &x, Y: &y, Players: []int{0}}, 1},
+		{Expectation{X: &x, Players: []int{0}, Sample: true}, 1},
+		{Expectation{X: &x, Y: &y, Sample: true}, 1},
+	} {
+		c.e.Year, c.e.Kind = 1, "alt_battle"
+		v := &Vector{Schema: Schema, ID: "T", Years: 1, Streams: 1,
+			InitialState: &State{Game: Game{Players: 1}, Players: []Player{{ID: 0}}},
+			Cases:        []Case{{ID: "T-1", Tag: "MEASURED", Expect: []Expectation{c.e}}}}
+		if errs := v.Check(); len(errs) != c.errs {
+			t.Errorf("%+v: want %d errors, got %v", c.e, c.errs, errs)
+		}
+	}
+}
