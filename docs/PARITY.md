@@ -4754,6 +4754,106 @@ Raw evidence: private `stars-oracle-apparatus` `evidence/mf/mf14`,
     direction.
   - 8 east-leg controls entering from outside: 8 stopped.
 
+#### Salvage and packet object ids (MEASURED, SV-1)
+
+This came from lane D: RG-002 year 1's 0x05b gave the salvage as 8192.
+- Setup: one pinned year on the CB base, cycles 20000 and 30000 (both gave
+  the same result). Player 0 owns packet 0, and player 1 owns packets 0
+  and 1. Two player 0 fleets and one player 1 fleet scrap themselves in
+  deep space (waypoint 0 task scrap).
+- Result: player 0's salvage has ids 8193 and 8194 (owner 0, numbers 1 and
+  2). Player 1's salvage has id 8706 (owner 1, number 2). 0x05b's object
+  slot held those ids. So salvage is a type-1 record, shared with packets,
+  with id 0x2000 + owner·512 + number, numbered in the owner's
+  packet-and-salvage pool. SV-1 cannot tell "lowest free number" from
+  "one past the highest" (both give 1, 2 and 2 here).
+- 0x05b's fleet slot did not match earlier runs: player 1's fleet 0 gave 0
+  here and 512 in WF. This is kept open in `MESSAGES.md` "Object ids in
+  slots".
+
+Raw evidence: apparatus `evidence/sv1`.
+
+#### Packet settings after a starbase is destroyed (MEASURED, PK-1)
+
+Asked from the RG-003 ledger: are a planet's packet destination and speed
+cleared when its starbase is destroyed, or kept but not written?
+
+- Setup (a state edit with `combatlab build`, not a played position): CB
+  base, player 0 at tech 26. Planets 3, 4, 6 and 9 each have a
+  Catcher 7 starbase (Orbital Fort with one Mass Driver 7), packet
+  destination planet 17 and packet warp 9. Ten player 1 Laser destroyers
+  sit at planets 4 and 6. Year 1 queues: planets 4 and 3 hold a Catcher
+  7 at 99% and then one ironium packet; planets 6 and 9 hold one ironium
+  packet. Two pinned streams (cycles 20000 and 30000) gave identical
+  results.
+- Year 1: all four planets launched a packet to planet 17 at warp 9
+  (0x0d3), and planets 3 and 4 built their Catcher 7 (0x0cd). Then
+  battles at 4 and 6 destroyed both starbases. Production came before
+  the battle. After the year, planets 4 and 6 have no starbase and no
+  packet setting in the host file.
+- Year 2 started from the year-1 result. The only change was a state edit
+  of the queue on all four planets (`pk1-y2.spec`): Catcher 7 at 99%
+  progress, then one ironium packet. A client order cannot set 99%
+  progress, so this is a state edit, not a client order. No destination
+  or speed was set. On planets 4 and 6 the
+  starbase was built (0x0cd), the packet item was cancelled (0x129), and
+  no packet launched. On planets 3 and 9 (controls) a packet launched to
+  planet 17 at warp 9 (0x0d3).
+- Reading: a rebuilt starbase does not bring back the old packet
+  settings (MEASURED: no launch where the controls launched). That the
+  planet then has no destination is inferred: it rests on 0x129, whose
+  no-target trigger is BINARY-ONLY. The speed is not observable here,
+  because the battle destroyed the rebuilt starbase again.
+- UNRESOLVED: whether the settings are cleared at destruction or kept but
+  not written. The two cannot be told apart here, because packet settings
+  are read only in production, which runs before battle.
+
+Raw evidence: apparatus `evidence/pk1`. Rules: `PRODUCTION-LAUNCH.md`,
+"A starbase destroyed in battle".
+
+#### Starbase-built message and invasion slots (MEASURED)
+
+From existing evidence. The tables are in `MESSAGES.md` under
+"0x0cd–0x0cf" and "Invasion slots".
+- Every starbase built in the preserved runs gave 0x0cd, for these hulls:
+  Orbital Forts (PD-1, PK-1, RG-002 `sbt/r18`); a Space Dock (SL-12);
+  Space Stations (SL-12, PD-1b, the PD-1 diagnostic runs, RG-002 `s0`,
+  `sbt` and RM runs, RG-003 year 8); and an Ultra Station for player 1
+  (SL-12). Death Star NOT RUN. No
+  0x0ce or 0x0cf record exists in about 67,600 decoded messages. This
+  contradicts the BINARY-ONLY dock rule, and the contradiction is kept
+  open. Design slot: owner·32 + 16 + starbase design index.
+- 0x004 [planet, troops lo, hi, player] and 0x007 [player, planet, troops
+  lo, hi]. The player slot was player + 0x30 in every record seen. The
+  controlled cases cover players 0 and 1, and the RG-003/RG-004 captures
+  (players 0 to 6) fit it. 0x00c is the exception: player + 0x20. Troops are
+  the attacker's total dropped that year: TK-301 and TK-302 gave 600 for
+  a repelled 600, and GC-1 gave 560 for 395 + 165.
+
+#### Sweep message slots (MEASURED, SW-1)
+
+docs/MESSAGES.md had no public slot table for the sweep messages 0x0be,
+0x0c2 and 0x0f4. Existing recorded years gave 87, 54 and 43 records with
+standard and heavy fields only (ob/ob007, ob/ob008, ob/ob010, cs/cs-003,
+mf/mf01–mf15, RG-003 year 11, cb056, zmd). SW-1 added a speed bump:
+
+- One pinned year (cycles 20000) on the two-player CB base. Player 1 owns
+  three 1000-mine fields: standard at (1050,1030), heavy at (1050,1180),
+  speed bump at (1080,1360). Five player 0 beam-armed destroyers sit
+  still at each centre with plan "Enemies". Legal orders only.
+- 0x0c2 slots: [0,100,0,1,0,1050,1030], [1,100,0,1,1,1050,1180],
+  [2,33,0,1,2,1080,1360]. 0x0be slots: [512,100,0,0,1050,1030],
+  [513,100,0,1,1050,1180], [514,33,0,2,1080,1360].
+- Field type 2 is a speed bump (MEASURED, one field). The speed bump lost
+  33 where the others lost 100, which is consistent with the "a third for
+  speed bumps" rule in MESSAGES.md 0x0c2.
+- The field-owner slot was a plain player number in every record (owners
+  0, 1 and 5); no flag bit was seen. The location was x, y in every record,
+  including a field centred on planet 8 in ob/ob007.
+
+The slot table is in MESSAGES.md under "Sweep slots". Raw evidence is in
+the apparatus under evidence/sw1.
+
 Not tested: the detonate-order validation gap (needs crafted orders), SS
 and SD safe-warp bonuses, fleets moving through gates in a field, steep
 but not due-north legs, and the stop-point rounding on diagonal legs.

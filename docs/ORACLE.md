@@ -1141,9 +1141,16 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   thing raw HEX
   ```
 
-  The game loaded, updated and rewrote all four kinds. `combatlab dump`
+  The game loaded, updated and rewrote all four kinds. It also creates,
+  keeps and rewrites salvage, a packet-type record (tk2/tk111 year 2, SV-1).
+  CombatLab has no salvage line. `combatlab dump`
   prints `things count=` and a `thing id=… type=…` line per record with its
   decoded fields and raw bytes.
+  Type numbers: 0 minefield, 1 packet or salvage, 2 wormhole, 3 Mystery
+  Trader (MEASURED in the preserved dumps, for example packet owner 4
+  number 0 = 10240 and the Trader = 24576). The dump prints salvage as
+  `type=packet` with `dest=1023 warp=4`. Message slots use the same ids
+  (`MESSAGES.md` "Object ids in slots", SV-1).
 - In written host files, wormhole records carry bit 13 of word 6 (0x2000)
   and packet records carry bit 15 of word 6. The game sets packet bit 14
   after a packet moves. Neither bit 15 nor bit 14 changed what the next

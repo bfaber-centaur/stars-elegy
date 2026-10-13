@@ -43,6 +43,10 @@ jobs:
       - run: |
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
           tools/fleetlab/combatlab selftest | grep -qx 'combatlab selftest: ok'
+      # RaceLab: a rename to a shorter name keeps a good footer checksum.
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          tools/fleetlab/racelab selftest | grep -qx 'racelab selftest: ok'
       # CombatLab "target thing": waypoint 0 aims at a universe object (type 0x18).
       - run: |
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
