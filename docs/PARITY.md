@@ -3737,9 +3737,13 @@ Hush-a-Boom 30/2, Smart 13/0, Peerless 50/0.
 
 ### Ground combat (CONFIRMED)
 
-- Attacker strength per player = floor(colonist units·110/100) (165 for
-  WM, not tested), times s' = s + (1 − s)/4, i.e. defenses work at 75%
-  against troops. Defender strength D = population units (×2 for IS, not
+- Attacker strength per drop = floor(floor(colonist units·110/100)·s')
+  (165 for WM, not tested), with s' = s + (1 − s)/4, i.e. defenses work
+  at 75% against troops; a player's strength is the sum over its drops.
+  **Corrected 2026-10-13:** this line used to say "per player". In
+  RG-003-Y7-2469 player 1's drops of 250 and 300 units onto planet 51
+  (ten Neutron Shields, s' ≈ 0.75911) killed 458 = 208 + 250, not the
+  per-player 459 (`TAKEOVER.md` "Ground combat"). Defender strength D = population units (×2 for IS, not
   tested).
 - D > strength: all attackers die and the defender loses
   floor(P·strength/D): 200 vs 110 → 90.

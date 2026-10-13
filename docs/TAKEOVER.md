@@ -369,12 +369,18 @@ after another, so their order does not change the result.
    colonist anyway, T-33). Each attacking player `p` has `troops[p]`, the
    sum of its drops' units, and `strength[p]`, the sum of its drops'
    strengths: the 110% factor and both floors apply per drop, not to the
-   player's total. `Σ` is the sum of all strengths. MEASURED once
-   (RG-003, year 2469, a chained year): planet 51 with ten Neutron
-   Shields (`s' ≈ 0.7591`) repelled player 1's drops of 250 and 300 units
-   and lost 458, the per-drop sum 208 + 250. A per-player strength would
-   be `⌊605·s'⌋ = 459`. **Corrected 2026-10-13:** this step used to
-   compute one strength per player from its total troops.
+   player's total. `Σ` is the sum of all strengths. The outer floor per
+   drop is MEASURED once (RG-003, case RG-003-Y7-2469): planet 51 with
+   ten Neutron Shields (`s' ≈ 0.75911`) repelled player 1's drops of 250
+   and 300 units and lost 458, the per-drop sum 208 + 250. A per-player
+   strength would be `⌊605·s'⌋ = 459`. The inner floor per drop is
+   BINARY-ONLY: 250·1.1 and 300·1.1 are whole numbers. This case does not
+   separate pooling from resolving the drops one after another (208
+   against the full population, then 250 against the rest, also kills
+   458; TK-403 gives the same either way), so the pooling and order
+   independence above stay BINARY-ONLY ("Open experiments").
+   **Corrected 2026-10-13:** this step used to compute one strength per
+   player from its total troops.
 3. If the planet is owned, the defender strength is `D = P` (×2 for Inner
    Strength, CONFIRMED, T-24).
    - `D > Σ`: every attacker dies, and the planet loses `⌊P·Σ/D⌋`. 200
@@ -383,7 +389,8 @@ after another, so their order does not change the result.
      (Capture, below) and the attackers resolve as for an empty planet,
      with `D` subtracted.
 4. Empty-planet resolution, with `D = 0` for an unowned planet. The
-   winner's drops land as one population: a single attacking player `w`
+   winner's drops land as one population (BINARY-ONLY): a single
+   attacking player `w`
    lands
    `max(1, troops[w]·⌊(Σ − D)·best/Σ⌋/best)`, where `best =
    strength[w]`. If `Σ = 0`, it lands all its troops.
@@ -753,10 +760,18 @@ resolutions after movement. Random-stream pinning for experiments:
 ## Open experiments
 
 Rounds 1–8 (TK-001..TK-606), the FO corpus and the MG runs measured every
-other rule here. What is left:
+other rule here, except the parts labelled BINARY-ONLY in place. What is
+left:
 
 - The draw order of a whole year (drops, battles, bombing, capture tech)
   as seen through the random stream; only the bombing part is measured.
+- Several drops by one player on one planet: whether their strengths are
+  pooled and compared with the defenders once, in any order (the binary),
+  or resolved one after another. RG-003-Y7-2469 cannot separate the two.
+  Lane F's planned GC-1 case can: 39,500 and 12,500 colonists from two
+  fleets onto a non-IS planet of 32,900 with RG-003's `s'`, predicted 123
+  units landed when pooled, against 126 when resolved in sequence with
+  the larger drop first.
 - Alternate Reality `k = 0` in a contested drop (an AR invasion is refused
   before strength matters, so legal orders do not reach it).
 
@@ -766,6 +781,8 @@ other rule here. What is left:
   TK-306, every case and value; raw files in private
   `stars-oracle-apparatus` `evidence/tk/`, `evidence/tk2/`,
   `evidence/tk3/` and `evidence/tk4/`.
+- `PARITY.md` "Representative game, 12 years (RG-003)": RG-003-Y7-2469,
+  several drops by one player on a defended planet.
 - White-box reading: private `stars-decomp` `docs/takeover.md` (§10 is
   the reconciliation with TK) and `docs/takeover-predictions.md`.
 - Related specs: `KERNEL.md` (turn order, growth, caps, research),
