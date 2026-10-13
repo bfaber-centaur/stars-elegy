@@ -6680,7 +6680,10 @@ packet that has flown on. The arrival cases and what happens to the
 emptied objects are MEASURED. Predictions were pushed before the runs for
 the exact start. Results: `experiments/ns/README.md` "NS-1". Raw evidence:
 private apparatus `evidence/ns1`. Each case ran one pinned year in two
-streams, which are identical.
+streams, which are identical. (Updated 2026-10-13: "identical" holds
+for the fleet, object, planet and player 0 message values the results
+list. The raw host file and both player files differ between the two
+streams.)
 
 Every fleet is player 0's empty Medium Freighter with "load all ironium,
 load all boranium". Every named object holds 100 kT boranium, and every
@@ -6744,7 +6747,9 @@ named planet 94 (MEASURED). Year 7's fleet 5/45 did the same with planet
 06:02:20Z (activity API), before the runs at 06:02:31Z. Results:
 `experiments/wf/README.md` "WK-1". Raw evidence: private apparatus
 `evidence/wk1`. One pinned year (cycles 20000 and 30000), identical
-streams. Player 0's HB Battleships killed player 1's Laser Destroyers at
+streams. (Updated 2026-10-13: "identical" holds for every line of the
+results, the fleets, waypoints and 0x028 messages. The raw host file
+and both player files differ between the two streams.) Player 0's HB Battleships killed player 1's Laser Destroyers at
 three places. Each victim fleet was followed by a player 0 freighter 100
 ly away, whose waypoint 1 was aimed at it.
 
