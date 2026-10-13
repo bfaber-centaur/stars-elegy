@@ -452,6 +452,20 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 
 - **Research order:** for each level gained, the level message comes first, then that level's component messages. Players are handled in player order and fields in field order. Super Stealth bonuses (0x159) come after all players, followed by any level-ups they cause.
   **Clarified 2026-10-13 (EM-1):** within one player's year the level messages follow the order the levels are gained, which is not always field order. MEASURED in RG-002 year 2468 (the same in three runs of that year): player 0 got 0x050 biotech 7 with next field weapons, then biotech 7's 0x05f messages, then 0x050 weapons 8 with its 0x05f messages. The leftover moved from biotech to weapons, an earlier field, which levelled after it. That fits the pass order in `KERNEL.md` "Research" (a switch to an earlier field is checked in the next pass). A Mystery Trader reward that grants several levels at once sent them in its own order (OT-1: energy, propulsion, biotech, weapons, construction, electronics). So a rule that sorts one player's level messages by field is wrong.
+- **Order of the component messages within one level** (BINARY-ONLY except where marked). After a level message, the component categories are walked in a fixed order. Within each category, items go in index order (`index` in `data/components.json`). One message is sent per item that this level made available. The category order is:
+  - engines, scanners, shields, armor, beam weapons, torpedoes, bombs, mining robots, mine layers and orbital parts (0x05f);
+  - starbase hulls (0x0d0);
+  - electrical, mechanical and terraforming parts (0x05f);
+  - ship hulls (0x078);
+  - planetary items, in index order: planetary scanners (0x157, indices 0–8), then planetary defenses (0x145, 9–13), then the Genesis Device (0x05f, index 14).
+
+  So within one level, a starbase hull can come before some 0x05f messages. Ship hulls, planetary scanners and planetary defenses come after every other component except the Genesis Device. For a Total Terraforming race, Gravity, Temp and Radiation Terraform ±3 (terraforming indices 8, 12 and 16) are never announced. MEASURED (KX-005, KX-003, RG-001) where two of these met in one level, in each player's message order:
+  - KX-005 R1, player 1, energy 10: Bear Neutrino Barrier (shield), Temp Terraform ±11 (terraforming), then Laser Battery (0x145).
+  - KX-003 r2 year 2 and KX-005 T0, player 1, energy 5: Temp Terraform ±7, then Missile Battery (0x145).
+  - RG-001 2433, player 0: Robo-Mini-Miner (mining robot), then Mini-Miner (0x078).
+  - RG-001 2434, player 0: Crobmnium (armor), Cargo Pod (mechanical), then Medium Freighter and Destroyer (0x078, hull indices 1 and 6).
+
+  The position of starbase hulls, the order between planetary scanners and defenses, the Genesis Device's place and the Total Terraforming skip have not been observed.
 - **0x050 vs 0x136:** the choice depends only on whether the player has Generalized Research.
 - **Wrong id in an earlier note:** an earlier private reading had 0x150 for the normal level-up message. The correct id is 0x050, and the oracle files agree.
 - **Component announcements:** the check is not limited to the leveled field. MEASURED, KX-005 R1 (`KERNEL.md` "Research"): energy 9 → 10 did not announce Battle Nexus, which also needs electronics 19; the check of all six fields is BINARY-ONLY beyond that case.
