@@ -1231,6 +1231,17 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   The race file must be copied into the games directory with the
   definition; `new-game` copies its extra arguments there. Copy it to a
   path outside the games directory first, because the reset deletes it.
+- **Computer players in the host file** (MEASURED on AIX, a game whose six
+  computer players came from definition lines `# 1 4` … `# 6 4`). One
+  byte of each player's record holds the computer flag, the level and the
+  personality. It read 0x01 for the human player and 0x0f, 0x2f, 0x4f,
+  0x6f, 0x8f and 0xaf for definition types 1 to 6 at expert (Robotoid,
+  Turindrone, Automitron, Rototill, Cybertron, Macinti). `combatlab dump`
+  prints it as `b7=`. The CombatLab spec line `computer P TYPE LEVEL`
+  writes it (TYPE 0 to 5 in that order, LEVEL 3 expert, giving those
+  values; `computer P off` gives 0x01). With it set on custom races in a
+  new game, the host ran a computer player for every player and wrote
+  each one's order file (RG-004, `experiments/rg004/README.md`).
 - More than one race file can follow the definition (`new-game DEF OUT
   CYCLES a.r1 b.r1 …`); the definition names them by file name, one per
   human player (UG16..UG21, up to six race files with ten computer

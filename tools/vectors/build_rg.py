@@ -67,6 +67,17 @@ RUNS = {
               'original AIX play; experiments/rg003 lists them), the computer players planned from the current '
               'files, then the year was generated with every order file supplied, so the host ran no computer player '
               'and the stream starts at seeding'),
+    'rg004': dict(
+        id='RG-004', cycles=20000, game='RGF', start='year 2465 of the unrecorded RGF warm-up',
+        title='representative game, other races: seven expert computer players on custom races (WM, SD, IT, JoaT, '
+              'PP, IS, HE with other LRTs), small dense universe, 2466 to 2477 chained (12 years) with every '
+              'player\'s orders',
+        setup='NOT from game start. A new game (small, dense, close positions, random events on) of seven custom '
+              'races, every player made an expert computer player before the first year (setup step, experiments/'
+              'rg004); 65 years then generated unrecorded with the host planning (the warm-up), and the recorded '
+              'chain starts from that state. Each recorded year: the computer players planned from the current '
+              'files, then the year was generated with every order file supplied, so the host ran no computer '
+              'player and the stream starts at seeding'),
 }
 IDENT = {
     'fleet': ('owner', 'id'), 'fleet_gone': ('owner', 'id'), 'planet': ('id',), 'player': ('id', 'seen_by'),
@@ -215,8 +226,10 @@ def alt_battles(k, gen, alts):
 
 
 def build(ev, out):
+    global GAME
     run = os.path.basename(ev.rstrip('/'))
     r = RUNS[run]
+    GAME = r.get('game', 'AIX')
     os.makedirs(out, exist_ok=True)
     ydirs = sorted(d for d in os.listdir(ev) if re.fullmatch(r'y\d\d', d)
                    and os.path.exists(os.path.join(ev, d, 'gen', 'raw', 'after', GAME + '.HST')))

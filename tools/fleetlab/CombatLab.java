@@ -221,7 +221,7 @@ public class CombatLab {
                         d[0x3b] & 0xff, d[0x3c] & 0xff, d[0x3d] & 0xff, d[0x3e], d[0x3f], d[0x40], d[0x41], d[0x42], d[0x43],
                         Util.read16(d, 0x48), d[0x45]));
                     // computer player: player struct +0x07 bit 1 (block byte 7)
-                    sb.append(" computer=").append(p.getDecryptedData()[7] >> 1 & 1);
+                    sb.append(" computer=").append(p.getDecryptedData()[7] >> 1 & 1).append(String.format(" b7=%02x", p.getDecryptedData()[7] & 0xff));
                     // Mystery Trader parts owned (bytes 0x4a, 0x4b as StarsAPI's setMtMask writes them)
                     sb.append(String.format(" mt=%02x%02x", p.fullDataBytes[0x4a] & 0xff, p.fullDataBytes[0x4b] & 0xff));
                     // economy settings (estimates corpus): growth %, colonists per resource / 100,
@@ -622,7 +622,7 @@ public class CombatLab {
         List<Block> blocks = dec.readFile(base);
         Map<String, Integer> tech = new HashMap<>();
         Map<String, Long> accums = new HashMap<>();
-        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>();
+        Map<Integer, Integer> lrts = new HashMap<>(), research = new HashMap<>(), prts = new HashMap<>(), computers = new HashMap<>();
         Map<Integer, byte[]> habs = new HashMap<>();
         Map<Integer, Integer> fields = new HashMap<>(), defLeftover = new HashMap<>(), mts = new HashMap<>();
         Map<Integer, byte[]> queues = new HashMap<>(); // planet -> queue block data (empty = none)
@@ -650,6 +650,10 @@ public class CombatLab {
                     case "tech": tech.put(t[1] + " " + t[2], Integer.parseInt(t[3])); break;
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
                     case "prt": prts.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
+                    // computer P TYPE LEVEL: player block byte 7 = 1 | computer 2 | LEVEL << 2 | TYPE << 5
+                    // (TYPE 0..5 Robotoid..Macinti as in AIX; LEVEL 3 expert); "computer P off" = 1
+                    case "computer": computers.put(Integer.parseInt(t[1]), t[2].equals("off") ? 1
+                        : 1 | 2 | (Integer.parseInt(t[3]) & 3) << 2 | (Integer.parseInt(t[2]) & 7) << 5); break;
                     case "hab": {
                         String[] h = t[2].split(",");
                         if (h.length != 9) throw new Exception("hab needs 9 values");
@@ -924,6 +928,7 @@ public class CombatLab {
                 p.fullDataBytes[0x47] = (byte) (lrts.get(k) >> 8);
             }
             if (prts.containsKey(k)) p.fullDataBytes[0x44] = (byte) (int) prts.get(k);
+            if (computers.containsKey(k)) p.byte7 = (byte) (int) computers.get(k);
             if (habs.containsKey(k)) System.arraycopy(habs.get(k), 0, p.fullDataBytes, 8, 9);
             if (research.containsKey(k)) p.fullDataBytes[0x30] = (byte) (int) research.get(k);
             for (Map.Entry<String, Long> e : accums.entrySet()) {
