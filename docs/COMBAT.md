@@ -172,6 +172,12 @@ player 0's fleet 1 at one point and fleet 3 at another destroyed player
 1's fleets 4 and 2 there. The salvage at fleet 1's point was player 1's
 number 0 and the other number 1, so the order is not by the victims' lowest
 fleet. An order by ascending y would also fit this layout.
+**Clarified 2026-10-13 (CB-058 Q4b, run as part of CB-059):** the same layout with the two points'
+y values swapped put the salvage numbered 0 at fleet 1's point again, now
+the one with the larger y. In all 8 streams, that battle was also the first
+record and the first summary in both players' files. So the order is by
+first fleet, not ascending y (CONFIRMED by prediction, elegy 5d2450e). The
+other orders named above were already ruled out.
 
 ## Who fights (CONFIRMED in part; see each rule)
 

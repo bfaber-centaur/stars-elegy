@@ -6353,6 +6353,28 @@ Earlier layouts with objects outside 1000..1400 in this start: ET-2b
 (`experiments/cb056/README.md`, "Galaxy clamp"). No other ET or CB layout
 did.
 
+## Battle summaries B1–B4 and the battle order (CB-059)
+
+Status: per case below. Predictions for the exact starts were pushed
+before the runs: private apparatus 76789105 for B1–B3, X and Q4b, and
+elegy 5d2450e for Q4b. Results: `experiments/cb059/README.md`. Raw
+evidence: private apparatus `evidence/cbb`. Eight pinned streams per
+start. A case is decided only by the streams whose battle record took the
+branch it states.
+
+| Question | Result | Status |
+|---|---|---|
+| B1: what counts as "hit" in the one-ship texts 0x091–0x095 | Only armor damage. Shield damage alone (from a Laser in B1-S, or from all-miss torpedo salvos in B1-M) gave 0x091 / 0x092, as did 0-hit torpedo records alone (B1-Z). One torpedo hit with armor damage gave 0x093 / 0x094. | CONFIRMED by prediction in the streams that took the branch: B1-S 8 of 8, B1-Z 7 of 8, B1-M 3 of 8 (14000, 10000, 5000); the other streams MEASURED. Elegy's rule (shield damage counts) failed B1-S and B1-M. |
+| B2b: a single ship dies after destroying some of several | Single ship's owner 0x0a3, the other side 0x0a2 | CONFIRMED by prediction (Elegy), 2 layouts |
+| X: a single ship destroys several and loses nothing | 0x113 / 0x114 | CONFIRMED by prediction (Elegy) |
+| B2a/c: both sides wiped out in a 2-player battle | Not reachable by fire: firing stops once only one player has live tokens (`COMBAT.md` "Firing") | NOT RUN |
+| B3: a third player present who does not fight | 2-player texts with every other ship counted as the enemy: 0x115 / 0x0a1. An uninvolved starbase owner gets 0x115 with its starbase as its single ship; a bystander fleet's owner gets nothing. | MEASURED. Elegy's rule (multi-race texts when the starbase owner is in the battle; 0x0a0 with a bystander) failed. |
+| B4: an AR starbase dies | No battle summary for anyone: 0x08e to the owner, 0x144 to the attacker | MEASURED (17 existing CB-041-sf streams) |
+| Q4b: battle order | By first fleet, not ascending y | CONFIRMED by prediction (Elegy) |
+
+See `MESSAGES.md` "Battles and bombing" (the clarifications dated
+2026-10-13) and `COMBAT.md` "Where battles happen in the turn".
+
 ## A transport task whose waypoint names a packet or salvage (NS-1)
 
 Status: CONFIRMED by prediction for waypoint 0, over a planet and for a
