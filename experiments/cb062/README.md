@@ -55,7 +55,7 @@ Two consequences:
 
 Z1b's Laser slot, as predicted: in all 49 rounds (6 streams) with the
 Laser DD within 1, the Laser hit the Laser DD. In two other rounds
-(30000 and 5000, round 5), the Laser DD was 2 away, outside the Laser's
+(30000 and 5000, round 5; MEASURED, not predicted), the Laser DD was 2 away, outside the Laser's
 reach. The Laser hit the Slow Shield BB at distance 1 instead. That is
 the existing "no primary-type target in reach" case.
 
