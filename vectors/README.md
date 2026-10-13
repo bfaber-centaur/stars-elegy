@@ -434,6 +434,9 @@ loss roll decided (a predicted ship range, the O-65 fleets of which only
 some arrive, the GT-003 W cases) carry `sample: true`, and so do message
 ids that only some of those fleets got. In `ob`, a PP terraforming step's
 size is a draw, so OB-029's `environment` expectations are samples.
+In `rp`, every year-end wormhole `object` (RD-P20, RD-P21) carries
+`sample: true`, as in RG-002: each end jiggles or jumps on its own draws
+every year (OBJECTS.md "Yearly movement").
 In `ob` and `wt`, these are samples too, because the original draws them
 (OBJECTS.md):
 - whether a player sees a wormhole, where the drawn jiggle (at most 17 ly
@@ -558,6 +561,15 @@ rebuild of those corpora would change what an implementation loads, so it
 waits on a parity check on the implementation side. Until then only
 `initial_state.game` was refreshed from the builders (universe size,
 bounds and density, read from each game's `.XY` planets block).
+
+**WT-001 player-0 wormhole bit (UNRESOLVED, 2026-10-13).** WT-001-G
+expects ends 2 and 3 known to players 0 and 1, and it is not flagged a
+sample. Player 1's bit is clear of the jiggle: its scouts sit 5 ly from
+each end against a 50 ly bound, and the jiggle moves an end at most 17 ly.
+Player 0 has no scanner close to either end, so there is no jiggle margin
+for its bit, and the run does not show how player 0 came to know them.
+Both streams agree. Until that is explained, player 0's bit on ends 2
+and 3 may be drawn rather than a rule.
 
 **Oracle runs not run.** Each PARITY section's "Not tested" list is the
 current record; the main ones are:
