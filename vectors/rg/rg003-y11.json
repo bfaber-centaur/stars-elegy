@@ -45942,7 +45942,8 @@
        "fleet": 47
       }
      ],
-     "year": 1
+     "year": 1,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -46170,7 +46171,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -46449,7 +46451,8 @@
        "fleet": 71
       }
      ],
-     "year": 1
+     "year": 1,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -46684,7 +46687,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": true
     },
     {
      "kind": "battle_actions",
@@ -47099,7 +47103,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -47394,7 +47399,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -48282,7 +48288,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
@@ -51002,7 +51009,8 @@
       }
      ],
      "year": 1,
-     "sample": true
+     "sample": true,
+     "start_sample": false
     },
     {
      "kind": "battle_actions",
