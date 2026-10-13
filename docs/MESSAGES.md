@@ -565,6 +565,7 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
   - one-on-one and one-stack battles report your loss;
   - other 2-player battles report 0x09d (you won with losses);
   - multi-race battles report 0x0a5.
+- **Races count (0x0a4–0x0a8).** **Clarified 2026-10-13 (CB-061, CONFIRMED by prediction in 6 of 6 streams; `PARITY.md` "The races count in multi-race battle summaries (CB-061)"):** the races count is the number of players who fought, not every player present. Three players fought at a fourth player's homeworld, whose unarmed starbase was not fired on: all four got 0x0a8 with races count 3, the starbase owner included. Its counts gave its starbase as its own one ship and the six fighting ships as everyone else's; each fighter's counts included the starbase among everyone else's ships (MEASURED).
 - **0x07e vs 0x0a8.** In multi-race battles, 0x0a8 is used only when one side lost nothing. When both sides lost part of their forces, the player gets only the generic 0x07e. Sampled 0x0a8 records fit this.
 - **Alternate Reality starbase death.**
   - The planet is emptied before any message is sent.
