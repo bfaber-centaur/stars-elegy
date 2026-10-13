@@ -30,7 +30,8 @@ player 0 was (9, 513). Both are CONFIRMED by prediction. 0x028 to player
 1 was (517, 516), not the predicted (5, 516). That is MEASURED.
 
 So reading E holds for fleets of one design: the slot is design·512 +
-fleet number. Lane D's readings A to D do not fit. f's value is 0x2000 +
+fleet number. Lane D's readings A to D do not fit (D's player-count part
+not retested). f's value is 0x2000 +
 2·512 + 6. That bit 13 marks a fleet of more than one design is
 inferred, from this one fleet.
 
@@ -38,6 +39,10 @@ MEASURED, not predicted:
 - 0x028's follower slot is owner·512 + number (517 for player 1's 1/5).
 - 0x140, sent with 0x059 to the planet owner, gave 7 for 0/7 and 518
   for 1/6, also owner·512 + number.
+- In these 0x140 and 0x028 follower cases the fleet owner was also the
+  recipient (and, for 0x140, the planet owner), so owner·512 cannot be
+  told from recipient·512. The 0x028 target slot (513, sent to player 0)
+  is the exception.
 
 Scope: CB with 2 players, one year, one ship per fleet. The player-count
 part of reading D rests on RG-002 year 1 and was not retested.

@@ -6868,7 +6868,8 @@ not-compared RG lines (`MESSAGES.md` "Object ids in slots"). The values
 on record (0, 1, 0, 512, 6 and 6151) did not follow the owner.
 Preparing the case, the preserved raw evidence showed that every one of
 them equals design·512 + fleet number, where design is the scrapped
-fleet's ship design. The prediction (`experiments/fs/PREDICTION.md`)
+fleet's ship design (retrodiction: reading E was built from these six
+values; not a prediction). The prediction (`experiments/fs/PREDICTION.md`)
 was pushed alone at 18:25:47Z (activity API), before the runs at
 18:26:06Z. Results: `experiments/fs/README.md` "FS-1". Raw evidence:
 private apparatus `evidence/fs1`.
@@ -6894,9 +6895,9 @@ Rows a to q are CONFIRMED by prediction. So, for a fleet of one design,
 the fleet slot of 0x05b and 0x059 holds design·512 + fleet number, for
 either owner, with or without another fleet following it. Lane D's
 candidate readings (owner bits shown only for a followed fleet; a
-constant per year; the fleet record's flags; the recipient or player
-count) do not fit: c gave 1, not 513, and the values changed with the
-design only. Row f's prediction (1030) failed. Its value is MEASURED;
+constant per year; the fleet record's flags; the recipient) do not fit:
+c gave 1, not 513, and bits 9 and up changed only with the design. The
+player-count part of D was not retested (see Scope). Row f's prediction (1030) failed. Its value is MEASURED;
 reading bit 13 as "more than one design" is inferred. With one mixed
 fleet, "first design in the record" and "lowest design" cannot be told
 apart (both 2).
@@ -6904,8 +6905,10 @@ apart (both 2).
 MEASURED, not predicted: 0x028's follower slot is owner·512 + number
 (player 1's follower 1/5 gave 517; WK-1 and WK-2 had only player 0
 followers). 0x140, sent to the planet owner with 0x059, gave 7 for 0/7
-and 518 for 1/6, also owner·512 + number. Scope: CB with 2 players and
-one year. The player-count reading rests on RG-002 year 1 (7 players,
+and 518 for 1/6, also owner·512 + number (fleet owner, recipient and,
+for 0x140, planet owner coincide in every case; the 0x028 target slot,
+513 sent to player 0, is the exception). Scope: CB with 2 players, one
+year, one ship per fleet. The player-count reading rests on RG-002 year 1 (7 players,
 design 0, value 6) and was not retested.
 
 ## The design check: timing, transfers, energy and loads (DC-1 to DC-6)
