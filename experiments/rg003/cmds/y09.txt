@@ -1,0 +1,7 @@
+plans
+plan select 0
+plan copy Guard
+plan primary 2
+plan who 1
+shot plans
+plans close

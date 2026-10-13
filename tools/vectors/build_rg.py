@@ -54,6 +54,17 @@ RUNS = {
               'orders written by the original client, the computer players planned from the current files, then '
               'the year was generated with every order file supplied, so the host ran no computer player and the '
               'stream starts at seeding'),
+    'rg003': dict(
+        id='RG-003', cycles=20000, start='RG-002\'s start (a state-edited AIX 2461 after one settling year)',
+        title='representative late game, long: RG-002 extended, a state-edited AIX 2461 after one settling year, '
+              'six expert computer players and a JOAT player giving client orders, 2462 to 2474 chained (12 years) '
+              'with every player\'s orders',
+        setup='NOT an unedited played game. Years 1 to 6 are RG-002\'s recorded years, unchanged (same files, same '
+              'orders; experiments/rg002 lists every start edit). Years 7 to 12 continue from RG-002 year 6 the same '
+              'way: player 0\'s orders written by the original client from commands lane F chose (injected, not '
+              'original AIX play; experiments/rg003 lists them), the computer players planned from the current '
+              'files, then the year was generated with every order file supplied, so the host ran no computer player '
+              'and the stream starts at seeding'),
 }
 IDENT = {
     'fleet': ('owner', 'id'), 'fleet_gone': ('owner', 'id'), 'planet': ('id',), 'player': ('id', 'seen_by'),

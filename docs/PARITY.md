@@ -6251,6 +6251,29 @@ so these restarts do not exercise them.
   at a starbase, and an IT player's packet costs.
 - The same limits as RG-001 on views and alternative streams.
 
+## Representative game, 12 years (RG-003)
+
+Status: MEASURED (recorded, no predictions committed). Vector:
+`vectors/rg/rg003.json`. Write-up: `experiments/rg003/README.md`. Raw
+evidence: private apparatus `evidence/rg003`.
+
+- **RG-003 is RG-002 continued to 12 chained years (2462 to 2474)** for
+  sprint milestone 2. Years 1 to 6 are RG-002's recorded years, unchanged.
+  Years 7 to 12 were recorded the same way. RG-002 keeps its own 6-year
+  vector.
+- **Player 0's orders in years 7 to 12 were injected by lane F.** These
+  were client commands chosen to keep a client player active, not
+  original AIX play: a starbase rebuild, two research changes, a new
+  battle plan, two queue changes and the leftover-to-research setting
+  (`experiments/rg003/README.md` lists each one).
+- All six new repeats were byte-identical. With the 3700 and 1490
+  streams, 1,337 of 5,851 expectations are `sample: true`. Every order
+  decoded, with no new order kind (3,731 orders in 84 player-years).
+- Observed in years 7 to 12: the homeworld starbase queued in 2469 was
+  built in 2470; 58 battles; populations over the maximum kept falling
+  (homeworld 15,744 to 14,386, colony 92 772 to 726, colony 95 2,544 to
+  2,509), and colony 100, under its maximum, kept growing (3,216 to 3,374).
+
 ## Coverage gaps after RG-002 (GAP-001)
 
 **Question.** These rules were never exercised by RG-002: hostile Orbital
