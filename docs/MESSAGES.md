@@ -481,6 +481,34 @@ Each section lists its message kinds in id order. Rows that share a trigger refe
 - **Wrong id in an earlier note:** an earlier private reading had 0x150 for the normal level-up message. The correct id is 0x050, and the oracle files agree.
 - **Component announcements:** the check is not limited to the leveled field. MEASURED, KX-005 R1 (`KERNEL.md` "Research"): energy 9 → 10 did not announce Battle Nexus, which also needs electronics 19; the check of all six fields is BINARY-ONLY beyond that case.
   **Clarified 2026-10-13 (EM-1):** terraforming parts are announced with 0x05f like other components, with category mask 0x2000 (terraforming), and the announcement is triggered by whichever requirement is met last. MEASURED in player 0's history in RG-001 and RG-002 (one AIX game): year 2426, biotech 1, announced Gravity Terraform ±3, Temp Terraform ±3 and Radiation Terraform ±3, whose other requirements were already met; year 2441, propulsion 5, announced Gravity Terraform ±7; year 2442, weapons 5, announced Radiation Terraform ±7; year 2445, biotech 3, announced Temp Terraform ±11. In 2441 and 2442 the triggering field was not biotech.
+- **Slots and focus of the component announcements** (added 2026-10-13). The four component messages share one layout: three slots, `field, mask, index`, and a focus.
+  - `field` is the field that just levelled (0 energy, 1 weapons, 2 propulsion, 3 construction, 4 electronics, 5 biotechnology).
+  - `mask` is the item's category as a single bit (table below). It is one 16-bit slot.
+  - `index` is the item's `index` within that category in `data/components.json`.
+  - The focus of 0x05f, 0x145 and 0x157 is a part code, `0xC000 | b << 8 | index`, where `b` is the bit number of `mask` (`mask = 1 << b`). It repeats the category and index of the slots, so a comparator that matches the slots can check the focus by computing it. The screen it opens is inferred to be that component in the Technology Browser. The focus of 0x078 and 0x0d0 is −3 (stored 0xFFFD, the ship-design screen, inferred), whatever the hull.
+
+  MEASURED (RG-001, RG-002, RG-003, KX-002, KX-003, KX-004, KX-005): every 0x05f, 0x078, 0x145 and 0x157 entry in the public vectors' `message_sequence` cases has this layout, with the focus equal to the part code above (or −3 for 0x078). The 0x0d0 values are MEASURED in AO-1 (b) only, from the private raw results; no public vector holds a 0x0d0 message. A category marked BINARY-ONLY below appears neither in the public vectors nor in AO-1; its mask and part code follow the same bit numbering, which is read from the binary.
+
+  | Category | Mask | `b` | Message (focus) | Status, with an example from the vectors |
+  |---|---|---:|---|---|
+  | Engines | 0x0001 | 0 | 0x05f (part code) | MEASURED: Long Hump 6, index 3 (RG-001); Trans-Galactic Drive 6 and Trans-Galactic Fuel Scoop 12 (RG-003) |
+  | Scanners | 0x0002 | 1 | 0x05f (part code) | MEASURED: DNA Scanner 3 (RG-002, RG-003); Chameleon Scanner 6 (RG-001) |
+  | Shields | 0x0004 | 2 | 0x05f (part code) | MEASURED: Cow-hide Shield 1 (KX-002); Bear Neutrino Barrier 5 (KX-005) |
+  | Armor | 0x0008 | 3 | 0x05f (part code) | MEASURED: Crobmnium 1 (RG-001) |
+  | Beam weapons | 0x0010 | 4 | 0x05f (part code) | BINARY-ONLY |
+  | Torpedoes | 0x0020 | 5 | 0x05f (part code) | BINARY-ONLY |
+  | Bombs | 0x0040 | 6 | 0x05f (part code) | MEASURED: Lady Finger Bomb 0 (RG-001) |
+  | Mining robots | 0x0080 | 7 | 0x05f (part code) | MEASURED: Robo-Mini-Miner 1 (RG-001) |
+  | Mine layers | 0x0100 | 8 | 0x05f (part code) | BINARY-ONLY |
+  | Orbital | 0x0200 | 9 | 0x05f (part code) | MEASURED: Mass Driver 7, index 9 (RG-001) |
+  | Starbase hulls | 0x0400 | 10 | 0x0d0 (−3) | MEASURED in AO-1 (b) only: Space Dock 1, field 3; not in the public vectors |
+  | Electrical | 0x0800 | 11 | 0x05f (part code) | MEASURED: Energy Capacitor 12 (KX-002) |
+  | Mechanical | 0x1000 | 12 | 0x05f (part code) | MEASURED: Cargo Pod 2 and Maneuvering Jet 7 (RG-001) |
+  | Terraforming | 0x2000 | 13 | 0x05f (part code) | MEASURED: Temp Terraform ±7 13 (KX-003, KX-005, RG-001); Temp Terraform ±11 14 and Radiation Terraform ±3 16 (KX-005) |
+  | Ship hulls | 0x4000 | 14 | 0x078 (−3) | MEASURED: Medium Freighter 1, Destroyer 6, Mini-Miner 21 (RG-001) |
+  | Planetary | 0x8000 | 15 | 0x157 for indices 0–8, 0x145 for 9–13 (part code) | MEASURED: Scoper 220 3 with 0x157 (RG-001); Missile Battery 10 (KX-002), Laser Battery 11 (KX-005) and Neutron Shield 13 (KX-004) with 0x145 |
+  | Planetary, Genesis Device | 0x8000 | 15 | 0x05f (part code 0xCF0E) | BINARY-ONLY |
+
 - **Invasion uses 0x0ef:** a ground invasion that wins can give the attacker research. The message used is 0x0ef, whose wording is about battle wreckage. Invasions never give trader components.
 - **Slow-tech research bonus:** under the slow-tech option the bonus from wreckage or invasion is half a level's cost, rounded down. The message shows twice that amount, so an odd cost is reported 1 too low.
 - **LEGACY BUG? 0x13e:** a trader planetary device found through battle wreckage would be reported with a ship-scrapping text, and its slots would be misread. It is likely unreachable.
