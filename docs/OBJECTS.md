@@ -134,9 +134,12 @@ fields of each kind.
   The fleet's later waypoints stay queued meanwhile (CONFIRMED, OB-019:
   both waypoints kept for three years).
   The task's years word counts down by one each year it lays (1 became 0
-  after one year, LM-1). A second order word, which computer players set
-  equal to the years word, is stored unchanged and changes nothing that was
-  measured (CONFIRMED, LM-1: words 0, 5 and 9 for years words 5, 1 and 0).
+  after one year, LM-1). The task can also store a second order word. All 6
+  of RG-002's computer-player lay-mines orders have years word 5 and second
+  word 5 (MEASURED). In LM-1 the second word was stored unchanged and changed
+  nothing measured, for these (years word, second word) pairs: (5, 0),
+  (5, 5), (5, 9), (1, 0), (1, 5), (0, 0) and (0, 5) (CONFIRMED by
+  prediction, LM-1).
 - **Order (CONFIRMED, MF-12).** Fleets lay one at a time in fleet order (owner,
   then fleet number). Each fleet lays standard, then heavy, then speed-bump
   mines, and each kind is merged (rule above) before the next fleet lays.

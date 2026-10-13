@@ -3,5 +3,6 @@
 # dumps, built and run like fleetlab.
 #   tools/fleetlab/combatlab dump FILE...
 #   tools/fleetlab/combatlab build BASE.HST SPEC OUT.HST
-#   tools/fleetlab/combatlab parse SPEC   (fleet lines only: each fleet's waypoint 0)
+#   tools/fleetlab/combatlab parse [-wps] SPEC   (fleet lines only: each fleet's waypoint 0;
+#                                             -wps adds every waypoint block's bytes)
 FLEETLAB_MAIN=CombatLab exec "$(dirname "$0")/fleetlab" "$@"

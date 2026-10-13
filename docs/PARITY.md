@@ -6320,7 +6320,7 @@ prediction was pushed before the runs (private apparatus 77f1dad). Results:
 
 | Question | Result | Status |
 |---|---|---|
-| Does a lay-mines task's second order word (0, 5 or 9; computer players store it equal to the years word) change the mines laid, the year the task ends or the messages? | No. Layers that differed only in the second word matched in every year, for years words 5, 1 and 0. | CONFIRMED by prediction |
+| Does a lay-mines task's second order word change the mines laid, the year the task ends or the messages? (All 6 RG-002 computer-player orders have years word 5 and second word 5; MEASURED.) | No. Layers that differed only in the second word matched in every year. Pairs run (years word, second word): (5, 0), (5, 5), (5, 9), (1, 0), (1, 5), (0, 0), (0, 5). | CONFIRMED by prediction |
 | Is the second word stored as given? | Yes, unchanged while the task continues. The years word counts down: 1 became 0 after the first year. | CONFIRMED by prediction |
 
 The durations matched `OBJECTS.md` "Laying" (Duration): years word 0 laid once,

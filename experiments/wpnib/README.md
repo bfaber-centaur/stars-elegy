@@ -1,8 +1,9 @@
 # WP-NIB: the high nibble of a waypoint's target-type byte
 
 Question: a waypoint carries a target-type byte. Its low nibble is the target
-kind: 1 planet, 2 fleet, 4 deep space, 8 a universe object. The client and
-the host normally write the high nibble as 1 (0x11, 0x12, 0x14). RG-002's
+kind: 1 planet, 2 fleet, 4 deep space, 8 a universe object. The client orders
+and Combat Lab starts seen so far write the high nibble as 1 (0x11, 0x12,
+0x14). RG-002's
 computer players also sent waypoints with 0x31 and 0x51 (23 waypoint orders: 6 with 0x31 and 17 with 0x51),
 and the saved files carry 0x51 and 0x54. Elegy's vectors drop the high
 nibble. Does the nibble change what the host does?

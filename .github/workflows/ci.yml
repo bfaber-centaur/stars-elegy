@@ -43,3 +43,11 @@ jobs:
       - run: |
           export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
           tools/fleetlab/combatlab parse experiments/ns/ns1.spec | diff tools/fleetlab/testdata/ns1.parse -
+      # parse -wps: every waypoint block's bytes as build writes them. The old
+      # specs' files were made with the CombatLab before "hi N" and "lay Y:W"
+      # (pins byte-identity); wpnib and lm1 pin the nibble and the second word.
+      - run: |
+          export FLEETLAB_CACHE="$RUNNER_TEMP/fleetlab"
+          for s in ob/ob002 ob/ob007 ob/ob014 ob/ob019 ns/ns1 cs003/cs003s tk/tk201 tk/tk301 tk/tk302 tk/tk503 wpnib/wpnib lm1/lm1; do
+            tools/fleetlab/combatlab parse -wps experiments/$s.spec | diff tools/fleetlab/testdata/$(basename $s).wps - || exit 1
+          done

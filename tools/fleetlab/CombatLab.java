@@ -133,9 +133,11 @@ public class CombatLab {
         } else if (args.length == 4 && args[0].equals("build")) {
             build(args[1], args[2], args[3]);
         } else if (args.length == 2 && args[0].equals("parse")) {
-            parse(args[1]);
+            parse(args[1], false);
+        } else if (args.length == 3 && args[0].equals("parse") && args[1].equals("-wps")) {
+            parse(args[2], true);
         } else {
-            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse SPEC");
+            System.err.println("usage: CombatLab dump FILE... | build BASE.HST SPEC OUT.HST | parse [-wps] SPEC");
             System.exit(2);
         }
     }
@@ -895,35 +897,7 @@ public class CombatLab {
             fl.setData(fl.getDecryptedData(), fl.size);
             List<Block> unit = new ArrayList<>();
             unit.add(fl);
-            List<int[]> all = new ArrayList<>();
-            all.add(waypoint0(fs));
-            all.addAll(fs.wps);
-            for (int w = 0; w < all.size(); w++) {
-                int[] wp = all.get(w);
-                WaypointBlock wb = new WaypointBlock();
-                wb.x = wp[0]; wb.y = wp[1];
-                wb.positionObject = wp[2];
-                wb.positionObjectType = wp[3];
-                wb.warp = wp[4];
-                wb.waypointTask = fs.task.getOrDefault(w, 0);
-                if (wb.waypointTask == 1) {
-                    // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
-                    for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
-                } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
-                    int o = fs.orders.get(w)[0];
-                    wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
-                    int o2 = fs.orders.get(w)[1];
-                    if (wb.waypointTask == 6 && o2 >= 0) { wb.additionalBytes.add((byte) o2); wb.additionalBytes.add((byte) (o2 >> 8)); }
-                } else if (wb.waypointTask == 7) {
-                    // patrol: two words (range, selected target id)
-                    for (int k = 0; k < 2; k++) {
-                        int o = fs.orders.get(w)[k];
-                        wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
-                    }
-                }
-                wb.encode();
-                unit.add(wb);
-            }
+            unit.addAll(waypointBlocks(fs));
             fleetUnits.put(fs.owner * 1024 + fs.id, unit);
             fleetCount.merge(fs.owner, 1, Integer::sum);
         }
@@ -1459,9 +1433,46 @@ public class CombatLab {
             : fs.planet >= 0 ? new int[]{fs.x, fs.y, fs.planet, 0x11, 0} : new int[]{fs.x, fs.y, 0, 0x14, 0};
     }
 
+    // The waypoint blocks of a spec fleet (waypoint 0 first), as build writes them.
+    static List<WaypointBlock> waypointBlocks(FleetSpec fs) {
+        List<WaypointBlock> out = new ArrayList<>();
+        List<int[]> all = new ArrayList<>();
+        all.add(waypoint0(fs));
+        all.addAll(fs.wps);
+        for (int w = 0; w < all.size(); w++) {
+            int[] wp = all.get(w);
+            WaypointBlock wb = new WaypointBlock();
+            wb.x = wp[0]; wb.y = wp[1];
+            wb.positionObject = wp[2];
+            wb.positionObjectType = wp[3];
+            wb.warp = wp[4];
+            wb.waypointTask = fs.task.getOrDefault(w, 0);
+            if (wb.waypointTask == 1) {
+                // transport: five order words (Ir, Bo, Ge, colonists, fuel), action << 12 | value
+                for (int o : fs.orders.get(w)) { wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8)); }
+            } else if (wb.waypointTask == 6 || wb.waypointTask == 9) {
+                int o = fs.orders.get(w)[0];
+                wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                int o2 = fs.orders.get(w)[1];
+                if (wb.waypointTask == 6 && o2 >= 0) { wb.additionalBytes.add((byte) o2); wb.additionalBytes.add((byte) (o2 >> 8)); }
+            } else if (wb.waypointTask == 7) {
+                // patrol: two words (range, selected target id)
+                for (int k = 0; k < 2; k++) {
+                    int o = fs.orders.get(w)[k];
+                    wb.additionalBytes.add((byte) o); wb.additionalBytes.add((byte) (o >> 8));
+                }
+            }
+            wb.encode();
+            out.add(wb);
+        }
+        return out;
+    }
+
     // Parse-only check of a spec's fleet lines, with no base file: one line per
-    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE".
-    static void parse(String spec) throws Exception {
+    // fleet, "fleet OWNER ID wp0 X Y OBJ 0xTYPE". With wps, each fleet line is
+    // followed by one line per waypoint, "  wp N HEX", the waypoint block's bytes
+    // exactly as build writes them.
+    static void parse(String spec, boolean wps) throws Exception {
         int lineNo = 0;
         for (String raw : Files.readAllLines(Paths.get(spec))) {
             lineNo++;
@@ -1471,6 +1482,15 @@ public class CombatLab {
                 FleetSpec fs = parseFleet(line.split("\\s+"));
                 int[] w = waypoint0(fs);
                 System.out.printf("fleet %d %d wp0 %d %d %d 0x%x%n", fs.owner, fs.id, w[0], w[1], w[2], w[3]);
+                if (wps) {
+                    List<WaypointBlock> bl = waypointBlocks(fs);
+                    for (int k = 0; k < bl.size(); k++) {
+                        byte[] d = bl.get(k).getDecryptedData();
+                        StringBuilder hx = new StringBuilder();
+                        for (int b = 0; b < bl.get(k).size; b++) hx.append(String.format("%02x", d[b] & 0xff));
+                        System.out.printf("  wp %d %s%n", k, hx);
+                    }
+                }
             } catch (Exception e) {
                 throw new Exception(spec + ":" + lineNo + ": " + e.getMessage(), e);
             }

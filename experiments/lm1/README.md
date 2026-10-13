@@ -2,8 +2,9 @@
 
 Question: a lay-mines waypoint task stores order words. The first is the
 years word (0 = this year only, 5 = indefinitely; `OBJECTS.md`
-"Laying", Duration). RG-002's computer players also store a second word, equal to
-the first (5 and 5). The client and Combat Lab starts leave it at 0, and
+"Laying", Duration). All 6 of RG-002's computer-player lay-mines orders also
+store a second word, and all 6 are (5, 5) (MEASURED). The one client-written lay-mines order on record (DS-1)
+carries no second word, Combat Lab specs before LM-1 wrote none, and
 Elegy's vectors drop it. Does the second word change what the host does?
 
 **Prediction, pushed before the runs** (private apparatus 77f1dad,
