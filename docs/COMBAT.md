@@ -1031,9 +1031,30 @@ CB-002, CB-003, CB-005; P-13):
 - Each target takes `ships × damage × count × capacitor/100 × that
   target's deflector/100`.
 - No range dropoff and no carry-over.
+- **Clarified 2026-10-13 (CB-060, `PARITY.md` "Late-tech weapons
+  (CB-060)"):** the primary/secondary type test does not narrow a gatling
+  shot. A Gatling Neutrino Cannon on a plan with primary "armed ships" and
+  secondary "any" hit an armed stack at distance 1 and an unarmed stack at
+  distance 2 in the same shot (CONFIRMED by prediction, 3 of 6 streams).
+  Whether a gatling hits a target matching neither type is NOT RUN. The Big
+  Mutha Cannon did 204 and the Mini Gun 13 at distances 0 and 1 (CONFIRMED
+  by prediction); distance 2 is NOT RUN for those two.
 
 **Sappers** (CONFIRMED, CB-002; P-15): damage shields only. They make no
 hit on a target without shields.
+
+- **Clarified 2026-10-13 (CB-060):**
+  - The Phased and Syncro Sappers follow the beam dropoff (409/396/379 and
+    1049/1017/973 at distances 1/2/3) and did no armor damage (CONFIRMED by
+    prediction).
+  - With only unshielded targets, the Pulsed Sapper made no record in the
+    whole battle (CONFIRMED by prediction).
+  - A sapper shot that strips a stack's last shields carries on to another
+    shielded target in reach, as a beam does after a kill (MEASURED, 5
+    streams). The carried amounts fit step 5 above with "stripped of its
+    shields" in place of "died". This corrects the CB-002 reading that
+    sappers never carry; that reading was never tested with a second
+    shielded target in reach.
 
 ### Torpedoes and missiles (CONFIRMED, CB-001, CB-002, CB-009, CS-003; P-17..P-21, Q-8, Q-14)
 
