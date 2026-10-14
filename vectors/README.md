@@ -82,7 +82,8 @@ file, so nothing in it is a default you have to guess.
   `victory_conditions` (each with its value in game units and, for the seven
   that can be switched, `enabled`), when the vector's builder read them.
 - `players`: `computer: true` for a computer player (the host plans its
-  orders each year; a vector lists only the outcomes its case is about),
+  orders each year; a vector lists only the outcomes its case is about)
+  and its `computer_level` (see "Computer level" below; added 2026-10-14),
   tech levels by field, research accumulated per field, research
   percent and field, `research_next_field` (the stored "next field to
   research" choice: a field, `same` or `lowest`; an explicit field is used
@@ -564,8 +565,36 @@ it, where 0 means random. When either is 0, `computer.drawn` gives the
 type (1..6) and level (1 easy .. 4 expert) the generator drew. The host file
 keeps only the race, so `drawn` is the `docs/AI.md` section 3 row that the
 recorded race matches on PRT, lesser traits, growth, habitat, colonists per
-resource, factories and mines (the builder fails if two rows ever match). The `wormholes`
+resource, factories and mines (the builder fails if two rows ever match). Corrected 2026-10-14: this said "The host file keeps only the race". The host file also keeps the type and level, in the player record's computer-player byte ("Computer level" below), and all 41 drawn pairs agree with that byte; `drawn` still comes from the race match. The `wormholes`
 sample counts wormhole ends, two per pair.
+
+### Computer level
+
+Added 2026-10-14. A computer player in `initial_state.players` has
+`computer_level`, decoded from its player record's computer-player byte
+in the recorded host file (byte 7 of the record; `combatlab dump` prints
+it as `b7=`). Bits 2 and 3 hold the level:
+
+| Bits 2–3 | `computer_level` | Definition-file level | How established |
+|---|---|---|---|
+| 0 | `easy` | 1 | MEASURED: 19 UG computer-player records created at definition level 1 (ug01 and its 30000-cycle repeat count separately) |
+| 1 | `standard` | 2 | MEASURED: 9 UG records at level 2 |
+| 2 | `harder` | 3 | MEASURED: 6 UG records at level 3 |
+| 3 | `expert` | 4 | MEASURED: 7 UG records at level 4, and AIX's six (`docs/ORACLE.md`, the bullet on computer players in the host file) |
+
+The level names follow the definition-file numbering (1 easy to 4 expert,
+as `ug`'s `computer.level`), whose races match `docs/AI.md` section 3's
+rows per level (PARITY AI-0). In the same UG host files, the 41 computer
+players whose type and level the generator drew (definition 0) also
+agree: bits 2–3 equal the drawn level − 1 and bits 5–7 the drawn type − 1,
+for every one. A human player's byte read 0x01 in every UG record (44).
+Bit 1 is the computer flag (`computer`). Source: the UG runs' definition
+files and host files in private apparatus `evidence/ug/run`.
+
+The field is additive: the schema stays `stars-elegy-vector/1`, and a
+loader that ignores unknown fields reads old and new vectors alike. The
+corpora whose vectors carry computer players were rebuilt with it on
+2026-10-14 (`rg`, `rp`, `wu`); the rebuild changed nothing else.
 
 ### Not vectors
 

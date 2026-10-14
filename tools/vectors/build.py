@@ -18,6 +18,7 @@ import ast, json, os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 COMBATLAB = os.path.join(ROOT, 'tools', 'fleetlab', 'combatlab')
+COMPUTER_LEVELS = ['easy', 'standard', 'harder', 'expert']
 SCHEMA = 'stars-elegy-vector/1'
 TECH = ['energy', 'weapons', 'propulsion', 'construction', 'electronics', 'biotechnology']
 DUMP_TECH = ['energy', 'weapons', 'prop', 'con', 'elec', 'bio']
@@ -217,6 +218,9 @@ def state(hst, xy, game, xy_path=None):
             })
             if d.get('computer') == '1':
                 st['players'][-1]['computer'] = True
+                # The player record's computer-player byte (the dump's b7):
+                # bits 2-3 hold the level (vectors/README.md "computer_level").
+                st['players'][-1]['computer_level'] = COMPUTER_LEVELS[int(d['b7'], 16) >> 2 & 3]
             # The default production queue new colonies start with, and their
             # default "only leftover to research" (the player record; planetary
             # items only, as in a planet queue with kind 1).

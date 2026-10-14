@@ -241,8 +241,9 @@ type Player struct {
 	ResearchNextField   string            `json:"research_next_field"` // a field, "same" or "lowest"
 	Relations           map[string]string `json:"relations"`
 	MysteryTraderItems  []string          `json:"mystery_trader_items"`
-	Computer            bool              `json:"computer,omitempty"`  // a computer player: the host plans its orders
-	Homeworld           *int              `json:"homeworld,omitempty"` // the planet the player's record names as its homeworld
+	Computer            bool              `json:"computer,omitempty"`       // a computer player: the host plans its orders
+	ComputerLevel       string            `json:"computer_level,omitempty"` // a computer player's level, from its record's computer-player byte
+	Homeworld           *int              `json:"homeworld,omitempty"`      // the planet the player's record names as its homeworld
 	// The default production queue new colonies start with (planetary items,
 	// kind 1) and their default "only leftover to research". Both or neither.
 	DefaultQueue    []QueueItem `json:"default_queue,omitempty"`
@@ -505,6 +506,9 @@ var (
 		"starbase_design_gone": true, "message_sequence": true, "alt_battle": true}
 )
 
+// ComputerLevels are the values of a player's computer_level.
+var ComputerLevels = map[string]bool{"easy": true, "standard": true, "harder": true, "expert": true}
+
 // Load decodes one vector strictly.
 func Load(path string) (*Vector, error) {
 	b, err := os.ReadFile(path)
@@ -577,6 +581,10 @@ func (v *Vector) Check() []error {
 			}
 		}
 		for _, p := range st.Players {
+			if p.Computer != ComputerLevels[p.ComputerLevel] {
+				bad("player %d: computer %v, computer_level %q (one of easy, standard, harder, expert for a computer player, none otherwise)",
+					p.ID, p.Computer, p.ComputerLevel)
+			}
 			if p.Homeworld != nil && !planets[*p.Homeworld] {
 				bad("player %d: homeworld %d is not a planet of the state", p.ID, *p.Homeworld)
 			}
