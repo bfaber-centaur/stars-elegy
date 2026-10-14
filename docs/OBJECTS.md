@@ -160,8 +160,12 @@ fields of each kind.
   (MEASURED, MF-13: a player-1 field elsewhere, or a salvage object, gave
   no field and the message; player 1's 511 fields with a player-0 field
   sorting before them made field 511). LEGACY BUG. **Chosen rule for
-  Elegy:** a plain limit of 512; the 511 case is reproduced only behind a
-  switch. The universe holds at most 4050
+  Elegy (corrected 2026-10-14):** match the original. Elegy makes the
+  512th field (number 511) only when no other object sorts after the
+  owner's minefields, as measured above (ruleset v7 turns
+  `FieldLimit511` on; Bobby's decision on the project's decision card,
+  2026-10-14 04:33Z). This said: "a plain limit of 512; the 511 case is
+  reproduced only behind a switch". The universe holds at most 4050
   space objects of all kinds (BINARY-ONLY). A lay that needs a new field
   when there is no room creates nothing: the owner gets a message and
   those mines are lost. A lay that merges needs no room. A new field takes
