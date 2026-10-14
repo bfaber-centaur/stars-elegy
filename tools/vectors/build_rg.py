@@ -78,6 +78,20 @@ RUNS = {
               'chain starts from that state. Each recorded year: the computer players planned from the current '
               'files, then the year was generated with every order file supplied, so the host ran no computer '
               'player and the stream starts at seeding'),
+    'rg005': dict(
+        id='RG-005', cycles=20000, game='RG5', start='year 2465 of the unrecorded RG5 warm-up',
+        title='out-of-sample validation game: five expert computer players on custom races (CA, SS, AR, WM, SD, '
+              'each with its own LRTs, habitability and economy), medium universe, 2466 to 2477 chained (12 years) '
+              'with every player\'s orders',
+        setup='NOT from game start. A new game (medium, normal density, farther positions, public scores, galaxy '
+              'clumping, random events on) of five custom races, every player made an expert computer player and '
+              'every pair set to enemies before the first year (a state edit, experiments/rg005); 65 years then '
+              'generated unrecorded with the host planning (the warm-up; W = 65 by the pre-registered rule), and the '
+              'recorded chain starts from that state. Each recorded year: the computer players planned from the '
+              'current files, then the year was generated with every order file supplied, so the host ran no '
+              'computer player and the stream starts at seeding',
+        verdict='recorded under the pre-run record experiments/rg005/PREDICTION.md, which makes no per-case '
+                'prediction; samples flagged from %d other streams'),
 }
 IDENT = {
     'fleet': ('owner', 'id'), 'fleet_gone': ('owner', 'id'), 'planet': ('id',), 'player': ('id', 'seen_by'),
@@ -256,8 +270,8 @@ def build(ev, out):
         cases.append({'id': '%s-%d' % (r['id'], year), 'rule': 'KERNEL',
                       'setup': 'year %d of the chain (%s)' % (k, r['setup']), 'tag': 'MEASURED',
                       'prediction_held': False, 'varies_by_stream': False,
-                      'verdict': 'recorded, no prediction committed; samples flagged from %d other streams'
-                                 % len(alts), 'expect': exps})
+                      'verdict': r.get('verdict', 'recorded, no prediction committed; samples flagged from %d '
+                                                   'other streams') % len(alts), 'expect': exps})
         prev = st1
     vec = {'schema': B.SCHEMA, 'id': r['id'], 'title': r['title'],
            'source': {'experiment': 'stars-oracle-apparatus evidence/%s (private); start from %s' % (

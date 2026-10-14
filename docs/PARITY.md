@@ -6422,6 +6422,41 @@ Status: MEASURED (recorded, no predictions committed). Vector:
   appears in some other streams and in the late warm-up
   (`experiments/rg004/README.md` "Random events").
 
+## Representative game (RG-005)
+
+Status: pre-registered out-of-sample validation game; no comparison
+yet. This section records how the game was set up and generated. It
+holds no comparison result. Vector: `vectors/rg/rg005.json` and
+`rg005-y1` to `rg005-y12`. Pre-run record: `experiments/rg005/PREDICTION.md`.
+Write-up: `experiments/rg005/README.md`. Raw evidence: private apparatus
+`evidence/rg005`.
+
+- **Pre-registered.** The pre-run record (configuration, method,
+  acceptance criteria, predictions) was pushed alone in 1019fa7 at
+  2026-10-14T02:19:31Z (activity API), and the oracle run started at
+  02:19:47Z (apparatus `evidence/rg005/started`). The engine under test
+  is elegy 8584f92, run unchanged. The record is never edited.
+- **Configuration.** A new game (RG5, seed 5005): medium universe,
+  normal density, positions "farther", public scores on, galaxy
+  clumping on, random events on, slower tech off. Five custom races
+  (CA, SS, AR, WM, SD), each with its own habitability, growth, economy
+  and research costs, and LRT sets that repeat no earlier corpus's. Every
+  player is an expert computer player (Turindrone, Automitron, Macinti,
+  Rototill, Cybertron) and every pair is at enemy. That setup step is a
+  state edit, as in RG-004. No orders were injected.
+- **Start year.** Warm-up years were generated unrecorded from 2400. The
+  record's rule (the first warm-up year from 45 on with at least 2
+  battle records, or 70) gave W = 65, so the chain starts from the state
+  after 2465. That RG-004 covers the same years is a coincidence: its 65
+  warm-up years were set in its own run.
+- **Chain.** 12 chained years (2466 to 2477), each also run alone from
+  the original's files (12 restarts). The record allows the extension
+  from 6 years to 12 "only if cost allows, decided before any comparison
+  is run". It was decided at 02:46:03Z, before any comparison. The
+  record set no threshold for cost.
+- **Scoring limit.** Years 1 to 6 (2466 to 2471) can support CONFIRMED
+  by prediction. Years 7 to 12 (2472 to 2477) support MEASURED only.
+
 ## Coverage gaps after RG-002 (GAP-001)
 
 **Question.** These rules were never exercised by RG-002: hostile Orbital
