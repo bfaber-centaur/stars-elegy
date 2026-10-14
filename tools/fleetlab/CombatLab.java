@@ -22,9 +22,10 @@ import org.starsautohost.starsapi.items.Items;
 //   computer P TYPE LEVEL | computer P off
 //                                   make P a computer player: the player record's computer
 //                                   flag, level and personality byte (b7 in the dump).
-//                                   TYPE 0..5 Robotoid..Macinti; LEVEL 3 expert. MEASURED
-//                                   on AIX for expert only (0x0f 0x2f 0x4f 0x6f 0x8f 0xaf);
-//                                   other LEVEL values are inferred. off = 1 (human)
+//                                   TYPE 0..5 Robotoid..Macinti; LEVEL 0 easy .. 3 expert.
+//                                   MEASURED on AIX for expert (0x0f 0x2f 0x4f 0x6f 0x8f 0xaf);
+//                                   updated 2026-10-14: the other LEVEL values are MEASURED
+//                                   in the UG host files (they were inferred). off = 1 (human)
 //   hab P C,C,C,L,L,L,H,H,H         set the habitability centre, low and high per axis
 //                                   (gravity, temperature, radiation)
 //   research P PCT                  set the share of resources spent on research
@@ -660,8 +661,9 @@ public class CombatLab {
                     case "lrt": lrts.put(Integer.parseInt(t[1]), Integer.decode(t[2])); break;
                     case "prt": prts.put(Integer.parseInt(t[1]), Integer.parseInt(t[2])); break;
                     // computer P TYPE LEVEL: player block byte 7 = 1 | computer 2 | LEVEL << 2 | TYPE << 5
-                    // (TYPE 0..5 Robotoid..Macinti as in AIX; LEVEL 3 expert). Only expert was measured
-                    // (AIX); the LEVEL position for other levels is inferred. "computer P off" = 1
+                    // (TYPE 0..5 Robotoid..Macinti as in AIX; LEVEL 0 easy .. 3 expert). Updated 2026-10-14:
+                    // all four LEVEL values are MEASURED in the UG host files (vectors/README.md
+                    // "Computer level"); this said only expert was measured. "computer P off" = 1
                     case "computer": computers.put(Integer.parseInt(t[1]), computerByte(t)); break;
                     case "hab": {
                         String[] h = t[2].split(",");

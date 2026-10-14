@@ -509,6 +509,12 @@ var (
 // ComputerLevels are the values of a player's computer_level.
 var ComputerLevels = map[string]bool{"easy": true, "standard": true, "harder": true, "expert": true}
 
+// computerLevelOK: a computer player has one of the ComputerLevels, and a
+// human player has no computer_level.
+func computerLevelOK(p Player) bool {
+	return p.Computer == (p.ComputerLevel != "") && (p.ComputerLevel == "" || ComputerLevels[p.ComputerLevel])
+}
+
 // Load decodes one vector strictly.
 func Load(path string) (*Vector, error) {
 	b, err := os.ReadFile(path)
@@ -581,7 +587,7 @@ func (v *Vector) Check() []error {
 			}
 		}
 		for _, p := range st.Players {
-			if p.Computer != ComputerLevels[p.ComputerLevel] {
+			if !computerLevelOK(p) {
 				bad("player %d: computer %v, computer_level %q (one of easy, standard, harder, expert for a computer player, none otherwise)",
 					p.ID, p.Computer, p.ComputerLevel)
 			}

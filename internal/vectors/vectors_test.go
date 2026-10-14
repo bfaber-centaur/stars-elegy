@@ -419,3 +419,23 @@ func TestAltBattleFields(t *testing.T) {
 		}
 	}
 }
+
+func TestComputerLevelOK(t *testing.T) {
+	for _, c := range []struct {
+		computer bool
+		level    string
+		ok       bool
+	}{
+		{true, "easy", true},
+		{true, "expert", true},
+		{false, "", true},
+		{true, "", false},        // a computer player without its level
+		{true, "hard", false},    // not one of the four names
+		{false, "expert", false}, // a level on a human player
+		{false, "bogus", false},  // an unknown level on a human player
+	} {
+		if got := computerLevelOK(Player{Computer: c.computer, ComputerLevel: c.level}); got != c.ok {
+			t.Errorf("computer %v, computer_level %q: ok %v, want %v", c.computer, c.level, got, c.ok)
+		}
+	}
+}

@@ -591,6 +591,12 @@ for every one. A human player's byte read 0x01 in every UG record (44).
 Bit 1 is the computer flag (`computer`). Source: the UG runs' definition
 files and host files in private apparatus `evidence/ug/run`.
 
+In RG-004 and RG-005 the computer-player byte, and so their `expert`,
+was written by the setup step, a state edit before the first year, not
+at game creation (`experiments/rg004/README.md` "Computer players (setup
+step)"). That such a game behaves as one created with expert computer
+players is an ASSUMPTION.
+
 The field is additive: the schema stays `stars-elegy-vector/1`, and a
 loader that ignores unknown fields reads old and new vectors alike. The
 corpora whose vectors carry computer players were rebuilt with it on
