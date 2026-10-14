@@ -1251,6 +1251,13 @@ python3 experiments/ob/check.py OB-001 OUT/after.dump
   values; `computer P off` gives 0x01). With it set on custom races in a
   new game, the host ran a computer player for every player and wrote
   each one's order file (RG-004, `experiments/rg004/README.md`).
+  **Updated 2026-10-14:** the other levels are now MEASURED from the UG
+  games' host files: bits 2–3 are the level (0 easy, 1 standard, 2
+  harder, 3 expert = definition level − 1), bits 5–7 the type − 1, bit 1
+  the computer flag; a human player read 0x01 (`vectors/README.md`
+  "Computer level"). So `computer P TYPE LEVEL` with LEVEL 0 to 2 writes
+  the byte the original writes for those levels, though no game made that
+  way has been generated.
 - More than one race file can follow the definition (`new-game DEF OUT
   CYCLES a.r1 b.r1 …`); the definition names them by file name, one per
   human player (UG16..UG21, up to six race files with ten computer

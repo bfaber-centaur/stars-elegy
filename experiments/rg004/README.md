@@ -66,7 +66,9 @@ created with definition-file computer players (MEASURED,
 0xaf. The same step set every pair of players to enemies, as AIX's
 computer players start (MEASURED in the AIX host file). Nothing else
 changed. The computer-player level bits are inferred: only expert was
-measured.
+measured. Updated 2026-10-14: the level bits for all four levels are now
+MEASURED in the UG host files (`vectors/README.md` "Computer level"),
+so this byte is the original's own expert byte.
 
 The personalities are the three that Elegy treats as faithful
 (`docs/AI.md`):

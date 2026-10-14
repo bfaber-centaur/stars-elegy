@@ -6409,7 +6409,9 @@ Status: MEASURED (recorded, no predictions committed). Vector:
   recorded (2466 to 2477). No orders were injected.
 - **Setup step (ASSUMPTION that it equals creating the game with computer
   players).** One byte per player record was set to the computer flag,
-  level and personality values MEASURED on AIX (expert only). Every pair
+  level and personality values MEASURED on AIX (expert only; updated
+  2026-10-14: all four levels are now MEASURED in the UG host files,
+  `vectors/README.md` "Computer level"). Every pair
   of players was set to enemies, as AIX starts.
 - MEASURED: all 12 repeats were byte-identical. With the 3700 and 1490
   streams, 404 of 2,941 expectations are `sample: true`. There were 55
