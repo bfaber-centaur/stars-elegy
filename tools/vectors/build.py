@@ -50,6 +50,8 @@ GAMES = {
     'GT': dict(name='GT', size='medium', bounds=[1000, 1000, 2200, 2200], density='normal'),
     # RGF: from its definition file (size 1 = small, density 2 = dense); 160 planets.
     'RGF': dict(name='RGF', size='small', bounds=[1000, 1000, 1800, 1800], density='dense'),
+    # RG5: from its definition file (size 2 = medium, density 1 = normal).
+    'RG5': dict(name='RG5', size='medium', bounds=[1000, 1000, 2200, 2200], density='normal'),
     'TK3': dict(name='TK3', size='tiny', bounds=[1000, 1000, 1400, 1400]),
     'AIX': dict(name='AIX', size='small', bounds=[1000, 1000, 1800, 1800], density='normal'),
     'PG001': dict(name='A Barefoot JayWalk', size='tiny', bounds=[1000, 1000, 1400, 1400], density='normal'),
