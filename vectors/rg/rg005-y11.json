@@ -18678,7 +18678,7 @@
    "tag": "MEASURED",
    "prediction_held": false,
    "varies_by_stream": false,
-   "verdict": "recorded, no prediction committed; samples flagged from 2 other streams",
+   "verdict": "recorded under the pre-run record experiments/rg005/PREDICTION.md, which makes no per-case prediction; samples flagged from 2 other streams",
    "expect": [
     {
      "kind": "fleet",

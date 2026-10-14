@@ -59,15 +59,19 @@ judgement, not a rule fixed in advance. To keep that judgement out of
 the scoring, only years 1 to 6 (2466 to 2471: restarts y1 to y6 and
 chained year 1) can support CONFIRMED by prediction. Results from years
 7 to 12 (2472 to 2477, restarts y7 to y12, and those chained years)
-support MEASURED only, whatever they show.
+support MEASURED only, whatever they show. So lane B's first-run
+tallies are reported in two parts: restarts y1 to y6 with chained year
+1, and restarts y7 to y12.
 
 ## Why the same years as RG-004
 
-RG-004 also covers 2466 to 2477. That is the output of the warm-up
-rule, not a choice. Both games start at 2400, and the RG-005 rule
+RG-004 also covers 2466 to 2477. For RG-005 that is the output of the
+warm-up rule, not a choice: the game starts at 2400, and the rule
 (first warm-up year from 45 on with at least 2 battle records, or 70)
-gave W = 65 (`pick-w.txt` above). RG-004 also started its chain after
-65 warm-up years, so both chains start from the state after 2465.
+gave W = 65 (`pick-w.txt` above). RG-004's 65 warm-up years were not
+picked by that rule; they were set in its own run (40 years, then 25
+more; `experiments/rg004/README.md`). The identical years are a
+coincidence.
 
 RG-005 shares no game file or state with RG-004 (apparatus, checked
 2026-10-14 by comparing the two `SHA256SUMS`). RG5 was created new
@@ -79,6 +83,20 @@ in RG-004, and neither is game state: the empty file (the `done`
 markers and the empty planning captures) and the `repeat.txt` text
 "repeat identical". The two runs do share the `rg-chain` and `rg-alt`
 scripts, as the record says.
+
+## Messages
+
+All 60 message sequences in the vector are empty, and the vector has no
+`message` expectations. That is what the original wrote, not a capture
+gap (MEASURED, 2026-10-14): a scan of the raw block headers of every
+RG-005 player file (`RG5.M1` to `RG5.M5`, 12 years: 60 files in the
+recorded stream and 120 in the 3700 and 1490 streams) found no message
+block (type 12), and every file parsed to its end. The same scan finds 8
+message blocks in RG-004's 84 recorded player files, and the dump the
+vector build uses decodes them. In RG-005, player 2 (AR) lost 14
+planets to no owner over the 12 years and got no message for them in
+its file. Why computer players' files carry so few messages is not
+explained here.
 
 ## Counts
 
